@@ -1,7 +1,5 @@
 package glm
 
-import "math"
-
 //------------------------------------------------------------------------------
 
 // Vec3 is a 3D vector of single-precision floats.
@@ -134,14 +132,14 @@ func (a Vec3) Dot(b Vec3) float32 {
 
 // Returns |a| (the euclidian length of a).
 func (a Vec3) Length() float32 {
-	return float32(math.Sqrt(float64(a.X*a.X + a.Y*a.Y + a.Z*a.Z)))
+	return Sqrt(a.X*a.X + a.Y*a.Y + a.Z*a.Z)
 }
 
 // Normalized return a/|a| (i.e. the normalization of a).
 // a must be non-zero.
 // See also Normalize.
 func (a Vec3) Normalized() Vec3 {
-	length := float32(math.Sqrt(float64(a.X*a.X + a.Y*a.Y + a.Z*a.Z)))
+	length := Sqrt(a.X*a.X + a.Y*a.Y + a.Z*a.Z)
 	return Vec3{a.X / length, a.Y / length, a.Z / length}
 }
 
@@ -149,7 +147,7 @@ func (a Vec3) Normalized() Vec3 {
 // a must be non-zero.
 // More efficitent than Normalized.
 func (a *Vec3) Normalize() {
-	length := float32(math.Sqrt(float64(a.X*a.X + a.Y*a.Y + a.Z*a.Z)))
+	length := Sqrt(a.X*a.X + a.Y*a.Y + a.Z*a.Z)
 	a.X /= length
 	a.Y /= length
 	a.Z /= length
