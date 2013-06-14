@@ -1,3 +1,6 @@
+// Copyright (c) 2013 Laurent Moussault. All rights reserved.
+// Licensed under a simplified BSD license (see LICENSE file).
+
 package glm
 
 //------------------------------------------------------------------------------
@@ -154,4 +157,3 @@ func (a *Vec3) Normalize() {
 }
 
 //------------------------------------------------------------------------------
-// Copyright (c) 2013 - Laurent Moussault <moussault.laurent@gmail.com>

@@ -1,3 +1,6 @@
+// Copyright (c) 2013 Laurent Moussault. All rights reserved.
+// Licensed under a simplified BSD license (see LICENSE file).
+
 package glm
 
 //------------------------------------------------------------------------------
@@ -8,4 +11,3 @@ type IVec2 struct {
 }
 
 //------------------------------------------------------------------------------
-// Copyright (c) 2013 - Laurent Moussault <moussault.laurent@gmail.com>
