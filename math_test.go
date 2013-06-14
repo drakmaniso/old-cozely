@@ -40,4 +40,52 @@ func BenchmarkGlmSqrt(b *testing.B) {
 }
 
 //------------------------------------------------------------------------------
+
+func TestFloor(t *testing.T) {
+	a := Floor(float32(3.3))
+	if a != 3 {
+		t.Errorf("Wrong result for Floor(3.3): %v %T", a, a)
+	}
+	b := Floor(float32(-3.3))
+	if b != -4 {
+		t.Errorf("Wrong result for Floor(-3.3): %v %T", b, b)
+	}
+	c := Floor(float32(3))
+	if c != 3 {
+		t.Errorf("Wrong result for Floor(3): %v %T", c, c)
+	}
+	d := Floor(float32(-3))
+	if d != -3 {
+		t.Errorf("Wrong result for Floor(-3): %v %T", d, d)
+	}
+}
+
+func BenchmarkMathFloorFloat64(b *testing.B) {
+	x := float64(3.3)
+	y := float64(-3.3)
+	for i := 0; i < b.N; i++ {
+		_ = math.Floor(x)
+		_ = math.Floor(y)
+	}
+}
+
+func BenchmarkMathFloorFloat32(b *testing.B) {
+	x := float32(3.3)
+	y := float32(-3.3)
+	for i := 0; i < b.N; i++ {
+		_ = float32(math.Floor(float64(x)))
+		_ = float32(math.Floor(float64(y)))
+	}
+}
+
+func BenchmarkGlmFloor(b *testing.B) {
+	x := float32(3.3)
+	y := float32(-3.3)
+	for i := 0; i < b.N; i++ {
+		_ = Floor(x)
+		_ = Floor(y)
+	}
+}
+
+//------------------------------------------------------------------------------
 // Copyright (c) 2013 - Laurent Moussault <moussault.laurent@gmail.com>

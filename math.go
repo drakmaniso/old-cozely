@@ -18,4 +18,11 @@ func Mix(x, y float32, a float32) float32 {
 }
 
 //------------------------------------------------------------------------------
+
+//go:noescape
+
+// Returns the nearest integer less than or equal to x.
+func Floor(x float32) float32
+
+//------------------------------------------------------------------------------
 // Copyright (c) 2013 - Laurent Moussault <moussault.laurent@gmail.com>
