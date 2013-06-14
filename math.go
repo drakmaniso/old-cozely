@@ -28,3 +28,14 @@ func Mix(x, y float32, a float32) float32 {
 func Floor(x float32) float32
 
 //------------------------------------------------------------------------------
+
+// Returns int32(x) if x>0, int32(x-1) otherwise.
+func FastFloor(x float32) int32 {
+	if x > 0 {
+		return int32(x)
+	} else {
+		return int32(x - 1)
+	}
+}
+
+//------------------------------------------------------------------------------

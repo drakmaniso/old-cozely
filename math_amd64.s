@@ -55,8 +55,11 @@ TEXT ·Floor(SB),7,$0
 	MOVSS      X0, ret+8(FP)
 	RET
 	
-// Doesn't work (e.g. for -3.3)
-//TEXT ·Floor(SB),7,$0
+//------------------------------------------------------------------------------
+
+// SLOWER than the Go function
+// func FastFloor(s float32) int32
+//TEXT ·FastFloor(SB),7,$0
 //	CVTTSS2SL  x+0(FP), BX
 //	MOVL       x+0(FP), AX
 //	SHRL       $31, AX
