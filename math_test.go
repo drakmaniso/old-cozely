@@ -1,8 +1,8 @@
 package glm
 
 import (
-	"testing"
 	"math"
+	"testing"
 )
 
 //------------------------------------------------------------------------------
@@ -20,14 +20,14 @@ func TestSqrt(t *testing.T) {
 
 func BenchmarkMathSqrtFloat64(b *testing.B) {
 	a := float64(3.3)
-	for i:=0; i < b.N; i++ {
+	for i := 0; i < b.N; i++ {
 		_ = math.Sqrt(a)
 	}
 }
 
 func BenchmarkMathSqrtFloat32(b *testing.B) {
 	a := float32(3.3)
-	for i:=0; i < b.N; i++ {
+	for i := 0; i < b.N; i++ {
 		_ = float32(math.Sqrt(float64(a)))
 	}
 }

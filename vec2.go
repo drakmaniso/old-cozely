@@ -15,7 +15,7 @@ func (a Vec2) Homogenized() Vec3 {
 	return Vec3{a.X, a.Y, 1.0}
 }
 
-// HomogenizedAsDirection returns the homogeneous coordinates 
+// HomogenizedAsDirection returns the homogeneous coordinates
 // of a point at infinity in the direction of a.
 func (a Vec2) HomogenizedAsDirection() Vec3 {
 	return Vec3{a.X, a.Y, 0.0}
