@@ -9,7 +9,7 @@ package glm
 
 //go:noescape
 
-// Returns the square root of x.
+// Sqrt returns the square root of x.
 func Sqrt(x float32) float32
 
 //------------------------------------------------------------------------------
@@ -35,6 +35,17 @@ func FastFloor(x float32) int32 {
 		return int32(x)
 	} else {
 		return int32(x - 1)
+	}
+}
+
+//------------------------------------------------------------------------------
+
+// Round returns the nearest integer to x.
+func Round(x float32) int32 {
+	if x > 0 {
+		return int32(x + 0.5)
+	} else {
+		return int32(x - 0.5)
 	}
 }
 
