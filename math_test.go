@@ -111,7 +111,7 @@ func TestFastFloor(t *testing.T) {
 	}
 }
 
-func castFloor(x float32) int32 {
+func castFastFloor(x float32) int32 {
 	if x > 0 {
 		return int32(x)
 	} else {
@@ -119,12 +119,23 @@ func castFloor(x float32) int32 {
 	}
 }
 
-func BenchmarkCastFloor(b *testing.B) {
+func BenchmarkCastFastFloor(b *testing.B) {
 	x := float32(3.3)
 	y := float32(-3.3)
 	for i := 0; i < b.N; i++ {
-		_ = castFloor(x)
-		_ = castFloor(y)
+		_ = castFastFloor(x)
+		_ = castFastFloor(y)
+	}
+}
+
+func asmFastFloor(s float32) int32
+
+func BenchmarkAsmFastFloor(b *testing.B) {
+	x := float32(3.3)
+	y := float32(-3.3)
+	for i := 0; i < b.N; i++ {
+		_ = asmFastFloor(x)
+		_ = asmFastFloor(y)
 	}
 }
 
@@ -166,7 +177,7 @@ func TestRound(t *testing.T) {
 	}
 }
 
-func simpleRound(x float32) int32 {
+func castRound(x float32) int32 {
 	if x > 0 {
 		return int32(x + 0.5)
 	} else {
@@ -174,16 +185,27 @@ func simpleRound(x float32) int32 {
 	}
 }
 
-func BenchmarkSimpleRound(b *testing.B) {
+func BenchmarkCastRound(b *testing.B) {
 	x := float32(3.3)
 	y := float32(-3.3)
 	for i := 0; i < b.N; i++ {
-		_ = simpleRound(x)
-		_ = simpleRound(y)
+		_ = castRound(x)
+		_ = castRound(y)
 	}
 }
 
-func BenchmarkRound(b *testing.B) {
+func asmRound(s float32) float32
+
+func BenchmarkAsmRound(b *testing.B) {
+	x := float32(3.3)
+	y := float32(-3.3)
+	for i := 0; i < b.N; i++ {
+		_ = asmRound(x)
+		_ = asmRound(y)
+	}
+}
+
+func BenchmarkGlmRound(b *testing.B) {
 	x := float32(3.3)
 	y := float32(-3.3)
 	for i := 0; i < b.N; i++ {
