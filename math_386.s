@@ -45,16 +45,15 @@ TEXT ·Sqrt(SB),7,$0
 
 // func Floor(s float32) float32
 TEXT ·Floor(SB),7,$0
-	FMOVF   x+0(FP), F0  // F0=x
-	FSTCW   -2(SP)       // save old Control Word
-	MOVL    -2(SP), AX
-	ANDW    $0xf3ff, AX
-	ORW     $0x0400, AX  // Rounding Control set to -Inf
-	MOVW    AX, -4(SP)   // store new Control Word
-	FLDCW   -4(SP)       // load new Control Word
-	FRNDINT              // F0=Floor(x)
-	FLDCW   -2(SP)       // load old Control Word
-	FMOVFP  F0, ret+4(FP)
+	MOVL       x+0(FP), AX
+	MOVL       AX, X0 // X0 = x
+	CVTTSS2SL  X0, AX // AX = int(x)
+	CVTSL2SS   AX, X1 // X1 = float(int(x))
+	CMPSS      X1, X0, 1 // compare LT; X0 = 0xffffffffffffffff or 0
+	MOVSS      $(-1.0), X2
+	ANDPS      X2, X0 // if x < float(int(x)) {X0 = -1} else {X0 = 0}
+	ADDSS      X1, X0
+	MOVSS      X0, ret+4(FP)
 	RET
 
 
