@@ -11,7 +11,7 @@ import (
 
 //-----------------------------------------------------------------------------
 
-func TestCreation(t *testing.T) {
+func TestVec3_creation(t *testing.T) {
 	var a Vec3
 	if a.X != 0 || a.Y != 0 || a.Z != 0 {
 		t.Errorf("Zero-initialization failed")
@@ -40,14 +40,14 @@ func ExampleVec3() {
 	fmt.Printf("a == %#v\n", a)
 	b := Vec3{1, 2.5, 3}
 	fmt.Printf("b == %#v\n", b)
-	// Output: 
+	// Output:
 	// a == glm.Vec3{X:0, Y:0, Z:0}
 	// b == glm.Vec3{X:1, Y:2.5, Z:3}
 }
 
 //-----------------------------------------------------------------------------
 
-func TestHomogenized(t *testing.T) {
+func TestVec3_Homogenized(t *testing.T) {
 	a := Vec3{1.1, 2.2, 3.3}
 	b := a.Homogenized()
 	if b.X != 1.1 || b.Y != 2.2 || b.Z != 3.3 || b.W != 1.0 {
@@ -60,7 +60,7 @@ func TestHomogenized(t *testing.T) {
 
 //-----------------------------------------------------------------------------
 
-func TestHomogenizedAsDirection(t *testing.T) {
+func TestVec3_HomogenizedAsDirection(t *testing.T) {
 	a := Vec3{1.1, 2.2, 3.3}
 	b := a.HomogenizedAsDirection()
 	if b.X != 1.1 || b.Y != 2.2 || b.Z != 3.3 || b.W != 0.0 {
@@ -73,7 +73,7 @@ func TestHomogenizedAsDirection(t *testing.T) {
 
 //-----------------------------------------------------------------------------
 
-func TestDehomogenized(t *testing.T) {
+func TestVec3_Dehomogenized(t *testing.T) {
 	a := Vec3{1.1, 2.2, 3.3}
 	b := a.Dehomogenized()
 	if b.X != 0.33333334 || b.Y != 0.6666667 {
@@ -86,7 +86,7 @@ func TestDehomogenized(t *testing.T) {
 
 //-----------------------------------------------------------------------------
 
-func TestAdd(t *testing.T) {
+func TestVec3_Add(t *testing.T) {
 	a := Vec3{1.1, 2.2, 3.3}
 	b := Vec3{4.4, 5.5, 6.6}
 	a.Add(b)
@@ -95,7 +95,7 @@ func TestAdd(t *testing.T) {
 	}
 }
 
-func TestPlus(t *testing.T) {
+func TestVec3_Plus(t *testing.T) {
 	a := Vec3{1.1, 2.2, 3.3}
 	b := Vec3{4.4, 5.5, 6.6}
 	c := a.Plus(b)
@@ -109,7 +109,7 @@ func TestPlus(t *testing.T) {
 
 //-----------------------------------------------------------------------------
 
-func TestSubtract(t *testing.T) {
+func TestVec3_Subtract(t *testing.T) {
 	a := Vec3{1.1, 2.2, 3.3}
 	b := Vec3{4.4, 5.5, 6.6}
 	a.Subtract(b)
@@ -118,7 +118,7 @@ func TestSubtract(t *testing.T) {
 	}
 }
 
-func TestMinus(t *testing.T) {
+func TestVec3_Minus(t *testing.T) {
 	a := Vec3{1.1, 2.2, 3.3}
 	b := Vec3{4.4, 5.5, 6.6}
 	c := a.Minus(b)
@@ -132,7 +132,7 @@ func TestMinus(t *testing.T) {
 
 //-----------------------------------------------------------------------------
 
-func TestInvert(t *testing.T) {
+func TestVec3_Invert(t *testing.T) {
 	a := Vec3{1.1, 2.2, 3.3}
 	a.Invert()
 	if a.X != -1.1 || a.Y != -2.2 || a.Z != -3.3 {
@@ -140,7 +140,7 @@ func TestInvert(t *testing.T) {
 	}
 }
 
-func TestInverse(t *testing.T) {
+func TestVec3_Inverse(t *testing.T) {
 	a := Vec3{1.1, 2.2, 3.3}
 	b := a.Inverse()
 	if b.X != -1.1 || b.Y != -2.2 || b.Z != -3.3 {
@@ -153,7 +153,7 @@ func TestInverse(t *testing.T) {
 
 //-----------------------------------------------------------------------------
 
-func TestMultiplyBy(t *testing.T) {
+func TestVec3_MultiplyBy(t *testing.T) {
 	a := Vec3{1.1, 2.2, 3.3}
 	a.MultiplyBy(4.4)
 	if a.X != 4.84 || a.Y != 9.68 || a.Z != 14.52 {
@@ -161,7 +161,7 @@ func TestMultiplyBy(t *testing.T) {
 	}
 }
 
-func TestTimes(t *testing.T) {
+func TestVec3_Times(t *testing.T) {
 	a := Vec3{1.1, 2.2, 3.3}
 	b := a.Times(4.4)
 	if b.X != 4.84 || b.Y != 9.68 || b.Z != 14.52 {
@@ -174,7 +174,7 @@ func TestTimes(t *testing.T) {
 
 //-----------------------------------------------------------------------------
 
-func TestDivideBy(t *testing.T) {
+func TestVec3_DivideBy(t *testing.T) {
 	a := Vec3{1.1, 2.2, 3.3}
 	a.DivideBy(4.4)
 	if a.X != 0.25 || a.Y != 0.5 || a.Z != 0.75 {
@@ -182,7 +182,7 @@ func TestDivideBy(t *testing.T) {
 	}
 }
 
-func TestSlash(t *testing.T) {
+func TestVec3_Slash(t *testing.T) {
 	a := Vec3{1.1, 2.2, 3.3}
 	b := a.Slash(4.4)
 	if b.X != 0.25 || b.Y != 0.5 || b.Z != 0.75 {
@@ -195,7 +195,7 @@ func TestSlash(t *testing.T) {
 
 //-----------------------------------------------------------------------------
 
-func TestCross(t *testing.T) {
+func TestVec3_Cross(t *testing.T) {
 	a := Vec3{1.1, 2.2, 3.3}
 	b := Vec3{4.4, 5.5, 6.6}
 	c := a.Cross(b)
@@ -209,7 +209,7 @@ func TestCross(t *testing.T) {
 
 //-----------------------------------------------------------------------------
 
-func TestDot(t *testing.T) {
+func TestVec3_Dot(t *testing.T) {
 	a := Vec3{1.1, 2.2, 3.3}
 	b := Vec3{4.4, 5.5, 6.6}
 	c := a.Dot(b)
@@ -223,7 +223,7 @@ func TestDot(t *testing.T) {
 
 //-----------------------------------------------------------------------------
 
-func TestLength(t *testing.T) {
+func TestVec3_Length(t *testing.T) {
 	a := Vec3{1.1, 2.2, 3.3}
 	b := a.Length()
 	if b != 4.115823 {
@@ -234,7 +234,7 @@ func TestLength(t *testing.T) {
 	}
 }
 
-func TestNormalize(t *testing.T) {
+func TestVec3_Normalize(t *testing.T) {
 	a := Vec3{1.1, 2.2, 3.3}
 	a.Normalize()
 	if a.X != 0.26726127 || a.Y != 0.53452253 || a.Z != 0.8017838 {

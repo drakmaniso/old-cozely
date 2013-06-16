@@ -21,21 +21,21 @@ func TestSqrt(t *testing.T) {
 	}
 }
 
-func BenchmarkMathSqrtFloat64(b *testing.B) {
+func BenchmarkSqrt_math64(b *testing.B) {
 	a := float64(3.3)
 	for i := 0; i < b.N; i++ {
 		_ = math.Sqrt(a)
 	}
 }
 
-func BenchmarkMathSqrtFloat32(b *testing.B) {
+func BenchmarkSqrt_math32(b *testing.B) {
 	a := float32(3.3)
 	for i := 0; i < b.N; i++ {
 		_ = float32(math.Sqrt(float64(a)))
 	}
 }
 
-func BenchmarkGlmSqrt(b *testing.B) {
+func BenchmarkSqrt_glm(b *testing.B) {
 	a := float32(3.3)
 	for i := 0; i < b.N; i++ {
 		_ = Sqrt(a)
@@ -63,7 +63,7 @@ func TestFloor(t *testing.T) {
 	}
 }
 
-func BenchmarkMathFloorFloat64(b *testing.B) {
+func BenchmarkFloor_math64(b *testing.B) {
 	x := float64(3.3)
 	y := float64(-3.3)
 	for i := 0; i < b.N; i++ {
@@ -72,7 +72,7 @@ func BenchmarkMathFloorFloat64(b *testing.B) {
 	}
 }
 
-func BenchmarkMathFloorFloat32(b *testing.B) {
+func BenchmarkFloor_math32(b *testing.B) {
 	x := float32(3.3)
 	y := float32(-3.3)
 	for i := 0; i < b.N; i++ {
@@ -81,7 +81,7 @@ func BenchmarkMathFloorFloat32(b *testing.B) {
 	}
 }
 
-func BenchmarkGlmFloor(b *testing.B) {
+func BenchmarkFloor_glm(b *testing.B) {
 	x := float32(3.3)
 	y := float32(-3.3)
 	for i := 0; i < b.N; i++ {
@@ -119,7 +119,7 @@ func castFastFloor(x float32) int32 {
 	}
 }
 
-func BenchmarkCastFastFloor(b *testing.B) {
+func BenchmarkFastFloor_cast(b *testing.B) {
 	x := float32(3.3)
 	y := float32(-3.3)
 	for i := 0; i < b.N; i++ {
@@ -130,7 +130,7 @@ func BenchmarkCastFastFloor(b *testing.B) {
 
 func asmFastFloor(s float32) int32
 
-func BenchmarkAsmFastFloor(b *testing.B) {
+func BenchmarkFastFloor_asm(b *testing.B) {
 	x := float32(3.3)
 	y := float32(-3.3)
 	for i := 0; i < b.N; i++ {
@@ -139,7 +139,7 @@ func BenchmarkAsmFastFloor(b *testing.B) {
 	}
 }
 
-func BenchmarkGlmFastFloor(b *testing.B) {
+func BenchmarkFastFloor_glm(b *testing.B) {
 	x := float32(3.3)
 	y := float32(-3.3)
 	for i := 0; i < b.N; i++ {
@@ -185,7 +185,7 @@ func castRound(x float32) int32 {
 	}
 }
 
-func BenchmarkCastRound(b *testing.B) {
+func BenchmarkRound_cast(b *testing.B) {
 	x := float32(3.3)
 	y := float32(-3.3)
 	for i := 0; i < b.N; i++ {
@@ -196,7 +196,7 @@ func BenchmarkCastRound(b *testing.B) {
 
 func asmRound(s float32) float32
 
-func BenchmarkAsmRound(b *testing.B) {
+func BenchmarkRound_asm(b *testing.B) {
 	x := float32(3.3)
 	y := float32(-3.3)
 	for i := 0; i < b.N; i++ {
@@ -205,7 +205,7 @@ func BenchmarkAsmRound(b *testing.B) {
 	}
 }
 
-func BenchmarkGlmRound(b *testing.B) {
+func BenchmarkRound_glm(b *testing.B) {
 	x := float32(3.3)
 	y := float32(-3.3)
 	for i := 0; i < b.N; i++ {
