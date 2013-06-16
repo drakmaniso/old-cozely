@@ -16,8 +16,8 @@ func TestVec3_creation(t *testing.T) {
 	if a.X != 0 || a.Y != 0 || a.Z != 0 {
 		t.Errorf("Zero-initialization failed")
 	}
-	b := Vec3{1, 2.5, 3}
-	if b.X != 1 || b.Y != 2.5 || b.Z != 3 {
+	b := Vec3{1.1, 2.2, 3.3}
+	if b.X != 1.1 || b.Y != 2.2 || b.Z != 3.3 {
 		t.Errorf("Literal initialization failed")
 	}
 	c := [2]Vec3{{1, 2, 3}, {4, 5, 6}}
@@ -37,12 +37,30 @@ func TestVec3_creation(t *testing.T) {
 
 func ExampleVec3() {
 	var a Vec3
+	b := Vec3{1.1, 2.2, 3.3}
+	c := b.Plus(Vec3{4.4, 5.5, 6.6})
+	d := b
+	d.Add(Vec3{4.4, 5.5, 6.6})
+	e := b.Slash(2.2)
+	f := e.Homogenized()
+	g := b
+	g.Normalize()
+	
 	fmt.Printf("a == %#v\n", a)
-	b := Vec3{1, 2.5, 3}
 	fmt.Printf("b == %#v\n", b)
+	fmt.Printf("c == %#v\n", c)
+	fmt.Printf("d == %#v\n", d)
+	fmt.Printf("e == %#v\n", e)
+	fmt.Printf("f == %#v\n", f)
+	fmt.Printf("g == %#v\n", g)
 	// Output:
 	// a == glm.Vec3{X:0, Y:0, Z:0}
-	// b == glm.Vec3{X:1, Y:2.5, Z:3}
+	// b == glm.Vec3{X:1.1, Y:2.2, Z:3.3}
+	// c == glm.Vec3{X:5.5, Y:7.7, Z:9.9}
+	// d == glm.Vec3{X:5.5, Y:7.7, Z:9.9}
+	// e == glm.Vec3{X:0.5, Y:1, Z:1.5}
+	// f == glm.Vec4{X:0.5, Y:1, Z:1.5, W:1}
+	// g == glm.Vec3{X:0.26726127, Y:0.53452253, Z:0.8017838}
 }
 
 //-----------------------------------------------------------------------------
