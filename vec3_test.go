@@ -45,7 +45,7 @@ func ExampleVec3() {
 	f := e.Homogenized()
 	g := b
 	g.Normalize()
-	
+
 	fmt.Printf("a == %#v\n", a)
 	fmt.Printf("b == %#v\n", b)
 	fmt.Printf("c == %#v\n", c)

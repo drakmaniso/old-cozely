@@ -48,7 +48,7 @@ func ExampleVec4() {
 	f := e.Dehomogenized()
 	g := b
 	g.Normalize()
-	
+
 	fmt.Printf("a == %#v\n", a)
 	fmt.Printf("b == %#v\n", b)
 	fmt.Printf("c == %#v\n", c)
