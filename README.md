@@ -10,7 +10,16 @@ GLM is a [Go](http://golang.org/) package providing mathematical types and opera
 - All types are pure values: there's no heap allocation, and no hidden data.
 - All types have the same memory layout than their corresponding GLSL types.
 - Most methods are inlined by the compiler.
-- Efficient single-precision math (use assembly).
+- Efficient single-precision math (using assembly when appropriate).
+- Several noise functions (Perlin, Simplex, ...).
+
+
+Noise Functions
+---------------
+
+The Perlin and Simplex noise functions are adapted from
+["Simplex Noise Demystified"](http://www.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf)
+by Stefan Gustavson (code in the public domain).
 
 
 Author
