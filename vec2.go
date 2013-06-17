@@ -3,6 +3,8 @@
 
 package glm
 
+import "github.com/drakmaniso/glm/math"
+
 //------------------------------------------------------------------------------
 
 // Vec2 is a 2D vector of single-precision floats.

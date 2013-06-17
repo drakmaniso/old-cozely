@@ -3,6 +3,8 @@
 
 package glm
 
+import "github.com/drakmaniso/glm/math"
+
 //------------------------------------------------------------------------------
 
 // Vec4 is a 4D vector of single-precision floats.
