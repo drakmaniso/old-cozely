@@ -114,14 +114,14 @@ func (a Vec2) Dot(b Vec2) float32 {
 
 // Returns |a| (the euclidian length of a).
 func (a Vec2) Length() float32 {
-	return Sqrt(a.X*a.X + a.Y*a.Y)
+	return math.Sqrt(a.X*a.X + a.Y*a.Y)
 }
 
 // Normalized return a/|a| (i.e. the normalization of a).
 // a must be non-zero.
 // See also Normalize.
 func (a Vec2) Normalized() Vec2 {
-	length := Sqrt(a.X*a.X + a.Y*a.Y)
+	length := math.Sqrt(a.X*a.X + a.Y*a.Y)
 	return Vec2{a.X / length, a.Y / length}
 }
 
@@ -129,7 +129,7 @@ func (a Vec2) Normalized() Vec2 {
 // a must be non-zero.
 // More efficitent than Normalized.
 func (a *Vec2) Normalize() {
-	length := Sqrt(a.X*a.X + a.Y*a.Y)
+	length := math.Sqrt(a.X*a.X + a.Y*a.Y)
 	a.X /= length
 	a.Y /= length
 }

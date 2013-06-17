@@ -121,14 +121,14 @@ func (a Vec4) Dot(b Vec4) float32 {
 
 // Returns |a| (the euclidian length of a).
 func (a Vec4) Length() float32 {
-	return Sqrt(a.X*a.X + a.Y*a.Y + a.Z*a.Z + a.W*a.W)
+	return math.Sqrt(a.X*a.X + a.Y*a.Y + a.Z*a.Z + a.W*a.W)
 }
 
 // Normalized return a/|a| (i.e. the normalization of a).
 // a must be non-zero.
 // See also Normalize.
 func (a Vec4) Normalized() Vec4 {
-	length := Sqrt(a.X*a.X + a.Y*a.Y + a.Z*a.Z + a.W*a.W)
+	length := math.Sqrt(a.X*a.X + a.Y*a.Y + a.Z*a.Z + a.W*a.W)
 	return Vec4{a.X / length, a.Y / length, a.Z / length, a.W / length}
 }
 
@@ -136,7 +136,7 @@ func (a Vec4) Normalized() Vec4 {
 // a must be non-zero.
 // More efficitent than Normalized.
 func (a *Vec4) Normalize() {
-	length := Sqrt(a.X*a.X + a.Y*a.Y + a.Z*a.Z + a.W*a.W)
+	length := math.Sqrt(a.X*a.X + a.Y*a.Y + a.Z*a.Z + a.W*a.W)
 	a.X /= length
 	a.Y /= length
 	a.Z /= length

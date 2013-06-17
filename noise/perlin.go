@@ -5,6 +5,7 @@ package noise
 
 import (
 	"github.com/drakmaniso/glm"
+	"github.com/drakmaniso/glm/math"
 )
 
 //------------------------------------------------------------------------------
@@ -66,9 +67,9 @@ func Perlin3DAt(p glm.Vec3) float32 {
 	// http://www.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf
 
 	// Unit grid cell containing point
-	ix := int32(glm.Floor(p.X))
-	iy := int32(glm.Floor(p.Y))
-	iz := int32(glm.Floor(p.Z))
+	ix := int32(math.Floor(p.X))
+	iy := int32(math.Floor(p.Y))
+	iz := int32(math.Floor(p.Z))
 
 	// Relative coordinates of point within that cell
 	rx := p.X - float32(ix)
@@ -106,17 +107,17 @@ func Perlin3DAt(p glm.Vec3) float32 {
 	w := perlinFade(rz)
 
 	// Interpolate along x the contributions from each of the corners
-	nx00 := glm.Mix(n000, n100, u)
-	nx01 := glm.Mix(n001, n101, u)
-	nx10 := glm.Mix(n010, n110, u)
-	nx11 := glm.Mix(n011, n111, u)
+	nx00 := math.Mix(n000, n100, u)
+	nx01 := math.Mix(n001, n101, u)
+	nx10 := math.Mix(n010, n110, u)
+	nx11 := math.Mix(n011, n111, u)
 
 	// Interpolate the four results along y
-	nxy0 := glm.Mix(nx00, nx10, v)
-	nxy1 := glm.Mix(nx01, nx11, v)
+	nxy0 := math.Mix(nx00, nx10, v)
+	nxy1 := math.Mix(nx01, nx11, v)
 
 	// Interpolate the two last results along z
-	nxyz := glm.Mix(nxy0, nxy1, w)
+	nxyz := math.Mix(nxy0, nxy1, w)
 
 	//return nxyz
 	_ = nxyz
