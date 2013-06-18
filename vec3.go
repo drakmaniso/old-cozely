@@ -3,7 +3,7 @@
 
 package glm
 
-import "github.com/drakmaniso/glm/math"
+import "github.com/drakmaniso/glam/math"
 
 //------------------------------------------------------------------------------
 

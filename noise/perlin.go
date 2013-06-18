@@ -4,8 +4,8 @@
 package noise
 
 import (
-	"github.com/drakmaniso/glm"
-	"github.com/drakmaniso/glm/math"
+	"github.com/drakmaniso/glam"
+	"github.com/drakmaniso/glam/math"
 )
 
 //------------------------------------------------------------------------------

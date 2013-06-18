@@ -9,7 +9,7 @@ import (
 )
 
 import (
-	"github.com/drakmaniso/glm"
+	"github.com/drakmaniso/glam"
 )
 
 //------------------------------------------------------------------------------
