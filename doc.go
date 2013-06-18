@@ -10,4 +10,4 @@
 //
 //- Efficient single-precision math (use assembly).
 //
-package glm
+package glam

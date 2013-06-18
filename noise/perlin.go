@@ -10,10 +10,10 @@ import (
 
 //------------------------------------------------------------------------------
 
-var perlinGradient = [12]glm.Vec3{
-	glm.Vec3{+1, +1, 0}, glm.Vec3{-1, +1, 0}, glm.Vec3{+1, -1, 0}, glm.Vec3{-1, -1, 0},
-	glm.Vec3{+1, 0, +1}, glm.Vec3{-1, 0, +1}, glm.Vec3{+1, 0, -1}, glm.Vec3{-1, 0, -1},
-	glm.Vec3{0, +1, +1}, glm.Vec3{0, -1, +1}, glm.Vec3{0, +1, -1}, glm.Vec3{0, -1, -1},
+var perlinGradient = [12]glam.Vec3{
+	glam.Vec3{+1, +1, 0}, glam.Vec3{-1, +1, 0}, glam.Vec3{+1, -1, 0}, glam.Vec3{-1, -1, 0},
+	glam.Vec3{+1, 0, +1}, glam.Vec3{-1, 0, +1}, glam.Vec3{+1, 0, -1}, glam.Vec3{-1, 0, -1},
+	glam.Vec3{0, +1, +1}, glam.Vec3{0, -1, +1}, glam.Vec3{0, +1, -1}, glam.Vec3{0, -1, -1},
 }
 
 //------------------------------------------------------------------------------
@@ -63,7 +63,7 @@ func perlinFade(x float32) float32 {
 //------------------------------------------------------------------------------
 
 // Perlin3DAt returns the value of a 3D Perlin noise function at position p.
-func Perlin3DAt(p glm.Vec3) float32 {
+func Perlin3DAt(p glam.Vec3) float32 {
 	// Source: "Simplex Noise Demystified" by Stefan Gustavson
 	// http://www.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf
 
@@ -93,14 +93,14 @@ func Perlin3DAt(p glm.Vec3) float32 {
 	g111 := perlinPermutation[ix+1+perlinPermutation[iy+1+perlinPermutation[iz+1]]] % 12
 
 	// Noise contribution for each corner
-	n000 := perlinGradient[g000].Dot(glm.Vec3{rx, ry, rz})
-	n100 := perlinGradient[g100].Dot(glm.Vec3{rx - 1, ry, rz})
-	n010 := perlinGradient[g010].Dot(glm.Vec3{rx, ry - 1, rz})
-	n110 := perlinGradient[g110].Dot(glm.Vec3{rx - 1, ry - 1, rz})
-	n001 := perlinGradient[g001].Dot(glm.Vec3{rx, ry, rz - 1})
-	n101 := perlinGradient[g101].Dot(glm.Vec3{rx - 1, ry, rz - 1})
-	n011 := perlinGradient[g011].Dot(glm.Vec3{rx, ry - 1, rz - 1})
-	n111 := perlinGradient[g111].Dot(glm.Vec3{rx - 1, ry - 1, rz - 1})
+	n000 := perlinGradient[g000].Dot(glam.Vec3{rx, ry, rz})
+	n100 := perlinGradient[g100].Dot(glam.Vec3{rx - 1, ry, rz})
+	n010 := perlinGradient[g010].Dot(glam.Vec3{rx, ry - 1, rz})
+	n110 := perlinGradient[g110].Dot(glam.Vec3{rx - 1, ry - 1, rz})
+	n001 := perlinGradient[g001].Dot(glam.Vec3{rx, ry, rz - 1})
+	n101 := perlinGradient[g101].Dot(glam.Vec3{rx - 1, ry, rz - 1})
+	n011 := perlinGradient[g011].Dot(glam.Vec3{rx, ry - 1, rz - 1})
+	n111 := perlinGradient[g111].Dot(glam.Vec3{rx - 1, ry - 1, rz - 1})
 
 	// Fade courbe
 	u := perlinFade(rx)
