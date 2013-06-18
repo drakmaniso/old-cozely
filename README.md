@@ -15,14 +15,24 @@ operations for use with OpenGL.
 - Several noise functions (Perlin, Simplex, ...).
 
 
+Package GLam
+------------
+
+    import "github.com/drakmaniso/glam"
+
+
 Package GLaM Math
 -----------------
+
+    import "github.com/drakmaniso/glam/math"
 
 This package provides single-precision (i.e. float32) math functions.
 
 
 Package GLaM Noise
 ------------------
+
+    import "github.com/drakmaniso/glam/noise"
 
 The Perlin and Simplex noise functions are adapted from
 ["Simplex Noise Demystified"](http://www.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf)
