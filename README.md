@@ -12,10 +12,10 @@ so the focus is on speed over portability or accuracy.
 
 - Vectors and matrices.
 - Efficient single-precision math.
-- Several noise functions (Perlin, Simplex, ...).
+- Some noise functions (Perlin, Simplex...).
 
 
-Package GLam
+Package GLaM
 ------------
 
     import "github.com/drakmaniso/glam"
