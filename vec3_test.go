@@ -171,9 +171,9 @@ func TestVec3_Inverse(t *testing.T) {
 
 //-----------------------------------------------------------------------------
 
-func TestVec3_MultiplyBy(t *testing.T) {
+func TestVec3_Multiply(t *testing.T) {
 	a := Vec3{1.1, 2.2, 3.3}
-	a.MultiplyBy(4.4)
+	a.Multiply(4.4)
 	if a.X != 4.84 || a.Y != 9.68 || a.Z != 14.52 {
 		t.Errorf("Wrong result: %#v", a)
 	}
@@ -192,9 +192,9 @@ func TestVec3_Times(t *testing.T) {
 
 //-----------------------------------------------------------------------------
 
-func TestVec3_DivideBy(t *testing.T) {
+func TestVec3_Divide(t *testing.T) {
 	a := Vec3{1.1, 2.2, 3.3}
-	a.DivideBy(4.4)
+	a.Divide(4.4)
 	if a.X != 0.25 || a.Y != 0.5 || a.Z != 0.75 {
 		t.Errorf("Wrong result: %#v", a)
 	}

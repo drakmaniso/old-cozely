@@ -77,14 +77,14 @@ func (a *Vec4) Invert() {
 //------------------------------------------------------------------------------
 
 // Times returns the product of a with the scalar s.
-// See also MultiplyBy.
+// See also Multiply.
 func (a Vec4) Times(s float32) Vec4 {
 	return Vec4{a.X * s, a.Y * s, a.Z * s, a.W * s}
 }
 
-// MultiplyBy sets a to the product of a with the scalar s.
+// Multiply sets a to the product of a with the scalar s.
 // More efficient than Times.
-func (a *Vec4) MultiplyBy(s float32) {
+func (a *Vec4) Multiply(s float32) {
 	a.X *= s
 	a.Y *= s
 	a.Z *= s
@@ -95,15 +95,15 @@ func (a *Vec4) MultiplyBy(s float32) {
 
 // Slash returns the division of a by the scalar s.
 // s must be non-zero.
-// See also DivideBy.
+// See also Divide.
 func (a Vec4) Slash(s float32) Vec4 {
 	return Vec4{a.X / s, a.Y / s, a.Z / s, a.W / s}
 }
 
-// DivideBy sets a to the division of a by the scalar s.
+// Divide sets a to the division of a by the scalar s.
 // s must be non-zero.
 // More efficient than Slash.
-func (a *Vec4) DivideBy(s float32) {
+func (a *Vec4) Divide(s float32) {
 	a.X /= s
 	a.Y /= s
 	a.Z /= s
