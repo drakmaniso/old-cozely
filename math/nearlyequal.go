@@ -12,18 +12,9 @@ package math
 func NearlyEqual(a, b float32, epsilon float32) bool {
 	// Source: http://floating-point-gui.de/errors/comparison/
 
-	absA := a
-	if absA < 0 {
-		absA = -absA
-	}
-	absB := b
-	if absB < 0 {
-		absB = -absB
-	}
-	diff := a - b
-	if diff < 0 {
-		diff = -diff
-	}
+	absA := Abs(a)
+	absB := Abs(b)
+	diff := Abs(a - b)
 
 	if a == b {
 		// Shortcut, handles infinities.
