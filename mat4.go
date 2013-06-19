@@ -7,6 +7,10 @@ import "github.com/drakmaniso/glam/math"
 
 //------------------------------------------------------------------------------
 
+// Mat4 is a single-precision matrix with 4 columns and 4 rows.
+//
+// Note: matrix are stored in column-major order, so when writing literals
+// remember to use the transpose.
 type Mat4 [4][4]float32
 
 //------------------------------------------------------------------------------

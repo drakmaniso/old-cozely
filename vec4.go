@@ -7,7 +7,7 @@ import "github.com/drakmaniso/glam/math"
 
 //------------------------------------------------------------------------------
 
-// Vec4 is a 4D vector of single-precision floats.
+// Vec4 is single-precision vector with 4 components.
 type Vec4 struct {
 	X float32
 	Y float32

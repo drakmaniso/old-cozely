@@ -7,7 +7,7 @@ import "github.com/drakmaniso/glam/math"
 
 //------------------------------------------------------------------------------
 
-// Vec3 is a 3D vector of single-precision floats.
+// Vec3 is a single-precision vector with 3 components.
 type Vec3 struct {
 	X float32
 	Y float32

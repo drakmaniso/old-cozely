@@ -7,7 +7,7 @@ import "github.com/drakmaniso/glam/math"
 
 //------------------------------------------------------------------------------
 
-// Vec2 is a 2D vector of single-precision floats.
+// Vec2 is a single-precision vector with 2 components..
 type Vec2 struct {
 	X float32
 	Y float32
