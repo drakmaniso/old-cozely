@@ -37,7 +37,7 @@ func BenchmarkAbs_math64(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		_ = math.Abs(x)
 		_ = math.Abs(y)
-	}	
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -48,7 +48,7 @@ func BenchmarkAbs_math32(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		_ = float64(math.Abs(float64(x)))
 		_ = float64(math.Abs(float64(y)))
-	}	
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -69,7 +69,7 @@ func BenchmarkAbs_switch(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		_ = switchAbs(x)
 		_ = switchAbs(y)
-	}	
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -80,7 +80,7 @@ func BenchmarkAbs_glm(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		_ = Abs(x)
 		_ = Abs(y)
-	}	
+	}
 }
 
 //------------------------------------------------------------------------------
