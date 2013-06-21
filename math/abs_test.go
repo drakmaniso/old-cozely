@@ -6,6 +6,7 @@ package math
 import (
 	"math"
 	"testing"
+	"unsafe"
 )
 
 //------------------------------------------------------------------------------
@@ -69,6 +70,50 @@ func BenchmarkAbs_switch(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		_ = switchAbs(x)
 		_ = switchAbs(y)
+	}
+}
+
+//------------------------------------------------------------------------------
+
+func bitsAbs(x float32) float32 {
+	return Float32frombits(Float32bits(x) & 0x7FFFFFFF)
+}
+
+func BenchmarkAbs_bits(b *testing.B) {
+	x := float32(3.3)
+	y := float32(-3.3)
+	for i := 0; i < b.N; i++ {
+		_ = bitsAbs(x)
+		_ = bitsAbs(y)
+	}
+}
+
+//------------------------------------------------------------------------------
+
+func unsafeAbs(x float32) float32 {
+	ux := *(*uint32)(unsafe.Pointer(&x)) & 0x7FFFFFFF
+	return *(*float32)(unsafe.Pointer(&ux))
+}
+
+func BenchmarkAbs_unsafe(b *testing.B) {
+	x := float32(3.3)
+	y := float32(-3.3)
+	for i := 0; i < b.N; i++ {
+		_ = unsafeAbs(x)
+		_ = unsafeAbs(y)
+	}
+}
+
+//------------------------------------------------------------------------------
+
+func abs_asm(x float32) float32
+
+func BenchmarkAbs_asm(b *testing.B) {
+	x := float32(3.3)
+	y := float32(-3.3)
+	for i := 0; i < b.N; i++ {
+		_ = abs_asm(x)
+		_ = abs_asm(y)
 	}
 }
 
