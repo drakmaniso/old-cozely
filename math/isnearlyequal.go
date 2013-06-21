@@ -23,7 +23,7 @@ func IsNearlyEqual(a, b float32, epsilon float32) bool {
 	} else if a == 0 || b == 0 || diff < SmallestNormalFloat32 {
 		// a or b is zero or both are extremely close to it.
 		// Relative error is less meaningful here.
-		return diff < (epsilon * SmallestNormalFloat32)
+		return diff < epsilon*SmallestNormalFloat32
 	} else {
 		// Use relative error.
 		// Note in the original source, `absA+absB` was used instead of `largest`
