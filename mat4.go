@@ -9,14 +9,14 @@ import "github.com/drakmaniso/glam/math"
 
 // `Mat4` is a single-precision matrix with 4 columns and 4 rows.
 //
-// Note: matrix are stored in column-major order, so when writing literals
+// Note: matrices are stored in column-major order, so when writing literals
 // remember to use the transpose.
 type Mat4 [4][4]float32
 
 //------------------------------------------------------------------------------
 
 // `NewMat4` allocates and returns a new matrix. The elements are stored in
-// alphabetical order (column-major).
+// alphabetical order (column-major order).
 func NewMat4(
 	a, e, i, m,
 	b, f, j, n,
@@ -32,7 +32,7 @@ func NewMat4(
 }
 
 // `MakeMat4` returns (by value) a matrix. The elements are stored in
-// alphabetical order (column-major).
+// alphabetical order (column-major order).
 func MakeMat4(
 	a, e, i, m,
 	b, f, j, n,
@@ -48,7 +48,7 @@ func MakeMat4(
 }
 
 // `SetTo` initializes `matrix`. The elements are stored in
-// alphabetical order (column-major).
+// alphabetical order (column-major order).
 func (matrix *Mat4) SetTo(
 	a, e, i, m,
 	b, f, j, n,
