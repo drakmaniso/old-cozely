@@ -5,6 +5,7 @@ package glam
 
 //------------------------------------------------------------------------------
 
+// `IVec3` is an integer vector with 3 components.
 type IVec3 struct {
 	X int32
 	Y int32

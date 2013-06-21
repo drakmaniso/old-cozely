@@ -5,6 +5,7 @@ package glam
 
 //------------------------------------------------------------------------------
 
+// `IVec4` is an integer vector with 4 components.
 type IVec4 struct {
 	X int32
 	Y int32

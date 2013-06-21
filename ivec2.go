@@ -5,6 +5,7 @@ package glam
 
 //------------------------------------------------------------------------------
 
+// `IVec2` is an integer vector with 2 components.
 type IVec2 struct {
 	X int32
 	Y int32

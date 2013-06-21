@@ -62,7 +62,7 @@ func perlinFade(x float32) float32 {
 
 //------------------------------------------------------------------------------
 
-// Perlin3DAt returns the value of a 3D Perlin noise function at position p.
+// `Perlin3DAt` returns the value of a 3D Perlin noise function at position `p`.
 func Perlin3DAt(p glam.Vec3) float32 {
 	// Source: "Simplex Noise Demystified" by Stefan Gustavson
 	// http://www.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf
@@ -113,15 +113,13 @@ func Perlin3DAt(p glam.Vec3) float32 {
 	nx10 := math.Mix(n010, n110, u)
 	nx11 := math.Mix(n011, n111, u)
 
-	// Interpolate the four results along y
+	// Interpolate the four results along `y`
 	nxy0 := math.Mix(nx00, nx10, v)
 	nxy1 := math.Mix(nx01, nx11, v)
 
-	// Interpolate the two last results along z
+	// Interpolate the two last results along `z`
 	nxyz := math.Mix(nxy0, nxy1, w)
 
-	//return nxyz
-	_ = nxyz
 	return nxyz
 }
 
