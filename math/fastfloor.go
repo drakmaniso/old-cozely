@@ -5,7 +5,7 @@ package math
 
 //------------------------------------------------------------------------------
 
-// FastFloor returns int32(x) if x>0, int32(x-1) otherwise.
+// `FastFloor` returns `int32(x)` if `x`>0, `int32(x-1)` otherwise.
 func FastFloor(x float32) int32 {
 	if x > 0 {
 		return int32(x)

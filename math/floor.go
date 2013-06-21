@@ -7,7 +7,7 @@ package math
 
 //go:noescape
 
-// Floor returns the nearest integer less than or equal to x.
+// `Floor` returns the nearest integer less than or equal to `x`.
 func Floor(x float32) float32
 
 //------------------------------------------------------------------------------

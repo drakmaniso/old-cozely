@@ -7,7 +7,7 @@ package math
 
 //------------------------------------------------------------------------------
 
-// IsNearlyEqual Returns true if the relative error between a and b is less than epsilon.
+// `IsNearlyEqual` Returns true if the relative error between `a` and `b` is less than `epsilon`.
 //
 // Handles special cases: zero, infinites, denormals.
 func IsNearlyEqual(a, b float32, epsilon float32) bool {

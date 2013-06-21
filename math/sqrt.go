@@ -7,7 +7,7 @@ package math
 
 //go:noescape
 
-// Sqrt returns the square root of x.
+// `Sqrt` returns the square root of `x`.
 func Sqrt(x float32) float32
 
 //------------------------------------------------------------------------------

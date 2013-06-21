@@ -5,7 +5,7 @@ package math
 
 //------------------------------------------------------------------------------
 
-// Round returns the nearest integer to x.
+// `Round` returns the nearest integer to `x`.
 func Round(x float32) int32 {
 	if x > 0 {
 		return int32(x + 0.5)

@@ -14,7 +14,7 @@ package math
 
 //------------------------------------------------------------------------------
 
-// Tan returns the tangent of x.
+// `Tan` returns the tangent of `x`.
 func Tan(x float32) float32 {
 	// (comment from the original source)
 	// DESCRIPTION:
@@ -49,8 +49,8 @@ func Tan(x float32) float32 {
 		sign = true
 	}
 
-	j := int32(x * M4PI) // Integer part of x/(Pi/4), as integer for tests on the phase angle.
-	y := float32(j)      // Integer part of x/(Pi/4), as float.
+	j := int32(x * M4PI) // Integer part of `x/(Pi/4)`, as integer for tests on the phase angle.
+	y := float32(j)      // Integer part of `x/(Pi/4)`, as float.
 
 	// Map zeros and singularities to origin.
 	if j&1 == 1 {
