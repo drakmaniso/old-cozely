@@ -7,7 +7,7 @@ import "github.com/drakmaniso/glam/math"
 
 //------------------------------------------------------------------------------
 
-// Mat4 is a single-precision matrix with 4 columns and 4 rows.
+// `Mat4` is a single-precision matrix with 4 columns and 4 rows.
 //
 // Note: matrix are stored in column-major order, so when writing literals
 // remember to use the transpose.
@@ -15,6 +15,8 @@ type Mat4 [4][4]float32
 
 //------------------------------------------------------------------------------
 
+// `NewMat4` allocates and returns a new matrix. The elements are stored in
+// alphabetical order (column-major).
 func NewMat4(
 	a, e, i, m,
 	b, f, j, n,
@@ -29,6 +31,8 @@ func NewMat4(
 	}
 }
 
+// `MakeMat4` returns (by value) a matrix. The elements are stored in
+// alphabetical order (column-major).
 func MakeMat4(
 	a, e, i, m,
 	b, f, j, n,
@@ -43,45 +47,50 @@ func MakeMat4(
 	}
 }
 
-func (self *Mat4) SetTo(
+// `SetTo` initializes `matrix`. The elements are stored in
+// alphabetical order (column-major).
+func (matrix *Mat4) SetTo(
 	a, e, i, m,
 	b, f, j, n,
 	c, g, k, o,
 	d, h, l, p float32,
 ) {
-	self[0][0] = a
-	self[0][1] = b
-	self[0][2] = c
-	self[0][3] = d
+	matrix[0][0] = a
+	matrix[0][1] = b
+	matrix[0][2] = c
+	matrix[0][3] = d
 
-	self[1][0] = e
-	self[1][1] = f
-	self[1][2] = g
-	self[1][3] = h
+	matrix[1][0] = e
+	matrix[1][1] = f
+	matrix[1][2] = g
+	matrix[1][3] = h
 
-	self[2][0] = i
-	self[2][1] = j
-	self[2][2] = k
-	self[2][3] = l
+	matrix[2][0] = i
+	matrix[2][1] = j
+	matrix[2][2] = k
+	matrix[2][3] = l
 
-	self[3][0] = m
-	self[3][1] = n
-	self[3][2] = o
-	self[3][3] = p
+	matrix[3][0] = m
+	matrix[3][1] = n
+	matrix[3][2] = o
+	matrix[3][3] = p
 }
 
 //------------------------------------------------------------------------------
 
-func (self Mat4) At(column, row int) float32 {
-	return self[column][row]
+// `At` returns the element at '(column, row)`.
+func (m Mat4) At(column, row int) float32 {
+	return m[column][row]
 }
 
-func (self *Mat4) Set(column, row int, value float32) {
-	self[column][row] = value
+// `Set` sets the element at `(column, row)` to `value`.
+func (m *Mat4) Set(column, row int, value float32) {
+	m[column][row] = value
 }
 
 //------------------------------------------------------------------------------
 
+// `Perspective` returns (by value) a perspective projection matrix.
 func Perspective(fieldOfView float32, aspectRatio float32, near float32, far float32) Mat4 {
 	f := float32(1.0) / math.Tan(fieldOfView/float32(2.0))
 
@@ -93,6 +102,7 @@ func Perspective(fieldOfView float32, aspectRatio float32, near float32, far flo
 	}
 }
 
+// `SetToPerspective` sets `m` to a perspective projection matrix.
 func (m *Mat4) SetToPerspective(fieldOfView float32, aspectRatio float32, near float32, far float32) {
 	f := float32(1.0) / math.Tan(fieldOfView/float32(2.0))
 
