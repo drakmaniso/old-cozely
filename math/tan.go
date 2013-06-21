@@ -12,33 +12,37 @@ package math
 // available from http://www.netlib.org/cephes/cmath.tgz.
 // The go code is a simplified version of the original C.
 //
-//      tan.c
+//	Circular tangent
 //
-//      Circular tangent
+//
 //
 // SYNOPSIS:
 //
-// double x, y, tan();
-// y = tan( x );
+// float x, y, tanf();
+//
+// y = tanf( x );
+//
+//
 //
 // DESCRIPTION:
 //
 // Returns the circular tangent of the radian argument x.
 //
-// Range reduction is modulo pi/4.  A rational function
-//       x + x**3 P(x**2)/Q(x**2)
+// Range reduction is modulo pi/4.  A polynomial approximation
 // is employed in the basic interval [0, pi/4].
 //
+//
+//
 // ACCURACY:
+//
 //                      Relative error:
 // arithmetic   domain     # trials      peak         rms
-//    DEC      +-1.07e9      44000      4.1e-17     1.0e-17
-//    IEEE     +-1.07e9      30000      2.9e-16     8.1e-17
+//    IEEE     +-4096        100000     3.3e-7      4.5e-8
 //
-// Partial loss of accuracy begins to occur at x = 2**30 = 1.074e9.  The loss
-// is not gradual, but jumps suddenly to about 1 part in 10e7.  Results may
-// be meaningless for x > 2**49 = 5.6e14.
-// [Accuracy loss statement from sin.go comments.]
+// ERROR MESSAGES:
+//
+//   message         condition          value returned
+// tanf total loss   x > 2^24              0.0
 //
 // Cephes Math Library Release 2.8:  June, 2000
 // Copyright 1984, 1987, 1989, 1992, 2000 by Stephen L. Moshier
@@ -58,26 +62,14 @@ package math
 //   Stephen L. Moshier
 //   moshier@na-net.ornl.gov
 
-// tan coefficients
-var _tanP = [...]float32{
-	-1.30936939181383777646E4, // 0xc0c992d8d24f3f38
-	1.15351664838587416140E6,  // 0x413199eca5fc9ddd
-	-1.79565251976484877988E7, // 0xc1711fead3299176
-}
-var _tanQ = [...]float32{
-	1.00000000000000000000E0,
-	1.36812963470692954678E4,  //0x40cab8a5eeb36572
-	-1.32089234440210967447E6, //0xc13427bc582abc96
-	2.50083801823357915839E7,  //0x4177d98fc2ead8ef
-	-5.38695755929454629881E7, //0xc189afe03cbe5a31
-}
+//------------------------------------------------------------------------------
 
 // Tan returns the tangent of x.
 func Tan(x float32) float32 {
 	const (
-		PI4A = float32(7.85398125648498535156E-1)                             // 0x3fe921fb40000000, Pi/4 split into three parts
-		PI4B = float32(3.77489470793079817668E-8)                             // 0x3e64442d00000000,
-		PI4C = float32(2.69515142907905952645E-15)                            // 0x3ce8469898cc5170,
+		PI4A = float32(0.78515625)
+		PI4B = float32(2.4187564849853515625e-4)
+		PI4C = float32(3.77489497744594108e-8)
 		M4PI = float32(1.273239544735162542821171882678754627704620361328125) // 4/pi
 	)
 	// special cases
@@ -107,8 +99,17 @@ func Tan(x float32) float32 {
 	z := ((x - y*PI4A) - y*PI4B) - y*PI4C
 	zz := z * z
 
-	if zz > 1e-14 {
-		y = z + z*(zz*(((_tanP[0]*zz)+_tanP[1])*zz+_tanP[2])/((((zz+_tanQ[1])*zz+_tanQ[2])*zz+_tanQ[3])*zz+_tanQ[4]))
+	if x > 1e-4 {
+		// 1.7e-8 relative error in [-pi/4, +pi/4]
+		const (
+			COEFA = 9.38540185543E-3
+			COEFB = 3.11992232697E-3
+			COEFC = 2.44301354525E-2
+			COEFD = 5.34112807005E-2
+			COEFE = 1.33387994085E-1
+			COEFF = 3.33331568548E-1
+		)
+		y = (((((COEFA*zz+COEFB)*zz+COEFC)*zz+COEFD)*zz+COEFE)*zz+COEFF)*zz*z + z
 	} else {
 		y = z
 	}
@@ -120,3 +121,5 @@ func Tan(x float32) float32 {
 	}
 	return y
 }
+
+//------------------------------------------------------------------------------
