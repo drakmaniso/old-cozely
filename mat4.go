@@ -17,6 +17,7 @@ type Mat4 [4][4]float32
 
 // `NewMat4` allocates and returns a new matrix. The elements are stored in
 // alphabetical order (column-major order).
+// See also `MakeMat4` and `SetTo`.
 func NewMat4(
 	a, e, i, m,
 	b, f, j, n,
@@ -31,8 +32,9 @@ func NewMat4(
 	}
 }
 
-// `MakeMat4` returns (by value) a matrix. The elements are stored in
+// `MakeMat4` returns a matrix. The elements are stored in
 // alphabetical order (column-major order).
+// See also `NewMat4` and `SetTo`.
 func MakeMat4(
 	a, e, i, m,
 	b, f, j, n,
@@ -49,6 +51,7 @@ func MakeMat4(
 
 // `SetTo` initializes `matrix`. The elements are stored in
 // alphabetical order (column-major order).
+// See also `NewMat4` and `SetTo`.
 func (matrix *Mat4) SetTo(
 	a, e, i, m,
 	b, f, j, n,
@@ -90,7 +93,7 @@ func (m *Mat4) Set(row, column int, value float32) {
 
 //------------------------------------------------------------------------------
 
-// `Perspective` returns (by value) a perspective projection matrix.
+// `Perspective` returns a perspective projection matrix.
 func Perspective(fieldOfView float32, aspectRatio float32, near float32, far float32) Mat4 {
 	f := float32(1.0) / math.Tan(fieldOfView/float32(2.0))
 
