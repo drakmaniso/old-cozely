@@ -78,13 +78,13 @@ func (matrix *Mat4) SetTo(
 
 //------------------------------------------------------------------------------
 
-// `At` returns the element at '(column, row)`.
-func (m Mat4) At(column, row int) float32 {
+// `At` returns the element at '(row, column)`.
+func (m Mat4) At(row, column int) float32 {
 	return m[column][row]
 }
 
-// `Set` sets the element at `(column, row)` to `value`.
-func (m *Mat4) Set(column, row int, value float32) {
+// `Set` sets the element at `(row, column)` to `value`.
+func (m *Mat4) Set(row, column int, value float32) {
 	m[column][row] = value
 }
 
