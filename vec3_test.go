@@ -125,6 +125,24 @@ func TestVec3_Plus(t *testing.T) {
 	}
 }
 
+func BenchmarkVec3_Add(b *testing.B) {
+	m := Vec3{1.1, 2.2, 3.3}
+	n := Vec3{5.5, 6.6, 7.7}
+	for i := 0; i < b.N; i++ {
+		m.Add(n)
+	}
+}
+
+func BenchmarkVec3_Plus(b *testing.B) {
+	m := Vec3{1.1, 2.2, 3.3}
+	n := Vec3{5.5, 6.6, 7.7}
+	var o Vec3
+	for i := 0; i < b.N; i++ {
+		o = m.Plus(n)
+	}
+	_ = o
+}
+
 //-----------------------------------------------------------------------------
 
 func TestVec3_Subtract(t *testing.T) {
@@ -252,12 +270,36 @@ func TestVec3_Length(t *testing.T) {
 	}
 }
 
+func TestVec3_Normalized(t *testing.T) {
+	a := Vec3{1.1, 2.2, 3.3}
+	b := a.Normalized()
+	if b.X != 0.26726127 || b.Y != 0.53452253 || b.Z != 0.8017838 {
+		t.Errorf("Wrong result: %#v", b)
+	}
+}
+
 func TestVec3_Normalize(t *testing.T) {
 	a := Vec3{1.1, 2.2, 3.3}
 	a.Normalize()
 	if a.X != 0.26726127 || a.Y != 0.53452253 || a.Z != 0.8017838 {
 		t.Errorf("Wrong result: %#v", a)
 	}
+}
+
+func BenchmarkVec3_Normalize(b *testing.B) {
+	m := Vec3{1.1, 2.2, 3.3}
+	for i := 0; i < b.N; i++ {
+		m.Normalize()
+	}
+}
+
+func BenchmarkVec3_Normalized(b *testing.B) {
+	m := Vec3{1.1, 2.2, 3.3}
+	var o Vec3
+	for i := 0; i < b.N; i++ {
+		o = m.Normalized()
+	}
+	_ = o
 }
 
 //-----------------------------------------------------------------------------

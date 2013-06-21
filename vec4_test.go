@@ -102,6 +102,24 @@ func TestVec4_Plus(t *testing.T) {
 	}
 }
 
+func BenchmarkVec4_Add(b *testing.B) {
+	m := Vec4{1.1, 2.2, 3.3, 4.4}
+	n := Vec4{5.5, 6.6, 7.7, 8.8}
+	for i := 0; i < b.N; i++ {
+		m.Add(n)
+	}
+}
+
+func BenchmarkVec4_Plus(b *testing.B) {
+	m := Vec4{1.1, 2.2, 3.3, 4.4}
+	n := Vec4{5.5, 6.6, 7.7, 8.8}
+	var o Vec4
+	for i := 0; i < b.N; i++ {
+		o = m.Plus(n)
+	}
+	_ = o
+}
+
 //-----------------------------------------------------------------------------
 
 func TestVec4_Subtract(t *testing.T) {
@@ -215,12 +233,36 @@ func TestVec4_Length(t *testing.T) {
 	}
 }
 
+func TestVec4_Normalized(t *testing.T) {
+	a := Vec4{1.1, 2.2, 3.3, 4.4}
+	b := a.Normalized()
+	if b.X != 0.18257418 || b.Y != 0.36514837 || b.Z != 0.5477226 || b.W != 0.73029673 {
+		t.Errorf("Wrong result: %#v", b)
+	}
+}
+
 func TestVec4_Normalize(t *testing.T) {
 	a := Vec4{1.1, 2.2, 3.3, 4.4}
 	a.Normalize()
 	if a.X != 0.18257418 || a.Y != 0.36514837 || a.Z != 0.5477226 || a.W != 0.73029673 {
 		t.Errorf("Wrong result: %#v", a)
 	}
+}
+
+func BenchmarkVec4_Normalize(b *testing.B) {
+	m := Vec4{1.1, 2.2, 3.3, 4.4}
+	for i := 0; i < b.N; i++ {
+		m.Normalize()
+	}
+}
+
+func BenchmarkVec4_Normalized(b *testing.B) {
+	m := Vec4{1.1, 2.2, 3.3, 4.4}
+	var o Vec4
+	for i := 0; i < b.N; i++ {
+		o = m.Normalized()
+	}
+	_ = o
 }
 
 //-----------------------------------------------------------------------------
