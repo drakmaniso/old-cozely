@@ -119,7 +119,7 @@ func BenchmarkAbs_asm(b *testing.B) {
 
 //------------------------------------------------------------------------------
 
-func BenchmarkAbs_glm(b *testing.B) {
+func BenchmarkAbs_glam(b *testing.B) {
 	x := float32(3.3)
 	y := float32(-3.3)
 	for i := 0; i < b.N; i++ {

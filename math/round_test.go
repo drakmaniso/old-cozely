@@ -38,7 +38,7 @@ func TestRound(t *testing.T) {
 
 //------------------------------------------------------------------------------
 
-func castRound(x float32) int32 {
+func round_cast(x float32) int32 {
 	if x > 0 {
 		return int32(x + 0.5)
 	} else {
@@ -50,27 +50,27 @@ func BenchmarkRound_cast(b *testing.B) {
 	x := float32(3.3)
 	y := float32(-3.3)
 	for i := 0; i < b.N; i++ {
-		_ = castRound(x)
-		_ = castRound(y)
+		_ = round_cast(x)
+		_ = round_cast(y)
 	}
 }
 
 //------------------------------------------------------------------------------
 
-func asmRound(s float32) float32
+func round_asm(s float32) float32
 
 func BenchmarkRound_asm(b *testing.B) {
 	x := float32(3.3)
 	y := float32(-3.3)
 	for i := 0; i < b.N; i++ {
-		_ = asmRound(x)
-		_ = asmRound(y)
+		_ = round_asm(x)
+		_ = round_asm(y)
 	}
 }
 
 //------------------------------------------------------------------------------
 
-func BenchmarkRound_glm(b *testing.B) {
+func BenchmarkRound_glam(b *testing.B) {
 	x := float32(3.3)
 	y := float32(-3.3)
 	for i := 0; i < b.N; i++ {

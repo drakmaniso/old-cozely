@@ -4,8 +4,8 @@
 //------------------------------------------------------------------------------
 
 // SLOWER than the Go function
-// func asmFastFloor(s float32) int32
-TEXT ·asmFastFloor(SB),7,$0
+// func FastFloor_asm(s float32) int32
+TEXT ·fastFloor_asm(SB),7,$0
 	CVTTSS2SL  x+0(FP), BX
 	MOVL       x+0(FP), AX
 	SHRL       $31, AX

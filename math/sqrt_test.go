@@ -41,7 +41,7 @@ func BenchmarkSqrt_math32(b *testing.B) {
 
 //------------------------------------------------------------------------------
 
-func BenchmarkSqrt_glm(b *testing.B) {
+func BenchmarkSqrt_glam(b *testing.B) {
 	a := float32(3.3)
 	for i := 0; i < b.N; i++ {
 		_ = Sqrt(a)

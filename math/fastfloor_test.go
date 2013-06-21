@@ -30,7 +30,7 @@ func TestFastFloor(t *testing.T) {
 
 //------------------------------------------------------------------------------
 
-func castFastFloor(x float32) int32 {
+func fastFloor_cast(x float32) int32 {
 	if x > 0 {
 		return int32(x)
 	} else {
@@ -42,27 +42,27 @@ func BenchmarkFastFloor_cast(b *testing.B) {
 	x := float32(3.3)
 	y := float32(-3.3)
 	for i := 0; i < b.N; i++ {
-		_ = castFastFloor(x)
-		_ = castFastFloor(y)
+		_ = fastFloor_cast(x)
+		_ = fastFloor_cast(y)
 	}
 }
 
 //------------------------------------------------------------------------------
 
-func asmFastFloor(s float32) int32
+func fastFloor_asm(s float32) int32
 
 func BenchmarkFastFloor_asm(b *testing.B) {
 	x := float32(3.3)
 	y := float32(-3.3)
 	for i := 0; i < b.N; i++ {
-		_ = asmFastFloor(x)
-		_ = asmFastFloor(y)
+		_ = fastFloor_asm(x)
+		_ = fastFloor_asm(y)
 	}
 }
 
 //------------------------------------------------------------------------------
 
-func BenchmarkFastFloor_glm(b *testing.B) {
+func BenchmarkFastFloor_glam(b *testing.B) {
 	x := float32(3.3)
 	y := float32(-3.3)
 	for i := 0; i < b.N; i++ {

@@ -53,7 +53,7 @@ func BenchmarkFloor_math32(b *testing.B) {
 
 //------------------------------------------------------------------------------
 
-func BenchmarkFloor_glm(b *testing.B) {
+func BenchmarkFloor_glam(b *testing.B) {
 	x := float32(3.3)
 	y := float32(-3.3)
 	for i := 0; i < b.N; i++ {
