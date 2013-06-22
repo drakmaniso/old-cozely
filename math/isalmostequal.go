@@ -10,6 +10,10 @@ package math
 
 // `IsAlmostEqual` returns true if the difference between `a` and `b` in ULPs
 // (Unit in the Last Place) is less than `ulps`.
+//
+// Handle special cases: zero, infinites, denormals.
+//
+// See also `IsNearlyEqual` and `IsRoughlyEqual`.
 func IsAlmostEqual(a, b float32, ulps uint32) bool {
 
 	diff := Abs(a - b)
