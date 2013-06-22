@@ -251,3 +251,38 @@ func (m *Mat4) SetToOrthographicFrustum(left, right, bottom, top, near, far floa
 }
 
 //------------------------------------------------------------------------------
+
+// `Translation` returns a translation matrix. See also `SetToTranslation`.
+func Translation(t Vec3) Mat4 {
+	return Mat4{
+		{ 1, 0, 0, 0 },
+		{ 0, 1, 0, 0 },
+		{ 0, 0, 1, 0 },
+		{ t.X, t.Y, t.Z, 1 },
+	}
+}
+
+// `SetToTranslation` sets `m` to a translation matrix. See also `Translation`.
+func (m *Mat4) SetToTranslation(t Vec3) {
+	m[0][0] = 1
+	m[0][1] = 0
+	m[0][2] = 0
+	m[0][3] = 0
+
+	m[1][0] = 0
+	m[1][1] = 1
+	m[1][2] = 0
+	m[1][3] = 0
+
+	m[2][0] = 0
+	m[2][1] = 0
+	m[2][2] = 1
+	m[2][3] = 0
+
+	m[3][0] = t.X
+	m[3][1] = t.Y
+	m[3][2] = t.Z
+	m[3][3] = 1
+}
+
+//------------------------------------------------------------------------------
