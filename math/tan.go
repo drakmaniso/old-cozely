@@ -43,10 +43,10 @@ func Tan(x float32) float32 {
 	)
 
 	// Make argument positive but save the sign.
-	sign := false
+	sign := float32(1)
 	if x < 0 {
 		x = -x
-		sign = true
+		sign = -1
 	}
 
 	j := uint64(x * FOPI) // Integer part of `x/(Pi/4)`, as integer for tests on the phase angle.
@@ -75,13 +75,12 @@ func Tan(x float32) float32 {
 	} else {
 		y = z
 	}
+
 	if j&2 == 2 {
 		y = -1 / y
 	}
-	if sign {
-		y = -y
-	}
-	return y
+
+	return sign * y
 }
 
 //------------------------------------------------------------------------------
