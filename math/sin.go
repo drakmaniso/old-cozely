@@ -47,7 +47,7 @@ func Sin(x float32) float32 {
 	// for x >= 2^24 and returns 0.0.
 
 	const (
-		FOPI = 1.27323954473516
+		FOPI = 1.27323954473516 // 4/Pi
 		DP1  = 0.78515625
 		DP2  = 2.4187564849853515625e-4
 		DP3  = 3.77489497744594108e-8
@@ -60,9 +60,9 @@ func Sin(x float32) float32 {
 	)
 
 	const (
-		COSCOF1 = 2.443315711809948E-005
-		COSCOF2 = -1.388731625493765E-003
-		COSCOF3 = 4.166664568298827E-002
+		COSCOF1 = 2.443315711809948E-5
+		COSCOF2 = -1.388731625493765E-3
+		COSCOF3 = 4.166664568298827E-2
 	)
 
 	// Make argument positive but save the sign
