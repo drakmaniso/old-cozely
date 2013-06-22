@@ -93,8 +93,9 @@ func (m *Mat4) Set(row, column int, value float32) {
 
 //------------------------------------------------------------------------------
 
-// `Perspective` returns a perspective projection matrix.
-func Perspective(fieldOfView float32, aspectRatio float32, near float32, far float32) Mat4 {
+// `Perspective` returns a perspective projection matrix. See also `SetToPerspective`,
+// `PerspectiveFrustum` and `SetToPerspectiveFrustum`.
+func Perspective(fieldOfView, aspectRatio, near, far float32) Mat4 {
 	f := float32(1.0) / math.Tan(fieldOfView/float32(2.0))
 
 	return Mat4{
@@ -105,8 +106,9 @@ func Perspective(fieldOfView float32, aspectRatio float32, near float32, far flo
 	}
 }
 
-// `SetToPerspective` sets `m` to a perspective projection matrix.
-func (m *Mat4) SetToPerspective(fieldOfView float32, aspectRatio float32, near float32, far float32) {
+// `SetToPerspective` sets `m` to a perspective projection matrix. See also `Perspective`,
+// `PerspectiveFrustum` and `SetToPerspectiveFrustum`.
+func (m *Mat4) SetToPerspective(fieldOfView, aspectRatio, near, far float32) {
 	f := float32(1.0) / math.Tan(fieldOfView/float32(2.0))
 
 	m[0][0] = f / aspectRatio
@@ -128,6 +130,124 @@ func (m *Mat4) SetToPerspective(fieldOfView float32, aspectRatio float32, near f
 	m[0][1] = 0
 	m[0][2] = (2 * far * near) / (near - far)
 	m[0][3] = 0
+}
+
+//------------------------------------------------------------------------------
+
+// `PerspectiveFrustum` returns a perspective projection matrix. See also `SetToPerspectiveFrustum`,
+// `Perspective` and `SetToPerspective`.
+func PerspectiveFrustum(left, right, bottom, top, near, far float32) Mat4 {
+	return Mat4{
+		{(2 * near) / (right - left), 0, 0, 0},
+		{0, (2 * near) / (top - bottom), 0, 0},
+		{(right + left) / (right - left), (top + bottom) / (top - bottom), -(far + near) / (far - near), -1},
+		{0, 0, -(2 * far * near) / (far - near), 0},
+	}
+}
+
+// `SetToPerspectiveFrustum` sets `m` to a perspective projection matrix. See also `PerspectiveFrustum`,
+// `Perspective` and `SetToPerspective`.
+func (m *Mat4) SetToPerspectiveFrustum(left, right, bottom, top, near, far float32) {
+	m[0][0] = (2 * near) / (right - left)
+	m[0][1] = 0
+	m[0][2] = 0
+	m[0][3] = 0
+
+	m[1][0] = 0
+	m[1][1] = (2 * near) / (top - bottom)
+	m[1][2] = 0
+	m[1][3] = 0
+
+	m[2][0] = (right + left) / (right - left)
+	m[2][1] = (top + bottom) / (top - bottom)
+	m[2][2] = -(far + near) / (far - near)
+	m[2][3] = -1
+
+	m[3][0] = 0
+	m[3][1] = 0
+	m[3][2] = -(2 * far * near) / (far - near)
+	m[3][3] = 0
+}
+
+//------------------------------------------------------------------------------
+
+// `Orthographic` returns an orthographic (parallel) projection matrix.
+// `zoom` is the height of the projection plane.
+// See also `SetToOrthographic`, `OrthographicFrustum` and `SetToOrthographicFrustum`.
+func Orthographic(zoom, aspectRatio, near, far float32) Mat4 {
+	vertical := zoom / 2
+	horizontal := vertical * aspectRatio
+	return Mat4{
+		{1 / horizontal, 0, 0, 0},
+		{0, 1 / vertical, 0, 0},
+		{0, 0, -2 / (far - near), 0},
+		{0, 0, -(far + near) / (far - near), 1},
+	}
+}
+
+// `SetToOrthographic` sets `m` to an orthographic (parallel) projection matrix.
+// `zoom` is the height of the projection plane.
+// See also `Orthographic`, `OrthographicFrustum` and `SetToOrthographicFrustum`.
+func (m *Mat4) SetToOrthographic(zoom, aspectRatio, near, far float32) {
+	vertical := zoom / 2
+	horizontal := vertical * aspectRatio
+
+	m[0][0] = 1 / horizontal
+	m[0][1] = 0
+	m[0][2] = 0
+	m[0][3] = 0
+
+	m[1][0] = 0
+	m[1][1] = 1 / vertical
+	m[1][2] = 0
+	m[1][3] = 0
+
+	m[2][0] = 0
+	m[2][1] = 0
+	m[2][2] = -2 / (far - near)
+	m[2][3] = 0
+
+	m[3][0] = 0
+	m[3][1] = 0
+	m[3][2] = -(far + near) / (far - near)
+	m[3][3] = 1
+}
+
+//------------------------------------------------------------------------------
+
+// `OrthographicFrustum` returns an orthographic (parallel) projection matrix.
+// See also `SetToOrthographicFrustum`, `Orthographic` and `SetToOrthographic`.
+func OrthographicFrustum(left, right, bottom, top, near, far float32) Mat4 {
+	return Mat4{
+		{2 / (right - left), 0, 0, 0},
+		{0, 2 / (top - bottom), 0, 0},
+		{0, 0, -2 / (far - near), 0},
+		{-(right + left) / (right - left), -(top + bottom) / (top - bottom), -(far + near) / (far - near), 1},
+	}
+}
+
+// `SetToOrthographicFrustum` returns an orthographic (parallel) projection matrix.
+// See also `OrthographicFrustum`, `Orthographic` and `SetToOrthographic`.
+func (m *Mat4) SetToOrthographicFrustum(left, right, bottom, top, near, far float32) {
+	m[0][0] = 2 / (right - left)
+	m[0][1] = 0
+	m[0][2] = 0
+	m[0][3] = 0
+
+	m[1][0] = 0
+	m[1][1] = 2 / (top - bottom)
+	m[1][2] = 0
+	m[1][3] = 0
+
+	m[2][0] = 0
+	m[2][1] = 0
+	m[2][2] = -2 / (far - near)
+	m[2][3] = 0
+
+	m[3][0] = -(right + left) / (right - left)
+	m[3][1] = -(top + bottom) / (top - bottom)
+	m[3][2] = -(far + near) / (far - near)
+	m[3][3] = 1
 }
 
 //------------------------------------------------------------------------------
