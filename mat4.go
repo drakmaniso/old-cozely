@@ -175,11 +175,11 @@ func (m *Mat4) SetToPerspectiveFrustum(left, right, bottom, top, near, far float
 // `zoom` is the height of the projection plane.
 // See also `SetToOrthographic`, `OrthographicFrustum` and `SetToOrthographicFrustum`.
 func Orthographic(zoom, aspectRatio, near, far float32) Mat4 {
-	vertical := zoom / 2
-	horizontal := vertical * aspectRatio
+	top := zoom / 2
+	right := top * aspectRatio
 	return Mat4{
-		{1 / horizontal, 0, 0, 0},
-		{0, 1 / vertical, 0, 0},
+		{1 / right, 0, 0, 0},
+		{0, 1 / top, 0, 0},
 		{0, 0, -2 / (far - near), 0},
 		{0, 0, -(far + near) / (far - near), 1},
 	}
@@ -189,16 +189,16 @@ func Orthographic(zoom, aspectRatio, near, far float32) Mat4 {
 // `zoom` is the height of the projection plane.
 // See also `Orthographic`, `OrthographicFrustum` and `SetToOrthographicFrustum`.
 func (m *Mat4) SetToOrthographic(zoom, aspectRatio, near, far float32) {
-	vertical := zoom / 2
-	horizontal := vertical * aspectRatio
+	top := zoom / 2
+	right := top * aspectRatio
 
-	m[0][0] = 1 / horizontal
+	m[0][0] = 1 / right
 	m[0][1] = 0
 	m[0][2] = 0
 	m[0][3] = 0
 
 	m[1][0] = 0
-	m[1][1] = 1 / vertical
+	m[1][1] = 1 / top
 	m[1][2] = 0
 	m[1][3] = 0
 
