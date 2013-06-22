@@ -36,10 +36,10 @@ func Tan(x float32) float32 {
 	// tanf total loss   x > 2^24              0.0
 
 	const (
-		PI4A = float32(0.78515625)
-		PI4B = float32(2.4187564849853515625e-4)
-		PI4C = float32(3.77489497744594108e-8)
-		M4PI = float32(1.273239544735162542821171882678754627704620361328125) // 4/pi
+		DP1 = float32(0.78515625)
+		DP2 = float32(2.4187564849853515625e-4)
+		DP3 = float32(3.77489497744594108e-8)
+		FOPI = float32(1.27323954473516) // 4/pi
 	)
 
 	// Make argument positive but save the sign.
@@ -49,7 +49,7 @@ func Tan(x float32) float32 {
 		sign = true
 	}
 
-	j := int32(x * M4PI) // Integer part of `x/(Pi/4)`, as integer for tests on the phase angle.
+	j := uint64(x * FOPI) // Integer part of `x/(Pi/4)`, as integer for tests on the phase angle.
 	y := float32(j)      // Integer part of `x/(Pi/4)`, as float.
 
 	// Map zeros and singularities to origin.
@@ -58,7 +58,7 @@ func Tan(x float32) float32 {
 		y += 1
 	}
 
-	z := ((x - y*PI4A) - y*PI4B) - y*PI4C
+	z := ((x - y*DP1) - y*DP2) - y*DP3
 	zz := z * z
 
 	if x > 1e-4 {
