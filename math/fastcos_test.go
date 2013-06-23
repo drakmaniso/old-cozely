@@ -26,12 +26,12 @@ func TestFastCos(t *testing.T) {
 
 //------------------------------------------------------------------------------
 
-// func BenchmarkFastCos_go(b *testing.B) {
-// 	a := float32(0.5)
-// 	for i := 0; i < b.N; i++ {
-// 		_ = fastCos(a)
-// 	}
-// }
+func BenchmarkFastCos_go(b *testing.B) {
+	a := float32(0.5)
+	for i := 0; i < b.N; i++ {
+		_ = fastCos(a)
+	}
+}
 
 //------------------------------------------------------------------------------
 

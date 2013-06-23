@@ -11,9 +11,9 @@ package math
 // Max absolute error in range [-Pi, Pi]: less than 1e-3
 //
 // Faster than `Cos`.
-func fastCos(x float32) float32
+func FastCos(x float32) float32
 
-func FastCos(x float32) float32 {
+func fastCos(x float32) float32 {
 	const (
 		PISLASHTWO = Pi / 2
 		TWOPI      = 2 * Pi
