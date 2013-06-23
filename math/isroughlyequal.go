@@ -14,7 +14,7 @@ func IsRoughlyEqual(a, b float32, epsilon float32) bool {
 		return true
 	} else {
 		// Use absolute error
-		return Abs(a - b) < epsilon
+		return Abs(a-b) < epsilon
 	}
 }
 
