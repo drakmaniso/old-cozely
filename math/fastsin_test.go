@@ -14,7 +14,7 @@ func TestFastSin(t *testing.T) {
 	var maxDiff float32 = 0
 	for _, tt := range sin_tests {
 		x = FastSin(tt.in)
-		if Abs(x - tt.out) > maxDiff {
+		if Abs(x-tt.out) > maxDiff {
 			maxDiff = Abs(x - tt.out)
 		}
 		if !IsRoughlyEqual(x, tt.out, 1e-3) {
@@ -22,6 +22,15 @@ func TestFastSin(t *testing.T) {
 		}
 	}
 	t.Logf("Max absolute error: %1.8e\n", maxDiff)
+}
+
+//------------------------------------------------------------------------------
+
+func BenchmarkFastSin_go(b *testing.B) {
+	a := float32(0.5)
+	for i := 0; i < b.N; i++ {
+		_ = fastSin(a)
+	}
 }
 
 //------------------------------------------------------------------------------
