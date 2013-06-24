@@ -255,10 +255,10 @@ func (m *Mat4) SetToOrthographicFrustum(left, right, bottom, top, near, far floa
 // `Translation` returns a translation matrix. See also `SetToTranslation`.
 func Translation(t Vec3) Mat4 {
 	return Mat4{
-		{ 1, 0, 0, 0 },
-		{ 0, 1, 0, 0 },
-		{ 0, 0, 1, 0 },
-		{ t.X, t.Y, t.Z, 1 },
+		{1, 0, 0, 0},
+		{0, 1, 0, 0},
+		{0, 0, 1, 0},
+		{t.X, t.Y, t.Z, 1},
 	}
 }
 
@@ -282,6 +282,51 @@ func (m *Mat4) SetToTranslation(t Vec3) {
 	m[3][0] = t.X
 	m[3][1] = t.Y
 	m[3][2] = t.Z
+	m[3][3] = 1
+}
+
+//------------------------------------------------------------------------------
+
+// `Rotation` returns a rotation matrix.
+//
+// See also `SetToRotation`.
+func Rotation(angle float32, axis Vec3) Mat4 {
+	c := math.Cos(angle)
+	s := math.Sin(angle)
+
+	return Mat4{
+		{c + axis.X*axis.X*(1-c), -axis.Z*s + axis.X*axis.Y*(1-c), axis.Y*s + axis.X*axis.Z*(1-c), 0},
+		{axis.Z*s + axis.Y*axis.X*(1-c), c + axis.Y*axis.Y*(1-c), -axis.X*s + axis.Y*axis.Z*(1-c), 0},
+		{-axis.Y*s + axis.Z*axis.X*(1-c), axis.X*s + axis.Z*axis.Y*(1-c), c + axis.Z*axis.Z*(1-c), 0},
+		{0, 0, 0, 1},
+	}
+}
+
+// `SetToRotation` sets `m` to a rotation matrix.
+//
+// See also `Rotation`.
+func (m *Mat4) Rotation(angle float32, axis Vec3) {
+	c := math.Cos(angle)
+	s := math.Sin(angle)
+
+	m[0][0] = c + axis.X*axis.X*(1-c)
+	m[0][1] = -axis.Z*s + axis.X*axis.Y*(1-c)
+	m[0][2] = axis.Y*s + axis.X*axis.Z*(1-c)
+	m[0][3] = 0
+
+	m[1][0] = axis.Z*s + axis.Y*axis.X*(1-c)
+	m[1][1] = c + axis.Y*axis.Y*(1-c)
+	m[1][2] = -axis.X*s + axis.Y*axis.Z*(1-c)
+	m[1][3] = 0
+
+	m[2][0] = -axis.Y*s + axis.Z*axis.X*(1-c)
+	m[2][1] = axis.X*s + axis.Z*axis.Y*(1-c)
+	m[2][2] = c + axis.Z*axis.Z*(1-c)
+	m[2][3] = 0
+
+	m[3][0] = 0
+	m[3][1] = 0
+	m[3][2] = 0
 	m[3][3] = 1
 }
 
