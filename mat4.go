@@ -17,6 +17,7 @@ type Mat4 [4][4]float32
 
 // `NewMat4` allocates and returns a new matrix. The elements are stored in
 // alphabetical order (column-major order).
+//
 // See also `MakeMat4` and `SetTo`.
 func NewMat4(
 	a, e, i, m,
@@ -34,6 +35,7 @@ func NewMat4(
 
 // `MakeMat4` returns a matrix. The elements are stored in
 // alphabetical order (column-major order).
+//
 // See also `NewMat4` and `SetTo`.
 func MakeMat4(
 	a, e, i, m,
@@ -51,6 +53,7 @@ func MakeMat4(
 
 // `SetTo` initializes `matrix`. The elements are stored in
 // alphabetical order (column-major order).
+//
 // See also `NewMat4` and `SetTo`.
 func (matrix *Mat4) SetTo(
 	a, e, i, m,
@@ -93,8 +96,9 @@ func (m *Mat4) Set(row, column int, value float32) {
 
 //------------------------------------------------------------------------------
 
-// `Perspective` returns a perspective projection matrix. See also `SetToPerspective`,
-// `PerspectiveFrustum` and `SetToPerspectiveFrustum`.
+// `Perspective` returns a perspective projection matrix.
+//
+// See also `SetToPerspective`, `PerspectiveFrustum` and `SetToPerspectiveFrustum`.
 func Perspective(fieldOfView, aspectRatio, near, far float32) Mat4 {
 	f := float32(1.0) / math.Tan(fieldOfView/float32(2.0))
 
@@ -106,8 +110,9 @@ func Perspective(fieldOfView, aspectRatio, near, far float32) Mat4 {
 	}
 }
 
-// `SetToPerspective` sets `m` to a perspective projection matrix. See also `Perspective`,
-// `PerspectiveFrustum` and `SetToPerspectiveFrustum`.
+// `SetToPerspective` sets `m` to a perspective projection matrix.
+//
+// See also `Perspective`, `PerspectiveFrustum` and `SetToPerspectiveFrustum`.
 func (m *Mat4) SetToPerspective(fieldOfView, aspectRatio, near, far float32) {
 	f := float32(1.0) / math.Tan(fieldOfView/float32(2.0))
 
@@ -134,8 +139,9 @@ func (m *Mat4) SetToPerspective(fieldOfView, aspectRatio, near, far float32) {
 
 //------------------------------------------------------------------------------
 
-// `PerspectiveFrustum` returns a perspective projection matrix. See also `SetToPerspectiveFrustum`,
-// `Perspective` and `SetToPerspective`.
+// `PerspectiveFrustum` returns a perspective projection matrix.
+//
+// See also `SetToPerspectiveFrustum`, `Perspective` and `SetToPerspective`.
 func PerspectiveFrustum(left, right, bottom, top, near, far float32) Mat4 {
 	return Mat4{
 		{(2 * near) / (right - left), 0, 0, 0},
@@ -145,8 +151,9 @@ func PerspectiveFrustum(left, right, bottom, top, near, far float32) Mat4 {
 	}
 }
 
-// `SetToPerspectiveFrustum` sets `m` to a perspective projection matrix. See also `PerspectiveFrustum`,
-// `Perspective` and `SetToPerspective`.
+// `SetToPerspectiveFrustum` sets `m` to a perspective projection matrix.
+//
+// See also `PerspectiveFrustum`, `Perspective` and `SetToPerspective`.
 func (m *Mat4) SetToPerspectiveFrustum(left, right, bottom, top, near, far float32) {
 	m[0][0] = (2 * near) / (right - left)
 	m[0][1] = 0
@@ -173,6 +180,7 @@ func (m *Mat4) SetToPerspectiveFrustum(left, right, bottom, top, near, far float
 
 // `Orthographic` returns an orthographic (parallel) projection matrix.
 // `zoom` is the height of the projection plane.
+//
 // See also `SetToOrthographic`, `OrthographicFrustum` and `SetToOrthographicFrustum`.
 func Orthographic(zoom, aspectRatio, near, far float32) Mat4 {
 	top := zoom / 2
@@ -187,6 +195,7 @@ func Orthographic(zoom, aspectRatio, near, far float32) Mat4 {
 
 // `SetToOrthographic` sets `m` to an orthographic (parallel) projection matrix.
 // `zoom` is the height of the projection plane.
+//
 // See also `Orthographic`, `OrthographicFrustum` and `SetToOrthographicFrustum`.
 func (m *Mat4) SetToOrthographic(zoom, aspectRatio, near, far float32) {
 	top := zoom / 2
@@ -216,6 +225,7 @@ func (m *Mat4) SetToOrthographic(zoom, aspectRatio, near, far float32) {
 //------------------------------------------------------------------------------
 
 // `OrthographicFrustum` returns an orthographic (parallel) projection matrix.
+//
 // See also `SetToOrthographicFrustum`, `Orthographic` and `SetToOrthographic`.
 func OrthographicFrustum(left, right, bottom, top, near, far float32) Mat4 {
 	return Mat4{
@@ -227,6 +237,7 @@ func OrthographicFrustum(left, right, bottom, top, near, far float32) Mat4 {
 }
 
 // `SetToOrthographicFrustum` returns an orthographic (parallel) projection matrix.
+//
 // See also `OrthographicFrustum`, `Orthographic` and `SetToOrthographic`.
 func (m *Mat4) SetToOrthographicFrustum(left, right, bottom, top, near, far float32) {
 	m[0][0] = 2 / (right - left)
@@ -252,7 +263,9 @@ func (m *Mat4) SetToOrthographicFrustum(left, right, bottom, top, near, far floa
 
 //------------------------------------------------------------------------------
 
-// `Translation` returns a translation matrix. See also `SetToTranslation`.
+// `Translation` returns a translation matrix.
+//
+// See also `SetToTranslation`.
 func Translation(t Vec3) Mat4 {
 	return Mat4{
 		{1, 0, 0, 0},
@@ -262,7 +275,9 @@ func Translation(t Vec3) Mat4 {
 	}
 }
 
-// `SetToTranslation` sets `m` to a translation matrix. See also `Translation`.
+// `SetToTranslation` sets `m` to a translation matrix.
+//
+// See also `Translation`.
 func (m *Mat4) SetToTranslation(t Vec3) {
 	m[0][0] = 1
 	m[0][1] = 0
