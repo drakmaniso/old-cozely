@@ -384,7 +384,7 @@ func (m *Mat4) Times(o *Mat4) Mat4 {
 // `r` must not be `m` or `o`.
 //
 // See also `Multiply`, `TimesVec` and `MultiplyVec`.
-func (r *Mat4) Multiply(m, o *Mat4) Mat4 {
+func (r *Mat4) Multiply(m, o *Mat4) {
 	r[0][0] = m[0][0]*o[0][0] + m[0][1]*o[1][0] + m[0][2]*o[2][0] + m[0][3]*o[3][0]
 	r[0][1] = m[0][0]*o[0][1] + m[0][1]*o[1][1] + m[0][2]*o[2][1] + m[0][3]*o[3][1]
 	r[0][2] = m[0][0]*o[0][2] + m[0][1]*o[1][2] + m[0][2]*o[2][2] + m[0][3]*o[3][2]
