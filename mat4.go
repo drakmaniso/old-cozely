@@ -407,3 +407,25 @@ func (r *Mat4) Multiply(m, o *Mat4) {
 }
 
 //------------------------------------------------------------------------------
+
+// `LookAt` returns a transform from world space into the specific eye space
+// that the projective matrix functions (Perspective, OrthographicFrustum, ...)
+// are designed to expect.
+//
+// See also `Perspective` and `OrthographicFrustum`.
+func LookAt(eye, center, up glam.Vec3) Mat4 {
+	center.Subtract(eye)
+	f := center.Normalized()
+	u := up.Normalized()
+	s := f.Cross(u).Normalized()
+	u = s.Cross(f)
+
+	res := MakeMat4(
+		s.X, s.Y, s.Z, -s.Dot(eye),
+		u.X, u.Y, u.Z, -u.Dot(eye),
+		-f.X, -f.Y, -f.Z, f.Dot(eye),
+		0, 0, 0, 1,
+	)
+
+	return res
+}
