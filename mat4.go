@@ -413,7 +413,7 @@ func (r *Mat4) Multiply(m, o *Mat4) {
 // are designed to expect.
 //
 // See also `Perspective` and `OrthographicFrustum`.
-func LookAt(eye, center, up glam.Vec3) Mat4 {
+func LookAt(eye, center, up Vec3) Mat4 {
 	center.Subtract(eye)
 	f := center.Normalized()
 	u := up.Normalized()
