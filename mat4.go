@@ -84,6 +84,28 @@ func (matrix *Mat4) SetTo(
 
 //------------------------------------------------------------------------------
 
+// `Zeros` returns a 4x4 zeroed matrix.
+func Zeros() Mat4 {
+	return MakeMat4(
+		0, 0, 0, 0,
+		0, 0, 0, 0,
+		0, 0, 0, 0,
+		0, 0, 0, 0,
+	)
+}
+
+// `Identity` returns a 4x4 Identity matrix.
+func Identity() Mat4 {
+	return MakeMat4(
+		0, 0, 0, 0,
+		0, 0, 0, 0,
+		0, 0, 0, 0,
+		0, 0, 0, 0,
+	)
+}
+
+//------------------------------------------------------------------------------
+
 // `At` returns the element at '(row, column)`.
 func (m Mat4) At(row, column int) float32 {
 	return m[column][row]
