@@ -97,10 +97,10 @@ func Zeros() Mat4 {
 // `Identity` returns a 4x4 Identity matrix.
 func Identity() Mat4 {
 	return MakeMat4(
-		0, 0, 0, 0,
-		0, 0, 0, 0,
-		0, 0, 0, 0,
-		0, 0, 0, 0,
+		1, 0, 0, 0,
+		0, 1, 0, 0,
+		0, 0, 1, 0,
+		0, 0, 0, 1,
 	)
 }
 
