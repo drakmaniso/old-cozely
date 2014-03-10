@@ -1,6 +1,10 @@
 GLaM: OpenGL Mathematics for Go
 ===============================
 
+
+**WARNING: This library is unfinished and no longer maintained.**
+
+
 Features
 --------
 
@@ -8,7 +12,6 @@ GLaM is a [Go](http://golang.org/) package providing mathematical types and
 operations for use with OpenGL. It is written with game development in mind,
 so the focus is on speed over portability or accuracy.
 
-**NOTE: this is a work in progress.**
 
 - Vectors and matrices.
 - Efficient single-precision math.
