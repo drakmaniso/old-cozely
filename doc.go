@@ -1,3 +1,4 @@
-// Package GLaM provides mathematical types and operations for use with OpenGL.
-//
+/*
+Package glam implements a minimalist game engine.
+*/
 package glam
