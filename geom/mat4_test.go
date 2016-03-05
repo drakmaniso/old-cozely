@@ -32,7 +32,7 @@ func (m *Mat4) multiply(a, b *Mat4) {
 	m[3][3] = a[3][0]*b[0][3] + a[3][1]*b[1][3] + a[3][2]*b[2][3] + a[3][3]*b[3][3]
 }
 
-func (m Mat4) timesTwoValues(o Mat4) Mat4 {
+func (m Mat4) timesOneRef(o *Mat4) Mat4 {
 	return Mat4{
 		{
 			m[0][0]*o[0][0] + m[0][1]*o[1][0] + m[0][2]*o[2][0] + m[0][3]*o[3][0],
@@ -61,8 +61,8 @@ func (m Mat4) timesTwoValues(o Mat4) Mat4 {
 	}
 }
 
-func (m *Mat4) timesTwoRefs(o *Mat4) *Mat4 {
-	return &Mat4{
+func (m Mat4) timesTwoValues(o Mat4) Mat4 {
+	return Mat4{
 		{
 			m[0][0]*o[0][0] + m[0][1]*o[1][0] + m[0][2]*o[2][0] + m[0][3]*o[3][0],
 			m[0][0]*o[0][1] + m[0][1]*o[1][1] + m[0][2]*o[2][1] + m[0][3]*o[3][1],
@@ -277,13 +277,13 @@ func BenchmarkMat4_SetTo(b *testing.B) {
 //------------------------------------------------------------------------------
 
 func BenchmarkMat4_Times(b *testing.B) {
-	m := MakeMat4(
+	m := NewMat4(
 		1.1, 11.1, 111.1, 1111.1,
 		2.2, 22.2, 222.2, 2222.2,
 		3.3, 33.3, 333.3, 3333.3,
 		4.4, 44.4, 444.4, 4444.4,
 	)
-	n := MakeMat4(
+	n := NewMat4(
 		5.5, 55.5, 555.5, 5555.5,
 		6.6, 66.6, 666.6, 6666.6,
 		7.7, 77.7, 777.7, 7777.7,
@@ -291,7 +291,47 @@ func BenchmarkMat4_Times(b *testing.B) {
 	)
 	var o Mat4
 	for i := 0; i < b.N; i++ {
-		o = m.Times(&n)
+		o = m.Times(n)
+	}
+	_ = o
+}
+
+func BenchmarkMat4_Times_ThreeRefs(b *testing.B) {
+	m := NewMat4(
+		1.1, 11.1, 111.1, 1111.1,
+		2.2, 22.2, 222.2, 2222.2,
+		3.3, 33.3, 333.3, 3333.3,
+		4.4, 44.4, 444.4, 4444.4,
+	)
+	n := NewMat4(
+		5.5, 55.5, 555.5, 5555.5,
+		6.6, 66.6, 666.6, 6666.6,
+		7.7, 77.7, 777.7, 7777.7,
+		8.8, 88.8, 888.8, 8888.8,
+	)
+	o := &Mat4{}
+	for i := 0; i < b.N; i++ {
+		o.multiply(m, n)
+	}
+	_ = o
+}
+
+func BenchmarkMat4_Times_OneRef(b *testing.B) {
+	m := MakeMat4(
+		1.1, 11.1, 111.1, 1111.1,
+		2.2, 22.2, 222.2, 2222.2,
+		3.3, 33.3, 333.3, 3333.3,
+		4.4, 44.4, 444.4, 4444.4,
+	)
+	n := NewMat4(
+		5.5, 55.5, 555.5, 5555.5,
+		6.6, 66.6, 666.6, 6666.6,
+		7.7, 77.7, 777.7, 7777.7,
+		8.8, 88.8, 888.8, 8888.8,
+	)
+	var o Mat4
+	for i := 0; i < b.N; i++ {
+		o = m.timesOneRef(n)
 	}
 	_ = o
 }
@@ -312,46 +352,6 @@ func BenchmarkMat4_Times_TwoValues(b *testing.B) {
 	var o Mat4
 	for i := 0; i < b.N; i++ {
 		o = m.timesTwoValues(n)
-	}
-	_ = o
-}
-
-func BenchmarkMat4_Times_TwoRefs(b *testing.B) {
-	m := MakeMat4(
-		1.1, 11.1, 111.1, 1111.1,
-		2.2, 22.2, 222.2, 2222.2,
-		3.3, 33.3, 333.3, 3333.3,
-		4.4, 44.4, 444.4, 4444.4,
-	)
-	n := MakeMat4(
-		5.5, 55.5, 555.5, 5555.5,
-		6.6, 66.6, 666.6, 6666.6,
-		7.7, 77.7, 777.7, 7777.7,
-		8.8, 88.8, 888.8, 8888.8,
-	)
-	var o *Mat4
-	for i := 0; i < b.N; i++ {
-		o = m.timesTwoRefs(&n)
-	}
-	_ = o
-}
-
-func BenchmarkMat4_Times_ThreeRefs(b *testing.B) {
-	m := MakeMat4(
-		1.1, 11.1, 111.1, 1111.1,
-		2.2, 22.2, 222.2, 2222.2,
-		3.3, 33.3, 333.3, 3333.3,
-		4.4, 44.4, 444.4, 4444.4,
-	)
-	n := MakeMat4(
-		5.5, 55.5, 555.5, 5555.5,
-		6.6, 66.6, 666.6, 6666.6,
-		7.7, 77.7, 777.7, 7777.7,
-		8.8, 88.8, 888.8, 8888.8,
-	)
-	var o Mat4
-	for i := 0; i < b.N; i++ {
-		o.multiply(&m, &n)
 	}
 	_ = o
 }
