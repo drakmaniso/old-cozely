@@ -1,7 +1,7 @@
 // Copyright (c) 2013 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
-package glam
+package geom
 
 import (
 	"fmt"
@@ -57,13 +57,13 @@ func ExampleVec4() {
 	fmt.Printf("f == %#v\n", f)
 	fmt.Printf("g == %#v\n", g)
 	// Output:
-	// a == glam.Vec4{X:0, Y:0, Z:0, W:0}
-	// b == glam.Vec4{X:1.1, Y:2.2, Z:3.3, W:4.4}
-	// c == glam.Vec4{X:6.6, Y:8.8, Z:11, W:13.200001}
-	// d == glam.Vec4{X:6.6, Y:8.8, Z:11, W:13.200001}
-	// e == glam.Vec4{X:0.5, Y:1, Z:1.5, W:2}
-	// f == glam.Vec3{X:0.25, Y:0.5, Z:0.75}
-	// g == glam.Vec4{X:0.18257418, Y:0.36514837, Z:0.5477226, W:0.73029673}
+	// a == geom.Vec4{X:0, Y:0, Z:0, W:0}
+	// b == geom.Vec4{X:1.1, Y:2.2, Z:3.3, W:4.4}
+	// c == geom.Vec4{X:6.6, Y:8.8, Z:11, W:13.200001}
+	// d == geom.Vec4{X:6.6, Y:8.8, Z:11, W:13.200001}
+	// e == geom.Vec4{X:0.5, Y:1, Z:1.5, W:2}
+	// f == geom.Vec3{X:0.25, Y:0.5, Z:0.75}
+	// g == geom.Vec4{X:0.18257418, Y:0.36514837, Z:0.5477226, W:0.73029673}
 }
 
 //-----------------------------------------------------------------------------

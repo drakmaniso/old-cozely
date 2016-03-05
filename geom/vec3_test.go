@@ -1,7 +1,7 @@
 // Copyright (c) 2013 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
-package glam
+package geom
 
 import (
 	"fmt"
@@ -54,13 +54,13 @@ func ExampleVec3() {
 	fmt.Printf("f == %#v\n", f)
 	fmt.Printf("g == %#v\n", g)
 	// Output:
-	// a == glam.Vec3{X:0, Y:0, Z:0}
-	// b == glam.Vec3{X:1.1, Y:2.2, Z:3.3}
-	// c == glam.Vec3{X:5.5, Y:7.7, Z:9.9}
-	// d == glam.Vec3{X:5.5, Y:7.7, Z:9.9}
-	// e == glam.Vec3{X:0.5, Y:1, Z:1.5}
-	// f == glam.Vec4{X:0.5, Y:1, Z:1.5, W:1}
-	// g == glam.Vec3{X:0.26726127, Y:0.53452253, Z:0.8017838}
+	// a == geom.Vec3{X:0, Y:0, Z:0}
+	// b == geom.Vec3{X:1.1, Y:2.2, Z:3.3}
+	// c == geom.Vec3{X:5.5, Y:7.7, Z:9.9}
+	// d == geom.Vec3{X:5.5, Y:7.7, Z:9.9}
+	// e == geom.Vec3{X:0.5, Y:1, Z:1.5}
+	// f == geom.Vec4{X:0.5, Y:1, Z:1.5, W:1}
+	// g == geom.Vec3{X:0.26726127, Y:0.53452253, Z:0.8017838}
 }
 
 //-----------------------------------------------------------------------------
