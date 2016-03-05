@@ -1,4 +1,4 @@
-// Copyright (c) 2013 Laurent Moussault. All rights reserved.
+// Copyright (c) 2013-2016 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
 package geom
@@ -7,7 +7,69 @@ import (
 	"fmt"
 	"testing"
 	"unsafe"
+
+	"github.com/drakmaniso/glam/math"
 )
+
+//-----------------------------------------------------------------------------
+
+func (v *Vec4) add(a, b Vec4) {
+	v.X = a.X + b.X
+	v.Y = a.Y + b.Y
+	v.Z = a.Z + b.Z
+	v.W = a.W + b.W
+}
+
+func (v *Vec4) subtract(a, b Vec4) {
+	v.X = a.X - b.X
+	v.Y = a.Y - b.Y
+	v.Z = a.Z - b.Z
+	v.W = a.W - b.W
+}
+
+func (v *Vec4) invert() {
+	v.X = -v.X
+	v.Y = -v.Y
+	v.Z = -v.Z
+	v.W = -v.W
+}
+
+func (v *Vec4) multiply(o Vec4, s float32) {
+	v.X = o.X * s
+	v.Y = o.Y * s
+	v.Z = o.Z * s
+	v.W = o.W * s
+}
+
+func (v *Vec4) divide(o Vec4, s float32) {
+	v.X = o.X / s
+	v.Y = o.Y / s
+	v.Z = o.Z / s
+	v.W = o.W / s
+}
+
+func (v *Vec4) normalize() {
+	length := math.Sqrt(v.X*v.X + v.Y*v.Y + v.Z*v.Z + v.W*v.W)
+	v.X /= length
+	v.Y /= length
+	v.Z /= length
+	v.W /= length
+}
+
+//-----------------------------------------------------------------------------
+
+type arrayVec4 [4]float32
+
+func (v arrayVec4) plus(o arrayVec4) arrayVec4 {
+	return arrayVec4{v[0] + o[0], v[1] + o[1], v[2] + o[2], v[3] + o[3]}
+}
+
+func (v *arrayVec4) add(a, b arrayVec4) {
+	v[0] = a[0] + b[0]
+	v[1] = a[1] + b[1]
+	v[2] = a[2] + b[2]
+	v[3] = a[3] + b[3]
+}
 
 //-----------------------------------------------------------------------------
 
@@ -43,11 +105,11 @@ func ExampleVec4() {
 	b := Vec4{1.1, 2.2, 3.3, 4.4}
 	c := b.Plus(Vec4{5.5, 6.6, 7.7, 8.8})
 	d := b
-	d.Add(Vec4{5.5, 6.6, 7.7, 8.8})
+	d = d.Plus(Vec4{5.5, 6.6, 7.7, 8.8})
 	e := b.Slash(2.2)
 	f := e.Dehomogenized()
 	g := b
-	g.Normalize()
+	g = g.Normalized()
 
 	fmt.Printf("a == %#v\n", a)
 	fmt.Printf("b == %#v\n", b)
@@ -81,15 +143,6 @@ func TestVec4_Dehomogenized(t *testing.T) {
 
 //-----------------------------------------------------------------------------
 
-func TestVec4_Add(t *testing.T) {
-	a := Vec4{1.1, 2.2, 3.3, 4.4}
-	b := Vec4{5.5, 6.6, 7.7, 8.8}
-	a.Add(b)
-	if a.X != 6.6 || a.Y != 8.8 || a.Z != 11 || a.W != 13.200001 {
-		t.Errorf("Wrong result: %#v", a)
-	}
-}
-
 func TestVec4_Plus(t *testing.T) {
 	a := Vec4{1.1, 2.2, 3.3, 4.4}
 	b := Vec4{5.5, 6.6, 7.7, 8.8}
@@ -99,14 +152,6 @@ func TestVec4_Plus(t *testing.T) {
 	}
 	if a.X != 1.1 || a.Y != 2.2 || a.Z != 3.3 || a.W != 4.4 {
 		t.Errorf("First operand modified")
-	}
-}
-
-func BenchmarkVec4_Add(b *testing.B) {
-	m := Vec4{1.1, 2.2, 3.3, 4.4}
-	n := Vec4{5.5, 6.6, 7.7, 8.8}
-	for i := 0; i < b.N; i++ {
-		m.Add(n)
 	}
 }
 
@@ -120,16 +165,73 @@ func BenchmarkVec4_Plus(b *testing.B) {
 	_ = o
 }
 
-//-----------------------------------------------------------------------------
-
-func TestVec4_Subtract(t *testing.T) {
-	a := Vec4{1.1, 2.2, 3.3, 4.4}
-	b := Vec4{5.5, 6.6, 7.7, 8.8}
-	a.Subtract(b)
-	if a.X != -4.4 || a.Y != -4.3999996 || a.Z != -4.3999996 || a.W != -4.4 {
-		t.Errorf("Wrong result: %#v", a)
+func BenchmarkVec4_Plus_Array(b *testing.B) {
+	m := arrayVec4{1.1, 2.2, 3.3, 4.4}
+	n := arrayVec4{5.5, 6.6, 7.7, 8.8}
+	var o arrayVec4
+	for i := 0; i < b.N; i++ {
+		o = m.plus(n)
 	}
+	_ = o
 }
+
+func BenchmarkVec4_Plus_Self(b *testing.B) {
+	m := Vec4{1.1, 2.2, 3.3, 4.4}
+	n := Vec4{5.5, 6.6, 7.7, 8.8}
+	for i := 0; i < b.N; i++ {
+		m = m.Plus(n)
+	}
+	_ = m
+}
+
+func BenchmarkVec4_Plus_ArraySelf(b *testing.B) {
+	m := arrayVec4{1.1, 2.2, 3.3, 4.4}
+	n := arrayVec4{5.5, 6.6, 7.7, 8.8}
+	for i := 0; i < b.N; i++ {
+		m = m.plus(n)
+	}
+	_ = m
+}
+
+func BenchmarkVec4_Plus_ByRef(b *testing.B) {
+	m := Vec4{1.1, 2.2, 3.3, 4.4}
+	n := Vec4{5.5, 6.6, 7.7, 8.8}
+	var o Vec4
+	for i := 0; i < b.N; i++ {
+		o.add(m, n)
+	}
+	_ = o
+}
+
+func BenchmarkVec4_Plus_ArrayByRef(b *testing.B) {
+	m := arrayVec4{1.1, 2.2, 3.3, 4.4}
+	n := arrayVec4{5.5, 6.6, 7.7, 8.8}
+	var o arrayVec4
+	for i := 0; i < b.N; i++ {
+		o.add(m, n)
+	}
+	_ = o
+}
+
+func BenchmarkVec4_Plus_ByRefSelf(b *testing.B) {
+	m := Vec4{1.1, 2.2, 3.3, 4.4}
+	n := Vec4{5.5, 6.6, 7.7, 8.8}
+	for i := 0; i < b.N; i++ {
+		m.add(m, n)
+	}
+	_ = m
+}
+
+func BenchmarkVec4_Plus_ArrayByRefSelf(b *testing.B) {
+	m := arrayVec4{1.1, 2.2, 3.3, 4.4}
+	n := arrayVec4{5.5, 6.6, 7.7, 8.8}
+	for i := 0; i < b.N; i++ {
+		m.add(m, n)
+	}
+	_ = m
+}
+
+//-----------------------------------------------------------------------------
 
 func TestVec4_Minus(t *testing.T) {
 	a := Vec4{1.1, 2.2, 3.3, 4.4}
@@ -145,14 +247,6 @@ func TestVec4_Minus(t *testing.T) {
 
 //-----------------------------------------------------------------------------
 
-func TestVec4_Invert(t *testing.T) {
-	a := Vec4{1.1, 2.2, 3.3, 4.4}
-	a.Invert()
-	if a.X != -1.1 || a.Y != -2.2 || a.Z != -3.3 || a.W != -4.4 {
-		t.Errorf("Wrong result: %#v", a)
-	}
-}
-
 func TestVec4_Inverse(t *testing.T) {
 	a := Vec4{1.1, 2.2, 3.3, 4.4}
 	b := a.Inverse()
@@ -166,14 +260,6 @@ func TestVec4_Inverse(t *testing.T) {
 
 //-----------------------------------------------------------------------------
 
-func TestVec4_Multiply(t *testing.T) {
-	a := Vec4{1.1, 2.2, 3.3, 4.4}
-	a.Multiply(5.5)
-	if a.X != 6.05 || a.Y != 12.1 || a.Z != 18.15 || a.W != 24.2 {
-		t.Errorf("Wrong result: %#v", a)
-	}
-}
-
 func TestVec4_Times(t *testing.T) {
 	a := Vec4{1.1, 2.2, 3.3, 4.4}
 	b := a.Times(5.5)
@@ -185,15 +271,45 @@ func TestVec4_Times(t *testing.T) {
 	}
 }
 
-//-----------------------------------------------------------------------------
-
-func TestVec4_Divide(t *testing.T) {
-	a := Vec4{1.1, 2.2, 3.3, 4.4}
-	a.Divide(5.5)
-	if a.X != 0.2 || a.Y != 0.4 || a.Z != 0.59999996 || a.W != 0.8 {
-		t.Errorf("Wrong result: %#v", a)
+func BenchmarkVec4_Times(b *testing.B) {
+	m := Vec4{1.1, 2.2, 3.3, 4.4}
+	n := float32(5.5)
+	var o Vec4
+	for i := 0; i < b.N; i++ {
+		o = m.Times(n)
 	}
+	_ = o
 }
+
+func BenchmarkVec4_Times_Self(b *testing.B) {
+	m := Vec4{1.1, 2.2, 3.3, 4.4}
+	n := float32(5.5)
+	for i := 0; i < b.N; i++ {
+		m = m.Times(n)
+	}
+	_ = m
+}
+
+func BenchmarkVec4_Times_ByRef(b *testing.B) {
+	m := Vec4{1.1, 2.2, 3.3, 4.4}
+	n := float32(5.5)
+	var o Vec4
+	for i := 0; i < b.N; i++ {
+		o.multiply(m, n)
+	}
+	_ = o
+}
+
+func BenchmarkVec4_Times_ByRefSelf(b *testing.B) {
+	m := Vec4{1.1, 2.2, 3.3, 4.4}
+	n := float32(5.5)
+	for i := 0; i < b.N; i++ {
+		m.multiply(m, n)
+	}
+	_ = m
+}
+
+//-----------------------------------------------------------------------------
 
 func TestVec4_Slash(t *testing.T) {
 	a := Vec4{1.1, 2.2, 3.3, 4.4}
@@ -204,6 +320,44 @@ func TestVec4_Slash(t *testing.T) {
 	if a.X != 1.1 || a.Y != 2.2 || a.Z != 3.3 || a.W != 4.4 {
 		t.Errorf("First operand modified")
 	}
+}
+
+func BenchmarkVec4_Slash(b *testing.B) {
+	m := Vec4{1.1, 2.2, 3.3, 4.4}
+	n := float32(5.5)
+	var o Vec4
+	for i := 0; i < b.N; i++ {
+		o = m.Slash(n)
+	}
+	_ = o
+}
+
+func BenchmarkVec4_Slash_Self(b *testing.B) {
+	m := Vec4{1.1, 2.2, 3.3, 4.4}
+	n := float32(5.5)
+	for i := 0; i < b.N; i++ {
+		m = m.Slash(n)
+	}
+	_ = m
+}
+
+func BenchmarkVec4_Slash_ByRef(b *testing.B) {
+	m := Vec4{1.1, 2.2, 3.3, 4.4}
+	n := float32(5.5)
+	var o Vec4
+	for i := 0; i < b.N; i++ {
+		o.divide(m, n)
+	}
+	_ = o
+}
+
+func BenchmarkVec4_Slash_ByRefSelf(b *testing.B) {
+	m := Vec4{1.1, 2.2, 3.3, 4.4}
+	n := float32(5.5)
+	for i := 0; i < b.N; i++ {
+		m.divide(m, n)
+	}
+	_ = m
 }
 
 //-----------------------------------------------------------------------------
@@ -233,26 +387,13 @@ func TestVec4_Length(t *testing.T) {
 	}
 }
 
+//-----------------------------------------------------------------------------
+
 func TestVec4_Normalized(t *testing.T) {
 	a := Vec4{1.1, 2.2, 3.3, 4.4}
 	b := a.Normalized()
 	if b.X != 0.18257418 || b.Y != 0.36514837 || b.Z != 0.5477226 || b.W != 0.73029673 {
 		t.Errorf("Wrong result: %#v", b)
-	}
-}
-
-func TestVec4_Normalize(t *testing.T) {
-	a := Vec4{1.1, 2.2, 3.3, 4.4}
-	a.Normalize()
-	if a.X != 0.18257418 || a.Y != 0.36514837 || a.Z != 0.5477226 || a.W != 0.73029673 {
-		t.Errorf("Wrong result: %#v", a)
-	}
-}
-
-func BenchmarkVec4_Normalize(b *testing.B) {
-	m := Vec4{1.1, 2.2, 3.3, 4.4}
-	for i := 0; i < b.N; i++ {
-		m.Normalize()
 	}
 }
 
@@ -263,6 +404,22 @@ func BenchmarkVec4_Normalized(b *testing.B) {
 		o = m.Normalized()
 	}
 	_ = o
+}
+
+func BenchmarkVec4_Normalized_Self(b *testing.B) {
+	m := Vec4{1.1, 2.2, 3.3, 4.4}
+	for i := 0; i < b.N; i++ {
+		m = m.Normalized()
+	}
+	_ = m
+}
+
+func BenchmarkVec4_Normalize_ByRef(b *testing.B) {
+	m := Vec4{1.1, 2.2, 3.3, 4.4}
+	for i := 0; i < b.N; i++ {
+		m.normalize()
+	}
+	_ = m
 }
 
 //-----------------------------------------------------------------------------

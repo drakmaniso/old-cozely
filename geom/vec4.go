@@ -1,4 +1,4 @@
-// Copyright (c) 2013 Laurent Moussault. All rights reserved.
+// Copyright (c) 2013-2016 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
 package geom
@@ -7,7 +7,7 @@ import "github.com/drakmaniso/glam/math"
 
 //------------------------------------------------------------------------------
 
-// `Vec4` is single-precision vector with 4 components.
+// Vec4 is a single-precision vector with 4 components.
 type Vec4 struct {
 	X float32
 	Y float32
@@ -17,139 +17,62 @@ type Vec4 struct {
 
 //------------------------------------------------------------------------------
 
-// `Dehomogenized` returns the dehomogenization of `a` (perspective divide).
-// `a.W` must be non-zero.
-func (a Vec4) Dehomogenized() Vec3 {
-	return Vec3{a.X / a.W, a.Y / a.W, a.Z / a.W}
+// Dehomogenized returns the dehomogenization of the vector (i.e. perspective
+// divide).
+//
+// Important: W must be non-zero.
+func (v Vec4) Dehomogenized() Vec3 {
+	return Vec3{v.X / v.W, v.Y / v.W, v.Z / v.W}
 }
 
 //------------------------------------------------------------------------------
 
-// `Plus` returns the sum `a + b`.
-//
-// See also `Add`.
-func (a Vec4) Plus(b Vec4) Vec4 {
-	return Vec4{a.X + b.X, a.Y + b.Y, a.Z + b.Z, a.W + b.W}
+// Plus returns the sum with another vector.
+func (v Vec4) Plus(o Vec4) Vec4 {
+	return Vec4{v.X + o.X, v.Y + o.Y, v.Z + o.Z, v.W + o.W}
 }
 
-// `Add` sets `a` to the sum `a + b`.
-//
-// More efficient than `Plus`.
-func (a *Vec4) Add(b Vec4) {
-	a.X += b.X
-	a.Y += b.Y
-	a.Z += b.Z
-	a.W += b.W
+// Minus returns the difference with another vector.
+func (v Vec4) Minus(o Vec4) Vec4 {
+	return Vec4{v.X - o.X, v.Y - o.Y, v.Z - o.Z, v.W - o.W}
 }
 
-//------------------------------------------------------------------------------
-
-// `Minus` returns the difference `a - b`.
-//
-// See also `Subtract`.
-func (a Vec4) Minus(b Vec4) Vec4 {
-	return Vec4{a.X - b.X, a.Y - b.Y, a.Z - b.Z, a.W - b.W}
+// Inverse return the inverse of the vector.
+func (v Vec4) Inverse() Vec4 {
+	return Vec4{-v.X, -v.Y, -v.Z, -v.W}
 }
 
-// `Subtract` sets `a` to the difference `a - b`.
-// More efficient than `Minus`.
-func (a *Vec4) Subtract(b Vec4) {
-	a.X -= b.X
-	a.Y -= b.Y
-	a.Z -= b.Z
-	a.W -= b.W
+// Times returns the product with a scalar.
+func (v Vec4) Times(s float32) Vec4 {
+	return Vec4{v.X * s, v.Y * s, v.Z * s, v.W * s}
+}
+
+// Slash returns the division by a scalar (which must be non-zero).
+func (v Vec4) Slash(s float32) Vec4 {
+	return Vec4{v.X / s, v.Y / s, v.Z / s, v.W / s}
 }
 
 //------------------------------------------------------------------------------
 
-// `Inverse` return the inverse of `a`.
-//
-// See also `Invert`.
-func (a Vec4) Inverse() Vec4 {
-	return Vec4{-a.X, -a.Y, -a.Z, -a.W}
-}
-
-// `Invert` sets `a` to its inverse.
-// More efficient than `Inverse`.
-func (a *Vec4) Invert() {
-	a.X = -a.X
-	a.Y = -a.Y
-	a.Z = -a.Z
-	a.W = -a.W
+// Dot returns the dot product with another vector.
+func (v Vec4) Dot(o Vec4) float32 {
+	return v.X*o.X + v.Y*o.Y + v.Z*o.Z + v.W*o.W
 }
 
 //------------------------------------------------------------------------------
 
-// `Times` returns the product of `a` with the scalar `s`.
+// Length returns the euclidian length of the vector.
+func (v Vec4) Length() float32 {
+	return math.Sqrt(v.X*v.X + v.Y*v.Y + v.Z*v.Z + v.W*v.W)
+}
+
+// Normalized return the normalization of the vector (i.e. the vector divided
+// by its length).
 //
-// See also `Multiply`.
-func (a Vec4) Times(s float32) Vec4 {
-	return Vec4{a.X * s, a.Y * s, a.Z * s, a.W * s}
-}
-
-// `Multiply` sets `a` to the product of `a` with the scalar `s`.
-// More efficient than `Times`.
-func (a *Vec4) Multiply(s float32) {
-	a.X *= s
-	a.Y *= s
-	a.Z *= s
-	a.W *= s
-}
-
-//------------------------------------------------------------------------------
-
-// `Slash` returns the division of `a` by the scalar `s`.
-// `s` must be non-zero.
-//
-// See also `Divide`.
-func (a Vec4) Slash(s float32) Vec4 {
-	return Vec4{a.X / s, a.Y / s, a.Z / s, a.W / s}
-}
-
-// `Divide` sets `a` to the division of `a` by the scalar `s`.
-// `s` must be non-zero.
-//
-// More efficient than `Slash`.
-func (a *Vec4) Divide(s float32) {
-	a.X /= s
-	a.Y /= s
-	a.Z /= s
-	a.W /= s
-}
-
-//------------------------------------------------------------------------------
-
-// `Dot` returns the dot product of `a` and `b`.
-func (a Vec4) Dot(b Vec4) float32 {
-	return a.X*b.X + a.Y*b.Y + a.Z*b.Z + a.W*b.W
-}
-
-//------------------------------------------------------------------------------
-
-// `Length` returns `|a|` (the euclidian length of `a`).
-func (a Vec4) Length() float32 {
-	return math.Sqrt(a.X*a.X + a.Y*a.Y + a.Z*a.Z + a.W*a.W)
-}
-
-// `Normalized` return `a/|a|` (i.e. the normalization of `a`).
-// `a` must be non-zero.
-//
-// See also `Normalize`.
-func (a Vec4) Normalized() Vec4 {
-	length := math.Sqrt(a.X*a.X + a.Y*a.Y + a.Z*a.Z + a.W*a.W)
-	return Vec4{a.X / length, a.Y / length, a.Z / length, a.W / length}
-}
-
-// `Normalize` sets `a` to `a/|a|` (i.e. normalizes `a`).
-// `a` must be non-zero.
-//
-// More efficitent than `Normalized`.
-func (a *Vec4) Normalize() {
-	length := math.Sqrt(a.X*a.X + a.Y*a.Y + a.Z*a.Z + a.W*a.W)
-	a.X /= length
-	a.Y /= length
-	a.Z /= length
-	a.W /= length
+// Important: Length() must be non-zero.
+func (v Vec4) Normalized() Vec4 {
+	length := math.Sqrt(v.X*v.X + v.Y*v.Y + v.Z*v.Z + v.W*v.W)
+	return Vec4{v.X / length, v.Y / length, v.Z / length, v.W / length}
 }
 
 //------------------------------------------------------------------------------

@@ -1,4 +1,4 @@
-// Copyright (c) 2013 Laurent Moussault. All rights reserved.
+// Copyright (c) 2013-2016 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
 package geom
@@ -40,11 +40,11 @@ func ExampleVec3() {
 	b := Vec3{1.1, 2.2, 3.3}
 	c := b.Plus(Vec3{4.4, 5.5, 6.6})
 	d := b
-	d.Add(Vec3{4.4, 5.5, 6.6})
+	d = d.Plus(Vec3{4.4, 5.5, 6.6})
 	e := b.Slash(2.2)
 	f := e.Homogenized()
 	g := b
-	g.Normalize()
+	g = g.Normalized()
 
 	fmt.Printf("a == %#v\n", a)
 	fmt.Printf("b == %#v\n", b)
@@ -104,15 +104,6 @@ func TestVec3_Dehomogenized(t *testing.T) {
 
 //-----------------------------------------------------------------------------
 
-func TestVec3_Add(t *testing.T) {
-	a := Vec3{1.1, 2.2, 3.3}
-	b := Vec3{4.4, 5.5, 6.6}
-	a.Add(b)
-	if a.X != 5.5 || a.Y != 7.7 || a.Z != 9.9 {
-		t.Errorf("Wrong result: %#v", a)
-	}
-}
-
 func TestVec3_Plus(t *testing.T) {
 	a := Vec3{1.1, 2.2, 3.3}
 	b := Vec3{4.4, 5.5, 6.6}
@@ -125,34 +116,7 @@ func TestVec3_Plus(t *testing.T) {
 	}
 }
 
-func BenchmarkVec3_Add(b *testing.B) {
-	m := Vec3{1.1, 2.2, 3.3}
-	n := Vec3{5.5, 6.6, 7.7}
-	for i := 0; i < b.N; i++ {
-		m.Add(n)
-	}
-}
-
-func BenchmarkVec3_Plus(b *testing.B) {
-	m := Vec3{1.1, 2.2, 3.3}
-	n := Vec3{5.5, 6.6, 7.7}
-	var o Vec3
-	for i := 0; i < b.N; i++ {
-		o = m.Plus(n)
-	}
-	_ = o
-}
-
 //-----------------------------------------------------------------------------
-
-func TestVec3_Subtract(t *testing.T) {
-	a := Vec3{1.1, 2.2, 3.3}
-	b := Vec3{4.4, 5.5, 6.6}
-	a.Subtract(b)
-	if a.X != -3.3000002 || a.Y != -3.3 || a.Z != -3.3 {
-		t.Errorf("Wrong result: %#v", a)
-	}
-}
 
 func TestVec3_Minus(t *testing.T) {
 	a := Vec3{1.1, 2.2, 3.3}
@@ -168,14 +132,6 @@ func TestVec3_Minus(t *testing.T) {
 
 //-----------------------------------------------------------------------------
 
-func TestVec3_Invert(t *testing.T) {
-	a := Vec3{1.1, 2.2, 3.3}
-	a.Invert()
-	if a.X != -1.1 || a.Y != -2.2 || a.Z != -3.3 {
-		t.Errorf("Wrong result: %#v", a)
-	}
-}
-
 func TestVec3_Inverse(t *testing.T) {
 	a := Vec3{1.1, 2.2, 3.3}
 	b := a.Inverse()
@@ -189,14 +145,6 @@ func TestVec3_Inverse(t *testing.T) {
 
 //-----------------------------------------------------------------------------
 
-func TestVec3_Multiply(t *testing.T) {
-	a := Vec3{1.1, 2.2, 3.3}
-	a.Multiply(4.4)
-	if a.X != 4.84 || a.Y != 9.68 || a.Z != 14.52 {
-		t.Errorf("Wrong result: %#v", a)
-	}
-}
-
 func TestVec3_Times(t *testing.T) {
 	a := Vec3{1.1, 2.2, 3.3}
 	b := a.Times(4.4)
@@ -209,14 +157,6 @@ func TestVec3_Times(t *testing.T) {
 }
 
 //-----------------------------------------------------------------------------
-
-func TestVec3_Divide(t *testing.T) {
-	a := Vec3{1.1, 2.2, 3.3}
-	a.Divide(4.4)
-	if a.X != 0.25 || a.Y != 0.5 || a.Z != 0.75 {
-		t.Errorf("Wrong result: %#v", a)
-	}
-}
 
 func TestVec3_Slash(t *testing.T) {
 	a := Vec3{1.1, 2.2, 3.3}
@@ -276,30 +216,6 @@ func TestVec3_Normalized(t *testing.T) {
 	if b.X != 0.26726127 || b.Y != 0.53452253 || b.Z != 0.8017838 {
 		t.Errorf("Wrong result: %#v", b)
 	}
-}
-
-func TestVec3_Normalize(t *testing.T) {
-	a := Vec3{1.1, 2.2, 3.3}
-	a.Normalize()
-	if a.X != 0.26726127 || a.Y != 0.53452253 || a.Z != 0.8017838 {
-		t.Errorf("Wrong result: %#v", a)
-	}
-}
-
-func BenchmarkVec3_Normalize(b *testing.B) {
-	m := Vec3{1.1, 2.2, 3.3}
-	for i := 0; i < b.N; i++ {
-		m.Normalize()
-	}
-}
-
-func BenchmarkVec3_Normalized(b *testing.B) {
-	m := Vec3{1.1, 2.2, 3.3}
-	var o Vec3
-	for i := 0; i < b.N; i++ {
-		o = m.Normalized()
-	}
-	_ = o
 }
 
 //-----------------------------------------------------------------------------

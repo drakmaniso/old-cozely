@@ -1,4 +1,4 @@
-// Copyright (c) 2013 Laurent Moussault. All rights reserved.
+// Copyright (c) 2013-2016 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
 package geom
@@ -7,7 +7,7 @@ import "github.com/drakmaniso/glam/math"
 
 //------------------------------------------------------------------------------
 
-// `Vec3` is a single-precision vector with 3 components.
+// Vec3 is a single-precision vector with 3 components.
 type Vec3 struct {
 	X float32
 	Y float32
@@ -16,116 +16,57 @@ type Vec3 struct {
 
 //------------------------------------------------------------------------------
 
-// `Homogenized` returns the homogeneous coordinates of `a`.
+// Homogenized returns the homogeneous coordinates of the vector.
 func (a Vec3) Homogenized() Vec4 {
 	return Vec4{a.X, a.Y, a.Z, 1.0}
 }
 
-// `HomogenizedAsDirection` returns the homogeneous coordinates
-// of a point at infinity in the direction of `a`.
+// HomogenizedAsDirection returns the homogeneous coordinates
+// of a point at infinity in the direction of the vector.
 func (a Vec3) HomogenizedAsDirection() Vec4 {
 	return Vec4{a.X, a.Y, a.Z, 0.0}
 }
 
-// `Returns` the dehomogenization of `a` (perspective divide).
-// `a.Z` must be non-zero.
+// Dehomogenized returns the dehomogenization of the vector (i.e. perspective
+// divide).
+//
+// Important: Z must be non-zero.
 func (a Vec3) Dehomogenized() Vec2 {
 	return Vec2{a.X / a.Z, a.Y / a.Z}
 }
 
 //------------------------------------------------------------------------------
 
-// `Plus` returns the sum `a + b`.
-//
-// See also `Add`.
+// Plus returns the sum with another vector.
 func (a Vec3) Plus(b Vec3) Vec3 {
 	return Vec3{a.X + b.X, a.Y + b.Y, a.Z + b.Z}
 }
 
-// `Add` sets `a` to the sum `a + b`.
-//
-// More efficient than `Plus`.
-func (a *Vec3) Add(b Vec3) {
-	a.X += b.X
-	a.Y += b.Y
-	a.Z += b.Z
-}
-
-//------------------------------------------------------------------------------
-
-// `Minus` returns the difference `a - b`.
-//
-// See also `Subtract`.
+// Minus returns the difference with another vector.
 func (a Vec3) Minus(b Vec3) Vec3 {
 	return Vec3{a.X - b.X, a.Y - b.Y, a.Z - b.Z}
 }
 
-// `Subtract` sets `a` to the difference `a - b`.
-// More efficient than `Minus`.
-func (a *Vec3) Subtract(b Vec3) {
-	a.X -= b.X
-	a.Y -= b.Y
-	a.Z -= b.Z
-}
-
-//------------------------------------------------------------------------------
-
-// `Inverse` return the inverse of `a`.
-//
-// See also `Invert`.
+// Inverse return the inverse of the vector.
 func (a Vec3) Inverse() Vec3 {
 	return Vec3{-a.X, -a.Y, -a.Z}
 }
 
-// `Invert` sets `a` to its inverse.
-//
-// More efficient than `Inverse`.
-func (a *Vec3) Invert() {
-	a.X = -a.X
-	a.Y = -a.Y
-	a.Z = -a.Z
-}
-
-//------------------------------------------------------------------------------
-
-// `Times` returns the product of `a` with the scalar `s`.
-//
-// See also `Multiply`.
+// Times returns the product with a scalar.
 func (a Vec3) Times(s float32) Vec3 {
 	return Vec3{a.X * s, a.Y * s, a.Z * s}
 }
 
-// `Multiply` sets `a` to the product of `a` with the scalar `s`.
-// More efficient than `Times`.
-func (a *Vec3) Multiply(s float32) {
-	a.X *= s
-	a.Y *= s
-	a.Z *= s
-}
-
-//------------------------------------------------------------------------------
-
-// `Slash` returns the division of `a` by the scalar `s`.
-// `s` must be non-zero.
+// Slash returns the division by a scalar.
 //
-// See also `Divide`.
+// Important: the scalar must be non-zero.
 func (a Vec3) Slash(s float32) Vec3 {
 	return Vec3{a.X / s, a.Y / s, a.Z / s}
 }
 
-// `Divide` sets `a` to the division of `a` by the scalar `s`.
-// `s` must be non-zero.
-//
-// More efficient than `Slash`.
-func (a *Vec3) Divide(s float32) {
-	a.X /= s
-	a.Y /= s
-	a.Z /= s
-}
-
 //------------------------------------------------------------------------------
 
-// `Cross` returns the cross product of `a` and `b`.
+// Cross returns the cross product with another vector.
 func (a Vec3) Cross(b Vec3) Vec3 {
 	return Vec3{
 		a.Y*b.Z - a.Z*b.Y,
@@ -134,38 +75,25 @@ func (a Vec3) Cross(b Vec3) Vec3 {
 	}
 }
 
-//------------------------------------------------------------------------------
-
-// `Dot` returns the dot product of `a` and `b`.
+// Dot returns the dot product with another vector.
 func (a Vec3) Dot(b Vec3) float32 {
 	return a.X*b.X + a.Y*b.Y + a.Z*b.Z
 }
 
 //------------------------------------------------------------------------------
 
-// `Length` returns `|a|` (the euclidian length of `a`).
+// Length returns the euclidian length.
 func (a Vec3) Length() float32 {
 	return math.Sqrt(a.X*a.X + a.Y*a.Y + a.Z*a.Z)
 }
 
-// `Normalized` return `a/|a|` (i.e. the normalization of `a`).
-// `a` must be non-zero.
+// Normalized return the normalization of the vector (i.e. the vector divided
+// by its length).
 //
-// See also `Normalize`.
+// Important: Length() must be non-zero.
 func (a Vec3) Normalized() Vec3 {
 	length := math.Sqrt(a.X*a.X + a.Y*a.Y + a.Z*a.Z)
 	return Vec3{a.X / length, a.Y / length, a.Z / length}
-}
-
-// `Normalize` sets `a` to `a/|a|` (i.e. normalizes `a`).
-// `a` must be non-zero.
-//
-// More efficitent than `Normalized`.
-func (a *Vec3) Normalize() {
-	length := math.Sqrt(a.X*a.X + a.Y*a.Y + a.Z*a.Z)
-	a.X /= length
-	a.Y /= length
-	a.Z /= length
 }
 
 //------------------------------------------------------------------------------
