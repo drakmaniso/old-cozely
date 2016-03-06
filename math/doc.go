@@ -1,3 +1,6 @@
-// Package GLaM Math provides fast float32 math functions.
-//
+/*
+Package math provides efficient float32 math functions.
+
+It uses assembly when appropriate.
+*/
 package math

@@ -1,4 +1,4 @@
 /*
-Package glam implements a minimalist game engine.
+Package glam provides a minimalist framework for making games in Go.
 */
 package glam

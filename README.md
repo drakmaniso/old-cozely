@@ -1,44 +1,47 @@
-Glam: a minimalist game engine in Go
-====================================
+Glam: a minimalist framework for making games in Go
+===================================================
 
 
-**WARNING: This is a work in progress, and far from complete.**
+**WARNING: This is a work in progress, very incomplete and not yet functional.**
+
+
+Goals
+-----
+
+I've started this project mostly for my personal use, to be able to write small
+games in Go. It's not meant as a general purpose engine, but may become useful to
+others at some point.
+
+The main inspiration behind the design is the Lua framework Löve. The goal is to
+provide thin abstractions above OpenGL and SDL.
+
+By order of priority, the API aims for:
+
+- simplicity (i.e. to keep the implementation small and manageable),
+- convenience (i.e. to facilitate writing games),
+- and, only when not in contradiction with the first two points, efficiency.
 
 
 Implemented Features
 --------------------
 
-- Vectors and matrices.
-- Efficient single-precision math.
-- Some noise functions (Perlin, Simplex...).
+- Package geom: Vectors and matrices (incomplete).
+- Package math: Efficient single-precision math.
+- Package noise: Perlin noise
 
 
-Package geom
-------------
+License
+-------
 
-    import "github.com/drakmaniso/glam/geom"
-
-This package provides vectors and matrices, and their associated operations.
-
-- The names mirrors the GLSL types: Vec2, Vec3, Vec4, Mat3, Mat4, IVec3...
-- All types are pure values: there's no heap allocation, and no hidden data.
-- All types have the same memory layout than their corresponding GLSL types.
-- Most methods are inlined by the compiler.
+The code is under a simplified BSD license (see LICENSE file). When a sub-package
+is derived from anothe source, the directory contain the appropriate LICENSE file. 
 
 
-Package math
-------------
+Credits
+-------
 
-    import "github.com/drakmaniso/glam/math"
-
-This package aims to provide *fast* float32 math functions, using assembly
-when appropriate.
-
-
-Package noise
--------------
-
-    import "github.com/drakmaniso/glam/noise"
+Some implementations of the single-precision math functions are
+derived from the Go source code.
 
 The Perlin and Simplex noise functions are adapted from
 ["Simplex Noise Demystified"](http://www.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf)
