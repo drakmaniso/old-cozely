@@ -7,91 +7,38 @@ import "github.com/drakmaniso/glam/math"
 
 //------------------------------------------------------------------------------
 
-// Mat4 is a single-precision matrix with 4 columns and 4 rows.
-//
-// Note: matrices are stored in column-major order, so when writing literals
-// remember to use the transpose.
+/*
+Mat4 is a single-precision matrix with 4 columns and 4 rows.
+
+Note: matrices are stored in column-major order, so when writing literals
+remember to use the transpose of the mathematical notation.
+In other words, this declaration:
+    M := {
+		{a, b, c, d},
+		{e, f, g, h},
+		{i, j, k, l},
+		{m, n, o, p},
+    }
+corresponds to the following mathematical notation:
+	⎡ a  e  i  m ⎤
+	⎢ b  f  j  n ⎥
+	⎢ c  g  k  o ⎥
+	⎣ d  h  l  p ⎦
+The same inversion happens with the indices: M[column][row] correspond to the
+mathematical indices "row,column".
+*/
 type Mat4 [4][4]float32
-
-//------------------------------------------------------------------------------
-
-// MakeMat4 returns a matrix. The elements are stored in
-// alphabetical order (column-major order).
-//
-// See also NewMat4 and SetTo.
-func MakeMat4(
-	a, e, i, m,
-	b, f, j, n,
-	c, g, k, o,
-	d, h, l, p float32,
-) Mat4 {
-	return Mat4{
-		{a, b, c, d},
-		{e, f, g, h},
-		{i, j, k, l},
-		{m, n, o, p},
-	}
-}
-
-// NewMat4 allocates and returns a new matrix. The elements are stored in
-// alphabetical order (column-major order).
-//
-// See also MakeMat4 and SetTo.
-func NewMat4(
-	a, e, i, m,
-	b, f, j, n,
-	c, g, k, o,
-	d, h, l, p float32,
-) *Mat4 {
-	return &Mat4{
-		{a, b, c, d},
-		{e, f, g, h},
-		{i, j, k, l},
-		{m, n, o, p},
-	}
-}
-
-// SetTo initializes a matrix. The elements are stored in
-// alphabetical order (column-major order).
-//
-// See also NewMat4 and SetTo.
-func (m *Mat4) SetTo(
-	a, e, i, mm,
-	b, f, j, n,
-	c, g, k, o,
-	d, h, l, p float32,
-) {
-	m[0][0] = a
-	m[0][1] = b
-	m[0][2] = c
-	m[0][3] = d
-
-	m[1][0] = e
-	m[1][1] = f
-	m[1][2] = g
-	m[1][3] = h
-
-	m[2][0] = i
-	m[2][1] = j
-	m[2][2] = k
-	m[2][3] = l
-
-	m[3][0] = mm
-	m[3][1] = n
-	m[3][2] = o
-	m[3][3] = p
-}
 
 //------------------------------------------------------------------------------
 
 // Mat4Identity returns a 4x4 Identity matrix.
 func Mat4Identity() Mat4 {
-	return MakeMat4(
-		1, 0, 0, 0,
-		0, 1, 0, 0,
-		0, 0, 1, 0,
-		0, 0, 0, 1,
-	)
+	return Mat4{
+		{1, 0, 0, 0},
+		{0, 1, 0, 0},
+		{0, 0, 1, 0},
+		{0, 0, 0, 1},
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -236,14 +183,12 @@ func LookAt(eye, center, up Vec3) Mat4 {
 	s := f.Cross(u).Normalized()
 	u = s.Cross(f)
 
-	res := MakeMat4(
-		s.X, s.Y, s.Z, -s.Dot(eye),
-		u.X, u.Y, u.Z, -u.Dot(eye),
-		-f.X, -f.Y, -f.Z, f.Dot(eye),
-		0, 0, 0, 1,
-	)
-
-	return res
+	return Mat4{
+		{s.X, u.X, -f.X, 0},
+		{s.Y, u.Y, -f.Y, 0},
+		{s.Z, u.Z, -f.Z, 0},
+		{-s.Dot(eye), -u.Dot(eye), f.Dot(eye), 1},
+	}
 }
 
 //------------------------------------------------------------------------------

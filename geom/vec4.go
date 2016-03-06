@@ -8,37 +8,15 @@ import "github.com/drakmaniso/glam/math"
 //------------------------------------------------------------------------------
 
 // Vec4 is a single-precision vector with 4 components.
+//
+// Note that in order to oblige the "go vet" tool, you should write vectors
+// literals like this:
+//  v := geom.Vec4{X: 1, Y: 2, Z: 3, W: 4} 
 type Vec4 struct {
 	X float32
 	Y float32
 	Z float32
 	W float32
-}
-
-//------------------------------------------------------------------------------
-
-// MakeVec4 returns a vector.
-//
-// See also NewVec4 and SetTo.
-func MakeVec4(x, y, z, w float32) Vec4 {
-	return Vec4{x, y, z, w}
-}
-
-// NewVec4 returns a vector.
-//
-// See also MakeVec4 and SetTo.
-func NewVec4(x, y, z, w float32) *Vec4 {
-	return &Vec4{x, y, z, w}
-}
-
-// SetTo initializes a vector.
-//
-// See also MakeVec4 and NewVec4.
-func (v *Vec4) SetTo(x, y, z, w float32) {
-    v.X = x
-    v.Y = y
-    v.Z = z
-    v.W = w
 }
 
 //------------------------------------------------------------------------------
