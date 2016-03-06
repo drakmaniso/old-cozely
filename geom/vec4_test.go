@@ -18,7 +18,7 @@ func TestVec4_Creation(t *testing.T) {
 	if a.X != 0 || a.Y != 0 || a.Z != 0 || a.W != 0 {
 		t.Errorf("Zero-initialization failed")
 	}
-	b := geom.Vec4{1.1, 2.2, 3.3, 4.4}
+	b := geom.MakeVec4(1.1, 2.2, 3.3, 4.4)
 	if b.X != 1.1 || b.Y != 2.2 || b.Z != 3.3 || b.W != 4.4 {
 		t.Errorf("Literal initialization failed")
 	}
@@ -42,10 +42,10 @@ func TestVec4_Creation(t *testing.T) {
 
 func ExampleVec4() {
 	var a geom.Vec4
-	b := geom.Vec4{1.1, 2.2, 3.3, 4.4}
-	c := b.Plus(geom.Vec4{5.5, 6.6, 7.7, 8.8})
+	b := geom.MakeVec4(1.1, 2.2, 3.3, 4.4)
+	c := b.Plus(geom.MakeVec4(5.5, 6.6, 7.7, 8.8))
 	d := b
-	d = d.Plus(geom.Vec4{5.5, 6.6, 7.7, 8.8})
+	d = d.Plus(geom.MakeVec4(5.5, 6.6, 7.7, 8.8))
 	e := b.Slash(2.2)
 	f := e.Dehomogenized()
 	g := b
@@ -71,7 +71,7 @@ func ExampleVec4() {
 //-----------------------------------------------------------------------------
 
 func TestVec4_Dehomogenized(t *testing.T) {
-	a := geom.Vec4{1.1, 2.2, 3.3, 4.4}
+	a := geom.MakeVec4(1.1, 2.2, 3.3, 4.4)
 	b := a.Dehomogenized()
 	if b.X != 0.25 || b.Y != 0.5 || b.Z != 0.75 {
 		t.Errorf("Wrong result: %#v", b)
@@ -84,8 +84,8 @@ func TestVec4_Dehomogenized(t *testing.T) {
 //-----------------------------------------------------------------------------
 
 func TestVec4_Plus(t *testing.T) {
-	a := geom.Vec4{1.1, 2.2, 3.3, 4.4}
-	b := geom.Vec4{5.5, 6.6, 7.7, 8.8}
+	a := geom.MakeVec4(1.1, 2.2, 3.3, 4.4)
+	b := geom.MakeVec4(5.5, 6.6, 7.7, 8.8)
 	c := a.Plus(b)
 	if c.X != 6.6 || c.Y != 8.8 || c.Z != 11 || c.W != 13.200001 {
 		t.Errorf("Wrong result: %#v", c)
@@ -98,8 +98,8 @@ func TestVec4_Plus(t *testing.T) {
 //-----------------------------------------------------------------------------
 
 func TestVec4_Minus(t *testing.T) {
-	a := geom.Vec4{1.1, 2.2, 3.3, 4.4}
-	b := geom.Vec4{5.5, 6.6, 7.7, 8.8}
+	a := geom.MakeVec4(1.1, 2.2, 3.3, 4.4)
+	b := geom.MakeVec4(5.5, 6.6, 7.7, 8.8)
 	c := a.Minus(b)
 	if c.X != -4.4 || c.Y != -4.3999996 || c.Z != -4.3999996 || c.W != -4.4 {
 		t.Errorf("Wrong result: %#v", c)
@@ -112,7 +112,7 @@ func TestVec4_Minus(t *testing.T) {
 //-----------------------------------------------------------------------------
 
 func TestVec4_Inverse(t *testing.T) {
-	a := geom.Vec4{1.1, 2.2, 3.3, 4.4}
+	a := geom.MakeVec4(1.1, 2.2, 3.3, 4.4)
 	b := a.Inverse()
 	if b.X != -1.1 || b.Y != -2.2 || b.Z != -3.3 || b.W != -4.4 {
 		t.Errorf("Wrong result: %#v", b)
@@ -125,7 +125,7 @@ func TestVec4_Inverse(t *testing.T) {
 //-----------------------------------------------------------------------------
 
 func TestVec4_Times(t *testing.T) {
-	a := geom.Vec4{1.1, 2.2, 3.3, 4.4}
+	a := geom.MakeVec4(1.1, 2.2, 3.3, 4.4)
 	b := a.Times(5.5)
 	if b.X != 6.05 || b.Y != 12.1 || b.Z != 18.15 || b.W != 24.2 {
 		t.Errorf("Wrong result: %#v", b)
@@ -138,7 +138,7 @@ func TestVec4_Times(t *testing.T) {
 //-----------------------------------------------------------------------------
 
 func TestVec4_Slash(t *testing.T) {
-	a := geom.Vec4{1.1, 2.2, 3.3, 4.4}
+	a := geom.MakeVec4(1.1, 2.2, 3.3, 4.4)
 	b := a.Slash(5.5)
 	if b.X != 0.2 || b.Y != 0.4 || b.Z != 0.59999996 || b.W != 0.8 {
 		t.Errorf("Wrong result: %#v", b)
@@ -151,8 +151,8 @@ func TestVec4_Slash(t *testing.T) {
 //-----------------------------------------------------------------------------
 
 func TestVec4_Dot(t *testing.T) {
-	a := geom.Vec4{1.1, 2.2, 3.3, 4.4}
-	b := geom.Vec4{5.5, 6.6, 7.7, 8.8}
+	a := geom.MakeVec4(1.1, 2.2, 3.3, 4.4)
+	b := geom.MakeVec4(5.5, 6.6, 7.7, 8.8)
 	c := a.Dot(b)
 	if c != 84.7 {
 		t.Errorf("Wrong result: %#v", c)
@@ -165,7 +165,7 @@ func TestVec4_Dot(t *testing.T) {
 //-----------------------------------------------------------------------------
 
 func TestVec4_Length(t *testing.T) {
-	a := geom.Vec4{1.1, 2.2, 3.3, 4.4}
+	a := geom.MakeVec4(1.1, 2.2, 3.3, 4.4)
 	b := a.Length()
 	if b != 6.024948 {
 		t.Errorf("Wrong result: %#v", b)
@@ -178,7 +178,7 @@ func TestVec4_Length(t *testing.T) {
 //-----------------------------------------------------------------------------
 
 func TestVec4_Normalized(t *testing.T) {
-	a := geom.Vec4{1.1, 2.2, 3.3, 4.4}
+	a := geom.MakeVec4(1.1, 2.2, 3.3, 4.4)
 	b := a.Normalized()
 	if b.X != 0.18257418 || b.Y != 0.36514837 || b.Z != 0.5477226 || b.W != 0.73029673 {
 		t.Errorf("Wrong result: %#v", b)
