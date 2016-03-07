@@ -5,13 +5,20 @@
 
 //------------------------------------------------------------------------------
 
+#include "textflag.h"
+
 // func Abs(x float32) float32
-TEXT ·abs_asm(SB),7,$0
-	MOVL   $(1<<31), BX
-	MOVL   BX, X0 // movss $(-0.0), x0
-	MOVSS  x+0(FP), X1
-	ANDNPS X1, X0
-	MOVSS  X0, ret+8(FP)
+TEXT ·abs_asm(SB),NOSPLIT,$0
+	MOVL   x+0(FP), AX
+	SHLL   $1, AX
+	SHRL   $1, AX
+	MOVL   AX, ret+8(FP)
 	RET
+//	MOVL   $(1<<31), BX
+//	MOVL   BX, X0 // movss $(-0.0), x0
+//	MOVSS  x+0(FP), X1
+//	ANDNPS X1, X0
+//	MOVSS  X0, ret+8(FP)
+//	RET
 
 //------------------------------------------------------------------------------
