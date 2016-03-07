@@ -9,23 +9,6 @@ import "github.com/drakmaniso/glam/math"
 
 /*
 Mat4 is a single-precision matrix with 4 columns and 4 rows.
-
-Note: matrices are stored in column-major order, so when writing literals
-remember to use the transpose of the mathematical notation.
-In other words, this declaration:
-    M := {
-		{a, b, c, d},
-		{e, f, g, h},
-		{i, j, k, l},
-		{m, n, o, p},
-    }
-corresponds to the following mathematical notation:
-	⎡ a  e  i  m ⎤
-	⎢ b  f  j  n ⎥
-	⎢ c  g  k  o ⎥
-	⎣ d  h  l  p ⎦
-The same inversion happens with the indices: M[column][row] correspond to the
-mathematical indices "row,column".
 */
 type Mat4 [4][4]float32
 
@@ -39,18 +22,6 @@ func Mat4Identity() Mat4 {
 		{0, 0, 1, 0},
 		{0, 0, 0, 1},
 	}
-}
-
-//------------------------------------------------------------------------------
-
-// At returns the element at (row, column).
-func (m Mat4) At(row, column int) float32 {
-	return m[column][row]
-}
-
-// Set sets the element at (row, column).
-func (m *Mat4) Set(row, column int, value float32) {
-	m[column][row] = value
 }
 
 //------------------------------------------------------------------------------
