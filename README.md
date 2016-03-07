@@ -25,6 +25,7 @@ By order of priority, the API aims for:
 Implemented Features
 --------------------
 
+- Package engine: Game loop and platform-dependent features (just started)
 - Package geom: Vectors and matrices (incomplete).
 - Package math: Efficient single-precision math.
 - Package noise: Perlin noise
