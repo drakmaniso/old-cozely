@@ -1,15 +1,12 @@
 // Copyright (c) 2013-2016 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
-#if defined(__WIN32)
-	#include <SDL2/SDL.h>
-#else
-	#include <SDL.h>
-#endif
-
-
-#define PEEP_SIZE 128
+#include "engine.h"
 
 SDL_Event events[PEEP_SIZE];
 
-int peepEvents();
+int peepEvents() {
+	SDL_PumpEvents();
+	int n = SDL_PeepEvents(events, PEEP_SIZE, SDL_GETEVENT, SDL_FIRSTEVENT, SDL_LASTEVENT);
+	return n;
+}

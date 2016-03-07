@@ -1,3 +1,6 @@
+// Copyright (c) 2013-2016 Laurent Moussault. All rights reserved.
+// Licensed under a simplified BSD license (see LICENSE file).
+
 package engine
 
 //------------------------------------------------------------------------------
@@ -8,6 +11,7 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"time"
 	"unsafe"
 )
 
@@ -50,6 +54,8 @@ func init() {
 	if errcode := C.SDL_Init(C.SDL_INIT_EVERYTHING); errcode != 0 {
 		panic(getError())
 	}
+	
+	C.SDL_StopTextInput()
 }
 
 func loadConfig() {
@@ -90,22 +96,77 @@ func Run() (err error) {
 	}
 	defer window.destroy()
 
-	running := true
-	var e C.SDL_CommonEvent
-	for running {
-		for C.SDL_PollEvent((*C.SDL_Event)(unsafe.Pointer(&e))) > 0 {
-			if e._type == C.SDL_QUIT {
-				running = false
-			}
-		}
-
-		//update()
-
+	quit := false
+	for ! quit {
+		quit = processEvents()
+		handleUpdate()
 		doMainthread()
-		
-		//draw()
+		handleDraw()
+		<-time.After(10 * time.Millisecond)
 	}
 
+	return
+}
+
+func processEvents() bool {
+	more := true
+	for more {
+		n := int(C.peepEvents())
+		for i := 0; i < n; i++ {
+			e := unsafe.Pointer(&C.events[i])
+			t := dispatchEvent(e)
+			if t == C.SDL_QUIT {
+				return true
+			}
+		}
+		more = n >= C.PEEP_SIZE
+	}
+	return false
+}
+
+func dispatchEvent(e unsafe.Pointer) (t C.Uint32) {
+	t = ((*C.SDL_CommonEvent)(e))._type
+	switch t {
+	case C.SDL_QUIT:
+		handleQuit()
+	//TODO: Window Events
+	case C.SDL_WINDOWEVENT:
+	// Keybord Events
+	case C.SDL_KEYDOWN:
+		handleKeyDown()
+	case C.SDL_KEYUP:
+		handleKeyUp()
+	// Mouse Events
+	case C.SDL_MOUSEMOTION:
+		handleMouseMotion()
+	case C.SDL_MOUSEBUTTONDOWN:
+		handleMouseButtonDown()
+	case C.SDL_MOUSEBUTTONUP:
+		handleMouseButtonUp()
+	case C.SDL_MOUSEWHEEL:
+		handleMouseWheel()
+	//TODO: Joystick Events
+	case C.SDL_JOYAXISMOTION:
+	case C.SDL_JOYBALLMOTION:
+	case C.SDL_JOYHATMOTION:
+	case C.SDL_JOYBUTTONDOWN:
+	case C.SDL_JOYBUTTONUP:
+	case C.SDL_JOYDEVICEADDED:
+	case C.SDL_JOYDEVICEREMOVED:
+	//TODO: Controller Events
+	case C.SDL_CONTROLLERAXISMOTION:
+	case C.SDL_CONTROLLERBUTTONDOWN:
+	case C.SDL_CONTROLLERBUTTONUP:
+	case C.SDL_CONTROLLERDEVICEADDED:
+	case C.SDL_CONTROLLERDEVICEREMOVED:
+	case C.SDL_CONTROLLERDEVICEREMAPPED:
+	//TODO: Audio Device Events
+	case C.SDL_AUDIODEVICEADDED:
+	case C.SDL_AUDIODEVICEREMOVED:		
+	default:
+		//TODO: remove
+		log.Println("Unknown", ((*C.SDL_CommonEvent)(e))._type)
+	}
 	return
 }
 
@@ -113,10 +174,10 @@ func doMainthread() {
 	more := true
 	for more {
 		select {
-			case f := <-mainthread:
-				f()
-			default:
-				more = false
+		case f := <-mainthread:
+			f()
+		default:
+			more = false
 		}
 	}
 }
