@@ -3,7 +3,7 @@ package engine_test
 //------------------------------------------------------------------------------
 
 import (
-	"log"
+	"os"
 	"testing"
 
 	"github.com/drakmaniso/glam/engine"
@@ -11,10 +11,18 @@ import (
 
 //------------------------------------------------------------------------------
 
+func TestMain(m *testing.M) {
+	err = engine.Run()
+	os.Exit(m.Run())
+}
+
+//------------------------------------------------------------------------------
+
+var err error
+
 func TestEngine_Run(t *testing.T) {
-	err := engine.Run()
 	if err != nil {
-		log.Panic(err)
+		t.Error(err)
 	}
 }
 

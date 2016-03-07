@@ -8,11 +8,12 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
+	"unsafe"
 )
 
 // #cgo windows LDFLAGS: -lSDL2
 // #cgo linux freebsd darwin pkg-config: sdl2
-// #include "os_sdl.h"
+// #include "engine.h"
 import "C"
 
 //------------------------------------------------------------------------------
@@ -89,11 +90,35 @@ func Run() (err error) {
 	}
 	defer window.destroy()
 
-	// for f := range mainthread {
-	// 	f()
-	// }
+	running := true
+	var e C.SDL_CommonEvent
+	for running {
+		for C.SDL_PollEvent((*C.SDL_Event)(unsafe.Pointer(&e))) > 0 {
+			if e._type == C.SDL_QUIT {
+				running = false
+			}
+		}
+
+		//update()
+
+		doMainthread()
+		
+		//draw()
+	}
 
 	return
+}
+
+func doMainthread() {
+	more := true
+	for more {
+		select {
+			case f := <-mainthread:
+				f()
+			default:
+				more = false
+		}
+	}
 }
 
 //------------------------------------------------------------------------------
