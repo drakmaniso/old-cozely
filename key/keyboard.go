@@ -1,3 +1,4 @@
+// Package key provides keyboard support
 package key
 
 // #include "../engine/engine.h"
@@ -7,7 +8,7 @@ import (
 	"unsafe"
 )
 
-// IsPressed returns true is the corresponding key position is currently
+// IsPressed returns true if the corresponding key position is currently
 // held down.
 func IsPressed(pos Position) bool {
 	return (*[C.SDL_NUM_SCANCODES]uint8)(unsafe.Pointer(C.keystate))[pos] == 1
