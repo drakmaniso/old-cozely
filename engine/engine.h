@@ -12,4 +12,8 @@
 
 SDL_Event events[PEEP_SIZE];
 
+Uint8 *keystate;
+SDL_Keymod keymod;
+
+void initC();
 int peepEvents();

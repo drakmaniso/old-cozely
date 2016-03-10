@@ -3,6 +3,8 @@
 
 package engine
 
+import "github.com/drakmaniso/glam/key"
+
 //------------------------------------------------------------------------------
 
 // HandleUpdate sets the callback for Update events.
@@ -31,18 +33,18 @@ var handleQuit = func() {}
 //------------------------------------------------------------------------------
 
 // HandleKeyDown sets the callback for KeyDown events.
-func HandleKeyDown(callback func()) {
+func HandleKeyDown(callback func(l key.Label, p key.Position, time uint32)) {
 	handleKeyDown = callback
 }
 
-var handleKeyDown = func() {}
+var handleKeyDown = func(l key.Label, p key.Position, time uint32) {}
 
 // HandleKeyUp sets the callback for KeyUp events.
-func HandleKeyUp(callback func()) {
+func HandleKeyUp(callback func(l key.Label, p key.Position, time uint32)) {
 	handleKeyUp = callback
 }
 
-var handleKeyUp = func() {}
+var handleKeyUp = func(l key.Label, p key.Position, time uint32) {}
 
 //------------------------------------------------------------------------------
 
@@ -73,6 +75,5 @@ func HandleMouseWheel(callback func()) {
 }
 
 var handleMouseWheel = func() {}
-
 
 //------------------------------------------------------------------------------

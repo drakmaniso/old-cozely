@@ -13,6 +13,8 @@ import (
 	"runtime"
 	"time"
 	"unsafe"
+
+	"github.com/drakmaniso/glam/key"
 )
 
 // #cgo windows LDFLAGS: -lSDL2
@@ -54,8 +56,10 @@ func init() {
 	if errcode := C.SDL_Init(C.SDL_INIT_EVERYTHING); errcode != 0 {
 		panic(getError())
 	}
-	
+
 	C.SDL_StopTextInput()
+
+	C.initC()
 }
 
 func loadConfig() {
@@ -97,7 +101,7 @@ func Run() (err error) {
 	defer window.destroy()
 
 	quit := false
-	for ! quit {
+	for !quit {
 		quit = processEvents()
 		handleUpdate()
 		doMainthread()
@@ -131,11 +135,23 @@ func dispatchEvent(e unsafe.Pointer) (t C.Uint32) {
 		handleQuit()
 	//TODO: Window Events
 	case C.SDL_WINDOWEVENT:
-	// Keybord Events
+	// Keyboard Events
 	case C.SDL_KEYDOWN:
-		handleKeyDown()
+		ke := (*C.SDL_KeyboardEvent)(e)
+		if ke.repeat == 0 {
+			handleKeyDown(
+				key.Label(ke.keysym.sym),
+				key.Position(ke.keysym.scancode),
+				uint32(ke.timestamp),
+			)
+		}
 	case C.SDL_KEYUP:
-		handleKeyUp()
+		ke := (*C.SDL_KeyboardEvent)(e)
+		handleKeyUp(
+			key.Label(ke.keysym.sym),
+			key.Position(ke.keysym.scancode),
+			uint32(ke.timestamp),
+		)
 	// Mouse Events
 	case C.SDL_MOUSEMOTION:
 		handleMouseMotion()
@@ -162,7 +178,7 @@ func dispatchEvent(e unsafe.Pointer) (t C.Uint32) {
 	case C.SDL_CONTROLLERDEVICEREMAPPED:
 	//TODO: Audio Device Events
 	case C.SDL_AUDIODEVICEADDED:
-	case C.SDL_AUDIODEVICEREMOVED:		
+	case C.SDL_AUDIODEVICEREMOVED:
 	default:
 		//TODO: remove
 		log.Println("Unknown", ((*C.SDL_CommonEvent)(e))._type)

@@ -5,8 +5,16 @@
 
 SDL_Event events[PEEP_SIZE];
 
+Uint8 *keystate;
+SDL_Keymod keymod;
+
+void initC() {
+	keystate = (Uint8*)SDL_GetKeyboardState(NULL);
+}
+
 int peepEvents() {
 	SDL_PumpEvents();
 	int n = SDL_PeepEvents(events, PEEP_SIZE, SDL_GETEVENT, SDL_FIRSTEVENT, SDL_LASTEVENT);
+	keymod = SDL_GetModState();
 	return n;
 }
