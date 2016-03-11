@@ -11,7 +11,9 @@ import (
 	"testing"
 
 	"github.com/drakmaniso/glam/engine"
+	"github.com/drakmaniso/glam/geom"
 	"github.com/drakmaniso/glam/key"
+	"github.com/drakmaniso/glam/mouse"
 )
 
 //------------------------------------------------------------------------------
@@ -26,6 +28,30 @@ func TestMain(m *testing.M) {
 	engine.HandleKeyUp(
 		func(l key.Label, p key.Position, time uint32) {
 			log.Print("Key Up: ", l, p, time)
+		},
+	)
+	engine.HandleMouseMotion(
+		func(rel geom.IVec2, pos geom.IVec2, b mouse.ButtonState, time uint32) {
+			log.Print("Mouse Motion: ", rel, pos, b, time)
+			if b.IsPressed(mouse.Right) {
+				log.Println("(RightPressed)")
+			}
+		},
+	)
+	engine.HandleMouseButtonDown(
+		func(b mouse.Button, clicks int, pos geom.IVec2, time uint32) {
+			log.Print("Mouse Button Down: ", b, clicks, pos, time)
+			if b == mouse.Right {
+				log.Println(">>> Right")
+			}
+		},
+	)
+	engine.HandleMouseButtonUp(
+		func(b mouse.Button, clicks int, pos geom.IVec2, time uint32) {
+			log.Print("Mouse Button Up: ", b, clicks, pos, time)
+			if b == mouse.Right {
+				log.Println("<<< Right")
+			}
 		},
 	)
 	err = engine.Run()

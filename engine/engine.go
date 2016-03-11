@@ -15,6 +15,8 @@ import (
 	"unsafe"
 
 	"github.com/drakmaniso/glam/key"
+	"github.com/drakmaniso/glam/mouse"
+	"github.com/drakmaniso/glam/geom"
 )
 
 // #cgo windows LDFLAGS: -lSDL2
@@ -137,28 +139,46 @@ func dispatchEvent(e unsafe.Pointer) (t C.Uint32) {
 	case C.SDL_WINDOWEVENT:
 	// Keyboard Events
 	case C.SDL_KEYDOWN:
-		ke := (*C.SDL_KeyboardEvent)(e)
-		if ke.repeat == 0 {
+		e := (*C.SDL_KeyboardEvent)(e)
+		if e.repeat == 0 {
 			handleKeyDown(
-				key.Label(ke.keysym.sym),
-				key.Position(ke.keysym.scancode),
-				uint32(ke.timestamp),
+				key.Label(e.keysym.sym),
+				key.Position(e.keysym.scancode),
+				uint32(e.timestamp),
 			)
 		}
 	case C.SDL_KEYUP:
-		ke := (*C.SDL_KeyboardEvent)(e)
+		e := (*C.SDL_KeyboardEvent)(e)
 		handleKeyUp(
-			key.Label(ke.keysym.sym),
-			key.Position(ke.keysym.scancode),
-			uint32(ke.timestamp),
+			key.Label(e.keysym.sym),
+			key.Position(e.keysym.scancode),
+			uint32(e.timestamp),
 		)
 	// Mouse Events
 	case C.SDL_MOUSEMOTION:
-		handleMouseMotion()
+		e := (*C.SDL_MouseMotionEvent)(e)
+		handleMouseMotion(
+			geom.IVec2{X: int32(e.xrel), Y: int32(e.yrel)},
+			geom.IVec2{X: int32(e.x), Y: int32(e.y)},
+			mouse.ButtonState(e.state),
+			uint32(e.timestamp),
+		)
 	case C.SDL_MOUSEBUTTONDOWN:
-		handleMouseButtonDown()
+		e := (*C.SDL_MouseButtonEvent)(e)
+		handleMouseButtonDown(
+			mouse.Button(e.button),
+			int(e.clicks),
+			geom.IVec2{X: int32(e.x), Y: int32(e.y)},
+			uint32(e.timestamp),
+		)
 	case C.SDL_MOUSEBUTTONUP:
-		handleMouseButtonUp()
+		e := (*C.SDL_MouseButtonEvent)(e)
+		handleMouseButtonUp(
+			mouse.Button(e.button),
+			int(e.clicks),
+			geom.IVec2{X: int32(e.x), Y: int32(e.y)},
+			uint32(e.timestamp),
+		)
 	case C.SDL_MOUSEWHEEL:
 		handleMouseWheel()
 	//TODO: Joystick Events

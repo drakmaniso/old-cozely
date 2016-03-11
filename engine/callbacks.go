@@ -3,7 +3,11 @@
 
 package engine
 
-import "github.com/drakmaniso/glam/key"
+import (
+	"github.com/drakmaniso/glam/geom"
+	"github.com/drakmaniso/glam/key"
+	"github.com/drakmaniso/glam/mouse"
+)
 
 //------------------------------------------------------------------------------
 
@@ -49,25 +53,25 @@ var handleKeyUp = func(l key.Label, p key.Position, time uint32) {}
 //------------------------------------------------------------------------------
 
 // HandleMouseMotion sets the callback for MouseMotion events.
-func HandleMouseMotion(callback func()) {
+func HandleMouseMotion(callback func(rel geom.IVec2, pos geom.IVec2, b mouse.ButtonState, time uint32)) {
 	handleMouseMotion = callback
 }
 
-var handleMouseMotion = func() {}
+var handleMouseMotion = func(rel geom.IVec2, pos geom.IVec2, b mouse.ButtonState, time uint32) {}
 
 // HandleMouseButtonDown sets the callback for MouseButtonDown events.
-func HandleMouseButtonDown(callback func()) {
+func HandleMouseButtonDown(callback func(b mouse.Button, clicks int, pos geom.IVec2, time uint32)) {
 	handleMouseButtonDown = callback
 }
 
-var handleMouseButtonDown = func() {}
+var handleMouseButtonDown = func(b mouse.Button, clicks int, pos geom.IVec2, time uint32) {}
 
 // HandleMouseButtonUp sets the callback for MouseButtonUp events.
-func HandleMouseButtonUp(callback func()) {
+func HandleMouseButtonUp(callback func(b mouse.Button, clicks int, pos geom.IVec2, time uint32)) {
 	handleMouseButtonUp = callback
 }
 
-var handleMouseButtonUp = func() {}
+var handleMouseButtonUp = func(b mouse.Button, clicks int, pos geom.IVec2, time uint32) {}
 
 // HandleMouseWheel sets the callback for MouseWheel events.
 func HandleMouseWheel(callback func()) {
