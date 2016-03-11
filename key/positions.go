@@ -265,9 +265,9 @@ const (
 	PositionBrightnessDown Position = 275
 	PositionBrightnessUp   Position = 276
 	PositionDisplaySwitch  Position = 277
-	PositionKbdillumToggle Position = 278
-	PositionKbdillumDown   Position = 279
-	PositionKbdillumUp     Position = 280
+	PositionKbdIllumToggle Position = 278
+	PositionKbdIllumDown   Position = 279
+	PositionKbdIllumUp     Position = 280
 	PositionEject          Position = 281
 	PositionSleep          Position = 282
 
