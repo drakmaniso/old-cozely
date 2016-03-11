@@ -4,6 +4,7 @@ Glam: a minimalist framework for making games in Go
 
 **WARNING: This is a work in progress, very incomplete and not yet functional.**
 
+[![GoDoc](https://godoc.org/github.com/drakmaniso/glam?status.svg)](https://godoc.org/github.com/drakmaniso/glam)
 
 Goals
 -----
@@ -25,10 +26,12 @@ By order of priority, the API aims for:
 Implemented Features
 --------------------
 
-- Package engine: Game loop and platform-dependent features (just started)
-- Package geom: Vectors and matrices (incomplete).
-- Package math: Efficient single-precision math.
-- Package noise: Perlin noise
+- Package engine: game loop and platform-dependent features (just started)
+- Package geom: vectors and matrices (incomplete).
+- Package key: provides support for the keyboard (usable but incomplete).
+- Package mouse: provides suport for the mouse (incomplete).
+- Package math: efficient single-precision math.
+- Package noise: perlin noise.
 
 
 License
