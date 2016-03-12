@@ -180,7 +180,15 @@ func dispatchEvent(e unsafe.Pointer) (t C.Uint32) {
 			uint32(e.timestamp),
 		)
 	case C.SDL_MOUSEWHEEL:
-		handleMouseWheel()
+		e := (*C.SDL_MouseWheelEvent)(e)
+		var d int32 = 1
+		if e.direction == C.SDL_MOUSEWHEEL_FLIPPED {
+			d = -1
+		}
+		handleMouseWheel(
+			geom.IVec2{X: int32(e.x) * d, Y: int32(e.y) * d},
+			uint32(e.timestamp),
+		)
 	//TODO: Joystick Events
 	case C.SDL_JOYAXISMOTION:
 	case C.SDL_JOYBALLMOTION:

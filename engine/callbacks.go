@@ -74,10 +74,10 @@ func HandleMouseButtonUp(callback func(b mouse.Button, clicks int, pos geom.IVec
 var handleMouseButtonUp = func(b mouse.Button, clicks int, pos geom.IVec2, time uint32) {}
 
 // HandleMouseWheel sets the callback for MouseWheel events.
-func HandleMouseWheel(callback func()) {
+func HandleMouseWheel(callback func(w geom.IVec2, time uint32)) {
 	handleMouseWheel = callback
 }
 
-var handleMouseWheel = func() {}
+var handleMouseWheel = func(w geom.IVec2, time uint32) {}
 
 //------------------------------------------------------------------------------

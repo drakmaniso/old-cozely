@@ -54,6 +54,11 @@ func TestMain(m *testing.M) {
 			}
 		},
 	)
+	engine.HandleMouseWheel(
+		func(w geom.IVec2, time uint32) {
+			log.Print("Mouse Wheel: ", w, time)
+		},
+	)
 	err = engine.Run()
 	os.Exit(m.Run())
 }
