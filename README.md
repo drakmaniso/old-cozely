@@ -9,17 +9,16 @@ Glam: a minimalist framework for making games in Go
 Goals
 -----
 
-I've started this project mostly for my personal use, to be able to write small
-games in Go. It's not meant as a general purpose engine, but may become useful to
-others at some point.
+This project is currently for my personal use. It's not meant as a general 
+purpose engine, but may become useful to others at some point.
 
 The main inspiration behind the design is the Lua framework Löve. The goal is to
 provide thin abstractions above OpenGL and SDL.
 
 By order of priority, the API aims for:
 
-- simplicity (i.e. to keep the implementation small and manageable),
-- convenience (i.e. to facilitate writing games),
+- simplicity of implementation (i.e. keep it small and manageable),
+- ease of use (e.g. avoid unnecessary abstractions, inconvenient APIs),
 - and, only when not in contradiction with the first two points, efficiency.
 
 
