@@ -1,13 +1,9 @@
 // Copyright (c) 2013-2016 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
-#include "../internal/internal.h"
+#include "engine.h"
 
 SDL_Event events[PEEP_SIZE];
-
-void initC() {
-	keystate = (Uint8*)SDL_GetKeyboardState(NULL);
-}
 
 int peepEvents() {
 	SDL_PumpEvents();

@@ -25,6 +25,7 @@ type game struct {
 func (g *game) Update() {
 	// fmt.Printf("--- Update delta=%v pos=%v rightBttn=%v\n",
 	// 	mouse.Delta(), mouse.Position(), mouse.IsPressed(mouse.Right))
+	// fmt.Printf("--- w = %v\n", key.IsPressed(key.PositionW))
 }
 
 func (g *game) Quit() {

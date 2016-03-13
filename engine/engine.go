@@ -20,7 +20,7 @@ import (
 
 // #cgo windows LDFLAGS: -lSDL2
 // #cgo linux freebsd darwin pkg-config: sdl2
-// #include "../internal/internal.h"
+// #include "engine.h"
 import "C"
 
 //------------------------------------------------------------------------------
@@ -59,8 +59,6 @@ func init() {
 	}
 
 	C.SDL_StopTextInput()
-
-	C.initC()
 }
 
 func loadConfig() {
@@ -140,6 +138,7 @@ func dispatchEvent(e unsafe.Pointer) (t C.Uint32) {
 	case C.SDL_KEYDOWN:
 		e := (*C.SDL_KeyboardEvent)(e)
 		if e.repeat == 0 {
+			internal.KeyState[e.keysym.scancode] = true
 			key.Handler.KeyDown(
 				key.Label(e.keysym.sym),
 				key.Position(e.keysym.scancode),
@@ -148,6 +147,7 @@ func dispatchEvent(e unsafe.Pointer) (t C.Uint32) {
 		}
 	case C.SDL_KEYUP:
 		e := (*C.SDL_KeyboardEvent)(e)
+		internal.KeyState[e.keysym.scancode] = false
 		key.Handler.KeyUp(
 			key.Label(e.keysym.sym),
 			key.Position(e.keysym.scancode),

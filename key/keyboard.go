@@ -1,11 +1,13 @@
 // Package key provides keyboard support
 package key
 
+// #cgo windows LDFLAGS: -lSDL2
+// #cgo linux freebsd darwin pkg-config: sdl2
 // #include "../internal/internal.h"
 import "C"
 
 import (
-	"unsafe"
+	"github.com/drakmaniso/glam/internal"
 )
 
 //------------------------------------------------------------------------------
@@ -21,7 +23,19 @@ var Handler interface {
 // IsPressed returns true if the corresponding key position is currently
 // held down.
 func IsPressed(pos Position) bool {
-	return (*[C.SDL_NUM_SCANCODES]uint8)(unsafe.Pointer(C.keystate))[pos] == 1
+	return internal.KeyState[pos]
+}
+
+// LabelOf returns the key label at the specified position in the current
+// layout.
+func LabelOf(pos Position) Label {
+	return Label(C.SDL_GetKeyFromScancode(C.SDL_Scancode(pos)))
+}
+
+// SearchPositionOf searches the current position of label in the current
+// layout.
+func SearchPositionOf(l Label) Position {
+	return Position(C.SDL_GetScancodeFromKey(C.SDL_Keycode(l)))
 }
 
 // Modifiers returns the current state of the keyboard modifiers (e.g. Shift,

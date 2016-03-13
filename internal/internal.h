@@ -7,13 +7,4 @@
 	#include <SDL.h>
 #endif
 
-
-#define PEEP_SIZE 128
-
-SDL_Event events[PEEP_SIZE];
-
-Uint8 *keystate;
 SDL_Keymod keymod;
-
-void initC();
-int peepEvents();
