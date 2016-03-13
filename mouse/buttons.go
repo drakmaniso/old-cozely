@@ -1,6 +1,6 @@
 package mouse
 
-// #include "../engine/engine.h"
+// #include "../internal/internal.h"
 import "C"
 
 // A Button on the mouse

@@ -22,7 +22,7 @@ import (
 
 // #cgo windows LDFLAGS: -lSDL2
 // #cgo linux freebsd darwin pkg-config: sdl2
-// #include "engine.h"
+// #include "../internal/internal.h"
 import "C"
 
 //------------------------------------------------------------------------------
@@ -57,7 +57,7 @@ func init() {
 	runtime.LockOSThread()
 
 	if errcode := C.SDL_Init(C.SDL_INIT_EVERYTHING); errcode != 0 {
-		panic(getError())
+		panic(internal.GetSDLError())
 	}
 
 	C.SDL_StopTextInput()

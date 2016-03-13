@@ -1,7 +1,7 @@
 // Package key provides keyboard support
 package key
 
-// #include "../engine/engine.h"
+// #include "../internal/internal.h"
 import "C"
 
 import (

@@ -8,9 +8,11 @@ package engine
 import (
 	"log"
 	"unsafe"
+
+	"github.com/drakmaniso/glam/internal"
 )
 
-// #include "engine.h"
+// #include "../internal/internal.h"
 import "C"
 
 //------------------------------------------------------------------------------
@@ -73,7 +75,7 @@ func (w *Window) open(
 		fl,
 	)
 	if w.window == nil {
-		err = getError()
+		err = internal.GetSDLError()
 		log.Print(err)
 		return
 	}
@@ -113,7 +115,7 @@ func (w *Window) logOpenGLInfos() {
 	if sw > 0 {
 		log.Printf("OpenGL Vertical Sync: %t\n", sw != 0)
 	} else {
-		err1 = getError()
+		err1 = internal.GetSDLError()
 		log.Print(err1)
 	}
 }
@@ -122,7 +124,7 @@ func sdlGLAttribute(attr C.SDL_GLattr) (value int, err error) {
 	var v C.int
 	errcode := C.SDL_GL_GetAttribute(attr, &v)
 	if errcode < 0 {
-		err = getError()
+		err = internal.GetSDLError()
 	}
 	value = int(v)
 	return

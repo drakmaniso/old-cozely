@@ -1,15 +1,9 @@
 // Copyright (c) 2013-2016 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
-#include "engine.h"
+#include "../internal/internal.h"
 
 SDL_Event events[PEEP_SIZE];
-
-Uint8 *keystate;
-SDL_Keymod keymod;
-
-int mouseX, mouseY;
-Uint32 mouseButtons;
 
 void initC() {
 	keystate = (Uint8*)SDL_GetKeyboardState(NULL);

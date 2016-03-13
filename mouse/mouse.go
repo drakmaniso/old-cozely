@@ -3,11 +3,10 @@ package mouse
 
 // #cgo windows LDFLAGS: -lSDL2
 // #cgo linux freebsd darwin pkg-config: sdl2
-// #include "../engine/engine.h"
+// #include "../internal/internal.h"
 import "C"
 
 import (
-	"errors"
 	"log"
 
 	"github.com/drakmaniso/glam/geom"
@@ -36,7 +35,7 @@ func SetRelativeMode(enabled bool) error {
 		m = 1
 	}
 	if C.SDL_SetRelativeMouseMode(m) != 0 {
-		err = getError()
+		err = internal.GetSDLError()
 		log.Print(err)
 	}
 	return err
@@ -45,11 +44,4 @@ func SetRelativeMode(enabled bool) error {
 // GetRelativeMode returns true if the relative mode is enabled.
 func GetRelativeMode() bool {
 	return C.SDL_GetRelativeMouseMode() == C.SDL_TRUE
-}
-
-func getError() error {
-	if s := C.SDL_GetError(); s != nil {
-		return errors.New(C.GoString(s))
-	}
-	return nil
 }

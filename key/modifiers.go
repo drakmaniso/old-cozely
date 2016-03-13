@@ -1,6 +1,6 @@
 package key
 
-// #include "../engine/engine.h"
+// #include "../internal/internal.h"
 import "C"
 
 // A Modifier represents one or more key modifiers (e.g. Shift, Ctrl,
