@@ -48,16 +48,18 @@ func (g *game) MouseMotion(rel geom.IVec2, pos geom.IVec2, b mouse.ButtonState, 
 
 func (g *game) MouseButtonDown(b mouse.Button, clicks int, pos geom.IVec2, time uint32) {
 	fmt.Println("*** Mouse Button Down: ", b, clicks, pos, time)
+	if b == mouse.Left {
+		mouse.SetRelativeMode(true)
+		fmt.Println("    Relative Mode ON")
+	}
 	if b == mouse.Right {
-		fmt.Println("    right button pressed...")
+		mouse.SetRelativeMode(false)
+		fmt.Println("    Relative Mode OFF")
 	}
 }
 
 func (g *game) MouseButtonUp(b mouse.Button, clicks int, pos geom.IVec2, time uint32) {
 	fmt.Println("*** Mouse Button Up: ", b, clicks, pos, time)
-	if b == mouse.Right {
-		fmt.Println("    ...right button released.")
-	}
 }
 
 func (g *game) MouseWheel(w geom.IVec2, time uint32) {
