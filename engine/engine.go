@@ -15,6 +15,7 @@ import (
 	"unsafe"
 
 	"github.com/drakmaniso/glam/geom"
+	"github.com/drakmaniso/glam/internal"
 	"github.com/drakmaniso/glam/key"
 	"github.com/drakmaniso/glam/mouse"
 )
@@ -158,7 +159,7 @@ func dispatchEvent(e unsafe.Pointer) (t C.Uint32) {
 	case C.SDL_MOUSEMOTION:
 		e := (*C.SDL_MouseMotionEvent)(e)
 		rel := geom.IVec2{X: int32(e.xrel), Y: int32(e.yrel)}
-		mouse.AddToDelta(rel)
+		internal.MouseDelta = internal.MouseDelta.Plus(rel)
 		mouseHandler.MouseMotion(
 			rel,
 			geom.IVec2{X: int32(e.x), Y: int32(e.y)},

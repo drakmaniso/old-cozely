@@ -11,6 +11,7 @@ import (
 	"log"
 
 	"github.com/drakmaniso/glam/geom"
+	"github.com/drakmaniso/glam/internal"
 )
 
 // Position returns the current mouse position, relative to the game window.
@@ -19,18 +20,11 @@ func Position() geom.IVec2 {
 	return geom.IVec2{X: int32(C.mouseX), Y: int32(C.mouseY)}
 }
 
-var delta geom.IVec2
-
 // Delta returns the mouse position relative to the last call of Delta.
 func Delta() geom.IVec2 {
-	result := delta
-	delta.X, delta.Y = 0, 0
+	result := internal.MouseDelta
+	internal.MouseDelta.X, internal.MouseDelta.Y = 0, 0
 	return result
-}
-
-// AddToDelta is used internally by the engine.
-func AddToDelta(rel geom.IVec2) {
-	delta = delta.Plus(rel)
 }
 
 // SetRelativeMode enables or disables the relative mode, where the mouse is
