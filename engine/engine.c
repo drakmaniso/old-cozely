@@ -8,6 +8,5 @@ SDL_Event events[PEEP_SIZE];
 int peepEvents() {
 	SDL_PumpEvents();
 	int n = SDL_PeepEvents(events, PEEP_SIZE, SDL_GETEVENT, SDL_FIRSTEVENT, SDL_LASTEVENT);
-	keymod = SDL_GetModState();
 	return n;
 }

@@ -38,11 +38,4 @@ func SearchPositionOf(l Label) Position {
 	return Position(C.SDL_GetScancodeFromKey(C.SDL_Keycode(l)))
 }
 
-// Modifiers returns the current state of the keyboard modifiers (e.g. Shift,
-// Ctrl, CapsLock...). The value is one or more Modifier constants OR'd
-// together.
-func Modifiers() Modifier {
-	return Modifier(C.keymod)
-}
-
 //------------------------------------------------------------------------------

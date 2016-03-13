@@ -6,5 +6,3 @@
 #else
 	#include <SDL.h>
 #endif
-
-SDL_Keymod keymod;
