@@ -17,9 +17,9 @@ import (
 
 // Handler receives the mouse events. 
 var Handler interface {
-	MouseMotion(rel geom.IVec2, pos geom.IVec2, b ButtonState, time uint32)
-	MouseButtonDown(b Button, clicks int, pos geom.IVec2, time uint32)
-	MouseButtonUp(b Button, clicks int, pos geom.IVec2, time uint32)
+	MouseMotion(rel geom.IVec2, pos geom.IVec2, time uint32)
+	MouseButtonDown(b Button, clicks int, time uint32)
+	MouseButtonUp(b Button, clicks int, time uint32)
 	MouseWheel(w geom.IVec2, time uint32)
 }
 
@@ -28,7 +28,7 @@ var Handler interface {
 // Position returns the current mouse position, relative to the game window.
 // Updated at the start of each game loop iteration.
 func Position() geom.IVec2 {
-	return geom.IVec2{X: int32(C.mouseX), Y: int32(C.mouseY)}
+	return internal.MousePosition
 }
 
 // Delta returns the mouse position relative to the last call of Delta.

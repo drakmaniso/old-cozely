@@ -5,6 +5,3 @@
 
 Uint8 *keystate;
 SDL_Keymod keymod;
-
-int mouseX, mouseY;
-Uint32 mouseButtons;

@@ -24,7 +24,7 @@ type game struct {
 
 func (g *game) Update() {
 	// fmt.Printf("--- Update delta=%v pos=%v rightBttn=%v\n",
-	// 	mouse.Delta(), mouse.Position(), mouse.Buttons().IsPressed(mouse.Right))
+	// 	mouse.Delta(), mouse.Position(), mouse.IsPressed(mouse.Right))
 }
 
 func (g *game) Quit() {
@@ -39,15 +39,15 @@ func (g *game) KeyUp(l key.Label, p key.Position, time uint32) {
 	fmt.Println("*** Key Up: ", l, p, time)
 }
 
-func (g *game) MouseMotion(rel geom.IVec2, pos geom.IVec2, b mouse.ButtonState, time uint32) {
-	fmt.Println("*** Mouse Motion: ", rel, pos, b, time)
-	if b.IsPressed(mouse.Right) {
+func (g *game) MouseMotion(rel geom.IVec2, pos geom.IVec2, time uint32) {
+	fmt.Println("*** Mouse Motion: ", rel, pos, time)
+	if mouse.IsPressed(mouse.Right) {
 		fmt.Println("    (right button pressed)")
 	}
 }
 
-func (g *game) MouseButtonDown(b mouse.Button, clicks int, pos geom.IVec2, time uint32) {
-	fmt.Println("*** Mouse Button Down: ", b, clicks, pos, time)
+func (g *game) MouseButtonDown(b mouse.Button, clicks int, time uint32) {
+	fmt.Println("*** Mouse Button Down: ", b, clicks, time)
 	if b == mouse.Left {
 		mouse.SetRelativeMode(true)
 		fmt.Println("    Relative Mode ON")
@@ -58,8 +58,8 @@ func (g *game) MouseButtonDown(b mouse.Button, clicks int, pos geom.IVec2, time 
 	}
 }
 
-func (g *game) MouseButtonUp(b mouse.Button, clicks int, pos geom.IVec2, time uint32) {
-	fmt.Println("*** Mouse Button Up: ", b, clicks, pos, time)
+func (g *game) MouseButtonUp(b mouse.Button, clicks int, time uint32) {
+	fmt.Println("*** Mouse Button Up: ", b, clicks, time)
 }
 
 func (g *game) MouseWheel(w geom.IVec2, time uint32) {

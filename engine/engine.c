@@ -13,6 +13,5 @@ int peepEvents() {
 	SDL_PumpEvents();
 	int n = SDL_PeepEvents(events, PEEP_SIZE, SDL_GETEVENT, SDL_FIRSTEVENT, SDL_LASTEVENT);
 	keymod = SDL_GetModState();
-	mouseButtons = SDL_GetMouseState(&mouseX, &mouseY);
 	return n;
 }

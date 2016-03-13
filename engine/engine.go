@@ -158,10 +158,11 @@ func dispatchEvent(e unsafe.Pointer) (t C.Uint32) {
 		e := (*C.SDL_MouseMotionEvent)(e)
 		rel := geom.IVec2{X: int32(e.xrel), Y: int32(e.yrel)}
 		internal.MouseDelta = internal.MouseDelta.Plus(rel)
+		internal.MousePosition = geom.IVec2{X: int32(e.x), Y: int32(e.y)}
+		internal.MouseButtons = uint32(e.state)
 		mouse.Handler.MouseMotion(
 			rel,
-			geom.IVec2{X: int32(e.x), Y: int32(e.y)},
-			mouse.ButtonState(e.state),
+			internal.MousePosition,
 			uint32(e.timestamp),
 		)
 	case C.SDL_MOUSEBUTTONDOWN:
@@ -169,7 +170,6 @@ func dispatchEvent(e unsafe.Pointer) (t C.Uint32) {
 		mouse.Handler.MouseButtonDown(
 			mouse.Button(e.button),
 			int(e.clicks),
-			geom.IVec2{X: int32(e.x), Y: int32(e.y)},
 			uint32(e.timestamp),
 		)
 	case C.SDL_MOUSEBUTTONUP:
@@ -177,7 +177,6 @@ func dispatchEvent(e unsafe.Pointer) (t C.Uint32) {
 		mouse.Handler.MouseButtonUp(
 			mouse.Button(e.button),
 			int(e.clicks),
-			geom.IVec2{X: int32(e.x), Y: int32(e.y)},
 			uint32(e.timestamp),
 		)
 	case C.SDL_MOUSEWHEEL:
