@@ -8,6 +8,28 @@ import (
 	"unsafe"
 )
 
+//------------------------------------------------------------------------------
+
+var handler Handler
+
+// SetHandler sets the handler for Mouse events.
+func SetHandler(h Handler) {
+	handler = h
+}
+
+// GetHandler returns the current handler for mouse events.
+func GetHandler() Handler {
+	return handler
+}
+
+// A Handler reacts to key events.
+type Handler interface {
+	KeyDown(l Label, p Position, time uint32)
+	KeyUp(l Label, p Position, time uint32)
+}
+
+//------------------------------------------------------------------------------
+
 // IsPressed returns true if the corresponding key position is currently
 // held down.
 func IsPressed(pos Position) bool {
@@ -20,3 +42,5 @@ func IsPressed(pos Position) bool {
 func Modifiers() Modifier {
 	return Modifier(C.keymod)
 }
+
+//------------------------------------------------------------------------------

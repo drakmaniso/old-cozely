@@ -11,46 +11,23 @@ import (
 
 //------------------------------------------------------------------------------
 
-// HandleLoop sets the handler for the game loop.
-func HandleLoop(h LoopHandler) {
-	loopHandler = h
+var handler Handler
+
+// SetHandler sets the handler for Mouse events.
+func SetHandler(h Handler) {
+	handler = h
 }
 
-var loopHandler LoopHandler = defaultHandler
+// GetHandler returns the current handler for mouse events.
+func GetHandler() Handler {
+	return handler
+}
 
-// A LoopHandler implements the game loop.
-type LoopHandler interface {
+// A Handler implements the game loop.
+type Handler interface {
 	Update()
 	Draw()
 	Quit()
-}
-
-// HandleKey sets the handler for Key events.
-func HandleKey(h KeyHandler) {
-	keyHandler = h
-}
-
-var keyHandler KeyHandler = defaultHandler
-
-// A KeyHandler reacts to key events.
-type KeyHandler interface {
-	KeyDown(l key.Label, p key.Position, time uint32)
-	KeyUp(l key.Label, p key.Position, time uint32)
-}
-
-// HandleMouse sets the handler for Mouse events.
-func HandleMouse(h MouseHandler) {
-	mouseHandler = h
-}
-
-var mouseHandler MouseHandler = defaultHandler
-
-// A MouseHandler reacts to mouse events. 
-type MouseHandler interface {
-	MouseMotion(rel geom.IVec2, pos geom.IVec2, b mouse.ButtonState, time uint32)
-	MouseButtonDown(b mouse.Button, clicks int, pos geom.IVec2, time uint32)
-	MouseButtonUp(b mouse.Button, clicks int, pos geom.IVec2, time uint32)
-	MouseWheel(w geom.IVec2, time uint32)
 }
 
 //------------------------------------------------------------------------------

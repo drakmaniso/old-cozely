@@ -3,6 +3,8 @@ package mouse
 // #include "../internal/internal.h"
 import "C"
 
+//------------------------------------------------------------------------------
+
 // A Button on the mouse
 type Button uint8
 
@@ -30,3 +32,5 @@ func (s ButtonState) IsPressed(b Button) bool {
 func Buttons() ButtonState {
 	return ButtonState(C.mouseButtons)
 }
+
+//------------------------------------------------------------------------------

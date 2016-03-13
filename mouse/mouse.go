@@ -13,6 +13,30 @@ import (
 	"github.com/drakmaniso/glam/internal"
 )
 
+//------------------------------------------------------------------------------
+
+var handler Handler
+
+// SetHandler sets the handler for Mouse events.
+func SetHandler(h Handler) {
+	handler = h
+}
+
+// GetHandler returns the current handler for mouse events.
+func GetHandler() Handler {
+	return handler
+}
+
+// A Handler reacts to mouse events. 
+type Handler interface {
+	MouseMotion(rel geom.IVec2, pos geom.IVec2, b ButtonState, time uint32)
+	MouseButtonDown(b Button, clicks int, pos geom.IVec2, time uint32)
+	MouseButtonUp(b Button, clicks int, pos geom.IVec2, time uint32)
+	MouseWheel(w geom.IVec2, time uint32)
+}
+
+//------------------------------------------------------------------------------
+
 // Position returns the current mouse position, relative to the game window.
 // Updated at the start of each game loop iteration.
 func Position() geom.IVec2 {
@@ -45,3 +69,5 @@ func SetRelativeMode(enabled bool) error {
 func GetRelativeMode() bool {
 	return C.SDL_GetRelativeMouseMode() == C.SDL_TRUE
 }
+
+//------------------------------------------------------------------------------

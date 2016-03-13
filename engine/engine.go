@@ -3,8 +3,6 @@
 
 package engine
 
-//------------------------------------------------------------------------------
-
 import (
 	"encoding/json"
 	"log"
@@ -106,9 +104,9 @@ func Run() (err error) {
 	quit := false
 	for !quit {
 		quit = processEvents()
-		loopHandler.Update()
+		handler.Update()
 		doMainthread()
-		loopHandler.Draw()
+		handler.Draw()
 		<-time.After(10 * time.Millisecond)
 	}
 
@@ -135,14 +133,14 @@ func dispatchEvent(e unsafe.Pointer) (t C.Uint32) {
 	t = ((*C.SDL_CommonEvent)(e))._type
 	switch t {
 	case C.SDL_QUIT:
-		loopHandler.Quit()
+		handler.Quit()
 	//TODO: Window Events
 	case C.SDL_WINDOWEVENT:
 	// Keyboard Events
 	case C.SDL_KEYDOWN:
 		e := (*C.SDL_KeyboardEvent)(e)
 		if e.repeat == 0 {
-			keyHandler.KeyDown(
+			key.GetHandler().KeyDown(
 				key.Label(e.keysym.sym),
 				key.Position(e.keysym.scancode),
 				uint32(e.timestamp),
@@ -150,7 +148,7 @@ func dispatchEvent(e unsafe.Pointer) (t C.Uint32) {
 		}
 	case C.SDL_KEYUP:
 		e := (*C.SDL_KeyboardEvent)(e)
-		keyHandler.KeyUp(
+		key.GetHandler().KeyUp(
 			key.Label(e.keysym.sym),
 			key.Position(e.keysym.scancode),
 			uint32(e.timestamp),
@@ -160,7 +158,7 @@ func dispatchEvent(e unsafe.Pointer) (t C.Uint32) {
 		e := (*C.SDL_MouseMotionEvent)(e)
 		rel := geom.IVec2{X: int32(e.xrel), Y: int32(e.yrel)}
 		internal.MouseDelta = internal.MouseDelta.Plus(rel)
-		mouseHandler.MouseMotion(
+		mouse.GetHandler().MouseMotion(
 			rel,
 			geom.IVec2{X: int32(e.x), Y: int32(e.y)},
 			mouse.ButtonState(e.state),
@@ -168,7 +166,7 @@ func dispatchEvent(e unsafe.Pointer) (t C.Uint32) {
 		)
 	case C.SDL_MOUSEBUTTONDOWN:
 		e := (*C.SDL_MouseButtonEvent)(e)
-		mouseHandler.MouseButtonDown(
+		mouse.GetHandler().MouseButtonDown(
 			mouse.Button(e.button),
 			int(e.clicks),
 			geom.IVec2{X: int32(e.x), Y: int32(e.y)},
@@ -176,7 +174,7 @@ func dispatchEvent(e unsafe.Pointer) (t C.Uint32) {
 		)
 	case C.SDL_MOUSEBUTTONUP:
 		e := (*C.SDL_MouseButtonEvent)(e)
-		mouseHandler.MouseButtonUp(
+		mouse.GetHandler().MouseButtonUp(
 			mouse.Button(e.button),
 			int(e.clicks),
 			geom.IVec2{X: int32(e.x), Y: int32(e.y)},
@@ -188,7 +186,7 @@ func dispatchEvent(e unsafe.Pointer) (t C.Uint32) {
 		if e.direction == C.SDL_MOUSEWHEEL_FLIPPED {
 			d = -1
 		}
-		mouseHandler.MouseWheel(
+		mouse.GetHandler().MouseWheel(
 			geom.IVec2{X: int32(e.x) * d, Y: int32(e.y) * d},
 			uint32(e.timestamp),
 		)
