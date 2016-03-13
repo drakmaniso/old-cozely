@@ -11,20 +11,8 @@ import (
 
 //------------------------------------------------------------------------------
 
-var handler Handler
-
-// SetHandler sets the handler for Mouse events.
-func SetHandler(h Handler) {
-	handler = h
-}
-
-// GetHandler returns the current handler for mouse events.
-func GetHandler() Handler {
-	return handler
-}
-
-// A Handler implements the game loop.
-type Handler interface {
+// Handler implements the game loop.
+var Handler interface {
 	Update()
 	Draw()
 	Quit()

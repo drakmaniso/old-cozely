@@ -15,20 +15,8 @@ import (
 
 //------------------------------------------------------------------------------
 
-var handler Handler
-
-// SetHandler sets the handler for Mouse events.
-func SetHandler(h Handler) {
-	handler = h
-}
-
-// GetHandler returns the current handler for mouse events.
-func GetHandler() Handler {
-	return handler
-}
-
-// A Handler reacts to mouse events. 
-type Handler interface {
+// Handler receives the mouse events. 
+var Handler interface {
 	MouseMotion(rel geom.IVec2, pos geom.IVec2, b ButtonState, time uint32)
 	MouseButtonDown(b Button, clicks int, pos geom.IVec2, time uint32)
 	MouseButtonUp(b Button, clicks int, pos geom.IVec2, time uint32)

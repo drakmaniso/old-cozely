@@ -68,9 +68,9 @@ func (g *game) MouseWheel(w geom.IVec2, time uint32) {
 
 func TestMain(m *testing.M) {
 	var g game
-	engine.SetHandler(&g)
-	key.SetHandler(&g)
-	mouse.SetHandler(&g)
+	engine.Handler = &g
+	key.Handler = &g
+	mouse.Handler = &g
 	err = engine.Run()
 	os.Exit(m.Run())
 }
