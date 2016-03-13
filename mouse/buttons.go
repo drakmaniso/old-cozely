@@ -24,3 +24,9 @@ func (s ButtonState) IsPressed(b Button) bool {
 	var m uint32 = 1 << (b - 1)
 	return uint32(s)&m != 0
 }
+
+// Buttons returns the current state of all mouse buttons.
+// Updated at the start of each game loop iteration.
+func Buttons() ButtonState {
+	return ButtonState(C.mouseButtons)
+}

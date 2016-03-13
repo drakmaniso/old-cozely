@@ -157,8 +157,10 @@ func dispatchEvent(e unsafe.Pointer) (t C.Uint32) {
 	// Mouse Events
 	case C.SDL_MOUSEMOTION:
 		e := (*C.SDL_MouseMotionEvent)(e)
+		rel := geom.IVec2{X: int32(e.xrel), Y: int32(e.yrel)}
+		mouse.AddToDelta(rel)
 		mouseHandler.MouseMotion(
-			geom.IVec2{X: int32(e.xrel), Y: int32(e.yrel)},
+			rel,
 			geom.IVec2{X: int32(e.x), Y: int32(e.y)},
 			mouse.ButtonState(e.state),
 			uint32(e.timestamp),

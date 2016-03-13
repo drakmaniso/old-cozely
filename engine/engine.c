@@ -8,6 +8,9 @@ SDL_Event events[PEEP_SIZE];
 Uint8 *keystate;
 SDL_Keymod keymod;
 
+int mouseX, mouseY;
+Uint32 mouseButtons;
+
 void initC() {
 	keystate = (Uint8*)SDL_GetKeyboardState(NULL);
 }
@@ -16,5 +19,6 @@ int peepEvents() {
 	SDL_PumpEvents();
 	int n = SDL_PeepEvents(events, PEEP_SIZE, SDL_GETEVENT, SDL_FIRSTEVENT, SDL_LASTEVENT);
 	keymod = SDL_GetModState();
+	mouseButtons = SDL_GetMouseState(&mouseX, &mouseY);
 	return n;
 }
