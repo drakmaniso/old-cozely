@@ -99,6 +99,8 @@ func Run() error {
 	}
 	defer window.destroy()
 	
+	// Main Loop
+	
 	then := uint32(C.SDL_GetTicks())
 	remain := uint32(0)
 
@@ -106,6 +108,7 @@ func Run() error {
 		now = uint32(C.SDL_GetTicks())
 		remain += now - then
 		for remain >= TimeStep {
+			// Fixed time step for logic and physics updates.
 			processEvents()
 			Handler.Update()
 			remain -= TimeStep
@@ -113,6 +116,7 @@ func Run() error {
 		doMainthread()
 		Handler.Draw()
 		if now - then < 10 {
+			// Prevent using too much CPU on empty loops.
 			<-time.After(10 * time.Millisecond)
 		}
 		then = now
