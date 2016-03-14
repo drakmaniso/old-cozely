@@ -98,16 +98,33 @@ func Run() error {
 		return err
 	}
 	defer window.destroy()
+	
+	then := uint32(C.SDL_GetTicks())
+	remain := uint32(0)
 
 	for !quit {
-		processEvents()
-		Handler.Update()
+		now = uint32(C.SDL_GetTicks())
+		remain += now - then
+		for remain >= TimeStep {
+			processEvents()
+			Handler.Update()
+			remain -= TimeStep
+		}
 		doMainthread()
 		Handler.Draw()
-		<-time.After(10 * time.Millisecond)
+		if now - then < 10 {
+			<-time.After(10 * time.Millisecond)
+		}
+		then = now
 	}
 	return nil
 }
+
+// now is the current time
+var now uint32
+
+// TimeStep is the fixed interval between each call to Update.
+var TimeStep = uint32(1000 / 50)
 
 var quit = false
 
