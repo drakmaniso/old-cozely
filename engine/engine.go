@@ -82,10 +82,10 @@ func loadConfig() {
 //
 // Important: must be called from main.main, or at least from a function that is
 // known to run on the main OS thread.
-func Run() (err error) {
+func Run() error {
 	defer C.SDL_Quit()
 
-	err = window.open(
+	err := window.open(
 		config.Title,
 		config.Resolution,
 		config.Display,
@@ -95,40 +95,36 @@ func Run() (err error) {
 	)
 	if err != nil {
 		log.Print(err)
-		return
+		return err
 	}
 	defer window.destroy()
 
-	quit := false
 	for !quit {
-		quit = processEvents()
+		processEvents()
 		Handler.Update()
 		doMainthread()
 		Handler.Draw()
 		<-time.After(10 * time.Millisecond)
 	}
-
-	return
+	return nil
 }
 
-func processEvents() bool {
+var quit = false
+
+func processEvents() {
 	more := true
-	for more {
+	for more && !quit {
 		n := int(C.peepEvents())
-		for i := 0; i < n; i++ {
+		for i := 0; i < n && !quit; i++ {
 			e := unsafe.Pointer(&C.events[i])
-			t := dispatchEvent(e)
-			if t == C.SDL_QUIT {
-				return true
-			}
+			dispatchEvent(e)
 		}
 		more = n >= C.PEEP_SIZE
 	}
-	return false
 }
 
-func dispatchEvent(e unsafe.Pointer) (t C.Uint32) {
-	t = ((*C.SDL_CommonEvent)(e))._type
+func dispatchEvent(e unsafe.Pointer) {
+	t := ((*C.SDL_CommonEvent)(e))._type
 	switch t {
 	case C.SDL_QUIT:
 		Handler.Quit()
@@ -211,7 +207,6 @@ func dispatchEvent(e unsafe.Pointer) (t C.Uint32) {
 		//TODO: remove
 		log.Println("Unknown", ((*C.SDL_CommonEvent)(e))._type)
 	}
-	return
 }
 
 func doMainthread() {
@@ -246,6 +241,14 @@ func Do(f func()) {
 // Go runs a function on the rendering thread, without blocking.
 func Go(f func()) {
 	mainthread <- f
+}
+
+//------------------------------------------------------------------------------
+
+// Stop request the engine to stop. No more events will be processed,
+// and at most one Update and one Draw will be called.
+func Stop() {
+	quit = true
 }
 
 //------------------------------------------------------------------------------

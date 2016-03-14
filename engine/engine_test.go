@@ -30,9 +30,13 @@ func (g *game) Update() {
 
 func (g *game) Quit() {
 	fmt.Println("*** Bye! ***")
+	engine.Stop()
 }
 
 func (g *game) KeyDown(l key.Label, p key.Position, time uint32) {
+	if l == key.LabelEscape {
+		engine.Stop()
+	}
 	fmt.Println("*** Key Down: ", l, p, time)
 }
 

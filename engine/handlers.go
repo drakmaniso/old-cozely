@@ -27,7 +27,7 @@ type DefaultHandler struct{}
 
 func (dh DefaultHandler) Update() {}
 func (dh DefaultHandler) Draw()   {}
-func (dh DefaultHandler) Quit()   {}
+func (dh DefaultHandler) Quit()   { Stop() }
 
 func (dh DefaultHandler) KeyDown(l key.Label, p key.Position, time uint32) {}
 func (dh DefaultHandler) KeyUp(l key.Label, p key.Position, time uint32)   {}
