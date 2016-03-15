@@ -7,6 +7,8 @@ package key
 import "C"
 
 import (
+	"time"
+
 	"github.com/drakmaniso/glam/internal"
 )
 
@@ -14,8 +16,8 @@ import (
 
 // Handler receives the key events.
 var Handler interface {
-	KeyDown(l Label, p Position, time uint32)
-	KeyUp(l Label, p Position, time uint32)
+	KeyDown(l Label, p Position, timestamp time.Duration)
+	KeyUp(l Label, p Position, timestamp time.Duration)
 }
 
 //------------------------------------------------------------------------------

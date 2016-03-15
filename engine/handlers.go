@@ -4,6 +4,8 @@
 package engine
 
 import (
+	"time"
+
 	"github.com/drakmaniso/glam/geom"
 	"github.com/drakmaniso/glam/key"
 	"github.com/drakmaniso/glam/mouse"
@@ -29,12 +31,12 @@ func (dh DefaultHandler) Update() {}
 func (dh DefaultHandler) Draw()   {}
 func (dh DefaultHandler) Quit()   { Stop() }
 
-func (dh DefaultHandler) KeyDown(l key.Label, p key.Position, time uint32) {}
-func (dh DefaultHandler) KeyUp(l key.Label, p key.Position, time uint32)   {}
+func (dh DefaultHandler) KeyDown(l key.Label, p key.Position, timestamp time.Duration) {}
+func (dh DefaultHandler) KeyUp(l key.Label, p key.Position, timestamp time.Duration)   {}
 
-func (dh DefaultHandler) MouseMotion(rel geom.IVec2, pos geom.IVec2, time uint32) {}
-func (dh DefaultHandler) MouseButtonDown(b mouse.Button, clicks int, time uint32) {}
-func (dh DefaultHandler) MouseButtonUp(b mouse.Button, clicks int, time uint32)   {}
-func (dh DefaultHandler) MouseWheel(w geom.IVec2, time uint32)                    {}
+func (dh DefaultHandler) MouseMotion(rel geom.IVec2, pos geom.IVec2, timestamp time.Duration) {}
+func (dh DefaultHandler) MouseButtonDown(b mouse.Button, clicks int, timestamp time.Duration) {}
+func (dh DefaultHandler) MouseButtonUp(b mouse.Button, clicks int, timestamp time.Duration)   {}
+func (dh DefaultHandler) MouseWheel(w geom.IVec2, timestamp time.Duration)                    {}
 
 //------------------------------------------------------------------------------

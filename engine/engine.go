@@ -101,11 +101,11 @@ func Run() error {
 	
 	// Main Loop
 	
-	then := uint32(C.SDL_GetTicks())
-	remain := uint32(0)
+	then := time.Duration(C.SDL_GetTicks()) * time.Millisecond
+	remain := time.Duration(0)
 
 	for !quit {
-		now = uint32(C.SDL_GetTicks())
+		now = time.Duration(C.SDL_GetTicks()) * time.Millisecond
 		remain += now - then
 		for remain >= TimeStep {
 			// Fixed time step for logic and physics updates.
@@ -115,7 +115,7 @@ func Run() error {
 		}
 		doMainthread()
 		Handler.Draw()
-		if now - then < 10 {
+		if now - then < 10 * time.Millisecond {
 			// Prevent using too much CPU on empty loops.
 			<-time.After(10 * time.Millisecond)
 		}
@@ -125,10 +125,10 @@ func Run() error {
 }
 
 // now is the current time
-var now uint32
+var now time.Duration
 
 // TimeStep is the fixed interval between each call to Update.
-var TimeStep = uint32(1000 / 50)
+var TimeStep = 1 * time.Second / 50
 
 var quit = false
 
@@ -145,8 +145,8 @@ func processEvents() {
 }
 
 func dispatchEvent(e unsafe.Pointer) {
-	t := ((*C.SDL_CommonEvent)(e))._type
-	switch t {
+	ts := time.Duration(((*C.SDL_CommonEvent)(e)).timestamp) * time.Millisecond
+	switch ((*C.SDL_CommonEvent)(e))._type {
 	case C.SDL_QUIT:
 		Handler.Quit()
 	//TODO: Window Events
@@ -159,7 +159,7 @@ func dispatchEvent(e unsafe.Pointer) {
 			key.Handler.KeyDown(
 				key.Label(e.keysym.sym),
 				key.Position(e.keysym.scancode),
-				uint32(e.timestamp),
+				ts,
 			)
 		}
 	case C.SDL_KEYUP:
@@ -168,7 +168,7 @@ func dispatchEvent(e unsafe.Pointer) {
 		key.Handler.KeyUp(
 			key.Label(e.keysym.sym),
 			key.Position(e.keysym.scancode),
-			uint32(e.timestamp),
+			ts,
 		)
 	// Mouse Events
 	case C.SDL_MOUSEMOTION:
@@ -180,21 +180,21 @@ func dispatchEvent(e unsafe.Pointer) {
 		mouse.Handler.MouseMotion(
 			rel,
 			internal.MousePosition,
-			uint32(e.timestamp),
+			ts,
 		)
 	case C.SDL_MOUSEBUTTONDOWN:
 		e := (*C.SDL_MouseButtonEvent)(e)
 		mouse.Handler.MouseButtonDown(
 			mouse.Button(e.button),
 			int(e.clicks),
-			uint32(e.timestamp),
+			ts,
 		)
 	case C.SDL_MOUSEBUTTONUP:
 		e := (*C.SDL_MouseButtonEvent)(e)
 		mouse.Handler.MouseButtonUp(
 			mouse.Button(e.button),
 			int(e.clicks),
-			uint32(e.timestamp),
+			ts,
 		)
 	case C.SDL_MOUSEWHEEL:
 		e := (*C.SDL_MouseWheelEvent)(e)
@@ -204,7 +204,7 @@ func dispatchEvent(e unsafe.Pointer) {
 		}
 		mouse.Handler.MouseWheel(
 			geom.IVec2{X: int32(e.x) * d, Y: int32(e.y) * d},
-			uint32(e.timestamp),
+			ts,
 		)
 	//TODO: Joystick Events
 	case C.SDL_JOYAXISMOTION:

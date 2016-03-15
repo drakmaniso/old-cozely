@@ -8,6 +8,7 @@ import "C"
 
 import (
 	"log"
+	"time"
 
 	"github.com/drakmaniso/glam/geom"
 	"github.com/drakmaniso/glam/internal"
@@ -15,12 +16,12 @@ import (
 
 //------------------------------------------------------------------------------
 
-// Handler receives the mouse events. 
+// Handler receives the mouse events.
 var Handler interface {
-	MouseMotion(rel geom.IVec2, pos geom.IVec2, time uint32)
-	MouseButtonDown(b Button, clicks int, time uint32)
-	MouseButtonUp(b Button, clicks int, time uint32)
-	MouseWheel(w geom.IVec2, time uint32)
+	MouseMotion(rel geom.IVec2, pos geom.IVec2, timestamp time.Duration)
+	MouseButtonDown(b Button, clicks int, timestamp time.Duration)
+	MouseButtonUp(b Button, clicks int, timestamp time.Duration)
+	MouseWheel(w geom.IVec2, timestamp time.Duration)
 }
 
 //------------------------------------------------------------------------------

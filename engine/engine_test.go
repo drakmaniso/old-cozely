@@ -9,6 +9,7 @@ import (
 	"fmt"
 	"os"
 	"testing"
+	"time"
 
 	"github.com/drakmaniso/glam/engine"
 	"github.com/drakmaniso/glam/geom"
@@ -33,25 +34,25 @@ func (g *game) Quit() {
 	engine.Stop()
 }
 
-func (g *game) KeyDown(l key.Label, p key.Position, time uint32) {
+func (g *game) KeyDown(l key.Label, p key.Position, time time.Duration) {
 	if l == key.LabelEscape {
 		engine.Stop()
 	}
 	fmt.Println("*** Key Down: ", l, p, time)
 }
 
-func (g *game) KeyUp(l key.Label, p key.Position, time uint32) {
+func (g *game) KeyUp(l key.Label, p key.Position, time time.Duration) {
 	fmt.Println("*** Key Up: ", l, p, time)
 }
 
-func (g *game) MouseMotion(rel geom.IVec2, pos geom.IVec2, time uint32) {
+func (g *game) MouseMotion(rel geom.IVec2, pos geom.IVec2, time time.Duration) {
 	fmt.Println("*** Mouse Motion: ", rel, pos, time)
 	if mouse.IsPressed(mouse.Right) {
 		fmt.Println("    (right button pressed)")
 	}
 }
 
-func (g *game) MouseButtonDown(b mouse.Button, clicks int, time uint32) {
+func (g *game) MouseButtonDown(b mouse.Button, clicks int, time time.Duration) {
 	fmt.Println("*** Mouse Button Down: ", b, clicks, time)
 	if b == mouse.Left {
 		mouse.SetRelativeMode(true)
@@ -63,11 +64,11 @@ func (g *game) MouseButtonDown(b mouse.Button, clicks int, time uint32) {
 	}
 }
 
-func (g *game) MouseButtonUp(b mouse.Button, clicks int, time uint32) {
+func (g *game) MouseButtonUp(b mouse.Button, clicks int, time time.Duration) {
 	fmt.Println("*** Mouse Button Up: ", b, clicks, time)
 }
 
-func (g *game) MouseWheel(w geom.IVec2, time uint32) {
+func (g *game) MouseWheel(w geom.IVec2, time time.Duration) {
 	fmt.Println("*** Mouse Wheel: ", w, time)
 }
 
