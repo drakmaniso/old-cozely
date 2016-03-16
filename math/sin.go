@@ -14,7 +14,7 @@ package math
 
 //------------------------------------------------------------------------------
 
-// `Sin` returns the sinus of `x`.
+// Sin returns the sinus of x.
 func Sin(x float32) float32 {
 	// (comment from the original source)
 	// DESCRIPTION:

@@ -14,7 +14,7 @@ package math
 
 //------------------------------------------------------------------------------
 
-// `Tan` returns the tangent of `x`.
+// Tan returns the tangent of x.
 func Tan(x float32) float32 {
 	// (comment from the original source)
 	// DESCRIPTION:

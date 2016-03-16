@@ -14,7 +14,7 @@ package math
 
 //------------------------------------------------------------------------------
 
-// `Cos` returns the sinus of `x`.
+// Cos returns the sinus of x.
 func Cos(x float32) float32 {
 	// (comment from the original source)
 	// DESCRIPTION:
@@ -69,7 +69,7 @@ func Cos(x float32) float32 {
 
 	if j&1 != 0 {
 		j++
-		y += 1
+		y++
 	}
 
 	j &= 7 // Octant modulo 360°

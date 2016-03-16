@@ -6,11 +6,11 @@ package math
 
 //------------------------------------------------------------------------------
 
-// `FastSin` returns an approximation of `sin(x)`.
+// FastSin returns an approximation of sin(x).
 //
 // Max absolute error in range [-Pi, Pi]: less than 1e-3
 //
-// Faster than `Sin`.
+// Faster than Sin.
 func FastSin(x float32) float32
 
 func fastSin(x float32) float32 {

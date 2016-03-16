@@ -8,12 +8,12 @@ package math
 
 //------------------------------------------------------------------------------
 
-// `IsAlmostEqual` returns true if the difference between `a` and `b` in ULPs
-// (Unit in the Last Place) is less than `ulps`.
+// IsAlmostEqual returns true if the difference between a and b in ULPs
+// (Unit in the Last Place) is less than ulps.
 //
 // Handle special cases: zero, infinites, denormals.
 //
-// See also `IsNearlyEqual` and `IsRoughlyEqual`.
+// See also IsNearlyEqual and IsRoughlyEqual.
 func IsAlmostEqual(a, b float32, ulps uint32) bool {
 
 	diff := Abs(a - b)
@@ -21,29 +21,29 @@ func IsAlmostEqual(a, b float32, ulps uint32) bool {
 	if a == b {
 		// Shortcut, handles infinities.
 		return true
-	} else if a == 0 || b == 0 || diff < SmallestNormalFloat32 {
+	} 
+	if a == 0 || b == 0 || diff < SmallestNormalFloat32 {
 		// a or b is zero or both are extremely close to it.
 		// Relative error is less meaningful here.
 		return diff < float32(ulps)*SmallestNonzeroFloat32
-	} else {
-		ua := Float32bits(a)
-		ub := Float32bits(b)
+	} 
+	ua := Float32bits(a)
+	ub := Float32bits(b)
 
-		// Different signs means they do not match.
-		if ua>>31 != ub>>31 {
-			return false
-		}
-
-		// Find the difference in ULPs.
-		var ulpsDiff uint32
-		if ua > ub {
-			ulpsDiff = ua - ub
-		} else {
-			ulpsDiff = ub - ua
-		}
-
-		return ulpsDiff < ulps
+	// Different signs means they do not match.
+	if ua>>31 != ub>>31 {
+		return false
 	}
+
+	// Find the difference in ULPs.
+	var ulpsDiff uint32
+	if ua > ub {
+		ulpsDiff = ua - ub
+	} else {
+		ulpsDiff = ub - ua
+	}
+
+	return ulpsDiff < ulps
 }
 
 // Original algorithm:

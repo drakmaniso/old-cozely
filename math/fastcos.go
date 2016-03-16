@@ -6,11 +6,11 @@ package math
 
 //------------------------------------------------------------------------------
 
-// `FastCos` returns an approximation of `sin(x)`.
+// FastCos returns an approximation of sin(x).
 //
 // Max absolute error in range [-Pi, Pi]: less than 1e-3
 //
-// Faster than `Cos`.
+// Faster than Cos.
 func FastCos(x float32) float32
 
 func fastCos(x float32) float32 {

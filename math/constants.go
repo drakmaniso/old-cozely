@@ -24,10 +24,10 @@ const (
 )
 
 // Floating-point limit values.
-// `Max` is the largest finite value representable by the type.
-// `SmallestNormal` is the smallest normal value representable by the type.
-// `Epsilon` is the smallest value that, when added to one, yields a result different from one.
-// `SmallestNonzero` is the smallest positive, non-zero value representable by the type.
+// Max is the largest finite value representable by the type.
+// SmallestNormal is the smallest normal value representable by the type.
+// Epsilon is the smallest value that, when added to one, yields a result different from one.
+// SmallestNonzero is the smallest positive, non-zero value representable by the type.
 const (
 	MaxFloat32             = float32(3.40282346638528859811704183484516925440e+38)  // 2**127 * (2**24 - 1) / 2**23
 	SmallestNormalFloat32  = float32(1.17549435082229e-38)                          // 1 / 2**(127 - 1)

@@ -7,11 +7,12 @@ package math
 
 //------------------------------------------------------------------------------
 
-// `IsNearlyEqual` Returns true if the relative error between `a` and `b` is less than `epsilon`.
+// IsNearlyEqual Returns true if the relative error between a and b is less
+// than epsilon.
 //
 // Handles special cases: zero, infinites, denormals.
 //
-// See also `IsAlmostEqual` and `IsRoughlyEqual`.
+// See also IsAlmostEqual and IsRoughlyEqual.
 func IsNearlyEqual(a, b float32, epsilon float32) bool {
 	// Source: http://floating-point-gui.de/errors/comparison/
 
@@ -22,19 +23,19 @@ func IsNearlyEqual(a, b float32, epsilon float32) bool {
 	if a == b {
 		// Shortcut, handles infinities.
 		return true
-	} else if a == 0 || b == 0 || diff < SmallestNormalFloat32 {
+	} 
+	if a == 0 || b == 0 || diff < SmallestNormalFloat32 {
 		// a or b is zero or both are extremely close to it.
 		// Relative error is less meaningful here.
 		return diff < epsilon*SmallestNormalFloat32
-	} else {
-		// Use relative error.
-		// Note in the original source, `absA+absB` was used instead of `largest`
-		largest := absA
-		if absB > absA {
-			largest = absB
-		}
-		return diff/largest < epsilon
 	}
+	// Use relative error.
+	// Note in the original source, absA+absB was used instead of largest
+	largest := absA
+	if absB > absA {
+		largest = absB
+	}
+	return diff/largest < epsilon
 }
 
 //------------------------------------------------------------------------------

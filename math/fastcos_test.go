@@ -1,4 +1,4 @@
-// Copyright (c) 2013 Laurent Moussault. All rights reserved.
+// Copyright (c) 2013-2016 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
 package math
@@ -11,7 +11,7 @@ import (
 
 func TestFastCos(t *testing.T) {
 	var x float32
-	var maxDiff float32 = 0
+	maxDiff := float32(0)
 	for _, tt := range cos_tests {
 		x = FastCos(tt.in)
 		if Abs(x-tt.out) > maxDiff {
