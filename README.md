@@ -26,9 +26,10 @@ Implemented Features
 --------------------
 
 - Package engine: game loop and platform-dependent features (just started)
-- Package geom: vectors and matrices (incomplete).
 - Package key: provides support for the keyboard (usable but incomplete).
 - Package mouse: provides suport for the mouse (incomplete).
+- Package window: provides support for window events (incomplete).
+- Package geom: vectors and matrices (incomplete).
 - Package math: efficient single-precision math.
 - Package noise: perlin noise.
 

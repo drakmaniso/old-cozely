@@ -165,7 +165,10 @@ func dispatchEvent(e unsafe.Pointer) {
 		case C.SDL_WINDOWEVENT_MOVED:
 			// Ignore
 		case C.SDL_WINDOWEVENT_RESIZED:
-			window.Handler.WindowResized(geom.IVec2{X: int32(e.data1), Y: int32(e.data2)}, ts)
+			window.Handler.WindowResized(
+				geom.IVec2{X: int32(e.data1), Y: int32(e.data2)},
+				ts,
+			)
 		case C.SDL_WINDOWEVENT_SIZE_CHANGED:
 			//TODO
 		case C.SDL_WINDOWEVENT_MINIMIZED:
