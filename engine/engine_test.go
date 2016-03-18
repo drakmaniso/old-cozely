@@ -28,6 +28,8 @@ func (g *game) Update() {
 	// fmt.Printf("--- Update delta=%v pos=%v rightBttn=%v\n",
 	// 	mouse.Delta(), mouse.Position(), mouse.IsPressed(mouse.Right))
 	// fmt.Printf("--- w = %v\n", key.IsPressed(key.PositionW))
+	// fmt.Printf("--- window.HasFocus = %v\n", window.HasFocus())
+	// fmt.Printf("--- window.HasMouseFocus = %v\n", window.HasMouseFocus())
 }
 
 func (g *game) Quit() {
@@ -98,11 +100,11 @@ func (g *game) WindowRestored(ts time.Duration) {
 }
 
 func (g *game) WindowMouseEnter(ts time.Duration) {
-	fmt.Println("*** Window Mouse Enter: ", ts)
+	// fmt.Println("*** Window Mouse Enter: ", ts)
 }
 
 func (g *game) WindowMouseLeave(ts time.Duration) {
-	fmt.Println("*** Window Mouse Leave: ", ts)
+	// fmt.Println("*** Window Mouse Leave: ", ts)
 }
 
 func (g *game) WindowFocusGained(ts time.Duration) {

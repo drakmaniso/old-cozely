@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/drakmaniso/glam/geom"
+	"github.com/drakmaniso/glam/internal"
 )
 
 //------------------------------------------------------------------------------
@@ -21,6 +22,18 @@ var Handler interface {
 	WindowMouseLeave(timestamp time.Duration)
 	WindowFocusGained(timestamp time.Duration)
 	WindowFocusLost(timestamp time.Duration)
+}
+
+//------------------------------------------------------------------------------
+
+// HasFocus returns true if the game windows has focus.
+func HasFocus() bool {
+	return internal.HasFocus
+}
+
+// HasMouseFocus returns true if the mouse is currently inside the game window.
+func HasMouseFocus() bool {
+	return internal.HasMouseFocus
 }
 
 //------------------------------------------------------------------------------
