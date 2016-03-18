@@ -1,41 +1,39 @@
 // Copyright (c) 2013-2016 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
-package engine
+package internal
 
 import (
 	"log"
 	"unsafe"
-
-	"github.com/drakmaniso/glam/internal"
 )
 
+// #cgo windows LDFLAGS: -lSDL2
+// #cgo linux freebsd darwin pkg-config: sdl2
 // #include "../internal/internal.h"
 import "C"
 
 //------------------------------------------------------------------------------
 
-// Window represents an OS window associated with an OpenGL context.
-type Window struct {
+// Window is the game window.
+var Window struct {
 	window  *C.SDL_Window
 	context C.SDL_GLContext
-	width   int
-	height  int
+	Width   int
+	Height  int
 }
-
-var window Window
 
 //------------------------------------------------------------------------------
 
-// open creates the window and its associated OpenGL context.
-func (w *Window) open(
+// OpenWindow creates the game window and its associated OpenGL context.
+func OpenWindow(
 	title string,
 	resolution [2]int,
 	display int,
 	fullscreen bool,
 	fullscreenMode string,
 	vsync bool,
-) (err error) {
+) error {
 	C.SDL_GL_SetAttribute(C.SDL_GL_CONTEXT_MAJOR_VERSION, 4)
 	C.SDL_GL_SetAttribute(C.SDL_GL_CONTEXT_MINOR_VERSION, 5)
 	C.SDL_GL_SetAttribute(C.SDL_GL_CONTEXT_PROFILE_MASK,
@@ -52,7 +50,7 @@ func (w *Window) open(
 	t := C.CString(title)
 	defer C.free(unsafe.Pointer(t))
 
-	w.width, w.height = resolution[0], resolution[1]
+	Window.Width, Window.Height = resolution[0], resolution[1]
 
 	var fs uint32
 	if fullscreen {
@@ -64,35 +62,36 @@ func (w *Window) open(
 	}
 	fl := C.SDL_WINDOW_OPENGL | C.SDL_WINDOW_RESIZABLE | C.Uint32(fs)
 
-	w.window = C.SDL_CreateWindow(
+	Window.window = C.SDL_CreateWindow(
 		t,
 		C.int(C.SDL_WINDOWPOS_CENTERED_MASK|display),
 		C.int(C.SDL_WINDOWPOS_CENTERED_MASK|display),
-		C.int(w.width),
-		C.int(w.height),
+		C.int(Window.Width),
+		C.int(Window.Height),
 		fl,
 	)
-	if w.window == nil {
-		err = internal.GetSDLError()
+	if Window.window == nil {
+		err := GetSDLError()
 		log.Print(err)
-		return
+		return err
 	}
 
-	w.context, err = C.SDL_GL_CreateContext(w.window)
+	ctx, err := C.SDL_GL_CreateContext(Window.window)
 	if err != nil {
 		log.Print(err)
-		return
+		return err
 	}
+	Window.context = ctx
 
-	w.logOpenGLInfos()
+	logOpenGLInfos()
 
 	//TODO: Send a fake resize event (for the renderer)
 
-	return
+	return nil
 }
 
 // logOpenGLInfos displays information about the OpenGL context
-func (w *Window) logOpenGLInfos() {
+func logOpenGLInfos() {
 	maj, err1 := sdlGLAttribute(C.SDL_GL_CONTEXT_MAJOR_VERSION)
 	min, err2 := sdlGLAttribute(C.SDL_GL_CONTEXT_MINOR_VERSION)
 	if err1 == nil && err2 == nil {
@@ -113,27 +112,26 @@ func (w *Window) logOpenGLInfos() {
 	if sw > 0 {
 		log.Printf("OpenGL Vertical Sync: %t\n", sw != 0)
 	} else {
-		err1 = internal.GetSDLError()
+		err1 = GetSDLError()
 		log.Print(err1)
 	}
 }
 
-func sdlGLAttribute(attr C.SDL_GLattr) (value int, err error) {
+func sdlGLAttribute(attr C.SDL_GLattr) (int, error) {
 	var v C.int
 	errcode := C.SDL_GL_GetAttribute(attr, &v)
 	if errcode < 0 {
-		err = internal.GetSDLError()
+		return 0, GetSDLError()
 	}
-	value = int(v)
-	return
+	return int(v), nil
 }
 
 //------------------------------------------------------------------------------
 
-// Destroy closes the window and delete the OpenGL context
-func (w *Window) destroy() {
-	C.SDL_GL_DeleteContext(w.context)
-	C.SDL_DestroyWindow(w.window)
+// DestroyWindow closes the game window and delete the OpenGL context
+func DestroyWindow() {
+	C.SDL_GL_DeleteContext(Window.context)
+	C.SDL_DestroyWindow(Window.window)
 }
 
 //------------------------------------------------------------------------------

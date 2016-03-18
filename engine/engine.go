@@ -85,7 +85,7 @@ func loadConfig() {
 func Run() error {
 	defer C.SDL_Quit()
 
-	err := window.open(
+	err := internal.OpenWindow(
 		config.Title,
 		config.Resolution,
 		config.Display,
@@ -97,10 +97,10 @@ func Run() error {
 		log.Print(err)
 		return err
 	}
-	defer window.destroy()
-	
+	defer internal.DestroyWindow()
+
 	// Main Loop
-	
+
 	then := time.Duration(C.SDL_GetTicks()) * time.Millisecond
 	remain := time.Duration(0)
 
@@ -115,7 +115,7 @@ func Run() error {
 		}
 		doMainthread()
 		Handler.Draw()
-		if now - then < 10 * time.Millisecond {
+		if now-then < 10*time.Millisecond {
 			// Prevent using too much CPU on empty loops.
 			<-time.After(10 * time.Millisecond)
 		}
