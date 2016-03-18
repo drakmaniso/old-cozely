@@ -39,4 +39,15 @@ func (dh DefaultHandler) MouseButtonDown(b mouse.Button, clicks int, timestamp t
 func (dh DefaultHandler) MouseButtonUp(b mouse.Button, clicks int, timestamp time.Duration)   {}
 func (dh DefaultHandler) MouseWheel(w geom.IVec2, timestamp time.Duration)                    {}
 
+func (dh DefaultHandler) WindowShown(timestamp time.Duration)                 {}
+func (dh DefaultHandler) WindowHidden(timestamp time.Duration)                {}
+func (dh DefaultHandler) WindowResized(s geom.IVec2, timestamp time.Duration) {}
+func (dh DefaultHandler) WindowMinimized(timestamp time.Duration)             {}
+func (dh DefaultHandler) WindowMaximized(timestamp time.Duration)             {}
+func (dh DefaultHandler) WindowRestored(timestamp time.Duration)              {}
+func (dh DefaultHandler) WindowMouseEnter(timestamp time.Duration)            {}
+func (dh DefaultHandler) WindowMouseLeave(timestamp time.Duration)            {}
+func (dh DefaultHandler) WindowFocusGained(timestamp time.Duration)           {}
+func (dh DefaultHandler) WindowFocusLost(timestamp time.Duration)             {}
+
 //------------------------------------------------------------------------------
