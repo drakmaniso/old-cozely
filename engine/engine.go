@@ -99,6 +99,7 @@ func Run() error {
 		return err
 	}
 	defer internal.DestroyWindow()
+	internal.InitOpenGL()
 
 	// Main Loop
 
@@ -116,6 +117,7 @@ func Run() error {
 		}
 		doMainthread()
 		Handler.Draw()
+		internal.Render()
 		if now-then < 10*time.Millisecond {
 			// Prevent using too much CPU on empty loops.
 			<-time.After(10 * time.Millisecond)

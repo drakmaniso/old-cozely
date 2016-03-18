@@ -1,6 +1,6 @@
 package key
 
-// #include "../internal/internal.h"
+// #include "../internal/sdl.h"
 import "C"
 
 // A Position designate a key by its physical position on the keyboard.

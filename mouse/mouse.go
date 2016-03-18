@@ -3,7 +3,7 @@ package mouse
 
 // #cgo windows LDFLAGS: -lSDL2
 // #cgo linux freebsd darwin pkg-config: sdl2
-// #include "../internal/internal.h"
+// #include "../internal/sdl.h"
 import "C"
 
 import (

@@ -1,6 +1,6 @@
 package mouse
 
-// #include "../internal/internal.h"
+// #include "../internal/sdl.h"
 import "C"
 
 import (
