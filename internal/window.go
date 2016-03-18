@@ -23,6 +23,12 @@ var Window struct {
 	Height  int
 }
 
+// Focus state
+var (
+	HasFocus      bool
+	HasMouseFocus bool
+)
+
 //------------------------------------------------------------------------------
 
 // OpenWindow creates the game window and its associated OpenGL context.

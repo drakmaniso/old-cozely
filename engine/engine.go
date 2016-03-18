@@ -16,6 +16,7 @@ import (
 	"github.com/drakmaniso/glam/internal"
 	"github.com/drakmaniso/glam/key"
 	"github.com/drakmaniso/glam/mouse"
+	"github.com/drakmaniso/glam/window"
 )
 
 // #cgo windows LDFLAGS: -lSDL2
@@ -149,8 +150,47 @@ func dispatchEvent(e unsafe.Pointer) {
 	switch ((*C.SDL_CommonEvent)(e))._type {
 	case C.SDL_QUIT:
 		Handler.Quit()
-	//TODO: Window Events
+	// Window Events
 	case C.SDL_WINDOWEVENT:
+		e := (*C.SDL_WindowEvent)(e)
+		switch e.event {
+		case C.SDL_WINDOWEVENT_NONE:
+			// Ignore
+		case C.SDL_WINDOWEVENT_SHOWN:
+			window.Handler.WindowShown(ts)
+		case C.SDL_WINDOWEVENT_HIDDEN:
+			window.Handler.WindowHidden(ts)
+		case C.SDL_WINDOWEVENT_EXPOSED:
+			// Ignore
+		case C.SDL_WINDOWEVENT_MOVED:
+			// Ignore
+		case C.SDL_WINDOWEVENT_RESIZED:
+			window.Handler.WindowResized(geom.IVec2{X: int32(e.data1), Y: int32(e.data2)}, ts)
+		case C.SDL_WINDOWEVENT_SIZE_CHANGED:
+			//TODO
+		case C.SDL_WINDOWEVENT_MINIMIZED:
+			window.Handler.WindowMinimized(ts)
+		case C.SDL_WINDOWEVENT_MAXIMIZED:
+			window.Handler.WindowMaximized(ts)
+		case C.SDL_WINDOWEVENT_RESTORED:
+			window.Handler.WindowRestored(ts)
+		case C.SDL_WINDOWEVENT_ENTER:
+			internal.HasMouseFocus = true
+			window.Handler.WindowMouseEnter(ts)
+		case C.SDL_WINDOWEVENT_LEAVE:
+			internal.HasMouseFocus = false
+			window.Handler.WindowMouseLeave(ts)
+		case C.SDL_WINDOWEVENT_FOCUS_GAINED:
+			internal.HasFocus = true
+			window.Handler.WindowFocusGained(ts)
+		case C.SDL_WINDOWEVENT_FOCUS_LOST:
+			internal.HasFocus = false
+			window.Handler.WindowFocusLost(ts)
+		case C.SDL_WINDOWEVENT_CLOSE:
+			// Ignore
+		default:
+			log.Printf("Unkown window event.")
+		}
 	// Keyboard Events
 	case C.SDL_KEYDOWN:
 		e := (*C.SDL_KeyboardEvent)(e)

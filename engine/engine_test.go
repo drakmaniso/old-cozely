@@ -15,6 +15,7 @@ import (
 	"github.com/drakmaniso/glam/geom"
 	"github.com/drakmaniso/glam/key"
 	"github.com/drakmaniso/glam/mouse"
+	"github.com/drakmaniso/glam/window"
 )
 
 //------------------------------------------------------------------------------
@@ -46,7 +47,7 @@ func (g *game) KeyUp(l key.Label, p key.Position, time time.Duration) {
 }
 
 func (g *game) MouseMotion(rel geom.IVec2, pos geom.IVec2, time time.Duration) {
-	fmt.Println("*** Mouse Motion: ", rel, pos, time)
+	// fmt.Println("*** Mouse Motion: ", rel, pos, time)
 	if mouse.IsPressed(mouse.Right) {
 		fmt.Println("    (right button pressed)")
 	}
@@ -72,11 +73,52 @@ func (g *game) MouseWheel(w geom.IVec2, time time.Duration) {
 	fmt.Println("*** Mouse Wheel: ", w, time)
 }
 
+func (g *game) WindowShown(ts time.Duration) {
+	fmt.Println("*** Window Shown: ", ts)
+}
+
+func (g *game) WindowHidden(ts time.Duration) {
+	fmt.Println("*** Window Hidden: ", ts)
+}
+
+func (g *game) WindowResized(s geom.IVec2, ts time.Duration) {
+	fmt.Println("*** Window Resized: ", s, ts)
+}
+
+func (g *game) WindowMinimized(ts time.Duration) {
+	fmt.Println("*** Window Minimized: ", ts)
+}
+
+func (g *game) WindowMaximized(ts time.Duration) {
+	fmt.Println("*** Window Maximized: ", ts)
+}
+
+func (g *game) WindowRestored(ts time.Duration) {
+	fmt.Println("*** Window Restored: ", ts)
+}
+
+func (g *game) WindowMouseEnter(ts time.Duration) {
+	fmt.Println("*** Window Mouse Enter: ", ts)
+}
+
+func (g *game) WindowMouseLeave(ts time.Duration) {
+	fmt.Println("*** Window Mouse Leave: ", ts)
+}
+
+func (g *game) WindowFocusGained(ts time.Duration) {
+	fmt.Println("*** Window Focus Gained: ", ts)
+}
+
+func (g *game) WindowFocusLost(ts time.Duration) {
+	fmt.Println("*** Window Focus Lost: ", ts)
+}
+
 func TestMain(m *testing.M) {
 	var g game
 	engine.Handler = &g
 	key.Handler = &g
 	mouse.Handler = &g
+	window.Handler = &g
 	err = engine.Run()
 	os.Exit(m.Run())
 }
