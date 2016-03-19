@@ -3,9 +3,7 @@
 
 package internal
 
-// #cgo windows LDFLAGS: -lSDL2
-// #cgo linux freebsd darwin pkg-config: sdl2
-// #include "../internal/sdl.h"
+// #include "sdl.h"
 import "C"
 
 import "errors"
