@@ -1,0 +1,8 @@
+{
+    "Title": "Glam Example 00: Minimal",
+    "Resolution": [800, 600],
+    "Display": 0,
+    "Fullscreen": false,
+    "FullscreenMode": "Desktop",
+    "VSync": true
+}
