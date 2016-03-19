@@ -15,7 +15,7 @@ import (
 
 //------------------------------------------------------------------------------
 
-var path = filepath.Dir(os.Args[0])
+var Path = filepath.Dir(os.Args[0])
 
 var config = struct {
 	Title          string
@@ -38,7 +38,7 @@ var config = struct {
 func init() {
 	log.SetFlags(log.Lshortfile | log.Ltime)
 
-	log.Printf("path = \"%s\"", path)
+	log.Printf("Path = \"%s\"", Path)
 
 	loadConfig()
 
@@ -65,7 +65,7 @@ func init() {
 }
 
 func loadConfig() {
-	f, err := os.Open(path + "/init.json")
+	f, err := os.Open(Path + "/init.json")
 	if err != nil {
 		log.Print(err)
 		return
@@ -75,7 +75,7 @@ func loadConfig() {
 	if err != nil {
 		log.Panic(err)
 	}
-	log.Printf("config = %v\n", config)
+	log.Printf("config = %+v\n", config)
 }
 
 //------------------------------------------------------------------------------
