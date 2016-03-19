@@ -36,7 +36,8 @@ var config = struct {
 //------------------------------------------------------------------------------
 
 func init() {
-	log.SetFlags(log.Lshortfile | log.Ltime)
+	log.SetPrefix("Glam: ")
+	log.SetFlags(log.Ltime)
 
 	log.Printf("Path = \"%s\"", Path)
 

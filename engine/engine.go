@@ -124,7 +124,7 @@ func dispatchEvent(e unsafe.Pointer) {
 		case C.SDL_WINDOWEVENT_CLOSE:
 			// Ignore
 		default:
-			log.Printf("Unkown window event.")
+			log.Printf("Unkown window event")
 		}
 	// Keyboard Events
 	case C.SDL_KEYDOWN:
