@@ -4,6 +4,7 @@
 package internal
 
 import (
+	"fmt"
 	"log"
 	"unsafe"
 )
@@ -96,29 +97,43 @@ func OpenWindow(
 
 // logOpenGLInfos displays information about the OpenGL context
 func logOpenGLInfos() {
+	s := "OpenGL: "
 	maj, err1 := sdlGLAttribute(C.SDL_GL_CONTEXT_MAJOR_VERSION)
 	min, err2 := sdlGLAttribute(C.SDL_GL_CONTEXT_MINOR_VERSION)
 	if err1 == nil && err2 == nil {
-		log.Printf("OpenGL version: %d, %d\n", maj, min)
+		s += fmt.Sprintf("%d.%d", maj, min)
 	}
 
 	db, err1 := sdlGLAttribute(C.SDL_GL_DOUBLEBUFFER)
 	if err1 == nil {
-		log.Printf("OpenGL Double Buffer: %t\n", db != 0)
+		if db != 0 {
+			s += ", Double Buffer"
+		} else {
+			s += ", NO Double Buffer"
+		}
 	}
 
 	av, err1 := sdlGLAttribute(C.SDL_GL_ACCELERATED_VISUAL)
 	if err1 == nil {
-		log.Printf("OpenGL Accelerated Visual: %t\n", av != 0)
+		if av != 0 {
+			s += ", Accelerated"
+		} else {
+			s += ", NOT Accelerated"
+		}
 	}
 
 	sw := C.SDL_GL_GetSwapInterval()
 	if sw > 0 {
-		log.Printf("OpenGL Vertical Sync: %t\n", sw != 0)
+		if sw != 0 {
+			s += ", VSync"
+		} else {
+			s += ", NO VSync"
+		}
 	} else {
 		err1 = GetSDLError()
 		log.Print(err1)
 	}
+	log.Printf(s)
 }
 
 func sdlGLAttribute(attr C.SDL_GLattr) (int, error) {
