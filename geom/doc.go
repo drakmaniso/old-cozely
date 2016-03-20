@@ -27,18 +27,5 @@ mathematical indices (row,column).
 
 Although all methods returns their result by value, they take their receiver and
 parameters by reference, for efficiency. They are never modified.
-
-Vectors
-
-When creating vector literals, if you are using the "go vet" tool, you must
-specify the X,Y,Z,... keys:
-	v := Vec4{X: x, Y: y, Z: z, W: w}
-
-If you really need something shorter and cannot ignore go vet, you can write a
-small local function:
-	func vec4(x, y, z, w: float32) {
-		return Vec4{X: x, Y: y, Z: z, W: w}
-	}
-	v := vec4(x, y, z, w)
 */
 package geom
