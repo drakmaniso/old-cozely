@@ -2,7 +2,6 @@ package internal
 
 //------------------------------------------------------------------------------
 
-// #include "sdl.h"
 // #include "render.h"
 import "C"
 
