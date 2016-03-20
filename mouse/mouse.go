@@ -18,10 +18,10 @@ import (
 
 // Handler receives the mouse events.
 var Handler interface {
-	MouseMotion(rel geom.IVec2, pos geom.IVec2, timestamp time.Duration)
+	MouseMotion(motion geom.IVec2, position geom.IVec2, timestamp time.Duration)
 	MouseButtonDown(b Button, clicks int, timestamp time.Duration)
 	MouseButtonUp(b Button, clicks int, timestamp time.Duration)
-	MouseWheel(w geom.IVec2, timestamp time.Duration)
+	MouseWheel(motion geom.IVec2, timestamp time.Duration)
 }
 
 //------------------------------------------------------------------------------

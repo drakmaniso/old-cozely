@@ -1,4 +1,4 @@
-// Package window porvides support for window events
+// Package window provides support for window events
 package window
 
 import (
@@ -14,7 +14,7 @@ import (
 var Handler interface {
 	WindowShown(timestamp time.Duration)
 	WindowHidden(timestamp time.Duration)
-	WindowResized(s geom.IVec2, timestamp time.Duration)
+	WindowResized(newSize geom.IVec2, timestamp time.Duration)
 	WindowMinimized(timestamp time.Duration)
 	WindowMaximized(timestamp time.Duration)
 	WindowRestored(timestamp time.Duration)
