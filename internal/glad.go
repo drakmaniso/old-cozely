@@ -5,16 +5,13 @@ package internal
 
 //------------------------------------------------------------------------------
 
-import (
-	"github.com/drakmaniso/glam/geom"
-)
+// #include "glad.h"
+import "C"
 
 //------------------------------------------------------------------------------
 
-var KeyState [512]bool
+type GLuint C.GLuint
 
-var MouseDelta geom.IVec2
-var MousePosition geom.IVec2
-var MouseButtons uint32
+type GLenum C.GLenum
 
 //------------------------------------------------------------------------------
