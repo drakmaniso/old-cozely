@@ -3,4 +3,6 @@
 
 int InitOpenGL();
 
-int Render(SDL_Window* w);
+void Render(SDL_Window* w);
+
+GLenum GetOpenGLError();
