@@ -107,33 +107,33 @@ func logOpenGLInfos() {
 	db, err1 := sdlGLAttribute(C.SDL_GL_DOUBLEBUFFER)
 	if err1 == nil {
 		if db != 0 {
-			s += ", Double Buffer"
+			s += ", double buffer"
 		} else {
-			s += ", NO Double Buffer"
+			s += ", NO double buffer"
 		}
 	}
 
 	av, err1 := sdlGLAttribute(C.SDL_GL_ACCELERATED_VISUAL)
 	if err1 == nil {
 		if av != 0 {
-			s += ", Accelerated"
+			s += ", accelerated"
 		} else {
-			s += ", NOT Accelerated"
+			s += ", NOT accelerated"
 		}
 	}
 
 	sw := C.SDL_GL_GetSwapInterval()
 	if sw > 0 {
 		if sw != 0 {
-			s += ", VSync"
+			s += ", vsync"
 		} else {
-			s += ", NO VSync"
+			s += ", NO vsync"
 		}
 	} else {
 		err1 = GetSDLError()
 		log.Print(err1)
 	}
-	log.Printf(s)
+	log.Print(s)
 }
 
 func sdlGLAttribute(attr C.SDL_GLattr) (int, error) {

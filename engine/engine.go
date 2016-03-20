@@ -124,7 +124,7 @@ func dispatchEvent(e unsafe.Pointer) {
 		case C.SDL_WINDOWEVENT_CLOSE:
 			// Ignore
 		default:
-			log.Printf("Unkown window event")
+			log.Print("unkown window event")
 		}
 	// Keyboard Events
 	case C.SDL_KEYDOWN:
@@ -201,7 +201,7 @@ func dispatchEvent(e unsafe.Pointer) {
 	case C.SDL_AUDIODEVICEREMOVED:
 	default:
 		//TODO: remove
-		log.Println("Unknown", ((*C.SDL_CommonEvent)(e))._type)
+		log.Print("unknown SDL event:", ((*C.SDL_CommonEvent)(e))._type)
 	}
 }
 

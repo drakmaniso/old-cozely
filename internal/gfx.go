@@ -24,11 +24,11 @@ func CompileShaders(
 ) GLuint {
 	vs, err := compileShader(vertexShader, C.GL_VERTEX_SHADER)
 	if err != nil {
-		log.Printf("compile error in vertex shader: %s\n", err)
+		log.Print("compile error in vertex shader:", err)
 	}
 	fs, err := compileShader(fragmentShader, C.GL_FRAGMENT_SHADER)
 	if err != nil {
-		log.Printf("compile error in fragment shader: %s\n", err)
+		log.Print("compile error in fragment shader:", err)
 	}
 
 	p := C.LinkProgram(vs, fs)

@@ -39,8 +39,7 @@ var config = struct {
 //------------------------------------------------------------------------------
 
 func init() {
-	log.SetPrefix("Glam: ")
-	log.SetFlags(log.Ltime)
+	log.SetFlags(log.Ltime | log.Lshortfile)
 
 	log.Printf("Path = \"%s\"", Path)
 
@@ -49,7 +48,7 @@ func init() {
 	runtime.LockOSThread()
 
 	if errcode := C.SDL_Init(C.SDL_INIT_EVERYTHING); errcode != 0 {
-		panic(GetSDLError())
+		log.Panic(GetSDLError())
 	}
 
 	C.SDL_StopTextInput()
@@ -79,7 +78,7 @@ func loadConfig() {
 	if err != nil {
 		log.Panic(err)
 	}
-	log.Printf("config = %+v\n", config)
+	log.Printf("config = %+v", config)
 }
 
 //------------------------------------------------------------------------------

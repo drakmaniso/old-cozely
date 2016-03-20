@@ -17,10 +17,10 @@ import (
 
 func initRender() {
 	if C.InitOpenGL() != 0 {
-		log.Panic("Failed to load OpenGL")
+		log.Panic("failed to load OpenGL")
 	}
 	if err := CheckGLError(); err != nil {
-		log.Panicf("Failed to initialize OpenGL: %s", err)
+		log.Panicf("failed to initialize OpenGL:", err)
 	}
 }
 
