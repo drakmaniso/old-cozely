@@ -15,6 +15,7 @@ func NewPipeline(
 	fragmentShader io.Reader,
 ) (*Pipeline, error) {
 	var p Pipeline
-	p.program = internal.CompileShaders(vertexShader, fragmentShader)
-	return &p, nil
+	var err error
+	p.program, err = internal.CompileShaders(vertexShader, fragmentShader)
+	return &p, err
 }

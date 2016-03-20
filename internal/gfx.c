@@ -15,15 +15,15 @@ GLuint CompileShader(const GLchar* b, GLenum t) {
 	return s;
 }
 
-char* CheckCompileShaderError(GLuint s) {
-    GLint status = GL_TRUE;
-    glGetShaderiv (s, GL_COMPILE_STATUS, &status);
-    if (status != GL_TRUE) {
-        GLint length = 0;
-        glGetShaderiv (s, GL_INFO_LOG_LENGTH, &length);
-        char *message = calloc(length + 1, sizeof(char));
-        glGetShaderInfoLog (s, length, &length, message);
-        return message;
+char* CompileShaderError(GLuint s) {
+    GLint ok = GL_TRUE;
+    glGetShaderiv (s, GL_COMPILE_STATUS, &ok);
+    if (ok != GL_TRUE) {
+        GLint l = 0;
+        glGetShaderiv (s, GL_INFO_LOG_LENGTH, &l);
+        char *m = calloc(l + 1, sizeof(char));
+        glGetShaderInfoLog (s, l, &l, m);
+        return m;
     }
 	
 	return NULL;
@@ -35,4 +35,19 @@ GLuint LinkProgram(GLuint vs, GLuint fs) {
 	glAttachShader(p, fs);
 	glLinkProgram(p);
 	return p;
+}
+
+char* LinkProgramError(GLuint p) {
+    GLint ok = GL_TRUE;
+    glGetProgramiv (p, GL_LINK_STATUS, &ok);
+    if (ok != GL_TRUE)
+    {
+        GLint l = 0;
+        glGetProgramiv (p, GL_INFO_LOG_LENGTH, &l);
+        char *m = calloc(l + 1, sizeof(char));
+        glGetProgramInfoLog (p, l, &l, m);
+        return m;
+    }
+	
+	return NULL;
 }

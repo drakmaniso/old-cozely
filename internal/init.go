@@ -41,6 +41,7 @@ var config = struct {
 func init() {
 	log.SetFlags(log.Ltime | log.Lshortfile)
 
+	log.Print("---------------------------------------------------------------")
 	log.Printf("Path = \"%s\"", Path)
 
 	loadConfig()
@@ -65,6 +66,7 @@ func init() {
 		log.Panic(err)
 	}
 	initRender()
+	log.Print("---------------------------------------------------------------")
 }
 
 func loadConfig() {

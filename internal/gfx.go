@@ -21,33 +21,39 @@ import (
 func CompileShaders(
 	vertexShader io.Reader,
 	fragmentShader io.Reader,
-) GLuint {
+) (GLuint, error) {
 	vs, err := compileShader(vertexShader, C.GL_VERTEX_SHADER)
 	if err != nil {
-		log.Print("compile error in vertex shader:", err)
+		log.Print("vertex shader compile error: ", err)
 	}
 	fs, err := compileShader(fragmentShader, C.GL_FRAGMENT_SHADER)
 	if err != nil {
-		log.Print("compile error in fragment shader:", err)
+		log.Print("fragment shader compile error: ", err)
 	}
 
 	p := C.LinkProgram(vs, fs)
-	return GLuint(p)
+	if errm := C.LinkProgramError(p); errm != nil {
+		defer C.free(unsafe.Pointer(errm))
+		err = errors.New(C.GoString(errm))
+		log.Print("shader link error: ", err)
+		return GLuint(p), err
+	}
+	return GLuint(p), err
 }
 
 func compileShader(r io.Reader, t C.GLenum) (C.GLuint, error) {
 	b, err := ioutil.ReadAll(r)
 	if err != nil {
-
+		log.Print("failed to read shader: ", err)
+		return 0, err
 	}
 	cb := C.CString(string(b))
 	defer C.free(unsafe.Pointer(cb))
-	s := C.CompileShader((*C.GLchar)(unsafe.Pointer(cb)), t)
 
-	errmsg := C.CheckCompileShaderError(s)
-	if errmsg != nil {
-		defer C.free(unsafe.Pointer(errmsg))
-		return 0, errors.New(C.GoString(errmsg))
+	s := C.CompileShader((*C.GLchar)(unsafe.Pointer(cb)), t)
+	if errm := C.CompileShaderError(s); errm != nil {
+		defer C.free(unsafe.Pointer(errm))
+		return s, errors.New(C.GoString(errm))
 	}
 
 	return s, nil
