@@ -14,7 +14,7 @@ import (
 //------------------------------------------------------------------------------
 
 type Pipeline struct {
-	program  internal.GLuint
+	program  uint32
 	isClosed bool
 }
 

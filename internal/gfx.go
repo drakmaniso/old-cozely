@@ -29,7 +29,7 @@ import (
 func CompileShaders(
 	vertexShader io.Reader,
 	fragmentShader io.Reader,
-) (GLuint, error) {
+) (uint32, error) {
 	vs, err := compileShader(vertexShader, C.GL_VERTEX_SHADER)
 	if err != nil {
 		log.Print("vertex shader compile error: ", err)
@@ -44,9 +44,9 @@ func CompileShaders(
 		defer C.free(unsafe.Pointer(errm))
 		err = errors.New(C.GoString(errm))
 		log.Print("shader link error: ", err)
-		return GLuint(p), err
+		return uint32(p), err
 	}
-	return GLuint(p), err
+	return uint32(p), err
 }
 
 func compileShader(r io.Reader, t C.GLenum) (C.GLuint, error) {
@@ -69,8 +69,8 @@ func compileShader(r io.Reader, t C.GLenum) (C.GLuint, error) {
 
 //------------------------------------------------------------------------------
 
-func CloseProgram(p GLuint) {
-	C.CloseProgram((C.GLuint)(p))
+func CloseProgram(p uint32) {
+	C.CloseProgram(C.GLuint(p))
 }
 
 //------------------------------------------------------------------------------
