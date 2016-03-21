@@ -15,9 +15,7 @@ import (
 	"github.com/drakmaniso/glam/window"
 )
 
-// #cgo windows LDFLAGS: -lSDL2
-// #cgo linux freebsd darwin pkg-config: sdl2
-// #include "engine.h"
+// #include "../internal/sdl.h"
 import "C"
 
 //------------------------------------------------------------------------------
@@ -28,16 +26,16 @@ import "C"
 // Important: must be called from main.main, or at least from a function that is
 // known to run on the main OS thread.
 func Run() error {
-	defer C.SDL_Quit()
+	defer internal.SDLQuit()
 	defer internal.DestroyWindow()
 
 	// Main Loop
 
-	then := time.Duration(C.SDL_GetTicks()) * time.Millisecond
+	then := internal.GetTime() * time.Millisecond
 	remain := time.Duration(0)
 
 	for !quit {
-		now = time.Duration(C.SDL_GetTicks()) * time.Millisecond
+		now = internal.GetTime() * time.Millisecond
 		remain += now - then
 		for remain >= TimeStep {
 			// Fixed time step for logic and physics updates.
@@ -68,12 +66,12 @@ var quit = false
 func processEvents() {
 	more := true
 	for more && !quit {
-		n := int(C.peepEvents())
+		n := internal.PeepEvents()
 		for i := 0; i < n && !quit; i++ {
-			e := unsafe.Pointer(&C.events[i])
+			e := internal.EventAt(i)
 			dispatchEvent(e)
 		}
-		more = n >= C.PEEP_SIZE
+		more = n >= internal.PeepSize
 	}
 }
 

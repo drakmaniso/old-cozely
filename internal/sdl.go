@@ -6,7 +6,22 @@ package internal
 // #include "sdl.h"
 import "C"
 
-import "errors"
+import (
+	"errors"
+	"time"
+)
+
+//------------------------------------------------------------------------------
+
+func SDLQuit() {
+	C.SDL_Quit()
+}
+
+//------------------------------------------------------------------------------
+
+func GetTime() time.Duration {
+	return time.Duration(C.SDL_GetTicks())
+}
 
 //------------------------------------------------------------------------------
 
