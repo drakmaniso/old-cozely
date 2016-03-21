@@ -2,7 +2,6 @@
 // Licensed under a simplified BSD license (see LICENSE file).
 
 #include "glad.h"
-#include "gfx.h"
 
 GLuint CompileShader(const GLchar* b, GLenum t) {
 	GLuint s = glCreateShader(t);

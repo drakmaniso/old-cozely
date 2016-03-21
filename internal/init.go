@@ -3,9 +3,15 @@
 
 package internal
 
-// #cgo windows LDFLAGS: -lSDL2
-// #cgo linux freebsd darwin pkg-config: sdl2
-// #include "sdl.h"
+/*
+#cgo windows LDFLAGS: -lSDL2
+#cgo linux freebsd darwin pkg-config: sdl2
+
+#include "SDL.h"
+#include "glad.h"
+
+int InitOpenGL();
+*/
 import "C"
 
 import (
@@ -65,7 +71,14 @@ func init() {
 	if err != nil {
 		log.Panic(err)
 	}
-	initRender()
+
+	if C.InitOpenGL() != 0 {
+		log.Panic("failed to load OpenGL")
+	}
+	if err := CheckGLError(); err != nil {
+		log.Panicf("failed to initialize OpenGL:", err)
+	}
+
 	log.Print("---------------------------------------------------------------")
 }
 
