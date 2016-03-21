@@ -51,3 +51,7 @@ char* LinkProgramError(GLuint p) {
 	
 	return NULL;
 }
+
+void CloseProgram(GLuint p) {
+	glDeleteProgram(p);
+}

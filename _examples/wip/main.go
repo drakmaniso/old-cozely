@@ -62,7 +62,8 @@ func main() {
 		}	
 	`)
 
-	_, _ = gfx.NewPipeline(vs, fs)
+	p, _ := gfx.NewPipeline(vs, fs)
+	defer p.Close()
 
 	err := engine.Run()
 	if err != nil {

@@ -7,3 +7,4 @@ GLuint CompileShader(const GLchar* b, GLenum t);
 char* CompileShaderError(GLuint s);
 GLuint LinkProgram(GLuint vs, GLuint fs);
 char* LinkProgramError(GLuint s);
+void CloseProgram(GLuint p);

@@ -60,3 +60,9 @@ func compileShader(r io.Reader, t C.GLenum) (C.GLuint, error) {
 }
 
 //------------------------------------------------------------------------------
+
+func CloseProgram(p GLuint) {
+	C.CloseProgram((C.GLuint)(p))
+}
+
+//------------------------------------------------------------------------------
