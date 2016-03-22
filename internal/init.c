@@ -21,7 +21,5 @@ int InitOpenGL() {
 
     glEnable(GL_FRAMEBUFFER_SRGB);
 	
-	glPointSize(40.0f); //TODO: remove
-	
 	return 0;
 }
