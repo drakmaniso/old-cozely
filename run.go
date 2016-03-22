@@ -12,6 +12,14 @@ import (
 
 //------------------------------------------------------------------------------
 
+// Handler implements the game loop.
+var Handler interface {
+	Update()
+	Draw()
+}
+
+//------------------------------------------------------------------------------
+
 // Run opens the game window and runs the main loop. It returns only once the
 // user quits or closes the window.
 //

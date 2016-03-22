@@ -8,20 +8,12 @@ package main
 import (
 	"log"
 	"strings"
-	"time"
 
 	"github.com/drakmaniso/glam"
 	"github.com/drakmaniso/glam/gfx"
-	"github.com/drakmaniso/glam/key"
-	"github.com/drakmaniso/glam/mouse"
-	"github.com/drakmaniso/glam/window"
 )
 
 //------------------------------------------------------------------------------
-
-type game struct {
-	glam.DefaultHandler
-}
 
 var pipeline *gfx.Pipeline
 
@@ -30,9 +22,6 @@ var pipeline *gfx.Pipeline
 func main() {
 	g := &game{}
 	glam.Handler = g
-	key.Handler = g
-	mouse.Handler = g
-	window.Handler = g
 
 	vs := strings.NewReader(`
 		#version 450 core
@@ -53,30 +42,20 @@ func main() {
 
 	pipeline, _ = gfx.NewPipeline(vs, fs)
 
-	err := glam.Run()
-	if err != nil {
-		log.Panic(err)
+	if err := glam.Run(); err != nil {
+		log.Print(err)
 	}
 }
 
 //------------------------------------------------------------------------------
 
-func (g *game) KeyDown(l key.Label, p key.Position, ts time.Duration) {
-	if l == key.LabelEscape {
-		glam.Stop()
-	}
-}
+type game struct{}
 
 func (g *game) Update() {
 }
 
 func (g *game) Draw() {
 	pipeline.Use()
-}
-
-func (g *game) WindowQuit(ts time.Duration) {
-	pipeline.Close()
-	glam.Stop()
 }
 
 //------------------------------------------------------------------------------

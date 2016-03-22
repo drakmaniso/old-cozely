@@ -18,6 +18,18 @@ import (
 var Handler interface {
 	KeyDown(l Label, p Position, timestamp time.Duration)
 	KeyUp(l Label, p Position, timestamp time.Duration)
+} = DefaultHandler{}
+
+// DefaultHandler implements default behavior for all keyboard events.
+type DefaultHandler struct{}
+
+func (dh DefaultHandler) KeyDown(l Label, p Position, timestamp time.Duration) {
+	if l == LabelEscape {
+		internal.QuitRequested = true
+	}
+}
+
+func (dh DefaultHandler) KeyUp(l Label, p Position, timestamp time.Duration) {
 }
 
 //------------------------------------------------------------------------------

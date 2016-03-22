@@ -7,47 +7,29 @@ package main
 
 import (
 	"log"
-	"time"
 
 	"github.com/drakmaniso/glam"
-	"github.com/drakmaniso/glam/key"
-	"github.com/drakmaniso/glam/mouse"
-	"github.com/drakmaniso/glam/window"
 )
-
-//------------------------------------------------------------------------------
-
-type game struct {
-	glam.DefaultHandler
-}
 
 //------------------------------------------------------------------------------
 
 func main() {
 	g := &game{}
 	glam.Handler = g
-	key.Handler = g
-	mouse.Handler = g
-	window.Handler = g
-	err := glam.Run()
-	if err != nil {
-		log.Panic(err)
+
+	if err := glam.Run(); err != nil {
+		log.Print(err)
 	}
 }
 
 //------------------------------------------------------------------------------
 
+type game struct{}
+
 func (g *game) Update() {
 }
 
-func (g *game) WindowQuit(ts time.Duration) {
-	glam.Stop()
-}
-
-func (g *game) KeyDown(l key.Label, p key.Position, ts time.Duration) {
-	if l == key.LabelEscape {
-		glam.Stop()
-	}
+func (g *game) Draw() {
 }
 
 //------------------------------------------------------------------------------

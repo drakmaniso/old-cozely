@@ -19,38 +19,21 @@ import (
 
 //------------------------------------------------------------------------------
 
-type game struct {
-	glam.DefaultHandler
-}
-
-//------------------------------------------------------------------------------
-
 func main() {
 	g := &game{}
 	glam.Handler = g
 	key.Handler = g
 	mouse.Handler = g
 	window.Handler = g
-	err := glam.Run()
-	if err != nil {
-		log.Panic(err)
+
+	if err := glam.Run(); err != nil {
+		log.Print(err)
 	}
 }
 
 //------------------------------------------------------------------------------
 
-func (g *game) Update() {
-	// fmt.Printf("--- Update delta=%v pos=%v rightBttn=%v\n",
-	// 	mouse.Delta(), mouse.Position(), mouse.IsPressed(mouse.Right))
-	// fmt.Printf("--- w = %v\n", key.IsPressed(key.PositionW))
-	// fmt.Printf("--- window.HasFocus = %v\n", window.HasFocus())
-	// fmt.Printf("--- window.HasMouseFocus = %v\n", window.HasMouseFocus())
-}
-
-func (g *game) WindowQuit(ts time.Duration) {
-	fmt.Println("*** Bye! ***")
-	glam.Stop()
-}
+type game struct{}
 
 func (g *game) KeyDown(l key.Label, p key.Position, ts time.Duration) {
 	if l == key.LabelEscape {
@@ -120,6 +103,21 @@ func (g *game) WindowFocusGained(ts time.Duration) {
 
 func (g *game) WindowFocusLost(ts time.Duration) {
 	fmt.Println("*** Window Focus Lost: ", ts)
+}
+
+func (g *game) WindowQuit(ts time.Duration) {
+	fmt.Println("*** Window Quit ***")
+	glam.Stop()
+}
+
+func (g *game) Draw() {}
+
+func (g *game) Update() {
+	// fmt.Printf("--- Update delta=%v pos=%v rightBttn=%v\n",
+	// 	mouse.Delta(), mouse.Position(), mouse.IsPressed(mouse.Right))
+	// fmt.Printf("--- w = %v\n", key.IsPressed(key.PositionW))
+	// fmt.Printf("--- window.HasFocus = %v\n", window.HasFocus())
+	// fmt.Printf("--- window.HasMouseFocus = %v\n", window.HasMouseFocus())
 }
 
 //------------------------------------------------------------------------------

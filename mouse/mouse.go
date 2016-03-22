@@ -22,7 +22,15 @@ var Handler interface {
 	MouseButtonDown(b Button, clicks int, timestamp time.Duration)
 	MouseButtonUp(b Button, clicks int, timestamp time.Duration)
 	MouseWheel(motion geom.IVec2, timestamp time.Duration)
-}
+} = DefaultHandler{}
+
+// DefaultHandler implements default behavior for all mouse events.
+type DefaultHandler struct{}
+
+func (dh DefaultHandler) MouseMotion(rel geom.IVec2, pos geom.IVec2, timestamp time.Duration) {}
+func (dh DefaultHandler) MouseButtonDown(b Button, clicks int, timestamp time.Duration)       {}
+func (dh DefaultHandler) MouseButtonUp(b Button, clicks int, timestamp time.Duration)         {}
+func (dh DefaultHandler) MouseWheel(w geom.IVec2, timestamp time.Duration)                    {}
 
 //------------------------------------------------------------------------------
 
