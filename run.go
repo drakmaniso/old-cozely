@@ -43,7 +43,6 @@ func Run() error {
 			Handler.Update()
 			remain -= TimeStep
 		}
-		doMainthread()
 		Handler.Draw()
 		internal.Render()
 		if now-then < 10*time.Millisecond {
@@ -60,40 +59,6 @@ var now time.Duration
 
 // TimeStep is the fixed interval between each call to Update.
 var TimeStep = 1 * time.Second / 50
-
-func doMainthread() {
-	more := true
-	for more {
-		select {
-		case f := <-mainthread:
-			f()
-		default:
-			more = false
-		}
-	}
-}
-
-//------------------------------------------------------------------------------
-
-// From a post by Russ Cox on go-nuts.
-// See https://github.com/golang/go/wiki/LockOSThread
-
-var mainthread = make(chan func())
-
-// Do runs a function on the rendering thread.
-func Do(f func()) {
-	done := make(chan bool, 1)
-	mainthread <- func() {
-		f()
-		done <- true
-	}
-	<-done
-}
-
-// Go runs a function on the rendering thread, without blocking.
-func Go(f func()) {
-	mainthread <- f
-}
 
 //------------------------------------------------------------------------------
 
