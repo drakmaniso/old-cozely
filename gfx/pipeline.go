@@ -14,8 +14,7 @@ import (
 //------------------------------------------------------------------------------
 
 type Pipeline struct {
-	program  uint32
-	vao      uint32
+	internal internal.Pipeline
 	isClosed bool
 }
 
@@ -27,21 +26,21 @@ func NewPipeline(
 ) (*Pipeline, error) {
 	var p Pipeline
 	var err error
-	p.program, err = internal.CompileShaders(vertexShader, fragmentShader)
-	p.vao, err = internal.SetupVAO()
+	err = p.internal.CompileShaders(vertexShader, fragmentShader)
+	err = p.internal.SetupVAO()
 	return &p, err
 }
 
 //------------------------------------------------------------------------------
 
 func (p *Pipeline) Use() {
-	internal.UsePipeline(p.program, p.vao)
+	p.internal.Use()
 }
 
 //------------------------------------------------------------------------------
 
 func (p *Pipeline) Close() {
-	internal.ClosePipeline(p.program)
+	p.internal.Close()
 	p.isClosed = true
 }
 

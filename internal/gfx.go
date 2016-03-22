@@ -29,10 +29,17 @@ import (
 
 //------------------------------------------------------------------------------
 
-func CompileShaders(
+type Pipeline struct {
+	program C.GLuint
+	vao     C.GLuint
+}
+
+//------------------------------------------------------------------------------
+
+func (p *Pipeline) CompileShaders(
 	vertexShader io.Reader,
 	fragmentShader io.Reader,
-) (uint32, error) {
+) error {
 	vs, err := compileShader(vertexShader, C.GL_VERTEX_SHADER)
 	if err != nil {
 		log.Print("vertex shader compile error: ", err)
@@ -42,14 +49,14 @@ func CompileShaders(
 		log.Print("fragment shader compile error: ", err)
 	}
 
-	p := C.LinkProgram(vs, fs)
-	if errm := C.LinkProgramError(p); errm != nil {
+	p.program = C.LinkProgram(vs, fs)
+	if errm := C.LinkProgramError(p.program); errm != nil {
 		defer C.free(unsafe.Pointer(errm))
 		err = errors.New(C.GoString(errm))
 		log.Print("shader link error: ", err)
-		return uint32(p), err
+		return err
 	}
-	return uint32(p), err
+	return err
 }
 
 func compileShader(r io.Reader, t C.GLenum) (C.GLuint, error) {
@@ -72,21 +79,21 @@ func compileShader(r io.Reader, t C.GLenum) (C.GLuint, error) {
 
 //------------------------------------------------------------------------------
 
-func SetupVAO() (uint32, error) {
-	vao := uint32(C.SetupVAO())
-	return vao, nil
+func (p *Pipeline) SetupVAO() error {
+	p.vao = C.SetupVAO()
+	return nil
 }
 
 //------------------------------------------------------------------------------
 
-func UsePipeline(p uint32, vao uint32) {
-	C.UsePipeline(C.GLuint(p), C.GLuint(vao))
+func (p *Pipeline) Use() {
+	C.UsePipeline(p.program, p.vao)
 }
 
 //------------------------------------------------------------------------------
 
-func ClosePipeline(p uint32) {
-	C.ClosePipeline(C.GLuint(p))
+func (p *Pipeline) Close() {
+	C.ClosePipeline(p.program)
 }
 
 //------------------------------------------------------------------------------
