@@ -23,18 +23,7 @@ type game struct {
 	engine.DefaultHandler
 }
 
-func (g *game) Update() {
-}
-
-func (g *game) Quit() {
-	engine.Stop()
-}
-
-func (g *game) KeyDown(l key.Label, p key.Position, time time.Duration) {
-	if l == key.LabelEscape {
-		engine.Stop()
-	}
-}
+var pipeline *gfx.Pipeline
 
 //------------------------------------------------------------------------------
 
@@ -62,13 +51,32 @@ func main() {
 		}	
 	`)
 
-	p, _ := gfx.NewPipeline(vs, fs)
-	defer p.Close()
+	pipeline, _ = gfx.NewPipeline(vs, fs)
 
 	err := engine.Run()
 	if err != nil {
 		log.Panic(err)
 	}
+}
+
+//------------------------------------------------------------------------------
+
+func (g *game) KeyDown(l key.Label, p key.Position, time time.Duration) {
+	if l == key.LabelEscape {
+		engine.Stop()
+	}
+}
+
+func (g *game) Update() {
+}
+
+func (g *game) Draw() {
+	pipeline.Use()
+}
+
+func (g *game) Quit() {
+	pipeline.Close()
+	engine.Stop()
 }
 
 //------------------------------------------------------------------------------

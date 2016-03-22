@@ -32,7 +32,7 @@ GLuint LinkProgram(GLuint vs, GLuint fs) {
 	GLuint p = glCreateProgram();
 	glAttachShader(p, vs);
 	glAttachShader(p, fs);
-	glLinkProgram(p);
+	glLinkProgram(p);	
 	return p;
 }
 
@@ -51,6 +51,12 @@ char* LinkProgramError(GLuint p) {
 	return NULL;
 }
 
-void CloseProgram(GLuint p) {
+GLuint SetupVAO() {
+	GLuint vao;
+	glGenVertexArrays(1, &vao);
+	return vao;
+}
+
+void ClosePipeline(GLuint p) {
 	glDeleteProgram(p);
 }

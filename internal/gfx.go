@@ -12,7 +12,10 @@ GLuint CompileShader(const GLchar* b, GLenum t);
 char* CompileShaderError(GLuint s);
 GLuint LinkProgram(GLuint vs, GLuint fs);
 char* LinkProgramError(GLuint s);
-void CloseProgram(GLuint p);
+GLuint SetupVAO();
+void ClosePipeline(GLuint p);
+
+static inline void UsePipeline(GLuint p, GLuint vao) {glUseProgram(p);glBindVertexArray(vao);};
 */
 import "C"
 
@@ -69,8 +72,21 @@ func compileShader(r io.Reader, t C.GLenum) (C.GLuint, error) {
 
 //------------------------------------------------------------------------------
 
-func CloseProgram(p uint32) {
-	C.CloseProgram(C.GLuint(p))
+func SetupVAO() (uint32, error) {
+	vao := uint32(C.SetupVAO())
+	return vao, nil
+}
+
+//------------------------------------------------------------------------------
+
+func UsePipeline(p uint32, vao uint32) {
+	C.UsePipeline(C.GLuint(p), C.GLuint(vao))
+}
+
+//------------------------------------------------------------------------------
+
+func ClosePipeline(p uint32) {
+	C.ClosePipeline(C.GLuint(p))
 }
 
 //------------------------------------------------------------------------------
