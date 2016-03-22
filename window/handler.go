@@ -22,6 +22,7 @@ var Handler interface {
 	WindowMouseLeave(timestamp time.Duration)
 	WindowFocusGained(timestamp time.Duration)
 	WindowFocusLost(timestamp time.Duration)
+	WindowQuit(timestamp time.Duration)
 }
 
 //------------------------------------------------------------------------------

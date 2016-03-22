@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/drakmaniso/glam/engine"
+	"github.com/drakmaniso/glam"
 	"github.com/drakmaniso/glam/gfx"
 	"github.com/drakmaniso/glam/key"
 	"github.com/drakmaniso/glam/mouse"
@@ -20,7 +20,7 @@ import (
 //------------------------------------------------------------------------------
 
 type game struct {
-	engine.DefaultHandler
+	glam.DefaultHandler
 }
 
 var pipeline *gfx.Pipeline
@@ -29,7 +29,7 @@ var pipeline *gfx.Pipeline
 
 func main() {
 	g := &game{}
-	engine.Handler = g
+	glam.Handler = g
 	key.Handler = g
 	mouse.Handler = g
 	window.Handler = g
@@ -53,7 +53,7 @@ func main() {
 
 	pipeline, _ = gfx.NewPipeline(vs, fs)
 
-	err := engine.Run()
+	err := glam.Run()
 	if err != nil {
 		log.Panic(err)
 	}
@@ -61,9 +61,9 @@ func main() {
 
 //------------------------------------------------------------------------------
 
-func (g *game) KeyDown(l key.Label, p key.Position, time time.Duration) {
+func (g *game) KeyDown(l key.Label, p key.Position, ts time.Duration) {
 	if l == key.LabelEscape {
-		engine.Stop()
+		glam.Stop()
 	}
 }
 
@@ -74,9 +74,9 @@ func (g *game) Draw() {
 	pipeline.Use()
 }
 
-func (g *game) Quit() {
+func (g *game) WindowQuit(ts time.Duration) {
 	pipeline.Close()
-	engine.Stop()
+	glam.Stop()
 }
 
 //------------------------------------------------------------------------------

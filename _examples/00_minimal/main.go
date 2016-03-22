@@ -9,7 +9,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/drakmaniso/glam/engine"
+	"github.com/drakmaniso/glam"
 	"github.com/drakmaniso/glam/key"
 	"github.com/drakmaniso/glam/mouse"
 	"github.com/drakmaniso/glam/window"
@@ -18,33 +18,35 @@ import (
 //------------------------------------------------------------------------------
 
 type game struct {
-	engine.DefaultHandler
-}
-
-func (g *game) Update() {
-}
-
-func (g *game) Quit() {
-	engine.Stop()
-}
-
-func (g *game) KeyDown(l key.Label, p key.Position, time time.Duration) {
-	if l == key.LabelEscape {
-		engine.Stop()
-	}
+	glam.DefaultHandler
 }
 
 //------------------------------------------------------------------------------
 
 func main() {
 	g := &game{}
-	engine.Handler = g
+	glam.Handler = g
 	key.Handler = g
 	mouse.Handler = g
 	window.Handler = g
-	err := engine.Run()
+	err := glam.Run()
 	if err != nil {
 		log.Panic(err)
+	}
+}
+
+//------------------------------------------------------------------------------
+
+func (g *game) Update() {
+}
+
+func (g *game) WindowQuit(ts time.Duration) {
+	glam.Stop()
+}
+
+func (g *game) KeyDown(l key.Label, p key.Position, ts time.Duration) {
+	if l == key.LabelEscape {
+		glam.Stop()
 	}
 }
 

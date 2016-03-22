@@ -1,7 +1,23 @@
 // Copyright (c) 2013-2016 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
-package engine
+package events
+
+//------------------------------------------------------------------------------
+
+/*
+#cgo windows LDFLAGS: -lSDL2
+#cgo linux freebsd darwin pkg-config: sdl2
+
+#include "../sdl.h"
+
+#define PEEP_SIZE 128
+
+SDL_Event Events[PEEP_SIZE];
+
+int PeepEvents();
+*/
+import "C"
 
 import (
 	"log"
@@ -15,71 +31,25 @@ import (
 	"github.com/drakmaniso/glam/window"
 )
 
-// #include "../internal/sdl.h"
-import "C"
-
 //------------------------------------------------------------------------------
 
-// Run opens the game window and runs the main loop. It returns only once the
-// user quits or closes the window.
-//
-// Important: must be called from main.main, or at least from a function that is
-// known to run on the main OS thread.
-func Run() error {
-	defer internal.SDLQuit()
-	defer internal.DestroyWindow()
-
-	// Main Loop
-
-	then := internal.GetTime() * time.Millisecond
-	remain := time.Duration(0)
-
-	for !quit {
-		now = internal.GetTime() * time.Millisecond
-		remain += now - then
-		for remain >= TimeStep {
-			// Fixed time step for logic and physics updates.
-			processEvents()
-			Handler.Update()
-			remain -= TimeStep
-		}
-		doMainthread()
-		Handler.Draw()
-		internal.Render()
-		if now-then < 10*time.Millisecond {
-			// Prevent using too much CPU on empty loops.
-			<-time.After(10 * time.Millisecond)
-		}
-		then = now
-	}
-	return nil
-}
-
-// now is the current time
-var now time.Duration
-
-// TimeStep is the fixed interval between each call to Update.
-var TimeStep = 1 * time.Second / 50
-
-var quit = false
-
-func processEvents() {
+func Process() {
 	more := true
-	for more && !quit {
-		n := internal.PeepEvents()
-		for i := 0; i < n && !quit; i++ {
-			e := internal.EventAt(i)
-			dispatchEvent(e)
+	for more && !internal.QuitRequested {
+		n := PeepEvents()
+		for i := 0; i < n && !internal.QuitRequested; i++ {
+			e := EventAt(i)
+			dispatch(e)
 		}
-		more = n >= internal.PeepSize
+		more = n >= C.PEEP_SIZE
 	}
 }
 
-func dispatchEvent(e unsafe.Pointer) {
+func dispatch(e unsafe.Pointer) {
 	ts := time.Duration(((*C.SDL_CommonEvent)(e)).timestamp) * time.Millisecond
 	switch ((*C.SDL_CommonEvent)(e))._type {
 	case C.SDL_QUIT:
-		Handler.Quit()
+		window.Handler.WindowQuit(ts)
 	// Window Events
 	case C.SDL_WINDOWEVENT:
 		e := (*C.SDL_WindowEvent)(e)
@@ -203,46 +173,14 @@ func dispatchEvent(e unsafe.Pointer) {
 	}
 }
 
-func doMainthread() {
-	more := true
-	for more {
-		select {
-		case f := <-mainthread:
-			f()
-		default:
-			more = false
-		}
-	}
+// PeepEvents fill the event buffer and returns the number of events fetched.
+func PeepEvents() int {
+	return int(C.PeepEvents())
 }
 
-//------------------------------------------------------------------------------
-
-// From a post by Russ Cox on go-nuts.
-// See https://github.com/golang/go/wiki/LockOSThread
-
-var mainthread = make(chan func())
-
-// Do runs a function on the rendering thread.
-func Do(f func()) {
-	done := make(chan bool, 1)
-	mainthread <- func() {
-		f()
-		done <- true
-	}
-	<-done
-}
-
-// Go runs a function on the rendering thread, without blocking.
-func Go(f func()) {
-	mainthread <- f
-}
-
-//------------------------------------------------------------------------------
-
-// Stop request the engine to stop. No more events will be processed,
-// and at most one Update and one Draw will be called.
-func Stop() {
-	quit = true
+// EventAt returns a pointer to an event in the event buffer.
+func EventAt(i int) unsafe.Pointer {
+	return unsafe.Pointer(&C.Events[i])
 }
 
 //------------------------------------------------------------------------------

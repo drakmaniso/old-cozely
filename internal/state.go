@@ -9,6 +9,10 @@ import "github.com/drakmaniso/glam/geom"
 
 //------------------------------------------------------------------------------
 
+var QuitRequested = false
+
+//------------------------------------------------------------------------------
+
 var KeyState [512]bool
 
 var MouseDelta geom.IVec2

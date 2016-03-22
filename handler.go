@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2016 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
-package engine
+package glam
 
 import (
 	"time"
@@ -17,7 +17,6 @@ import (
 var Handler interface {
 	Update()
 	Draw()
-	Quit()
 }
 
 //------------------------------------------------------------------------------
@@ -29,7 +28,6 @@ type DefaultHandler struct{}
 
 func (dh DefaultHandler) Update() {}
 func (dh DefaultHandler) Draw()   {}
-func (dh DefaultHandler) Quit()   { Stop() }
 
 func (dh DefaultHandler) KeyDown(l key.Label, p key.Position, timestamp time.Duration) {}
 func (dh DefaultHandler) KeyUp(l key.Label, p key.Position, timestamp time.Duration)   {}
@@ -49,5 +47,6 @@ func (dh DefaultHandler) WindowMouseEnter(timestamp time.Duration)            {}
 func (dh DefaultHandler) WindowMouseLeave(timestamp time.Duration)            {}
 func (dh DefaultHandler) WindowFocusGained(timestamp time.Duration)           {}
 func (dh DefaultHandler) WindowFocusLost(timestamp time.Duration)             {}
+func (dh DefaultHandler) WindowQuit()                                         { Stop() }
 
 //------------------------------------------------------------------------------

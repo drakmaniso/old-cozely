@@ -10,7 +10,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/drakmaniso/glam/engine"
+	"github.com/drakmaniso/glam"
 	"github.com/drakmaniso/glam/geom"
 	"github.com/drakmaniso/glam/key"
 	"github.com/drakmaniso/glam/mouse"
@@ -20,8 +20,24 @@ import (
 //------------------------------------------------------------------------------
 
 type game struct {
-	engine.DefaultHandler
+	glam.DefaultHandler
 }
+
+//------------------------------------------------------------------------------
+
+func main() {
+	g := &game{}
+	glam.Handler = g
+	key.Handler = g
+	mouse.Handler = g
+	window.Handler = g
+	err := glam.Run()
+	if err != nil {
+		log.Panic(err)
+	}
+}
+
+//------------------------------------------------------------------------------
 
 func (g *game) Update() {
 	// fmt.Printf("--- Update delta=%v pos=%v rightBttn=%v\n",
@@ -31,39 +47,39 @@ func (g *game) Update() {
 	// fmt.Printf("--- window.HasMouseFocus = %v\n", window.HasMouseFocus())
 }
 
-func (g *game) Quit() {
+func (g *game) WindowQuit(ts time.Duration) {
 	fmt.Println("*** Bye! ***")
-	engine.Stop()
+	glam.Stop()
 }
 
-func (g *game) KeyDown(l key.Label, p key.Position, time time.Duration) {
+func (g *game) KeyDown(l key.Label, p key.Position, ts time.Duration) {
 	if l == key.LabelEscape {
-		engine.Stop()
+		glam.Stop()
 	}
-	fmt.Println("*** Key Down: ", l, p, time)
+	fmt.Println("*** Key Down: ", l, p, ts)
 }
 
-func (g *game) KeyUp(l key.Label, p key.Position, time time.Duration) {
-	fmt.Println("*** Key Up: ", l, p, time)
+func (g *game) KeyUp(l key.Label, p key.Position, ts time.Duration) {
+	fmt.Println("*** Key Up: ", l, p, ts)
 }
 
-func (g *game) MouseMotion(rel geom.IVec2, pos geom.IVec2, time time.Duration) {
-	fmt.Println("*** Mouse Motion: ", rel, pos, time)
+func (g *game) MouseMotion(rel geom.IVec2, pos geom.IVec2, ts time.Duration) {
+	fmt.Println("*** Mouse Motion: ", rel, pos, ts)
 }
 
-func (g *game) MouseButtonDown(b mouse.Button, clicks int, time time.Duration) {
-	fmt.Println("*** Mouse Button Down: ", b, clicks, time)
+func (g *game) MouseButtonDown(b mouse.Button, clicks int, ts time.Duration) {
+	fmt.Println("*** Mouse Button Down: ", b, clicks, ts)
 	if b == mouse.Left {
 		fmt.Println("    (Click!)")
 	}
 }
 
-func (g *game) MouseButtonUp(b mouse.Button, clicks int, time time.Duration) {
-	fmt.Println("*** Mouse Button Up: ", b, clicks, time)
+func (g *game) MouseButtonUp(b mouse.Button, clicks int, ts time.Duration) {
+	fmt.Println("*** Mouse Button Up: ", b, clicks, ts)
 }
 
-func (g *game) MouseWheel(w geom.IVec2, time time.Duration) {
-	fmt.Println("*** Mouse Wheel: ", w, time)
+func (g *game) MouseWheel(w geom.IVec2, ts time.Duration) {
+	fmt.Println("*** Mouse Wheel: ", w, ts)
 }
 
 func (g *game) WindowShown(ts time.Duration) {
@@ -104,20 +120,6 @@ func (g *game) WindowFocusGained(ts time.Duration) {
 
 func (g *game) WindowFocusLost(ts time.Duration) {
 	fmt.Println("*** Window Focus Lost: ", ts)
-}
-
-//------------------------------------------------------------------------------
-
-func main() {
-	g := &game{}
-	engine.Handler = g
-	key.Handler = g
-	mouse.Handler = g
-	window.Handler = g
-	err := engine.Run()
-	if err != nil {
-		log.Panic(err)
-	}
 }
 
 //------------------------------------------------------------------------------
