@@ -13,7 +13,7 @@ This project is currently for my personal use. It's not meant as a general
 purpose engine, but may become useful to others at some point.
 
 The main inspiration behind the design is the Lua framework Löve. The goal is to
-provide thin abstractions above OpenGL and SDL.
+provide simle abstractions over OpenGL and SDL.
 
 By order of priority, the API aims for:
 
@@ -25,10 +25,11 @@ By order of priority, the API aims for:
 Implemented Features
 --------------------
 
-- Package engine: game loop and platform-dependent features (just started)
-- Package key: provides support for the keyboard (usable but incomplete).
-- Package mouse: provides suport for the mouse (incomplete).
-- Package window: provides support for window events (incomplete).
+- Package glam: the game loop.
+- Package gfx: simple abstractions over OpenGL (just started).
+- Package key: support for keyboard events (incomplete).
+- Package mouse: suport for mouse events (incomplete).
+- Package window: support for window events (incomplete).
 - Package geom: vectors and matrices (incomplete).
 - Package math: efficient single-precision math.
 - Package noise: perlin noise.

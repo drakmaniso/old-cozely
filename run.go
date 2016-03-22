@@ -20,8 +20,7 @@ var Handler interface {
 
 //------------------------------------------------------------------------------
 
-// Run opens the game window and runs the main loop. It returns only once the
-// user quits or closes the window.
+// Run opens the game window and runs the game loop, until Stop() is called.
 //
 // Important: must be called from main.main, or at least from a function that is
 // known to run on the main OS thread.
@@ -62,8 +61,7 @@ var TimeStep = 1 * time.Second / 50
 
 //------------------------------------------------------------------------------
 
-// Stop request the engine to stop. No more events will be processed,
-// and at most one Update and one Draw will be called.
+// Stop request the game loop to stop.
 func Stop() {
 	internal.QuitRequested = true
 }
