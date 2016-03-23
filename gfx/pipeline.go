@@ -14,21 +14,22 @@ import (
 //------------------------------------------------------------------------------
 
 type Pipeline struct {
-	internal internal.Pipeline
-	isClosed bool
+	internal   internal.Pipeline
+	isCompiled bool
+	isClosed   bool
 }
 
 //------------------------------------------------------------------------------
 
-func NewPipeline(
+func (p *Pipeline) CompileShaders(
 	vertexShader io.Reader,
 	fragmentShader io.Reader,
-) (*Pipeline, error) {
-	var p Pipeline
+) error {
 	var err error
 	err = p.internal.CompileShaders(vertexShader, fragmentShader)
 	err = p.internal.SetupVAO()
-	return &p, err
+	p.isCompiled = true
+	return err
 }
 
 //------------------------------------------------------------------------------

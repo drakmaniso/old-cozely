@@ -15,7 +15,7 @@ import (
 
 //------------------------------------------------------------------------------
 
-var pipeline *gfx.Pipeline
+var pipeline gfx.Pipeline
 
 //------------------------------------------------------------------------------
 
@@ -47,7 +47,7 @@ func main() {
 		}	
 	`)
 
-	pipeline, _ = gfx.NewPipeline(vs, fs)
+	_ = pipeline.CompileShaders(vs, fs)
 
 	if err := glam.Run(); err != nil {
 		log.Print(err)
