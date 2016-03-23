@@ -42,6 +42,9 @@ func (p *Pipeline) Bind() {
 
 //------------------------------------------------------------------------------
 
+// BindAttributes binds a vertex buffer to an attributes binding slot.
+// The buffer should use the same struct type than passed to the corresponding
+// CreateAttributesBinding call. 
 func (p *Pipeline) BindAttributes(binding uint32, b *Buffer) {
 	p.internal.BindAttributes(binding, &b.internal, p.attribStride[binding])
 }

@@ -16,6 +16,8 @@ import (
 
 //------------------------------------------------------------------------------
 
+// CreateAttributesBinding defines a binding slot for vertex attributes.
+// The format must be a struct with layout tags.
 func (p *Pipeline) CreateAttributesBinding(binding uint32, format interface{}) error {
 	f := reflect.TypeOf(format)
 	if f.Kind() != reflect.Struct {
