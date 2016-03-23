@@ -13,9 +13,10 @@ char* CompileShaderError(GLuint s);
 GLuint LinkProgram(GLuint vs, GLuint fs);
 char* LinkProgramError(GLuint s);
 GLuint SetupVAO();
-void ClosePipeline(GLuint p);
+void ClosePipeline(GLuint p, GLuint vao);
 
-static inline void UsePipeline(GLuint p, GLuint vao) {glUseProgram(p);glBindVertexArray(vao);};
+static inline void BindPipeline(GLuint p, GLuint vao) {	glClear (GL_COLOR_BUFFER_BIT |  GL_DEPTH_BUFFER_BIT); glUseProgram(p); glBindVertexArray(vao);};
+static inline void DrawArrays(GLenum m, GLuint f, GLuint c) {glDrawArrays(m, f, c);};
 */
 import "C"
 
@@ -77,23 +78,23 @@ func compileShader(r io.Reader, t C.GLenum) (C.GLuint, error) {
 	return s, nil
 }
 
-//------------------------------------------------------------------------------
-
 func (p *Pipeline) SetupVAO() error {
 	p.vao = C.SetupVAO()
 	return nil
 }
 
-//------------------------------------------------------------------------------
+func (p *Pipeline) Bind() {
+	C.BindPipeline(p.program, p.vao)
+}
 
-func (p *Pipeline) Use() {
-	C.UsePipeline(p.program, p.vao)
+func (p *Pipeline) Close() {
+	C.ClosePipeline(p.program, p.vao)
 }
 
 //------------------------------------------------------------------------------
 
-func (p *Pipeline) Close() {
-	C.ClosePipeline(p.program)
+func Draw(mode uint32, first, count int32) {
+	C.DrawArrays(C.GLenum(mode), C.GLuint(first), C.GLuint(count))
 }
 
 //------------------------------------------------------------------------------

@@ -8,15 +8,15 @@ package internal
 /*
 #include "sdl.h"
 
-void Render(SDL_Window* w);
+static inline void SwapWindow(SDL_Window* w) {SDL_GL_SwapWindow(w);}
 */
 import "C"
 
 //------------------------------------------------------------------------------
 
-// Render send the draw commands to the GPU and swaps the double-buffer.
-func Render() {
-	C.Render(Window.window)
+// SwapWindow swaps the double-buffer.
+func SwapWindow() {
+	C.SwapWindow(Window.window)
 }
 
 //------------------------------------------------------------------------------

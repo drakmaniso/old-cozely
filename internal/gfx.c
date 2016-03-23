@@ -53,10 +53,11 @@ char* LinkProgramError(GLuint p) {
 
 GLuint SetupVAO() {
 	GLuint vao;
-	glGenVertexArrays(1, &vao);
+	glCreateVertexArrays(1, &vao);
 	return vao;
 }
 
-void ClosePipeline(GLuint p) {
+void ClosePipeline(GLuint p, GLuint vao) {
+	glDeleteVertexArrays(1, &vao);
 	glDeleteProgram(p);
 }

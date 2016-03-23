@@ -43,7 +43,7 @@ func Run() error {
 			remain -= TimeStep
 		}
 		Handler.Draw()
-		internal.Render()
+		internal.SwapWindow()
 		if now-then < 10*time.Millisecond {
 			// Prevent using too much CPU on empty loops.
 			<-time.After(10 * time.Millisecond)

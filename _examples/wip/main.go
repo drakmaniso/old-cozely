@@ -62,7 +62,8 @@ func (g *game) Update() {
 }
 
 func (g *game) Draw() {
-	pipeline.Use()
+	pipeline.Bind()
+	gfx.Draw(gfx.Triangles, 0, 3)
 }
 
 //------------------------------------------------------------------------------
