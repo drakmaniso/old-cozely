@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/drakmaniso/glam"
+	. "github.com/drakmaniso/glam/geom"
 	"github.com/drakmaniso/glam/gfx"
 )
 
@@ -18,6 +19,13 @@ import (
 var pipeline gfx.Pipeline
 
 //------------------------------------------------------------------------------
+
+type vertex struct {
+	position Vec3 `layout:"0"`
+	// padd1    byte
+	color IVec4   `layout:"1"`
+	alpha float32 `layout:"2"`
+}
 
 func main() {
 	g := &game{}
@@ -48,6 +56,13 @@ func main() {
 	`)
 
 	_ = pipeline.CompileShaders(vs, fs)
+
+	if err := pipeline.CreateAttributesBinding(0, float32(1.2)); err != nil {
+		log.Print("ERROR: ", err)
+	}
+	if err := pipeline.CreateAttributesBinding(0, vertex{}); err != nil {
+		log.Print("ERROR: ", err)
+	}
 
 	if err := glam.Run(); err != nil {
 		log.Print(err)

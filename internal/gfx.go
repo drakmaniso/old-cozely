@@ -98,3 +98,16 @@ func Draw(mode uint32, first, count int32) {
 }
 
 //------------------------------------------------------------------------------
+
+const (
+	GlByteEnum          C.GLenum = C.GL_BYTE
+	GlUnsignedByteEnum  C.GLenum = C.GL_UNSIGNED_BYTE
+	GlShortEnum         C.GLenum = C.GL_SHORT
+	GlUnsignedShortEnum C.GLenum = C.GL_UNSIGNED_SHORT
+	GlIntEnum           C.GLenum = C.GL_INT
+	GlUnsignedIntEnum   C.GLenum = C.GL_UNSIGNED_INT
+	GlFloatEnum         C.GLenum = C.GL_FLOAT
+	GlDoubleEnum        C.GLenum = C.GL_DOUBLE
+)
+
+//------------------------------------------------------------------------------

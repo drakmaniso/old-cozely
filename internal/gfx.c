@@ -57,6 +57,20 @@ GLuint SetupVAO() {
 	return vao;
 }
 
+void CreateAttributeBinding(
+	GLuint vao, 
+	GLuint index, 
+	GLuint binding,
+	GLint size,
+	GLenum type, 
+	GLboolean normalized,
+	GLuint relativeOffset
+) {
+	glEnableVertexArrayAttrib(vao, index);
+	glVertexArrayAttribBinding(vao, index, binding);
+	glVertexArrayAttribFormat(vao, index, size, type, normalized, relativeOffset);
+}
+
 void ClosePipeline(GLuint p, GLuint vao) {
 	glDeleteVertexArrays(1, &vao);
 	glDeleteProgram(p);
