@@ -21,6 +21,8 @@ func (p *Pipeline) CreateAttributesBinding(binding uint32, format interface{}) e
 	if f.Kind() != reflect.Struct {
 		return fmt.Errorf("attributes binding format must be a struct, not a %s", f.Kind())
 	}
+	p.attribStride[binding] = f.Size()
+	log.Print(p.attribStride[binding])
 	for i := 0; i < f.NumField(); i++ {
 		a := f.Field(i)
 		log.Print("*** Attribute: ", i)
@@ -49,7 +51,7 @@ func (p *Pipeline) CreateAttributesBinding(binding uint32, format interface{}) e
 			at.ConvertibleTo(ivec2Type):
 			ate = internal.GlIntEnum
 		}
-		
+
 		log.Print("        Index: ", ali)
 		log.Print("         Size: ", as)
 		log.Print("         Type: ", ate)

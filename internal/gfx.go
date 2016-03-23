@@ -23,9 +23,13 @@ void CreateAttributeBinding(
 	GLboolean normalized,
 	GLuint relativeOffset
 );
+GLuint CreateBufferFrom(GLsizeiptr size, const GLvoid* data);
 
 static inline void BindPipeline(GLuint p, GLuint vao) {	glClear (GL_COLOR_BUFFER_BIT |  GL_DEPTH_BUFFER_BIT); glUseProgram(p); glBindVertexArray(vao);};
 static inline void DrawArrays(GLenum m, GLuint f, GLuint c) {glDrawArrays(m, f, c);};
+static inline void BindAttributes(GLuint vao, GLuint binding, GLuint buffer, GLintptr offset, GLsizei stride) {
+	glVertexArrayVertexBuffer(vao, binding, buffer, offset, stride);
+}
 */
 import "C"
 
@@ -43,8 +47,6 @@ type Pipeline struct {
 	program C.GLuint
 	vao     C.GLuint
 }
-
-//------------------------------------------------------------------------------
 
 func (p *Pipeline) CompileShaders(
 	vertexShader io.Reader,
@@ -96,6 +98,11 @@ func (p *Pipeline) Bind() {
 	C.BindPipeline(p.program, p.vao)
 }
 
+func (p *Pipeline) BindAttributes(binding uint32, b *Buffer, stride uintptr) {
+	//TODO: offset
+	C.BindAttributes(C.GLuint(p.vao), C.GLuint(binding), C.GLuint(b.buffer), C.GLintptr(0), C.GLsizei(stride))
+}
+
 func (p *Pipeline) Close() {
 	C.ClosePipeline(p.program, p.vao)
 }
@@ -119,6 +126,17 @@ func (p *Pipeline) CreateAttributeBinding(
 		C.GLboolean(normalized),
 		C.GLuint(relativeOffset),
 	)
+}
+
+//------------------------------------------------------------------------------
+
+type Buffer struct {
+	buffer C.GLuint
+}
+
+func (b *Buffer) CreateFrom(size uintptr, data uintptr) error {
+	b.buffer = C.CreateBufferFrom(C.GLsizeiptr(size), unsafe.Pointer(data))
+	return nil
 }
 
 //------------------------------------------------------------------------------

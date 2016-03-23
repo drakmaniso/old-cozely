@@ -71,6 +71,13 @@ void CreateAttributeBinding(
 	glVertexArrayAttribFormat(vao, index, size, type, normalized, relativeOffset);
 }
 
+GLuint CreateBufferFrom(GLsizeiptr size, const GLvoid* data) {
+	GLuint b;
+	glCreateBuffers(1, &b);
+	glNamedBufferStorage(b, size, data, 0);
+	return b;
+}
+
 void ClosePipeline(GLuint p, GLuint vao) {
 	glDeleteVertexArrays(1, &vao);
 	glDeleteProgram(p);

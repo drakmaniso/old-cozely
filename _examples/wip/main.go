@@ -17,14 +17,14 @@ import (
 //------------------------------------------------------------------------------
 
 var pipeline gfx.Pipeline
+var vbo gfx.Buffer
 
 //------------------------------------------------------------------------------
 
 type vertex struct {
-	position Vec3 `layout:"0"`
-	// padd1    byte
-	color IVec4   `layout:"1"`
-	alpha float32 `layout:"2"`
+	position Vec4 `layout:"0"`
+	// color    IVec3   `layout:"1"`
+	// alpha    float32 `layout:"2"`
 }
 
 func main() {
@@ -33,6 +33,7 @@ func main() {
 
 	vs := strings.NewReader(`
 		#version 420 core
+		layout(location = 0) in vec4 pos;
 		void main(void)
 		{
 			const float Pi = 3.14;
@@ -42,7 +43,8 @@ func main() {
 				vec4(r*sin(-Pi*2/3), r*cos(-Pi*2/3), 0.5, 1.0),
 				vec4(r*sin(-Pi*4/3), r*cos(-Pi*4/3), 0.5, 1.0)
 			);
-			gl_Position = v[gl_VertexID];
+			//gl_Position = v[gl_VertexID];
+			gl_Position = pos;
 		}	
 	`)
 
@@ -61,6 +63,15 @@ func main() {
 		log.Print("ERROR: ", err)
 	}
 
+	v := []vertex{
+		{Vec4{-0.25, -0.25, 0.5, 1.0}},
+		{Vec4{0.25, -0.25, 0.5, 1.0}},
+		{Vec4{0.25, 0.25, 0.5, 1.0}},
+	}
+	if err := vbo.CreateFrom(v); err != nil {
+		log.Print(err)
+	}
+
 	if err := glam.Run(); err != nil {
 		log.Print(err)
 	}
@@ -75,7 +86,8 @@ func (g *game) Update() {
 
 func (g *game) Draw() {
 	pipeline.Bind()
-	gfx.Draw(gfx.Triangles, 0, 0)
+	pipeline.BindAttributes(0, &vbo)
+	gfx.Draw(gfx.Triangles, 0, 3)
 }
 
 //------------------------------------------------------------------------------
