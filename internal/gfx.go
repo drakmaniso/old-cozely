@@ -14,6 +14,15 @@ GLuint LinkProgram(GLuint vs, GLuint fs);
 char* LinkProgramError(GLuint s);
 GLuint SetupVAO();
 void ClosePipeline(GLuint p, GLuint vao);
+void CreateAttributeBinding(
+	GLuint vao,
+	GLuint index,
+	GLuint binding,
+	GLint size,
+	GLenum type,
+	GLboolean normalized,
+	GLuint relativeOffset
+);
 
 static inline void BindPipeline(GLuint p, GLuint vao) {	glClear (GL_COLOR_BUFFER_BIT |  GL_DEPTH_BUFFER_BIT); glUseProgram(p); glBindVertexArray(vao);};
 static inline void DrawArrays(GLenum m, GLuint f, GLuint c) {glDrawArrays(m, f, c);};
@@ -89,6 +98,27 @@ func (p *Pipeline) Bind() {
 
 func (p *Pipeline) Close() {
 	C.ClosePipeline(p.program, p.vao)
+}
+
+//------------------------------------------------------------------------------
+
+func (p *Pipeline) CreateAttributeBinding(
+	index uint32,
+	binding uint32,
+	size int32,
+	typ uint32,
+	normalized byte,
+	relativeOffset uint32,
+) {
+	C.CreateAttributeBinding(
+		C.GLuint(p.vao),
+		C.GLuint(index),
+		C.GLuint(binding),
+		C.GLint(size),
+		C.GLenum(typ),
+		C.GLboolean(normalized),
+		C.GLuint(relativeOffset),
+	)
 }
 
 //------------------------------------------------------------------------------

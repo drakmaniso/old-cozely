@@ -18,7 +18,6 @@ import (
 
 func (p *Pipeline) CreateAttributesBinding(binding uint32, format interface{}) error {
 	f := reflect.TypeOf(format)
-	log.Print("Kind: ", f.Kind())
 	if f.Kind() != reflect.Struct {
 		return fmt.Errorf("attributes binding format must be a struct, not a %s", f.Kind())
 	}
@@ -29,14 +28,14 @@ func (p *Pipeline) CreateAttributesBinding(binding uint32, format interface{}) e
 		if al == "" {
 			continue
 		}
-		at := a.Type
-		as := at.Size()
-		ao := a.Offset
 		ali, err := strconv.Atoi(al)
 		if err != nil {
 			return fmt.Errorf("invalid layout for attributes binding: %q", al)
 		}
 		//TODO: check that ali is in range
+		at := a.Type
+		as := at.Size()
+		ao := a.Offset
 		ate := internal.GlByteEnum
 		switch {
 		case at.ConvertibleTo(float32Type),
@@ -50,10 +49,19 @@ func (p *Pipeline) CreateAttributesBinding(binding uint32, format interface{}) e
 			at.ConvertibleTo(ivec2Type):
 			ate = internal.GlIntEnum
 		}
+		
 		log.Print("        Index: ", ali)
 		log.Print("         Size: ", as)
 		log.Print("         Type: ", ate)
 		log.Print("       Offset: ", ao)
+		p.internal.CreateAttributeBinding(
+			uint32(ali),
+			uint32(0), //TODO
+			int32(as),
+			uint32(ate),
+			byte(0), //TODO
+			uint32(ao),
+		)
 	}
 	return nil
 }

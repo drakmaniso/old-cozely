@@ -57,9 +57,6 @@ func main() {
 
 	_ = pipeline.CompileShaders(vs, fs)
 
-	if err := pipeline.CreateAttributesBinding(0, float32(1.2)); err != nil {
-		log.Print("ERROR: ", err)
-	}
 	if err := pipeline.CreateAttributesBinding(0, vertex{}); err != nil {
 		log.Print("ERROR: ", err)
 	}
@@ -78,7 +75,7 @@ func (g *game) Update() {
 
 func (g *game) Draw() {
 	pipeline.Bind()
-	gfx.Draw(gfx.Triangles, 0, 3)
+	gfx.Draw(gfx.Triangles, 0, 0)
 }
 
 //------------------------------------------------------------------------------
