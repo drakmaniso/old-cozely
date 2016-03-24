@@ -5,11 +5,14 @@ package internal
 
 import (
 	"fmt"
-	"log"
 	"unsafe"
 )
 
-// #include "sdl.h"
+/*
+#include "sdl.h"
+
+static inline void SwapWindow(SDL_Window* w) {SDL_GL_SwapWindow(w);}
+*/
 import "C"
 
 //------------------------------------------------------------------------------
@@ -82,14 +85,12 @@ func OpenWindow(
 	)
 	if Window.window == nil {
 		err := GetSDLError()
-		log.Print(err)
-		return err
+		return fmt.Errorf("could not open window: %s", err)
 	}
 
 	ctx, err := C.SDL_GL_CreateContext(Window.window)
 	if err != nil {
-		log.Print(err)
-		return err
+		return fmt.Errorf("could not create OpenGL context: %s", err)
 	}
 	Window.context = ctx
 
@@ -134,11 +135,8 @@ func logOpenGLInfos() {
 		} else {
 			s += ", NO vsync"
 		}
-	} else {
-		err1 = GetSDLError()
-		log.Print(err1)
 	}
-	log.Print(s)
+	//TODO: log.Print(s)
 }
 
 func sdlGLAttribute(attr C.SDL_GLattr) (int, error) {
@@ -148,6 +146,13 @@ func sdlGLAttribute(attr C.SDL_GLattr) (int, error) {
 		return 0, GetSDLError()
 	}
 	return int(v), nil
+}
+
+//------------------------------------------------------------------------------
+
+// SwapWindow swaps the double-buffer.
+func SwapWindow() {
+	C.SwapWindow(Window.window)
 }
 
 //------------------------------------------------------------------------------

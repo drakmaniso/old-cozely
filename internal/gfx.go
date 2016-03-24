@@ -35,9 +35,9 @@ import "C"
 
 import (
 	"errors"
+	"fmt"
 	"io"
 	"io/ioutil"
-	"log"
 	"unsafe"
 )
 
@@ -54,28 +54,25 @@ func (p *Pipeline) CompileShaders(
 ) error {
 	vs, err := compileShader(vertexShader, C.GL_VERTEX_SHADER)
 	if err != nil {
-		log.Print("vertex shader compile error: ", err)
+		return fmt.Errorf("vertex shader compile error:\n    %s", err)
 	}
 	fs, err := compileShader(fragmentShader, C.GL_FRAGMENT_SHADER)
 	if err != nil {
-		log.Print("fragment shader compile error: ", err)
+		return fmt.Errorf("fragment shader compile error:\n    %s", err)
 	}
 
 	p.program = C.LinkProgram(vs, fs)
 	if errm := C.LinkProgramError(p.program); errm != nil {
 		defer C.free(unsafe.Pointer(errm))
-		err = errors.New(C.GoString(errm))
-		log.Print("shader link error: ", err)
-		return err
+		return fmt.Errorf("shader link error:\n    %s", errors.New(C.GoString(errm)))
 	}
-	return err
+	return nil
 }
 
 func compileShader(r io.Reader, t C.GLenum) (C.GLuint, error) {
 	b, err := ioutil.ReadAll(r)
 	if err != nil {
-		log.Print("failed to read shader: ", err)
-		return 0, err
+		return 0, fmt.Errorf("failed to read shader: %s", err)
 	}
 	cb := C.CString(string(b))
 	defer C.free(unsafe.Pointer(cb))

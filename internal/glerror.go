@@ -7,10 +7,7 @@ package internal
 
 //#include "glad.h"
 import "C"
-
-import (
-	"log"
-)
+import "fmt"
 
 //------------------------------------------------------------------------------
 
@@ -70,7 +67,7 @@ func logGLError(
 	case C.GL_DEBUG_TYPE_OTHER:
 		ty = "other"
 	}
-	log.Printf("%s: %s: %s\n    %s\n", sev, sou, ty, C.GoString(m))
+	fmt.Printf("%s: %s: %s\n    %s\n", sev, sou, ty, C.GoString(m))
 }
 
 //------------------------------------------------------------------------------

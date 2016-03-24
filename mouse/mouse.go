@@ -7,7 +7,7 @@ package mouse
 import "C"
 
 import (
-	"log"
+	"fmt"
 	"time"
 
 	"github.com/drakmaniso/glam/geom"
@@ -50,16 +50,14 @@ func Delta() geom.IVec2 {
 // SetRelativeMode enables or disables the relative mode, where the mouse is
 // hidden and mouse motions are continuously reported.
 func SetRelativeMode(enabled bool) error {
-	var err error
 	var m C.SDL_bool
 	if enabled {
 		m = 1
 	}
 	if C.SDL_SetRelativeMouseMode(m) != 0 {
-		err = internal.GetSDLError()
-		log.Print(err)
+		return fmt.Errorf("impossible to set relative mouse mode: %s", internal.GetSDLError())
 	}
-	return err
+	return nil
 }
 
 // GetRelativeMode returns true if the relative mode is enabled.

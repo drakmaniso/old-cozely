@@ -16,7 +16,7 @@ import "C"
 
 import (
 	"encoding/json"
-	"log"
+	"fmt"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -47,7 +47,7 @@ var config = struct {
 //------------------------------------------------------------------------------
 
 func init() {
-	log.SetFlags(log.Ltime | log.Lshortfile)
+	//log.SetFlags(log.Ltime | log.Lshortfile)
 
 	//TODO: log.Printf("Path = \"%s\"", Path)
 
@@ -56,7 +56,8 @@ func init() {
 	runtime.LockOSThread()
 
 	if errcode := C.SDL_Init(C.SDL_INIT_EVERYTHING); errcode != 0 {
-		log.Panic(GetSDLError())
+		InitError = fmt.Errorf("impossible to initialize SDL: %s", GetSDLError())
+		return
 	}
 
 	C.SDL_StopTextInput()
@@ -71,7 +72,8 @@ func init() {
 		config.Debug,
 	)
 	if err != nil {
-		log.Panic(err)
+		InitError = err
+		return
 	}
 
 	var d C.int
@@ -79,20 +81,20 @@ func init() {
 		d = 1
 	}
 	if C.InitOpenGL(d) != 0 {
-		log.Panic("failed to load OpenGL")
+		InitError = fmt.Errorf("impossible to initialize OpenGL")
 	}
 }
 
 func loadConfig() {
 	f, err := os.Open(Path + "/init.json")
 	if err != nil {
-		log.Print(err)
+		InitError = fmt.Errorf(`impossible to open configuration file "init.json": %s`, err)
 		return
 	}
 	d := json.NewDecoder(f)
-	err = d.Decode(&config)
-	if err != nil {
-		log.Panic(err)
+	if err := d.Decode(&config); err != nil {
+		InitError = fmt.Errorf(`impossible to decode configuration file "init.json": %s`, err)
+		return
 	}
 	//TODO: log.Printf("config = %+v", config)
 }

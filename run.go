@@ -25,6 +25,9 @@ var Handler interface {
 // Important: must be called from main.main, or at least from a function that is
 // known to run on the main OS thread.
 func Run() error {
+	if internal.InitError != nil {
+		return internal.InitError
+	}
 	defer internal.SDLQuit()
 	defer internal.DestroyWindow()
 

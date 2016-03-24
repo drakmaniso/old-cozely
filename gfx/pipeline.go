@@ -26,12 +26,15 @@ func (p *Pipeline) CompileShaders(
 	vertexShader io.Reader,
 	fragmentShader io.Reader,
 ) error {
-	var err error
-	err = p.internal.CompileShaders(vertexShader, fragmentShader)
-	err = p.internal.SetupVAO()
+	if err := p.internal.CompileShaders(vertexShader, fragmentShader); err != nil {
+		return err
+	}
+	if err := p.internal.SetupVAO(); err != nil {
+		return err
+	}
 	p.attribStride = make(map[uint32]uintptr)
 	p.isCompiled = true
-	return err
+	return nil
 }
 
 //------------------------------------------------------------------------------

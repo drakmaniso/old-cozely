@@ -27,7 +27,7 @@ func main() {
 	window.Handler = g
 
 	if err := glam.Run(); err != nil {
-		log.Print(err)
+		log.Fatal(err)
 	}
 }
 

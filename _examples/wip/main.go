@@ -53,10 +53,12 @@ func main() {
 		}	
 	`)
 
-	_ = pipeline.CompileShaders(vs, fs)
+	if err := pipeline.CompileShaders(vs, fs); err != nil {
+		log.Fatal(err)
+	}
 
 	if err := pipeline.DefineAttributes(0, vertex{}); err != nil {
-		log.Print("ERROR: ", err)
+		log.Fatal(err)
 	}
 
 	r := float32(0.75)
@@ -75,11 +77,11 @@ func main() {
 		},
 	}
 	if err := vbo.CreateFrom(v); err != nil {
-		log.Print(err)
+		log.Fatal(err)
 	}
 
 	if err := glam.Run(); err != nil {
-		log.Print(err)
+		log.Fatal(err)
 	}
 }
 

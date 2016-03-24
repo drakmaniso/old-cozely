@@ -5,7 +5,6 @@ package gfx
 
 import (
 	"fmt"
-	"log"
 	"reflect"
 
 	"strconv"
@@ -25,11 +24,11 @@ func (p *Pipeline) DefineAttributes(binding uint32, format interface{}) error {
 	if f.Kind() != reflect.Struct {
 		return fmt.Errorf("attributes binding format must be a struct, not a %s", f.Kind())
 	}
+
 	p.attribStride[binding] = f.Size()
-	log.Print(p.attribStride[binding])
+
 	for i := 0; i < f.NumField(); i++ {
 		a := f.Field(i)
-		log.Print("*** Attribute: ", i)
 		al := a.Tag.Get("layout")
 		if al == "" {
 			continue
@@ -72,10 +71,6 @@ func (p *Pipeline) DefineAttributes(binding uint32, format interface{}) error {
 			ate = internal.GlIntEnum
 		}
 
-		log.Print("        Index: ", ali)
-		log.Print("         Size: ", as)
-		log.Print("         Type: ", ate)
-		log.Print("       Offset: ", ao)
 		p.internal.DefineAttribute(
 			uint32(ali),
 			uint32(0), //TODO

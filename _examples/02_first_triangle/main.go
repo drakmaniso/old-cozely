@@ -47,10 +47,12 @@ func main() {
 		}	
 	`)
 
-	_ = pipeline.CompileShaders(vs, fs)
+	if err := pipeline.CompileShaders(vs, fs); err != nil {
+		log.Fatal(err)
+	}
 
 	if err := glam.Run(); err != nil {
-		log.Print(err)
+		log.Fatal(err)
 	}
 }
 

@@ -5,7 +5,6 @@ package gfx
 
 import (
 	"fmt"
-	"log"
 	"reflect"
 
 	"github.com/drakmaniso/glam/internal"
@@ -31,7 +30,6 @@ func (b *Buffer) CreateFrom(data interface{}) error {
 	}
 	p := v.Pointer()
 	s := v.Index(0).Type().Size()
-	log.Print(p, s)
 	b.internal.CreateFrom(uintptr(l)*s, p)
 	return nil
 }

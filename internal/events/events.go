@@ -20,7 +20,6 @@ int PeepEvents();
 import "C"
 
 import (
-	"log"
 	"time"
 	"unsafe"
 
@@ -92,7 +91,7 @@ func dispatch(e unsafe.Pointer) {
 		case C.SDL_WINDOWEVENT_CLOSE:
 			// Ignore
 		default:
-			log.Print("unkown window event")
+			//TODO: log.Print("unkown window event")
 		}
 	// Keyboard Events
 	case C.SDL_KEYDOWN:
@@ -168,8 +167,7 @@ func dispatch(e unsafe.Pointer) {
 	case C.SDL_AUDIODEVICEADDED:
 	case C.SDL_AUDIODEVICEREMOVED:
 	default:
-		//TODO: remove
-		log.Print("unknown SDL event:", ((*C.SDL_CommonEvent)(e))._type)
+		//TODO: log.Print("unknown SDL event:", ((*C.SDL_CommonEvent)(e))._type)
 	}
 }
 
