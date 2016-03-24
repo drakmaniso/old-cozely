@@ -57,6 +57,8 @@ func main() {
 		log.Fatal(err)
 	}
 
+	pipeline.SetClearColor(Vec4{0.8, 0.8, 0.8, 1.0})
+
 	if err := pipeline.DefineAttributes(0, vertex{}); err != nil {
 		log.Fatal(err)
 	}

@@ -21,10 +21,8 @@ int InitOpenGL(int debug) {
 	if(!gladLoadGLLoader(SDL_GL_GetProcAddress)) {
 		return -1;
 	}
-	glClearColor (0.45, 0.31, 0.59, 1.0);
 
     glEnable (GL_DEPTH_TEST);
-    glClearDepth (1.0);
     glDepthFunc (GL_LEQUAL);
 
     glEnable (GL_CULL_FACE);

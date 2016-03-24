@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/drakmaniso/glam"
+	. "github.com/drakmaniso/glam/geom"
 	"github.com/drakmaniso/glam/gfx"
 )
 
@@ -50,6 +51,8 @@ func main() {
 	if err := pipeline.CompileShaders(vs, fs); err != nil {
 		log.Fatal(err)
 	}
+
+	pipeline.SetClearColor(Vec4{0.45, 0.31, 0.59, 1.0})
 
 	if err := glam.Run(); err != nil {
 		log.Fatal(err)

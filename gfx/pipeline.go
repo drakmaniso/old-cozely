@@ -8,6 +8,7 @@ package gfx
 import (
 	"io"
 
+	"github.com/drakmaniso/glam/geom"
 	"github.com/drakmaniso/glam/internal"
 )
 
@@ -15,6 +16,7 @@ import (
 
 type Pipeline struct {
 	internal     internal.Pipeline
+	clearColor   [4]float32
 	attribStride map[uint32]uintptr
 	isCompiled   bool
 	isClosed     bool
@@ -39,8 +41,17 @@ func (p *Pipeline) CompileShaders(
 
 //------------------------------------------------------------------------------
 
+func (p *Pipeline) SetClearColor(color geom.Vec4) {
+	p.clearColor[0] = color.X
+	p.clearColor[1] = color.Y
+	p.clearColor[2] = color.Z
+	p.clearColor[3] = color.W
+}
+
+//------------------------------------------------------------------------------
+
 func (p *Pipeline) Bind() {
-	p.internal.Bind()
+	p.internal.Bind(p.clearColor)
 }
 
 //------------------------------------------------------------------------------

@@ -25,7 +25,13 @@ void DefineAttribute(
 );
 GLuint CreateBufferFrom(GLsizeiptr size, const GLvoid* data);
 
-static inline void BindPipeline(GLuint p, GLuint vao) {	glClear (GL_COLOR_BUFFER_BIT |  GL_DEPTH_BUFFER_BIT); glUseProgram(p); glBindVertexArray(vao);};
+static inline void BindPipeline(GLuint p, GLuint vao, GLfloat *c) {
+	glClearBufferfv(GL_COLOR, 0, c);
+	GLfloat d = 1.0;
+	glClearBufferfv(GL_DEPTH, 0, &d);
+	glUseProgram(p);
+	glBindVertexArray(vao);
+};
 static inline void DrawArrays(GLenum m, GLuint f, GLuint c) {glDrawArrays(m, f, c);};
 static inline void BindAttributes(GLuint vao, GLuint binding, GLuint buffer, GLintptr offset, GLsizei stride) {
 	glVertexArrayVertexBuffer(vao, binding, buffer, offset, stride);
@@ -91,8 +97,12 @@ func (p *Pipeline) SetupVAO() error {
 	return nil
 }
 
-func (p *Pipeline) Bind() {
-	C.BindPipeline(p.program, p.vao)
+func (p *Pipeline) Bind(clearColor [4]float32) {
+	C.BindPipeline(
+		p.program,
+		p.vao,
+		(*C.GLfloat)(unsafe.Pointer(&clearColor[0])),
+	)
 }
 
 func (p *Pipeline) BindAttributes(binding uint32, b *Buffer, stride uintptr) {
