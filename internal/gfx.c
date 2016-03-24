@@ -66,9 +66,9 @@ void DefineAttribute(
 	GLboolean normalized,
 	GLuint relativeOffset
 ) {
-	glEnableVertexArrayAttrib(vao, index);
-	glVertexArrayAttribBinding(vao, index, binding);
 	glVertexArrayAttribFormat(vao, index, size, type, normalized, relativeOffset);
+	glVertexArrayAttribBinding(vao, index, binding);
+	glEnableVertexArrayAttrib(vao, index);
 }
 
 GLuint CreateBufferFrom(GLsizeiptr size, const GLvoid* data) {

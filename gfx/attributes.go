@@ -40,19 +40,35 @@ func (p *Pipeline) DefineAttributes(binding uint32, format interface{}) error {
 		}
 		//TODO: check that ali is in range
 		at := a.Type
-		as := at.Size()
+		var as int32
 		ao := a.Offset
 		ate := internal.GlByteEnum
 		switch {
-		case at.ConvertibleTo(float32Type),
-			at.ConvertibleTo(vec4Type),
-			at.ConvertibleTo(vec3Type),
-			at.ConvertibleTo(vec2Type):
+		// Float32
+		case at.ConvertibleTo(float32Type):
+			as = 1
 			ate = internal.GlFloatEnum
-		case at.ConvertibleTo(int32Type),
-			at.ConvertibleTo(ivec4Type),
-			at.ConvertibleTo(ivec3Type),
-			at.ConvertibleTo(ivec2Type):
+		case at.ConvertibleTo(vec4Type):
+			as = 4
+			ate = internal.GlFloatEnum
+		case at.ConvertibleTo(vec3Type):
+			as = 3
+			ate = internal.GlFloatEnum
+		case at.ConvertibleTo(vec2Type):
+			as = 2
+			ate = internal.GlFloatEnum
+		// Int32
+		case at.ConvertibleTo(int32Type):
+			as = 1
+			ate = internal.GlIntEnum
+		case at.ConvertibleTo(ivec4Type):
+			as = 4
+			ate = internal.GlIntEnum
+		case at.ConvertibleTo(ivec3Type):
+			as = 3
+			ate = internal.GlIntEnum
+		case at.ConvertibleTo(ivec2Type):
+			as = 2
 			ate = internal.GlIntEnum
 		}
 
@@ -63,7 +79,7 @@ func (p *Pipeline) DefineAttributes(binding uint32, format interface{}) error {
 		p.internal.DefineAttribute(
 			uint32(ali),
 			uint32(0), //TODO
-			int32(as),
+			as,
 			uint32(ate),
 			byte(0), //TODO
 			uint32(ao),

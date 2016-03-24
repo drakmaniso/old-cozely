@@ -12,6 +12,7 @@ import (
 	"github.com/drakmaniso/glam"
 	. "github.com/drakmaniso/glam/geom"
 	"github.com/drakmaniso/glam/gfx"
+	"github.com/drakmaniso/glam/math"
 )
 
 //------------------------------------------------------------------------------
@@ -19,13 +20,12 @@ import (
 var pipeline gfx.Pipeline
 var vbo gfx.Buffer
 
-//------------------------------------------------------------------------------
-
 type vertex struct {
-	position Vec4 `layout:"0"`
-	// color    IVec3   `layout:"1"`
-	// alpha    float32 `layout:"2"`
+	position Vec3 `layout:"0"`
+	color    Vec3 `layout:"1"`
 }
+
+//------------------------------------------------------------------------------
 
 func main() {
 	g := &game{}
@@ -33,27 +33,23 @@ func main() {
 
 	vs := strings.NewReader(`
 		#version 420 core
-		layout(location = 0) in vec4 pos;
+		layout(location = 0) in vec3 pos;
+		layout(location = 1) in vec3 col;
+		layout(location = 0) out vec3 fs_col;
 		void main(void)
 		{
-			const float Pi = 3.14;
-			const float r = 0.75;
-			const vec4 v[3] = vec4[3](
-				vec4(r*sin(0),       r*cos(0),       0.5, 1.0),
-				vec4(r*sin(-Pi*2/3), r*cos(-Pi*2/3), 0.5, 1.0),
-				vec4(r*sin(-Pi*4/3), r*cos(-Pi*4/3), 0.5, 1.0)
-			);
-			//gl_Position = v[gl_VertexID];
-			gl_Position = pos;
+			gl_Position = vec4(pos, 1);
+			fs_col = col;
 		}	
 	`)
 
 	fs := strings.NewReader(`
 		#version 420 core
+		layout(location = 0) in vec3 vs_col;
 		out vec4 color;
 		void main(void)
 		{
-			color = vec4(0.84, 0.00, 0.44, 1.0);
+			color = vec4(vs_col, 1);
 		}	
 	`)
 
@@ -63,10 +59,20 @@ func main() {
 		log.Print("ERROR: ", err)
 	}
 
+	r := float32(0.75)
 	v := []vertex{
-		{Vec4{-0.25, -0.25, 0.5, 1.0}},
-		{Vec4{0.25, -0.25, 0.5, 1.0}},
-		{Vec4{0.25, 0.25, 0.5, 1.0}},
+		{
+			Vec3{r * math.Sin(0), r * math.Cos(0), 0.5},
+			Vec3{0.3, 0, 0.8},
+		},
+		{
+			Vec3{r * math.Sin(-math.Pi*2/3), r * math.Cos(-math.Pi*2/3), 0.5},
+			Vec3{0.8, 0.3, 0},
+		},
+		{
+			Vec3{r * math.Sin(-math.Pi*4/3), r * math.Cos(-math.Pi*4/3), 0.5},
+			Vec3{0, 0.6, 0.2},
+		},
 	}
 	if err := vbo.CreateFrom(v); err != nil {
 		log.Print(err)
