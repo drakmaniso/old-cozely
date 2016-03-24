@@ -38,6 +38,7 @@ func OpenWindow(
 	fullscreen bool,
 	fullscreenMode string,
 	vsync bool,
+	debug bool,
 ) error {
 	C.SDL_GL_SetAttribute(C.SDL_GL_CONTEXT_MAJOR_VERSION, 4)
 	C.SDL_GL_SetAttribute(C.SDL_GL_CONTEXT_MINOR_VERSION, 5)
@@ -45,6 +46,10 @@ func OpenWindow(
 	C.SDL_GL_SetAttribute(C.SDL_GL_DOUBLEBUFFER, 1)
 	C.SDL_GL_SetAttribute(C.SDL_GL_MULTISAMPLEBUFFERS, 1)
 	C.SDL_GL_SetAttribute(C.SDL_GL_MULTISAMPLESAMPLES, 8)
+
+	if debug {
+		C.SDL_GL_SetAttribute(C.SDL_GL_CONTEXT_FLAGS, C.SDL_GL_CONTEXT_DEBUG_FLAG)
+	}
 
 	var si C.int
 	if vsync {
@@ -88,7 +93,7 @@ func OpenWindow(
 	}
 	Window.context = ctx
 
-	logOpenGLInfos()
+	//TODO: logOpenGLInfos()
 
 	//TODO: Send a fake resize event (for the renderer)
 

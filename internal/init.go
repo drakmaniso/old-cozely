@@ -10,7 +10,7 @@ package internal
 #include "SDL.h"
 #include "glad.h"
 
-int InitOpenGL();
+int InitOpenGL(int debug);
 */
 import "C"
 
@@ -33,6 +33,7 @@ var config = struct {
 	Fullscreen     bool
 	FullscreenMode string
 	VSync          bool
+	Debug          bool
 }{
 	Title:          "Glam",
 	Resolution:     [2]int{1280, 720},
@@ -40,6 +41,7 @@ var config = struct {
 	Fullscreen:     false,
 	FullscreenMode: "Desktop",
 	VSync:          true,
+	Debug:          false,
 }
 
 //------------------------------------------------------------------------------
@@ -47,8 +49,7 @@ var config = struct {
 func init() {
 	log.SetFlags(log.Ltime | log.Lshortfile)
 
-	log.Print("---------------------------------------------------------------")
-	log.Printf("Path = \"%s\"", Path)
+	//TODO: log.Printf("Path = \"%s\"", Path)
 
 	loadConfig()
 
@@ -67,19 +68,19 @@ func init() {
 		config.Fullscreen,
 		config.FullscreenMode,
 		config.VSync,
+		config.Debug,
 	)
 	if err != nil {
 		log.Panic(err)
 	}
 
-	if C.InitOpenGL() != 0 {
+	var d C.int
+	if config.Debug {
+		d = 1
+	}
+	if C.InitOpenGL(d) != 0 {
 		log.Panic("failed to load OpenGL")
 	}
-	if err := CheckGLError(); err != nil {
-		log.Panicf("failed to initialize OpenGL:", err)
-	}
-
-	log.Print("---------------------------------------------------------------")
 }
 
 func loadConfig() {
@@ -93,7 +94,7 @@ func loadConfig() {
 	if err != nil {
 		log.Panic(err)
 	}
-	log.Printf("config = %+v", config)
+	//TODO: log.Printf("config = %+v", config)
 }
 
 //------------------------------------------------------------------------------

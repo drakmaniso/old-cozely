@@ -4,5 +4,6 @@
     "Display": 0,
     "Fullscreen": false,
     "FullscreenMode": "Desktop",
-    "VSync": true
+    "VSync": true,
+	"Debug": true
 }
