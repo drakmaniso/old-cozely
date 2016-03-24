@@ -24,21 +24,19 @@ func main() {
 	g := &game{}
 	glam.Handler = g
 
+	// Shaders
 	vs := strings.NewReader(`
 		#version 420 core
 		void main(void)
 		{
-			const float Pi = 3.14;
-			const float r = 0.75;
 			const vec4 v[3] = vec4[3](
-				vec4(r*sin(0),       r*cos(0),       0.5, 1.0),
-				vec4(r*sin(-Pi*2/3), r*cos(-Pi*2/3), 0.5, 1.0),
-				vec4(r*sin(-Pi*4/3), r*cos(-Pi*4/3), 0.5, 1.0)
+				vec4(0, 0.65, 0.5, 1),
+				vec4(-0.65, -0.475, 0.5, 1),
+				vec4(0.65, -0.475, 0.5, 1)
 			);
 			gl_Position = v[gl_VertexID];
 		}	
 	`)
-
 	fs := strings.NewReader(`
 		#version 420 core
 		out vec4 color;
@@ -48,12 +46,13 @@ func main() {
 		}	
 	`)
 
+	// Setup the Pipeline
 	if err := pipeline.CompileShaders(vs, fs); err != nil {
 		log.Fatal(err)
 	}
-
 	pipeline.SetClearColor(Vec4{0.45, 0.31, 0.59, 1.0})
 
+	// Run the Game Loop
 	if err := glam.Run(); err != nil {
 		log.Fatal(err)
 	}

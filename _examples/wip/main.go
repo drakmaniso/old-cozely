@@ -12,7 +12,6 @@ import (
 	"github.com/drakmaniso/glam"
 	. "github.com/drakmaniso/glam/geom"
 	"github.com/drakmaniso/glam/gfx"
-	"github.com/drakmaniso/glam/math"
 )
 
 //------------------------------------------------------------------------------
@@ -31,6 +30,7 @@ func main() {
 	g := &game{}
 	glam.Handler = g
 
+	// Shaders
 	vs := strings.NewReader(`
 		#version 420 core
 		layout(location = 0) in vec3 pos;
@@ -42,7 +42,6 @@ func main() {
 			fs_col = col;
 		}	
 	`)
-
 	fs := strings.NewReader(`
 		#version 420 core
 		layout(location = 0) in vec3 vs_col;
@@ -53,35 +52,26 @@ func main() {
 		}	
 	`)
 
+	// Setup the Pipeline
 	if err := pipeline.CompileShaders(vs, fs); err != nil {
 		log.Fatal(err)
 	}
+	if err := pipeline.VertexBufferFormat(0, vertex{}); err != nil {
+		log.Fatal(err)
+	}
+	pipeline.SetClearColor(Vec4{0.9, 0.9, 0.9, 1.0})
 
-	pipeline.SetClearColor(Vec4{0.8, 0.8, 0.8, 1.0})
-
-	if err := pipeline.DefineAttributes(0, vertex{}); err != nil {
+	// Create the Vertex Buffer
+	data := []vertex{
+		{Vec3{0, 0.65, 0.5}, Vec3{0.3, 0, 0.8}},
+		{Vec3{-0.65, -0.475, 0.5}, Vec3{0.8, 0.3, 0}},
+		{Vec3{0.65, -0.475, 0.5}, Vec3{0, 0.6, 0.2}},
+	}
+	if err := vbo.CreateFrom(data); err != nil {
 		log.Fatal(err)
 	}
 
-	r := float32(0.75)
-	v := []vertex{
-		{
-			Vec3{r * math.Sin(0), r * math.Cos(0), 0.5},
-			Vec3{0.3, 0, 0.8},
-		},
-		{
-			Vec3{r * math.Sin(-math.Pi*2/3), r * math.Cos(-math.Pi*2/3), 0.5},
-			Vec3{0.8, 0.3, 0},
-		},
-		{
-			Vec3{r * math.Sin(-math.Pi*4/3), r * math.Cos(-math.Pi*4/3), 0.5},
-			Vec3{0, 0.6, 0.2},
-		},
-	}
-	if err := vbo.CreateFrom(v); err != nil {
-		log.Fatal(err)
-	}
-
+	// Run the Game Loop
 	if err := glam.Run(); err != nil {
 		log.Fatal(err)
 	}
@@ -96,7 +86,7 @@ func (g *game) Update() {
 
 func (g *game) Draw() {
 	pipeline.Bind()
-	pipeline.BindAttributes(0, &vbo)
+	pipeline.BindVertexBuffer(0, &vbo, 0)
 	gfx.Draw(gfx.Triangles, 0, 3)
 }
 

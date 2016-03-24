@@ -33,7 +33,7 @@ static inline void BindPipeline(GLuint p, GLuint vao, GLfloat *c) {
 	glBindVertexArray(vao);
 };
 static inline void DrawArrays(GLenum m, GLuint f, GLuint c) {glDrawArrays(m, f, c);};
-static inline void BindAttributes(GLuint vao, GLuint binding, GLuint buffer, GLintptr offset, GLsizei stride) {
+static inline void BindVertexBuffer(GLuint vao, GLuint binding, GLuint buffer, GLintptr offset, GLsizei stride) {
 	glVertexArrayVertexBuffer(vao, binding, buffer, offset, stride);
 }
 */
@@ -105,9 +105,8 @@ func (p *Pipeline) Bind(clearColor [4]float32) {
 	)
 }
 
-func (p *Pipeline) BindAttributes(binding uint32, b *Buffer, stride uintptr) {
-	//TODO: offset
-	C.BindAttributes(C.GLuint(p.vao), C.GLuint(binding), C.GLuint(b.buffer), C.GLintptr(0), C.GLsizei(stride))
+func (p *Pipeline) BindVertexBuffer(binding uint32, b *Buffer, offset uintptr, stride uintptr) {
+	C.BindVertexBuffer(C.GLuint(p.vao), C.GLuint(binding), C.GLuint(b.buffer), C.GLintptr(offset), C.GLsizei(stride))
 }
 
 func (p *Pipeline) Close() {
