@@ -16,9 +16,11 @@ import (
 
 //------------------------------------------------------------------------------
 
-// CreateAttributesBinding defines a binding slot for vertex attributes.
+// DefineAttributes prepares everything the pipeline needs to use a set of
+// vertex attributes, and assign a binding index to it.
+//
 // The format must be a struct with layout tags.
-func (p *Pipeline) CreateAttributesBinding(binding uint32, format interface{}) error {
+func (p *Pipeline) DefineAttributes(binding uint32, format interface{}) error {
 	f := reflect.TypeOf(format)
 	if f.Kind() != reflect.Struct {
 		return fmt.Errorf("attributes binding format must be a struct, not a %s", f.Kind())
@@ -58,7 +60,7 @@ func (p *Pipeline) CreateAttributesBinding(binding uint32, format interface{}) e
 		log.Print("         Size: ", as)
 		log.Print("         Type: ", ate)
 		log.Print("       Offset: ", ao)
-		p.internal.CreateAttributeBinding(
+		p.internal.DefineAttribute(
 			uint32(ali),
 			uint32(0), //TODO
 			int32(as),
@@ -70,8 +72,6 @@ func (p *Pipeline) CreateAttributesBinding(binding uint32, format interface{}) e
 	return nil
 }
 
-//------------------------------------------------------------------------------
-
 var (
 	float32Type = reflect.TypeOf(float32(0))
 	vec4Type    = reflect.TypeOf(geom.Vec4{})
@@ -82,5 +82,15 @@ var (
 	ivec3Type   = reflect.TypeOf(geom.IVec3{})
 	ivec2Type   = reflect.TypeOf(geom.IVec2{})
 )
+
+//------------------------------------------------------------------------------
+
+// BindAttributes binds a vertex buffer to a set of vertex attributes. The set
+// must have been previously defined with the same binding index.
+//
+// The buffer should use the same struct type than the one used in definition.
+func (p *Pipeline) BindAttributes(binding uint32, b *Buffer) {
+	p.internal.BindAttributes(binding, &b.internal, p.attribStride[binding])
+}
 
 //------------------------------------------------------------------------------

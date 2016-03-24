@@ -59,7 +59,7 @@ func main() {
 
 	_ = pipeline.CompileShaders(vs, fs)
 
-	if err := pipeline.CreateAttributesBinding(0, vertex{}); err != nil {
+	if err := pipeline.DefineAttributes(0, vertex{}); err != nil {
 		log.Print("ERROR: ", err)
 	}
 

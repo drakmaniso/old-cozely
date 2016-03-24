@@ -14,7 +14,7 @@ GLuint LinkProgram(GLuint vs, GLuint fs);
 char* LinkProgramError(GLuint s);
 GLuint SetupVAO();
 void ClosePipeline(GLuint p, GLuint vao);
-void CreateAttributeBinding(
+void DefineAttribute(
 	GLuint vao,
 	GLuint index,
 	GLuint binding,
@@ -109,7 +109,7 @@ func (p *Pipeline) Close() {
 
 //------------------------------------------------------------------------------
 
-func (p *Pipeline) CreateAttributeBinding(
+func (p *Pipeline) DefineAttribute(
 	index uint32,
 	binding uint32,
 	size int32,
@@ -117,7 +117,7 @@ func (p *Pipeline) CreateAttributeBinding(
 	normalized byte,
 	relativeOffset uint32,
 ) {
-	C.CreateAttributeBinding(
+	C.DefineAttribute(
 		C.GLuint(p.vao),
 		C.GLuint(index),
 		C.GLuint(binding),

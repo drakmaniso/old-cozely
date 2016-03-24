@@ -57,7 +57,7 @@ GLuint SetupVAO() {
 	return vao;
 }
 
-void CreateAttributeBinding(
+void DefineAttribute(
 	GLuint vao, 
 	GLuint index, 
 	GLuint binding,
