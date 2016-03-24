@@ -27,36 +27,44 @@ var colorfulTriangle gfx.Buffer
 
 //------------------------------------------------------------------------------
 
+var vertexShader = strings.NewReader(`
+#version 450 core
+
+layout(location = 0) in vec2 Position;
+layout(location = 1) in vec3 Color;
+
+out VertexOut {
+	layout(location = 0) out vec3 Color;
+} vert;
+
+void main(void) {
+	gl_Position = vec4(Position, 0.5, 1);
+	vert.Color = Color;
+}
+`)
+
+var fragmentShader = strings.NewReader(`
+#version 450 core
+
+in VertexOut {
+	layout(location = 0) in vec3 Color;
+} vert;
+
+out vec4 Color;
+
+void main(void) {
+	Color = vec4(vert.Color, 1);
+}
+`)
+
+//------------------------------------------------------------------------------
+
 func main() {
 	g := &game{}
 	glam.Handler = g
 
-	// Shaders
-	vs := strings.NewReader(`
-		#version 450 core
-		layout(location = 0) in vec2 Position;
-		layout(location = 1) in vec3 Color;
-		out VS_OUT {
-			layout(location = 0) out vec3 Color;
-		} vs;
-		void main(void) {
-			gl_Position = vec4(Position, 0.5, 1);
-			vs.Color = Color;
-		}
-	`)
-	fs := strings.NewReader(`
-		#version 450 core
-		in VS_OUT {
-			layout(location = 0) in vec3 Color;
-		} vs;
-		out vec4 Color;
-		void main(void) {
-			Color = vec4(vs.Color, 1);
-		}
-	`)
-
 	// Setup the Pipeline
-	if err := pipeline.CompileShaders(vs, fs); err != nil {
+	if err := pipeline.CompileShaders(vertexShader, fragmentShader); err != nil {
 		log.Fatal(err)
 	}
 	if err := pipeline.VertexBufferFormat(0, vertex{}); err != nil {

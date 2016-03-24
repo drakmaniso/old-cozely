@@ -15,7 +15,7 @@ import (
 
 //------------------------------------------------------------------------------
 
-// VertexBufferFormat prepares everything the pipeline needs to be able to use a
+// VertexBufferFormat prepares everything the pipeline needs to use a
 // vertex buffer of a specific format, and assign a binding index to it.
 //
 // The format must be a struct with layout tags.
