@@ -26,19 +26,19 @@ func main() {
 
 	// Shaders
 	vs := strings.NewReader(`
-		#version 420 core
+		#version 450 core
 		void main(void)
 		{
-			const vec4 v[3] = vec4[3](
+			const vec4 triangle[3] = vec4[3](
 				vec4(0, 0.65, 0.5, 1),
 				vec4(-0.65, -0.475, 0.5, 1),
 				vec4(0.65, -0.475, 0.5, 1)
 			);
-			gl_Position = v[gl_VertexID];
+			gl_Position = triangle[gl_VertexID];
 		}	
 	`)
 	fs := strings.NewReader(`
-		#version 420 core
+		#version 450 core
 		out vec4 color;
 		void main(void)
 		{
