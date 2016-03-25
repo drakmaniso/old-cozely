@@ -84,7 +84,7 @@ func main() {
 	}
 
 	m := space.Rotation(3.14, Vec3{1, 2, 3})
-	v := space.Transform(m, Vec4{1, 2, 3, 4})
+	v := space.Apply(m, Vec4{1, 2, 3, 4})
 	log.Print(v)
 
 	// Run the Game Loop

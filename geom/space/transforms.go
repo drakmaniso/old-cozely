@@ -10,8 +10,21 @@ import (
 
 //------------------------------------------------------------------------------
 
-// Transform a vector by a matrix.
-func Transform(m geom.Mat4, v geom.Vec4) geom.Vec4 {
+// Identity matrix.
+func Identity() geom.Mat4 {
+	return geom.Mat4{
+		{1, 0, 0, 0},
+		{0, 1, 0, 0},
+		{0, 0, 1, 0},
+		{0, 0, 0, 1},
+	}
+}
+
+//------------------------------------------------------------------------------
+
+// Apply a tranformation matrix to a vector (i.e. returns matrix multiplied by
+// column vector).
+func Apply(m geom.Mat4, v geom.Vec4) geom.Vec4 {
 	return geom.Vec4{
 		X: m[0][0]*v.X + m[1][0]*v.Y + m[2][0]*v.Z + m[3][0]*v.W,
 		Y: m[0][1]*v.X + m[1][1]*v.Y + m[2][1]*v.Z + m[3][1]*v.W,
@@ -22,7 +35,7 @@ func Transform(m geom.Mat4, v geom.Vec4) geom.Vec4 {
 
 //------------------------------------------------------------------------------
 
-// Translation returns a translation matrix.
+// Translation by a vector.
 func Translation(t geom.Vec3) geom.Mat4 {
 	return geom.Mat4{
 		{1, 0, 0, 0},
@@ -34,7 +47,7 @@ func Translation(t geom.Vec3) geom.Mat4 {
 
 //------------------------------------------------------------------------------
 
-// Rotation returns a rotation matrix.
+// Rotation around an axis.
 func Rotation(angle float32, axis geom.Vec3) geom.Mat4 {
 	c := math.Cos(angle)
 	s := math.Sin(angle)
@@ -49,7 +62,7 @@ func Rotation(angle float32, axis geom.Vec3) geom.Mat4 {
 
 //------------------------------------------------------------------------------
 
-// Scaling returns a scaling matrix.
+// Scaling along the 3 axis.
 func Scaling(s geom.Vec3) geom.Mat4 {
 	return geom.Mat4{
 		{s.X, 0, 0, 0},
@@ -61,25 +74,11 @@ func Scaling(s geom.Vec3) geom.Mat4 {
 
 //------------------------------------------------------------------------------
 
-// Identity returns an Identity matrix.
-func Identity() geom.Mat4 {
-	return geom.Mat4{
-		{1, 0, 0, 0},
-		{0, 1, 0, 0},
-		{0, 0, 1, 0},
-		{0, 0, 0, 1},
-	}
-}
-
-//------------------------------------------------------------------------------
-
-// LookAt returns a transform from world space into the specific eye space
-// that the projective matrix functions (Perspective, OrthographicFrustum, ...)
-// are designed to expect.
-//
-// See also Perspective and OrthographicFrustum.
-func LookAt(eye, center, up geom.Vec3) geom.Mat4 {
-	f := center.Minus(eye).Normalized()
+// LookAt returns a transform which put eye at origin and target along
+// negative Z. In other words, if a projection matrix is applied to the result,
+// target will be in the center of the viewport.
+func LookAt(eye, target, up geom.Vec3) geom.Mat4 {
+	f := target.Minus(eye).Normalized()
 	u := up.Normalized()
 	s := f.Cross(u).Normalized()
 	u = s.Cross(f)
@@ -95,8 +94,6 @@ func LookAt(eye, center, up geom.Vec3) geom.Mat4 {
 //------------------------------------------------------------------------------
 
 // Perspective returns a perspective projection matrix.
-//
-// See also PerspectiveFrustum.
 func Perspective(fieldOfView, aspectRatio, near, far float32) geom.Mat4 {
 	f := float32(1.0) / math.Tan(fieldOfView/float32(2.0))
 
@@ -109,8 +106,6 @@ func Perspective(fieldOfView, aspectRatio, near, far float32) geom.Mat4 {
 }
 
 // PerspectiveFrustum returns a perspective projection matrix.
-//
-// See also Perspective.
 func PerspectiveFrustum(left, right, bottom, top, near, far float32) geom.Mat4 {
 	return geom.Mat4{
 		{(2 * near) / (right - left), 0, 0, 0},
@@ -122,8 +117,6 @@ func PerspectiveFrustum(left, right, bottom, top, near, far float32) geom.Mat4 {
 
 // Orthographic returns an orthographic (parallel) projection matrix.
 // (zoom is the height of the projection plane).
-//
-// See also OrthographicFrustum.
 func Orthographic(zoom, aspectRatio, near, far float32) geom.Mat4 {
 	top := zoom / 2
 	right := top * aspectRatio
@@ -136,8 +129,6 @@ func Orthographic(zoom, aspectRatio, near, far float32) geom.Mat4 {
 }
 
 // OrthographicFrustum returns an orthographic (parallel) projection matrix.
-//
-// See also Orthographic.
 func OrthographicFrustum(left, right, bottom, top, near, far float32) geom.Mat4 {
 	return geom.Mat4{
 		{2 / (right - left), 0, 0, 0},
