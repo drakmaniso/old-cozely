@@ -109,64 +109,96 @@ func (v DVec2) Homogenized() DVec3 {
 
 //------------------------------------------------------------------------------
 
-// XYZ returns a 3D vector made of X, Y and Z.
-func (v Vec4) XYZ() Vec3 {
+// Vec3 returns a 3 components vector made of X, Y and Z.
+func (v Vec4) Vec3() Vec3 {
 	return Vec3{v.X, v.Y, v.Z}
 }
 
-// XY returns a 2D vector made of X, and Y.
-func (v Vec4) XY() Vec2 {
+// Vec2 returns a 2 components vector made of X, and Y.
+func (v Vec4) Vec2() Vec2 {
 	return Vec2{v.X, v.Y}
 }
 
-// XY returns a 2D vector made of X, and Y.
-func (v Vec3) XY() Vec2 {
+// Vec2 returns a 2 components vector made of X, and Y.
+func (v Vec3) Vec2() Vec2 {
 	return Vec2{v.X, v.Y}
 }
 
-// XYZw returns a 4D vector made of X, Y, Z and w.
-func (v Vec3) XYZw(w float32) Vec4 {
+// Vec4 returns a 4 components vector made of X, Y, Z and w.
+func (v Vec3) Vec4(w float32) Vec4 {
 	return Vec4{v.X, v.Y, v.Z, w}
 }
 
-// XYz returns a 3D vector made of X, Y, and z.
-func (v Vec2) XYz(z float32) Vec3 {
+// Vec3 returns a 3 components vector made of X, Y, and z.
+func (v Vec2) Vec3(z float32) Vec3 {
 	return Vec3{v.X, v.Y, z}
 }
 
-// XYzw returns a 4D vector made of X, Y, z, and w.
-func (v Vec2) XYzw(z, w float32) Vec4 {
+// Vec4 returns a 4 components vector made of X, Y, z, and w.
+func (v Vec2) Vec4(z, w float32) Vec4 {
 	return Vec4{v.X, v.Y, z, w}
 }
 
-// XYZ returns a 3D vector made of X, Y and Z.
-func (v DVec4) XYZ() DVec3 {
+// DVec3 returns a 3 components vector made of X, Y and Z.
+func (v DVec4) DVec3() DVec3 {
 	return DVec3{v.X, v.Y, v.Z}
 }
 
-// XY returns a 2D vector made of X, and Y.
-func (v DVec4) XY() DVec2 {
+// DVec2 returns a 2 components vector made of X, and Y.
+func (v DVec4) DVec2() DVec2 {
 	return DVec2{v.X, v.Y}
 }
 
-// XY returns a 2D vector made of X, and Y.
-func (v DVec3) XY() DVec2 {
+// DVec2 returns a 2 components vector made of X, and Y.
+func (v DVec3) DVec2() DVec2 {
 	return DVec2{v.X, v.Y}
 }
 
-// XYZw returns a 4D vector made of X, Y, Z and w.
-func (v DVec3) XYZw(w float64) DVec4 {
+// DVec4 returns a 4 components vector made of X, Y, Z and w.
+func (v DVec3) DVec4(w float64) DVec4 {
 	return DVec4{v.X, v.Y, v.Z, w}
 }
 
-// XYz returns a 3D vector made of X, Y, and z.
-func (v DVec2) XYz(z float64) DVec3 {
+// DVec3 returns a 3 components vector made of X, Y, and z.
+func (v DVec2) DVec3(z float64) DVec3 {
 	return DVec3{v.X, v.Y, z}
 }
 
-// XYzw returns a 4D vector made of X, Y, z, and w.
-func (v DVec2) XYzw(z, w float64) DVec4 {
+// DVec4 returns a 4 components vector made of X, Y, z, and w.
+func (v DVec2) DVec4(z, w float64) DVec4 {
 	return DVec4{v.X, v.Y, z, w}
+}
+
+//------------------------------------------------------------------------------
+
+// DVec4 converts the vector to 64-bit.
+func (v Vec4) DVec4() DVec4 {
+	return DVec4{float64(v.X), float64(v.Y), float64(v.Z), float64(v.W)}
+}
+
+// Vec4 converts the vector to 64-bit.
+func (v DVec4) Vec4() Vec4 {
+	return Vec4{float32(v.X), float32(v.Y), float32(v.Z), float32(v.W)}
+}
+
+// DVec3 converts the vector to 64-bit.
+func (v Vec3) DVec3() DVec3 {
+	return DVec3{float64(v.X), float64(v.Y), float64(v.Z)}
+}
+
+// Vec3 converts the vector to 64-bit.
+func (v DVec3) Vec3() Vec3 {
+	return Vec3{float32(v.X), float32(v.Y), float32(v.Z)}
+}
+
+// DVec2 converts the vector to 64-bit.
+func (v Vec2) DVec2() DVec2 {
+	return DVec2{float64(v.X), float64(v.Y)}
+}
+
+// Vec2 converts the vector to 64-bit.
+func (v DVec2) Vec2() Vec2 {
+	return Vec2{float32(v.X), float32(v.Y)}
 }
 
 //------------------------------------------------------------------------------
