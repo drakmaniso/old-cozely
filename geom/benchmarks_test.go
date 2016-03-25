@@ -511,3 +511,94 @@ func BenchmarkMat4_Times_TwoValues(b *testing.B) {
 }
 
 //------------------------------------------------------------------------------
+
+func (m *Mat4) rotationSetAndReturn(angle float32, axis Vec3) Mat4 {
+	c := math.Cos(angle)
+	s := math.Sin(angle)
+
+	m[0][0] = c + axis.X*axis.X*(1-c)
+	m[0][1] = -axis.Z*s + axis.X*axis.Y*(1-c)
+	m[0][2] = axis.Y*s + axis.X*axis.Z*(1-c)
+	m[0][3] = 0
+
+	m[1][0] = axis.Z*s + axis.Y*axis.X*(1-c)
+	m[1][1] = c + axis.Y*axis.Y*(1-c)
+	m[1][2] = -axis.X*s + axis.Y*axis.Z*(1-c)
+	m[1][3] = 0
+
+	m[2][0] = -axis.Y*s + axis.Z*axis.X*(1-c)
+	m[2][1] = axis.X*s + axis.Z*axis.Y*(1-c)
+	m[2][2] = c + axis.Z*axis.Z*(1-c)
+	m[2][3] = 0
+
+	m[3][0] = 0
+	m[3][1] = 0
+	m[3][2] = 0
+	m[3][3] = 1
+
+	return *m
+}
+
+func (m *Mat4) rotationSetOnly(angle float32, axis Vec3) {
+	c := math.Cos(angle)
+	s := math.Sin(angle)
+
+	m[0][0] = c + axis.X*axis.X*(1-c)
+	m[0][1] = -axis.Z*s + axis.X*axis.Y*(1-c)
+	m[0][2] = axis.Y*s + axis.X*axis.Z*(1-c)
+	m[0][3] = 0
+
+	m[1][0] = axis.Z*s + axis.Y*axis.X*(1-c)
+	m[1][1] = c + axis.Y*axis.Y*(1-c)
+	m[1][2] = -axis.X*s + axis.Y*axis.Z*(1-c)
+	m[1][3] = 0
+
+	m[2][0] = -axis.Y*s + axis.Z*axis.X*(1-c)
+	m[2][1] = axis.X*s + axis.Z*axis.Y*(1-c)
+	m[2][2] = c + axis.Z*axis.Z*(1-c)
+	m[2][3] = 0
+
+	m[3][0] = 0
+	m[3][1] = 0
+	m[3][2] = 0
+	m[3][3] = 1
+}
+
+// func BenchmarkMat4_Rotation(b *testing.B) {
+// 	axis := Vec3{1, 2, 3}
+// 	var o Mat4
+// 	for i := 0; i < b.N; i++ {
+// 		o = space.Rotation(3.14, axis)
+// 	}
+// 	_ = o
+// }
+
+func BenchmarkMat4_Rotation_SetAndReturn(b *testing.B) {
+	axis := Vec3{1, 2, 3}
+	var m Mat4
+	var o Mat4
+	for i := 0; i < b.N; i++ {
+		o = m.rotationSetAndReturn(3.14, axis)
+	}
+	_ = o
+}
+
+func BenchmarkMat4_Rotation_SetAndDiscardReturn(b *testing.B) {
+	axis := Vec3{1, 2, 3}
+	var o Mat4
+	for i := 0; i < b.N; i++ {
+		o.rotationSetAndReturn(3.14, axis)
+	}
+	_ = o
+}
+
+func BenchmarkMat4_Rotation_SetOnly(b *testing.B) {
+	axis := Vec3{1, 2, 3}
+	var o Mat4
+	for i := 0; i < b.N; i++ {
+		o.rotationSetOnly(3.14, axis)
+	}
+	_ = o
+}
+
+//------------------------------------------------------------------------------

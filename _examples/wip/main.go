@@ -11,6 +11,7 @@ import (
 
 	"github.com/drakmaniso/glam"
 	. "github.com/drakmaniso/glam/geom"
+	"github.com/drakmaniso/glam/geom/space"
 	"github.com/drakmaniso/glam/gfx"
 )
 
@@ -81,6 +82,10 @@ func main() {
 	if err := colorfulTriangle.CreateFrom(data); err != nil {
 		log.Fatal(err)
 	}
+
+	m := space.Rotation(3.14, Vec3{1, 2, 3})
+	v := space.Transform(m, Vec4{1, 2, 3, 4})
+	log.Print(v)
 
 	// Run the Game Loop
 	if err := glam.Run(); err != nil {

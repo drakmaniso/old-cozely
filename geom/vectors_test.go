@@ -4,7 +4,6 @@
 package geom_test
 
 import (
-	"fmt"
 	"testing"
 	"unsafe"
 
@@ -62,34 +61,6 @@ func TestVec3_creation(t *testing.T) {
 	if uintptr(unsafe.Pointer(&c[0].Z))+4 != uintptr(unsafe.Pointer(&c[1].X)) {
 		t.Errorf("Padding between c[0].Z an c[1].X")
 	}
-}
-
-func Example() {
-	var a geom.Vec3
-	b := geom.Vec3{1.1, 2.2, 3.3}
-	c := b.Plus(geom.Vec3{4.4, 5.5, 6.6})
-	d := b
-	d = d.Plus(geom.Vec3{4.4, 5.5, 6.6})
-	e := b.Slash(2.2)
-	f := e.Homogenized()
-	g := b
-	g = g.Normalized()
-
-	fmt.Println("a =", a)
-	fmt.Println("b =", b)
-	fmt.Println("c =", c)
-	fmt.Println("d =", d)
-	fmt.Println("e =", e)
-	fmt.Println("f =", f)
-	fmt.Println("g =", g)
-	// Output:
-	// a = {0 0 0}
-	// b = {1.1 2.2 3.3}
-	// c = {5.5 7.7 9.9}
-	// d = {5.5 7.7 9.9}
-	// e = {0.5 1 1.5}
-	// f = {0.5 1 1.5 1}
-	// g = {0.26726127 0.53452253 0.8017838}
 }
 
 //-----------------------------------------------------------------------------
