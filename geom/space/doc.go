@@ -3,9 +3,9 @@ Package space provides 3D transforms in homogeneous coordinates.
 
 A transform is written as the multiplication of a matrix by a column-vector.
 To transform v by M and then by N, you should write N⋅M⋅v:
-	M := Translation4(Vec3(10, 15, 2))
+	M := Translation(Vec3(10, 15, 2))
 	N := Rotation(3.14, Vec3(0, 1, 0))
-	v := Vec4{1, 2, 3}
+	v := Vec4{1, 2, 3, 1}
 	w := Apply(N.Times(M), v)
 
 In order to be compatible with both GLSL and column vectors, matrices are stored
