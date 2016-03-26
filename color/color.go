@@ -1,6 +1,7 @@
 // Copyright (c) 2013-2016 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
+// Package color provides types and functions to manipulate colors.
 package color
 
 //------------------------------------------------------------------------------
@@ -34,6 +35,38 @@ type HSV struct {
 	H float32
 	S float32
 	V float32
+}
+
+// HSLA is a color defined by its hue, saturation and luminance components,
+// with alpha.
+type HSLA struct {
+	H float32
+	S float32
+	L float32
+	A float32
+}
+
+// HSL is a color defined by its hue, saturation and luminance components.
+type HSL struct {
+	H float32
+	S float32
+	L float32
+}
+
+// HCLA is a color defined by its hue, chroma and luminance components,
+// with alpha.
+type HCLA struct {
+	H float32
+	C float32
+	L float32
+	A float32
+}
+
+// HCL is a color defined by its hue, chroma and luminance components.
+type HCL struct {
+	H float32
+	C float32
+	L float32
 }
 
 // RGBA8 is a color defined by its red, green and blue components, with alpha.
