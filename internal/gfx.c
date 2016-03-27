@@ -57,7 +57,7 @@ GLuint SetupVAO() {
 	return vao;
 }
 
-void DefineAttribute(
+void VertexAttribute(
 	GLuint vao, 
 	GLuint index, 
 	GLuint binding,

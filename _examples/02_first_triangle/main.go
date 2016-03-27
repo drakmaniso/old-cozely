@@ -41,7 +41,7 @@ out vec4 color;
 
 void main(void)
 {
-	color = vec4(0.84, 0.00, 0.44, 1.0);
+	color = vec4(0.3, 0.1, 0.6, 1.0);
 }	
 `)
 
@@ -52,10 +52,10 @@ func main() {
 	glam.Handler = g
 
 	// Setup the Pipeline
-	if err := pipeline.CompileShaders(vertexShader, fragmentShader); err != nil {
+	if err := pipeline.Shaders(vertexShader, fragmentShader); err != nil {
 		log.Fatal(err)
 	}
-	pipeline.SetClearColor(Vec4{0.45, 0.31, 0.59, 1.0})
+	pipeline.ClearColor(Vec4{0.9, 0.9, 0.9, 1.0})
 
 	// Run the Game Loop
 	if err := glam.Run(); err != nil {
@@ -71,7 +71,7 @@ func (g *game) Update() {
 }
 
 func (g *game) Draw() {
-	pipeline.Bind()
+	pipeline.Use()
 	gfx.Draw(gfx.Triangles, 0, 3)
 }
 

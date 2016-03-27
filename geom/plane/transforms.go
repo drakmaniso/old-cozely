@@ -38,13 +38,13 @@ func Translation(t geom.Vec2) geom.Mat3 {
 	return geom.Mat3{
 		{1, 0, 0},
 		{0, 1, 0},
-		{t.X, t.Y},
+		{t.X, t.Y, 1},
 	}
 }
 
 //------------------------------------------------------------------------------
 
-// Rotation around an axis.
+// Rotation.
 func Rotation(angle float32) geom.Mat3 {
 	c := math.Cos(angle)
 	s := math.Sin(angle)
@@ -58,13 +58,58 @@ func Rotation(angle float32) geom.Mat3 {
 
 //------------------------------------------------------------------------------
 
-// Scaling along both axis.
+// RotationAround a point.
+func RotationAround(angle float32, center geom.Vec2) geom.Mat3 {
+	c := math.Cos(angle)
+	s := math.Sin(angle)
+
+	return geom.Mat3{
+		{c, -s, 0},
+		{s, c, 0},
+		{center.X - c*center.X - s*center.Y, center.Y + s*center.X - c*center.Y, 1},
+	}
+}
+
+//------------------------------------------------------------------------------
+
+// Scaling and/or mirror along both axis.
 func Scaling(s geom.Vec2) geom.Mat3 {
 	return geom.Mat3{
 		{s.X, 0, 0},
 		{0, s.Y, 0},
 		{0, 0, 1},
 	}
+}
+
+//------------------------------------------------------------------------------
+
+// ScalingAround a point (and/or mirror).
+func ScalingAround(s geom.Vec2, center geom.Vec2) geom.Mat3 {
+	return geom.Mat3{
+		{s.X, 0, 0},
+		{0, s.Y, 0},
+		{center.X - center.X*s.X, center.Y - center.Y*s.Y, 1},
+	}
+}
+
+//------------------------------------------------------------------------------
+
+// Shearing along both axis.
+func Shearing(s geom.Vec2) geom.Mat3 {
+	return geom.Mat3{
+		{1, s.Y, 0},
+		{s.X, 1, 0},
+		{0, 0, 1},
+	}
+}
+
+//------------------------------------------------------------------------------
+
+// Viewport returns a matrix that scale to an aspect ratio and zoom.
+func Viewport(zoom, aspectRatio float32) geom.Mat3 {
+	height := zoom / 2
+	width := height * aspectRatio
+	return Scaling(geom.Vec2{X: width, Y: height})
 }
 
 //------------------------------------------------------------------------------

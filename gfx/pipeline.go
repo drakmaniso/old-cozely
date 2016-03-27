@@ -24,11 +24,11 @@ type Pipeline struct {
 
 //------------------------------------------------------------------------------
 
-func (p *Pipeline) CompileShaders(
+func (p *Pipeline) Shaders(
 	vertexShader io.Reader,
 	fragmentShader io.Reader,
 ) error {
-	if err := p.internal.CompileShaders(vertexShader, fragmentShader); err != nil {
+	if err := p.internal.Shaders(vertexShader, fragmentShader); err != nil {
 		return err
 	}
 	if err := p.internal.SetupVAO(); err != nil {
@@ -41,7 +41,7 @@ func (p *Pipeline) CompileShaders(
 
 //------------------------------------------------------------------------------
 
-func (p *Pipeline) SetClearColor(color geom.Vec4) {
+func (p *Pipeline) ClearColor(color geom.Vec4) {
 	p.clearColor[0] = color.X
 	p.clearColor[1] = color.Y
 	p.clearColor[2] = color.Z
@@ -50,8 +50,8 @@ func (p *Pipeline) SetClearColor(color geom.Vec4) {
 
 //------------------------------------------------------------------------------
 
-func (p *Pipeline) Bind() {
-	p.internal.Bind(p.clearColor)
+func (p *Pipeline) Use() {
+	p.internal.Use(p.clearColor)
 }
 
 //------------------------------------------------------------------------------

@@ -14,7 +14,7 @@ GLuint LinkProgram(GLuint vs, GLuint fs);
 char* LinkProgramError(GLuint s);
 GLuint SetupVAO();
 void ClosePipeline(GLuint p, GLuint vao);
-void DefineAttribute(
+void VertexAttribute(
 	GLuint vao,
 	GLuint index,
 	GLuint binding,
@@ -25,7 +25,7 @@ void DefineAttribute(
 );
 GLuint CreateBufferFrom(GLsizeiptr size, const GLvoid* data);
 
-static inline void BindPipeline(GLuint p, GLuint vao, GLfloat *c) {
+static inline void UsePipeline(GLuint p, GLuint vao, GLfloat *c) {
 	glClearBufferfv(GL_COLOR, 0, c);
 	GLfloat d = 1.0;
 	glClearBufferfv(GL_DEPTH, 0, &d);
@@ -33,7 +33,7 @@ static inline void BindPipeline(GLuint p, GLuint vao, GLfloat *c) {
 	glBindVertexArray(vao);
 };
 static inline void DrawArrays(GLenum m, GLuint f, GLuint c) {glDrawArrays(m, f, c);};
-static inline void BindVertexBuffer(GLuint vao, GLuint binding, GLuint buffer, GLintptr offset, GLsizei stride) {
+static inline void VertexBuffer(GLuint vao, GLuint binding, GLuint buffer, GLintptr offset, GLsizei stride) {
 	glVertexArrayVertexBuffer(vao, binding, buffer, offset, stride);
 }
 */
@@ -54,7 +54,7 @@ type Pipeline struct {
 	vao     C.GLuint
 }
 
-func (p *Pipeline) CompileShaders(
+func (p *Pipeline) Shaders(
 	vertexShader io.Reader,
 	fragmentShader io.Reader,
 ) error {
@@ -97,16 +97,16 @@ func (p *Pipeline) SetupVAO() error {
 	return nil
 }
 
-func (p *Pipeline) Bind(clearColor [4]float32) {
-	C.BindPipeline(
+func (p *Pipeline) Use(clearColor [4]float32) {
+	C.UsePipeline(
 		p.program,
 		p.vao,
 		(*C.GLfloat)(unsafe.Pointer(&clearColor[0])),
 	)
 }
 
-func (p *Pipeline) BindVertexBuffer(binding uint32, b *Buffer, offset uintptr, stride uintptr) {
-	C.BindVertexBuffer(C.GLuint(p.vao), C.GLuint(binding), C.GLuint(b.buffer), C.GLintptr(offset), C.GLsizei(stride))
+func (p *Pipeline) VertexBuffer(binding uint32, b *Buffer, offset uintptr, stride uintptr) {
+	C.VertexBuffer(C.GLuint(p.vao), C.GLuint(binding), C.GLuint(b.buffer), C.GLintptr(offset), C.GLsizei(stride))
 }
 
 func (p *Pipeline) Close() {
@@ -115,7 +115,7 @@ func (p *Pipeline) Close() {
 
 //------------------------------------------------------------------------------
 
-func (p *Pipeline) DefineAttribute(
+func (p *Pipeline) VertexAttribute(
 	index uint32,
 	binding uint32,
 	size int32,
@@ -123,7 +123,7 @@ func (p *Pipeline) DefineAttribute(
 	normalized byte,
 	relativeOffset uint32,
 ) {
-	C.DefineAttribute(
+	C.VertexAttribute(
 		C.GLuint(p.vao),
 		C.GLuint(index),
 		C.GLuint(binding),

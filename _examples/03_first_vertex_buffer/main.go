@@ -64,13 +64,13 @@ func main() {
 	glam.Handler = g
 
 	// Setup the Pipeline
-	if err := pipeline.CompileShaders(vertexShader, fragmentShader); err != nil {
+	if err := pipeline.Shaders(vertexShader, fragmentShader); err != nil {
 		log.Fatal(err)
 	}
-	if err := pipeline.VertexBufferFormat(0, vertex{}); err != nil {
+	if err := pipeline.VertexFormat(0, vertex{}); err != nil {
 		log.Fatal(err)
 	}
-	pipeline.SetClearColor(Vec4{0.9, 0.9, 0.9, 1.0})
+	pipeline.ClearColor(Vec4{0.9, 0.9, 0.9, 1.0})
 
 	// Create the Vertex Buffer
 	data := []vertex{
@@ -96,8 +96,8 @@ func (g *game) Update() {
 }
 
 func (g *game) Draw() {
-	pipeline.Bind()
-	pipeline.BindVertexBuffer(0, &colorfulTriangle, 0)
+	pipeline.Use()
+	pipeline.VertexBuffer(0, &colorfulTriangle, 0)
 	gfx.Draw(gfx.Triangles, 0, 3)
 }
 

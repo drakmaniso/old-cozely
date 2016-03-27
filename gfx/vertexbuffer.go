@@ -15,11 +15,11 @@ import (
 
 //------------------------------------------------------------------------------
 
-// VertexBufferFormat prepares everything the pipeline needs to use a
+// VertexFormat prepares everything the pipeline needs to use a
 // vertex buffer of a specific format, and assign a binding index to it.
 //
 // The format must be a struct with layout tags.
-func (p *Pipeline) VertexBufferFormat(binding uint32, format interface{}) error {
+func (p *Pipeline) VertexFormat(binding uint32, format interface{}) error {
 	f := reflect.TypeOf(format)
 	if f.Kind() != reflect.Struct {
 		return fmt.Errorf("attributes binding format must be a struct, not a %s", f.Kind())
@@ -71,7 +71,7 @@ func (p *Pipeline) VertexBufferFormat(binding uint32, format interface{}) error 
 			ate = internal.GlIntEnum
 		}
 
-		p.internal.DefineAttribute(
+		p.internal.VertexAttribute(
 			uint32(ali),
 			uint32(0), //TODO
 			as,
@@ -96,12 +96,12 @@ var (
 
 //------------------------------------------------------------------------------
 
-// BindVertexBuffer binds a buffer to a vertex buffer binding index.
+// VertexBuffer binds a buffer to a vertex buffer binding index.
 //
 // The buffer should use the same struct type than the one used in the
 // corresponding call to VertexBufferFormat.
-func (p *Pipeline) BindVertexBuffer(binding uint32, b *Buffer, offset uintptr) {
-	p.internal.BindVertexBuffer(binding, &b.internal, offset, p.attribStride[binding])
+func (p *Pipeline) VertexBuffer(binding uint32, b *Buffer, offset uintptr) {
+	p.internal.VertexBuffer(binding, &b.internal, offset, p.attribStride[binding])
 }
 
 //------------------------------------------------------------------------------
