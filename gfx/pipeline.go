@@ -50,6 +50,12 @@ func (p *Pipeline) ClearColor(color geom.Vec4) {
 
 //------------------------------------------------------------------------------
 
+func (p *Pipeline) UniformBuffer(binding uint32, b *Buffer) {
+	p.internal.UniformBuffer(binding, &b.internal)
+}
+
+//------------------------------------------------------------------------------
+
 func (p *Pipeline) Use() {
 	p.internal.Use(p.clearColor)
 }

@@ -23,7 +23,7 @@ void VertexAttribute(
 	GLboolean normalized,
 	GLuint relativeOffset
 );
-GLuint CreateBufferFrom(GLsizeiptr size, const GLvoid* data);
+GLuint CreateBufferFrom(GLsizeiptr size, void* data, GLenum flags);
 
 static inline void UsePipeline(GLuint p, GLuint vao, GLfloat *c) {
 	glClearBufferfv(GL_COLOR, 0, c);
@@ -32,10 +32,18 @@ static inline void UsePipeline(GLuint p, GLuint vao, GLfloat *c) {
 	glUseProgram(p);
 	glBindVertexArray(vao);
 };
+
+static inline void UniformBuffer(GLuint binding, GLuint buffer) {glBindBufferBase(GL_UNIFORM_BUFFER, binding, buffer);};
+
 static inline void DrawArrays(GLenum m, GLuint f, GLuint c) {glDrawArrays(m, f, c);};
+
 static inline void VertexBuffer(GLuint vao, GLuint binding, GLuint buffer, GLintptr offset, GLsizei stride) {
 	glVertexArrayVertexBuffer(vao, binding, buffer, offset, stride);
-}
+};
+
+static inline void UpdateBufferWith(GLuint buffer, GLintptr offset, GLsizei size, void *data) {
+	glNamedBufferSubData(buffer, offset, size, data);
+};
 */
 import "C"
 
@@ -105,6 +113,10 @@ func (p *Pipeline) Use(clearColor [4]float32) {
 	)
 }
 
+func (p *Pipeline) UniformBuffer(binding uint32, b *Buffer) {
+	C.UniformBuffer(C.GLuint(binding), C.GLuint(b.buffer))
+}
+
 func (p *Pipeline) VertexBuffer(binding uint32, b *Buffer, offset uintptr, stride uintptr) {
 	C.VertexBuffer(C.GLuint(p.vao), C.GLuint(binding), C.GLuint(b.buffer), C.GLintptr(offset), C.GLsizei(stride))
 }
@@ -140,9 +152,13 @@ type Buffer struct {
 	buffer C.GLuint
 }
 
-func (b *Buffer) CreateFrom(size uintptr, data uintptr) error {
-	b.buffer = C.CreateBufferFrom(C.GLsizeiptr(size), unsafe.Pointer(data))
+func (b *Buffer) CreateFrom(size uintptr, data uintptr, flags uint32) error {
+	b.buffer = C.CreateBufferFrom(C.GLsizeiptr(size), unsafe.Pointer(data), C.GLenum(flags))
 	return nil
+}
+
+func (b *Buffer) UpdateWith(offset uintptr, size uintptr, data uintptr) {
+	C.UpdateBufferWith(b.buffer, C.GLintptr(offset), C.GLsizei(size), unsafe.Pointer(data))
 }
 
 //------------------------------------------------------------------------------
