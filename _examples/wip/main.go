@@ -28,8 +28,6 @@ type uniformBlock struct {
 	matrix Mat4
 }
 
-var rotation uniformBlock
-
 var transform gfx.Buffer
 var colorfulTriangle gfx.Buffer
 
@@ -91,9 +89,9 @@ func main() {
 
 	// Create the Vertex Buffer
 	data := []vertex{
-		{Vec2{0, 0.65}, Vec3{0.3, 0, 0.8}},
-		{Vec2{-0.65, -0.475}, Vec3{0.8, 0.3, 0}},
-		{Vec2{0.65, -0.475}, Vec3{0, 0.6, 0.2}},
+		{Vec2{0, 0.75}, Vec3{0.3, 0, 0.8}},
+		{Vec2{-0.65, -0.465}, Vec3{0.8, 0.3, 0}},
+		{Vec2{0.65, -0.465}, Vec3{0, 0.6, 0.2}},
 	}
 	if err := colorfulTriangle.CreateFrom(data, 0); err != nil {
 		log.Fatal(err)
@@ -113,13 +111,15 @@ var angle float32
 
 func (g *game) Update() {
 	angle += 0.01
-	rotation.matrix = space.Rotation(angle, Vec3{0, 0, 1})
 }
 
 func (g *game) Draw() {
 	pipeline.Use()
-	transform.UpdateWith(&rotation, 0)
 	pipeline.UniformBuffer(0, &transform)
+
+	m := space.Rotation(angle, Vec3{0, 0, 1})
+	transform.UpdateWith(&m, 0)
+
 	pipeline.VertexBuffer(0, &colorfulTriangle, 0)
 	gfx.Draw(gfx.Triangles, 0, 3)
 }

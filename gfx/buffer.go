@@ -27,12 +27,12 @@ func (b *Buffer) CreateFrom(data interface{}, f bufferFlags) error {
 	return nil
 }
 
-func (b *Buffer) UpdateWith(data interface{}, offset uintptr) error {
+func (b *Buffer) UpdateWith(data interface{}, atOffset uintptr) error {
 	s, p, err := sizeAndPointerOf(data)
 	if err != nil {
 		return err
 	}
-	b.internal.UpdateWith(offset, s, p)
+	b.internal.UpdateWith(atOffset, s, p)
 	return nil
 }
 
