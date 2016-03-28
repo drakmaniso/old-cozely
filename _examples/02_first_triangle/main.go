@@ -23,6 +23,10 @@ var pipeline gfx.Pipeline
 var vertexShader = strings.NewReader(`
 #version 450 core
 
+out gl_PerVertex {
+	vec4 gl_Position;
+};
+
 void main(void)
 {
 	const vec4 triangle[3] = vec4[3](

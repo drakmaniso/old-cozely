@@ -33,7 +33,11 @@ var vertexShader = strings.NewReader(`
 layout(location = 0) in vec2 Position;
 layout(location = 1) in vec3 Color;
 
-out VertexOut {
+out gl_PerVertex {
+	vec4 gl_Position;
+};
+
+out PerVertex {
 	layout(location = 0) out vec3 Color;
 } vert;
 
@@ -46,7 +50,7 @@ void main(void) {
 var fragmentShader = strings.NewReader(`
 #version 450 core
 
-in VertexOut {
+in PerVertex {
 	layout(location = 0) in vec3 Color;
 } vert;
 

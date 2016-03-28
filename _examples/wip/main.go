@@ -39,16 +39,20 @@ var vertexShader = strings.NewReader(`
 layout(location = 0) in vec2 Position;
 layout(location = 1) in vec3 Color;
 
-layout(std140, binding = 0) uniform block {
-	mat4 transform;
+layout(std140, binding = 0) uniform PerObject {
+	mat4 Transform;
+} obj;
+
+out gl_PerVertex {
+	vec4 gl_Position;
 };
 
-out VertexOut {
+out PerVertex {
 	layout(location = 0) out vec3 Color;
 } vert;
 
 void main(void) {
-	gl_Position = transform * vec4(Position, 0.5, 1);
+	gl_Position = obj.Transform * vec4(Position, 0.5, 1);
 	vert.Color = Color;
 }
 `)
@@ -56,7 +60,7 @@ void main(void) {
 var fragmentShader = strings.NewReader(`
 #version 450 core
 
-in VertexOut {
+in PerVertex {
 	layout(location = 0) in vec3 Color;
 } vert;
 
