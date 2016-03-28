@@ -78,7 +78,7 @@ func main() {
 		{Vec2{-0.65, -0.475}, Vec3{0.8, 0.3, 0}},
 		{Vec2{0.65, -0.475}, Vec3{0, 0.6, 0.2}},
 	}
-	if err := colorfulTriangle.CreateFrom(data); err != nil {
+	if err := colorfulTriangle.Create(data, 0); err != nil {
 		log.Fatal(err)
 	}
 
