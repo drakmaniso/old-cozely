@@ -83,7 +83,7 @@ func main() {
 	pipeline.ClearColor(Vec4{0.9, 0.9, 0.9, 1.0})
 
 	// Create the Uniform Buffer
-	if err := transform.CreateFrom(&uniformBlock{}, gfx.DynamicStorage); err != nil {
+	if err := transform.Create(uintptr(64), gfx.DynamicStorage); err != nil {
 		log.Fatal(err)
 	}
 
@@ -93,7 +93,7 @@ func main() {
 		{Vec2{-0.65, -0.465}, Vec3{0.8, 0.3, 0}},
 		{Vec2{0.65, -0.465}, Vec3{0, 0.6, 0.2}},
 	}
-	if err := colorfulTriangle.CreateFrom(data, 0); err != nil {
+	if err := colorfulTriangle.Create(data, 0); err != nil {
 		log.Fatal(err)
 	}
 
@@ -118,7 +118,7 @@ func (g *game) Draw() {
 	pipeline.UniformBuffer(0, &transform)
 
 	m := space.Rotation(angle, Vec3{0, 0, 1})
-	transform.UpdateWith(&m, 0)
+	transform.Update(&m, 0)
 
 	pipeline.VertexBuffer(0, &colorfulTriangle, 0)
 	gfx.Draw(gfx.Triangles, 0, 3)

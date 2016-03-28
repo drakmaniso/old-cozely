@@ -12,27 +12,43 @@ import (
 
 //------------------------------------------------------------------------------
 
+// A Buffer is a block of memory owned by the GPU.
 type Buffer struct {
 	internal internal.Buffer
 }
 
 //------------------------------------------------------------------------------
 
-func (b *Buffer) CreateFrom(data interface{}, f bufferFlags) error {
+// Create asks the GPU to allocate a new block of memory. If data is a
+// uinptr, it is interpreted as the desired size for the buffer (in bytes), and
+// the content is not initialized. Otherwise data must be a slice or a pointer
+// to pure values (no nested references). In all cases the size of the buffer is
+// fixed at creation.
+//
+// The flags must be a combination of the following:
+//     DynamicStorage
+//     MapRead
+//     MapWrite
+//     MapPersistent
+//     MapCoherent
+func (b *Buffer) Create(data interface{}, f bufferFlags) error {
 	s, p, err := sizeAndPointerOf(data)
 	if err != nil {
 		return err
 	}
-	b.internal.CreateFrom(s, p, uint32(f))
+	b.internal.Create(s, p, uint32(f))
 	return nil
 }
 
-func (b *Buffer) UpdateWith(data interface{}, atOffset uintptr) error {
+// Update a buffer with data, starting at a specified offset. It is your
+// responsability to ensure that the size of data plus the offset does not
+// exceed the buffer size.
+func (b *Buffer) Update(data interface{}, atOffset uintptr) error {
 	s, p, err := sizeAndPointerOf(data)
 	if err != nil {
 		return err
 	}
-	b.internal.UpdateWith(atOffset, s, p)
+	b.internal.Update(atOffset, s, p)
 	return nil
 }
 
@@ -40,8 +56,11 @@ func sizeAndPointerOf(data interface{}) (size uintptr, ptr uintptr, err error) {
 	var s uintptr
 	var p uintptr
 	v := reflect.ValueOf(data)
-	k := v.Type().Kind()
+	k := v.Kind()
 	switch k {
+	case reflect.Uintptr:
+		s = uintptr(v.Uint())
+		p = 0
 	case reflect.Slice:
 		l := v.Len()
 		if l == 0 {
@@ -64,11 +83,12 @@ type bufferFlags uint32
 
 // Flags for buffer creation.
 const (
-	MapRead        bufferFlags = 0x0001
-	MapWrite       bufferFlags = 0x0002
-	MapPersistent  bufferFlags = 0x0040
-	MapCoherent    bufferFlags = 0x0080
-	DynamicStorage bufferFlags = 0x0100
+	MapRead        bufferFlags = 0x0001 // Data store will be mapped for reading
+	MapWrite       bufferFlags = 0x0002 // Data store will be mapped for writing
+	MapPersistent  bufferFlags = 0x0040 // Data store will be accessed by both application and GPU while mapped
+	MapCoherent    bufferFlags = 0x0080 // No synchronization needed when persistently mapped
+	DynamicStorage bufferFlags = 0x0100 // Content will be updated
+	ClientStorage  bufferFlags = 0x0200 // Prefer storage on application side
 )
 
 //------------------------------------------------------------------------------

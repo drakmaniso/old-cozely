@@ -71,7 +71,7 @@ void VertexAttribute(
 	glEnableVertexArrayAttrib(vao, index);
 }
 
-GLuint CreateBufferFrom(GLsizeiptr size, void* data, GLenum flags) {
+GLuint CreateBuffer(GLsizeiptr size, void* data, GLenum flags) {
 	GLuint b;
 	glCreateBuffers(1, &b);
 	glNamedBufferStorage(b, size, data, flags);
