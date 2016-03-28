@@ -8,11 +8,12 @@ package internal
 /*
 #include "glad.h"
 
-GLuint CompileShader(const GLchar* b, GLenum t);
+GLuint CompileShader(GLenum t, const GLchar* b);
 char* CompileShaderError(GLuint s);
-GLuint LinkProgram(GLuint vs, GLuint fs);
-char* LinkProgramError(GLuint s);
-GLuint SetupVAO();
+GLuint CreatePipeline();
+GLuint CreateVAO();
+void PipelineUseShader(GLuint p, GLenum stages, GLuint shader);
+char* ShaderLinkError(GLuint s);
 void ClosePipeline(GLuint p, GLuint vao);
 void VertexAttribute(
 	GLuint vao,
@@ -29,7 +30,7 @@ static inline void UsePipeline(GLuint p, GLuint vao, GLfloat *c) {
 	glClearBufferfv(GL_COLOR, 0, c);
 	GLfloat d = 1.0;
 	glClearBufferfv(GL_DEPTH, 0, &d);
-	glUseProgram(p);
+	glBindProgramPipeline(p);
 	glBindVertexArray(vao);
 };
 
@@ -58,56 +59,28 @@ import (
 //------------------------------------------------------------------------------
 
 type Pipeline struct {
-	program C.GLuint
-	vao     C.GLuint
+	pipeline C.GLuint
+	vao      C.GLuint
 }
 
-func (p *Pipeline) Shaders(
-	vertexShader io.Reader,
-	fragmentShader io.Reader,
-) error {
-	vs, err := compileShader(vertexShader, C.GL_VERTEX_SHADER)
-	if err != nil {
-		return fmt.Errorf("vertex shader compile error:\n    %s", err)
-	}
-	fs, err := compileShader(fragmentShader, C.GL_FRAGMENT_SHADER)
-	if err != nil {
-		return fmt.Errorf("fragment shader compile error:\n    %s", err)
-	}
+func (p *Pipeline) Create() error {
+	p.pipeline = C.CreatePipeline()
+	p.vao = C.CreateVAO()
+	return nil
+}
 
-	p.program = C.LinkProgram(vs, fs)
-	if errm := C.LinkProgramError(p.program); errm != nil {
+func (p *Pipeline) UseShader(s *Shader) error {
+	C.PipelineUseShader(C.GLuint(p.pipeline), C.GLenum(s.stages), C.GLuint(s.shader))
+	if errm := C.ShaderLinkError(p.pipeline); errm != nil {
 		defer C.free(unsafe.Pointer(errm))
 		return fmt.Errorf("shader link error:\n    %s", errors.New(C.GoString(errm)))
 	}
 	return nil
 }
 
-func compileShader(r io.Reader, t C.GLenum) (C.GLuint, error) {
-	b, err := ioutil.ReadAll(r)
-	if err != nil {
-		return 0, fmt.Errorf("failed to read shader: %s", err)
-	}
-	cb := C.CString(string(b))
-	defer C.free(unsafe.Pointer(cb))
-
-	s := C.CompileShader((*C.GLchar)(unsafe.Pointer(cb)), t)
-	if errm := C.CompileShaderError(s); errm != nil {
-		defer C.free(unsafe.Pointer(errm))
-		return s, errors.New(C.GoString(errm))
-	}
-
-	return s, nil
-}
-
-func (p *Pipeline) SetupVAO() error {
-	p.vao = C.SetupVAO()
-	return nil
-}
-
 func (p *Pipeline) Use(clearColor [4]float32) {
 	C.UsePipeline(
-		p.program,
+		p.pipeline,
 		p.vao,
 		(*C.GLfloat)(unsafe.Pointer(&clearColor[0])),
 	)
@@ -122,7 +95,7 @@ func (p *Pipeline) VertexBuffer(binding uint32, b *Buffer, offset uintptr, strid
 }
 
 func (p *Pipeline) Close() {
-	C.ClosePipeline(p.program, p.vao)
+	C.ClosePipeline(p.pipeline, p.vao)
 }
 
 //------------------------------------------------------------------------------
@@ -144,6 +117,44 @@ func (p *Pipeline) VertexAttribute(
 		C.GLboolean(normalized),
 		C.GLuint(relativeOffset),
 	)
+}
+
+//------------------------------------------------------------------------------
+
+type Shader struct {
+	shader C.GLuint
+	stages C.GLenum
+}
+
+func (s *Shader) Create(t uint32, r io.Reader) error {
+	b, err := ioutil.ReadAll(r)
+	if err != nil {
+		return fmt.Errorf("failed to read shader: %s", err)
+	}
+	cb := C.CString(string(b))
+	defer C.free(unsafe.Pointer(cb))
+
+	s.shader = C.CompileShader(C.GLenum(t), (*C.GLchar)(unsafe.Pointer(cb)))
+	if errm := C.ShaderLinkError(s.shader); errm != nil {
+		defer C.free(unsafe.Pointer(errm))
+		return errors.New(C.GoString(errm))
+	}
+
+	switch t {
+	case C.GL_VERTEX_SHADER:
+		s.stages = C.GL_VERTEX_SHADER_BIT
+	case C.GL_FRAGMENT_SHADER:
+		s.stages = C.GL_FRAGMENT_SHADER_BIT
+	case C.GL_GEOMETRY_SHADER:
+		s.stages = C.GL_GEOMETRY_SHADER_BIT
+	case C.GL_TESS_CONTROL_SHADER:
+		s.stages = C.GL_TESS_CONTROL_SHADER_BIT
+	case C.GL_TESS_EVALUATION_SHADER:
+		s.stages = C.GL_TESS_EVALUATION_SHADER_BIT
+	case C.GL_COMPUTE_SHADER:
+		s.stages = C.GL_COMPUTE_SHADER_BIT
+	}
+	return nil
 }
 
 //------------------------------------------------------------------------------

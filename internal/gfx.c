@@ -3,40 +3,32 @@
 
 #include "glad.h"
 
-GLuint CompileShader(const GLchar* b, GLenum t) {
-	GLuint s = glCreateShader(t);
+GLuint CompileShader(GLenum t, const GLchar* b) {
+	GLuint s = glCreateShaderProgramv(t, 1, &b);
 	if (s == 0) {
 		return 0;
 	}
-	glShaderSource(s, 1, &b, NULL);
-	glCompileShader(s);
 
 	return s;
 }
 
-char* CompileShaderError(GLuint s) {
-    GLint ok = GL_TRUE;
-    glGetShaderiv (s, GL_COMPILE_STATUS, &ok);
-    if (ok != GL_TRUE) {
-        GLint l = 0;
-        glGetShaderiv (s, GL_INFO_LOG_LENGTH, &l);
-        char *m = calloc(l + 1, sizeof(char));
-        glGetShaderInfoLog (s, l, &l, m);
-        return m;
-    }
-	
-	return NULL;
-}
-
-GLuint LinkProgram(GLuint vs, GLuint fs) {
-	GLuint p = glCreateProgram();
-	glAttachShader(p, vs);
-	glAttachShader(p, fs);
-	glLinkProgram(p);	
+GLuint CreatePipeline() {
+	GLuint p;
+	glCreateProgramPipelines(1, &p);
 	return p;
 }
 
-char* LinkProgramError(GLuint p) {
+GLuint CreateVAO() {
+	GLuint vao;
+	glCreateVertexArrays(1, &vao);
+	return vao;
+}
+
+void PipelineUseShader(GLuint p, GLenum stages, GLuint shader) {
+	glUseProgramStages(p, stages, shader);
+}
+
+char* ShaderLinkError(GLuint p) {
     GLint ok = GL_TRUE;
     glGetProgramiv (p, GL_LINK_STATUS, &ok);
     if (ok != GL_TRUE)
@@ -49,12 +41,6 @@ char* LinkProgramError(GLuint p) {
     }
 	
 	return NULL;
-}
-
-GLuint SetupVAO() {
-	GLuint vao;
-	glCreateVertexArrays(1, &vao);
-	return vao;
 }
 
 void VertexAttribute(

@@ -6,8 +6,6 @@ package gfx
 //------------------------------------------------------------------------------
 
 import (
-	"io"
-
 	"github.com/drakmaniso/glam/geom"
 	"github.com/drakmaniso/glam/internal"
 )
@@ -24,15 +22,14 @@ type Pipeline struct {
 
 //------------------------------------------------------------------------------
 
-func (p *Pipeline) Shaders(
-	vertexShader io.Reader,
-	fragmentShader io.Reader,
-) error {
-	if err := p.internal.Shaders(vertexShader, fragmentShader); err != nil {
+func (p *Pipeline) Create(s ...*Shader) error {
+	if err := p.internal.Create(); err != nil {
 		return err
 	}
-	if err := p.internal.SetupVAO(); err != nil {
-		return err
+	for _, s := range s {
+		if err := p.internal.UseShader(&s.internal); err != nil {
+			return err
+		}
 	}
 	p.attribStride = make(map[uint32]uintptr)
 	p.isCompiled = true

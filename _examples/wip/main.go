@@ -78,7 +78,10 @@ func main() {
 	glam.Handler = g
 
 	// Setup the Pipeline
-	if err := pipeline.Shaders(vertexShader, fragmentShader); err != nil {
+	var vs, fs gfx.Shader
+	vs.Create(gfx.VertexShader, vertexShader)
+	fs.Create(gfx.FragmentShader, fragmentShader)
+	if err := pipeline.Create(&vs, &fs); err != nil {
 		log.Fatal(err)
 	}
 	if err := pipeline.VertexFormat(0, vertex{}); err != nil {

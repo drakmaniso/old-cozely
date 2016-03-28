@@ -56,7 +56,10 @@ func main() {
 	glam.Handler = g
 
 	// Setup the Pipeline
-	if err := pipeline.Shaders(vertexShader, fragmentShader); err != nil {
+	var vs, fs gfx.Shader
+	vs.Create(gfx.VertexShader, vertexShader)
+	fs.Create(gfx.FragmentShader, fragmentShader)
+	if err := pipeline.Create(&vs, &fs); err != nil {
 		log.Fatal(err)
 	}
 	pipeline.ClearColor(Vec4{0.9, 0.9, 0.9, 1.0})
