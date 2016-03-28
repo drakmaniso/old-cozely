@@ -66,5 +66,5 @@ GLuint CreateBuffer(GLsizeiptr size, void* data, GLenum flags) {
 
 void ClosePipeline(GLuint p, GLuint vao) {
 	glDeleteVertexArrays(1, &vao);
-	glDeleteProgram(p);
+	glDeleteProgramPipelines(1, &p);
 }
