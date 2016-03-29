@@ -1,49 +1,42 @@
-Glam: a minimalist framework for making games in Go
-===================================================
+# Glam
 
 
-**WARNING: This is a work in progress, very incomplete and not yet functional.**
+**This is a work in progress, still very incomplete.**
 
 [![GoDoc](https://godoc.org/github.com/drakmaniso/glam?status.svg)](https://godoc.org/github.com/drakmaniso/glam)
 
-Goals
------
-
-This project is currently for my personal use. It's not meant as a general 
-purpose engine, but may become useful to others at some point.
-
-The main inspiration behind the design is the Lua framework Löve. The goal is to
-provide simle abstractions over OpenGL and SDL.
+Glam is a minimalist framework for making games in Go. It provides simple
+abstractions to access to the hardware, and tries to find a balance between
+simplicity and versatility.
 
 By order of priority, the API aims for:
 
-- simplicity of implementation (i.e. keep it small and manageable),
-- ease of use (e.g. avoid unnecessary abstractions, inconvenient APIs),
+- simplicity of implementation (i.e. keep it small and manageable, avoid unnecessary abstractions),
+- ease of use (e.g. to minimize boiler-plate code),
 - and, only when not in contradiction with the first two points, efficiency.
 
 
-Implemented Features
---------------------
+## Implemented Features
 
-- Package glam: the game loop.
-- Package gfx: simple abstractions over OpenGL (just started).
-- Package key: support for keyboard events (incomplete).
-- Package mouse: suport for mouse events (incomplete).
-- Package window: support for window events (incomplete).
-- Package geom: vectors and matrices (incomplete).
-- Package math: efficient single-precision math.
-- Package noise: perlin noise.
+As of 23/03/2016, Glam provides:
+
+- a game loop with basic support for mouse, keyboard and window events,
+- vectors, matrices and efficient float32 math functions (incomplete),
+- simple abstractions over a modern subset of OpenGL (very incomplete).
 
 
-License
--------
+## Dependencies
+
+The only dependancies are SDL 2 and OpenGL 4.5.
+
+
+## License
 
 The code is under a simplified BSD license (see LICENSE file). When a sub-package
 is derived from anothe source, the directory contain the appropriate LICENSE file. 
 
 
-Credits
--------
+## Credits
 
 Some implementations of the single-precision math functions are
 derived from the Go source code.
@@ -51,9 +44,3 @@ derived from the Go source code.
 The Perlin and Simplex noise functions are adapted from
 ["Simplex Noise Demystified"](http://www.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf)
 by Stefan Gustavson (code in the public domain).
-
-
-Author
-------
-
-Laurent Moussault <moussault.laurent@gmail.com>
