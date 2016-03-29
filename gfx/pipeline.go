@@ -16,24 +16,24 @@ type Pipeline struct {
 	internal     internal.Pipeline
 	clearColor   [4]float32
 	attribStride map[uint32]uintptr
-	isCompiled   bool
-	isClosed     bool
 }
 
 //------------------------------------------------------------------------------
 
-func (p *Pipeline) Create(s ...*Shader) error {
-	if err := p.internal.Create(); err != nil {
-		return err
-	}
-	for _, s := range s {
-		if err := p.internal.UseShader(&s.internal); err != nil {
-			return err
-		}
+func NewPipeline(s ...Shader) (Pipeline, error) {
+	var p Pipeline
+	var err error
+	p.internal, err = internal.NewPipeline()
+	if err != nil {
+		return Pipeline{}, err
 	}
 	p.attribStride = make(map[uint32]uintptr)
-	p.isCompiled = true
-	return nil
+	for _, s := range s {
+		if err := p.internal.UseShader(s.internal); err != nil {
+			return p, err
+		}
+	}
+	return p, nil
 }
 
 //------------------------------------------------------------------------------
@@ -47,21 +47,20 @@ func (p *Pipeline) ClearColor(color geom.Vec4) {
 
 //------------------------------------------------------------------------------
 
-func (p *Pipeline) UniformBuffer(binding uint32, b *Buffer) {
-	p.internal.UniformBuffer(binding, &b.internal)
+func (p *Pipeline) UniformBuffer(binding uint32, b Buffer) {
+	p.internal.UniformBuffer(binding, b.internal)
 }
 
 //------------------------------------------------------------------------------
 
-func (p *Pipeline) Use() {
-	p.internal.Use(p.clearColor)
+func (p *Pipeline) Bind() {
+	p.internal.Bind(p.clearColor)
 }
 
 //------------------------------------------------------------------------------
 
 func (p *Pipeline) Close() {
 	p.internal.Close()
-	p.isClosed = true
 }
 
 //------------------------------------------------------------------------------

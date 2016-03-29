@@ -56,16 +56,23 @@ func main() {
 	glam.Handler = g
 
 	// Setup the Pipeline
-	var vs, fs gfx.Shader
-	vs.Create(gfx.VertexShader, vertexShader)
-	fs.Create(gfx.FragmentShader, fragmentShader)
-	if err := pipeline.Create(&vs, &fs); err != nil {
+	vs, err := gfx.NewVertexShader(vertexShader)
+	if err != nil {
+		log.Fatal(err)
+	}
+	fs, err := gfx.NewFragmentShader(fragmentShader)
+	if err != nil {
+		log.Fatal(err)
+	}
+	pipeline, err = gfx.NewPipeline(vs, fs)
+	if err != nil {
 		log.Fatal(err)
 	}
 	pipeline.ClearColor(Vec4{0.9, 0.9, 0.9, 1.0})
 
 	// Run the Game Loop
-	if err := glam.Run(); err != nil {
+	err = glam.Run()
+	if err != nil {
 		log.Fatal(err)
 	}
 }
@@ -78,7 +85,7 @@ func (g *game) Update() {
 }
 
 func (g *game) Draw() {
-	pipeline.Use()
+	pipeline.Bind()
 	gfx.Draw(gfx.Triangles, 0, 3)
 }
 

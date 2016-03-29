@@ -19,7 +19,7 @@ type Buffer struct {
 
 //------------------------------------------------------------------------------
 
-// Create asks the GPU to allocate a new block of memory. If data is a
+// NewBuffer asks the GPU to allocate a new block of memory. If data is a
 // uinptr, it is interpreted as the desired size for the buffer (in bytes), and
 // the content is not initialized. Otherwise data must be a slice or a pointer
 // to pure values (no nested references). In all cases the size of the buffer is
@@ -31,13 +31,14 @@ type Buffer struct {
 //     MapWrite
 //     MapPersistent
 //     MapCoherent
-func (b *Buffer) Create(data interface{}, f bufferFlags) error {
+func NewBuffer(data interface{}, f bufferFlags) (Buffer, error) {
 	s, p, err := sizeAndPointerOf(data)
 	if err != nil {
-		return err
+		return Buffer{}, err
 	}
-	b.internal.Create(s, p, uint32(f))
-	return nil
+	var b Buffer
+	b.internal, err = internal.NewBuffer(s, p, uint32(f))
+	return b, err
 }
 
 // Update a buffer with data, starting at a specified offset. It is your

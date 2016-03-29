@@ -12,7 +12,7 @@ GLuint CompileShader(GLenum t, const GLchar* b) {
 	return s;
 }
 
-GLuint CreatePipeline() {
+GLuint NewPipeline() {
 	GLuint p;
 	glCreateProgramPipelines(1, &p);
 	return p;
@@ -57,7 +57,7 @@ void VertexAttribute(
 	glEnableVertexArrayAttrib(vao, index);
 }
 
-GLuint CreateBuffer(GLsizeiptr size, void* data, GLenum flags) {
+GLuint NewBuffer(GLsizeiptr size, void* data, GLenum flags) {
 	GLuint b;
 	glCreateBuffers(1, &b);
 	glNamedBufferStorage(b, size, data, flags);

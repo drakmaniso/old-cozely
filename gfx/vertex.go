@@ -100,8 +100,8 @@ var (
 //
 // The buffer should use the same struct type than the one used in the
 // corresponding call to VertexBufferFormat.
-func (p *Pipeline) VertexBuffer(binding uint32, b *Buffer, offset uintptr) {
-	p.internal.VertexBuffer(binding, &b.internal, offset, p.attribStride[binding])
+func (p *Pipeline) VertexBuffer(binding uint32, b Buffer, offset uintptr) {
+	p.internal.VertexBuffer(binding, b.internal, offset, p.attribStride[binding])
 }
 
 //------------------------------------------------------------------------------

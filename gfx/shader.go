@@ -4,6 +4,7 @@
 package gfx
 
 import (
+	"fmt"
 	"io"
 
 	"github.com/drakmaniso/glam/internal"
@@ -18,21 +19,64 @@ type Shader struct {
 
 //------------------------------------------------------------------------------
 
-func (s *Shader) Create(st shaderStages, r io.Reader) {
-	s.internal.Create(uint32(st), r)
+func NewVertexShader(r io.Reader) (Shader, error) {
+	var s Shader
+	var err error
+	s.internal, err = internal.NewVertexShader(r)
+	if err != nil {
+		return s, fmt.Errorf("error in vertex shader: %s", err)
+	}
+	return s, nil
 }
 
-//------------------------------------------------------------------------------
+func NewFragmentShader(r io.Reader) (Shader, error) {
+	var s Shader
+	var err error
+	s.internal, err = internal.NewFragmentShader(r)
+	if err != nil {
+		return s, fmt.Errorf("error in fragment shader: %s", err)
+	}
+	return s, nil
+}
 
-type shaderStages uint32
+func NewGeometryShader(r io.Reader) (Shader, error) {
+	var s Shader
+	var err error
+	s.internal, err = internal.NewGeometryShader(r)
+	if err != nil {
+		return s, fmt.Errorf("error in geometry shader: %s", err)
+	}
+	return s, nil
+}
 
-const (
-	VertexShader         shaderStages = 0x8B31
-	FragmentShader       shaderStages = 0x8B30
-	GeometryShader       shaderStages = 0x8DD9
-	TessControlShader    shaderStages = 0x8E88
-	TessEvaluationShader shaderStages = 0x8E87
-	ComputeShader        shaderStages = 0x91B9
-)
+func NewTessControlShader(r io.Reader) (Shader, error) {
+	var s Shader
+	var err error
+	s.internal, err = internal.NewTessControlShader(r)
+	if err != nil {
+		return s, fmt.Errorf("error in tesselation control shader: %s", err)
+	}
+	return s, nil
+}
+
+func NewTessEvaluationShader(r io.Reader) (Shader, error) {
+	var s Shader
+	var err error
+	s.internal, err = internal.NewTessEvaluationShader(r)
+	if err != nil {
+		return s, fmt.Errorf("error in tesselation evaluation shader: %s", err)
+	}
+	return s, nil
+}
+
+func NewComputeShader(r io.Reader) (Shader, error) {
+	var s Shader
+	var err error
+	s.internal, err = internal.NewComputeShader(r)
+	if err != nil {
+		return s, fmt.Errorf("error in compute shader: %s", err)
+	}
+	return s, nil
+}
 
 //------------------------------------------------------------------------------

@@ -10,7 +10,7 @@ package internal
 
 GLuint CompileShader(GLenum t, const GLchar* b);
 char* CompileShaderError(GLuint s);
-GLuint CreatePipeline();
+GLuint NewPipeline();
 GLuint CreateVAO();
 void PipelineUseShader(GLuint p, GLenum stages, GLuint shader);
 char* ShaderLinkError(GLuint s);
@@ -24,9 +24,9 @@ void VertexAttribute(
 	GLboolean normalized,
 	GLuint relativeOffset
 );
-GLuint CreateBuffer(GLsizeiptr size, void* data, GLenum flags);
+GLuint NewBuffer(GLsizeiptr size, void* data, GLenum flags);
 
-static inline void UsePipeline(GLuint p, GLuint vao, GLfloat *c) {
+static inline void BindPipeline(GLuint p, GLuint vao, GLfloat *c) {
 	glClearBufferfv(GL_COLOR, 0, c);
 	GLfloat d = 1.0;
 	glClearBufferfv(GL_DEPTH, 0, &d);
@@ -63,13 +63,14 @@ type Pipeline struct {
 	vao      C.GLuint
 }
 
-func (p *Pipeline) Create() error {
-	p.pipeline = C.CreatePipeline()
+func NewPipeline() (Pipeline, error) {
+	var p Pipeline
+	p.pipeline = C.NewPipeline()
 	p.vao = C.CreateVAO()
-	return nil
+	return p, nil //TODO: Error Handling
 }
 
-func (p *Pipeline) UseShader(s *Shader) error {
+func (p *Pipeline) UseShader(s Shader) error {
 	C.PipelineUseShader(C.GLuint(p.pipeline), C.GLenum(s.stages), C.GLuint(s.shader))
 	if errm := C.ShaderLinkError(p.pipeline); errm != nil {
 		defer C.free(unsafe.Pointer(errm))
@@ -78,19 +79,19 @@ func (p *Pipeline) UseShader(s *Shader) error {
 	return nil
 }
 
-func (p *Pipeline) Use(clearColor [4]float32) {
-	C.UsePipeline(
+func (p *Pipeline) Bind(clearColor [4]float32) {
+	C.BindPipeline(
 		p.pipeline,
 		p.vao,
 		(*C.GLfloat)(unsafe.Pointer(&clearColor[0])),
 	)
 }
 
-func (p *Pipeline) UniformBuffer(binding uint32, b *Buffer) {
+func (p *Pipeline) UniformBuffer(binding uint32, b Buffer) {
 	C.UniformBuffer(C.GLuint(binding), C.GLuint(b.buffer))
 }
 
-func (p *Pipeline) VertexBuffer(binding uint32, b *Buffer, offset uintptr, stride uintptr) {
+func (p *Pipeline) VertexBuffer(binding uint32, b Buffer, offset uintptr, stride uintptr) {
 	C.VertexBuffer(C.GLuint(p.vao), C.GLuint(binding), C.GLuint(b.buffer), C.GLintptr(offset), C.GLsizei(stride))
 }
 
@@ -126,35 +127,69 @@ type Shader struct {
 	stages C.GLenum
 }
 
-func (s *Shader) Create(t uint32, r io.Reader) error {
+func NewVertexShader(r io.Reader) (Shader, error) {
+	var s Shader
+	var err error
+	s.stages = C.GL_VERTEX_SHADER_BIT
+	s.shader, err = newShader(C.GL_VERTEX_SHADER, r)
+	return s, err
+}
+
+func NewFragmentShader(r io.Reader) (Shader, error) {
+	var s Shader
+	var err error
+	s.stages = C.GL_FRAGMENT_SHADER_BIT
+	s.shader, err = newShader(C.GL_FRAGMENT_SHADER, r)
+	return s, err
+}
+
+func NewGeometryShader(r io.Reader) (Shader, error) {
+	var s Shader
+	var err error
+	s.stages = C.GL_GEOMETRY_SHADER_BIT
+	s.shader, err = newShader(C.GL_GEOMETRY_SHADER, r)
+	return s, err
+}
+
+func NewTessControlShader(r io.Reader) (Shader, error) {
+	var s Shader
+	var err error
+	s.stages = C.GL_TESS_CONTROL_SHADER_BIT
+	s.shader, err = newShader(C.GL_TESS_CONTROL_SHADER, r)
+	return s, err
+}
+
+func NewTessEvaluationShader(r io.Reader) (Shader, error) {
+	var s Shader
+	var err error
+	s.stages = C.GL_TESS_EVALUATION_SHADER_BIT
+	s.shader, err = newShader(C.GL_TESS_EVALUATION_SHADER, r)
+	return s, err
+}
+
+func NewComputeShader(r io.Reader) (Shader, error) {
+	var s Shader
+	var err error
+	s.stages = C.GL_COMPUTE_SHADER_BIT
+	s.shader, err = newShader(C.GL_COMPUTE_SHADER, r)
+	return s, err
+}
+
+func newShader(t uint32, r io.Reader) (C.GLuint, error) {
 	b, err := ioutil.ReadAll(r)
 	if err != nil {
-		return fmt.Errorf("failed to read shader: %s", err)
+		return 0, fmt.Errorf("failed to read shader: %s", err)
 	}
 	cb := C.CString(string(b))
 	defer C.free(unsafe.Pointer(cb))
 
-	s.shader = C.CompileShader(C.GLenum(t), (*C.GLchar)(unsafe.Pointer(cb)))
-	if errm := C.ShaderLinkError(s.shader); errm != nil {
+	s := C.CompileShader(C.GLenum(t), (*C.GLchar)(unsafe.Pointer(cb)))
+	if errm := C.ShaderLinkError(s); errm != nil {
 		defer C.free(unsafe.Pointer(errm))
-		return errors.New(C.GoString(errm))
+		return 0, errors.New(C.GoString(errm))
 	}
 
-	switch t {
-	case C.GL_VERTEX_SHADER:
-		s.stages = C.GL_VERTEX_SHADER_BIT
-	case C.GL_FRAGMENT_SHADER:
-		s.stages = C.GL_FRAGMENT_SHADER_BIT
-	case C.GL_GEOMETRY_SHADER:
-		s.stages = C.GL_GEOMETRY_SHADER_BIT
-	case C.GL_TESS_CONTROL_SHADER:
-		s.stages = C.GL_TESS_CONTROL_SHADER_BIT
-	case C.GL_TESS_EVALUATION_SHADER:
-		s.stages = C.GL_TESS_EVALUATION_SHADER_BIT
-	case C.GL_COMPUTE_SHADER:
-		s.stages = C.GL_COMPUTE_SHADER_BIT
-	}
-	return nil
+	return s, nil
 }
 
 //------------------------------------------------------------------------------
@@ -163,9 +198,10 @@ type Buffer struct {
 	buffer C.GLuint
 }
 
-func (b *Buffer) Create(size uintptr, data uintptr, flags uint32) error {
-	b.buffer = C.CreateBuffer(C.GLsizeiptr(size), unsafe.Pointer(data), C.GLenum(flags))
-	return nil
+func NewBuffer(size uintptr, data uintptr, flags uint32) (Buffer, error) {
+	var b Buffer
+	b.buffer = C.NewBuffer(C.GLsizeiptr(size), unsafe.Pointer(data), C.GLenum(flags))
+	return b, nil
 }
 
 func (b *Buffer) Update(offset uintptr, size uintptr, data uintptr) {

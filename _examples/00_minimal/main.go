@@ -17,7 +17,8 @@ func main() {
 	g := &game{}
 	glam.Handler = g
 
-	if err := glam.Run(); err != nil {
+	err := glam.Run()
+	if err != nil {
 		log.Fatal(err)
 	}
 }

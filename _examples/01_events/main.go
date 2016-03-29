@@ -26,7 +26,8 @@ func main() {
 	mouse.Handler = g
 	window.Handler = g
 
-	if err := glam.Run(); err != nil {
+	err := glam.Run()
+	if err != nil {
 		log.Fatal(err)
 	}
 }
