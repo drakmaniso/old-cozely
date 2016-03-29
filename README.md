@@ -11,8 +11,8 @@ simplicity and versatility.
 
 By order of priority, the API aims for:
 
-- simplicity of implementation (i.e. keep it small and manageable, avoid unnecessary abstractions),
-- ease of use (e.g. to minimize boiler-plate code),
+- simplicity of implementation (keep it small and manageable, avoid unnecessary abstractions),
+- ease of use (minimize boiler-plate code),
 - and, only when not in contradiction with the first two points, efficiency.
 
 
@@ -33,13 +33,13 @@ The only dependancies are SDL 2 and OpenGL 4.5.
 ## License
 
 The code is under a simplified BSD license (see LICENSE file). When a sub-package
-is derived from anothe source, the directory contain the appropriate LICENSE file. 
+is derived from another source, the directory contain the appropriate LICENSE file. 
 
 
 ## Credits
 
 Some implementations of the single-precision math functions are
-derived from the Go source code.
+derived from the [Go source code](https://github.com/golang/go) (BSD-style license).
 
 The Perlin and Simplex noise functions are adapted from
 ["Simplex Noise Demystified"](http://www.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf)
