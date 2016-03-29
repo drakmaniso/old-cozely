@@ -1,13 +1,18 @@
 // Copyright (c) 2013-2016 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
-package internal
+package gfx
 
 //------------------------------------------------------------------------------
 
-//#include "glad.h"
+/*
+#include "glad.h"
+*/
 import "C"
-import "fmt"
+
+import (
+	"fmt"
+)
 
 //------------------------------------------------------------------------------
 

@@ -10,8 +10,30 @@ import (
 	"strconv"
 
 	"github.com/drakmaniso/glam/geom"
-	"github.com/drakmaniso/glam/internal"
 )
+
+/*
+#include "glad.h"
+
+void VertexAttribute(
+	GLuint vao,
+	GLuint index,
+	GLuint binding,
+	GLint size,
+	GLenum type,
+	GLboolean normalized,
+	GLuint relativeOffset
+) {
+	glVertexArrayAttribFormat(vao, index, size, type, normalized, relativeOffset);
+	glVertexArrayAttribBinding(vao, index, binding);
+	glEnableVertexArrayAttrib(vao, index);
+}
+
+static inline void VertexBuffer(GLuint vao, GLuint binding, GLuint buffer, GLintptr offset, GLsizei stride) {
+	glVertexArrayVertexBuffer(vao, binding, buffer, offset, stride);
+}
+*/
+import "C"
 
 //------------------------------------------------------------------------------
 
@@ -41,43 +63,44 @@ func (p *Pipeline) VertexFormat(binding uint32, format interface{}) error {
 		at := a.Type
 		var as int32
 		ao := a.Offset
-		ate := internal.GlByteEnum
+		var ate C.GLenum
 		switch {
 		// Float32
 		case at.ConvertibleTo(float32Type):
 			as = 1
-			ate = internal.GlFloatEnum
+			ate = C.GL_FLOAT
 		case at.ConvertibleTo(vec4Type):
 			as = 4
-			ate = internal.GlFloatEnum
+			ate = C.GL_FLOAT
 		case at.ConvertibleTo(vec3Type):
 			as = 3
-			ate = internal.GlFloatEnum
+			ate = C.GL_FLOAT
 		case at.ConvertibleTo(vec2Type):
 			as = 2
-			ate = internal.GlFloatEnum
+			ate = C.GL_FLOAT
 		// Int32
 		case at.ConvertibleTo(int32Type):
 			as = 1
-			ate = internal.GlIntEnum
+			ate = C.GL_INT
 		case at.ConvertibleTo(ivec4Type):
 			as = 4
-			ate = internal.GlIntEnum
+			ate = C.GL_INT
 		case at.ConvertibleTo(ivec3Type):
 			as = 3
-			ate = internal.GlIntEnum
+			ate = C.GL_INT
 		case at.ConvertibleTo(ivec2Type):
 			as = 2
-			ate = internal.GlIntEnum
+			ate = C.GL_INT
 		}
 
-		p.internal.VertexAttribute(
-			uint32(ali),
-			uint32(0), //TODO
-			as,
-			uint32(ate),
-			byte(0), //TODO
-			uint32(ao),
+		C.VertexAttribute(
+			p.vao,
+			C.GLuint(ali),
+			C.GLuint(0), //TODO
+			C.GLint(as),
+			ate,
+			C.GLboolean(0), //TODO
+			C.GLuint(ao),
 		)
 	}
 	return nil
@@ -101,7 +124,7 @@ var (
 // The buffer should use the same struct type than the one used in the
 // corresponding call to VertexBufferFormat.
 func (p *Pipeline) VertexBuffer(binding uint32, b Buffer, offset uintptr) {
-	p.internal.VertexBuffer(binding, b.internal, offset, p.attribStride[binding])
+	C.VertexBuffer(p.vao, C.GLuint(binding), b.buffer, C.GLintptr(offset), C.GLsizei(p.attribStride[binding]))
 }
 
 //------------------------------------------------------------------------------

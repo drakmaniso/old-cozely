@@ -9,6 +9,7 @@ import "github.com/drakmaniso/glam/geom"
 
 //------------------------------------------------------------------------------
 
+var Debug = false
 var InitError error
 var QuitRequested = false
 

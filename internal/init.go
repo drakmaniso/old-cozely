@@ -8,9 +8,6 @@ package internal
 #cgo linux freebsd darwin pkg-config: sdl2
 
 #include "SDL.h"
-#include "glad.h"
-
-int InitOpenGL(int debug);
 */
 import "C"
 
@@ -53,6 +50,10 @@ func init() {
 
 	loadConfig()
 
+	if config.Debug {
+		Debug = true
+	}
+
 	runtime.LockOSThread()
 
 	if errcode := C.SDL_Init(C.SDL_INIT_EVERYTHING); errcode != 0 {
@@ -74,14 +75,6 @@ func init() {
 	if err != nil {
 		InitError = err
 		return
-	}
-
-	var d C.int
-	if config.Debug {
-		d = 1
-	}
-	if C.InitOpenGL(d) != 0 {
-		InitError = fmt.Errorf("impossible to initialize OpenGL")
 	}
 }
 

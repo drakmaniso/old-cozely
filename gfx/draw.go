@@ -3,9 +3,14 @@
 
 package gfx
 
-import (
-	"github.com/drakmaniso/glam/internal"
-)
+/*
+#include "glad.h"
+
+static inline void DrawArrays(GLenum m, GLuint f, GLuint c) {
+	glDrawArrays(m, f, c);
+}
+*/
+import "C"
 
 //------------------------------------------------------------------------------
 
@@ -30,7 +35,7 @@ const (
 //------------------------------------------------------------------------------
 
 func Draw(mode primitive, first int32, count int32) {
-	internal.Draw(uint32(mode), first, count)
+	C.DrawArrays(C.GLenum(mode), C.GLuint(first), C.GLuint(count))
 }
 
 //------------------------------------------------------------------------------

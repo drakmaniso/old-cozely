@@ -6,14 +6,81 @@ package gfx
 //------------------------------------------------------------------------------
 
 import (
+	"errors"
+	"fmt"
+	"unsafe"
+
 	"github.com/drakmaniso/glam/geom"
-	"github.com/drakmaniso/glam/internal"
 )
+
+/*
+#include "glad.h"
+
+GLuint NewPipeline() {
+	GLuint p;
+	glCreateProgramPipelines(1, &p);
+	return p;
+}
+
+GLuint CreateVAO() {
+	GLuint vao;
+	glCreateVertexArrays(1, &vao);
+	return vao;
+}
+
+char* PipelineLinkError(GLuint pr) {
+    GLint ok = GL_TRUE;
+    glGetProgramiv (pr, GL_LINK_STATUS, &ok);
+    if (ok != GL_TRUE)
+    {
+        GLint l = 0;
+        glGetProgramiv (pr, GL_INFO_LOG_LENGTH, &l);
+        char *m = calloc(l + 1, sizeof(char));
+        glGetProgramInfoLog (pr, l, &l, m);
+        return m;
+    }
+
+	return NULL;
+}
+
+void PipelineUseShader(GLuint p, GLenum stages, GLuint shader) {
+	glUseProgramStages(p, stages, shader);
+}
+
+void ClosePipeline(GLuint p, GLuint vao) {
+	glDeleteVertexArrays(1, &vao);
+	glDeleteProgramPipelines(1, &p);
+}
+
+static inline void BindPipeline(GLuint p, GLuint vao, GLfloat *c) {
+
+    glEnable (GL_DEPTH_TEST);
+    glDepthFunc (GL_LEQUAL);
+
+    glEnable (GL_CULL_FACE);
+    glCullFace (GL_BACK);
+
+    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    glEnable(GL_FRAMEBUFFER_SRGB);
+	glClearBufferfv(GL_COLOR, 0, c);
+	GLfloat d = 1.0;
+	glClearBufferfv(GL_DEPTH, 0, &d);
+	glBindProgramPipeline(p);
+	glBindVertexArray(vao);
+}
+
+static inline void UniformBuffer(GLuint binding, GLuint buffer) {
+	glBindBufferBase(GL_UNIFORM_BUFFER, binding, buffer);
+}
+*/
+import "C"
 
 //------------------------------------------------------------------------------
 
 type Pipeline struct {
-	internal     internal.Pipeline
+	pipeline     C.GLuint
+	vao          C.GLuint
 	clearColor   [4]float32
 	attribStride map[uint32]uintptr
 }
@@ -22,18 +89,24 @@ type Pipeline struct {
 
 func NewPipeline(s ...Shader) (Pipeline, error) {
 	var p Pipeline
-	var err error
-	p.internal, err = internal.NewPipeline()
-	if err != nil {
-		return Pipeline{}, err
-	}
+	p.pipeline = C.NewPipeline() //TODO: Error Handling
+	p.vao = C.CreateVAO()        //TODO: Error Handling
 	p.attribStride = make(map[uint32]uintptr)
 	for _, s := range s {
-		if err := p.internal.UseShader(s.internal); err != nil {
+		if err := p.useShader(s); err != nil {
 			return p, err
 		}
 	}
 	return p, nil
+}
+
+func (p *Pipeline) useShader(s Shader) error {
+	C.PipelineUseShader(p.pipeline, s.stages, s.shader)
+	if errm := C.PipelineLinkError(p.pipeline); errm != nil {
+		defer C.free(unsafe.Pointer(errm))
+		return fmt.Errorf("shader link error:\n    %s", errors.New(C.GoString(errm)))
+	}
+	return nil
 }
 
 //------------------------------------------------------------------------------
@@ -48,19 +121,23 @@ func (p *Pipeline) ClearColor(color geom.Vec4) {
 //------------------------------------------------------------------------------
 
 func (p *Pipeline) UniformBuffer(binding uint32, b Buffer) {
-	p.internal.UniformBuffer(binding, b.internal)
+	C.UniformBuffer(C.GLuint(binding), b.buffer)
 }
 
 //------------------------------------------------------------------------------
 
 func (p *Pipeline) Bind() {
-	p.internal.Bind(p.clearColor)
+	C.BindPipeline(
+		p.pipeline,
+		p.vao,
+		(*C.GLfloat)(unsafe.Pointer(&p.clearColor[0])),
+	)
 }
 
 //------------------------------------------------------------------------------
 
 func (p *Pipeline) Close() {
-	p.internal.Close()
+	C.ClosePipeline(p.pipeline, p.vao)
 }
 
 //------------------------------------------------------------------------------

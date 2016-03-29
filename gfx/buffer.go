@@ -6,15 +6,30 @@ package gfx
 import (
 	"fmt"
 	"reflect"
-
-	"github.com/drakmaniso/glam/internal"
+	"unsafe"
 )
+
+/*
+#include "glad.h"
+
+GLuint NewBuffer(GLsizeiptr size, void* data, GLenum flags) {
+	GLuint b;
+	glCreateBuffers(1, &b);
+	glNamedBufferStorage(b, size, data, flags);
+	return b;
+}
+
+static inline void UpdateBuffer(GLuint buffer, GLintptr offset, GLsizei size, void *data) {
+	glNamedBufferSubData(buffer, offset, size, data);
+}
+*/
+import "C"
 
 //------------------------------------------------------------------------------
 
 // A Buffer is a block of memory owned by the GPU.
 type Buffer struct {
-	internal internal.Buffer
+	buffer C.GLuint
 }
 
 //------------------------------------------------------------------------------
@@ -37,8 +52,9 @@ func NewBuffer(data interface{}, f bufferFlags) (Buffer, error) {
 		return Buffer{}, err
 	}
 	var b Buffer
-	b.internal, err = internal.NewBuffer(s, p, uint32(f))
-	return b, err
+	b.buffer = C.NewBuffer(C.GLsizeiptr(s), unsafe.Pointer(p), C.GLenum(f))
+	//TODO: error handling
+	return b, nil
 }
 
 // Update a buffer with data, starting at a specified offset. It is your
@@ -49,7 +65,7 @@ func (b *Buffer) Update(data interface{}, atOffset uintptr) error {
 	if err != nil {
 		return err
 	}
-	b.internal.Update(atOffset, s, p)
+	C.UpdateBuffer(b.buffer, C.GLintptr(atOffset), C.GLsizei(s), unsafe.Pointer(p))
 	return nil
 }
 
