@@ -12,6 +12,7 @@ import (
 )
 
 /*
+#include <stdlib.h>
 #include "glad.h"
 
 GLuint CompileShader(GLenum t, const GLchar* b) {

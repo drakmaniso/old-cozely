@@ -4,6 +4,7 @@
 package gfx
 
 /*
+#cgo linux LDFLAGS: -ldl
 #include "glad.h"
 
 int InitOpenGL(int debug);

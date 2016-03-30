@@ -14,6 +14,7 @@ import (
 )
 
 /*
+#include <stdlib.h>
 #include "glad.h"
 
 GLuint NewPipeline() {
