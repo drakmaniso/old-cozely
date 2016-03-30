@@ -9,6 +9,7 @@ import (
 )
 
 /*
+#include <stdlib.h>
 #include "sdl.h"
 
 static inline void SwapWindow(SDL_Window* w) {SDL_GL_SwapWindow(w);}
