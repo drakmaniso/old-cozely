@@ -88,8 +88,9 @@ func OpenWindow(
 		return fmt.Errorf("could not open window: %s", err)
 	}
 
-	ctx, err := C.SDL_GL_CreateContext(Window.window)
-	if err != nil {
+	ctx := C.SDL_GL_CreateContext(Window.window)
+	if ctx == nil {
+        err := GetSDLError()
 		return fmt.Errorf("could not create OpenGL context: %s", err)
 	}
 	Window.context = ctx
