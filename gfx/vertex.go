@@ -9,6 +9,7 @@ import (
 
 	"strconv"
 
+	"github.com/drakmaniso/glam/color"
 	"github.com/drakmaniso/glam/geom"
 )
 
@@ -69,10 +70,10 @@ func (p *Pipeline) VertexFormat(binding uint32, format interface{}) error {
 		case at.ConvertibleTo(float32Type):
 			as = 1
 			ate = C.GL_FLOAT
-		case at.ConvertibleTo(vec4Type):
+		case at.ConvertibleTo(vec4Type), at.ConvertibleTo(rgbaType):
 			as = 4
 			ate = C.GL_FLOAT
-		case at.ConvertibleTo(vec3Type):
+		case at.ConvertibleTo(vec3Type), at.ConvertibleTo(rgbType):
 			as = 3
 			ate = C.GL_FLOAT
 		case at.ConvertibleTo(vec2Type):
@@ -115,6 +116,8 @@ var (
 	ivec4Type   = reflect.TypeOf(geom.IVec4{})
 	ivec3Type   = reflect.TypeOf(geom.IVec3{})
 	ivec2Type   = reflect.TypeOf(geom.IVec2{})
+	rgbType     = reflect.TypeOf(color.RGB{})
+	rgbaType    = reflect.TypeOf(color.RGBA{})
 )
 
 //------------------------------------------------------------------------------

@@ -10,6 +10,7 @@ import (
 	"strings"
 
 	"github.com/drakmaniso/glam"
+	"github.com/drakmaniso/glam/color"
 	. "github.com/drakmaniso/glam/geom"
 	"github.com/drakmaniso/glam/geom/space"
 	"github.com/drakmaniso/glam/gfx"
@@ -20,8 +21,8 @@ import (
 var pipeline gfx.Pipeline
 
 type perVertex struct {
-	position Vec2 `layout:"0"`
-	color    Vec3 `layout:"1"`
+	position Vec2      `layout:"0"`
+	color    color.RGB `layout:"1"`
 }
 
 type perObject struct {
@@ -108,9 +109,9 @@ func main() {
 
 	// Create the Vertex Buffer
 	data := []perVertex{
-		{Vec2{0, 0.75}, Vec3{0.3, 0, 0.8}},
-		{Vec2{-0.65, -0.465}, Vec3{0.8, 0.3, 0}},
-		{Vec2{0.65, -0.465}, Vec3{0, 0.6, 0.2}},
+		{Vec2{0, 0.75}, color.RGB{0.3, 0, 0.8}},
+		{Vec2{-0.65, -0.465}, color.RGB{0.8, 0.3, 0}},
+		{Vec2{0.65, -0.465}, color.RGB{0, 0.6, 0.2}},
 	}
 	colorfulTriangle, err = gfx.NewBuffer(data, 0)
 	if err != nil {
