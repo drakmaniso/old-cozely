@@ -12,7 +12,7 @@ import (
 	"github.com/drakmaniso/glam"
 	"github.com/drakmaniso/glam/color"
 	. "github.com/drakmaniso/glam/geom"
-	"github.com/drakmaniso/glam/geom/space"
+	"github.com/drakmaniso/glam/geom/plane"
 	"github.com/drakmaniso/glam/gfx"
 )
 
@@ -26,7 +26,7 @@ type perVertex struct {
 }
 
 type perObject struct {
-	transform Mat4
+	transform Mat3x4
 }
 
 var transform gfx.Buffer
@@ -41,7 +41,7 @@ layout(location = 0) in vec2 Position;
 layout(location = 1) in vec3 Color;
 
 layout(std140, binding = 0) uniform PerObject {
-	mat4 Transform;
+	mat3 Transform;
 } obj;
 
 out gl_PerVertex {
@@ -53,7 +53,8 @@ out PerVertex {
 } vert;
 
 void main(void) {
-	gl_Position = obj.Transform * vec4(Position, 0.5, 1);
+	vec3 p = obj.Transform * vec3(Position, 1);
+	gl_Position = vec4(p.xy, 0.5, 1);
 	vert.Color = Color;
 }
 `)
@@ -139,8 +140,9 @@ func (g *game) Draw() {
 	pipeline.Bind()
 	pipeline.UniformBuffer(0, transform)
 
+	m := plane.Rotation(angle)
 	t := perObject{
-		transform: space.Rotation(angle, Vec3{0, 0, 1}),
+		transform: m.Mat3x4(),
 	}
 	transform.Update(&t, 0)
 

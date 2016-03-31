@@ -9,10 +9,61 @@ package geom
 type Mat4 [4][4]float32
 
 // Mat3 is a 32-bit float matrix with 3 columns and 3 rows.
+//
+// Note: due to alignment rules, it's not possible to pass a Mat3 directly to
+// the GPU. You should use Mat3x4 instead.
 type Mat3 [3][3]float32
 
 // Mat2 is a 32-bit float matrix with 2 columns and 2 rows.
 type Mat2 [2][2]float32
+
+// Mat3x4 is a 32-bit float matrix with 3 columns and 4 rows.
+type Mat3x4 [3][4]float32
+
+//------------------------------------------------------------------------------
+
+// Mat3 returns the upper-left part of the matrix.
+func (m *Mat4) Mat3() Mat3 {
+	return Mat3{
+		{m[0][0], m[1][0], m[2][0]},
+		{m[0][1], m[1][1], m[2][1]},
+		{m[0][2], m[1][2], m[2][2]},
+	}
+}
+
+// Mat3x4 returns the left part of the matrix.
+func (m *Mat4) Mat3x4() Mat3x4 {
+	return Mat3x4{
+		{m[0][0], m[1][0], m[2][0], m[3][0]},
+		{m[0][1], m[1][1], m[2][1], m[3][1]},
+		{m[0][2], m[1][2], m[2][2], m[3][2]},
+	}
+}
+
+// Mat2 returns the upper-left part of the matrix.
+func (m *Mat4) Mat2() Mat2 {
+	return Mat2{
+		{m[0][0], m[1][0]},
+		{m[0][1], m[1][1]},
+	}
+}
+
+// Mat2 returns the upper-left part of the matrix.
+func (m *Mat3) Mat2() Mat2 {
+	return Mat2{
+		{m[0][0], m[1][0]},
+		{m[0][1], m[1][1]},
+	}
+}
+
+// Mat3x4 returns the left part of the matrix.
+func (m *Mat3) Mat3x4() Mat3x4 {
+	return Mat3x4{
+		{m[0][0], m[1][0], m[2][0], 0},
+		{m[0][1], m[1][1], m[2][1], 0},
+		{m[0][2], m[1][2], m[2][2], 0},
+	}
+}
 
 //------------------------------------------------------------------------------
 
