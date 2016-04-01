@@ -110,9 +110,9 @@ func main() {
 
 	// Create the Vertex Buffer
 	data := []perVertex{
-		{Vec2{0, 0.75}, color.RGB{0.3, 0, 0.8}},
-		{Vec2{-0.65, -0.465}, color.RGB{0.8, 0.3, 0}},
-		{Vec2{0.65, -0.465}, color.RGB{0, 0.6, 0.2}},
+		{Vec2{0, 0.75}, color.RGB{R: 0.3, G: 0, B: 0.8}},
+		{Vec2{-0.65, -0.465}, color.RGB{R: 0.8, G: 0.3, B: 0}},
+		{Vec2{0.65, -0.465}, color.RGB{R: 0, G: 0.6, B: 0.2}},
 	}
 	colorfulTriangle, err = gfx.NewBuffer(data, 0)
 	if err != nil {
