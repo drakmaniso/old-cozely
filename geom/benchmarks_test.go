@@ -479,7 +479,7 @@ func BenchmarkMat4_Times(b *testing.B) {
 	_ = o
 }
 
-func BenchmarkMat4_Times_ThreeRefs(b *testing.B) {
+func BenchmarkMat4_Times_RecvMutated_TwoArgsByRef(b *testing.B) {
 	m := &Mat4{
 		{1.1, 2.1, 3.1, 4.1},
 		{1.2, 2.2, 3.2, 4.2},
@@ -499,7 +499,7 @@ func BenchmarkMat4_Times_ThreeRefs(b *testing.B) {
 	_ = o
 }
 
-func BenchmarkMat4_Times_RecvRefArgVal(b *testing.B) {
+func BenchmarkMat4_Times_RecvByRef_ArgByVal(b *testing.B) {
 	m := Mat4{
 		{1.1, 2.1, 3.1, 4.1},
 		{1.2, 2.2, 3.2, 4.2},
@@ -519,7 +519,7 @@ func BenchmarkMat4_Times_RecvRefArgVal(b *testing.B) {
 	_ = o
 }
 
-func BenchmarkMat4_Times_RecvValArgRef(b *testing.B) {
+func BenchmarkMat4_Times_RecvByVal_ArgByRef(b *testing.B) {
 	m := Mat4{
 		{1.1, 2.1, 3.1, 4.1},
 		{1.2, 2.2, 3.2, 4.2},
@@ -539,8 +539,28 @@ func BenchmarkMat4_Times_RecvValArgRef(b *testing.B) {
 	_ = o
 }
 
-func BenchmarkMat4_Times_RecvValArgVal(b *testing.B) {
+func BenchmarkMat4_Times_RecvByVal_ArgByVal(b *testing.B) {
 	m := Mat4{
+		{1.1, 2.1, 3.1, 4.1},
+		{1.2, 2.2, 3.2, 4.2},
+		{1.3, 2.3, 3.3, 4.3},
+		{1.4, 2.4, 3.4, 4.4},
+	}
+	n := Mat4{
+		{10.1, 20.1, 30.1, 40.1},
+		{10.2, 20.2, 30.2, 40.2},
+		{10.3, 20.3, 30.3, 40.3},
+		{10.4, 20.4, 30.4, 40.4},
+	}
+	var o Mat4
+	for i := 0; i < b.N; i++ {
+		o = m.timesRecvValArgVal(n)
+	}
+	_ = o
+}
+
+func BenchmarkMat4_Times_RecvByValAddr_ArgByVal(b *testing.B) {
+	m := &Mat4{
 		{1.1, 2.1, 3.1, 4.1},
 		{1.2, 2.2, 3.2, 4.2},
 		{1.3, 2.3, 3.3, 4.3},
