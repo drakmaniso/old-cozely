@@ -12,7 +12,7 @@ import (
 	"github.com/drakmaniso/glam"
 	"github.com/drakmaniso/glam/color"
 	. "github.com/drakmaniso/glam/geom"
-	"github.com/drakmaniso/glam/geom/plane"
+	"github.com/drakmaniso/glam/geom/space"
 	"github.com/drakmaniso/glam/gfx"
 )
 
@@ -21,12 +21,12 @@ import (
 var pipeline gfx.Pipeline
 
 type perVertex struct {
-	position Vec2      `layout:"0"`
+	position Vec3      `layout:"0"`
 	color    color.RGB `layout:"1"`
 }
 
 type perObject struct {
-	transform Mat3x4
+	transform Mat4
 }
 
 var transform gfx.Buffer
@@ -37,11 +37,11 @@ var colorfulTriangle gfx.Buffer
 var vertexShader = strings.NewReader(`
 #version 450 core
 
-layout(location = 0) in vec2 Position;
+layout(location = 0) in vec3 Position;
 layout(location = 1) in vec3 Color;
 
 layout(std140, binding = 0) uniform PerObject {
-	mat3 Transform;
+	mat4 Transform;
 } obj;
 
 out gl_PerVertex {
@@ -53,8 +53,7 @@ out PerVertex {
 } vert;
 
 void main(void) {
-	vec3 p = obj.Transform * vec3(Position, 1);
-	gl_Position = vec4(p.xy, 0.5, 1);
+	gl_Position = obj.Transform * vec4(Position, 1);
 	vert.Color = Color;
 }
 `)
@@ -110,9 +109,48 @@ func main() {
 
 	// Create the Vertex Buffer
 	data := []perVertex{
-		{Vec2{0, 0.75}, color.RGB{R: 0.3, G: 0, B: 0.8}},
-		{Vec2{-0.65, -0.465}, color.RGB{R: 0.8, G: 0.3, B: 0}},
-		{Vec2{0.65, -0.465}, color.RGB{R: 0, G: 0.6, B: 0.2}},
+		// Front Face
+		{Vec3{0, 0, 1}, color.RGB{R: 0.3, G: 0, B: 0.8}},
+		{Vec3{1, 1, 1}, color.RGB{R: 0.3, G: 0, B: 0.8}},
+		{Vec3{0, 1, 1}, color.RGB{R: 0.3, G: 0, B: 0.8}},
+		{Vec3{0, 0, 1}, color.RGB{R: 0.3, G: 0, B: 0.8}},
+		{Vec3{1, 0, 1}, color.RGB{R: 0.3, G: 0, B: 0.8}},
+		{Vec3{1, 1, 1}, color.RGB{R: 0.3, G: 0, B: 0.8}},
+		// Back Face
+		{Vec3{0, 0, 0}, color.RGB{R: 0.3, G: 0, B: 0.8}},
+		{Vec3{0, 1, 0}, color.RGB{R: 0.3, G: 0, B: 0.8}},
+		{Vec3{1, 1, 0}, color.RGB{R: 0.3, G: 0, B: 0.8}},
+		{Vec3{0, 0, 0}, color.RGB{R: 0.3, G: 0, B: 0.8}},
+		{Vec3{1, 1, 0}, color.RGB{R: 0.3, G: 0, B: 0.8}},
+		{Vec3{1, 0, 0}, color.RGB{R: 0.3, G: 0, B: 0.8}},
+		// Right Face
+		{Vec3{1, 0, 1}, color.RGB{R: 0.8, G: 0.3, B: 0}},
+		{Vec3{1, 1, 0}, color.RGB{R: 0.8, G: 0.3, B: 0}},
+		{Vec3{1, 1, 1}, color.RGB{R: 0.8, G: 0.3, B: 0}},
+		{Vec3{1, 0, 1}, color.RGB{R: 0.8, G: 0.3, B: 0}},
+		{Vec3{1, 0, 0}, color.RGB{R: 0.8, G: 0.3, B: 0}},
+		{Vec3{1, 1, 0}, color.RGB{R: 0.8, G: 0.3, B: 0}},
+		// Left Face
+		{Vec3{0, 0, 1}, color.RGB{R: 0.8, G: 0.3, B: 0}},
+		{Vec3{0, 1, 1}, color.RGB{R: 0.8, G: 0.3, B: 0}},
+		{Vec3{0, 1, 0}, color.RGB{R: 0.8, G: 0.3, B: 0}},
+		{Vec3{0, 0, 1}, color.RGB{R: 0.8, G: 0.3, B: 0}},
+		{Vec3{0, 1, 0}, color.RGB{R: 0.8, G: 0.3, B: 0}},
+		{Vec3{0, 0, 0}, color.RGB{R: 0.8, G: 0.3, B: 0}},
+		// Bottom Face
+		{Vec3{0, 0, 1}, color.RGB{R: 0, G: 0.6, B: 0.2}},
+		{Vec3{0, 0, 0}, color.RGB{R: 0, G: 0.6, B: 0.2}},
+		{Vec3{1, 0, 1}, color.RGB{R: 0, G: 0.6, B: 0.2}},
+		{Vec3{0, 0, 0}, color.RGB{R: 0, G: 0.6, B: 0.2}},
+		{Vec3{1, 0, 0}, color.RGB{R: 0, G: 0.6, B: 0.2}},
+		{Vec3{1, 0, 1}, color.RGB{R: 0, G: 0.6, B: 0.2}},
+		// Top Face
+		{Vec3{0, 1, 1}, color.RGB{R: 0, G: 0.6, B: 0.2}},
+		{Vec3{1, 1, 1}, color.RGB{R: 0, G: 0.6, B: 0.2}},
+		{Vec3{0, 1, 0}, color.RGB{R: 0, G: 0.6, B: 0.2}},
+		{Vec3{0, 1, 0}, color.RGB{R: 0, G: 0.6, B: 0.2}},
+		{Vec3{1, 1, 1}, color.RGB{R: 0, G: 0.6, B: 0.2}},
+		{Vec3{1, 1, 0}, color.RGB{R: 0, G: 0.6, B: 0.2}},
 	}
 	colorfulTriangle, err = gfx.NewBuffer(data, 0)
 	if err != nil {
@@ -140,14 +178,17 @@ func (g *game) Draw() {
 	pipeline.Bind()
 	pipeline.UniformBuffer(0, transform)
 
-	m := plane.Rotation(angle)
+	m := space.Perspective(0.535, 1.0, 0.001, 1000.0)
+	m = m.Times(space.LookAt(Vec3{0, 0, 5}, Vec3{0, 0, 0}, Vec3{0, 1, 0}))
+	m = m.Times(space.Rotation(angle, Vec3{1, -0.5, 0.25}.Normalized()))
+	m = m.Times(space.Translation(Vec3{-0.5, -0.5, -0.5}))
 	t := perObject{
-		transform: m.Mat3x4(),
+		transform: m,
 	}
 	transform.Update(&t, 0)
 
 	pipeline.VertexBuffer(0, colorfulTriangle, 0)
-	gfx.Draw(gfx.Triangles, 0, 3)
+	gfx.Draw(gfx.Triangles, 0, 6*2*3)
 }
 
 //------------------------------------------------------------------------------
