@@ -68,7 +68,7 @@ func (m *Mat3) Mat3x4() Mat3x4 {
 //------------------------------------------------------------------------------
 
 // Times returns the matrix product with another matrix.
-func (m *Mat4) Times(o *Mat4) Mat4 {
+func (m *Mat4) Times(o Mat4) Mat4 {
 	return Mat4{
 		{
 			m[0][0]*o[0][0] + m[1][0]*o[0][1] + m[2][0]*o[0][2] + m[3][0]*o[0][3],
@@ -98,7 +98,7 @@ func (m *Mat4) Times(o *Mat4) Mat4 {
 }
 
 // Times returns the matrix product with another matrix.
-func (m *Mat3) Times(o *Mat3) Mat3 {
+func (m *Mat3) Times(o Mat3) Mat3 {
 	return Mat3{
 		{
 			m[0][0]*o[0][0] + m[1][0]*o[0][1] + m[2][0]*o[0][2],
@@ -119,7 +119,7 @@ func (m *Mat3) Times(o *Mat3) Mat3 {
 }
 
 // Times returns the matrix product with another matrix.
-func (m *Mat2) Times(o *Mat2) Mat2 {
+func (m *Mat2) Times(o Mat2) Mat2 {
 	return Mat2{
 		{
 			m[0][0]*o[0][0] + m[1][0]*o[0][1],

@@ -21,7 +21,7 @@ func Example() {
 		{-1, 0, 0},
 		{0, 0, 1},
 	}
-	m := r.Times(&t)
+	m := r.Times(t)
 	fmt.Println(m)
 	// Output:
 	// {0.70710677 -0.70710677}
