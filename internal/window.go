@@ -91,14 +91,20 @@ func OpenWindow(
 
 	ctx := C.SDL_GL_CreateContext(Window.window)
 	if ctx == nil {
-        err := GetSDLError()
+		err := GetSDLError()
 		return fmt.Errorf("could not create OpenGL context: %s", err)
 	}
 	Window.context = ctx
 
 	//TODO: logOpenGLInfos()
 
-	//TODO: Send a fake resize event (for the renderer)
+	//Send a fake resize event, with window initial size
+	var e C.SDL_WindowEvent
+	e._type = C.SDL_WINDOWEVENT
+	e.event = C.SDL_WINDOWEVENT_RESIZED
+	e.data1 = C.Sint32(Window.Width)
+	e.data2 = C.Sint32(Window.Height)
+	C.SDL_PushEvent((*C.SDL_Event)(unsafe.Pointer(&e)))
 
 	return nil
 }
