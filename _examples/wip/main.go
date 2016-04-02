@@ -224,7 +224,8 @@ func (g *game) MouseMotion(motion IVec2, position IVec2, timestamp time.Duration
 //------------------------------------------------------------------------------
 
 func (g *game) updateModel() {
-	g.model = space.EulerXYZ(g.pitch, g.yaw, 0)
+
+	g.model = space.EulerZXY(g.pitch, g.yaw, 0)
 	g.model = g.model.Times(space.Translation(Vec3{-0.5, -0.5, -0.5}))
 }
 
