@@ -62,6 +62,8 @@ func Rotation(angle float32, axis geom.Vec3) geom.Mat4 {
 
 //------------------------------------------------------------------------------
 
+// EulerYXZ returns a transform matrix corresponding to a sequence of three
+// intrinsic rotations around the (local) axis Y, X, Z, in that order.
 func EulerYXZ(angleX, angleY, angleZ float32) geom.Mat4 {
 	c1 := math.Cos(angleY)
 	s1 := math.Sin(angleY)
@@ -78,6 +80,8 @@ func EulerYXZ(angleX, angleY, angleZ float32) geom.Mat4 {
 	}
 }
 
+// EulerXYZ returns a transform matrix corresponding to a sequence of three
+// intrinsic rotations around the (local) axis X, Y, Z, in that order.
 func EulerXYZ(angleX, angleY, angleZ float32) geom.Mat4 {
 	c1 := math.Cos(angleX)
 	s1 := math.Sin(angleX)
@@ -94,6 +98,8 @@ func EulerXYZ(angleX, angleY, angleZ float32) geom.Mat4 {
 	}
 }
 
+// EulerZYX returns a transform matrix corresponding to a sequence of three
+// intrinsic rotations around the (local) axis Z, Y, X, in that order.
 func EulerZYX(angleX, angleY, angleZ float32) geom.Mat4 {
 	c1 := math.Cos(angleZ)
 	s1 := math.Sin(angleZ)
@@ -110,6 +116,8 @@ func EulerZYX(angleX, angleY, angleZ float32) geom.Mat4 {
 	}
 }
 
+// EulerXZY returns a transform matrix corresponding to a sequence of three
+// intrinsic rotations around the (local) axis X, Z, Y, in that order.
 func EulerXZY(angleX, angleY, angleZ float32) geom.Mat4 {
 	c1 := math.Cos(angleX)
 	s1 := math.Sin(angleX)
@@ -126,6 +134,8 @@ func EulerXZY(angleX, angleY, angleZ float32) geom.Mat4 {
 	}
 }
 
+// EulerYZX returns a transform matrix corresponding to a sequence of three
+// intrinsic rotations around the (local) axis Y, Z, X, in that order.
 func EulerYZX(angleX, angleY, angleZ float32) geom.Mat4 {
 	c1 := math.Cos(angleY)
 	s1 := math.Sin(angleY)
@@ -142,6 +152,8 @@ func EulerYZX(angleX, angleY, angleZ float32) geom.Mat4 {
 	}
 }
 
+// EulerZXY returns a transform matrix corresponding to a sequence of three
+// intrinsic rotations around the (local) axis Z, X, Y, in that order.
 func EulerZXY(angleX, angleY, angleZ float32) geom.Mat4 {
 	c1 := math.Cos(angleZ)
 	s1 := math.Sin(angleZ)
