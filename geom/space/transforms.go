@@ -60,6 +60,24 @@ func Rotation(angle float32, axis geom.Vec3) geom.Mat4 {
 	}
 }
 
+//------------------------------------------------------------------------------
+
+func EulerYXZ(angleX, angleY, angleZ float32) geom.Mat4 {
+	c1 := math.Cos(angleY)
+	s1 := math.Sin(angleY)
+	c2 := math.Cos(angleX)
+	s2 := math.Sin(angleX)
+	c3 := math.Cos(angleZ)
+	s3 := math.Sin(angleZ)
+
+	return geom.Mat4{
+		{c1*c3 + s1*s2*s3, c2 * s3, c1*s2*s3 - c3*s1},
+		{c3*s1*s2 - c1*s3, c2 * c3, c1*c3*s2 + s1*s3},
+		{c2 * s1, -s2, c1 * c2},
+		{0, 0, 0, 1},
+	}
+}
+
 func EulerXYZ(angleX, angleY, angleZ float32) geom.Mat4 {
 	c1 := math.Cos(angleX)
 	s1 := math.Sin(angleX)
@@ -72,6 +90,70 @@ func EulerXYZ(angleX, angleY, angleZ float32) geom.Mat4 {
 		{c2 * c3, c1*s3 + c3*s1*s2, s1*s3 - c1*c3*s2},
 		{-c2 * s3, c1*c3 - s1*s2*s3, c3*s1 + c1*s2*s3},
 		{s2, -c2 * s1, c1 * c2},
+		{0, 0, 0, 1},
+	}
+}
+
+func EulerZYX(angleX, angleY, angleZ float32) geom.Mat4 {
+	c1 := math.Cos(angleZ)
+	s1 := math.Sin(angleZ)
+	c2 := math.Cos(angleY)
+	s2 := math.Sin(angleY)
+	c3 := math.Cos(angleX)
+	s3 := math.Sin(angleX)
+
+	return geom.Mat4{
+		{c1 * c2, c2 * s1, -s2},
+		{c1*s2*s3 - c3*s1, c1*c3 + s1*s2*s3, c2 * s3},
+		{s1*s3 + c1*c3*s2, c3*s1*s2 - c1*s3, c2 * c3},
+		{0, 0, 0, 1},
+	}
+}
+
+func EulerXZY(angleX, angleY, angleZ float32) geom.Mat4 {
+	c1 := math.Cos(angleX)
+	s1 := math.Sin(angleX)
+	c2 := math.Cos(angleZ)
+	s2 := math.Sin(angleZ)
+	c3 := math.Cos(angleY)
+	s3 := math.Sin(angleY)
+
+	return geom.Mat4{
+		{c2 * c3, s1*s3 + c1*c3*s2, c3*s1*s2 - c1*s3},
+		{-s2, c1 * c2, c2 * s1},
+		{c2 * s3, c1*s2*s3 - c3*s1, c1*c3 + s1*s2*s3},
+		{0, 0, 0, 1},
+	}
+}
+
+func EulerYZX(angleX, angleY, angleZ float32) geom.Mat4 {
+	c1 := math.Cos(angleY)
+	s1 := math.Sin(angleY)
+	c2 := math.Cos(angleZ)
+	s2 := math.Sin(angleZ)
+	c3 := math.Cos(angleX)
+	s3 := math.Sin(angleX)
+
+	return geom.Mat4{
+		{c1 * c2, s2, -c2 * s1},
+		{s1*s3 - c1*c3*s2, c2 * c3, c1*s3 + c3*s1*s2},
+		{c3*s1 + c1*s2*s3, -c2 * s3, c1*c3 - s1*s2*s3},
+		{0, 0, 0, 1},
+	}
+}
+
+func EulerZXY(angleX, angleY, angleZ float32) geom.Mat4 {
+	c1 := math.Cos(angleZ)
+	s1 := math.Sin(angleZ)
+	c2 := math.Cos(angleX)
+	s2 := math.Sin(angleX)
+	c3 := math.Cos(angleY)
+	s3 := math.Sin(angleY)
+
+	return geom.Mat4{
+		{c1*c3 - s1*s2*s3, c3*s1 + c1*s2*s3, -c2 * s3},
+		{-c2 * s1, c1 * c2, s2},
+		{c1*s3 + c3*s1*s2, s1*s3 - c1*c3*s2, c2 * c3},
 		{0, 0, 0, 1},
 	}
 }
