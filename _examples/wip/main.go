@@ -22,8 +22,6 @@ import (
 
 //------------------------------------------------------------------------------
 
-var pipeline gfx.Pipeline
-
 type perVertex struct {
 	position Vec3      `layout:"0"`
 	color    color.RGB `layout:"1"`
@@ -32,11 +30,6 @@ type perVertex struct {
 type perObject struct {
 	transform Mat4
 }
-
-var model, view, projection Mat4
-
-var transform gfx.Buffer
-var colorfulTriangle gfx.Buffer
 
 //------------------------------------------------------------------------------
 
@@ -83,7 +76,7 @@ void main(void) {
 func main() {
 	log.SetFlags(log.Lshortfile)
 
-	g := &game{}
+	g := &game{distance: 3, yaw: -0.6, pitch: 0.3}
 	glam.Handler = g
 	window.Handler = g
 	mouse.Handler = g
@@ -99,18 +92,18 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	pipeline, err = gfx.NewPipeline(vs, fs)
+	g.pipeline, err = gfx.NewPipeline(vs, fs)
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = pipeline.VertexFormat(0, perVertex{})
+	err = g.pipeline.VertexFormat(0, perVertex{})
 	if err != nil {
 		log.Fatal(err)
 	}
-	pipeline.ClearColor(Vec4{0.9, 0.9, 0.9, 1.0})
+	g.pipeline.ClearColor(Vec4{0.9, 0.9, 0.9, 1.0})
 
 	// Create the Uniform Buffer
-	transform, err = gfx.NewBuffer(uintptr(64), gfx.DynamicStorage)
+	g.transform, err = gfx.NewBuffer(uintptr(64), gfx.DynamicStorage)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -160,11 +153,12 @@ func main() {
 		{Vec3{1, 1, 1}, color.RGB{R: 0, G: 0.6, B: 0.2}},
 		{Vec3{1, 1, 0}, color.RGB{R: 0, G: 0.6, B: 0.2}},
 	}
-	colorfulTriangle, err = gfx.NewBuffer(data, 0)
+	g.colorfulTriangle, err = gfx.NewBuffer(data, 0)
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	g.updateModel()
 	g.updateView()
 
 	// Run the Game Loop
@@ -179,81 +173,85 @@ func main() {
 type game struct {
 	window.DefaultWindowHandler
 	mouse.DefaultMouseHandler
+
+	distance                float32
+	yaw, pitch              float32
+	model, view, projection Mat4
+
+	pipeline         gfx.Pipeline
+	transform        gfx.Buffer
+	colorfulTriangle gfx.Buffer
 }
 
 //------------------------------------------------------------------------------
 
 func (g *game) WindowResized(s IVec2, timestamp time.Duration) {
 	r := float32(s.X) / float32(s.Y)
-	projection = space.Perspective(math.Pi/4, r, 0.001, 1000.0)
+	g.projection = space.Perspective(math.Pi/4, r, 0.001, 1000.0)
 }
 
-var distance = float32(3)
-var yaw = float32(-0.6)
-var pitch = float32(0.4)
-
 func (g *game) MouseWheel(motion IVec2, timestamp time.Duration) {
-	distance -= float32(motion.Y) / 4
+	g.distance -= float32(motion.Y) / 4
 	g.updateView()
 }
 
 func (g *game) MouseButtonDown(b mouse.Button, clicks int, timestamp time.Duration) {
-	if b == mouse.Left {
-		mouse.SetRelativeMode(true)
-	}
+	mouse.SetRelativeMode(true)
 }
 
 func (g *game) MouseButtonUp(b mouse.Button, clicks int, timestamp time.Duration) {
-	if b == mouse.Left {
-		mouse.SetRelativeMode(false)
-	}
+	mouse.SetRelativeMode(false)
 }
 
 func (g *game) MouseMotion(motion IVec2, position IVec2, timestamp time.Duration) {
-	if mouse.IsPressed(mouse.Left) {
-		yaw -= 4 * float32(motion.X) / 1280
-		pitch += 4 * float32(motion.Y) / 720
+	switch {
+	case mouse.IsPressed(mouse.Left):
+		g.yaw += 4 * float32(motion.X) / 1280
+		g.pitch += 4 * float32(motion.Y) / 720
 		switch {
-		case pitch < -math.Pi/2+0.01:
-			pitch = -math.Pi/2 + 0.01
-		case pitch > math.Pi/2-0.01:
-			pitch = math.Pi/2 - 0.01
+		case g.pitch < -math.Pi/2+0.01:
+			g.pitch = -math.Pi/2 + 0.01
+		case g.pitch > math.Pi/2-0.01:
+			g.pitch = math.Pi/2 - 0.01
 		}
+		g.updateModel()
+	case mouse.IsPressed(mouse.Middle):
+		g.distance += 4 * float32(motion.Y) / 720
 		g.updateView()
 	}
 }
 
+//------------------------------------------------------------------------------
+
+func (g *game) updateModel() {
+	g.model = space.EulerXYZ(g.pitch, g.yaw, 0)
+	g.model = g.model.Times(space.Translation(Vec3{-0.5, -0.5, -0.5}))
+}
+
 func (g *game) updateView() {
-	p := Vec3{
-		math.Cos(pitch) * math.Sin(yaw),
-		math.Sin(pitch),
-		math.Cos(pitch) * math.Cos(yaw),
-	}.Times(distance)
-	view = space.LookAt(p, Vec3{0, 0, 0}, Vec3{0, 1, 0})
+	if g.distance < 1 {
+		g.distance = 1
+	}
+	g.view = space.LookAt(Vec3{0, 0, g.distance}, Vec3{0, 0, 0}, Vec3{0, 1, 0})
 }
 
 //------------------------------------------------------------------------------
 
-var angle float32
-
 func (g *game) Update() {
-	// angle += 0.01
-	model = space.Rotation(angle, Vec3{0, -1, 0}.Normalized())
-	model = model.Times(space.Translation(Vec3{-0.5, -0.5, -0.5}))
 }
 
 func (g *game) Draw() {
-	pipeline.Bind()
-	pipeline.UniformBuffer(0, transform)
+	g.pipeline.Bind()
+	g.pipeline.UniformBuffer(0, g.transform)
 
-	mvp := projection.Times(view)
-	mvp = mvp.Times(model)
+	mvp := g.projection.Times(g.view)
+	mvp = mvp.Times(g.model)
 	t := perObject{
 		transform: mvp,
 	}
-	transform.Update(&t, 0)
+	g.transform.Update(&t, 0)
 
-	pipeline.VertexBuffer(0, colorfulTriangle, 0)
+	g.pipeline.VertexBuffer(0, g.colorfulTriangle, 0)
 	gfx.Draw(gfx.Triangles, 0, 6*2*3)
 }
 

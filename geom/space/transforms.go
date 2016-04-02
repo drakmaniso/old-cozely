@@ -72,6 +72,7 @@ func EulerXYZ(angleX, angleY, angleZ float32) geom.Mat4 {
 		{c2 * c3, c1*s3 + c3*s1*s2, s1*s3 - c1*c3*s2},
 		{-c2 * s3, c1*c3 - s1*s2*s3, c3*s1 + c1*s2*s3},
 		{s2, -c2 * s1, c1 * c2},
+		{0, 0, 0, 1},
 	}
 }
 
