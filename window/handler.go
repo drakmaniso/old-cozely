@@ -23,22 +23,22 @@ var Handler interface {
 	WindowFocusGained(timestamp time.Duration)
 	WindowFocusLost(timestamp time.Duration)
 	WindowQuit(timestamp time.Duration)
-} = DefaultHandler{}
+} = DefaultWindowHandler{}
 
-// DefaultHandler implements default behavior for all window events.
-type DefaultHandler struct{}
+// DefaultWindowHandler implements default behavior for all window events.
+type DefaultWindowHandler struct{}
 
-func (dh DefaultHandler) WindowShown(timestamp time.Duration)                 {}
-func (dh DefaultHandler) WindowHidden(timestamp time.Duration)                {}
-func (dh DefaultHandler) WindowResized(s geom.IVec2, timestamp time.Duration) {}
-func (dh DefaultHandler) WindowMinimized(timestamp time.Duration)             {}
-func (dh DefaultHandler) WindowMaximized(timestamp time.Duration)             {}
-func (dh DefaultHandler) WindowRestored(timestamp time.Duration)              {}
-func (dh DefaultHandler) WindowMouseEnter(timestamp time.Duration)            {}
-func (dh DefaultHandler) WindowMouseLeave(timestamp time.Duration)            {}
-func (dh DefaultHandler) WindowFocusGained(timestamp time.Duration)           {}
-func (dh DefaultHandler) WindowFocusLost(timestamp time.Duration)             {}
-func (dh DefaultHandler) WindowQuit(timestamp time.Duration) {
+func (dh DefaultWindowHandler) WindowShown(timestamp time.Duration)                 {}
+func (dh DefaultWindowHandler) WindowHidden(timestamp time.Duration)                {}
+func (dh DefaultWindowHandler) WindowResized(s geom.IVec2, timestamp time.Duration) {}
+func (dh DefaultWindowHandler) WindowMinimized(timestamp time.Duration)             {}
+func (dh DefaultWindowHandler) WindowMaximized(timestamp time.Duration)             {}
+func (dh DefaultWindowHandler) WindowRestored(timestamp time.Duration)              {}
+func (dh DefaultWindowHandler) WindowMouseEnter(timestamp time.Duration)            {}
+func (dh DefaultWindowHandler) WindowMouseLeave(timestamp time.Duration)            {}
+func (dh DefaultWindowHandler) WindowFocusGained(timestamp time.Duration)           {}
+func (dh DefaultWindowHandler) WindowFocusLost(timestamp time.Duration)             {}
+func (dh DefaultWindowHandler) WindowQuit(timestamp time.Duration) {
 	internal.QuitRequested = true
 }
 
