@@ -8,12 +8,14 @@ package main
 import (
 	"log"
 	"strings"
+	"time"
 
 	"github.com/drakmaniso/glam"
 	"github.com/drakmaniso/glam/color"
 	. "github.com/drakmaniso/glam/geom"
 	"github.com/drakmaniso/glam/geom/space"
 	"github.com/drakmaniso/glam/gfx"
+	"github.com/drakmaniso/glam/window"
 )
 
 //------------------------------------------------------------------------------
@@ -28,6 +30,8 @@ type perVertex struct {
 type perObject struct {
 	transform Mat4
 }
+
+var projection Mat4
 
 var transform gfx.Buffer
 var colorfulTriangle gfx.Buffer
@@ -79,6 +83,7 @@ func main() {
 
 	g := &game{}
 	glam.Handler = g
+	window.Handler = g
 
 	var err error
 
@@ -166,7 +171,18 @@ func main() {
 
 //------------------------------------------------------------------------------
 
-type game struct{}
+type game struct {
+	window.DefaultHandler
+}
+
+//------------------------------------------------------------------------------
+
+func (g *game) WindowResized(s IVec2, timestamp time.Duration) {
+	r := float32(s.X) / float32(s.Y)
+	projection = space.Perspective(0.535, r, 0.001, 1000.0)
+}
+
+//------------------------------------------------------------------------------
 
 var angle float32
 
@@ -178,8 +194,7 @@ func (g *game) Draw() {
 	pipeline.Bind()
 	pipeline.UniformBuffer(0, transform)
 
-	m := space.Perspective(0.535, 1.0, 0.001, 1000.0)
-	m = m.Times(space.LookAt(Vec3{0, 0, 5}, Vec3{0, 0, 0}, Vec3{0, 1, 0}))
+	m := projection.Times(space.LookAt(Vec3{0, 0, 5}, Vec3{0, 0, 0}, Vec3{0, 1, 0}))
 	m = m.Times(space.Rotation(angle, Vec3{1, -0.5, 0.25}.Normalized()))
 	m = m.Times(space.Translation(Vec3{-0.5, -0.5, -0.5}))
 	t := perObject{
