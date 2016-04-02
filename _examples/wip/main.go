@@ -15,6 +15,8 @@ import (
 	. "github.com/drakmaniso/glam/geom"
 	"github.com/drakmaniso/glam/geom/space"
 	"github.com/drakmaniso/glam/gfx"
+	"github.com/drakmaniso/glam/math"
+	"github.com/drakmaniso/glam/mouse"
 	"github.com/drakmaniso/glam/window"
 )
 
@@ -31,7 +33,7 @@ type perObject struct {
 	transform Mat4
 }
 
-var projection Mat4
+var model, view, projection Mat4
 
 var transform gfx.Buffer
 var colorfulTriangle gfx.Buffer
@@ -84,6 +86,7 @@ func main() {
 	g := &game{}
 	glam.Handler = g
 	window.Handler = g
+	mouse.Handler = g
 
 	var err error
 
@@ -162,6 +165,8 @@ func main() {
 		log.Fatal(err)
 	}
 
+	g.updateView()
+
 	// Run the Game Loop
 	err = glam.Run()
 	if err != nil {
@@ -172,14 +177,59 @@ func main() {
 //------------------------------------------------------------------------------
 
 type game struct {
-	window.DefaultHandler
+	window.DefaultWindowHandler
+	mouse.DefaultMouseHandler
 }
 
 //------------------------------------------------------------------------------
 
 func (g *game) WindowResized(s IVec2, timestamp time.Duration) {
 	r := float32(s.X) / float32(s.Y)
-	projection = space.Perspective(0.535, r, 0.001, 1000.0)
+	projection = space.Perspective(math.Pi/4, r, 0.001, 1000.0)
+}
+
+var distance = float32(3)
+var yaw = float32(-0.6)
+var pitch = float32(0.4)
+
+func (g *game) MouseWheel(motion IVec2, timestamp time.Duration) {
+	distance -= float32(motion.Y) / 4
+	g.updateView()
+}
+
+func (g *game) MouseButtonDown(b mouse.Button, clicks int, timestamp time.Duration) {
+	if b == mouse.Left {
+		mouse.SetRelativeMode(true)
+	}
+}
+
+func (g *game) MouseButtonUp(b mouse.Button, clicks int, timestamp time.Duration) {
+	if b == mouse.Left {
+		mouse.SetRelativeMode(false)
+	}
+}
+
+func (g *game) MouseMotion(motion IVec2, position IVec2, timestamp time.Duration) {
+	if mouse.IsPressed(mouse.Left) {
+		yaw -= 4 * float32(motion.X) / 1280
+		pitch += 4 * float32(motion.Y) / 720
+		switch {
+		case pitch < -math.Pi/2+0.01:
+			pitch = -math.Pi/2 + 0.01
+		case pitch > math.Pi/2-0.01:
+			pitch = math.Pi/2 - 0.01
+		}
+		g.updateView()
+	}
+}
+
+func (g *game) updateView() {
+	p := Vec3{
+		math.Cos(pitch) * math.Sin(yaw),
+		math.Sin(pitch),
+		math.Cos(pitch) * math.Cos(yaw),
+	}.Times(distance)
+	view = space.LookAt(p, Vec3{0, 0, 0}, Vec3{0, 1, 0})
 }
 
 //------------------------------------------------------------------------------
@@ -187,18 +237,19 @@ func (g *game) WindowResized(s IVec2, timestamp time.Duration) {
 var angle float32
 
 func (g *game) Update() {
-	angle += 0.01
+	// angle += 0.01
+	model = space.Rotation(angle, Vec3{0, -1, 0}.Normalized())
+	model = model.Times(space.Translation(Vec3{-0.5, -0.5, -0.5}))
 }
 
 func (g *game) Draw() {
 	pipeline.Bind()
 	pipeline.UniformBuffer(0, transform)
 
-	m := projection.Times(space.LookAt(Vec3{0, 0, 5}, Vec3{0, 0, 0}, Vec3{0, 1, 0}))
-	m = m.Times(space.Rotation(angle, Vec3{1, -0.5, 0.25}.Normalized()))
-	m = m.Times(space.Translation(Vec3{-0.5, -0.5, -0.5}))
+	mvp := projection.Times(view)
+	mvp = mvp.Times(model)
 	t := perObject{
-		transform: m,
+		transform: mvp,
 	}
 	transform.Update(&t, 0)
 

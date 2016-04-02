@@ -60,6 +60,21 @@ func Rotation(angle float32, axis geom.Vec3) geom.Mat4 {
 	}
 }
 
+func EulerXYZ(angleX, angleY, angleZ float32) geom.Mat4 {
+	c1 := math.Cos(angleX)
+	s1 := math.Sin(angleX)
+	c2 := math.Cos(angleY)
+	s2 := math.Sin(angleY)
+	c3 := math.Cos(angleZ)
+	s3 := math.Sin(angleZ)
+
+	return geom.Mat4{
+		{c2 * c3, c1*s3 + c3*s1*s2, s1*s3 - c1*c3*s2},
+		{-c2 * s3, c1*c3 - s1*s2*s3, c3*s1 + c1*s2*s3},
+		{s2, -c2 * s1, c1 * c2},
+	}
+}
+
 //------------------------------------------------------------------------------
 
 // Scaling along the 3 axis.
