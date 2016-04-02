@@ -54,4 +54,9 @@ func HasMouseFocus() bool {
 	return internal.HasMouseFocus
 }
 
+// Size returns the size of the window in pixels.
+func Size() geom.IVec2 {
+	return geom.IVec2{X: internal.Window.Width, Y: internal.Window.Height}
+}
+
 //------------------------------------------------------------------------------

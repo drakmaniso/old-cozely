@@ -65,6 +65,8 @@ func dispatch(e unsafe.Pointer) {
 		case C.SDL_WINDOWEVENT_MOVED:
 			// Ignore
 		case C.SDL_WINDOWEVENT_RESIZED:
+			internal.Window.Width = int32(e.data1)
+			internal.Window.Height = int32(e.data2)
 			gfx.Viewport(geom.IVec2{X: 0, Y: 0}, geom.IVec2{X: int32(e.data1), Y: int32(e.data2)})
 			window.Handler.WindowResized(
 				geom.IVec2{X: int32(e.data1), Y: int32(e.data2)},

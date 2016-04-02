@@ -204,10 +204,11 @@ func (g *game) MouseButtonUp(b mouse.Button, clicks int, timestamp time.Duration
 }
 
 func (g *game) MouseMotion(motion IVec2, position IVec2, timestamp time.Duration) {
+	s := window.Size().Float()
 	switch {
 	case mouse.IsPressed(mouse.Left):
-		g.yaw += 4 * float32(motion.X) / 1280
-		g.pitch += 4 * float32(motion.Y) / 720
+		g.yaw += 4 * float32(motion.X) / s.X
+		g.pitch += 4 * float32(motion.Y) / s.Y
 		switch {
 		case g.pitch < -math.Pi/2+0.01:
 			g.pitch = -math.Pi/2 + 0.01
@@ -216,7 +217,7 @@ func (g *game) MouseMotion(motion IVec2, position IVec2, timestamp time.Duration
 		}
 		g.updateModel()
 	case mouse.IsPressed(mouse.Middle):
-		g.distance += 4 * float32(motion.Y) / 720
+		g.distance += 4 * float32(motion.Y) / s.Y
 		g.updateView()
 	}
 }

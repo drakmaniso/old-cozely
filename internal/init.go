@@ -25,7 +25,7 @@ var Path = filepath.Dir(os.Args[0])
 
 var config = struct {
 	Title          string
-	Resolution     [2]int
+	Resolution     [2]int32
 	Display        int
 	Fullscreen     bool
 	FullscreenMode string
@@ -33,7 +33,7 @@ var config = struct {
 	Debug          bool
 }{
 	Title:          "Glam",
-	Resolution:     [2]int{1280, 720},
+	Resolution:     [2]int32{1280, 720},
 	Display:        0,
 	Fullscreen:     false,
 	FullscreenMode: "Desktop",
