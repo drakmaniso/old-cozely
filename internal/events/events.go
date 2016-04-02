@@ -24,6 +24,7 @@ import (
 	"unsafe"
 
 	"github.com/drakmaniso/glam/geom"
+	"github.com/drakmaniso/glam/gfx"
 	"github.com/drakmaniso/glam/internal"
 	"github.com/drakmaniso/glam/key"
 	"github.com/drakmaniso/glam/mouse"
@@ -64,6 +65,7 @@ func dispatch(e unsafe.Pointer) {
 		case C.SDL_WINDOWEVENT_MOVED:
 			// Ignore
 		case C.SDL_WINDOWEVENT_RESIZED:
+			gfx.Viewport(geom.IVec2{X: 0, Y: 0}, geom.IVec2{X: int32(e.data1), Y: int32(e.data2)})
 			window.Handler.WindowResized(
 				geom.IVec2{X: int32(e.data1), Y: int32(e.data2)},
 				ts,
