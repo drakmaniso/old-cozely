@@ -6,8 +6,8 @@
 // SLOWER than the Go function
 // func fastFloor_asm(s float32) int32
 TEXT ·fastFloor_asm(SB),7,$0
-	CVTTSS2SL  x+0(FP), BX
-	MOVL       x+0(FP), AX
+	CVTTSS2SL  s+0(FP), BX
+	MOVL       s+0(FP), AX
 	SHRL       $31, AX
 	SUBL       AX, BX
 	MOVL       BX,ret+8(FP)

@@ -52,7 +52,7 @@ func NewBuffer(data interface{}, f bufferFlags) (Buffer, error) {
 		return Buffer{}, err
 	}
 	var b Buffer
-	b.buffer = C.NewBuffer(C.GLsizeiptr(s), unsafe.Pointer(p), C.GLenum(f))
+	b.buffer = C.NewBuffer(C.GLsizeiptr(s), p, C.GLenum(f))
 	//TODO: error handling
 	return b, nil
 }
@@ -65,31 +65,31 @@ func (b *Buffer) Update(data interface{}, atOffset uintptr) error {
 	if err != nil {
 		return err
 	}
-	C.UpdateBuffer(b.buffer, C.GLintptr(atOffset), C.GLsizei(s), unsafe.Pointer(p))
+	C.UpdateBuffer(b.buffer, C.GLintptr(atOffset), C.GLsizei(s), p)
 	return nil
 }
 
-func sizeAndPointerOf(data interface{}) (size uintptr, ptr uintptr, err error) {
+func sizeAndPointerOf(data interface{}) (size uintptr, ptr unsafe.Pointer, err error) {
 	var s uintptr
-	var p uintptr
+	var p unsafe.Pointer
 	v := reflect.ValueOf(data)
 	k := v.Kind()
 	switch k {
 	case reflect.Uintptr:
 		s = uintptr(v.Uint())
-		p = 0
+		p = nil
 	case reflect.Slice:
 		l := v.Len()
 		if l == 0 {
-			return 0, 0, fmt.Errorf("buffer data cannot be an empty slice")
+			return 0, nil, fmt.Errorf("buffer data cannot be an empty slice")
 		}
-		p = v.Pointer()
+		p = unsafe.Pointer(v.Pointer())
 		s = uintptr(l) * v.Index(0).Type().Size()
 	case reflect.Ptr:
-		p = v.Pointer()
+		p = unsafe.Pointer(v.Pointer())
 		s = v.Elem().Type().Size()
 	default:
-		return 0, 0, fmt.Errorf("buffer data must be a slice or a pointer, not a %s", reflect.TypeOf(data).Kind())
+		return 0, nil, fmt.Errorf("buffer data must be a slice or a pointer, not a %s", reflect.TypeOf(data).Kind())
 	}
 	return s, p, nil
 }

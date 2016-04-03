@@ -44,7 +44,7 @@ func TestVec3_creation(t *testing.T) {
 	if a.X != 0 || a.Y != 0 || a.Z != 0 {
 		t.Errorf("Zero-initialization failed")
 	}
-	b := geom.Vec3{1.1, 2.2, 3.3}
+	b := geom.Vec3{X: 1.1, Y: 2.2, Z: 3.3}
 	if b.X != 1.1 || b.Y != 2.2 || b.Z != 3.3 {
 		t.Errorf("Literal initialization failed")
 	}
@@ -77,7 +77,7 @@ func TestVec4_Dehomogenized(t *testing.T) {
 }
 
 func TestVec3_Homogenized(t *testing.T) {
-	a := geom.Vec3{1.1, 2.2, 3.3}
+	a := geom.Vec3{X: 1.1, Y: 2.2, Z: 3.3}
 	b := a.Homogenized()
 	if b.X != 1.1 || b.Y != 2.2 || b.Z != 3.3 || b.W != 1.0 {
 		t.Errorf("Wrong result: %#v", b)
@@ -88,7 +88,7 @@ func TestVec3_Homogenized(t *testing.T) {
 }
 
 func TestVec3_Dehomogenized(t *testing.T) {
-	a := geom.Vec3{1.1, 2.2, 3.3}
+	a := geom.Vec3{X: 1.1, Y: 2.2, Z: 3.3}
 	b := a.Dehomogenized()
 	if b.X != 0.33333334 || b.Y != 0.6666667 {
 		t.Errorf("Wrong result: %#v", b)
@@ -113,8 +113,8 @@ func TestVec4_Plus(t *testing.T) {
 }
 
 func TestVec3_Plus(t *testing.T) {
-	a := geom.Vec3{1.1, 2.2, 3.3}
-	b := geom.Vec3{4.4, 5.5, 6.6}
+	a := geom.Vec3{X: 1.1, Y: 2.2, Z: 3.3}
+	b := geom.Vec3{X: 4.4, Y: 5.5, Z: 6.6}
 	c := a.Plus(b)
 	if c.X != 5.5 || c.Y != 7.7 || c.Z != 9.9 {
 		t.Errorf("Wrong result: %#v", c)
@@ -139,8 +139,8 @@ func TestVec4_Minus(t *testing.T) {
 }
 
 func TestVec3_Minus(t *testing.T) {
-	a := geom.Vec3{1.1, 2.2, 3.3}
-	b := geom.Vec3{4.4, 5.5, 6.6}
+	a := geom.Vec3{X: 1.1, Y: 2.2, Z: 3.3}
+	b := geom.Vec3{X: 4.4, Y: 5.5, Z: 6.6}
 	c := a.Minus(b)
 	if c.X != -3.3000002 || c.Y != -3.3 || c.Z != -3.3 {
 		t.Errorf("Wrong result: %#v", c)
@@ -164,7 +164,7 @@ func TestVec4_Inverse(t *testing.T) {
 }
 
 func TestVec3_Inverse(t *testing.T) {
-	a := geom.Vec3{1.1, 2.2, 3.3}
+	a := geom.Vec3{X: 1.1, Y: 2.2, Z: 3.3}
 	b := a.Inverse()
 	if b.X != -1.1 || b.Y != -2.2 || b.Z != -3.3 {
 		t.Errorf("Wrong result: %#v", b)
@@ -188,7 +188,7 @@ func TestVec4_Times(t *testing.T) {
 }
 
 func TestVec3_Times(t *testing.T) {
-	a := geom.Vec3{1.1, 2.2, 3.3}
+	a := geom.Vec3{X: 1.1, Y: 2.2, Z: 3.3}
 	b := a.Times(4.4)
 	if b.X != 4.84 || b.Y != 9.68 || b.Z != 14.52 {
 		t.Errorf("Wrong result: %#v", b)
@@ -212,7 +212,7 @@ func TestVec4_Slash(t *testing.T) {
 }
 
 func TestVec3_Slash(t *testing.T) {
-	a := geom.Vec3{1.1, 2.2, 3.3}
+	a := geom.Vec3{X: 1.1, Y: 2.2, Z: 3.3}
 	b := a.Slash(4.4)
 	if b.X != 0.25 || b.Y != 0.5 || b.Z != 0.75 {
 		t.Errorf("Wrong result: %#v", b)
@@ -237,8 +237,8 @@ func TestVec4_Dot(t *testing.T) {
 }
 
 func TestVec3_Dot(t *testing.T) {
-	a := geom.Vec3{1.1, 2.2, 3.3}
-	b := geom.Vec3{4.4, 5.5, 6.6}
+	a := geom.Vec3{X: 1.1, Y: 2.2, Z: 3.3}
+	b := geom.Vec3{X: 4.4, Y: 5.5, Z: 6.6}
 	c := a.Dot(b)
 	if c != 38.72 {
 		t.Errorf("Wrong result: %#v", c)
@@ -251,8 +251,8 @@ func TestVec3_Dot(t *testing.T) {
 //-----------------------------------------------------------------------------
 
 func TestVec3_Cross(t *testing.T) {
-	a := geom.Vec3{1.1, 2.2, 3.3}
-	b := geom.Vec3{4.4, 5.5, 6.6}
+	a := geom.Vec3{X: 1.1, Y: 2.2, Z: 3.3}
+	b := geom.Vec3{X: 4.4, Y: 5.5, Z: 6.6}
 	c := a.Cross(b)
 	if c.X != -3.6299992 || c.Y != 7.26 || c.Z != -3.63 {
 		t.Errorf("Wrong result: %#v", c)
@@ -276,7 +276,7 @@ func TestVec4_Length(t *testing.T) {
 }
 
 func TestVec3_Length(t *testing.T) {
-	a := geom.Vec3{1.1, 2.2, 3.3}
+	a := geom.Vec3{X: 1.1, Y: 2.2, Z: 3.3}
 	b := a.Length()
 	if b != 4.115823 {
 		t.Errorf("Wrong result: %#v", b)
@@ -297,7 +297,7 @@ func TestVec4_Normalized(t *testing.T) {
 }
 
 func TestVec3_Normalized(t *testing.T) {
-	a := geom.Vec3{1.1, 2.2, 3.3}
+	a := geom.Vec3{X: 1.1, Y: 2.2, Z: 3.3}
 	b := a.Normalized()
 	if b.X != 0.26726127 || b.Y != 0.53452253 || b.Z != 0.8017838 {
 		t.Errorf("Wrong result: %#v", b)

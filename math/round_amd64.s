@@ -6,7 +6,7 @@
 // SLOWER than the Go function
 // func round_asm(s float32) float32
 TEXT ·round_asm(SB),7,$0
-	CVTSS2SL  x+0(FP), BX
+	CVTSS2SL  s+0(FP), BX
 	MOVL       BX, ret+8(FP)
 	RET
 

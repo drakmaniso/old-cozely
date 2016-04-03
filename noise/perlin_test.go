@@ -6,10 +6,8 @@ package noise
 import (
 	"fmt"
 	"testing"
-)
 
-import (
-	"github.com/drakmaniso/glam"
+	"github.com/drakmaniso/glam/geom"
 )
 
 //------------------------------------------------------------------------------
@@ -18,7 +16,7 @@ func ExamplePerlin3DAt() {
 	for z := 0; z < 4; z++ {
 		for y := 0; y < 10; y++ {
 			for x := 0; x < 10; x++ {
-				v := Perlin3DAt(glam.Vec3{float32(x), float32(y), float32(z * 10)}.Slash(10.0))
+				v := Perlin3DAt(geom.Vec3{X: float32(x), Y: float32(y), Z: float32(z * 10)}.Slash(10.0))
 				iv := uint8(v*50.0 + 50.0)
 				fmt.Printf("%2d", iv)
 				if x < 9 {
@@ -196,7 +194,7 @@ func TestPerlin3DAt(t *testing.T) {
 	for z := 0; z < 10; z++ {
 		for y := 0; y < 10; y++ {
 			for x := 0; x < 10; x++ {
-				outputPerlin3DAt[x][y][z] = Perlin3DAt(glam.Vec3{float32(x), float32(y), float32(z * 10)}.Slash(10.0))
+				outputPerlin3DAt[x][y][z] = Perlin3DAt(geom.Vec3{X: float32(x), Y: float32(y), Z: float32(z * 10)}.Slash(10.0))
 			}
 		}
 	}
