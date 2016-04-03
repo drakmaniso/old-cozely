@@ -3,6 +3,8 @@
 
 package math
 
+//------------------------------------------------------------------------------
+
 import (
 	"math"
 	"testing"
@@ -12,7 +14,7 @@ import (
 
 func TestSqrt(t *testing.T) {
 	var x float32
-	for _, tt := range sqrt_tests {
+	for _, tt := range sqrtTests {
 		x = Sqrt(tt.in)
 		if x != tt.out {
 			t.Errorf("Error for Sqrt(%.100g): %.100g instead of %.100g\n", tt.in, x, tt.out)
@@ -49,7 +51,7 @@ func BenchmarkSqrt_glam(b *testing.B) {
 
 //------------------------------------------------------------------------------
 
-var sqrt_tests = [...]struct {
+var sqrtTests = [...]struct {
 	in  float32
 	out float32
 }{

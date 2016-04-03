@@ -33,6 +33,7 @@ import (
 
 //------------------------------------------------------------------------------
 
+// Process and dispatch the events.
 func Process() {
 	more := true
 	for more && !internal.QuitRequested {

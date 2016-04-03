@@ -79,7 +79,7 @@ func Sin(x float32) float32 {
 	// Map zeros to origin
 	if j&1 != 0 {
 		j++
-		y += 1
+		y++
 	}
 
 	j &= 7 // Octant modulo 360°

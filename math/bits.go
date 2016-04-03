@@ -5,6 +5,8 @@
 
 package math
 
+//------------------------------------------------------------------------------
+
 const (
 	uvnan    = 0x7F800001
 	uvinf    = 0x7F800000
@@ -13,6 +15,8 @@ const (
 	shift    = 32 - 8 - 1
 	bias     = 127
 )
+
+//------------------------------------------------------------------------------
 
 // Inf returns positive infinity if sign >= 0, negative infinity if sign < 0.
 func Inf(sign int) float32 {
@@ -57,3 +61,5 @@ func Normalized(x float32) (y float32, exp int) {
 	}
 	return x, 0
 }
+
+//------------------------------------------------------------------------------

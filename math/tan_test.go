@@ -3,6 +3,8 @@
 
 package math
 
+//------------------------------------------------------------------------------
+
 import (
 	"math"
 	"testing"
@@ -12,7 +14,7 @@ import (
 
 func TestTan(t *testing.T) {
 	var x float32
-	for _, tt := range tan_tests {
+	for _, tt := range tanTests {
 		x = Tan(tt.in)
 		if !IsNearlyEqual(x, tt.out, 2*EpsilonFloat32) {
 			t.Errorf("Relative error for Tan(%.100g): %.100g instead of %.100g\n", tt.in, x, tt.out)
@@ -52,7 +54,7 @@ func BenchmarkTan_glam(b *testing.B) {
 
 //------------------------------------------------------------------------------
 
-var tan_tests = [...]struct {
+var tanTests = [...]struct {
 	in  float32
 	out float32
 }{

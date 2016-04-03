@@ -3,6 +3,8 @@
 
 package math
 
+//------------------------------------------------------------------------------
+
 import (
 	"math"
 	"testing"
@@ -12,7 +14,7 @@ import (
 
 func TestSin(t *testing.T) {
 	var x float32
-	for _, tt := range sin_tests {
+	for _, tt := range sinTests {
 		x = Sin(tt.in)
 		if !IsNearlyEqual(x, tt.out, EpsilonFloat32) {
 			t.Errorf("Relative error for Sin(%.100g): %.100g instead of %.100g\n", tt.in, x, tt.out)
@@ -52,7 +54,7 @@ func BenchmarkSin_glam(b *testing.B) {
 
 //------------------------------------------------------------------------------
 
-var sin_tests = [...]struct {
+var sinTests = [...]struct {
 	in  float32
 	out float32
 }{

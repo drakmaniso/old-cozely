@@ -3,6 +3,8 @@
 
 package space
 
+//------------------------------------------------------------------------------
+
 import (
 	"github.com/drakmaniso/glam/geom"
 	"github.com/drakmaniso/glam/math"

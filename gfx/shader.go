@@ -3,6 +3,8 @@
 
 package gfx
 
+//------------------------------------------------------------------------------
+
 import (
 	"errors"
 	"fmt"
@@ -51,6 +53,7 @@ type Shader struct {
 
 //------------------------------------------------------------------------------
 
+// NewVertexShader compiles a vertex shader.
 func NewVertexShader(r io.Reader) (Shader, error) {
 	var s Shader
 	var err error
@@ -62,6 +65,7 @@ func NewVertexShader(r io.Reader) (Shader, error) {
 	return s, nil
 }
 
+// NewFragmentShader compiles a fragment shader.
 func NewFragmentShader(r io.Reader) (Shader, error) {
 	var s Shader
 	var err error
@@ -73,6 +77,7 @@ func NewFragmentShader(r io.Reader) (Shader, error) {
 	return s, nil
 }
 
+// NewGeometryShader compiles a geometry shader.
 func NewGeometryShader(r io.Reader) (Shader, error) {
 	var s Shader
 	var err error
@@ -84,6 +89,7 @@ func NewGeometryShader(r io.Reader) (Shader, error) {
 	return s, nil
 }
 
+// NewTessControlShader compiles a tesselation control shader.
 func NewTessControlShader(r io.Reader) (Shader, error) {
 	var s Shader
 	var err error
@@ -95,6 +101,7 @@ func NewTessControlShader(r io.Reader) (Shader, error) {
 	return s, nil
 }
 
+// NewTessEvaluationShader compiles a tesselation evaluation shader.
 func NewTessEvaluationShader(r io.Reader) (Shader, error) {
 	var s Shader
 	var err error
@@ -106,6 +113,7 @@ func NewTessEvaluationShader(r io.Reader) (Shader, error) {
 	return s, nil
 }
 
+// NewComputeShader compiles a comput shader.
 func NewComputeShader(r io.Reader) (Shader, error) {
 	var s Shader
 	var err error

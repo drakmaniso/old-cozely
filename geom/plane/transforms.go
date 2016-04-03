@@ -3,6 +3,8 @@
 
 package plane
 
+//------------------------------------------------------------------------------
+
 import (
 	"github.com/drakmaniso/glam/geom"
 	"github.com/drakmaniso/glam/math"
@@ -44,7 +46,7 @@ func Translation(t geom.Vec2) geom.Mat3 {
 
 //------------------------------------------------------------------------------
 
-// Rotation.
+// Rotation by an angle.
 func Rotation(angle float32) geom.Mat3 {
 	c := math.Cos(angle)
 	s := math.Sin(angle)

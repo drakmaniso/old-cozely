@@ -2,6 +2,6 @@
 // Licensed under a simplified BSD license (see LICENSE file).
 
 /*
-Package gfx provides simple abstractions over a modern subset of OpenGL.
+Package key provides keyboard support
 */
-package gfx
+package key

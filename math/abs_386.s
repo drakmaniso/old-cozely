@@ -6,7 +6,7 @@
 //------------------------------------------------------------------------------
 
 // func Abs(x float32) float32
-TEXT ·abs_asm(SB),7,$0
+TEXT ·absAsm(SB),7,$0
 	MOVL   $(1<<31), BX
 	MOVL   BX, X0 // movsd $(-0.0), x0
 	MOVSS  x+0(FP), X1

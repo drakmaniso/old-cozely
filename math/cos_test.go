@@ -3,6 +3,8 @@
 
 package math
 
+//------------------------------------------------------------------------------
+
 import (
 	"math"
 	"testing"
@@ -12,7 +14,7 @@ import (
 
 func TestCos(t *testing.T) {
 	var x float32
-	for _, tt := range cos_tests {
+	for _, tt := range cosTests {
 		x = Cos(tt.in)
 		if !IsNearlyEqual(x, tt.out, EpsilonFloat32) {
 			t.Errorf("Relative error for Cos(%.100g): %.100g instead of %.100g\n", tt.in, x, tt.out)
@@ -52,7 +54,7 @@ func BenchmarkCos_glam(b *testing.B) {
 
 //------------------------------------------------------------------------------
 
-var cos_tests = [...]struct {
+var cosTests = [...]struct {
 	in  float32
 	out float32
 }{

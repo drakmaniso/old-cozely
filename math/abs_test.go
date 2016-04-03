@@ -3,6 +3,8 @@
 
 package math
 
+//------------------------------------------------------------------------------
+
 import (
 	"math"
 	"testing"
@@ -106,14 +108,14 @@ func BenchmarkAbs_unsafe(b *testing.B) {
 
 //------------------------------------------------------------------------------
 
-func abs_asm(x float32) float32
+func absAsm(x float32) float32
 
 func BenchmarkAbs_asm(b *testing.B) {
 	x := float32(3.3)
 	y := float32(-3.3)
 	for i := 0; i < b.N; i++ {
-		_ = abs_asm(x)
-		_ = abs_asm(y)
+		_ = absAsm(x)
+		_ = absAsm(y)
 	}
 }
 

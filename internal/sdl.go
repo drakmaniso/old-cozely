@@ -3,6 +3,8 @@
 
 package internal
 
+//------------------------------------------------------------------------------
+
 // #include "sdl.h"
 import "C"
 
@@ -13,12 +15,14 @@ import (
 
 //------------------------------------------------------------------------------
 
+// SDLQuit is called when the game loop stops.
 func SDLQuit() {
 	C.SDL_Quit()
 }
 
 //------------------------------------------------------------------------------
 
+// GetTime returns the time elapsed since program start.
 func GetTime() time.Duration {
 	return time.Duration(C.SDL_GetTicks())
 }

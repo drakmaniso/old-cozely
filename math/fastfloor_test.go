@@ -3,6 +3,8 @@
 
 package math
 
+//------------------------------------------------------------------------------
+
 import (
 	"testing"
 )
@@ -30,33 +32,32 @@ func TestFastFloor(t *testing.T) {
 
 //------------------------------------------------------------------------------
 
-func fastFloor_cast(x float32) int32 {
+func fastFloorCast(x float32) int32 {
 	if x > 0 {
 		return int32(x)
-	} else {
-		return int32(x - 1)
 	}
+	return int32(x - 1)
 }
 
 func BenchmarkFastFloor_cast(b *testing.B) {
 	x := float32(3.3)
 	y := float32(-3.3)
 	for i := 0; i < b.N; i++ {
-		_ = fastFloor_cast(x)
-		_ = fastFloor_cast(y)
+		_ = fastFloorCast(x)
+		_ = fastFloorCast(y)
 	}
 }
 
 //------------------------------------------------------------------------------
 
-func fastFloor_asm(s float32) int32
+func fastFloorAsm(s float32) int32
 
 func BenchmarkFastFloor_asm(b *testing.B) {
 	x := float32(3.3)
 	y := float32(-3.3)
 	for i := 0; i < b.N; i++ {
-		_ = fastFloor_asm(x)
-		_ = fastFloor_asm(y)
+		_ = fastFloorAsm(x)
+		_ = fastFloorAsm(y)
 	}
 }
 

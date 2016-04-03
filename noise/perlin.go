@@ -1,7 +1,9 @@
-// Copyright (c) 2013 Laurent Moussault. All rights reserved.
+// Copyright (c) 2013-2016 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
 package noise
+
+//------------------------------------------------------------------------------
 
 import (
 	"github.com/drakmaniso/glam/geom"
@@ -62,7 +64,7 @@ func perlinFade(x float32) float32 {
 
 //------------------------------------------------------------------------------
 
-// `Perlin3DAt` returns the value of a 3D Perlin noise function at position `p`.
+// Perlin3DAt returns the value of a 3D Perlin noise function at position `p`.
 func Perlin3DAt(p geom.Vec3) float32 {
 	// Source: "Simplex Noise Demystified" by Stefan Gustavson
 	// http://www.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf

@@ -1,5 +1,8 @@
+// Copyright (c) 2013-2016 Laurent Moussault. All rights reserved.
+// Licensed under a simplified BSD license (see LICENSE file).
+
 /*
- Package plane provides 2D transforms in homogeneous coordinates.
+Package plane provides 2D transforms in homogeneous coordinates.
 
 A transform is written as the multiplication of a matrix by a column-vector.
 To transform v by M and then by N, you should write N⋅M⋅v:

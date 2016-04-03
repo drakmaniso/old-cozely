@@ -1,7 +1,14 @@
+// Copyright (c) 2013-2016 Laurent Moussault. All rights reserved.
+// Licensed under a simplified BSD license (see LICENSE file).
+
 package key
+
+//------------------------------------------------------------------------------
 
 // #include "../internal/sdl.h"
 import "C"
+
+//------------------------------------------------------------------------------
 
 // A Position designate a key by its physical position on the keyboard.
 // It is not affected by the layout or any other language settings.
@@ -277,3 +284,5 @@ const (
 
 // MaxPosition is the maximum valid position.
 const MaxPosition Position = C.SDL_NUM_SCANCODES
+
+//------------------------------------------------------------------------------

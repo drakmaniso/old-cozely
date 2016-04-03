@@ -3,6 +3,8 @@
 
 package internal
 
+//------------------------------------------------------------------------------
+
 /*
 #cgo windows LDFLAGS: -lSDL2
 #cgo linux freebsd darwin pkg-config: sdl2
@@ -21,6 +23,7 @@ import (
 
 //------------------------------------------------------------------------------
 
+// Path of the executable.
 var Path = filepath.Dir(os.Args[0]) + "/"
 
 var config = struct {

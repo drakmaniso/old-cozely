@@ -54,8 +54,8 @@ func Tan(x float32) float32 {
 
 	// Map zeros and singularities to origin.
 	if j&1 == 1 {
-		j += 1
-		y += 1
+		j++
+		y++
 	}
 
 	z := ((x - y*DP1) - y*DP2) - y*DP3

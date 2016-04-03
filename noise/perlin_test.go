@@ -1,7 +1,9 @@
-// Copyright (c) 2013 Laurent Moussault. All rights reserved.
+// Copyright (c) 2013-2016 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
 package noise
+
+//------------------------------------------------------------------------------
 
 import (
 	"fmt"
@@ -76,7 +78,7 @@ func ExamplePerlin3DAt() {
 //------------------------------------------------------------------------------
 
 var outputPerlin3DAt [10][10][10]float32
-var resultsPerlin3DAt [10][10][10]float32 = [10][10][10]float32{
+var resultsPerlin3DAt = [10][10][10]float32{
 	[10][10]float32{
 		[10]float32{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 		[10]float32{-0.099144004, 0.106848, -0.106848, 0.099144004, 0.099144004, -0.106848, 0, 0, 0, 0.106848},

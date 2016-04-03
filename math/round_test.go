@@ -3,6 +3,8 @@
 
 package math
 
+//------------------------------------------------------------------------------
+
 import (
 	"testing"
 )
@@ -38,33 +40,32 @@ func TestRound(t *testing.T) {
 
 //------------------------------------------------------------------------------
 
-func round_cast(x float32) int32 {
+func roundCast(x float32) int32 {
 	if x > 0 {
 		return int32(x + 0.5)
-	} else {
-		return int32(x - 0.5)
 	}
+	return int32(x - 0.5)
 }
 
 func BenchmarkRound_cast(b *testing.B) {
 	x := float32(3.3)
 	y := float32(-3.3)
 	for i := 0; i < b.N; i++ {
-		_ = round_cast(x)
-		_ = round_cast(y)
+		_ = roundCast(x)
+		_ = roundCast(y)
 	}
 }
 
 //------------------------------------------------------------------------------
 
-func round_asm(s float32) float32
+func roundAsm(s float32) float32
 
 func BenchmarkRound_asm(b *testing.B) {
 	x := float32(3.3)
 	y := float32(-3.3)
 	for i := 0; i < b.N; i++ {
-		_ = round_asm(x)
-		_ = round_asm(y)
+		_ = roundAsm(x)
+		_ = roundAsm(y)
 	}
 }
 

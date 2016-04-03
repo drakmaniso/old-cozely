@@ -3,6 +3,8 @@
 
 package gfx
 
+//------------------------------------------------------------------------------
+
 /*
 #cgo linux LDFLAGS: -ldl
 #include "glad.h"
@@ -17,6 +19,8 @@ import (
 	"github.com/drakmaniso/glam/internal"
 )
 
+//------------------------------------------------------------------------------
+
 func init() {
 	var d C.int
 	if internal.Debug {
@@ -26,3 +30,5 @@ func init() {
 		internal.InitError = fmt.Errorf("impossible to initialize OpenGL")
 	}
 }
+
+//------------------------------------------------------------------------------

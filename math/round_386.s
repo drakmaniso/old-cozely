@@ -4,8 +4,8 @@
 //------------------------------------------------------------------------------
 
 // SLOWER than the Go function
-// func round_asm(s float32) float32
-TEXT ·round_asm(SB),7,$0
+// func roundAsm(s float32) float32
+TEXT ·roundAsm(SB),7,$0
 	CVTSS2SL  x+0(FP), BX
 	MOVL       BX, ret+4(FP)
 	RET

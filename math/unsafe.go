@@ -4,7 +4,11 @@
 
 package math
 
+//------------------------------------------------------------------------------
+
 import "unsafe"
+
+//------------------------------------------------------------------------------
 
 // Float32bits returns the IEEE 754 binary representation of f.
 func Float32bits(f float32) uint32 { return *(*uint32)(unsafe.Pointer(&f)) }
@@ -19,3 +23,5 @@ func Float64bits(f float64) uint64 { return *(*uint64)(unsafe.Pointer(&f)) }
 // Float64frombits returns the floating point number corresponding
 // the IEEE 754 binary representation b.
 func Float64frombits(b uint64) float64 { return *(*float64)(unsafe.Pointer(&b)) }
+
+//------------------------------------------------------------------------------

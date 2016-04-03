@@ -2,6 +2,6 @@
 // Licensed under a simplified BSD license (see LICENSE file).
 
 /*
-Package gfx provides simple abstractions over a modern subset of OpenGL.
+Package window provides support for window events
 */
-package gfx
+package window

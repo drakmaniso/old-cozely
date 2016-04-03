@@ -79,6 +79,7 @@ import "C"
 
 //------------------------------------------------------------------------------
 
+// A Pipeline consists of shaders and state for the GPU.
 type Pipeline struct {
 	pipeline     C.GLuint
 	vao          C.GLuint
@@ -88,6 +89,7 @@ type Pipeline struct {
 
 //------------------------------------------------------------------------------
 
+// NewPipeline returns a pipeline with created from a specific set of shaders.
 func NewPipeline(s ...Shader) (Pipeline, error) {
 	var p Pipeline
 	p.pipeline = C.NewPipeline() //TODO: Error Handling
@@ -112,6 +114,7 @@ func (p *Pipeline) useShader(s Shader) error {
 
 //------------------------------------------------------------------------------
 
+// ClearColor sets the color used to clear the framebuffer.
 func (p *Pipeline) ClearColor(color geom.Vec4) {
 	p.clearColor[0] = color.X
 	p.clearColor[1] = color.Y
@@ -121,12 +124,15 @@ func (p *Pipeline) ClearColor(color geom.Vec4) {
 
 //------------------------------------------------------------------------------
 
+// UniformBuffer binds a buffer to a uniform binding index. This index should
+// correspond to one indicated by a layout qualifier in the shaders.
 func (p *Pipeline) UniformBuffer(binding uint32, b Buffer) {
 	C.UniformBuffer(C.GLuint(binding), b.buffer)
 }
 
 //------------------------------------------------------------------------------
 
+// Bind the pipeline for use by the GPU in all following draw commands.
 func (p *Pipeline) Bind() {
 	C.BindPipeline(
 		p.pipeline,
@@ -137,6 +143,7 @@ func (p *Pipeline) Bind() {
 
 //------------------------------------------------------------------------------
 
+// Close the pipeline.
 func (p *Pipeline) Close() {
 	C.ClosePipeline(p.pipeline, p.vao)
 }

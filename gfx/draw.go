@@ -3,6 +3,8 @@
 
 package gfx
 
+//------------------------------------------------------------------------------
+
 /*
 #include "glad.h"
 
@@ -34,6 +36,7 @@ const (
 
 //------------------------------------------------------------------------------
 
+// Draw count primitives, starting at first.
 func Draw(mode primitive, first int32, count int32) {
 	C.DrawArrays(C.GLenum(mode), C.GLuint(first), C.GLuint(count))
 }
