@@ -16,10 +16,6 @@ import (
 
 //------------------------------------------------------------------------------
 
-var pipeline gfx.Pipeline
-
-//------------------------------------------------------------------------------
-
 var vertexShader = strings.NewReader(`
 #version 450 core
 
@@ -53,7 +49,6 @@ void main(void)
 
 func main() {
 	g := &game{}
-	glam.Handler = g
 
 	// Setup the Pipeline
 	vs, err := gfx.NewVertexShader(vertexShader)
@@ -64,14 +59,14 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	pipeline, err = gfx.NewPipeline(vs, fs)
+	g.pipeline, err = gfx.NewPipeline(vs, fs)
 	if err != nil {
 		log.Fatal(err)
 	}
-	pipeline.ClearColor(Vec4{0.9, 0.9, 0.9, 1.0})
+	g.pipeline.ClearColor(Vec4{0.9, 0.9, 0.9, 1.0})
 
 	// Run the Game Loop
-	err = glam.Run()
+	err = glam.Run(g)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -79,13 +74,15 @@ func main() {
 
 //------------------------------------------------------------------------------
 
-type game struct{}
+type game struct {
+	pipeline gfx.Pipeline
+}
 
 func (g *game) Update() {
 }
 
 func (g *game) Draw() {
-	pipeline.Bind()
+	g.pipeline.Bind()
 	gfx.Draw(gfx.Triangles, 0, 3)
 }
 

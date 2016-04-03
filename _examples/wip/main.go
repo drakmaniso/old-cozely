@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/drakmaniso/glam"
+	"github.com/drakmaniso/glam/basic"
 	"github.com/drakmaniso/glam/color"
 	. "github.com/drakmaniso/glam/geom"
 	"github.com/drakmaniso/glam/geom/space"
@@ -23,15 +24,10 @@ import (
 //------------------------------------------------------------------------------
 
 func main() {
-	log.SetFlags(log.Lshortfile)
-
 	g := newGame()
-	glam.Handler = g
-	window.Handler = g
-	mouse.Handler = g
 
 	// Run the Game Loop
-	err := glam.Run()
+	err := glam.Run(g)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -40,17 +36,17 @@ func main() {
 //------------------------------------------------------------------------------
 
 type game struct {
-	window.DefaultWindowHandler
-	mouse.DefaultMouseHandler
+	basic.WindowHandler
+	basic.MouseHandler
 
 	distance                float32
 	position                Vec3
 	yaw, pitch              float32
 	model, view, projection Mat4
 
-	pipeline         gfx.Pipeline
-	transform        gfx.Buffer
-	colorfulTriangle gfx.Buffer
+	pipeline  gfx.Pipeline
+	transform gfx.Buffer
+	cube      gfx.Buffer
 }
 
 type perVertex struct {
@@ -101,7 +97,7 @@ func newGame() *game {
 	}
 
 	// Create and fill the Vertex Buffer
-	g.colorfulTriangle, err = gfx.NewBuffer(cube(), 0)
+	g.cube, err = gfx.NewBuffer(cube(), 0)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -187,7 +183,7 @@ func (g *game) Draw() {
 	}
 	g.transform.Update(&t, 0)
 
-	g.pipeline.VertexBuffer(0, g.colorfulTriangle, 0)
+	g.pipeline.VertexBuffer(0, g.cube, 0)
 	gfx.Draw(gfx.Triangles, 0, 6*2*3)
 }
 

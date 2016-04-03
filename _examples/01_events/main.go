@@ -14,19 +14,14 @@ import (
 	"github.com/drakmaniso/glam/geom"
 	"github.com/drakmaniso/glam/key"
 	"github.com/drakmaniso/glam/mouse"
-	"github.com/drakmaniso/glam/window"
 )
 
 //------------------------------------------------------------------------------
 
 func main() {
 	g := &game{}
-	glam.Handler = g
-	key.Handler = g
-	mouse.Handler = g
-	window.Handler = g
 
-	err := glam.Run()
+	err := glam.Run(g)
 	if err != nil {
 		log.Fatal(err)
 	}

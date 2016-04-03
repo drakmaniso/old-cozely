@@ -49,7 +49,7 @@ func dispatch(e unsafe.Pointer) {
 	ts := time.Duration(((*C.SDL_CommonEvent)(e)).timestamp) * time.Millisecond
 	switch ((*C.SDL_CommonEvent)(e))._type {
 	case C.SDL_QUIT:
-		window.Handler.WindowQuit(ts)
+		window.Handle.WindowQuit(ts)
 	// Window Events
 	case C.SDL_WINDOWEVENT:
 		e := (*C.SDL_WindowEvent)(e)
@@ -57,9 +57,9 @@ func dispatch(e unsafe.Pointer) {
 		case C.SDL_WINDOWEVENT_NONE:
 			// Ignore
 		case C.SDL_WINDOWEVENT_SHOWN:
-			window.Handler.WindowShown(ts)
+			window.Handle.WindowShown(ts)
 		case C.SDL_WINDOWEVENT_HIDDEN:
-			window.Handler.WindowHidden(ts)
+			window.Handle.WindowHidden(ts)
 		case C.SDL_WINDOWEVENT_EXPOSED:
 			// Ignore
 		case C.SDL_WINDOWEVENT_MOVED:
@@ -68,30 +68,30 @@ func dispatch(e unsafe.Pointer) {
 			internal.Window.Width = float32(e.data1)
 			internal.Window.Height = float32(e.data2)
 			gfx.Viewport(geom.Vec2{X: 0, Y: 0}, geom.Vec2{X: float32(e.data1), Y: float32(e.data2)})
-			window.Handler.WindowResized(
+			window.Handle.WindowResized(
 				geom.Vec2{X: float32(e.data1), Y: float32(e.data2)},
 				ts,
 			)
 		case C.SDL_WINDOWEVENT_SIZE_CHANGED:
 			//TODO
 		case C.SDL_WINDOWEVENT_MINIMIZED:
-			window.Handler.WindowMinimized(ts)
+			window.Handle.WindowMinimized(ts)
 		case C.SDL_WINDOWEVENT_MAXIMIZED:
-			window.Handler.WindowMaximized(ts)
+			window.Handle.WindowMaximized(ts)
 		case C.SDL_WINDOWEVENT_RESTORED:
-			window.Handler.WindowRestored(ts)
+			window.Handle.WindowRestored(ts)
 		case C.SDL_WINDOWEVENT_ENTER:
 			internal.HasMouseFocus = true
-			window.Handler.WindowMouseEnter(ts)
+			window.Handle.WindowMouseEnter(ts)
 		case C.SDL_WINDOWEVENT_LEAVE:
 			internal.HasMouseFocus = false
-			window.Handler.WindowMouseLeave(ts)
+			window.Handle.WindowMouseLeave(ts)
 		case C.SDL_WINDOWEVENT_FOCUS_GAINED:
 			internal.HasFocus = true
-			window.Handler.WindowFocusGained(ts)
+			window.Handle.WindowFocusGained(ts)
 		case C.SDL_WINDOWEVENT_FOCUS_LOST:
 			internal.HasFocus = false
-			window.Handler.WindowFocusLost(ts)
+			window.Handle.WindowFocusLost(ts)
 		case C.SDL_WINDOWEVENT_CLOSE:
 			// Ignore
 		default:
@@ -102,7 +102,7 @@ func dispatch(e unsafe.Pointer) {
 		e := (*C.SDL_KeyboardEvent)(e)
 		if e.repeat == 0 {
 			internal.KeyState[e.keysym.scancode] = true
-			key.Handler.KeyDown(
+			key.Handle.KeyDown(
 				key.Label(e.keysym.sym),
 				key.Position(e.keysym.scancode),
 				ts,
@@ -111,7 +111,7 @@ func dispatch(e unsafe.Pointer) {
 	case C.SDL_KEYUP:
 		e := (*C.SDL_KeyboardEvent)(e)
 		internal.KeyState[e.keysym.scancode] = false
-		key.Handler.KeyUp(
+		key.Handle.KeyUp(
 			key.Label(e.keysym.sym),
 			key.Position(e.keysym.scancode),
 			ts,
@@ -123,21 +123,21 @@ func dispatch(e unsafe.Pointer) {
 		internal.MouseDelta = internal.MouseDelta.Plus(rel)
 		internal.MousePosition = geom.Vec2{X: float32(e.x), Y: float32(e.y)}
 		internal.MouseButtons = uint32(e.state)
-		mouse.Handler.MouseMotion(
+		mouse.Handle.MouseMotion(
 			rel,
 			internal.MousePosition,
 			ts,
 		)
 	case C.SDL_MOUSEBUTTONDOWN:
 		e := (*C.SDL_MouseButtonEvent)(e)
-		mouse.Handler.MouseButtonDown(
+		mouse.Handle.MouseButtonDown(
 			mouse.Button(e.button),
 			int(e.clicks),
 			ts,
 		)
 	case C.SDL_MOUSEBUTTONUP:
 		e := (*C.SDL_MouseButtonEvent)(e)
-		mouse.Handler.MouseButtonUp(
+		mouse.Handle.MouseButtonUp(
 			mouse.Button(e.button),
 			int(e.clicks),
 			ts,
@@ -148,7 +148,7 @@ func dispatch(e unsafe.Pointer) {
 		if e.direction == C.SDL_MOUSEWHEEL_FLIPPED {
 			d = -1
 		}
-		mouse.Handler.MouseWheel(
+		mouse.Handle.MouseWheel(
 			geom.Vec2{X: float32(e.x) * d, Y: float32(e.y) * d},
 			ts,
 		)

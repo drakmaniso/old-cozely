@@ -17,17 +17,6 @@ import (
 
 //------------------------------------------------------------------------------
 
-var pipeline gfx.Pipeline
-
-type perVertex struct {
-	position Vec2      `layout:"0"`
-	color    color.RGB `layout:"1"`
-}
-
-var colorfulTriangle gfx.Buffer
-
-//------------------------------------------------------------------------------
-
 var vertexShader = strings.NewReader(`
 #version 450 core
 
@@ -66,7 +55,6 @@ void main(void) {
 
 func main() {
 	g := &game{}
-	glam.Handler = g
 
 	// Setup the Pipeline
 	vs, err := gfx.NewVertexShader(vertexShader)
@@ -77,15 +65,15 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	pipeline, err = gfx.NewPipeline(vs, fs)
+	g.pipeline, err = gfx.NewPipeline(vs, fs)
 	if err != nil {
 		log.Fatal(err)
 	}
-	err = pipeline.VertexFormat(0, perVertex{})
+	err = g.pipeline.VertexFormat(0, perVertex{})
 	if err != nil {
 		log.Fatal(err)
 	}
-	pipeline.ClearColor(Vec4{0.9, 0.9, 0.9, 1.0})
+	g.pipeline.ClearColor(Vec4{0.9, 0.9, 0.9, 1.0})
 
 	// Create the Vertex Buffer
 	data := []perVertex{
@@ -93,13 +81,13 @@ func main() {
 		{Vec2{-0.65, -0.475}, color.RGB{R: 0.8, G: 0.3, B: 0}},
 		{Vec2{0.65, -0.475}, color.RGB{R: 0, G: 0.6, B: 0.2}},
 	}
-	colorfulTriangle, err = gfx.NewBuffer(data, 0)
+	g.triangle, err = gfx.NewBuffer(data, 0)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	// Run the Game Loop
-	err = glam.Run()
+	err = glam.Run(g)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -107,14 +95,24 @@ func main() {
 
 //------------------------------------------------------------------------------
 
-type game struct{}
+type perVertex struct {
+	position Vec2      `layout:"0"`
+	color    color.RGB `layout:"1"`
+}
+
+//------------------------------------------------------------------------------
+
+type game struct {
+	pipeline gfx.Pipeline
+	triangle gfx.Buffer
+}
 
 func (g *game) Update() {
 }
 
 func (g *game) Draw() {
-	pipeline.Bind()
-	pipeline.VertexBuffer(0, colorfulTriangle, 0)
+	g.pipeline.Bind()
+	g.pipeline.VertexBuffer(0, g.triangle, 0)
 	gfx.Draw(gfx.Triangles, 0, 3)
 }
 

@@ -15,22 +15,15 @@ import (
 //------------------------------------------------------------------------------
 
 // Handler receives the key events.
-var Handler interface {
+type Handler interface {
 	KeyDown(l Label, p Position, timestamp time.Duration)
 	KeyUp(l Label, p Position, timestamp time.Duration)
-} = DefaultKeyHandler{}
-
-// DefaultKeyHandler implements default behavior for all keyboard events.
-type DefaultKeyHandler struct{}
-
-func (dh DefaultKeyHandler) KeyDown(l Label, p Position, timestamp time.Duration) {
-	if l == LabelEscape {
-		internal.QuitRequested = true
-	}
 }
 
-func (dh DefaultKeyHandler) KeyUp(l Label, p Position, timestamp time.Duration) {
-}
+// Handle is the current handlers for key events
+//
+// It can be changed while the loop is running, but must never be nil.
+var Handle Handler
 
 //------------------------------------------------------------------------------
 

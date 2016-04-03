@@ -17,20 +17,17 @@ import (
 //------------------------------------------------------------------------------
 
 // Handler receives the mouse events.
-var Handler interface {
+type Handler interface {
 	MouseMotion(motion geom.Vec2, position geom.Vec2, timestamp time.Duration)
 	MouseButtonDown(b Button, clicks int, timestamp time.Duration)
 	MouseButtonUp(b Button, clicks int, timestamp time.Duration)
 	MouseWheel(motion geom.Vec2, timestamp time.Duration)
-} = DefaultMouseHandler{}
+}
 
-// DefaultMouseHandler implements default behavior for all mouse events.
-type DefaultMouseHandler struct{}
-
-func (dh DefaultMouseHandler) MouseMotion(rel geom.Vec2, pos geom.Vec2, timestamp time.Duration) {}
-func (dh DefaultMouseHandler) MouseButtonDown(b Button, clicks int, timestamp time.Duration)     {}
-func (dh DefaultMouseHandler) MouseButtonUp(b Button, clicks int, timestamp time.Duration)       {}
-func (dh DefaultMouseHandler) MouseWheel(w geom.Vec2, timestamp time.Duration)                   {}
+// Handle is the current handlers for mouse events
+//
+// It can be changed while the loop is running, but must never be nil.
+var Handle Handler
 
 //------------------------------------------------------------------------------
 

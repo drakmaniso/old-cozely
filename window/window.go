@@ -11,7 +11,7 @@ import (
 //------------------------------------------------------------------------------
 
 // Handler receives window events.
-var Handler interface {
+type Handler interface {
 	WindowShown(timestamp time.Duration)
 	WindowHidden(timestamp time.Duration)
 	WindowResized(newSize geom.Vec2, timestamp time.Duration)
@@ -23,24 +23,12 @@ var Handler interface {
 	WindowFocusGained(timestamp time.Duration)
 	WindowFocusLost(timestamp time.Duration)
 	WindowQuit(timestamp time.Duration)
-} = DefaultWindowHandler{}
-
-// DefaultWindowHandler implements default behavior for all window events.
-type DefaultWindowHandler struct{}
-
-func (dh DefaultWindowHandler) WindowShown(timestamp time.Duration)                 {}
-func (dh DefaultWindowHandler) WindowHidden(timestamp time.Duration)                {}
-func (dh DefaultWindowHandler) WindowResized(s geom.Vec2, timestamp time.Duration) {}
-func (dh DefaultWindowHandler) WindowMinimized(timestamp time.Duration)             {}
-func (dh DefaultWindowHandler) WindowMaximized(timestamp time.Duration)             {}
-func (dh DefaultWindowHandler) WindowRestored(timestamp time.Duration)              {}
-func (dh DefaultWindowHandler) WindowMouseEnter(timestamp time.Duration)            {}
-func (dh DefaultWindowHandler) WindowMouseLeave(timestamp time.Duration)            {}
-func (dh DefaultWindowHandler) WindowFocusGained(timestamp time.Duration)           {}
-func (dh DefaultWindowHandler) WindowFocusLost(timestamp time.Duration)             {}
-func (dh DefaultWindowHandler) WindowQuit(timestamp time.Duration) {
-	internal.QuitRequested = true
 }
+
+// Handle is the current handlers for window events
+//
+// It can be changed while the loop is running, but must never be nil.
+var Handle Handler
 
 //------------------------------------------------------------------------------
 

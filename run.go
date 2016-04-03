@@ -6,30 +6,60 @@ package glam
 import (
 	"time"
 
+	"github.com/drakmaniso/glam/basic"
 	"github.com/drakmaniso/glam/internal"
 	"github.com/drakmaniso/glam/internal/events"
+	"github.com/drakmaniso/glam/key"
+	"github.com/drakmaniso/glam/mouse"
+	"github.com/drakmaniso/glam/window"
 )
 
 //------------------------------------------------------------------------------
 
-// Handler implements the game loop.
-var Handler interface {
+// A Looper implements a game loop.
+type Looper interface {
 	Update()
 	Draw()
 }
 
+// Loop is the current game loop.
+//
+// It can be changed while the loop is running, but must never be nil.
+var Loop Looper
+
 //------------------------------------------------------------------------------
 
-// Run opens the game window and runs the game loop, until Stop() is called.
+// Run opens the game window and runs a game loop, until Stop() is called.
+//
+// If the Looper is also a window, mouse or key Handler, it is set as the
+// corresponding Handle.
 //
 // Important: must be called from main.main, or at least from a function that is
 // known to run on the main OS thread.
-func Run() error {
+func Run(l Looper) error {
 	if internal.InitError != nil {
 		return internal.InitError
 	}
 	defer internal.SDLQuit()
 	defer internal.DestroyWindow()
+
+	// Setup Handlers
+	Loop = l
+	if h, ok := l.(window.Handler); ok {
+		window.Handle = h
+	} else {
+		window.Handle = basic.WindowHandler{}
+	}
+	if h, ok := l.(mouse.Handler); ok {
+		mouse.Handle = h
+	} else {
+		mouse.Handle = basic.MouseHandler{}
+	}
+	if h, ok := l.(key.Handler); ok {
+		key.Handle = h
+	} else {
+		key.Handle = basic.KeyHandler{}
+	}
 
 	// Main Loop
 
@@ -42,10 +72,10 @@ func Run() error {
 		for remain >= TimeStep {
 			// Fixed time step for logic and physics updates.
 			events.Process()
-			Handler.Update()
+			Loop.Update()
 			remain -= TimeStep
 		}
-		Handler.Draw()
+		Loop.Draw()
 		internal.SwapWindow()
 		if now-then < 10*time.Millisecond {
 			// Prevent using too much CPU on empty loops.
