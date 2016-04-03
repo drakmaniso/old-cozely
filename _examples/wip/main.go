@@ -7,7 +7,7 @@ package main
 
 import (
 	"log"
-	"strings"
+	"os"
 	"time"
 
 	"github.com/drakmaniso/glam"
@@ -22,6 +22,37 @@ import (
 
 //------------------------------------------------------------------------------
 
+func main() {
+	log.SetFlags(log.Lshortfile)
+
+	g := newGame()
+	glam.Handler = g
+	window.Handler = g
+	mouse.Handler = g
+
+	// Run the Game Loop
+	err := glam.Run()
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+//------------------------------------------------------------------------------
+
+type game struct {
+	window.DefaultWindowHandler
+	mouse.DefaultMouseHandler
+
+	distance                float32
+	position                Vec3
+	yaw, pitch              float32
+	model, view, projection Mat4
+
+	pipeline         gfx.Pipeline
+	transform        gfx.Buffer
+	colorfulTriangle gfx.Buffer
+}
+
 type perVertex struct {
 	position Vec3      `layout:"0"`
 	color    color.RGB `layout:"1"`
@@ -33,62 +64,23 @@ type perObject struct {
 
 //------------------------------------------------------------------------------
 
-var vertexShader = strings.NewReader(`
-#version 450 core
-
-layout(location = 0) in vec3 Position;
-layout(location = 1) in vec3 Color;
-
-layout(std140, binding = 0) uniform PerObject {
-	mat4 Transform;
-} obj;
-
-out gl_PerVertex {
-	vec4 gl_Position;
-};
-
-out PerVertex {
-	layout(location = 0) out vec3 Color;
-} vert;
-
-void main(void) {
-	gl_Position = obj.Transform * vec4(Position, 1);
-	vert.Color = Color;
-}
-`)
-
-var fragmentShader = strings.NewReader(`
-#version 450 core
-
-in PerVertex {
-	layout(location = 0) in vec3 Color;
-} vert;
-
-out vec4 Color;
-
-void main(void) {
-	Color = vec4(vert.Color, 1);
-}
-`)
-
-//------------------------------------------------------------------------------
-
-func main() {
-	log.SetFlags(log.Lshortfile)
-
-	g := &game{distance: 3, yaw: -0.6, pitch: 0.3}
-	glam.Handler = g
-	window.Handler = g
-	mouse.Handler = g
-
-	var err error
+func newGame() *game {
+	g := &game{}
 
 	// Setup the Pipeline
-	vs, err := gfx.NewVertexShader(vertexShader)
+	vf, err := os.Open(glam.Path() + "shader.vert")
 	if err != nil {
 		log.Fatal(err)
 	}
-	fs, err := gfx.NewFragmentShader(fragmentShader)
+	vs, err := gfx.NewVertexShader(vf)
+	if err != nil {
+		log.Fatal(err)
+	}
+	ff, err := os.Open(glam.Path() + "shader.frag")
+	if err != nil {
+		log.Fatal(err)
+	}
+	fs, err := gfx.NewFragmentShader(ff)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -108,79 +100,21 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// Create the Vertex Buffer
-	data := []perVertex{
-		// Front Face
-		{Vec3{0, 0, 1}, color.RGB{R: 0.3, G: 0, B: 0.8}},
-		{Vec3{1, 1, 1}, color.RGB{R: 0.3, G: 0, B: 0.8}},
-		{Vec3{0, 1, 1}, color.RGB{R: 0.3, G: 0, B: 0.8}},
-		{Vec3{0, 0, 1}, color.RGB{R: 0.3, G: 0, B: 0.8}},
-		{Vec3{1, 0, 1}, color.RGB{R: 0.3, G: 0, B: 0.8}},
-		{Vec3{1, 1, 1}, color.RGB{R: 0.3, G: 0, B: 0.8}},
-		// Back Face
-		{Vec3{0, 0, 0}, color.RGB{R: 0.3, G: 0, B: 0.8}},
-		{Vec3{0, 1, 0}, color.RGB{R: 0.3, G: 0, B: 0.8}},
-		{Vec3{1, 1, 0}, color.RGB{R: 0.3, G: 0, B: 0.8}},
-		{Vec3{0, 0, 0}, color.RGB{R: 0.3, G: 0, B: 0.8}},
-		{Vec3{1, 1, 0}, color.RGB{R: 0.3, G: 0, B: 0.8}},
-		{Vec3{1, 0, 0}, color.RGB{R: 0.3, G: 0, B: 0.8}},
-		// Right Face
-		{Vec3{1, 0, 1}, color.RGB{R: 0.8, G: 0.3, B: 0}},
-		{Vec3{1, 1, 0}, color.RGB{R: 0.8, G: 0.3, B: 0}},
-		{Vec3{1, 1, 1}, color.RGB{R: 0.8, G: 0.3, B: 0}},
-		{Vec3{1, 0, 1}, color.RGB{R: 0.8, G: 0.3, B: 0}},
-		{Vec3{1, 0, 0}, color.RGB{R: 0.8, G: 0.3, B: 0}},
-		{Vec3{1, 1, 0}, color.RGB{R: 0.8, G: 0.3, B: 0}},
-		// Left Face
-		{Vec3{0, 0, 1}, color.RGB{R: 0.8, G: 0.3, B: 0}},
-		{Vec3{0, 1, 1}, color.RGB{R: 0.8, G: 0.3, B: 0}},
-		{Vec3{0, 1, 0}, color.RGB{R: 0.8, G: 0.3, B: 0}},
-		{Vec3{0, 0, 1}, color.RGB{R: 0.8, G: 0.3, B: 0}},
-		{Vec3{0, 1, 0}, color.RGB{R: 0.8, G: 0.3, B: 0}},
-		{Vec3{0, 0, 0}, color.RGB{R: 0.8, G: 0.3, B: 0}},
-		// Bottom Face
-		{Vec3{0, 0, 1}, color.RGB{R: 0, G: 0.6, B: 0.2}},
-		{Vec3{0, 0, 0}, color.RGB{R: 0, G: 0.6, B: 0.2}},
-		{Vec3{1, 0, 1}, color.RGB{R: 0, G: 0.6, B: 0.2}},
-		{Vec3{0, 0, 0}, color.RGB{R: 0, G: 0.6, B: 0.2}},
-		{Vec3{1, 0, 0}, color.RGB{R: 0, G: 0.6, B: 0.2}},
-		{Vec3{1, 0, 1}, color.RGB{R: 0, G: 0.6, B: 0.2}},
-		// Top Face
-		{Vec3{0, 1, 1}, color.RGB{R: 0, G: 0.6, B: 0.2}},
-		{Vec3{1, 1, 1}, color.RGB{R: 0, G: 0.6, B: 0.2}},
-		{Vec3{0, 1, 0}, color.RGB{R: 0, G: 0.6, B: 0.2}},
-		{Vec3{0, 1, 0}, color.RGB{R: 0, G: 0.6, B: 0.2}},
-		{Vec3{1, 1, 1}, color.RGB{R: 0, G: 0.6, B: 0.2}},
-		{Vec3{1, 1, 0}, color.RGB{R: 0, G: 0.6, B: 0.2}},
-	}
-	g.colorfulTriangle, err = gfx.NewBuffer(data, 0)
+	// Create and fill the Vertex Buffer
+	g.colorfulTriangle, err = gfx.NewBuffer(cube(), 0)
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	// Initialize model and view matrices
+	g.position = Vec3{0, 0, 0}
+	g.yaw = -0.6
+	g.pitch = 0.3
 	g.updateModel()
+	g.distance = 3
 	g.updateView()
 
-	// Run the Game Loop
-	err = glam.Run()
-	if err != nil {
-		log.Fatal(err)
-	}
-}
-
-//------------------------------------------------------------------------------
-
-type game struct {
-	window.DefaultWindowHandler
-	mouse.DefaultMouseHandler
-
-	distance                float32
-	yaw, pitch              float32
-	model, view, projection Mat4
-
-	pipeline         gfx.Pipeline
-	transform        gfx.Buffer
-	colorfulTriangle gfx.Buffer
+	return g
 }
 
 //------------------------------------------------------------------------------
@@ -217,17 +151,17 @@ func (g *game) MouseMotion(motion IVec2, position IVec2, timestamp time.Duration
 		}
 		g.updateModel()
 	case mouse.IsPressed(mouse.Middle):
-		g.distance += 4 * float32(motion.Y) / s.Y
-		g.updateView()
+		g.position.X += 2 * float32(motion.X) / s.X
+		g.position.Y -= 2 * float32(motion.Y) / s.Y
+		g.updateModel()
 	}
 }
 
 //------------------------------------------------------------------------------
 
 func (g *game) updateModel() {
-
-	g.model = space.EulerZXY(g.pitch, g.yaw, 0)
-	g.model = g.model.Times(space.Translation(Vec3{-0.5, -0.5, -0.5}))
+	g.model = space.Translation(g.position)
+	g.model = g.model.Times(space.EulerZXY(g.pitch, g.yaw, 0))
 }
 
 func (g *game) updateView() {
