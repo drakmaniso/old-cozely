@@ -18,30 +18,30 @@ import (
 
 // Handler receives the mouse events.
 var Handler interface {
-	MouseMotion(motion geom.IVec2, position geom.IVec2, timestamp time.Duration)
+	MouseMotion(motion geom.Vec2, position geom.Vec2, timestamp time.Duration)
 	MouseButtonDown(b Button, clicks int, timestamp time.Duration)
 	MouseButtonUp(b Button, clicks int, timestamp time.Duration)
-	MouseWheel(motion geom.IVec2, timestamp time.Duration)
+	MouseWheel(motion geom.Vec2, timestamp time.Duration)
 } = DefaultMouseHandler{}
 
 // DefaultMouseHandler implements default behavior for all mouse events.
 type DefaultMouseHandler struct{}
 
-func (dh DefaultMouseHandler) MouseMotion(rel geom.IVec2, pos geom.IVec2, timestamp time.Duration) {}
-func (dh DefaultMouseHandler) MouseButtonDown(b Button, clicks int, timestamp time.Duration)       {}
-func (dh DefaultMouseHandler) MouseButtonUp(b Button, clicks int, timestamp time.Duration)         {}
-func (dh DefaultMouseHandler) MouseWheel(w geom.IVec2, timestamp time.Duration)                    {}
+func (dh DefaultMouseHandler) MouseMotion(rel geom.Vec2, pos geom.Vec2, timestamp time.Duration) {}
+func (dh DefaultMouseHandler) MouseButtonDown(b Button, clicks int, timestamp time.Duration)     {}
+func (dh DefaultMouseHandler) MouseButtonUp(b Button, clicks int, timestamp time.Duration)       {}
+func (dh DefaultMouseHandler) MouseWheel(w geom.Vec2, timestamp time.Duration)                   {}
 
 //------------------------------------------------------------------------------
 
 // Position returns the current mouse position, relative to the game window.
 // Updated at the start of each game loop iteration.
-func Position() geom.IVec2 {
+func Position() geom.Vec2 {
 	return internal.MousePosition
 }
 
 // Delta returns the mouse position relative to the last call of Delta.
-func Delta() geom.IVec2 {
+func Delta() geom.Vec2 {
 	result := internal.MouseDelta
 	internal.MouseDelta.X, internal.MouseDelta.Y = 0, 0
 	return result

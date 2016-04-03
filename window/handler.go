@@ -14,7 +14,7 @@ import (
 var Handler interface {
 	WindowShown(timestamp time.Duration)
 	WindowHidden(timestamp time.Duration)
-	WindowResized(newSize geom.IVec2, timestamp time.Duration)
+	WindowResized(newSize geom.Vec2, timestamp time.Duration)
 	WindowMinimized(timestamp time.Duration)
 	WindowMaximized(timestamp time.Duration)
 	WindowRestored(timestamp time.Duration)
@@ -30,7 +30,7 @@ type DefaultWindowHandler struct{}
 
 func (dh DefaultWindowHandler) WindowShown(timestamp time.Duration)                 {}
 func (dh DefaultWindowHandler) WindowHidden(timestamp time.Duration)                {}
-func (dh DefaultWindowHandler) WindowResized(s geom.IVec2, timestamp time.Duration) {}
+func (dh DefaultWindowHandler) WindowResized(s geom.Vec2, timestamp time.Duration) {}
 func (dh DefaultWindowHandler) WindowMinimized(timestamp time.Duration)             {}
 func (dh DefaultWindowHandler) WindowMaximized(timestamp time.Duration)             {}
 func (dh DefaultWindowHandler) WindowRestored(timestamp time.Duration)              {}
@@ -55,8 +55,8 @@ func HasMouseFocus() bool {
 }
 
 // Size returns the size of the window in pixels.
-func Size() geom.IVec2 {
-	return geom.IVec2{X: internal.Window.Width, Y: internal.Window.Height}
+func Size() geom.Vec2 {
+	return geom.Vec2{X: internal.Window.Width, Y: internal.Window.Height}
 }
 
 //------------------------------------------------------------------------------

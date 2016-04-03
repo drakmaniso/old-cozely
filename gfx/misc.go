@@ -20,7 +20,7 @@ import (
 
 //------------------------------------------------------------------------------
 
-func Viewport(orig, size geom.IVec2) {
+func Viewport(orig, size geom.Vec2) {
 	C.Viewport(C.GLint(orig.X), C.GLint(orig.Y), C.GLsizei(size.X), C.GLsizei(size.Y))
 }
 

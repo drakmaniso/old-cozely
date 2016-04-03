@@ -65,11 +65,11 @@ func dispatch(e unsafe.Pointer) {
 		case C.SDL_WINDOWEVENT_MOVED:
 			// Ignore
 		case C.SDL_WINDOWEVENT_RESIZED:
-			internal.Window.Width = int32(e.data1)
-			internal.Window.Height = int32(e.data2)
-			gfx.Viewport(geom.IVec2{X: 0, Y: 0}, geom.IVec2{X: int32(e.data1), Y: int32(e.data2)})
+			internal.Window.Width = float32(e.data1)
+			internal.Window.Height = float32(e.data2)
+			gfx.Viewport(geom.Vec2{X: 0, Y: 0}, geom.Vec2{X: float32(e.data1), Y: float32(e.data2)})
 			window.Handler.WindowResized(
-				geom.IVec2{X: int32(e.data1), Y: int32(e.data2)},
+				geom.Vec2{X: float32(e.data1), Y: float32(e.data2)},
 				ts,
 			)
 		case C.SDL_WINDOWEVENT_SIZE_CHANGED:
@@ -119,9 +119,9 @@ func dispatch(e unsafe.Pointer) {
 	// Mouse Events
 	case C.SDL_MOUSEMOTION:
 		e := (*C.SDL_MouseMotionEvent)(e)
-		rel := geom.IVec2{X: int32(e.xrel), Y: int32(e.yrel)}
+		rel := geom.Vec2{X: float32(e.xrel), Y: float32(e.yrel)}
 		internal.MouseDelta = internal.MouseDelta.Plus(rel)
-		internal.MousePosition = geom.IVec2{X: int32(e.x), Y: int32(e.y)}
+		internal.MousePosition = geom.Vec2{X: float32(e.x), Y: float32(e.y)}
 		internal.MouseButtons = uint32(e.state)
 		mouse.Handler.MouseMotion(
 			rel,
@@ -144,12 +144,12 @@ func dispatch(e unsafe.Pointer) {
 		)
 	case C.SDL_MOUSEWHEEL:
 		e := (*C.SDL_MouseWheelEvent)(e)
-		var d int32 = 1
+		var d float32 = 1
 		if e.direction == C.SDL_MOUSEWHEEL_FLIPPED {
 			d = -1
 		}
 		mouse.Handler.MouseWheel(
-			geom.IVec2{X: int32(e.x) * d, Y: int32(e.y) * d},
+			geom.Vec2{X: float32(e.x) * d, Y: float32(e.y) * d},
 			ts,
 		)
 	//TODO: Joystick Events

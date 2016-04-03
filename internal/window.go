@@ -22,8 +22,8 @@ import "C"
 var Window struct {
 	window  *C.SDL_Window
 	context C.SDL_GLContext
-	Width   int32
-	Height  int32
+	Width   float32
+	Height  float32
 }
 
 // Focus state
@@ -37,7 +37,7 @@ var (
 // OpenWindow creates the game window and its associated OpenGL context.
 func OpenWindow(
 	title string,
-	resolution [2]int32,
+	resolution [2]float32,
 	display int,
 	fullscreen bool,
 	fullscreenMode string,

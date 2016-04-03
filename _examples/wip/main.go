@@ -119,13 +119,13 @@ func newGame() *game {
 
 //------------------------------------------------------------------------------
 
-func (g *game) WindowResized(s IVec2, timestamp time.Duration) {
-	r := float32(s.X) / float32(s.Y)
+func (g *game) WindowResized(s Vec2, timestamp time.Duration) {
+	r := s.X / s.Y
 	g.projection = space.Perspective(math.Pi/4, r, 0.001, 1000.0)
 }
 
-func (g *game) MouseWheel(motion IVec2, timestamp time.Duration) {
-	g.distance -= float32(motion.Y) / 4
+func (g *game) MouseWheel(motion Vec2, timestamp time.Duration) {
+	g.distance -= motion.Y / 4
 	g.updateView()
 }
 
@@ -137,22 +137,22 @@ func (g *game) MouseButtonUp(b mouse.Button, clicks int, timestamp time.Duration
 	mouse.SetRelativeMode(false)
 }
 
-func (g *game) MouseMotion(motion IVec2, position IVec2, timestamp time.Duration) {
-	s := window.Size().Float()
+func (g *game) MouseMotion(motion Vec2, position Vec2, timestamp time.Duration) {
+	s := window.Size()
 	switch {
 	case mouse.IsPressed(mouse.Left):
-		g.yaw += 4 * float32(motion.X) / s.X
-		g.pitch += 4 * float32(motion.Y) / s.Y
+		g.yaw += 4 * motion.X / s.X
+		g.pitch += 4 * motion.Y / s.Y
 		switch {
 		case g.pitch < -math.Pi/2+0.01:
 			g.pitch = -math.Pi/2 + 0.01
-		case g.pitch > math.Pi/2-0.01:
-			g.pitch = math.Pi/2 - 0.01
+		case g.pitch > +math.Pi/2-0.01:
+			g.pitch = +math.Pi/2 - 0.01
 		}
 		g.updateModel()
 	case mouse.IsPressed(mouse.Middle):
-		g.position.X += 2 * float32(motion.X) / s.X
-		g.position.Y -= 2 * float32(motion.Y) / s.Y
+		g.position.X += 2 * motion.X / s.X
+		g.position.Y -= 2 * motion.Y / s.Y
 		g.updateModel()
 	}
 }

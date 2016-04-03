@@ -17,8 +17,8 @@ var QuitRequested = false
 
 var KeyState [512]bool
 
-var MouseDelta geom.IVec2
-var MousePosition geom.IVec2
+var MouseDelta geom.Vec2
+var MousePosition geom.Vec2
 var MouseButtons uint32
 
 //------------------------------------------------------------------------------

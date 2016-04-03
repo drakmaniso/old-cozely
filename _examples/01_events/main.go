@@ -47,7 +47,7 @@ func (g *game) KeyUp(l key.Label, p key.Position, ts time.Duration) {
 	fmt.Println("*** Key Up: ", l, p, ts)
 }
 
-func (g *game) MouseMotion(rel geom.IVec2, pos geom.IVec2, ts time.Duration) {
+func (g *game) MouseMotion(rel geom.Vec2, pos geom.Vec2, ts time.Duration) {
 	fmt.Println("*** Mouse Motion: ", rel, pos, ts)
 }
 
@@ -62,7 +62,7 @@ func (g *game) MouseButtonUp(b mouse.Button, clicks int, ts time.Duration) {
 	fmt.Println("*** Mouse Button Up: ", b, clicks, ts)
 }
 
-func (g *game) MouseWheel(w geom.IVec2, ts time.Duration) {
+func (g *game) MouseWheel(w geom.Vec2, ts time.Duration) {
 	fmt.Println("*** Mouse Wheel: ", w, ts)
 }
 
@@ -74,7 +74,7 @@ func (g *game) WindowHidden(ts time.Duration) {
 	fmt.Println("*** Window Hidden: ", ts)
 }
 
-func (g *game) WindowResized(s geom.IVec2, ts time.Duration) {
+func (g *game) WindowResized(s geom.Vec2, ts time.Duration) {
 	fmt.Println("*** Window Resized: ", s, ts)
 }
 
