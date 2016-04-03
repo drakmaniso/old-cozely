@@ -9,6 +9,7 @@ import (
 	"log"
 	"os"
 	"time"
+	"unsafe"
 
 	"github.com/drakmaniso/glam"
 	"github.com/drakmaniso/glam/basic"
@@ -26,8 +27,12 @@ import (
 func main() {
 	g := newGame()
 
+	glam.Loop = g
+	window.Handle = g
+	mouse.Handle = g
+
 	// Run the Game Loop
-	err := glam.Run(g)
+	err := glam.Run()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -91,7 +96,7 @@ func newGame() *game {
 	g.pipeline.ClearColor(Vec4{0.9, 0.9, 0.9, 1.0})
 
 	// Create the Uniform Buffer
-	g.transform, err = gfx.NewBuffer(uintptr(64), gfx.DynamicStorage)
+	g.transform, err = gfx.NewBuffer(unsafe.Sizeof(perObject{}), gfx.DynamicStorage)
 	if err != nil {
 		log.Fatal(err)
 	}

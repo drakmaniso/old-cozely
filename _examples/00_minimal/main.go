@@ -16,7 +16,9 @@ import (
 func main() {
 	g := &game{}
 
-	err := glam.Run(g)
+	glam.Loop = g
+
+	err := glam.Run()
 	if err != nil {
 		log.Fatal(err)
 	}

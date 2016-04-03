@@ -29,35 +29,25 @@ var Loop Looper
 
 //------------------------------------------------------------------------------
 
-// Run opens the game window and runs a game loop, until Stop() is called.
-//
-// If the Looper is also a window, mouse or key Handler, it is set as the
-// corresponding Handle.
+// Run opens the game window and runs the Loop, until Stop() is called.
 //
 // Important: must be called from main.main, or at least from a function that is
 // known to run on the main OS thread.
-func Run(l Looper) error {
+func Run() error {
 	if internal.InitError != nil {
 		return internal.InitError
 	}
 	defer internal.SDLQuit()
 	defer internal.DestroyWindow()
 
-	// Setup Handlers
-	Loop = l
-	if h, ok := l.(window.Handler); ok {
-		window.Handle = h
-	} else {
+	// Setup Fallback Handlers
+	if window.Handle == nil {
 		window.Handle = basic.WindowHandler{}
 	}
-	if h, ok := l.(mouse.Handler); ok {
-		mouse.Handle = h
-	} else {
+	if mouse.Handle == nil {
 		mouse.Handle = basic.MouseHandler{}
 	}
-	if h, ok := l.(key.Handler); ok {
-		key.Handle = h
-	} else {
+	if key.Handle == nil {
 		key.Handle = basic.KeyHandler{}
 	}
 

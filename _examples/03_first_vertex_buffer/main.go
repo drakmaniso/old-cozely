@@ -54,6 +54,32 @@ void main(void) {
 //------------------------------------------------------------------------------
 
 func main() {
+	g := newGame()
+
+	glam.Loop = g
+
+	// Run the Game Loop
+	err := glam.Run()
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+//------------------------------------------------------------------------------
+
+type perVertex struct {
+	position Vec2      `layout:"0"`
+	color    color.RGB `layout:"1"`
+}
+
+type game struct {
+	pipeline gfx.Pipeline
+	triangle gfx.Buffer
+}
+
+//------------------------------------------------------------------------------
+
+func newGame() *game {
 	g := &game{}
 
 	// Setup the Pipeline
@@ -86,26 +112,10 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// Run the Game Loop
-	err = glam.Run(g)
-	if err != nil {
-		log.Fatal(err)
-	}
+	return g
 }
 
 //------------------------------------------------------------------------------
-
-type perVertex struct {
-	position Vec2      `layout:"0"`
-	color    color.RGB `layout:"1"`
-}
-
-//------------------------------------------------------------------------------
-
-type game struct {
-	pipeline gfx.Pipeline
-	triangle gfx.Buffer
-}
 
 func (g *game) Update() {
 }

@@ -8,6 +8,7 @@ package main
 import (
 	"log"
 	"strings"
+	"unsafe"
 
 	"github.com/drakmaniso/glam"
 	"github.com/drakmaniso/glam/color"
@@ -60,9 +61,39 @@ void main(void) {
 //------------------------------------------------------------------------------
 
 func main() {
-	g := &game{}
+	g := newGame()
 
-	var err error
+	glam.Loop = g
+
+	// Run the Game Loop
+	err := glam.Run()
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+//------------------------------------------------------------------------------
+
+type game struct {
+	pipeline  gfx.Pipeline
+	transform gfx.Buffer
+	triangle  gfx.Buffer
+	angle     float32
+}
+
+type perVertex struct {
+	position Vec2      `layout:"0"`
+	color    color.RGB `layout:"1"`
+}
+
+type perObject struct {
+	transform Mat3x4
+}
+
+//------------------------------------------------------------------------------
+
+func newGame() *game {
+	g := &game{}
 
 	// Setup the Pipeline
 	vs, err := gfx.NewVertexShader(vertexShader)
@@ -84,7 +115,7 @@ func main() {
 	g.pipeline.ClearColor(Vec4{0.9, 0.9, 0.9, 1.0})
 
 	// Create the Uniform Buffer
-	g.transform, err = gfx.NewBuffer(uintptr(64), gfx.DynamicStorage)
+	g.transform, err = gfx.NewBuffer(unsafe.Sizeof(perObject{}), gfx.DynamicStorage)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -100,43 +131,20 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// Run the Game Loop
-	err = glam.Run(g)
-	if err != nil {
-		log.Fatal(err)
-	}
+	return g
 }
 
 //------------------------------------------------------------------------------
-
-type perVertex struct {
-	position Vec2      `layout:"0"`
-	color    color.RGB `layout:"1"`
-}
-
-type perObject struct {
-	transform Mat3x4
-}
-
-//------------------------------------------------------------------------------
-
-type game struct {
-	pipeline  gfx.Pipeline
-	transform gfx.Buffer
-	triangle  gfx.Buffer
-}
-
-var angle float32
 
 func (g *game) Update() {
-	angle -= 0.01
+	g.angle -= 0.01
 }
 
 func (g *game) Draw() {
 	g.pipeline.Bind()
 	g.pipeline.UniformBuffer(0, g.transform)
 
-	m := plane.Rotation(angle)
+	m := plane.Rotation(g.angle)
 	t := perObject{
 		transform: m.Mat3x4(),
 	}

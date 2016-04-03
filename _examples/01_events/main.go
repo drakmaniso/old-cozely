@@ -14,6 +14,7 @@ import (
 	"github.com/drakmaniso/glam/geom"
 	"github.com/drakmaniso/glam/key"
 	"github.com/drakmaniso/glam/mouse"
+	"github.com/drakmaniso/glam/window"
 )
 
 //------------------------------------------------------------------------------
@@ -21,7 +22,12 @@ import (
 func main() {
 	g := &game{}
 
-	err := glam.Run(g)
+	glam.Loop = g
+	window.Handle = g
+	mouse.Handle = g
+	key.Handle = g
+
+	err := glam.Run()
 	if err != nil {
 		log.Fatal(err)
 	}

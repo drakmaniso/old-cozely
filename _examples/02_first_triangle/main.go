@@ -48,6 +48,26 @@ void main(void)
 //------------------------------------------------------------------------------
 
 func main() {
+	g := newGame()
+
+	glam.Loop = g
+
+	// Run the Game Loop
+	err := glam.Run()
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+//------------------------------------------------------------------------------
+
+type game struct {
+	pipeline gfx.Pipeline
+}
+
+//------------------------------------------------------------------------------
+
+func newGame() *game {
 	g := &game{}
 
 	// Setup the Pipeline
@@ -65,18 +85,10 @@ func main() {
 	}
 	g.pipeline.ClearColor(Vec4{0.9, 0.9, 0.9, 1.0})
 
-	// Run the Game Loop
-	err = glam.Run(g)
-	if err != nil {
-		log.Fatal(err)
-	}
+	return g
 }
 
 //------------------------------------------------------------------------------
-
-type game struct {
-	pipeline gfx.Pipeline
-}
 
 func (g *game) Update() {
 }
