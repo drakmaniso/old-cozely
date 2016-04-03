@@ -21,7 +21,7 @@ import (
 
 //------------------------------------------------------------------------------
 
-var Path = filepath.Dir(os.Args[0])
+var Path = filepath.Dir(os.Args[0]) + "/"
 
 var config = struct {
 	Title          string
@@ -79,7 +79,7 @@ func init() {
 }
 
 func loadConfig() {
-	f, err := os.Open(Path + "/init.json")
+	f, err := os.Open(Path + "init.json")
 	if err != nil {
 		InitError = fmt.Errorf(`impossible to open configuration file "init.json": %s`, err)
 		return
