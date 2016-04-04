@@ -44,14 +44,14 @@ type game struct {
 	basic.WindowHandler
 	basic.MouseHandler
 
+	pipeline  gfx.Pipeline
+	transform gfx.Buffer
+	cube      gfx.Buffer
+
 	distance                float32
 	position                Vec3
 	yaw, pitch              float32
 	model, view, projection Mat4
-
-	pipeline  gfx.Pipeline
-	transform gfx.Buffer
-	cube      gfx.Buffer
 }
 
 type perVertex struct {
@@ -140,17 +140,19 @@ func (g *game) MouseButtonUp(b mouse.Button, clicks int, timestamp time.Duration
 
 func (g *game) MouseMotion(motion Vec2, position Vec2, timestamp time.Duration) {
 	s := window.Size()
+
 	switch {
 	case mouse.IsPressed(mouse.Left):
 		g.yaw += 4 * motion.X / s.X
 		g.pitch += 4 * motion.Y / s.Y
 		switch {
-		case g.pitch < -math.Pi/2+0.01:
-			g.pitch = -math.Pi/2 + 0.01
-		case g.pitch > +math.Pi/2-0.01:
-			g.pitch = +math.Pi/2 - 0.01
+		case g.pitch < -math.Pi/2:
+			g.pitch = -math.Pi / 2
+		case g.pitch > +math.Pi/2:
+			g.pitch = +math.Pi / 2
 		}
 		g.updateModel()
+
 	case mouse.IsPressed(mouse.Middle):
 		g.position.X += 2 * motion.X / s.X
 		g.position.Y -= 2 * motion.Y / s.Y

@@ -78,7 +78,8 @@ type game struct {
 	pipeline  gfx.Pipeline
 	transform gfx.Buffer
 	triangle  gfx.Buffer
-	angle     float32
+
+	angle float32
 }
 
 type perVertex struct {
