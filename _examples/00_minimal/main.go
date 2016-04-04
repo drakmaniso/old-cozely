@@ -5,11 +5,7 @@ package main
 
 //------------------------------------------------------------------------------
 
-import (
-	"log"
-
-	"github.com/drakmaniso/glam"
-)
+import "github.com/drakmaniso/glam"
 
 //------------------------------------------------------------------------------
 
@@ -20,7 +16,7 @@ func main() {
 
 	err := glam.Run()
 	if err != nil {
-		log.Fatal(err)
+		glam.Fatal(err)
 	}
 }
 

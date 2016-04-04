@@ -6,6 +6,8 @@ package glam
 //------------------------------------------------------------------------------
 
 import (
+	"fmt"
+	"os"
 	"time"
 
 	"github.com/drakmaniso/glam/basic"
@@ -96,6 +98,17 @@ func Stop() {
 // Path returns the executable path.
 func Path() string {
 	return internal.Path
+}
+
+//------------------------------------------------------------------------------
+
+// Fatal displays an error dialog box, then quit.
+func Fatal(e error) {
+	err := internal.ErrorDialog(e.Error())
+	if err != nil {
+		fmt.Fprintln(os.Stderr, e.Error())
+	}
+	os.Exit(1)
 }
 
 //------------------------------------------------------------------------------

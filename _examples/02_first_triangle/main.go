@@ -6,7 +6,6 @@ package main
 //------------------------------------------------------------------------------
 
 import (
-	"log"
 	"strings"
 
 	"github.com/drakmaniso/glam"
@@ -55,7 +54,7 @@ func main() {
 	// Run the Game Loop
 	err := glam.Run()
 	if err != nil {
-		log.Fatal(err)
+		glam.Fatal(err)
 	}
 }
 
@@ -73,15 +72,15 @@ func newGame() *game {
 	// Setup the Pipeline
 	vs, err := gfx.NewVertexShader(vertexShader)
 	if err != nil {
-		log.Fatal(err)
+		glam.Fatal(err)
 	}
 	fs, err := gfx.NewFragmentShader(fragmentShader)
 	if err != nil {
-		log.Fatal(err)
+		glam.Fatal(err)
 	}
 	g.pipeline, err = gfx.NewPipeline(vs, fs)
 	if err != nil {
-		log.Fatal(err)
+		glam.Fatal(err)
 	}
 	g.pipeline.ClearColor(Vec4{0.9, 0.9, 0.9, 1.0})
 

@@ -6,7 +6,6 @@ package main
 //------------------------------------------------------------------------------
 
 import (
-	"log"
 	"os"
 	"time"
 	"unsafe"
@@ -34,7 +33,7 @@ func main() {
 	// Run the Game Loop
 	err := glam.Run()
 	if err != nil {
-		log.Fatal(err)
+		glam.Fatal(err)
 	}
 }
 
@@ -71,40 +70,40 @@ func newGame() *game {
 	// Setup the Pipeline
 	vf, err := os.Open(glam.Path() + "shader.vert")
 	if err != nil {
-		log.Fatal(err)
+		glam.Fatal(err)
 	}
 	vs, err := gfx.NewVertexShader(vf)
 	if err != nil {
-		log.Fatal(err)
+		glam.Fatal(err)
 	}
 	ff, err := os.Open(glam.Path() + "shader.frag")
 	if err != nil {
-		log.Fatal(err)
+		glam.Fatal(err)
 	}
 	fs, err := gfx.NewFragmentShader(ff)
 	if err != nil {
-		log.Fatal(err)
+		glam.Fatal(err)
 	}
 	g.pipeline, err = gfx.NewPipeline(vs, fs)
 	if err != nil {
-		log.Fatal(err)
+		glam.Fatal(err)
 	}
 	err = g.pipeline.VertexFormat(0, perVertex{})
 	if err != nil {
-		log.Fatal(err)
+		glam.Fatal(err)
 	}
 	g.pipeline.ClearColor(Vec4{0.9, 0.9, 0.9, 1.0})
 
 	// Create the Uniform Buffer
 	g.transform, err = gfx.NewBuffer(unsafe.Sizeof(perObject{}), gfx.DynamicStorage)
 	if err != nil {
-		log.Fatal(err)
+		glam.Fatal(err)
 	}
 
 	// Create and fill the Vertex Buffer
 	g.cube, err = gfx.NewBuffer(cube(), 0)
 	if err != nil {
-		log.Fatal(err)
+		glam.Fatal(err)
 	}
 
 	// Initialize model and view matrices

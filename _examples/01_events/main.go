@@ -7,7 +7,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"time"
 
 	"github.com/drakmaniso/glam"
@@ -29,7 +28,7 @@ func main() {
 
 	err := glam.Run()
 	if err != nil {
-		log.Fatal(err)
+		glam.Fatal(err)
 	}
 }
 
