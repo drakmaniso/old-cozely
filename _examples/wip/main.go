@@ -6,13 +6,14 @@ package main
 //------------------------------------------------------------------------------
 
 import (
+	"image"
+	_ "image/png"
 	"os"
 	"time"
 	"unsafe"
 
 	"github.com/drakmaniso/glam"
 	"github.com/drakmaniso/glam/basic"
-	"github.com/drakmaniso/glam/color"
 	. "github.com/drakmaniso/glam/geom"
 	"github.com/drakmaniso/glam/geom/space"
 	"github.com/drakmaniso/glam/gfx"
@@ -46,6 +47,7 @@ type game struct {
 	pipeline  gfx.Pipeline
 	transform gfx.Buffer
 	cube      gfx.Buffer
+	diffuse   gfx.Texture
 
 	distance                float32
 	position                Vec3
@@ -54,8 +56,8 @@ type game struct {
 }
 
 type perVertex struct {
-	position Vec3      `layout:"0"`
-	color    color.RGB `layout:"1"`
+	position Vec3 `layout:"0"`
+	uv       Vec2 `layout:"1"`
 }
 
 type perObject struct {
@@ -105,6 +107,26 @@ func newGame() *game {
 	if err != nil {
 		glam.Fatal(err)
 	}
+
+	// Create and bind the sampler
+	// s = gfx.NewSampler()
+	// s.Filter(gfx.LinearMipmapLinear, gfx.Linear)
+	// s.LoD(-1000, 1000)
+	// s.Wrap(gfx.Repeat, gfx.Repeat, gfx.Repeat)
+	// s.BorderColor(color.RGBA(1, 1, 1, 1))
+	// s.CompareMode(gfx.None)
+	// s.CompareFunc(gfx.LEqual)
+	// g.pipeline.Sampler(0, s)
+
+	// Create and load the textures
+	g.diffuse = gfx.NewTexture2D(1, IVec2{256, 256}, gfx.RGBA8)
+	r, err := os.Open(glam.Path() + "diffuse.png")
+	if err != nil {
+		glam.Fatal(err)
+	}
+	defer r.Close()
+	img, _, err := image.Decode(r)
+	g.diffuse.Data(img, IVec2{0, 0}, 0)
 
 	// Initialize model and view matrices
 	g.position = Vec3{0, 0, 0}
@@ -190,6 +212,7 @@ func (g *game) Draw() {
 	g.transform.Update(&t, 0)
 
 	g.pipeline.VertexBuffer(0, g.cube, 0)
+	g.pipeline.Texture(0, g.diffuse)
 	gfx.Draw(gfx.Triangles, 0, 6*2*3)
 }
 

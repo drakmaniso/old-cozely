@@ -1,11 +1,13 @@
 #version 450 core
 
+layout(binding = 0) uniform sampler2D Diffuse;
+
 in PerVertex {
-	layout(location = 0) in vec3 Color;
+	layout(location = 0) vec2 UV;
 } vert;
 
 out vec4 Color;
 
 void main(void) {
-	Color = vec4(vert.Color, 1);
+	Color = texture(Diffuse, vert.UV);
 }
