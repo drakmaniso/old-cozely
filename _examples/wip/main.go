@@ -109,17 +109,17 @@ func newGame() *game {
 	}
 
 	// Create and bind the sampler
-	// s = gfx.NewSampler()
-	// s.Filter(gfx.LinearMipmapLinear, gfx.Linear)
-	// s.LoD(-1000, 1000)
+	s := gfx.NewSampler()
+	s.Filter(gfx.LinearMipmapLinear, gfx.Linear)
+	s.Anisotropy(16.0)
 	// s.Wrap(gfx.Repeat, gfx.Repeat, gfx.Repeat)
 	// s.BorderColor(color.RGBA(1, 1, 1, 1))
 	// s.CompareMode(gfx.None)
 	// s.CompareFunc(gfx.LEqual)
-	// g.pipeline.Sampler(0, s)
+	g.pipeline.Sampler(0, s)
 
 	// Create and load the textures
-	g.diffuse = gfx.NewTexture2D(1, IVec2{256, 256}, gfx.RGBA8)
+	g.diffuse = gfx.NewTexture2D(8, IVec2{1024, 1024}, gfx.RGBA8)
 	r, err := os.Open(glam.Path() + "diffuse.png")
 	if err != nil {
 		glam.Fatal(err)
@@ -127,6 +127,7 @@ func newGame() *game {
 	defer r.Close()
 	img, _, err := image.Decode(r)
 	g.diffuse.Data(img, IVec2{0, 0}, 0)
+	g.diffuse.GenerateMipmap()
 
 	// Initialize model and view matrices
 	g.position = Vec3{0, 0, 0}

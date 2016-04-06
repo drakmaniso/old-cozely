@@ -36,6 +36,10 @@ static inline void TextureSubImage2D(
 	glTextureSubImage2D(texture, level, xoffset, yoffset, width, height, format, type, pixels);
 }
 
+static inline void TextureGenerateMipmap(GLuint texture) {
+	glGenerateTextureMipmap(texture);
+}
+
 static inline void BindTextureUnit(GLuint unit, GLuint texture) {
 	glBindTextureUnit(unit, texture);
 }
@@ -55,6 +59,7 @@ func NewTexture2D(levels int32, size geom.IVec2, f textureFormat) Texture {
 	var t Texture
 	t.format = f
 	t.object = C.NewTexture2D(C.GLsizei(levels), C.GLenum(f), C.GLsizei(size.X), C.GLsizei(size.Y))
+	//TODO: error handling?
 	return t
 }
 
@@ -76,6 +81,12 @@ func (t *Texture) Data(img image.Image, offset geom.IVec2, level int32) {
 		pt = C.GL_UNSIGNED_BYTE
 	}
 	C.TextureSubImage2D(t.object, C.GLint(level), C.GLint(offset.X), C.GLint(offset.Y), C.GLsizei(img.Bounds().Dx()), C.GLsizei(img.Bounds().Dy()), pf, pt, p)
+}
+
+//------------------------------------------------------------------------------
+
+func (t *Texture) GenerateMipmap() {
+	C.TextureGenerateMipmap(t.object)
 }
 
 //------------------------------------------------------------------------------
