@@ -4,6 +4,7 @@
 **This is a work in progress, still very incomplete.**
 
 [![GoDoc](https://godoc.org/github.com/drakmaniso/glam?status.svg)](https://godoc.org/github.com/drakmaniso/glam)
+[![Go Report Card](https://goreportcard.com/badge/github.com/drakmaniso/glam)](https://goreportcard.com/report/github.com/drakmaniso/glam)
 
 Glam is a minimalist framework for making games in Go. It provides simple
 abstractions to access to the hardware, and tries to find a balance between
