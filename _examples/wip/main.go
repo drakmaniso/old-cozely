@@ -119,8 +119,8 @@ func newGame() *game {
 	g.pipeline.Sampler(0, s)
 
 	// Create and load the textures
-	g.diffuse = gfx.NewTexture2D(8, IVec2{1024, 1024}, gfx.RGBA8)
-	r, err := os.Open(glam.Path() + "diffuse.png")
+	g.diffuse = gfx.NewTexture2D(8, IVec2{512, 512}, gfx.SRGBA8)
+	r, err := os.Open(glam.Path() + "../shared/testpattern.png")
 	if err != nil {
 		glam.Fatal(err)
 	}

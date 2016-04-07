@@ -66,7 +66,8 @@ func NewTexture2D(levels int32, size geom.IVec2, f textureFormat) Texture {
 type textureFormat C.GLenum
 
 const (
-	RGBA8 textureFormat = C.GL_RGBA8
+	RGBA8  textureFormat = C.GL_RGBA8
+	SRGBA8 textureFormat = C.GL_SRGB8_ALPHA8
 )
 
 //------------------------------------------------------------------------------
@@ -75,7 +76,12 @@ func (t *Texture) Data(img image.Image, offset geom.IVec2, level int32) {
 	var p unsafe.Pointer
 	var pf, pt C.GLenum
 	switch img := img.(type) {
+	//TODO: other formats
 	case *image.RGBA:
+		p = unsafe.Pointer(&img.Pix[0])
+		pf = C.GL_RGBA
+		pt = C.GL_UNSIGNED_BYTE
+	case *image.NRGBA:
 		p = unsafe.Pointer(&img.Pix[0])
 		pf = C.GL_RGBA
 		pt = C.GL_UNSIGNED_BYTE
