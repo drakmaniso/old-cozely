@@ -99,7 +99,7 @@ func (p *Pipeline) VertexFormat(binding uint32, format interface{}) error {
 		C.VertexAttribute(
 			p.vao,
 			C.GLuint(ali),
-			C.GLuint(0), //TODO
+			C.GLuint(binding),
 			C.GLint(as),
 			ate,
 			C.GLboolean(0), //TODO
