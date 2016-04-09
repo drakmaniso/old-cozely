@@ -81,7 +81,7 @@ import "C"
 
 // A Pipeline consists of shaders and state for the GPU.
 type Pipeline struct {
-	pipeline     C.GLuint
+	object       C.GLuint
 	vao          C.GLuint
 	clearColor   [4]float32
 	attribStride map[uint32]uintptr
@@ -92,8 +92,8 @@ type Pipeline struct {
 // NewPipeline returns a pipeline with created from a specific set of shaders.
 func NewPipeline(s ...Shader) (Pipeline, error) {
 	var p Pipeline
-	p.pipeline = C.NewPipeline() //TODO: Error Handling
-	p.vao = C.CreateVAO()        //TODO: Error Handling
+	p.object = C.NewPipeline() //TODO: Error Handling
+	p.vao = C.CreateVAO()      //TODO: Error Handling
 	p.attribStride = make(map[uint32]uintptr)
 	for _, s := range s {
 		if err := p.useShader(s); err != nil {
@@ -104,8 +104,8 @@ func NewPipeline(s ...Shader) (Pipeline, error) {
 }
 
 func (p *Pipeline) useShader(s Shader) error {
-	C.PipelineUseShader(p.pipeline, s.stages, s.shader)
-	if errm := C.PipelineLinkError(p.pipeline); errm != nil {
+	C.PipelineUseShader(p.object, s.stages, s.shader)
+	if errm := C.PipelineLinkError(p.object); errm != nil {
 		defer C.free(unsafe.Pointer(errm))
 		return fmt.Errorf("shader link error:\n    %s", errors.New(C.GoString(errm)))
 	}
@@ -127,7 +127,7 @@ func (p *Pipeline) ClearColor(color geom.Vec4) {
 // UniformBuffer binds a buffer to a uniform binding index. This index should
 // correspond to one indicated by a layout qualifier in the shaders.
 func (p *Pipeline) UniformBuffer(binding uint32, b Buffer) {
-	C.UniformBuffer(C.GLuint(binding), b.buffer)
+	C.UniformBuffer(C.GLuint(binding), b.object)
 }
 
 //------------------------------------------------------------------------------
@@ -135,7 +135,7 @@ func (p *Pipeline) UniformBuffer(binding uint32, b Buffer) {
 // Bind the pipeline for use by the GPU in all following draw commands.
 func (p *Pipeline) Bind() {
 	C.BindPipeline(
-		p.pipeline,
+		p.object,
 		p.vao,
 		(*C.GLfloat)(unsafe.Pointer(&p.clearColor[0])),
 	)
@@ -145,7 +145,7 @@ func (p *Pipeline) Bind() {
 
 // Close the pipeline.
 func (p *Pipeline) Close() {
-	C.ClosePipeline(p.pipeline, p.vao)
+	C.ClosePipeline(p.object, p.vao)
 }
 
 //------------------------------------------------------------------------------

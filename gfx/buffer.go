@@ -31,7 +31,7 @@ import "C"
 
 // A Buffer is a block of memory owned by the GPU.
 type Buffer struct {
-	buffer C.GLuint
+	object C.GLuint
 }
 
 //------------------------------------------------------------------------------
@@ -54,7 +54,7 @@ func NewBuffer(data interface{}, f bufferFlags) (Buffer, error) {
 		return Buffer{}, err
 	}
 	var b Buffer
-	b.buffer = C.NewBuffer(C.GLsizeiptr(s), p, C.GLenum(f))
+	b.object = C.NewBuffer(C.GLsizeiptr(s), p, C.GLenum(f))
 	//TODO: error handling
 	return b, nil
 }
@@ -67,7 +67,7 @@ func (b *Buffer) Update(data interface{}, atOffset uintptr) error {
 	if err != nil {
 		return err
 	}
-	C.UpdateBuffer(b.buffer, C.GLintptr(atOffset), C.GLsizei(s), p)
+	C.UpdateBuffer(b.object, C.GLintptr(atOffset), C.GLsizei(s), p)
 	return nil
 }
 

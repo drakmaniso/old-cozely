@@ -129,7 +129,7 @@ var (
 // The buffer should use the same struct type than the one used in the
 // corresponding call to VertexBufferFormat.
 func (p *Pipeline) VertexBuffer(binding uint32, b Buffer, offset uintptr) {
-	C.VertexBuffer(p.vao, C.GLuint(binding), b.buffer, C.GLintptr(offset), C.GLsizei(p.attribStride[binding]))
+	C.VertexBuffer(p.vao, C.GLuint(binding), b.object, C.GLintptr(offset), C.GLsizei(p.attribStride[binding]))
 }
 
 //------------------------------------------------------------------------------
