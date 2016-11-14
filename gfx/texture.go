@@ -48,6 +48,7 @@ import "C"
 
 //------------------------------------------------------------------------------
 
+// A Texture contains one or more images that all have the same format.
 type Texture struct {
 	object C.GLuint
 	format textureFormat
@@ -55,6 +56,7 @@ type Texture struct {
 
 //------------------------------------------------------------------------------
 
+// NewTexture2D returns a new 2-dimensional texture.
 func NewTexture2D(levels int32, size geom.IVec2, f textureFormat) Texture {
 	var t Texture
 	t.format = f
@@ -65,6 +67,7 @@ func NewTexture2D(levels int32, size geom.IVec2, f textureFormat) Texture {
 
 type textureFormat C.GLenum
 
+// Texture image formats.
 const (
 	RGBA8  textureFormat = C.GL_RGBA8
 	SRGBA8 textureFormat = C.GL_SRGB8_ALPHA8
@@ -72,6 +75,7 @@ const (
 
 //------------------------------------------------------------------------------
 
+// Data loads an image into a texture at a specific position offset and level.
 func (t *Texture) Data(img image.Image, offset geom.IVec2, level int32) {
 	var p unsafe.Pointer
 	var pf, pt C.GLenum
@@ -91,12 +95,14 @@ func (t *Texture) Data(img image.Image, offset geom.IVec2, level int32) {
 
 //------------------------------------------------------------------------------
 
+// GenerateMipmap generates mipmaps for the texture.
 func (t *Texture) GenerateMipmap() {
 	C.TextureGenerateMipmap(t.object)
 }
 
 //------------------------------------------------------------------------------
 
+// Texture binds a texture to a texture unit.
 func (p *Pipeline) Texture(index uint32, t Texture) {
 	C.BindTextureUnit(C.GLuint(index), t.object)
 }
