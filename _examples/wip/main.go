@@ -14,6 +14,7 @@ import (
 
 	"github.com/drakmaniso/glam"
 	"github.com/drakmaniso/glam/basic"
+	"github.com/drakmaniso/glam/color"
 	. "github.com/drakmaniso/glam/geom"
 	"github.com/drakmaniso/glam/geom/space"
 	"github.com/drakmaniso/glam/gfx"
@@ -112,10 +113,8 @@ func newGame() *game {
 	s := gfx.NewSampler()
 	s.Filter(gfx.LinearMipmapLinear, gfx.Linear)
 	s.Anisotropy(16.0)
-	// s.Wrap(gfx.Repeat, gfx.Repeat, gfx.Repeat)
-	// s.BorderColor(color.RGBA(1, 1, 1, 1))
-	// s.CompareMode(gfx.None)
-	// s.CompareFunc(gfx.LEqual)
+	s.Wrap(gfx.Repeat, gfx.Repeat, gfx.Repeat)        // Default
+	s.BorderColor(color.RGBA{R: 0, G: 0, B: 0, A: 0}) // Default
 	g.pipeline.Sampler(0, s)
 
 	// Create and load the textures
