@@ -77,10 +77,9 @@ import "C"
 
 // A Pipeline consists of shaders and state for the GPU.
 type Pipeline struct {
-	object       C.GLuint
-	vao          C.GLuint
-	clearColor   [4]float32
-	attribStride map[uint32]uintptr
+	object     C.GLuint
+	vao        C.GLuint
+	clearColor [4]float32
 }
 
 //------------------------------------------------------------------------------
@@ -90,7 +89,6 @@ func NewPipeline(s ...Shader) (Pipeline, error) {
 	var p Pipeline
 	p.object = C.NewPipeline() //TODO: Error Handling
 	p.vao = C.CreateVAO()      //TODO: Error Handling
-	p.attribStride = make(map[uint32]uintptr)
 	for _, s := range s {
 		if err := p.useShader(s); err != nil {
 			return p, err

@@ -46,8 +46,6 @@ func (p *Pipeline) VertexFormat(binding uint32, format interface{}) error {
 		return fmt.Errorf("attributes binding format must be a struct, not a %s", f.Kind())
 	}
 
-	p.attribStride[binding] = f.Size()
-
 	for i := 0; i < f.NumField(); i++ {
 		a := f.Field(i)
 		al := a.Tag.Get("layout")
