@@ -28,6 +28,10 @@ static inline void UpdateBuffer(GLuint buffer, GLintptr offset, GLsizei size, vo
 static inline void BindUniform(GLuint binding, GLuint buffer) {
 	glBindBufferBase(GL_UNIFORM_BUFFER, binding, buffer);
 }
+
+static inline void BindVertex(GLuint binding, GLuint buffer, GLintptr offset, GLsizei stride) {
+	glBindVertexBuffer(binding, buffer, offset, stride);
+}
 */
 import "C"
 
@@ -36,6 +40,7 @@ import "C"
 // A Buffer is a block of memory owned by the GPU.
 type Buffer struct {
 	object C.GLuint
+	stride uintptr
 }
 
 //------------------------------------------------------------------------------
@@ -53,13 +58,14 @@ type Buffer struct {
 //     MapPersistent
 //     MapCoherent
 func NewBuffer(data interface{}, f bufferFlags) (Buffer, error) {
-	s, p, err := sizeAndPointerOf(data)
+	s, p, st, err := sizeAndPointerOf(data)
 	if err != nil {
 		return Buffer{}, err
 	}
 	var b Buffer
 	b.object = C.NewBuffer(C.GLsizeiptr(s), p, C.GLenum(f))
 	//TODO: error handling
+	b.stride = st
 	return b, nil
 }
 
@@ -67,37 +73,45 @@ func NewBuffer(data interface{}, f bufferFlags) (Buffer, error) {
 // responsability to ensure that the size of data plus the offset does not
 // exceed the buffer size.
 func (b *Buffer) Update(data interface{}, atOffset uintptr) error {
-	s, p, err := sizeAndPointerOf(data)
+	s, p, st, err := sizeAndPointerOf(data)
 	if err != nil {
 		return err
 	}
 	C.UpdateBuffer(b.object, C.GLintptr(atOffset), C.GLsizei(s), p)
+	if b.stride == 0 {
+		// In case the stride was not specified at buffer creation.
+		b.stride = st
+	}
 	return nil
 }
 
-func sizeAndPointerOf(data interface{}) (size uintptr, ptr unsafe.Pointer, err error) {
+func sizeAndPointerOf(data interface{}) (size uintptr, ptr unsafe.Pointer, stride uintptr, err error) {
 	var s uintptr
+	var st uintptr
 	var p unsafe.Pointer
 	v := reflect.ValueOf(data)
 	k := v.Kind()
 	switch k {
 	case reflect.Uintptr:
 		s = uintptr(v.Uint())
+		st = 0
 		p = nil
 	case reflect.Slice:
 		l := v.Len()
 		if l == 0 {
-			return 0, nil, fmt.Errorf("buffer data cannot be an empty slice")
+			return 0, nil, 0, fmt.Errorf("buffer data cannot be an empty slice")
 		}
 		p = unsafe.Pointer(v.Pointer())
-		s = uintptr(l) * v.Index(0).Type().Size()
+		st = v.Index(0).Type().Size()
+		s = uintptr(l) * st
 	case reflect.Ptr:
 		p = unsafe.Pointer(v.Pointer())
+		st = 0
 		s = v.Elem().Type().Size()
 	default:
-		return 0, nil, fmt.Errorf("buffer data must be a slice or a pointer, not a %s", reflect.TypeOf(data).Kind())
+		return 0, nil, 0, fmt.Errorf("buffer data must be a slice or a pointer, not a %s", reflect.TypeOf(data).Kind())
 	}
-	return s, p, nil
+	return s, p, st, nil
 }
 
 //------------------------------------------------------------------------------
@@ -120,6 +134,16 @@ const (
 // correspond to one indicated by a layout qualifier in the shaders.
 func (b *Buffer) BindUniform(binding uint32) {
 	C.BindUniform(C.GLuint(binding), b.object)
+}
+
+//------------------------------------------------------------------------------
+
+// BindVertex binds the buffer to a vertex buffer binding index.
+//
+// The buffer should use the same struct type than the one used in the
+// corresponding call to Pipeline.VertexFormat.
+func (b *Buffer) BindVertex(binding uint32, offset uintptr) {
+	C.BindVertex(C.GLuint(binding), b.object, C.GLintptr(offset), C.GLsizei(b.stride))
 }
 
 //------------------------------------------------------------------------------
