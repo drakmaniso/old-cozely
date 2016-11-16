@@ -102,8 +102,8 @@ func (t *Texture) GenerateMipmap() {
 
 //------------------------------------------------------------------------------
 
-// Texture binds a texture to a texture unit.
-func (p *Pipeline) Texture(index uint32, t Texture) {
+// Bind to a texture unit.
+func (t *Texture) Bind(index uint32) {
 	C.BindTextureUnit(C.GLuint(index), t.object)
 }
 

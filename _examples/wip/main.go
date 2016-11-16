@@ -212,7 +212,7 @@ func (g *game) Draw() {
 	g.transform.Update(&t, 0)
 
 	g.pipeline.VertexBuffer(0, g.cube, 0)
-	g.pipeline.Texture(0, g.diffuse)
+	g.diffuse.Bind(0)
 	gfx.Draw(gfx.Triangles, 0, 6*2*3)
 }
 
