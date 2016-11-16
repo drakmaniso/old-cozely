@@ -70,10 +70,6 @@ static inline void BindPipeline(GLuint p, GLuint vao, GLfloat *c) {
 	glBindProgramPipeline(p);
 	glBindVertexArray(vao);
 }
-
-static inline void UniformBuffer(GLuint binding, GLuint buffer) {
-	glBindBufferBase(GL_UNIFORM_BUFFER, binding, buffer);
-}
 */
 import "C"
 
@@ -120,14 +116,6 @@ func (p *Pipeline) ClearColor(color geom.Vec4) {
 	p.clearColor[1] = color.Y
 	p.clearColor[2] = color.Z
 	p.clearColor[3] = color.W
-}
-
-//------------------------------------------------------------------------------
-
-// UniformBuffer binds a buffer to a uniform binding index. This index should
-// correspond to one indicated by a layout qualifier in the shaders.
-func (p *Pipeline) UniformBuffer(binding uint32, b Buffer) {
-	C.UniformBuffer(C.GLuint(binding), b.object)
 }
 
 //------------------------------------------------------------------------------

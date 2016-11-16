@@ -202,7 +202,7 @@ func (g *game) Update() {
 
 func (g *game) Draw() {
 	g.pipeline.Bind()
-	g.pipeline.UniformBuffer(0, g.transform)
+	g.transform.BindUniform(0)
 
 	mvp := g.projection.Times(g.view)
 	mvp = mvp.Times(g.model)

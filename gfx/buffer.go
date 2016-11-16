@@ -24,6 +24,10 @@ GLuint NewBuffer(GLsizeiptr size, void* data, GLenum flags) {
 static inline void UpdateBuffer(GLuint buffer, GLintptr offset, GLsizei size, void *data) {
 	glNamedBufferSubData(buffer, offset, size, data);
 }
+
+static inline void BindUniform(GLuint binding, GLuint buffer) {
+	glBindBufferBase(GL_UNIFORM_BUFFER, binding, buffer);
+}
 */
 import "C"
 
@@ -109,5 +113,13 @@ const (
 	DynamicStorage bufferFlags = 0x0100 // Content will be updated
 	ClientStorage  bufferFlags = 0x0200 // Prefer storage on application side
 )
+
+//------------------------------------------------------------------------------
+
+// BindUniform binds the buffer to a uniform binding index. This index should
+// correspond to one indicated by a layout qualifier in the shaders.
+func (b *Buffer) BindUniform(binding uint32) {
+	C.BindUniform(C.GLuint(binding), b.object)
+}
 
 //------------------------------------------------------------------------------
