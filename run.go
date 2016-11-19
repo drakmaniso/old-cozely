@@ -104,6 +104,7 @@ func Path() string {
 
 // Fatal displays an error dialog box, then quit.
 func Fatal(e error) {
+	//TODO: Don't use os.Exit. Probably replace glam.Fatal with glam.ErrorDialog.
 	err := internal.ErrorDialog(e.Error())
 	if err != nil {
 		fmt.Fprintln(os.Stderr, e.Error())
