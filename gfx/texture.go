@@ -48,35 +48,23 @@ import "C"
 
 //------------------------------------------------------------------------------
 
-// A Texture contains one or more images that all have the same format.
-type Texture struct {
+// A Texture2D contains one or more images that all have the same format.
+type Texture2D struct {
 	object C.GLuint
 	format textureFormat
 }
 
-//------------------------------------------------------------------------------
-
 // NewTexture2D returns a new 2-dimensional texture.
-func NewTexture2D(levels int32, size geom.IVec2, f textureFormat) Texture {
-	var t Texture
+func NewTexture2D(levels int32, size geom.IVec2, f textureFormat) Texture2D {
+	var t Texture2D
 	t.format = f
 	t.object = C.NewTexture2D(C.GLsizei(levels), C.GLenum(f), C.GLsizei(size.X), C.GLsizei(size.Y))
 	//TODO: error handling?
 	return t
 }
 
-type textureFormat C.GLenum
-
-// Texture image formats.
-const (
-	RGBA8  textureFormat = C.GL_RGBA8
-	SRGBA8 textureFormat = C.GL_SRGB8_ALPHA8
-)
-
-//------------------------------------------------------------------------------
-
 // Data loads an image into a texture at a specific position offset and level.
-func (t *Texture) Data(img image.Image, offset geom.IVec2, level int32) {
+func (t *Texture2D) Data(img image.Image, offset geom.IVec2, level int32) {
 	var p unsafe.Pointer
 	var pf, pt C.GLenum
 	switch img := img.(type) {
@@ -93,18 +81,24 @@ func (t *Texture) Data(img image.Image, offset geom.IVec2, level int32) {
 	C.TextureSubImage2D(t.object, C.GLint(level), C.GLint(offset.X), C.GLint(offset.Y), C.GLsizei(img.Bounds().Dx()), C.GLsizei(img.Bounds().Dy()), pf, pt, p)
 }
 
-//------------------------------------------------------------------------------
-
 // GenerateMipmap generates mipmaps for the texture.
-func (t *Texture) GenerateMipmap() {
+func (t *Texture2D) GenerateMipmap() {
 	C.TextureGenerateMipmap(t.object)
 }
 
-//------------------------------------------------------------------------------
-
 // Bind to a texture unit.
-func (t *Texture) Bind(index uint32) {
+func (t *Texture2D) Bind(index uint32) {
 	C.BindTextureUnit(C.GLuint(index), t.object)
 }
+
+//------------------------------------------------------------------------------
+
+type textureFormat C.GLenum
+
+// Texture image formats.
+const (
+	RGBA8  textureFormat = C.GL_RGBA8
+	SRGBA8 textureFormat = C.GL_SRGB8_ALPHA8
+)
 
 //------------------------------------------------------------------------------

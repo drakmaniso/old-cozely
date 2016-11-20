@@ -48,7 +48,7 @@ type game struct {
 	pipeline  gfx.Pipeline
 	transform gfx.UniformBuffer
 	cube      gfx.VertexBuffer
-	diffuse   gfx.Texture
+	diffuse   gfx.Texture2D
 
 	distance                float32
 	position                Vec3
