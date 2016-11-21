@@ -65,19 +65,7 @@ func NewTexture2D(levels int32, size geom.IVec2, f textureFormat) Texture2D {
 
 // Data loads an image into a texture at a specific position offset and level.
 func (t *Texture2D) Data(img image.Image, offset geom.IVec2, level int32) {
-	var p unsafe.Pointer
-	var pf, pt C.GLenum
-	switch img := img.(type) {
-	//TODO: other formats
-	case *image.RGBA:
-		p = unsafe.Pointer(&img.Pix[0])
-		pf = C.GL_RGBA
-		pt = C.GL_UNSIGNED_BYTE
-	case *image.NRGBA:
-		p = unsafe.Pointer(&img.Pix[0])
-		pf = C.GL_RGBA
-		pt = C.GL_UNSIGNED_BYTE
-	}
+	p, pf, pt := pointerFormatAndTypeOf(img)
 	C.TextureSubImage2D(t.object, C.GLint(level), C.GLint(offset.X), C.GLint(offset.Y), C.GLsizei(img.Bounds().Dx()), C.GLsizei(img.Bounds().Dy()), pf, pt, p)
 }
 
@@ -100,5 +88,20 @@ const (
 	RGBA8  textureFormat = C.GL_RGBA8
 	SRGBA8 textureFormat = C.GL_SRGB8_ALPHA8
 )
+
+func pointerFormatAndTypeOf(img image.Image) (p unsafe.Pointer, pformat C.GLenum, ptype C.GLenum) {
+	switch img := img.(type) {
+	//TODO: other formats
+	case *image.RGBA:
+		p = unsafe.Pointer(&img.Pix[0])
+		pformat = C.GL_RGBA
+		ptype = C.GL_UNSIGNED_BYTE
+	case *image.NRGBA:
+		p = unsafe.Pointer(&img.Pix[0])
+		pformat = C.GL_RGBA
+		ptype = C.GL_UNSIGNED_BYTE
+	}
+	return p, pformat, ptype
+}
 
 //------------------------------------------------------------------------------

@@ -50,7 +50,7 @@ type UniformBuffer struct {
 // to a struct of pure values (no nested references). In all cases the size of
 // the buffer is fixed at creation.
 func NewUniformBuffer(data interface{}, f bufferFlags) (UniformBuffer, error) {
-	s, p, err := sizeAndPointerOf(data)
+	p, s, err := pointerAndSizeOf(data)
 	if err != nil {
 		return UniformBuffer{}, err
 	}
@@ -66,31 +66,12 @@ func NewUniformBuffer(data interface{}, f bufferFlags) (UniformBuffer, error) {
 // It is your responsability to ensure that the size of data plus the offset
 // does not exceed the buffer size.
 func (ub *UniformBuffer) Update(data interface{}, atOffset uintptr) error {
-	s, p, err := sizeAndPointerOf(data)
+	p, s, err := pointerAndSizeOf(data)
 	if err != nil {
 		return err
 	}
 	C.UpdateBuffer(ub.object, C.GLintptr(atOffset), C.GLsizei(s), p)
 	return nil
-}
-
-func sizeAndPointerOf(data interface{}) (size uintptr, ptr unsafe.Pointer, err error) {
-	var s uintptr
-	var p unsafe.Pointer
-	v := reflect.ValueOf(data)
-	k := v.Kind()
-	switch k {
-	case reflect.Uintptr:
-		s = uintptr(v.Uint())
-		p = nil
-	case reflect.Ptr:
-		p = unsafe.Pointer(v.Pointer())
-		//TODO: check if pointer refer to a struct
-		s = v.Elem().Type().Size()
-	default:
-		return 0, nil, fmt.Errorf("%s instead of point-to-struct or uinptr", reflect.TypeOf(data).Kind())
-	}
-	return s, p, nil
 }
 
 // Bind to a uniform binding index.
@@ -116,7 +97,7 @@ type VertexBuffer struct {
 // pure values (no nested references). In all cases the size of the buffer is
 // fixed at creation.
 func NewVertexBuffer(data interface{}, f bufferFlags) (VertexBuffer, error) {
-	s, p, st, err := sizePointerAndStrideOf(data)
+	p, s, st, err := pointerSizeAndStrideOf(data)
 	if err != nil {
 		return VertexBuffer{}, err
 	}
@@ -131,7 +112,7 @@ func NewVertexBuffer(data interface{}, f bufferFlags) (VertexBuffer, error) {
 // responsability to ensure that the size of data plus the offset does not
 // exceed the buffer size.
 func (vb *VertexBuffer) Update(data interface{}, atOffset uintptr) error {
-	s, p, st, err := sizePointerAndStrideOf(data)
+	p, s, st, err := pointerSizeAndStrideOf(data)
 	if err != nil {
 		return err
 	}
@@ -142,31 +123,6 @@ func (vb *VertexBuffer) Update(data interface{}, atOffset uintptr) error {
 		vb.stride = st
 	}
 	return nil
-}
-
-func sizePointerAndStrideOf(data interface{}) (size uintptr, ptr unsafe.Pointer, stride uintptr, err error) {
-	var s uintptr
-	var st uintptr
-	var p unsafe.Pointer
-	v := reflect.ValueOf(data)
-	k := v.Kind()
-	switch k {
-	case reflect.Uintptr:
-		s = uintptr(v.Uint())
-		st = 0
-		p = nil
-	case reflect.Slice:
-		l := v.Len()
-		if l == 0 {
-			return 0, nil, 0, fmt.Errorf("buffer data cannot be an empty slice")
-		}
-		p = unsafe.Pointer(v.Pointer())
-		st = v.Index(0).Type().Size()
-		s = uintptr(l) * st
-	default:
-		return 0, nil, 0, fmt.Errorf("%s instead of slice or uintptr", reflect.TypeOf(data).Kind())
-	}
-	return s, p, st, nil
 }
 
 // Bind to a vertex buffer binding index.
@@ -191,5 +147,49 @@ const (
 	DynamicStorage bufferFlags = 0x0100 // Content will be updated
 	ClientStorage  bufferFlags = 0x0200 // Prefer storage on application side
 )
+
+func pointerAndSizeOf(data interface{}) (ptr unsafe.Pointer, size uintptr, err error) {
+	var p unsafe.Pointer
+	var s uintptr
+	v := reflect.ValueOf(data)
+	k := v.Kind()
+	switch k {
+	case reflect.Uintptr:
+		p = nil
+		s = uintptr(v.Uint())
+	case reflect.Ptr:
+		p = unsafe.Pointer(v.Pointer())
+		//TODO: check if pointer refer to a struct
+		s = v.Elem().Type().Size()
+	default:
+		return nil, 0, fmt.Errorf("%s instead of point-to-struct or uinptr", reflect.TypeOf(data).Kind())
+	}
+	return p, s, nil
+}
+
+func pointerSizeAndStrideOf(data interface{}) (ptr unsafe.Pointer, size uintptr, stride uintptr, err error) {
+	var p unsafe.Pointer
+	var s uintptr
+	var st uintptr
+	v := reflect.ValueOf(data)
+	k := v.Kind()
+	switch k {
+	case reflect.Uintptr:
+		p = nil
+		s = uintptr(v.Uint())
+		st = 0
+	case reflect.Slice:
+		l := v.Len()
+		if l == 0 {
+			return nil, 0, 0, fmt.Errorf("buffer data cannot be an empty slice")
+		}
+		p = unsafe.Pointer(v.Pointer())
+		st = v.Index(0).Type().Size()
+		s = uintptr(l) * st
+	default:
+		return nil, 0, 0, fmt.Errorf("%s instead of slice or uintptr", reflect.TypeOf(data).Kind())
+	}
+	return p, s, st, nil
+}
 
 //------------------------------------------------------------------------------
