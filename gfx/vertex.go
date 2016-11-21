@@ -31,10 +31,6 @@ void VertexAttribute(
 	glVertexArrayAttribBinding(vao, index, binding);
 	glEnableVertexArrayAttrib(vao, index);
 }
-
-static inline void VertexBuffer(GLuint vao, GLuint binding, GLuint buffer, GLintptr offset, GLsizei stride) {
-	glVertexArrayVertexBuffer(vao, binding, buffer, offset, stride);
-}
 */
 import "C"
 
@@ -49,8 +45,6 @@ func (p *Pipeline) VertexFormat(binding uint32, format interface{}) error {
 	if f.Kind() != reflect.Struct {
 		return fmt.Errorf("attributes binding format must be a struct, not a %s", f.Kind())
 	}
-
-	p.attribStride[binding] = f.Size()
 
 	for i := 0; i < f.NumField(); i++ {
 		a := f.Field(i)
@@ -99,7 +93,7 @@ func (p *Pipeline) VertexFormat(binding uint32, format interface{}) error {
 		C.VertexAttribute(
 			p.vao,
 			C.GLuint(ali),
-			C.GLuint(0), //TODO
+			C.GLuint(binding),
 			C.GLint(as),
 			ate,
 			C.GLboolean(0), //TODO
@@ -121,15 +115,5 @@ var (
 	rgbType     = reflect.TypeOf(color.RGB{})
 	rgbaType    = reflect.TypeOf(color.RGBA{})
 )
-
-//------------------------------------------------------------------------------
-
-// VertexBuffer binds a buffer to a vertex buffer binding index.
-//
-// The buffer should use the same struct type than the one used in the
-// corresponding call to VertexBufferFormat.
-func (p *Pipeline) VertexBuffer(binding uint32, b Buffer, offset uintptr) {
-	C.VertexBuffer(p.vao, C.GLuint(binding), b.buffer, C.GLintptr(offset), C.GLsizei(p.attribStride[binding]))
-}
 
 //------------------------------------------------------------------------------

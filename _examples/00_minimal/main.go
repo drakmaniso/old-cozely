@@ -16,7 +16,7 @@ func main() {
 
 	err := glam.Run()
 	if err != nil {
-		glam.Fatal(err)
+		panic(err)
 	}
 }
 

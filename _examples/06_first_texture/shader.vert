@@ -1,7 +1,7 @@
 #version 450 core
 
 layout(location = 0) in vec3 Position;
-layout(location = 1) in vec3 Color;
+layout(location = 1) in vec2 UV;
 
 layout(std140, binding = 0) uniform PerObject {
 	mat4 Transform;
@@ -12,10 +12,10 @@ out gl_PerVertex {
 };
 
 out PerVertex {
-	layout(location = 0) out vec3 Color;
+	layout(location = 0) out vec2 UV;
 } vert;
 
 void main(void) {
 	gl_Position = obj.Transform * vec4(Position, 1);
-	vert.Color = Color;
+	vert.UV = UV;
 }

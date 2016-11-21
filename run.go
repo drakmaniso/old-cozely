@@ -102,13 +102,12 @@ func Path() string {
 
 //------------------------------------------------------------------------------
 
-// Fatal displays an error dialog box, then quit.
-func Fatal(e error) {
+// ErrorDialog displays an error dialog box.
+func ErrorDialog(e error) {
 	err := internal.ErrorDialog(e.Error())
 	if err != nil {
 		fmt.Fprintln(os.Stderr, e.Error())
 	}
-	os.Exit(1)
 }
 
 //------------------------------------------------------------------------------

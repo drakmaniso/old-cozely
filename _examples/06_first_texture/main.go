@@ -6,6 +6,8 @@ package main
 //------------------------------------------------------------------------------
 
 import (
+	"image"
+	_ "image/png"
 	"os"
 	"time"
 	"unsafe"
@@ -33,7 +35,7 @@ func main() {
 	// Run the Game Loop
 	err := glam.Run()
 	if err != nil {
-		glam.Fatal(err)
+		panic(err)
 	}
 }
 
@@ -44,8 +46,9 @@ type game struct {
 	basic.MouseHandler
 
 	pipeline  gfx.Pipeline
-	transform gfx.Buffer
-	cube      gfx.Buffer
+	transform gfx.UniformBuffer
+	cube      gfx.VertexBuffer
+	diffuse   gfx.Texture2D
 
 	distance                float32
 	position                Vec3
@@ -54,8 +57,8 @@ type game struct {
 }
 
 type perVertex struct {
-	position Vec3      `layout:"0"`
-	color    color.RGB `layout:"1"`
+	position Vec3 `layout:"0"`
+	uv       Vec2 `layout:"1"`
 }
 
 type perObject struct {
@@ -70,41 +73,63 @@ func newGame() *game {
 	// Setup the Pipeline
 	vf, err := os.Open(glam.Path() + "shader.vert")
 	if err != nil {
-		glam.Fatal(err)
+		panic(err)
 	}
 	vs, err := gfx.NewVertexShader(vf)
 	if err != nil {
-		glam.Fatal(err)
+		panic(err)
 	}
 	ff, err := os.Open(glam.Path() + "shader.frag")
 	if err != nil {
-		glam.Fatal(err)
+		panic(err)
 	}
 	fs, err := gfx.NewFragmentShader(ff)
 	if err != nil {
-		glam.Fatal(err)
+		panic(err)
 	}
 	g.pipeline, err = gfx.NewPipeline(vs, fs)
 	if err != nil {
-		glam.Fatal(err)
+		panic(err)
 	}
 	err = g.pipeline.VertexFormat(0, perVertex{})
 	if err != nil {
-		glam.Fatal(err)
+		panic(err)
 	}
 	g.pipeline.ClearColor(Vec4{0.9, 0.9, 0.9, 1.0})
 
 	// Create the Uniform Buffer
-	g.transform, err = gfx.NewBuffer(unsafe.Sizeof(perObject{}), gfx.DynamicStorage)
+	g.transform, err = gfx.NewUniformBuffer(unsafe.Sizeof(perObject{}), gfx.DynamicStorage)
 	if err != nil {
-		glam.Fatal(err)
+		panic(err)
 	}
 
 	// Create and fill the Vertex Buffer
-	g.cube, err = gfx.NewBuffer(cube(), 0)
+	g.cube, err = gfx.NewVertexBuffer(cube(), gfx.StaticStorage)
 	if err != nil {
-		glam.Fatal(err)
+		panic(err)
 	}
+
+	// Create and bind the sampler
+	s := gfx.NewSampler()
+	s.Filter(gfx.LinearMipmapLinear, gfx.Linear)
+	s.Anisotropy(16.0)
+	s.Wrap(gfx.Repeat, gfx.Repeat, gfx.Repeat)        // Default
+	s.BorderColor(color.RGBA{R: 0, G: 0, B: 0, A: 0}) // Default
+	g.pipeline.Sampler(0, s)
+
+	// Create and load the textures
+	g.diffuse = gfx.NewTexture2D(8, IVec2{512, 512}, gfx.SRGBA8)
+	r, err := os.Open(glam.Path() + "../shared/testpattern.png")
+	if err != nil {
+		panic(err)
+	}
+	defer r.Close()
+	img, _, err := image.Decode(r)
+	if err != nil {
+		panic(err)
+	}
+	g.diffuse.Data(img, IVec2{0, 0}, 0)
+	g.diffuse.GenerateMipmap()
 
 	// Initialize model and view matrices
 	g.position = Vec3{0, 0, 0}
@@ -180,7 +205,7 @@ func (g *game) Update() {
 
 func (g *game) Draw() {
 	g.pipeline.Bind()
-	g.pipeline.UniformBuffer(0, g.transform)
+	g.transform.Bind(0)
 
 	mvp := g.projection.Times(g.view)
 	mvp = mvp.Times(g.model)
@@ -189,7 +214,8 @@ func (g *game) Draw() {
 	}
 	g.transform.Update(&t, 0)
 
-	g.pipeline.VertexBuffer(0, g.cube, 0)
+	g.cube.Bind(0, 0)
+	g.diffuse.Bind(0)
 	gfx.Draw(gfx.Triangles, 0, 6*2*3)
 }
 
