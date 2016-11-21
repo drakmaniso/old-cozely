@@ -73,7 +73,7 @@ type perVertex struct {
 
 type game struct {
 	pipeline gfx.Pipeline
-	triangle gfx.Buffer
+	triangle gfx.VertexBuffer
 }
 
 //------------------------------------------------------------------------------
@@ -106,7 +106,7 @@ func newGame() *game {
 		{Vec2{-0.65, -0.475}, color.RGB{R: 0.8, G: 0.3, B: 0}},
 		{Vec2{0.65, -0.475}, color.RGB{R: 0, G: 0.6, B: 0.2}},
 	}
-	g.triangle, err = gfx.NewBuffer(data, 0)
+	g.triangle, err = gfx.NewVertexBuffer(data, 0)
 	if err != nil {
 		glam.Fatal(err)
 	}
@@ -121,7 +121,7 @@ func (g *game) Update() {
 
 func (g *game) Draw() {
 	g.pipeline.Bind()
-	g.pipeline.VertexBuffer(0, g.triangle, 0)
+	g.triangle.Bind(0, 0)
 	gfx.Draw(gfx.Triangles, 0, 3)
 }
 

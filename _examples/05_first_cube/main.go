@@ -44,8 +44,8 @@ type game struct {
 	basic.MouseHandler
 
 	pipeline  gfx.Pipeline
-	transform gfx.Buffer
-	cube      gfx.Buffer
+	transform gfx.UniformBuffer
+	cube      gfx.VertexBuffer
 
 	distance                float32
 	position                Vec3
@@ -95,13 +95,13 @@ func newGame() *game {
 	g.pipeline.ClearColor(Vec4{0.9, 0.9, 0.9, 1.0})
 
 	// Create the Uniform Buffer
-	g.transform, err = gfx.NewBuffer(unsafe.Sizeof(perObject{}), gfx.DynamicStorage)
+	g.transform, err = gfx.NewUniformBuffer(unsafe.Sizeof(perObject{}), gfx.DynamicStorage)
 	if err != nil {
 		glam.Fatal(err)
 	}
 
 	// Create and fill the Vertex Buffer
-	g.cube, err = gfx.NewBuffer(cube(), 0)
+	g.cube, err = gfx.NewVertexBuffer(cube(), 0)
 	if err != nil {
 		glam.Fatal(err)
 	}
@@ -180,7 +180,7 @@ func (g *game) Update() {
 
 func (g *game) Draw() {
 	g.pipeline.Bind()
-	g.pipeline.UniformBuffer(0, g.transform)
+	g.transform.Bind(0)
 
 	mvp := g.projection.Times(g.view)
 	mvp = mvp.Times(g.model)
@@ -189,7 +189,7 @@ func (g *game) Draw() {
 	}
 	g.transform.Update(&t, 0)
 
-	g.pipeline.VertexBuffer(0, g.cube, 0)
+	g.cube.Bind(0, 0)
 	gfx.Draw(gfx.Triangles, 0, 6*2*3)
 }
 

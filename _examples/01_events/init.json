@@ -1,9 +1,12 @@
 {
-    "Title": "Glam Example 01: Events",
-    "Resolution": [512, 512],
-    "Display": 0,
-    "Fullscreen": false,
-    "FullscreenMode": "Desktop",
-    "VSync": true,
-	"Debug": true
+  "Title": "Glam Example 01: Events",
+  "Resolution": [
+    512,
+    512
+  ],
+  "Display": 0,
+  "Fullscreen": false,
+  "FullscreenMode": "Desktop",
+  "VSync": true,
+  "Debug": true
 }
