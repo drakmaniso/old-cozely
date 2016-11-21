@@ -67,7 +67,7 @@ func main() {
 	// Run the Game Loop
 	err := glam.Run()
 	if err != nil {
-		glam.Fatal(err)
+		panic(err)
 	}
 }
 
@@ -98,26 +98,26 @@ func newGame() *game {
 	// Setup the Pipeline
 	vs, err := gfx.NewVertexShader(vertexShader)
 	if err != nil {
-		glam.Fatal(err)
+		panic(err)
 	}
 	fs, err := gfx.NewFragmentShader(fragmentShader)
 	if err != nil {
-		glam.Fatal(err)
+		panic(err)
 	}
 	g.pipeline, err = gfx.NewPipeline(vs, fs)
 	if err != nil {
-		glam.Fatal(err)
+		panic(err)
 	}
 	err = g.pipeline.VertexFormat(0, perVertex{})
 	if err != nil {
-		glam.Fatal(err)
+		panic(err)
 	}
 	g.pipeline.ClearColor(Vec4{0.9, 0.9, 0.9, 1.0})
 
 	// Create the Uniform Buffer
 	g.transform, err = gfx.NewUniformBuffer(unsafe.Sizeof(perObject{}), gfx.DynamicStorage)
 	if err != nil {
-		glam.Fatal(err)
+		panic(err)
 	}
 
 	// Create the Vertex Buffer
@@ -128,7 +128,7 @@ func newGame() *game {
 	}
 	g.triangle, err = gfx.NewVertexBuffer(data, 0)
 	if err != nil {
-		glam.Fatal(err)
+		panic(err)
 	}
 
 	return g

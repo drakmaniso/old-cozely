@@ -30,7 +30,7 @@ void main(void)
 		vec4(0.65, -0.475, 0.5, 1)
 	);
 	gl_Position = triangle[gl_VertexID];
-}	
+}
 `)
 
 var fragmentShader = strings.NewReader(`
@@ -41,7 +41,7 @@ out vec4 color;
 void main(void)
 {
 	color = vec4(0.3, 0.1, 0.6, 1.0);
-}	
+}
 `)
 
 //------------------------------------------------------------------------------
@@ -54,7 +54,7 @@ func main() {
 	// Run the Game Loop
 	err := glam.Run()
 	if err != nil {
-		glam.Fatal(err)
+		panic(err)
 	}
 }
 
@@ -72,15 +72,15 @@ func newGame() *game {
 	// Setup the Pipeline
 	vs, err := gfx.NewVertexShader(vertexShader)
 	if err != nil {
-		glam.Fatal(err)
+		panic(err)
 	}
 	fs, err := gfx.NewFragmentShader(fragmentShader)
 	if err != nil {
-		glam.Fatal(err)
+		panic(err)
 	}
 	g.pipeline, err = gfx.NewPipeline(vs, fs)
 	if err != nil {
-		glam.Fatal(err)
+		panic(err)
 	}
 	g.pipeline.ClearColor(Vec4{0.9, 0.9, 0.9, 1.0})
 
