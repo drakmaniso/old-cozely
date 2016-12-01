@@ -34,9 +34,7 @@ func main() {
 
 	// Run the Game Loop
 	err := glam.Run()
-	if err != nil {
-		panic(err)
-	}
+	check(err)
 }
 
 //------------------------------------------------------------------------------
@@ -72,42 +70,26 @@ func newGame() *game {
 
 	// Setup the Pipeline
 	vf, err := os.Open(glam.Path() + "shader.vert")
-	if err != nil {
-		panic(err)
-	}
+	check(err)
 	vs, err := gfx.NewVertexShader(vf)
-	if err != nil {
-		panic(err)
-	}
+	check(err)
 	ff, err := os.Open(glam.Path() + "shader.frag")
-	if err != nil {
-		panic(err)
-	}
+	check(err)
 	fs, err := gfx.NewFragmentShader(ff)
-	if err != nil {
-		panic(err)
-	}
+	check(err)
 	g.pipeline, err = gfx.NewPipeline(vs, fs)
-	if err != nil {
-		panic(err)
-	}
+	check(err)
 	err = g.pipeline.VertexFormat(0, perVertex{})
-	if err != nil {
-		panic(err)
-	}
+	check(err)
 	g.pipeline.ClearColor(Vec4{0.9, 0.9, 0.9, 1.0})
 
 	// Create the Uniform Buffer
 	g.transform, err = gfx.NewUniformBuffer(unsafe.Sizeof(perObject{}), gfx.DynamicStorage)
-	if err != nil {
-		panic(err)
-	}
+	check(err)
 
 	// Create and fill the Vertex Buffer
 	g.cube, err = gfx.NewVertexBuffer(cube(), gfx.StaticStorage)
-	if err != nil {
-		panic(err)
-	}
+	check(err)
 
 	// Create and bind the sampler
 	s := gfx.NewSampler()
@@ -120,14 +102,10 @@ func newGame() *game {
 	// Create and load the textures
 	g.diffuse = gfx.NewTexture2D(8, IVec2{512, 512}, gfx.SRGBA8)
 	r, err := os.Open(glam.Path() + "../shared/testpattern.png")
-	if err != nil {
-		panic(err)
-	}
+	check(err)
 	defer r.Close()
 	img, _, err := image.Decode(r)
-	if err != nil {
-		panic(err)
-	}
+	check(err)
 	g.diffuse.Data(img, IVec2{0, 0}, 0)
 	g.diffuse.GenerateMipmap()
 
@@ -217,6 +195,14 @@ func (g *game) Draw() {
 	g.cube.Bind(0, 0)
 	g.diffuse.Bind(0)
 	gfx.Draw(gfx.Triangles, 0, 6*2*3)
+}
+
+//------------------------------------------------------------------------------
+
+func check(err error) {
+	if err != nil {
+		panic(err)
+	}
 }
 
 //------------------------------------------------------------------------------
