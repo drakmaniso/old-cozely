@@ -32,14 +32,14 @@ func logGLError(
 	case C.GL_DEBUG_SEVERITY_MEDIUM:
 		sev = "WARNING"
 	case C.GL_DEBUG_SEVERITY_LOW:
-		sev = "warning"
+		sev = "Warning"
 	case C.GL_DEBUG_SEVERITY_NOTIFICATION:
-		sev = "notification"
+		sev = "Info"
 	}
 	var sou string
 	switch source {
 	case C.GL_DEBUG_SOURCE_API:
-		sou = "OpenGL API"
+		sou = "OpenGL"
 	case C.GL_DEBUG_SOURCE_WINDOW_SYSTEM:
 		sou = "window-system API"
 	case C.GL_DEBUG_SOURCE_SHADER_COMPILER:
@@ -54,25 +54,25 @@ func logGLError(
 	var ty string
 	switch typ {
 	case C.GL_DEBUG_TYPE_ERROR:
-		ty = "error"
+		ty = ", error"
 	case C.GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
-		ty = "deprecated behavior"
+		ty = ", deprecated behavior"
 	case C.GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
-		ty = "undefined behavior"
+		ty = ", undefined behavior"
 	case C.GL_DEBUG_TYPE_PORTABILITY:
-		ty = "portability"
+		ty = ", portability"
 	case C.GL_DEBUG_TYPE_PERFORMANCE:
-		ty = "performance"
+		ty = ", performance"
 	case C.GL_DEBUG_TYPE_MARKER:
-		ty = "marker"
+		ty = ", marker"
 	case C.GL_DEBUG_TYPE_PUSH_GROUP:
-		ty = "push group"
+		ty = ", push group"
 	case C.GL_DEBUG_TYPE_POP_GROUP:
-		ty = "pop group"
+		ty = ", pop group"
 	case C.GL_DEBUG_TYPE_OTHER:
-		ty = "other"
+		ty = ""
 	}
-	fmt.Printf("%s: %s: %s\n    %s\n", sev, sou, ty, C.GoString(m))
+	fmt.Printf("%s (%s%s): %s\n", sev, sou, ty, C.GoString(m))
 }
 
 //------------------------------------------------------------------------------
