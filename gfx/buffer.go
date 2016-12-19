@@ -49,29 +49,30 @@ type UniformBuffer struct {
 // bytes), and the content is not initialized. Otherwise data must be a pointer
 // to a struct of pure values (no nested references). In all cases the size of
 // the buffer is fixed at creation.
-func NewUniformBuffer(data interface{}, f bufferFlags) (UniformBuffer, error) {
+func NewUniformBuffer(data interface{}, f bufferFlags) UniformBuffer {
 	p, s, err := pointerAndSizeOf(data)
 	if err != nil {
-		return UniformBuffer{}, err
+		setErr(err)
+		return UniformBuffer{}
 	}
 	var ub UniformBuffer
 	ub.object = C.NewBuffer(C.GLsizeiptr(s), p, C.GLenum(f))
 	//TODO: error handling
 	ub.stride = 0
-	return ub, nil
+	return ub
 }
 
 // Update the buffer with data, starting at a specified offset.
 //
 // It is your responsability to ensure that the size of data plus the offset
 // does not exceed the buffer size.
-func (ub *UniformBuffer) Update(data interface{}, atOffset uintptr) error {
+func (ub *UniformBuffer) Update(data interface{}, atOffset uintptr) {
 	p, s, err := pointerAndSizeOf(data)
 	if err != nil {
-		return err
+		setErr(err)
+		return
 	}
 	C.UpdateBuffer(ub.object, C.GLintptr(atOffset), C.GLsizei(s), p)
-	return nil
 }
 
 // Bind to a uniform binding index.
@@ -96,25 +97,27 @@ type VertexBuffer struct {
 // bytes), and the content is not initialized. Otherwise data must be a slice of
 // pure values (no nested references). In all cases the size of the buffer is
 // fixed at creation.
-func NewVertexBuffer(data interface{}, f bufferFlags) (VertexBuffer, error) {
+func NewVertexBuffer(data interface{}, f bufferFlags) VertexBuffer {
 	p, s, st, err := pointerSizeAndStrideOf(data)
 	if err != nil {
-		return VertexBuffer{}, err
+		setErr(err)
+		return VertexBuffer{}
 	}
 	var vb VertexBuffer
 	vb.object = C.NewBuffer(C.GLsizeiptr(s), p, C.GLenum(f))
 	//TODO: error handling
 	vb.stride = st
-	return vb, nil
+	return vb
 }
 
 // Update the buffer with data, starting at a specified offset. It is your
 // responsability to ensure that the size of data plus the offset does not
 // exceed the buffer size.
-func (vb *VertexBuffer) Update(data interface{}, atOffset uintptr) error {
+func (vb *VertexBuffer) Update(data interface{}, atOffset uintptr) {
 	p, s, st, err := pointerSizeAndStrideOf(data)
 	if err != nil {
-		return err
+		setErr(err)
+		return
 	}
 	C.UpdateBuffer(vb.object, C.GLintptr(atOffset), C.GLsizei(s), p)
 	if st != 0 {
@@ -122,7 +125,6 @@ func (vb *VertexBuffer) Update(data interface{}, atOffset uintptr) error {
 		// has a different stride.
 		vb.stride = st
 	}
-	return nil
 }
 
 // Bind to a vertex buffer binding index.

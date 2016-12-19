@@ -27,7 +27,9 @@ func main() {
 	key.Handle = g
 
 	err := glam.Run()
-	check(err)
+	if err != nil {
+		glam.ErrorDialog(err)
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -117,14 +119,6 @@ func (g *game) Update() {
 	// fmt.Printf("--- w = %v\n", key.IsPressed(key.PositionW))
 	// fmt.Printf("--- window.HasFocus = %v\n", window.HasFocus())
 	// fmt.Printf("--- window.HasMouseFocus = %v\n", window.HasMouseFocus())
-}
-
-//------------------------------------------------------------------------------
-
-func check(err error) {
-	if err != nil {
-		panic(err)
-	}
 }
 
 //------------------------------------------------------------------------------

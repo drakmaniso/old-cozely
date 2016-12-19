@@ -40,10 +40,11 @@ import "C"
 // vertex buffer of a specific format, and assign a binding index to it.
 //
 // The format must be a struct with layout tags.
-func (p *Pipeline) VertexFormat(binding uint32, format interface{}) error {
+func (p *Pipeline) VertexFormat(binding uint32, format interface{}) {
 	f := reflect.TypeOf(format)
 	if f.Kind() != reflect.Struct {
-		return fmt.Errorf("attributes binding format must be a struct, not a %s", f.Kind())
+		setErr(fmt.Errorf("attributes binding format must be a struct, not a %s", f.Kind()))
+		return
 	}
 
 	for i := 0; i < f.NumField(); i++ {
@@ -54,7 +55,8 @@ func (p *Pipeline) VertexFormat(binding uint32, format interface{}) error {
 		}
 		ali, err := strconv.Atoi(al)
 		if err != nil {
-			return fmt.Errorf("invalid layout for attributes binding: %q", al)
+			setErr(fmt.Errorf("invalid layout for attributes binding: %q", al))
+			return
 		}
 		//TODO: check that ali is in range
 		at := a.Type
@@ -100,7 +102,7 @@ func (p *Pipeline) VertexFormat(binding uint32, format interface{}) error {
 			C.GLuint(ao),
 		)
 	}
-	return nil
+	return
 }
 
 var (

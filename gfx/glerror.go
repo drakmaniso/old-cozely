@@ -72,6 +72,7 @@ func logGLError(
 	case C.GL_DEBUG_TYPE_OTHER:
 		ty = ""
 	}
+  //TODO: log?
 	fmt.Printf("%s (%s%s): %s\n", sev, sou, ty, C.GoString(m))
 }
 

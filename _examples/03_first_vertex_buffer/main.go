@@ -53,13 +53,19 @@ void main(void) {
 //------------------------------------------------------------------------------
 
 func main() {
-	g := newGame()
+	g, err := newGame()
+	if err != nil {
+		glam.ErrorDialog(err)
+		return
+	}
 
 	glam.Loop = g
 
 	// Run the Game Loop
-	err := glam.Run()
-	check(err)
+	err = glam.Run()
+	if err != nil {
+		glam.ErrorDialog(err)
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -76,18 +82,14 @@ type game struct {
 
 //------------------------------------------------------------------------------
 
-func newGame() *game {
+func newGame() (*game, error) {
 	g := &game{}
 
 	// Setup the Pipeline
-	vs, err := gfx.NewVertexShader(vertexShader)
-	check(err)
-	fs, err := gfx.NewFragmentShader(fragmentShader)
-	check(err)
-	g.pipeline, err = gfx.NewPipeline(vs, fs)
-	check(err)
-	err = g.pipeline.VertexFormat(0, perVertex{})
-	check(err)
+	vs := gfx.NewVertexShader(vertexShader)
+	fs := gfx.NewFragmentShader(fragmentShader)
+	g.pipeline = gfx.NewPipeline(vs, fs)
+	g.pipeline.VertexFormat(0, perVertex{})
 	g.pipeline.ClearColor(Vec4{0.9, 0.9, 0.9, 1.0})
 
 	// Create the Vertex Buffer
@@ -96,10 +98,9 @@ func newGame() *game {
 		{Vec2{-0.65, -0.475}, color.RGB{R: 0.8, G: 0.3, B: 0}},
 		{Vec2{0.65, -0.475}, color.RGB{R: 0, G: 0.6, B: 0.2}},
 	}
-	g.triangle, err = gfx.NewVertexBuffer(data, 0)
-	check(err)
+	g.triangle = gfx.NewVertexBuffer(data, 0)
 
-	return g
+	return g, gfx.Err()
 }
 
 //------------------------------------------------------------------------------
@@ -111,14 +112,6 @@ func (g *game) Draw() {
 	g.pipeline.Bind()
 	g.triangle.Bind(0, 0)
 	gfx.Draw(gfx.Triangles, 0, 3)
-}
-
-//------------------------------------------------------------------------------
-
-func check(err error) {
-	if err != nil {
-		panic(err)
-	}
 }
 
 //------------------------------------------------------------------------------

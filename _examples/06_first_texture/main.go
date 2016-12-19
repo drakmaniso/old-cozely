@@ -26,15 +26,21 @@ import (
 //------------------------------------------------------------------------------
 
 func main() {
-	g := newGame()
+	g, err := newGame()
+	if err != nil {
+		glam.ErrorDialog(err)
+		return
+	}
 
 	glam.Loop = g
 	window.Handle = g
 	mouse.Handle = g
 
 	// Run the Game Loop
-	err := glam.Run()
-	check(err)
+	err = glam.Run()
+	if err != nil {
+		glam.ErrorDialog(err)
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -65,31 +71,42 @@ type perObject struct {
 
 //------------------------------------------------------------------------------
 
-func newGame() *game {
+func newGame() (*game, error) {
 	g := &game{}
 
 	// Setup the Pipeline
 	vf, err := os.Open(glam.Path() + "shader.vert")
-	check(err)
-	vs, err := gfx.NewVertexShader(vf)
-	check(err)
+	if err != nil {
+		return nil, err
+	}
 	ff, err := os.Open(glam.Path() + "shader.frag")
-	check(err)
-	fs, err := gfx.NewFragmentShader(ff)
-	check(err)
-	g.pipeline, err = gfx.NewPipeline(vs, fs)
-	check(err)
-	err = g.pipeline.VertexFormat(0, perVertex{})
-	check(err)
+	if err != nil {
+		return nil, err
+	}
+	vs := gfx.NewVertexShader(vf)
+	fs := gfx.NewFragmentShader(ff)
+	g.pipeline = gfx.NewPipeline(vs, fs)
+	g.pipeline.VertexFormat(0, perVertex{})
 	g.pipeline.ClearColor(Vec4{0.9, 0.9, 0.9, 1.0})
 
+	// vf, err := os.Open(glam.Path() + "shader.vert")
+	// check(err)
+	// ff, err := os.Open(glam.Path() + "shader.frag")
+	// check(err)
+	// g.pipeline, err = gfx.NewPipeline(
+	//   []gfx.Shader{
+	//     gfx.NewVertexShader(vf),
+	//     gfx.NewFragmentShader(ff)
+	//   },
+	//   gfx.VertexFormat(0, perVertex{}),
+	//   gfx.ClearColor(Vec4{0.9, 0.9, 0.9, 1.0})
+	// )
+
 	// Create the Uniform Buffer
-	g.transform, err = gfx.NewUniformBuffer(unsafe.Sizeof(perObject{}), gfx.DynamicStorage)
-	check(err)
+	g.transform = gfx.NewUniformBuffer(unsafe.Sizeof(perObject{}), gfx.DynamicStorage)
 
 	// Create and fill the Vertex Buffer
-	g.cube, err = gfx.NewVertexBuffer(cube(), gfx.StaticStorage)
-	check(err)
+	g.cube = gfx.NewVertexBuffer(cube(), gfx.StaticStorage)
 
 	// Create and bind the sampler
 	s := gfx.NewSampler()
@@ -102,10 +119,14 @@ func newGame() *game {
 	// Create and load the textures
 	g.diffuse = gfx.NewTexture2D(8, IVec2{512, 512}, gfx.SRGBA8)
 	r, err := os.Open(glam.Path() + "../shared/testpattern.png")
-	check(err)
+	if err != nil {
+		return nil, err
+	}
 	defer r.Close()
 	img, _, err := image.Decode(r)
-	check(err)
+	if err != nil {
+		return nil, err
+	}
 	g.diffuse.Data(img, IVec2{0, 0}, 0)
 	g.diffuse.GenerateMipmap()
 
@@ -117,7 +138,7 @@ func newGame() *game {
 	g.distance = 3
 	g.updateView()
 
-	return g
+	return g, gfx.Err()
 }
 
 //------------------------------------------------------------------------------
@@ -195,14 +216,6 @@ func (g *game) Draw() {
 	g.cube.Bind(0, 0)
 	g.diffuse.Bind(0)
 	gfx.Draw(gfx.Triangles, 0, 6*2*3)
-}
-
-//------------------------------------------------------------------------------
-
-func check(err error) {
-	if err != nil {
-		panic(err)
-	}
 }
 
 //------------------------------------------------------------------------------

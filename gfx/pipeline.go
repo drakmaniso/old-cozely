@@ -85,25 +85,25 @@ type Pipeline struct {
 //------------------------------------------------------------------------------
 
 // NewPipeline returns a pipeline with created from a specific set of shaders.
-func NewPipeline(s ...Shader) (Pipeline, error) {
+func NewPipeline(s ...Shader) Pipeline {
 	var p Pipeline
 	p.object = C.NewPipeline() //TODO: Error Handling
 	p.vao = C.CreateVAO()      //TODO: Error Handling
 	for _, s := range s {
-		if err := p.useShader(s); err != nil {
-			return p, err
-		}
+		p.useShader(s)
 	}
-	return p, nil
+	return p
 }
 
-func (p *Pipeline) useShader(s Shader) error {
+func (p *Pipeline) useShader(s Shader) {
 	C.PipelineUseShader(p.object, s.stages, s.shader)
 	if errm := C.PipelineLinkError(p.object); errm != nil {
 		defer C.free(unsafe.Pointer(errm))
-		return fmt.Errorf("shader link error:\n    %s", errors.New(C.GoString(errm)))
+		setErr(
+			fmt.Errorf("shader link error:\n    %s", errors.New(C.GoString(errm))),
+		)
 	}
-	return nil
+	return
 }
 
 //------------------------------------------------------------------------------

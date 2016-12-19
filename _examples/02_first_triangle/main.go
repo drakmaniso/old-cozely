@@ -47,13 +47,19 @@ void main(void)
 //------------------------------------------------------------------------------
 
 func main() {
-	g := newGame()
+	g, err := newGame()
+	if err != nil {
+		glam.ErrorDialog(err)
+		return
+	}
 
 	glam.Loop = g
 
 	// Run the Game Loop
-	err := glam.Run()
-	check(err)
+	err = glam.Run()
+	if err != nil {
+		glam.ErrorDialog(err)
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -64,19 +70,16 @@ type game struct {
 
 //------------------------------------------------------------------------------
 
-func newGame() *game {
+func newGame() (*game, error) {
 	g := &game{}
 
 	// Setup the Pipeline
-	vs, err := gfx.NewVertexShader(vertexShader)
-	check(err)
-	fs, err := gfx.NewFragmentShader(fragmentShader)
-	check(err)
-	g.pipeline, err = gfx.NewPipeline(vs, fs)
-	check(err)
+	vs := gfx.NewVertexShader(vertexShader)
+	fs := gfx.NewFragmentShader(fragmentShader)
+	g.pipeline = gfx.NewPipeline(vs, fs)
 	g.pipeline.ClearColor(Vec4{0.9, 0.9, 0.9, 1.0})
 
-	return g
+	return g, gfx.Err()
 }
 
 //------------------------------------------------------------------------------
@@ -87,14 +90,6 @@ func (g *game) Update() {
 func (g *game) Draw() {
 	g.pipeline.Bind()
 	gfx.Draw(gfx.Triangles, 0, 3)
-}
-
-//------------------------------------------------------------------------------
-
-func check(err error) {
-	if err != nil {
-		panic(err)
-	}
 }
 
 //------------------------------------------------------------------------------
