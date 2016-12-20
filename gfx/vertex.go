@@ -40,7 +40,13 @@ import "C"
 // vertex buffer of a specific format, and assign a binding index to it.
 //
 // The format must be a struct with layout tags.
-func (p *Pipeline) VertexFormat(binding uint32, format interface{}) {
+func VertexFormat(binding uint32, format interface{}) PipelineOption {
+	return func(p *Pipeline) {
+		p.setVertexFormat(binding, format)
+	}
+}
+
+func (p *Pipeline) setVertexFormat(binding uint32, format interface{}) {
 	f := reflect.TypeOf(format)
 	if f.Kind() != reflect.Struct {
 		setErr(fmt.Errorf("attributes binding format must be a struct, not a %s", f.Kind()))

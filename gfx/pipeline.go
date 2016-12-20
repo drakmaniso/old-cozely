@@ -84,18 +84,22 @@ type Pipeline struct {
 
 //------------------------------------------------------------------------------
 
+type PipelineOption func(*Pipeline)
+
+//------------------------------------------------------------------------------
+
 // NewPipeline returns a pipeline with created from a specific set of shaders.
-func NewPipeline(s ...Shader) Pipeline {
+func NewPipeline(o ...PipelineOption) Pipeline {
 	var p Pipeline
 	p.object = C.NewPipeline() //TODO: Error Handling
 	p.vao = C.CreateVAO()      //TODO: Error Handling
-	for _, s := range s {
-		p.useShader(s)
+	for _, f := range o {
+		f(&p)
 	}
 	return p
 }
 
-func (p *Pipeline) useShader(s Shader) {
+func (p *Pipeline) useShader(s shader) {
 	C.PipelineUseShader(p.object, s.stages, s.shader)
 	if errm := C.PipelineLinkError(p.object); errm != nil {
 		defer C.free(unsafe.Pointer(errm))
@@ -109,11 +113,13 @@ func (p *Pipeline) useShader(s Shader) {
 //------------------------------------------------------------------------------
 
 // ClearColor sets the color used to clear the framebuffer.
-func (p *Pipeline) ClearColor(color geom.Vec4) {
-	p.clearColor[0] = color.X
-	p.clearColor[1] = color.Y
-	p.clearColor[2] = color.Z
-	p.clearColor[3] = color.W
+func ClearColor(color geom.Vec4) PipelineOption {
+	return func(p *Pipeline) {
+		p.clearColor[0] = color.X
+		p.clearColor[1] = color.Y
+		p.clearColor[2] = color.Z
+		p.clearColor[3] = color.W
+	}
 }
 
 //------------------------------------------------------------------------------

@@ -72,19 +72,20 @@ func newGame() (*game, error) {
 	g := &game{}
 
 	// Setup the Pipeline
-	vf, err := os.Open(glam.Path() + "shader.vert")
+	v, err := os.Open(glam.Path() + "shader.vert")
 	if err != nil {
 		return nil, err
 	}
-	ff, err := os.Open(glam.Path() + "shader.frag")
+	f, err := os.Open(glam.Path() + "shader.frag")
 	if err != nil {
 		return nil, err
 	}
-	vs := gfx.NewVertexShader(vf)
-	fs := gfx.NewFragmentShader(ff)
-	g.pipeline = gfx.NewPipeline(vs, fs)
-	g.pipeline.VertexFormat(0, perVertex{})
-	g.pipeline.ClearColor(Vec4{0.9, 0.9, 0.9, 1.0})
+	g.pipeline = gfx.NewPipeline(
+		gfx.VertexShader(v),
+		gfx.FragmentShader(f),
+		gfx.VertexFormat(0, perVertex{}),
+		gfx.ClearColor(Vec4{0.9, 0.9, 0.9, 1.0}),
+	)
 
 	// Create the Uniform Buffer
 	g.transform = gfx.NewUniformBuffer(unsafe.Sizeof(perObject{}), gfx.DynamicStorage)

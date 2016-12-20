@@ -45,84 +45,96 @@ import "C"
 
 //------------------------------------------------------------------------------
 
-// A Shader is a compiled program run by the GPU.
-type Shader struct {
+// A shader is a compiled program run by the GPU.
+type shader struct {
 	shader C.GLuint
 	stages C.GLenum
 }
 
 //------------------------------------------------------------------------------
 
-// NewVertexShader compiles a vertex shader.
-func NewVertexShader(r io.Reader) Shader {
-	var s Shader
+// VertexShader compiles a vertex shader.
+func VertexShader(r io.Reader) PipelineOption {
+	var s shader
 	var err error
 	s.stages = C.GL_VERTEX_SHADER_BIT
 	s.shader, err = newShader(C.GL_VERTEX_SHADER, r)
 	if err != nil {
 		setErr(fmt.Errorf("error in vertex shader: %s", err))
 	}
-	return s
+	return func(p *Pipeline) {
+		p.useShader(s)
+	}
 }
 
-// NewFragmentShader compiles a fragment shader.
-func NewFragmentShader(r io.Reader) Shader {
-	var s Shader
+// FragmentShader compiles a fragment shader.
+func FragmentShader(r io.Reader) PipelineOption {
+	var s shader
 	var err error
 	s.stages = C.GL_FRAGMENT_SHADER_BIT
 	s.shader, err = newShader(C.GL_FRAGMENT_SHADER, r)
 	if err != nil {
 		setErr(fmt.Errorf("error in fragment shader: %s", err))
 	}
-	return s
+	return func(p *Pipeline) {
+		p.useShader(s)
+	}
 }
 
-// NewGeometryShader compiles a geometry shader.
-func NewGeometryShader(r io.Reader) Shader {
-	var s Shader
+// GeometryShader compiles a geometry shader.
+func GeometryShader(r io.Reader) PipelineOption {
+	var s shader
 	var err error
 	s.stages = C.GL_GEOMETRY_SHADER_BIT
 	s.shader, err = newShader(C.GL_GEOMETRY_SHADER, r)
 	if err != nil {
 		setErr(fmt.Errorf("error in geometry shader: %s", err))
 	}
-	return s
+	return func(p *Pipeline) {
+		p.useShader(s)
+	}
 }
 
-// NewTessControlShader compiles a tesselation control shader.
-func NewTessControlShader(r io.Reader) Shader {
-	var s Shader
+// TessControlShader compiles a tesselation control shader.
+func TessControlShader(r io.Reader) PipelineOption {
+	var s shader
 	var err error
 	s.stages = C.GL_TESS_CONTROL_SHADER_BIT
 	s.shader, err = newShader(C.GL_TESS_CONTROL_SHADER, r)
 	if err != nil {
 		setErr(fmt.Errorf("error in tesselation control shader: %s", err))
 	}
-	return s
+	return func(p *Pipeline) {
+		p.useShader(s)
+	}
 }
 
-// NewTessEvaluationShader compiles a tesselation evaluation shader.
-func NewTessEvaluationShader(r io.Reader) Shader {
-	var s Shader
+// TessEvaluationShader compiles a tesselation evaluation shader.
+func TessEvaluationShader(r io.Reader) PipelineOption {
+	var s shader
 	var err error
 	s.stages = C.GL_TESS_EVALUATION_SHADER_BIT
 	s.shader, err = newShader(C.GL_TESS_EVALUATION_SHADER, r)
 	if err != nil {
 		setErr(fmt.Errorf("error in tesselation evaluation shader: %s", err))
 	}
-	return s
+	return func(p *Pipeline) {
+		p.useShader(s)
+	}
 }
 
-// NewComputeShader compiles a comput shader.
-func NewComputeShader(r io.Reader) Shader {
-	var s Shader
+// ComputeShader compiles a comput shader.
+func ComputeShader(r io.Reader) PipelineOption {
+	var s shader
 	var err error
 	s.stages = C.GL_COMPUTE_SHADER_BIT
 	s.shader, err = newShader(C.GL_COMPUTE_SHADER, r)
 	if err != nil {
 		setErr(fmt.Errorf("error in compute shader: %s", err))
 	}
-	return s
+	return func(p *Pipeline) {
+		p.useShader(s)
+	}
 }
 
 func newShader(t uint32, r io.Reader) (C.GLuint, error) {

@@ -74,10 +74,11 @@ func newGame() (*game, error) {
 	g := &game{}
 
 	// Setup the Pipeline
-	vs := gfx.NewVertexShader(vertexShader)
-	fs := gfx.NewFragmentShader(fragmentShader)
-	g.pipeline = gfx.NewPipeline(vs, fs)
-	g.pipeline.ClearColor(Vec4{0.9, 0.9, 0.9, 1.0})
+	g.pipeline = gfx.NewPipeline(
+		gfx.VertexShader(vertexShader),
+		gfx.FragmentShader(fragmentShader),
+		gfx.ClearColor(Vec4{0.9, 0.9, 0.9, 1.0}),
+	)
 
 	return g, gfx.Err()
 }

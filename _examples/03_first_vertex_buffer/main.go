@@ -86,11 +86,12 @@ func newGame() (*game, error) {
 	g := &game{}
 
 	// Setup the Pipeline
-	vs := gfx.NewVertexShader(vertexShader)
-	fs := gfx.NewFragmentShader(fragmentShader)
-	g.pipeline = gfx.NewPipeline(vs, fs)
-	g.pipeline.VertexFormat(0, perVertex{})
-	g.pipeline.ClearColor(Vec4{0.9, 0.9, 0.9, 1.0})
+	g.pipeline = gfx.NewPipeline(
+		gfx.VertexShader(vertexShader),
+		gfx.FragmentShader(fragmentShader),
+		gfx.VertexFormat(0, perVertex{}),
+		gfx.ClearColor(Vec4{0.9, 0.9, 0.9, 1.0}),
+	)
 
 	// Create the Vertex Buffer
 	data := []perVertex{
