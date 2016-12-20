@@ -102,7 +102,7 @@ func newGame() (*game, error) {
 	s.Anisotropy(16.0)
 	s.Wrap(gfx.Repeat, gfx.Repeat, gfx.Repeat)        // Default
 	s.BorderColor(color.RGBA{R: 0, G: 0, B: 0, A: 0}) // Default
-	g.pipeline.Sampler(0, s)
+	s.Bind(0)
 
 	// Create and load the textures
 	g.diffuse = gfx.NewTexture2D(8, IVec2{512, 512}, gfx.SRGBA8)

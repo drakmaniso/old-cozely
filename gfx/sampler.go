@@ -54,7 +54,7 @@ static inline void SamplerCompareFunc(GLuint object, GLenum f) {
 	glSamplerParameteri(object, GL_TEXTURE_COMPARE_MODE, f);
 }
 
-static inline void PipelineSampler(GLuint binding, GLuint sampler) {
+static inline void SamplerBind(GLuint binding, GLuint sampler) {
 	glBindSampler(binding, sampler);
 }
 
@@ -171,9 +171,9 @@ const (
 
 //------------------------------------------------------------------------------
 
-// Sampler binds a sampler to a texture unit index.
-func (p *Pipeline) Sampler(binding uint32, sa Sampler) {
-	C.PipelineSampler(C.GLuint(binding), sa.object)
+// Bind a sampler to a texture unit index.
+func (sa Sampler) Bind(binding uint32) {
+	C.SamplerBind(C.GLuint(binding), sa.object)
 }
 
 //------------------------------------------------------------------------------
