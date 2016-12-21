@@ -10,7 +10,7 @@ import (
 	"fmt"
 	"unsafe"
 
-	"github.com/drakmaniso/glam/geom"
+	"github.com/drakmaniso/glam/color"
 )
 
 /*
@@ -53,7 +53,7 @@ void ClosePipeline(GLuint p, GLuint vao) {
 	glDeleteProgramPipelines(1, &p);
 }
 
-static inline void BindPipeline(GLuint p, GLuint vao, GLfloat *c) {
+static inline void BindPipeline(GLuint p, GLuint vao) {
 
     glEnable (GL_DEPTH_TEST);
     glDepthFunc (GL_LEQUAL);
@@ -64,11 +64,20 @@ static inline void BindPipeline(GLuint p, GLuint vao, GLfloat *c) {
     glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     glEnable(GL_FRAMEBUFFER_SRGB);
-	glClearBufferfv(GL_COLOR, 0, c);
-	GLfloat d = 1.0;
-	glClearBufferfv(GL_DEPTH, 0, &d);
 	glBindProgramPipeline(p);
 	glBindVertexArray(vao);
+}
+
+static inline void ClearColorBuffer(GLfloat *c) {
+	glClearBufferfv(GL_COLOR, 0, c);
+}
+
+static inline void ClearDepthBuffer(GLfloat d) {
+	glClearBufferfv(GL_DEPTH, 0, &d);
+}
+
+static inline void ClearStencilBuffer(GLint m) {
+	glClearBufferiv(GL_STENCIL, 0, &m);
 }
 */
 import "C"
@@ -112,14 +121,19 @@ func (p *Pipeline) useShader(s shader) {
 
 //------------------------------------------------------------------------------
 
-// ClearColor sets the color used to clear the framebuffer.
-func ClearColor(color geom.Vec4) PipelineOption {
-	return func(p *Pipeline) {
-		p.clearColor[0] = color.X
-		p.clearColor[1] = color.Y
-		p.clearColor[2] = color.Z
-		p.clearColor[3] = color.W
-	}
+// ClearColorBuffer clears the color buffer with c.
+func ClearColorBuffer(c color.RGBA) {
+	C.ClearColorBuffer((*C.GLfloat)(unsafe.Pointer(&c)))
+}
+
+// ClearDepthBuffer clears the depth buffer with d.
+func ClearDepthBuffer(d float32) {
+	C.ClearDepthBuffer((C.GLfloat)(d))
+}
+
+// ClearStencilBuffer clears the stencil buffer with m.
+func ClearStencilBuffer(m int32) {
+	C.ClearStencilBuffer((C.GLint)(m))
 }
 
 //------------------------------------------------------------------------------
@@ -129,7 +143,6 @@ func (p *Pipeline) Bind() {
 	C.BindPipeline(
 		p.object,
 		p.vao,
-		(*C.GLfloat)(unsafe.Pointer(&p.clearColor[0])),
 	)
 }
 

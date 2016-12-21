@@ -104,7 +104,6 @@ func newGame() (*game, error) {
 		gfx.VertexShader(vertexShader),
 		gfx.FragmentShader(fragmentShader),
 		gfx.VertexFormat(0, perVertex{}),
-		gfx.ClearColor(Vec4{0.9, 0.9, 0.9, 1.0}),
 	)
 
 	// Create the Uniform Buffer
@@ -128,6 +127,8 @@ func (g *game) Update() {
 }
 
 func (g *game) Draw() {
+	gfx.ClearDepthBuffer(1.0)
+	gfx.ClearColorBuffer(color.RGBA{0.9, 0.9, 0.9, 1.0})
 	g.pipeline.Bind()
 	g.transform.Bind(0)
 

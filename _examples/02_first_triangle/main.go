@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	"github.com/drakmaniso/glam"
-	. "github.com/drakmaniso/glam/geom"
+	"github.com/drakmaniso/glam/color"
 	"github.com/drakmaniso/glam/gfx"
 )
 
@@ -77,7 +77,6 @@ func newGame() (*game, error) {
 	g.pipeline = gfx.NewPipeline(
 		gfx.VertexShader(vertexShader),
 		gfx.FragmentShader(fragmentShader),
-		gfx.ClearColor(Vec4{0.9, 0.9, 0.9, 1.0}),
 	)
 
 	return g, gfx.Err()
@@ -89,6 +88,8 @@ func (g *game) Update() {
 }
 
 func (g *game) Draw() {
+	gfx.ClearDepthBuffer(1.0)
+	gfx.ClearColorBuffer(color.RGBA{0.9, 0.9, 0.9, 1.0})
 	g.pipeline.Bind()
 	gfx.Draw(gfx.Triangles, 0, 3)
 }

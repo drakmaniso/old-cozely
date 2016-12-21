@@ -86,7 +86,6 @@ func newGame() (*game, error) {
 	g.pipeline = gfx.NewPipeline(
 		gfx.VertexShader(v),
 		gfx.FragmentShader(f),
-		gfx.ClearColor(Vec4{0.9, 0.9, 0.9, 1.0}),
 		gfx.VertexFormat(0, perVertex{}),
 	)
 
@@ -191,6 +190,8 @@ func (g *game) Update() {
 }
 
 func (g *game) Draw() {
+	gfx.ClearDepthBuffer(1.0)
+	gfx.ClearColorBuffer(color.RGBA{0.9, 0.9, 0.9, 1.0})
 	g.pipeline.Bind()
 	g.transform.Bind(0)
 
