@@ -86,9 +86,8 @@ import "C"
 
 // A Pipeline consists of shaders and state for the GPU.
 type Pipeline struct {
-	object     C.GLuint
-	vao        C.GLuint
-	clearColor [4]float32
+	object C.GLuint
+	vao    C.GLuint
 }
 
 //------------------------------------------------------------------------------
