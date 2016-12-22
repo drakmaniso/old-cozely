@@ -93,6 +93,8 @@ type Pipeline struct {
 
 //------------------------------------------------------------------------------
 
+// A PipelineOption represents a configuration option used when creating a new
+// pipeline.
 type PipelineOption func(*Pipeline)
 
 //------------------------------------------------------------------------------
