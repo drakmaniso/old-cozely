@@ -91,6 +91,8 @@ func newGame() (*game, error) {
 		gfx.FragmentShader(fragmentShader),
 		gfx.VertexFormat(0, perVertex{}),
 	)
+	gfx.Enable(gfx.CullFace)
+	gfx.Enable(gfx.FramebufferSRGB)
 
 	// Create the Vertex Buffer
 	data := []perVertex{

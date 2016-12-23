@@ -105,6 +105,8 @@ func newGame() (*game, error) {
 		gfx.FragmentShader(fragmentShader),
 		gfx.VertexFormat(0, perVertex{}),
 	)
+	gfx.Enable(gfx.CullFace)
+	gfx.Enable(gfx.FramebufferSRGB)
 
 	// Create the Uniform Buffer
 	g.transform = gfx.NewUniformBuffer(unsafe.Sizeof(perObject{}), gfx.DynamicStorage)
