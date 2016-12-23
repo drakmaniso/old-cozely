@@ -12,6 +12,10 @@ package gfx
 static inline void Enable(GLenum c) {
 	glEnable(c);
 }
+
+static inline void Disable(GLenum c) {
+	glDisable(c);
+}
 */
 import "C"
 
@@ -20,6 +24,11 @@ import "C"
 // Enable an OpenGL capability
 func Enable(c capability) {
 	C.Enable((C.GLenum)(c))
+}
+
+// Disable an OpenGL capability
+func Disable(c capability) {
+	C.Disable((C.GLenum)(c))
 }
 
 //------------------------------------------------------------------------------
