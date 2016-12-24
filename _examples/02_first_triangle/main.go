@@ -47,15 +47,14 @@ void main(void)
 //------------------------------------------------------------------------------
 
 func main() {
-	g, err := newGame()
+	err := setup()
 	if err != nil {
 		glam.ErrorDialog(err)
 		return
 	}
 
-	glam.Loop = g
-
-	// Run the Game Loop
+	// Run the main Loop
+	glam.Loop = looper{}
 	err = glam.Run()
 	if err != nil {
 		glam.ErrorDialog(err)
@@ -64,33 +63,34 @@ func main() {
 
 //------------------------------------------------------------------------------
 
-type game struct {
+// OpenGL pipeline object
+var (
 	pipeline gfx.Pipeline
-}
+)
 
 //------------------------------------------------------------------------------
 
-func newGame() (*game, error) {
-	g := &game{}
-
-	// Setup the Pipeline
-	g.pipeline = gfx.NewPipeline(
+func setup() error {
+	// Setup the pipeline
+	pipeline = gfx.NewPipeline(
 		gfx.VertexShader(vertexShader),
 		gfx.FragmentShader(fragmentShader),
 	)
 
-	return g, gfx.Err()
+	return gfx.Err()
 }
 
 //------------------------------------------------------------------------------
 
-func (g *game) Update() {
+type looper struct{}
+
+func (l looper) Update() {
 }
 
-func (g *game) Draw() {
+func (l looper) Draw() {
 	gfx.ClearDepthBuffer(1.0)
 	gfx.ClearColorBuffer(color.RGBA{0.9, 0.9, 0.9, 1.0})
-	g.pipeline.Bind()
+	pipeline.Bind()
 	gfx.Draw(gfx.Triangles, 0, 3)
 }
 

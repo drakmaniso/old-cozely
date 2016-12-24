@@ -10,7 +10,7 @@ import (
 
 	"github.com/drakmaniso/glam"
 	"github.com/drakmaniso/glam/color"
-	. "github.com/drakmaniso/glam/geom"
+	"github.com/drakmaniso/glam/geom"
 	"github.com/drakmaniso/glam/gfx"
 )
 
@@ -53,15 +53,14 @@ void main(void) {
 //------------------------------------------------------------------------------
 
 func main() {
-	g, err := newGame()
+	err := setup()
 	if err != nil {
 		glam.ErrorDialog(err)
 		return
 	}
 
-	glam.Loop = g
-
-	// Run the Game Loop
+	// Run the main loop
+	glam.Loop = looper{}
 	err = glam.Run()
 	if err != nil {
 		glam.ErrorDialog(err)
@@ -70,23 +69,23 @@ func main() {
 
 //------------------------------------------------------------------------------
 
+// Vertex buffer layout
 type perVertex struct {
-	position Vec2      `layout:"0"`
+	position geom.Vec2 `layout:"0"`
 	color    color.RGB `layout:"1"`
 }
 
-type game struct {
+// OpenGL objects
+var (
 	pipeline gfx.Pipeline
 	triangle gfx.VertexBuffer
-}
+)
 
 //------------------------------------------------------------------------------
 
-func newGame() (*game, error) {
-	g := &game{}
-
-	// Setup the Pipeline
-	g.pipeline = gfx.NewPipeline(
+func setup() error {
+	// Setup the pipeline
+	pipeline = gfx.NewPipeline(
 		gfx.VertexShader(vertexShader),
 		gfx.FragmentShader(fragmentShader),
 		gfx.VertexFormat(0, perVertex{}),
@@ -94,27 +93,29 @@ func newGame() (*game, error) {
 	gfx.Enable(gfx.CullFace)
 	gfx.Enable(gfx.FramebufferSRGB)
 
-	// Create the Vertex Buffer
+	// Create the vertex buffer
 	data := []perVertex{
-		{Vec2{0, 0.65}, color.RGB{R: 0.3, G: 0, B: 0.8}},
-		{Vec2{-0.65, -0.475}, color.RGB{R: 0.8, G: 0.3, B: 0}},
-		{Vec2{0.65, -0.475}, color.RGB{R: 0, G: 0.6, B: 0.2}},
+		{geom.Vec2{0, 0.65}, color.RGB{R: 0.3, G: 0, B: 0.8}},
+		{geom.Vec2{-0.65, -0.475}, color.RGB{R: 0.8, G: 0.3, B: 0}},
+		{geom.Vec2{0.65, -0.475}, color.RGB{R: 0, G: 0.6, B: 0.2}},
 	}
-	g.triangle = gfx.NewVertexBuffer(data, 0)
+	triangle = gfx.NewVertexBuffer(data, 0)
 
-	return g, gfx.Err()
+	return gfx.Err()
 }
 
 //------------------------------------------------------------------------------
 
-func (g *game) Update() {
+type looper struct{}
+
+func (l looper) Update() {
 }
 
-func (g *game) Draw() {
+func (l looper) Draw() {
 	gfx.ClearDepthBuffer(1.0)
 	gfx.ClearColorBuffer(color.RGBA{0.9, 0.9, 0.9, 1.0})
-	g.pipeline.Bind()
-	g.triangle.Bind(0, 0)
+	pipeline.Bind()
+	triangle.Bind(0, 0)
 	gfx.Draw(gfx.Triangles, 0, 3)
 }
 

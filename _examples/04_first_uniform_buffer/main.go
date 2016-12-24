@@ -11,7 +11,7 @@ import (
 
 	"github.com/drakmaniso/glam"
 	"github.com/drakmaniso/glam/color"
-	. "github.com/drakmaniso/glam/geom"
+	"github.com/drakmaniso/glam/geom"
 	"github.com/drakmaniso/glam/geom/plane"
 	"github.com/drakmaniso/glam/gfx"
 )
@@ -60,15 +60,14 @@ void main(void) {
 //------------------------------------------------------------------------------
 
 func main() {
-	g, err := newGame()
+	err := setup()
 	if err != nil {
 		glam.ErrorDialog(err)
 		return
 	}
 
-	glam.Loop = g
-
-	// Run the Game Loop
+	// Run the main loop
+	glam.Loop = looper{}
 	err = glam.Run()
 	if err != nil {
 		glam.ErrorDialog(err)
@@ -77,30 +76,34 @@ func main() {
 
 //------------------------------------------------------------------------------
 
-type game struct {
-	pipeline  gfx.Pipeline
-	transform gfx.UniformBuffer
-	triangle  gfx.VertexBuffer
-
-	angle float32
-}
-
+// Vertex buffer layout
 type perVertex struct {
-	position Vec2      `layout:"0"`
+	position geom.Vec2 `layout:"0"`
 	color    color.RGB `layout:"1"`
 }
 
+// Uniform buffer
 type perObject struct {
-	transform Mat3x4
+	transform geom.Mat3x4
 }
+
+// OpenGL objects
+var (
+	pipeline  gfx.Pipeline
+	transform gfx.UniformBuffer
+	triangle  gfx.VertexBuffer
+)
+
+// Animation state
+var (
+	angle float32
+)
 
 //------------------------------------------------------------------------------
 
-func newGame() (*game, error) {
-	g := &game{}
-
-	// Setup the Pipeline
-	g.pipeline = gfx.NewPipeline(
+func setup() error {
+	// Setup the pipeline
+	pipeline = gfx.NewPipeline(
 		gfx.VertexShader(vertexShader),
 		gfx.FragmentShader(fragmentShader),
 		gfx.VertexFormat(0, perVertex{}),
@@ -108,39 +111,41 @@ func newGame() (*game, error) {
 	gfx.Enable(gfx.CullFace)
 	gfx.Enable(gfx.FramebufferSRGB)
 
-	// Create the Uniform Buffer
-	g.transform = gfx.NewUniformBuffer(unsafe.Sizeof(perObject{}), gfx.DynamicStorage)
+	// Create the uniform buffer
+	transform = gfx.NewUniformBuffer(unsafe.Sizeof(perObject{}), gfx.DynamicStorage)
 
-	// Create the Vertex Buffer
+	// Create the vertex buffer
 	data := []perVertex{
-		{Vec2{0, 0.75}, color.RGB{R: 0.3, G: 0, B: 0.8}},
-		{Vec2{-0.65, -0.465}, color.RGB{R: 0.8, G: 0.3, B: 0}},
-		{Vec2{0.65, -0.465}, color.RGB{R: 0, G: 0.6, B: 0.2}},
+		{geom.Vec2{0, 0.75}, color.RGB{R: 0.3, G: 0, B: 0.8}},
+		{geom.Vec2{-0.65, -0.465}, color.RGB{R: 0.8, G: 0.3, B: 0}},
+		{geom.Vec2{0.65, -0.465}, color.RGB{R: 0, G: 0.6, B: 0.2}},
 	}
-	g.triangle = gfx.NewVertexBuffer(data, 0)
+	triangle = gfx.NewVertexBuffer(data, 0)
 
-	return g, gfx.Err()
+	return gfx.Err()
 }
 
 //------------------------------------------------------------------------------
 
-func (g *game) Update() {
-	g.angle -= 0.01
+type looper struct{}
+
+func (l looper) Update() {
+	angle -= 0.01
 }
 
-func (g *game) Draw() {
+func (l looper) Draw() {
 	gfx.ClearDepthBuffer(1.0)
 	gfx.ClearColorBuffer(color.RGBA{0.9, 0.9, 0.9, 1.0})
-	g.pipeline.Bind()
-	g.transform.Bind(0)
+	pipeline.Bind()
+	transform.Bind(0)
 
-	m := plane.Rotation(g.angle)
+	m := plane.Rotation(angle)
 	t := perObject{
 		transform: m.Mat3x4(),
 	}
-	g.transform.Update(&t, 0)
+	transform.Update(&t, 0)
 
-	g.triangle.Bind(0, 0)
+	triangle.Bind(0, 0)
 	gfx.Draw(gfx.Triangles, 0, 3)
 }
 

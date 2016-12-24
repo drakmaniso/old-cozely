@@ -10,10 +10,7 @@ import "github.com/drakmaniso/glam"
 //------------------------------------------------------------------------------
 
 func main() {
-	g := &game{}
-
-	glam.Loop = g
-
+	glam.Loop = looper{}
 	err := glam.Run()
 	if err != nil {
 		glam.ErrorDialog(err)
@@ -22,12 +19,12 @@ func main() {
 
 //------------------------------------------------------------------------------
 
-type game struct{}
+type looper struct{}
 
-func (g *game) Update() {
+func (l looper) Update() {
 }
 
-func (g *game) Draw() {
+func (l looper) Draw() {
 }
 
 //------------------------------------------------------------------------------
