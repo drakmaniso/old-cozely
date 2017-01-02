@@ -26,10 +26,10 @@ var KeyState [512]bool
 //------------------------------------------------------------------------------
 
 // MouseDelta holds the delta from last mouse position.
-var MouseDelta geom.Vec2
+var MouseDelta geom.IVec2
 
 // MousePosition holds the current mouse position.
-var MousePosition geom.Vec2
+var MousePosition geom.IVec2
 
 // MouseButtons holds the state of the mouse buttons.
 var MouseButtons uint32

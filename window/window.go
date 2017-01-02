@@ -19,7 +19,7 @@ import (
 type Handler interface {
 	WindowShown(timestamp time.Duration)
 	WindowHidden(timestamp time.Duration)
-	WindowResized(newSize geom.Vec2, timestamp time.Duration)
+	WindowResized(newSize geom.IVec2, timestamp time.Duration)
 	WindowMinimized(timestamp time.Duration)
 	WindowMaximized(timestamp time.Duration)
 	WindowRestored(timestamp time.Duration)
@@ -48,8 +48,8 @@ func HasMouseFocus() bool {
 }
 
 // Size returns the size of the window in pixels.
-func Size() geom.Vec2 {
-	return geom.Vec2{X: internal.Window.Width, Y: internal.Window.Height}
+func Size() geom.IVec2 {
+	return geom.IVec2{X: internal.Window.Width, Y: internal.Window.Height}
 }
 
 //------------------------------------------------------------------------------

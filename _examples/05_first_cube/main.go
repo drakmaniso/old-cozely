@@ -120,31 +120,31 @@ type handler struct {
 	basic.MouseHandler
 }
 
-func (h handler) WindowResized(s geom.Vec2, timestamp time.Duration) {
-	r := s.X / s.Y
+func (h handler) WindowResized(s geom.IVec2, _ time.Duration) {
+	r := float32(s.X) / float32(s.Y)
 	projection = space.Perspective(math.Pi/4, r, 0.001, 1000.0)
 }
 
-func (h handler) MouseWheel(motion geom.Vec2, timestamp time.Duration) {
-	distance -= motion.Y / 4
+func (h handler) MouseWheel(motion geom.IVec2, _ time.Duration) {
+	distance -= float32(motion.Y) / 4
 	updateView()
 }
 
-func (h handler) MouseButtonDown(b mouse.Button, clicks int, timestamp time.Duration) {
+func (h handler) MouseButtonDown(b mouse.Button, _ int, _ time.Duration) {
 	mouse.SetRelativeMode(true)
 }
 
-func (h handler) MouseButtonUp(b mouse.Button, clicks int, timestamp time.Duration) {
+func (h handler) MouseButtonUp(b mouse.Button, _ int, _ time.Duration) {
 	mouse.SetRelativeMode(false)
 }
 
-func (h handler) MouseMotion(motion geom.Vec2, position geom.Vec2, timestamp time.Duration) {
+func (h handler) MouseMotion(motion geom.IVec2, _ geom.IVec2, _ time.Duration) {
 	s := window.Size()
 
 	switch {
 	case mouse.IsPressed(mouse.Left):
-		yaw += 4 * motion.X / s.X
-		pitch += 4 * motion.Y / s.Y
+		yaw += 4 * float32(motion.X) / float32(s.X)
+		pitch += 4 * float32(motion.Y) / float32(s.Y)
 		switch {
 		case pitch < -math.Pi/2:
 			pitch = -math.Pi / 2
@@ -154,8 +154,8 @@ func (h handler) MouseMotion(motion geom.Vec2, position geom.Vec2, timestamp tim
 		updateModel()
 
 	case mouse.IsPressed(mouse.Middle):
-		position.X += 2 * motion.X / s.X
-		position.Y -= 2 * motion.Y / s.Y
+		position.X += 2.0 * float32(motion.X) / float32(s.X)
+		position.Y -= 2.0 * float32(motion.Y) / float32(s.Y)
 		updateModel()
 	}
 }
