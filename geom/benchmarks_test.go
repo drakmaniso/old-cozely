@@ -54,6 +54,15 @@ func (m *Mat4) setTo(
 	m[3][3] = p
 }
 
+func add(a, b Vec4) Vec4 {
+	return Vec4{
+		a.X + b.X,
+		a.Y + b.Y,
+		a.Z + b.Z,
+		a.W + b.W,
+	}
+}
+
 func (v *Vec4) add(a, b Vec4) {
 	v.X = a.X + b.X
 	v.Y = a.Y + b.Y
@@ -118,6 +127,16 @@ func BenchmarkVec4_Plus(b *testing.B) {
 	var o Vec4
 	for i := 0; i < b.N; i++ {
 		o = m.Plus(n)
+	}
+	_ = o
+}
+
+func BenchmarkVec4_Plus_Add(b *testing.B) {
+	m := Vec4{1.1, 2.2, 3.3, 4.4}
+	n := Vec4{5.5, 6.6, 7.7, 8.8}
+	var o Vec4
+	for i := 0; i < b.N; i++ {
+		o = add(m, n)
 	}
 	_ = o
 }
