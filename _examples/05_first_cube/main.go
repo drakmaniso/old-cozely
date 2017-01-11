@@ -121,7 +121,8 @@ type handler struct {
 }
 
 func (h handler) WindowResized(s pixel.XY, _ time.Duration) {
-	r := float32(s.X) / float32(s.Y)
+	sx, sy := window.Size().Cartesian()
+	r := sx / sy
 	projection = space.Perspective(math.Pi/4, r, 0.001, 1000.0)
 }
 
@@ -139,12 +140,13 @@ func (h handler) MouseButtonUp(b mouse.Button, _ int, _ time.Duration) {
 }
 
 func (h handler) MouseMotion(motion pixel.XY, _ pixel.XY, _ time.Duration) {
-	s := window.Size()
+	mx, my := motion.Cartesian()
+	sx, sy := window.Size().Cartesian()
 
 	switch {
 	case mouse.IsPressed(mouse.Left):
-		yaw += 4 * float32(motion.X) / float32(s.X)
-		pitch += 4 * float32(motion.Y) / float32(s.Y)
+		yaw += 4 * mx / sx
+		pitch += 4 * my / sy
 		switch {
 		case pitch < -math.Pi/2:
 			pitch = -math.Pi / 2
@@ -154,8 +156,8 @@ func (h handler) MouseMotion(motion pixel.XY, _ pixel.XY, _ time.Duration) {
 		updateModel()
 
 	case mouse.IsPressed(mouse.Middle):
-		position.X += 2.0 * float32(motion.X) / float32(s.X)
-		position.Y -= 2.0 * float32(motion.Y) / float32(s.Y)
+		position.X += 2 * mx / sx
+		position.Y -= 2 * my / sy
 		updateModel()
 	}
 }
