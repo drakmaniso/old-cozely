@@ -14,18 +14,18 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/drakmaniso/glam/geom"
 	"github.com/drakmaniso/glam/internal"
+	"github.com/drakmaniso/glam/pixel"
 )
 
 //------------------------------------------------------------------------------
 
 // Handler receives the mouse events.
 type Handler interface {
-	MouseMotion(motion geom.IVec2, position geom.IVec2, timestamp time.Duration)
+	MouseMotion(motion pixel.XY, position pixel.XY, timestamp time.Duration)
 	MouseButtonDown(b Button, clicks int, timestamp time.Duration)
 	MouseButtonUp(b Button, clicks int, timestamp time.Duration)
-	MouseWheel(motion geom.IVec2, timestamp time.Duration)
+	MouseWheel(motion pixel.XY, timestamp time.Duration)
 }
 
 // Handle is the current handlers for mouse events
@@ -37,12 +37,12 @@ var Handle Handler
 
 // Position returns the current mouse position, relative to the game window.
 // Updated at the start of each game loop iteration.
-func Position() geom.IVec2 {
+func Position() pixel.XY {
 	return internal.MousePosition
 }
 
 // Delta returns the mouse position relative to the last call of Delta.
-func Delta() geom.IVec2 {
+func Delta() pixel.XY {
 	result := internal.MouseDelta
 	internal.MouseDelta.X, internal.MouseDelta.Y = 0, 0
 	return result

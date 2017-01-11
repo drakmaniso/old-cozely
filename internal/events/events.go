@@ -23,11 +23,11 @@ import (
 	"time"
 	"unsafe"
 
-	"github.com/drakmaniso/glam/geom"
 	"github.com/drakmaniso/glam/gfx"
 	"github.com/drakmaniso/glam/internal"
 	"github.com/drakmaniso/glam/key"
 	"github.com/drakmaniso/glam/mouse"
+	"github.com/drakmaniso/glam/pixel"
 	"github.com/drakmaniso/glam/window"
 )
 
@@ -68,9 +68,9 @@ func dispatch(e unsafe.Pointer) {
 		case C.SDL_WINDOWEVENT_RESIZED:
 			internal.Window.Width = int32(e.data1)
 			internal.Window.Height = int32(e.data2)
-			gfx.Viewport(geom.IVec2{X: 0, Y: 0}, geom.IVec2{X: int32(e.data1), Y: int32(e.data2)})
+			gfx.Viewport(pixel.XY{X: 0, Y: 0}, pixel.XY{X: int32(e.data1), Y: int32(e.data2)})
 			window.Handle.WindowResized(
-				geom.IVec2{X: int32(e.data1), Y: int32(e.data2)},
+				pixel.XY{X: int32(e.data1), Y: int32(e.data2)},
 				ts,
 			)
 		case C.SDL_WINDOWEVENT_SIZE_CHANGED:
@@ -120,9 +120,9 @@ func dispatch(e unsafe.Pointer) {
 	// Mouse Events
 	case C.SDL_MOUSEMOTION:
 		e := (*C.SDL_MouseMotionEvent)(e)
-		rel := geom.IVec2{X: int32(e.xrel), Y: int32(e.yrel)}
+		rel := pixel.XY{X: int32(e.xrel), Y: int32(e.yrel)}
 		internal.MouseDelta = internal.MouseDelta.Plus(rel)
-		internal.MousePosition = geom.IVec2{X: int32(e.x), Y: int32(e.y)}
+		internal.MousePosition = pixel.XY{X: int32(e.x), Y: int32(e.y)}
 		internal.MouseButtons = uint32(e.state)
 		mouse.Handle.MouseMotion(
 			rel,
@@ -150,7 +150,7 @@ func dispatch(e unsafe.Pointer) {
 			d = -1
 		}
 		mouse.Handle.MouseWheel(
-			geom.IVec2{X: int32(e.x) * d, Y: int32(e.y) * d},
+			pixel.XY{X: int32(e.x) * d, Y: int32(e.y) * d},
 			ts,
 		)
 	//TODO: Joystick Events

@@ -15,7 +15,7 @@ static void Viewport(GLint x,  GLint y,  GLsizei width,  GLsizei height) {
 import "C"
 
 import (
-	"github.com/drakmaniso/glam/geom"
+	"github.com/drakmaniso/glam/pixel"
 )
 
 //------------------------------------------------------------------------------
@@ -24,7 +24,7 @@ import (
 //
 // Note that this function is automatically called each time the window is
 // resized.
-func Viewport(orig, size geom.IVec2) {
+func Viewport(orig, size pixel.XY) {
 	C.Viewport(C.GLint(orig.X), C.GLint(orig.Y), C.GLsizei(size.X), C.GLsizei(size.Y))
 }
 

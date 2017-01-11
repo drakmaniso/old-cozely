@@ -9,8 +9,8 @@ package window
 import (
 	"time"
 
-	"github.com/drakmaniso/glam/geom"
 	"github.com/drakmaniso/glam/internal"
+	"github.com/drakmaniso/glam/pixel"
 )
 
 //------------------------------------------------------------------------------
@@ -19,7 +19,7 @@ import (
 type Handler interface {
 	WindowShown(timestamp time.Duration)
 	WindowHidden(timestamp time.Duration)
-	WindowResized(newSize geom.IVec2, timestamp time.Duration)
+	WindowResized(newSize pixel.XY, timestamp time.Duration)
 	WindowMinimized(timestamp time.Duration)
 	WindowMaximized(timestamp time.Duration)
 	WindowRestored(timestamp time.Duration)
@@ -48,8 +48,8 @@ func HasMouseFocus() bool {
 }
 
 // Size returns the size of the window in pixels.
-func Size() geom.IVec2 {
-	return geom.IVec2{X: internal.Window.Width, Y: internal.Window.Height}
+func Size() pixel.XY {
+	return pixel.XY{X: internal.Window.Width, Y: internal.Window.Height}
 }
 
 //------------------------------------------------------------------------------

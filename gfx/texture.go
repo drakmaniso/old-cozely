@@ -9,7 +9,7 @@ import (
 	"image"
 	"unsafe"
 
-	"github.com/drakmaniso/glam/geom"
+	"github.com/drakmaniso/glam/pixel"
 )
 
 /*
@@ -55,7 +55,7 @@ type Texture2D struct {
 }
 
 // NewTexture2D returns a new 2-dimensional texture.
-func NewTexture2D(levels int32, size geom.IVec2, f textureFormat) Texture2D {
+func NewTexture2D(levels int32, size pixel.XY, f textureFormat) Texture2D {
 	var t Texture2D
 	t.format = f
 	t.object = C.NewTexture2D(C.GLsizei(levels), C.GLenum(f), C.GLsizei(size.X), C.GLsizei(size.Y))
@@ -64,7 +64,7 @@ func NewTexture2D(levels int32, size geom.IVec2, f textureFormat) Texture2D {
 }
 
 // Data loads an image into a texture at a specific position offset and level.
-func (t *Texture2D) Data(img image.Image, offset geom.IVec2, level int32) {
+func (t *Texture2D) Data(img image.Image, offset pixel.XY, level int32) {
 	p, pf, pt := pointerFormatAndTypeOf(img)
 	C.TextureSubImage2D(t.object, C.GLint(level), C.GLint(offset.X), C.GLint(offset.Y), C.GLsizei(img.Bounds().Dx()), C.GLsizei(img.Bounds().Dy()), pf, pt, p)
 }

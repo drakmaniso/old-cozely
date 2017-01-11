@@ -114,7 +114,7 @@ func setup() error {
 	s.Bind(0)
 
 	// Create and load the textures
-	diffuse = gfx.NewTexture2D(8, geom.IVec2{512, 512}, gfx.SRGBA8)
+	diffuse = gfx.NewTexture2D(8, pixel.XY{512, 512}, gfx.SRGBA8)
 	r, err := os.Open(glam.Path() + "../shared/testpattern.png")
 	if err != nil {
 		return err
@@ -124,7 +124,7 @@ func setup() error {
 	if err != nil {
 		return err
 	}
-	diffuse.Data(img, geom.IVec2{0, 0}, 0)
+	diffuse.Data(img, pixel.XY{0, 0}, 0)
 	diffuse.GenerateMipmap()
 
 	// Initialize model and view matrices
@@ -146,12 +146,12 @@ type handler struct {
 	basic.MouseHandler
 }
 
-func (h handler) WindowResized(s geom.IVec2, _ time.Duration) {
+func (h handler) WindowResized(s pixel.XY, _ time.Duration) {
 	r := float32(s.X) / float32(s.Y)
 	projection = space.Perspective(math.Pi/4, r, 0.001, 1000.0)
 }
 
-func (h handler) MouseWheel(motion geom.IVec2, _ time.Duration) {
+func (h handler) MouseWheel(motion pixel.XY, _ time.Duration) {
 	distance -= float32(motion.Y) / 4
 	updateView()
 }
@@ -164,7 +164,7 @@ func (h handler) MouseButtonUp(b mouse.Button, _ int, _ time.Duration) {
 	mouse.SetRelativeMode(false)
 }
 
-func (h handler) MouseMotion(motion geom.IVec2, _ geom.IVec2, _ time.Duration) {
+func (h handler) MouseMotion(motion pixel.XY, _ pixel.XY, _ time.Duration) {
 	s := window.Size()
 
 	switch {

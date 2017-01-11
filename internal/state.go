@@ -5,7 +5,7 @@ package internal
 
 //------------------------------------------------------------------------------
 
-import "github.com/drakmaniso/glam/geom"
+import "github.com/drakmaniso/glam/pixel"
 
 //------------------------------------------------------------------------------
 
@@ -26,10 +26,10 @@ var KeyState [512]bool
 //------------------------------------------------------------------------------
 
 // MouseDelta holds the delta from last mouse position.
-var MouseDelta geom.IVec2
+var MouseDelta pixel.XY
 
 // MousePosition holds the current mouse position.
-var MousePosition geom.IVec2
+var MousePosition pixel.XY
 
 // MouseButtons holds the state of the mouse buttons.
 var MouseButtons uint32
