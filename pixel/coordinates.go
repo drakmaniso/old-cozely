@@ -5,13 +5,14 @@ package pixel
 
 //------------------------------------------------------------------------------
 
-// XY is the cartesian coordinates of a pixel on the screen
+// XY is the cartesian coordinates of a pixel on the screen.
 type XY struct {
 	X, Y int32
 }
 
 //------------------------------------------------------------------------------
 
+// Cartesian implements the plane.Coordinates interface.
 func (p XY) Cartesian() (x, y float32) {
 	return float32(p.X), float32(p.Y)
 }
