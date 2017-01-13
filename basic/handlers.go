@@ -26,7 +26,7 @@ func (dh WindowHandler) WindowShown(timestamp time.Duration) {}
 func (dh WindowHandler) WindowHidden(timestamp time.Duration) {}
 
 // WindowResized does nothing.
-func (dh WindowHandler) WindowResized(s pixel.XY, timestamp time.Duration) {}
+func (dh WindowHandler) WindowResized(s pixel.Coord, timestamp time.Duration) {}
 
 // WindowMinimized does nothing.
 func (dh WindowHandler) WindowMinimized(timestamp time.Duration) {}
@@ -60,7 +60,7 @@ func (dh WindowHandler) WindowQuit(timestamp time.Duration) {
 type MouseHandler struct{}
 
 // MouseMotion does nothing.
-func (dh MouseHandler) MouseMotion(rel pixel.XY, pos pixel.XY, timestamp time.Duration) {}
+func (dh MouseHandler) MouseMotion(rel pixel.Coord, pos pixel.Coord, timestamp time.Duration) {}
 
 // MouseButtonDown does nothing.
 func (dh MouseHandler) MouseButtonDown(b mouse.Button, clicks int, timestamp time.Duration) {}
@@ -69,7 +69,7 @@ func (dh MouseHandler) MouseButtonDown(b mouse.Button, clicks int, timestamp tim
 func (dh MouseHandler) MouseButtonUp(b mouse.Button, clicks int, timestamp time.Duration) {}
 
 // MouseWheel does nothing.
-func (dh MouseHandler) MouseWheel(w pixel.XY, timestamp time.Duration) {}
+func (dh MouseHandler) MouseWheel(w pixel.Coord, timestamp time.Duration) {}
 
 //------------------------------------------------------------------------------
 

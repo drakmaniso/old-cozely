@@ -26,10 +26,10 @@ var KeyState [512]bool
 //------------------------------------------------------------------------------
 
 // MouseDelta holds the delta from last mouse position.
-var MouseDelta pixel.XY
+var MouseDelta pixel.Coord
 
 // MousePosition holds the current mouse position.
-var MousePosition pixel.XY
+var MousePosition pixel.Coord
 
 // MouseButtons holds the state of the mouse buttons.
 var MouseButtons uint32

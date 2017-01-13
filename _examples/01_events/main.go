@@ -46,7 +46,7 @@ func (h handler) KeyUp(l key.Label, p key.Position, ts time.Duration) {
 	fmt.Println("*** Key Up: ", l, p, ts)
 }
 
-func (h handler) MouseMotion(rel pixel.XY, pos pixel.XY, ts time.Duration) {
+func (h handler) MouseMotion(rel pixel.Coord, pos pixel.Coord, ts time.Duration) {
 	fmt.Println("*** Mouse Motion: ", rel, pos, ts)
 }
 
@@ -61,7 +61,7 @@ func (h handler) MouseButtonUp(b mouse.Button, clicks int, ts time.Duration) {
 	fmt.Println("*** Mouse Button Up: ", b, clicks, ts)
 }
 
-func (h handler) MouseWheel(w pixel.XY, ts time.Duration) {
+func (h handler) MouseWheel(w pixel.Coord, ts time.Duration) {
 	fmt.Println("*** Mouse Wheel: ", w, ts)
 }
 
@@ -73,7 +73,7 @@ func (h handler) WindowHidden(ts time.Duration) {
 	fmt.Println("*** Window Hidden: ", ts)
 }
 
-func (h handler) WindowResized(s pixel.XY, ts time.Duration) {
+func (h handler) WindowResized(s pixel.Coord, ts time.Duration) {
 	fmt.Println("*** Window Resized: ", s, ts)
 }
 

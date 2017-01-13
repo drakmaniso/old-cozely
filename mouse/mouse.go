@@ -22,10 +22,10 @@ import (
 
 // Handler receives the mouse events.
 type Handler interface {
-	MouseMotion(motion pixel.XY, position pixel.XY, timestamp time.Duration)
+	MouseMotion(motion pixel.Coord, position pixel.Coord, timestamp time.Duration)
 	MouseButtonDown(b Button, clicks int, timestamp time.Duration)
 	MouseButtonUp(b Button, clicks int, timestamp time.Duration)
-	MouseWheel(motion pixel.XY, timestamp time.Duration)
+	MouseWheel(motion pixel.Coord, timestamp time.Duration)
 }
 
 // Handle is the current handlers for mouse events
@@ -37,12 +37,12 @@ var Handle Handler
 
 // Position returns the current mouse position, relative to the game window.
 // Updated at the start of each game loop iteration.
-func Position() pixel.XY {
+func Position() pixel.Coord {
 	return internal.MousePosition
 }
 
 // Delta returns the mouse position relative to the last call of Delta.
-func Delta() pixel.XY {
+func Delta() pixel.Coord {
 	result := internal.MouseDelta
 	internal.MouseDelta.X, internal.MouseDelta.Y = 0, 0
 	return result

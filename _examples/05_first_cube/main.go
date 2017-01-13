@@ -120,13 +120,13 @@ type handler struct {
 	basic.MouseHandler
 }
 
-func (h handler) WindowResized(s pixel.XY, _ time.Duration) {
+func (h handler) WindowResized(s pixel.Coord, _ time.Duration) {
 	sx, sy := window.Size().Cartesian()
 	r := sx / sy
 	projection = space.Perspective(math.Pi/4, r, 0.001, 1000.0)
 }
 
-func (h handler) MouseWheel(motion pixel.XY, _ time.Duration) {
+func (h handler) MouseWheel(motion pixel.Coord, _ time.Duration) {
 	distance -= float32(motion.Y) / 4
 	updateView()
 }
@@ -139,7 +139,7 @@ func (h handler) MouseButtonUp(b mouse.Button, _ int, _ time.Duration) {
 	mouse.SetRelativeMode(false)
 }
 
-func (h handler) MouseMotion(motion pixel.XY, _ pixel.XY, _ time.Duration) {
+func (h handler) MouseMotion(motion pixel.Coord, _ pixel.Coord, _ time.Duration) {
 	mx, my := motion.Cartesian()
 	sx, sy := window.Size().Cartesian()
 

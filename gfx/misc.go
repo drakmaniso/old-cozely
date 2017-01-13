@@ -24,7 +24,7 @@ import (
 //
 // Note that this function is automatically called each time the window is
 // resized.
-func Viewport(orig, size pixel.XY) {
+func Viewport(orig, size pixel.Coord) {
 	C.Viewport(C.GLint(orig.X), C.GLint(orig.Y), C.GLsizei(size.X), C.GLsizei(size.Y))
 }
 

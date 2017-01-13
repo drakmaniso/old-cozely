@@ -68,9 +68,9 @@ func dispatch(e unsafe.Pointer) {
 		case C.SDL_WINDOWEVENT_RESIZED:
 			internal.Window.Width = int32(e.data1)
 			internal.Window.Height = int32(e.data2)
-			gfx.Viewport(pixel.XY{X: 0, Y: 0}, pixel.XY{X: int32(e.data1), Y: int32(e.data2)})
+			gfx.Viewport(pixel.Coord{X: 0, Y: 0}, pixel.Coord{X: int32(e.data1), Y: int32(e.data2)})
 			window.Handle.WindowResized(
-				pixel.XY{X: int32(e.data1), Y: int32(e.data2)},
+				pixel.Coord{X: int32(e.data1), Y: int32(e.data2)},
 				ts,
 			)
 		case C.SDL_WINDOWEVENT_SIZE_CHANGED:
@@ -120,9 +120,9 @@ func dispatch(e unsafe.Pointer) {
 	// Mouse Events
 	case C.SDL_MOUSEMOTION:
 		e := (*C.SDL_MouseMotionEvent)(e)
-		rel := pixel.XY{X: int32(e.xrel), Y: int32(e.yrel)}
+		rel := pixel.Coord{X: int32(e.xrel), Y: int32(e.yrel)}
 		internal.MouseDelta = internal.MouseDelta.Plus(rel)
-		internal.MousePosition = pixel.XY{X: int32(e.x), Y: int32(e.y)}
+		internal.MousePosition = pixel.Coord{X: int32(e.x), Y: int32(e.y)}
 		internal.MouseButtons = uint32(e.state)
 		mouse.Handle.MouseMotion(
 			rel,
@@ -150,7 +150,7 @@ func dispatch(e unsafe.Pointer) {
 			d = -1
 		}
 		mouse.Handle.MouseWheel(
-			pixel.XY{X: int32(e.x) * d, Y: int32(e.y) * d},
+			pixel.Coord{X: int32(e.x) * d, Y: int32(e.y) * d},
 			ts,
 		)
 	//TODO: Joystick Events

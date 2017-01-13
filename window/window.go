@@ -19,7 +19,7 @@ import (
 type Handler interface {
 	WindowShown(timestamp time.Duration)
 	WindowHidden(timestamp time.Duration)
-	WindowResized(newSize pixel.XY, timestamp time.Duration)
+	WindowResized(newSize pixel.Coord, timestamp time.Duration)
 	WindowMinimized(timestamp time.Duration)
 	WindowMaximized(timestamp time.Duration)
 	WindowRestored(timestamp time.Duration)
@@ -48,8 +48,8 @@ func HasMouseFocus() bool {
 }
 
 // Size returns the size of the window in pixels.
-func Size() pixel.XY {
-	return pixel.XY{X: internal.Window.Width, Y: internal.Window.Height}
+func Size() pixel.Coord {
+	return pixel.Coord{X: internal.Window.Width, Y: internal.Window.Height}
 }
 
 //------------------------------------------------------------------------------
