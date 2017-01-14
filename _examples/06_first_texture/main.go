@@ -15,11 +15,12 @@ import (
 	"github.com/drakmaniso/glam"
 	"github.com/drakmaniso/glam/basic"
 	"github.com/drakmaniso/glam/color"
-	"github.com/drakmaniso/glam/geom"
-	"github.com/drakmaniso/glam/geom/space"
 	"github.com/drakmaniso/glam/gfx"
 	"github.com/drakmaniso/glam/math"
 	"github.com/drakmaniso/glam/mouse"
+	"github.com/drakmaniso/glam/pixel"
+	"github.com/drakmaniso/glam/plane"
+	"github.com/drakmaniso/glam/space"
 	"github.com/drakmaniso/glam/window"
 )
 
@@ -47,13 +48,13 @@ func main() {
 
 // Vertex buffer layout
 type perVertex struct {
-	position geom.Vec3 `layout:"0"`
-	uv       geom.Vec2 `layout:"1"`
+	position space.Coord `layout:"0"`
+	uv       plane.Coord `layout:"1"`
 }
 
 // Uniform buffer
 type perObject struct {
-	transform geom.Mat4
+	transform space.Matrix
 }
 
 // OpenGL objects
@@ -67,15 +68,15 @@ var (
 // Cube state
 var (
 	distance   float32
-	position   geom.Vec3
+	position   space.Coord
 	yaw, pitch float32
 )
 
 // Matrices
 var (
-	model      geom.Mat4
-	view       geom.Mat4
-	projection geom.Mat4
+	model      space.Matrix
+	view       space.Matrix
+	projection space.Matrix
 )
 
 //------------------------------------------------------------------------------
@@ -128,7 +129,7 @@ func setup() error {
 	diffuse.GenerateMipmap()
 
 	// Initialize model and view matrices
-	position = geom.Vec3{0, 0, 0}
+	position = space.Coord{0, 0, 0}
 	yaw = -0.6
 	pitch = 0.3
 	updateModel()
@@ -199,7 +200,7 @@ func updateView() {
 	if distance < 1 {
 		distance = 1
 	}
-	view = space.LookAt(geom.Vec3{0, 0, distance}, geom.Vec3{0, 0, 0}, geom.Vec3{0, 1, 0})
+	view = space.LookAt(space.Coord{0, 0, distance}, space.Coord{0, 0, 0}, space.Coord{0, 1, 0})
 }
 
 //------------------------------------------------------------------------------

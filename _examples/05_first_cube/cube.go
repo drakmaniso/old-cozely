@@ -7,7 +7,7 @@ package main
 
 import (
 	"github.com/drakmaniso/glam/color"
-	. "github.com/drakmaniso/glam/geom"
+	"github.com/drakmaniso/glam/space"
 )
 
 //------------------------------------------------------------------------------
@@ -23,47 +23,47 @@ var (
 func cube() []perVertex {
 	return []perVertex{
 		// Front Face
-		{Vec3{-0.5, -0.5, +0.5}, purple},
-		{Vec3{+0.5, +0.5, +0.5}, purple},
-		{Vec3{-0.5, +0.5, +0.5}, purple},
-		{Vec3{-0.5, -0.5, +0.5}, purple},
-		{Vec3{+0.5, -0.5, +0.5}, purple},
-		{Vec3{+0.5, +0.5, +0.5}, purple},
+		{space.Coord{-0.5, -0.5, +0.5}, purple},
+		{space.Coord{+0.5, +0.5, +0.5}, purple},
+		{space.Coord{-0.5, +0.5, +0.5}, purple},
+		{space.Coord{-0.5, -0.5, +0.5}, purple},
+		{space.Coord{+0.5, -0.5, +0.5}, purple},
+		{space.Coord{+0.5, +0.5, +0.5}, purple},
 		// Back Face
-		{Vec3{-0.5, -0.5, -0.5}, purple},
-		{Vec3{-0.5, +0.5, -0.5}, purple},
-		{Vec3{+0.5, +0.5, -0.5}, purple},
-		{Vec3{-0.5, -0.5, -0.5}, purple},
-		{Vec3{+0.5, +0.5, -0.5}, purple},
-		{Vec3{+0.5, -0.5, -0.5}, purple},
+		{space.Coord{-0.5, -0.5, -0.5}, purple},
+		{space.Coord{-0.5, +0.5, -0.5}, purple},
+		{space.Coord{+0.5, +0.5, -0.5}, purple},
+		{space.Coord{-0.5, -0.5, -0.5}, purple},
+		{space.Coord{+0.5, +0.5, -0.5}, purple},
+		{space.Coord{+0.5, -0.5, -0.5}, purple},
 		// Right Face
-		{Vec3{+0.5, -0.5, +0.5}, green},
-		{Vec3{+0.5, +0.5, -0.5}, green},
-		{Vec3{+0.5, +0.5, +0.5}, green},
-		{Vec3{+0.5, -0.5, +0.5}, green},
-		{Vec3{+0.5, -0.5, -0.5}, green},
-		{Vec3{+0.5, +0.5, -0.5}, green},
+		{space.Coord{+0.5, -0.5, +0.5}, green},
+		{space.Coord{+0.5, +0.5, -0.5}, green},
+		{space.Coord{+0.5, +0.5, +0.5}, green},
+		{space.Coord{+0.5, -0.5, +0.5}, green},
+		{space.Coord{+0.5, -0.5, -0.5}, green},
+		{space.Coord{+0.5, +0.5, -0.5}, green},
 		// Left Face
-		{Vec3{-0.5, -0.5, +0.5}, green},
-		{Vec3{-0.5, +0.5, +0.5}, green},
-		{Vec3{-0.5, +0.5, -0.5}, green},
-		{Vec3{-0.5, -0.5, +0.5}, green},
-		{Vec3{-0.5, +0.5, -0.5}, green},
-		{Vec3{-0.5, -0.5, -0.5}, green},
+		{space.Coord{-0.5, -0.5, +0.5}, green},
+		{space.Coord{-0.5, +0.5, +0.5}, green},
+		{space.Coord{-0.5, +0.5, -0.5}, green},
+		{space.Coord{-0.5, -0.5, +0.5}, green},
+		{space.Coord{-0.5, +0.5, -0.5}, green},
+		{space.Coord{-0.5, -0.5, -0.5}, green},
 		// Bottom Face
-		{Vec3{-0.5, -0.5, +0.5}, orange},
-		{Vec3{-0.5, -0.5, -0.5}, orange},
-		{Vec3{+0.5, -0.5, +0.5}, orange},
-		{Vec3{-0.5, -0.5, -0.5}, orange},
-		{Vec3{+0.5, -0.5, -0.5}, orange},
-		{Vec3{+0.5, -0.5, +0.5}, orange},
+		{space.Coord{-0.5, -0.5, +0.5}, orange},
+		{space.Coord{-0.5, -0.5, -0.5}, orange},
+		{space.Coord{+0.5, -0.5, +0.5}, orange},
+		{space.Coord{-0.5, -0.5, -0.5}, orange},
+		{space.Coord{+0.5, -0.5, -0.5}, orange},
+		{space.Coord{+0.5, -0.5, +0.5}, orange},
 		// Top Face
-		{Vec3{-0.5, +0.5, +0.5}, orange},
-		{Vec3{+0.5, +0.5, +0.5}, orange},
-		{Vec3{-0.5, +0.5, -0.5}, orange},
-		{Vec3{-0.5, +0.5, -0.5}, orange},
-		{Vec3{+0.5, +0.5, +0.5}, orange},
-		{Vec3{+0.5, +0.5, -0.5}, orange},
+		{space.Coord{-0.5, +0.5, +0.5}, orange},
+		{space.Coord{+0.5, +0.5, +0.5}, orange},
+		{space.Coord{-0.5, +0.5, -0.5}, orange},
+		{space.Coord{-0.5, +0.5, -0.5}, orange},
+		{space.Coord{+0.5, +0.5, +0.5}, orange},
+		{space.Coord{+0.5, +0.5, -0.5}, orange},
 	}
 }
 

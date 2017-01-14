@@ -10,9 +10,9 @@ import (
 	"time"
 
 	"github.com/drakmaniso/glam"
-	"github.com/drakmaniso/glam/geom"
 	"github.com/drakmaniso/glam/key"
 	"github.com/drakmaniso/glam/mouse"
+	"github.com/drakmaniso/glam/pixel"
 	"github.com/drakmaniso/glam/window"
 )
 

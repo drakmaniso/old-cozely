@@ -5,54 +5,57 @@ package main
 
 //------------------------------------------------------------------------------
 
-import . "github.com/drakmaniso/glam/geom"
+import (
+	"github.com/drakmaniso/glam/plane"
+	"github.com/drakmaniso/glam/space"
+)
 
 //------------------------------------------------------------------------------
 
 func cube() []perVertex {
 	return []perVertex{
 		// Front Face
-		{Vec3{-0.5, -0.5, +0.5}, Vec2{0, 1}},
-		{Vec3{+0.5, -0.5, +0.5}, Vec2{1, 1}},
-		{Vec3{+0.5, +0.5, +0.5}, Vec2{1, 0}},
-		{Vec3{-0.5, -0.5, +0.5}, Vec2{0, 1}},
-		{Vec3{+0.5, +0.5, +0.5}, Vec2{1, 0}},
-		{Vec3{-0.5, +0.5, +0.5}, Vec2{0, 0}},
+		{space.Coord{-0.5, -0.5, +0.5}, plane.Coord{0, 1}},
+		{space.Coord{+0.5, -0.5, +0.5}, plane.Coord{1, 1}},
+		{space.Coord{+0.5, +0.5, +0.5}, plane.Coord{1, 0}},
+		{space.Coord{-0.5, -0.5, +0.5}, plane.Coord{0, 1}},
+		{space.Coord{+0.5, +0.5, +0.5}, plane.Coord{1, 0}},
+		{space.Coord{-0.5, +0.5, +0.5}, plane.Coord{0, 0}},
 		// Back Face
-		{Vec3{+0.5, -0.5, -0.5}, Vec2{0, 1}},
-		{Vec3{-0.5, -0.5, -0.5}, Vec2{1, 1}},
-		{Vec3{-0.5, +0.5, -0.5}, Vec2{1, 0}},
-		{Vec3{+0.5, -0.5, -0.5}, Vec2{0, 1}},
-		{Vec3{-0.5, +0.5, -0.5}, Vec2{1, 0}},
-		{Vec3{+0.5, +0.5, -0.5}, Vec2{0, 0}},
+		{space.Coord{+0.5, -0.5, -0.5}, plane.Coord{0, 1}},
+		{space.Coord{-0.5, -0.5, -0.5}, plane.Coord{1, 1}},
+		{space.Coord{-0.5, +0.5, -0.5}, plane.Coord{1, 0}},
+		{space.Coord{+0.5, -0.5, -0.5}, plane.Coord{0, 1}},
+		{space.Coord{-0.5, +0.5, -0.5}, plane.Coord{1, 0}},
+		{space.Coord{+0.5, +0.5, -0.5}, plane.Coord{0, 0}},
 		// Right Face
-		{Vec3{+0.5, -0.5, +0.5}, Vec2{0, 1}},
-		{Vec3{+0.5, -0.5, -0.5}, Vec2{1, 1}},
-		{Vec3{+0.5, +0.5, -0.5}, Vec2{1, 0}},
-		{Vec3{+0.5, -0.5, +0.5}, Vec2{0, 1}},
-		{Vec3{+0.5, +0.5, -0.5}, Vec2{1, 0}},
-		{Vec3{+0.5, +0.5, +0.5}, Vec2{0, 0}},
+		{space.Coord{+0.5, -0.5, +0.5}, plane.Coord{0, 1}},
+		{space.Coord{+0.5, -0.5, -0.5}, plane.Coord{1, 1}},
+		{space.Coord{+0.5, +0.5, -0.5}, plane.Coord{1, 0}},
+		{space.Coord{+0.5, -0.5, +0.5}, plane.Coord{0, 1}},
+		{space.Coord{+0.5, +0.5, -0.5}, plane.Coord{1, 0}},
+		{space.Coord{+0.5, +0.5, +0.5}, plane.Coord{0, 0}},
 		// Left Face
-		{Vec3{-0.5, -0.5, -0.5}, Vec2{0, 1}},
-		{Vec3{-0.5, -0.5, +0.5}, Vec2{1, 1}},
-		{Vec3{-0.5, +0.5, +0.5}, Vec2{1, 0}},
-		{Vec3{-0.5, -0.5, -0.5}, Vec2{0, 1}},
-		{Vec3{-0.5, +0.5, +0.5}, Vec2{1, 0}},
-		{Vec3{-0.5, +0.5, -0.5}, Vec2{0, 0}},
+		{space.Coord{-0.5, -0.5, -0.5}, plane.Coord{0, 1}},
+		{space.Coord{-0.5, -0.5, +0.5}, plane.Coord{1, 1}},
+		{space.Coord{-0.5, +0.5, +0.5}, plane.Coord{1, 0}},
+		{space.Coord{-0.5, -0.5, -0.5}, plane.Coord{0, 1}},
+		{space.Coord{-0.5, +0.5, +0.5}, plane.Coord{1, 0}},
+		{space.Coord{-0.5, +0.5, -0.5}, plane.Coord{0, 0}},
 		// Bottom Face
-		{Vec3{-0.5, -0.5, -0.5}, Vec2{0, 1}},
-		{Vec3{+0.5, -0.5, -0.5}, Vec2{1, 1}},
-		{Vec3{+0.5, -0.5, +0.5}, Vec2{1, 0}},
-		{Vec3{-0.5, -0.5, -0.5}, Vec2{0, 1}},
-		{Vec3{+0.5, -0.5, +0.5}, Vec2{1, 0}},
-		{Vec3{-0.5, -0.5, +0.5}, Vec2{0, 0}},
+		{space.Coord{-0.5, -0.5, -0.5}, plane.Coord{0, 1}},
+		{space.Coord{+0.5, -0.5, -0.5}, plane.Coord{1, 1}},
+		{space.Coord{+0.5, -0.5, +0.5}, plane.Coord{1, 0}},
+		{space.Coord{-0.5, -0.5, -0.5}, plane.Coord{0, 1}},
+		{space.Coord{+0.5, -0.5, +0.5}, plane.Coord{1, 0}},
+		{space.Coord{-0.5, -0.5, +0.5}, plane.Coord{0, 0}},
 		// Top Face
-		{Vec3{-0.5, +0.5, +0.5}, Vec2{0, 1}},
-		{Vec3{+0.5, +0.5, +0.5}, Vec2{1, 1}},
-		{Vec3{+0.5, +0.5, -0.5}, Vec2{1, 0}},
-		{Vec3{-0.5, +0.5, +0.5}, Vec2{0, 1}},
-		{Vec3{+0.5, +0.5, -0.5}, Vec2{1, 0}},
-		{Vec3{-0.5, +0.5, -0.5}, Vec2{0, 0}},
+		{space.Coord{-0.5, +0.5, +0.5}, plane.Coord{0, 1}},
+		{space.Coord{+0.5, +0.5, +0.5}, plane.Coord{1, 1}},
+		{space.Coord{+0.5, +0.5, -0.5}, plane.Coord{1, 0}},
+		{space.Coord{-0.5, +0.5, +0.5}, plane.Coord{0, 1}},
+		{space.Coord{+0.5, +0.5, -0.5}, plane.Coord{1, 0}},
+		{space.Coord{-0.5, +0.5, -0.5}, plane.Coord{0, 0}},
 	}
 }
 

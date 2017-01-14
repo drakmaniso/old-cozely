@@ -11,9 +11,8 @@ import (
 
 	"github.com/drakmaniso/glam"
 	"github.com/drakmaniso/glam/color"
-	"github.com/drakmaniso/glam/geom"
-	"github.com/drakmaniso/glam/geom/plane"
 	"github.com/drakmaniso/glam/gfx"
+	"github.com/drakmaniso/glam/plane"
 )
 
 //------------------------------------------------------------------------------
@@ -78,13 +77,13 @@ func main() {
 
 // Vertex buffer layout
 type perVertex struct {
-	position geom.Vec2 `layout:"0"`
-	color    color.RGB `layout:"1"`
+	position plane.Coord `layout:"0"`
+	color    color.RGB   `layout:"1"`
 }
 
 // Uniform buffer
 type perObject struct {
-	transform geom.Mat3x4
+	transform plane.GPUMatrix
 }
 
 // OpenGL objects
@@ -116,9 +115,9 @@ func setup() error {
 
 	// Create the vertex buffer
 	data := []perVertex{
-		{geom.Vec2{0, 0.75}, color.RGB{R: 0.3, G: 0, B: 0.8}},
-		{geom.Vec2{-0.65, -0.465}, color.RGB{R: 0.8, G: 0.3, B: 0}},
-		{geom.Vec2{0.65, -0.465}, color.RGB{R: 0, G: 0.6, B: 0.2}},
+		{plane.Coord{0, 0.75}, color.RGB{R: 0.3, G: 0, B: 0.8}},
+		{plane.Coord{-0.65, -0.465}, color.RGB{R: 0.8, G: 0.3, B: 0}},
+		{plane.Coord{0.65, -0.465}, color.RGB{R: 0, G: 0.6, B: 0.2}},
 	}
 	triangle = gfx.NewVertexBuffer(data, 0)
 
@@ -141,7 +140,7 @@ func (l looper) Draw() {
 
 	m := plane.Rotation(angle)
 	t := perObject{
-		transform: m.Mat3x4(),
+		transform: m.GPU(),
 	}
 	transform.Update(&t, 0)
 
