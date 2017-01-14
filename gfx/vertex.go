@@ -8,11 +8,7 @@ package gfx
 import (
 	"fmt"
 	"reflect"
-
 	"strconv"
-
-	"github.com/drakmaniso/glam/color"
-	"github.com/drakmaniso/glam/geom"
 )
 
 /*
@@ -113,15 +109,15 @@ func (p *Pipeline) setVertexFormat(binding uint32, format interface{}) {
 
 var (
 	float32Type = reflect.TypeOf(float32(0))
-	vec4Type    = reflect.TypeOf(geom.Vec4{})
-	vec3Type    = reflect.TypeOf(geom.Vec3{})
-	vec2Type    = reflect.TypeOf(geom.Vec2{})
+	vec4Type    = reflect.TypeOf(struct{ X, Y, Z, W float32 }{})
+	vec3Type    = reflect.TypeOf(struct{ X, Y, Z float32 }{})
+	vec2Type    = reflect.TypeOf(struct{ X, Y float32 }{})
 	int32Type   = reflect.TypeOf(int32(0))
-	ivec4Type   = reflect.TypeOf(geom.IVec4{})
-	ivec3Type   = reflect.TypeOf(geom.IVec3{})
-	ivec2Type   = reflect.TypeOf(geom.IVec2{})
-	rgbType     = reflect.TypeOf(color.RGB{})
-	rgbaType    = reflect.TypeOf(color.RGBA{})
+	ivec4Type   = reflect.TypeOf(struct{ X, Y, Z, W int32 }{})
+	ivec3Type   = reflect.TypeOf(struct{ X, Y, Z int32 }{})
+	ivec2Type   = reflect.TypeOf(struct{ X, Y int32 }{})
+	rgbType     = reflect.TypeOf(struct{ R, G, B float32 }{})
+	rgbaType    = reflect.TypeOf(struct{ R, G, B, A float32 }{})
 )
 
 //------------------------------------------------------------------------------
