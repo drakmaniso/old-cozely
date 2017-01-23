@@ -19,7 +19,7 @@ import "C"
 // A Primitive specifies what kind of object to draw.
 type Primitive C.GLenum
 
-// Used in 'Draw'.
+// Used in `Draw`.
 const (
 	Points               Primitive = C.GL_POINTS
 	Lines                Primitive = C.GL_LINES

@@ -36,7 +36,7 @@ func Disable(c Capability) {
 // A Capability is an OpenGL functionality that can be enabled or disabled.
 type Capability C.GLenum
 
-// Used in 'Enable' and 'Disable'.
+// Used in `Enable` and `Disable`.
 const (
 	Blend                      Capability = C.GL_BLEND
 	ColorLogicOp               Capability = C.GL_COLOR_LOGIC_OP

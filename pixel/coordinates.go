@@ -5,7 +5,7 @@ package pixel
 
 //------------------------------------------------------------------------------
 
-// Coord is the coordinates of a pixel on the screen.
+// A Coord is the pair of coordinates of a pixel.
 type Coord struct {
 	X, Y int32
 }
@@ -13,7 +13,7 @@ type Coord struct {
 //------------------------------------------------------------------------------
 
 // Cartesian returns the floating point conversion of the coordinates, thus
-// implementing the plane.Vector interface.
+// implementing the `plane.Vector` interface.
 func (p Coord) Cartesian() (x, y float32) {
 	return float32(p.X), float32(p.Y)
 }

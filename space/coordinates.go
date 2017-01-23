@@ -11,35 +11,34 @@ import (
 
 //------------------------------------------------------------------------------
 
-// Vector encapsulates any type that can represent an euclidian vector (ie can
-// represent a point in space).
+// A Vector is a euclidian vector in 3 dimensions.
 type Vector interface {
 	Cartesian() (x, y, z float32)
 }
 
 //------------------------------------------------------------------------------
 
-// Coord is a cartesian coordinate vector.
+// A Coord is a cartesian coordinate vector.
 type Coord struct {
 	X float32
 	Y float32
 	Z float32
 }
 
-// NewCoord returns a new Coord corresponding to v.
+// NewCoord returns a new `Coord` corresponding to `v`.
 func NewCoord(v Vector) Coord {
 	x, y, z := v.Cartesian()
 	return Coord{x, y, z}
 }
 
-// Cartesian returns X, Y and Z. This function is here to implement the Vector
-// interface.
+// Cartesian returns `v.X`, `v.Y` and `v.Z`. This function is here to implement
+// the `Vector` interface.
 func (v Coord) Cartesian() (x, y, z float32) {
 	return v.X, v.Y, v.Z
 }
 
-// Homogen returns an homogenous coordinate vector corresponding to v, with W
-// set to 1.
+// Homogen returns an homogenous coordinate vector corresponding to `v`, with
+// `v.W` set to 1.
 func (v Coord) Homogen() Homogen {
 	return Homogen{v.X, v.Y, v.Z, 1.0}
 }
@@ -64,8 +63,9 @@ func (v Coord) Times(o Coord) Coord {
 	return Coord{v.X * o.X, v.Y * o.Y, v.Z * o.Z}
 }
 
-// Slash returns the division by another coordinate vector (of which both X and
-// Y must be non-zero).
+// Slash returns the division by another coordinate vector.
+//
+// Important: both `o.X` and `o.Y` must be non-zero.
 func (v Coord) Slash(o Coord) Coord {
 	return Coord{v.X / o.X, v.Y / o.Y, v.Z / o.Z}
 }
@@ -92,7 +92,7 @@ func (v Coord) Length() float32 {
 // Normalized return the normalization of the vector (i.e. the vector divided
 // by its length).
 //
-// Important: Length() must be non-zero.
+// Important: `v.Length()` must be non-zero.
 func (v Coord) Normalized() Coord {
 	l := v.Length()
 	return Coord{v.X / l, v.Y / l, v.Z / l}
@@ -103,7 +103,7 @@ func (v Coord) Normalized() Coord {
 //
 // Handle special cases: zero, infinites, denormals.
 //
-// See also IsNearlyEqual and IsRoughlyEqual.
+// See also `IsNearlyEqual` and `IsRoughlyEqual`.
 func (v Coord) IsAlmostEqual(o Coord, ulps uint32) bool {
 	return math.IsAlmostEqual(v.X, o.X, ulps) &&
 		math.IsAlmostEqual(v.Y, o.Y, ulps) &&
@@ -115,7 +115,7 @@ func (v Coord) IsAlmostEqual(o Coord, ulps uint32) bool {
 //
 // Handles special cases: zero, infinites, denormals.
 //
-// See also IsAlmostEqual and IsRoughlyEqual.
+// See also `IsAlmostEqual` and `IsRoughlyEqual`.
 func (v Coord) IsNearlyEqual(o Coord, epsilon float32) bool {
 	return math.IsNearlyEqual(v.X, o.X, epsilon) &&
 		math.IsNearlyEqual(v.Y, o.Y, epsilon) &&
@@ -125,7 +125,7 @@ func (v Coord) IsNearlyEqual(o Coord, epsilon float32) bool {
 // IsRoughlyEqual Returns true if the absolute error between the two vectors is
 // less than epsilon.
 //
-// See also IsNearlyEqual and IsAlmostEqual.
+// See also `IsNearlyEqual` and `IsAlmostEqual`.
 func (v Coord) IsRoughlyEqual(o Coord, epsilon float32) bool {
 	return math.IsRoughlyEqual(v.X, o.X, epsilon) &&
 		math.IsRoughlyEqual(v.Y, o.Y, epsilon) &&
@@ -142,17 +142,17 @@ type Homogen struct {
 	W float32
 }
 
-// Cartesian implements the Vector interface: it returns the dehomogenization of
-// the vector (i.e. perspective divide).
+// Cartesian implements the `Vector` interface: it returns the dehomogenization
+// of the vector (i.e. perspective divide).
 //
-// Important: v.W must be non-zero.
+// Important: `v.W` must be non-zero.
 func (v Homogen) Cartesian() (x, y, z float32) {
 	return v.X / v.W, v.Y / v.W, v.Z / v.W
 }
 
 // Coord returns the dehomogenization of the vector (i.e. perspective divide).
 //
-// Important: v.W must be non-zero.
+// Important: `v.W` must be non-zero.
 func (v Homogen) Coord() Coord {
 	return Coord{v.X / v.W, v.Y / v.W, v.Z / v.W}
 }
@@ -196,7 +196,7 @@ func (v Homogen) Length() float32 {
 // Normalized return the normalization of the vector (i.e. the vector divided
 // by its length).
 //
-// Important: Length() must be non-zero.
+// Important: `v.Length()` must be non-zero.
 func (v Homogen) Normalized() Homogen {
 	l := v.Length()
 	return Homogen{v.X / l, v.Y / l, v.Z / l, v.W / l}

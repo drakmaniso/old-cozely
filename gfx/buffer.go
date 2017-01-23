@@ -141,7 +141,7 @@ func (vb *VertexBuffer) Bind(binding uint32, offset uintptr) {
 // can be ORed together.
 type BufferFlags C.GLbitfield
 
-// Used in 'NewUniformBuffer' and 'NewVertexBuffer'.
+// Used in `NewUniformBuffer` and `NewVertexBuffer`.
 const (
 	StaticStorage  BufferFlags = C.GL_NONE                // Content will not be updated
 	MapRead        BufferFlags = C.GL_MAP_READ_BIT        // Data store will be mapped for reading

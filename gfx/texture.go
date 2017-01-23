@@ -84,7 +84,7 @@ func (t *Texture2D) Bind(index uint32) {
 // A TextureFormat specifies the format used to store textures in memory.
 type TextureFormat C.GLenum
 
-// Used in 'NewTexture2D'.
+// Used in `NewTexture2D`.
 const (
 	RGBA8  TextureFormat = C.GL_RGBA8
 	SRGBA8 TextureFormat = C.GL_SRGB8_ALPHA8

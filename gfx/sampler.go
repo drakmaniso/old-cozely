@@ -88,7 +88,7 @@ func (sa *Sampler) Filter(min, mag FilterMode) {
 // A FilterMode specifies how to filter textures when minifying or magnifying.
 type FilterMode C.GLuint
 
-// Used in 'Sampler.Filter'.
+// Used in `Sampler.Filter`.
 const (
 	Nearest             FilterMode = C.GL_NEAREST
 	Linear              FilterMode = C.GL_LINEAR
@@ -128,7 +128,7 @@ func (sa *Sampler) Wrap(s, t, p WrapMode) {
 // A WrapMode specifies the way a texture wraps.
 type WrapMode C.GLuint
 
-// Used in 'Sampler.Wrap'.
+// Used in `Sampler.Wrap`.
 const (
 	ClampToBorder     WrapMode = C.GL_CLAMP_TO_BORDER
 	ClampToEdge       WrapMode = C.GL_CLAMP_TO_EDGE
@@ -153,7 +153,7 @@ func (sa *Sampler) CompareMode(m CompareMode) {
 // A CompareMode specifies a mode of texture comparison.
 type CompareMode C.GLuint
 
-// Used in 'Sampler.CompareMode'.
+// Used in `Sampler.CompareMode`.
 const (
 	None                CompareMode = C.GL_NONE
 	CompareRefToTexture CompareMode = C.GL_COMPARE_REF_TO_TEXTURE
@@ -169,7 +169,7 @@ func (sa *Sampler) CompareFunc(f CompareFunc) {
 // A CompareFunc specifies an operator for texture comparison.
 type CompareFunc C.GLuint
 
-// Used in 'Sampler.CompareFunc'.
+// Used in `Sampler.CompareFunc`.
 const (
 	LessOrEqual    CompareFunc = C.GL_LEQUAL
 	GreaterOrEqual CompareFunc = C.GL_GEQUAL
