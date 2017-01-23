@@ -63,7 +63,7 @@ import "C"
 
 //------------------------------------------------------------------------------
 
-// A Sampler stores the sampling parameters for a texture inside a shader.
+// A Sampler describes a way to sample textures inside shaders.
 type Sampler struct {
 	object C.GLuint
 }
@@ -81,21 +81,28 @@ func NewSampler() Sampler {
 
 // Filter specifies which function is used when minifying and magnifying
 // the texture.
-func (sa *Sampler) Filter(min, mag filter) {
+func (sa *Sampler) Filter(min, mag FilterMode) {
 	C.SamplerFilter(sa.object, C.GLenum(min), C.GLenum(mag))
 }
 
-type filter C.GLuint
+// A FilterMode specifies how to filter textures when minifying or magnifying.
+type FilterMode C.GLuint
 
-// Sampler filtering functions.
+// Used in 'Sampler.Filter'.
 const (
-	Nearest             filter = C.GL_NEAREST
-	Linear              filter = C.GL_LINEAR
-	NearestMimapNearest filter = C.GL_NEAREST_MIPMAP_NEAREST
-	LinearMipmapNearest filter = C.GL_LINEAR_MIPMAP_NEAREST
-	NearestMipmapLinear filter = C.GL_NEAREST_MIPMAP_LINEAR
-	LinearMipmapLinear  filter = C.GL_LINEAR_MIPMAP_LINEAR
+	Nearest             FilterMode = C.GL_NEAREST
+	Linear              FilterMode = C.GL_LINEAR
+	NearestMimapNearest FilterMode = C.GL_NEAREST_MIPMAP_NEAREST
+	LinearMipmapNearest FilterMode = C.GL_LINEAR_MIPMAP_NEAREST
+	NearestMipmapLinear FilterMode = C.GL_NEAREST_MIPMAP_LINEAR
+	LinearMipmapLinear  FilterMode = C.GL_LINEAR_MIPMAP_LINEAR
 )
+
+// func MinFilterNearest() SamplerOption {
+//   return func(sa *Sampler) {
+//     C.SamplerMinFilter(sa.object, C.GL_NEAREST)
+//   }
+// }
 
 //------------------------------------------------------------------------------
 
@@ -114,19 +121,20 @@ func (sa *Sampler) Anisotropy(max float32) {
 //------------------------------------------------------------------------------
 
 // Wrap sets the wrapping modes for texture coordinates.
-func (sa *Sampler) Wrap(s, t, p wrap) {
+func (sa *Sampler) Wrap(s, t, p WrapMode) {
 	C.SamplerWrap(sa.object, C.GLenum(s), C.GLenum(t), C.GLenum(p))
 }
 
-type wrap C.GLuint
+// A WrapMode specifies the way a texture wraps.
+type WrapMode C.GLuint
 
-// Sampler wrapping modes.
+// Used in 'Sampler.Wrap'.
 const (
-	ClampToBorder     wrap = C.GL_CLAMP_TO_BORDER
-	ClampToEdge       wrap = C.GL_CLAMP_TO_EDGE
-	MirrorClampToEdge wrap = C.GL_MIRROR_CLAMP_TO_EDGE
-	Repeat            wrap = C.GL_REPEAT
-	MirroredRepeat    wrap = C.GL_MIRRORED_REPEAT
+	ClampToBorder     WrapMode = C.GL_CLAMP_TO_BORDER
+	ClampToEdge       WrapMode = C.GL_CLAMP_TO_EDGE
+	MirrorClampToEdge WrapMode = C.GL_MIRROR_CLAMP_TO_EDGE
+	Repeat            WrapMode = C.GL_REPEAT
+	MirroredRepeat    WrapMode = C.GL_MIRRORED_REPEAT
 )
 
 // BorderColor sets the color used for texture filtering when ClampToborder
@@ -138,35 +146,39 @@ func (sa *Sampler) BorderColor(c color.RGBA) {
 //------------------------------------------------------------------------------
 
 // CompareMode specifies the texture comparison mode.
-func (sa *Sampler) CompareMode(m compareMode) {
+func (sa *Sampler) CompareMode(m CompareMode) {
 	C.SamplerCompareMode(sa.object, C.GLenum(m))
 }
 
-type compareMode C.GLuint
+// A CompareMode specifies a mode of texture comparison.
+type CompareMode C.GLuint
 
-// Sampler comparison modes.
+// Used in 'Sampler.CompareMode'.
 const (
-	None                compareMode = C.GL_NONE
-	CompareRefToTexture compareMode = C.GL_COMPARE_REF_TO_TEXTURE
+	None                CompareMode = C.GL_NONE
+	CompareRefToTexture CompareMode = C.GL_COMPARE_REF_TO_TEXTURE
 )
 
+//------------------------------------------------------------------------------
+
 // CompareFunc specifies the comparison operator.
-func (sa *Sampler) CompareFunc(f compareFunc) {
+func (sa *Sampler) CompareFunc(f CompareFunc) {
 	C.SamplerCompareFunc(sa.object, C.GLenum(f))
 }
 
-type compareFunc C.GLuint
+// A CompareFunc specifies an operator for texture comparison.
+type CompareFunc C.GLuint
 
-// Sampelr comparison operators.
+// Used in 'Sampler.CompareFunc'.
 const (
-	LessOrEqual    compareFunc = C.GL_LEQUAL
-	GreaterOrEqual compareFunc = C.GL_GEQUAL
-	Less           compareFunc = C.GL_LESS
-	Greater        compareFunc = C.GL_GREATER
-	Equal          compareFunc = C.GL_EQUAL
-	NotEqual       compareFunc = C.GL_NOTEQUAL
-	Always         compareFunc = C.GL_ALWAYS
-	Never          compareFunc = C.GL_NEVER
+	LessOrEqual    CompareFunc = C.GL_LEQUAL
+	GreaterOrEqual CompareFunc = C.GL_GEQUAL
+	Less           CompareFunc = C.GL_LESS
+	Greater        CompareFunc = C.GL_GREATER
+	Equal          CompareFunc = C.GL_EQUAL
+	NotEqual       CompareFunc = C.GL_NOTEQUAL
+	Always         CompareFunc = C.GL_ALWAYS
+	Never          CompareFunc = C.GL_NEVER
 )
 
 //------------------------------------------------------------------------------

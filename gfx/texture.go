@@ -51,11 +51,11 @@ import "C"
 // A Texture2D contains one or more images that all have the same format.
 type Texture2D struct {
 	object C.GLuint
-	format textureFormat
+	format TextureFormat
 }
 
 // NewTexture2D returns a new 2-dimensional texture.
-func NewTexture2D(levels int32, size pixel.Coord, f textureFormat) Texture2D {
+func NewTexture2D(levels int32, size pixel.Coord, f TextureFormat) Texture2D {
 	var t Texture2D
 	t.format = f
 	t.object = C.NewTexture2D(C.GLsizei(levels), C.GLenum(f), C.GLsizei(size.X), C.GLsizei(size.Y))
@@ -81,12 +81,13 @@ func (t *Texture2D) Bind(index uint32) {
 
 //------------------------------------------------------------------------------
 
-type textureFormat C.GLenum
+// A TextureFormat specifies the format used to store textures in memory.
+type TextureFormat C.GLenum
 
-// Texture image formats.
+// Used in 'NewTexture2D'.
 const (
-	RGBA8  textureFormat = C.GL_RGBA8
-	SRGBA8 textureFormat = C.GL_SRGB8_ALPHA8
+	RGBA8  TextureFormat = C.GL_RGBA8
+	SRGBA8 TextureFormat = C.GL_SRGB8_ALPHA8
 )
 
 func pointerFormatAndTypeOf(img image.Image) (p unsafe.Pointer, pformat C.GLenum, ptype C.GLenum) {

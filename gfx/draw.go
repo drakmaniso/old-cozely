@@ -16,28 +16,29 @@ import "C"
 
 //------------------------------------------------------------------------------
 
-type primitive uint32
+// A Primitive specifies what kind of object to draw.
+type Primitive C.GLenum
 
-// Drawing Primitives
+// Used in 'Draw'.
 const (
-	Points               primitive = 0x0000
-	Lines                primitive = 0x0001
-	LineLoop             primitive = 0x0002
-	LineStrip            primitive = 0x0003
-	Triangles            primitive = 0x0004
-	TriangleStrip        primitive = 0x0005
-	TriangleFan          primitive = 0x0006
-	LinesAdjency         primitive = 0x000A
-	LineStripAdjency     primitive = 0x000B
-	TrianglesAdjency     primitive = 0x000C
-	TriangleStripAdjency primitive = 0x000D
-	Patches              primitive = 0x000E
+	Points               Primitive = C.GL_POINTS
+	Lines                Primitive = C.GL_LINES
+	LineLoop             Primitive = C.GL_LINE_LOOP
+	LineStrip            Primitive = C.GL_LINE_STRIP
+	Triangles            Primitive = C.GL_TRIANGLES
+	TriangleStrip        Primitive = C.GL_TRIANGLE_STRIP
+	TriangleFan          Primitive = C.GL_TRIANGLE_FAN
+	LinesAdjency         Primitive = C.GL_LINES_ADJACENCY
+	LineStripAdjency     Primitive = C.GL_LINE_STRIP_ADJACENCY
+	TrianglesAdjency     Primitive = C.GL_TRIANGLES_ADJACENCY
+	TriangleStripAdjency Primitive = C.GL_TRIANGLE_STRIP_ADJACENCY
+	Patches              Primitive = C.GL_PATCHES
 )
 
 //------------------------------------------------------------------------------
 
 // Draw count primitives, starting at first.
-func Draw(mode primitive, first int32, count int32) {
+func Draw(mode Primitive, first int32, count int32) {
 	C.DrawArrays(C.GLenum(mode), C.GLuint(first), C.GLuint(count))
 }
 

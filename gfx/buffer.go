@@ -14,7 +14,7 @@ import (
 /*
 #include "glad.h"
 
-GLuint NewBuffer(GLsizeiptr size, void* data, GLenum flags) {
+GLuint NewBuffer(GLsizeiptr size, void* data, GLbitfield flags) {
 	GLuint b;
 	glCreateBuffers(1, &b);
 	glNamedBufferStorage(b, size, data, flags);
@@ -49,14 +49,14 @@ type UniformBuffer struct {
 // bytes), and the content is not initialized. Otherwise data must be a pointer
 // to a struct of pure values (no nested references). In all cases the size of
 // the buffer is fixed at creation.
-func NewUniformBuffer(data interface{}, f bufferFlags) UniformBuffer {
+func NewUniformBuffer(data interface{}, f BufferFlags) UniformBuffer {
 	p, s, err := pointerAndSizeOf(data)
 	if err != nil {
 		setErr(err)
 		return UniformBuffer{}
 	}
 	var ub UniformBuffer
-	ub.object = C.NewBuffer(C.GLsizeiptr(s), p, C.GLenum(f))
+	ub.object = C.NewBuffer(C.GLsizeiptr(s), p, C.GLbitfield(f))
 	//TODO: error handling
 	ub.stride = 0
 	return ub
@@ -97,14 +97,14 @@ type VertexBuffer struct {
 // bytes), and the content is not initialized. Otherwise data must be a slice of
 // pure values (no nested references). In all cases the size of the buffer is
 // fixed at creation.
-func NewVertexBuffer(data interface{}, f bufferFlags) VertexBuffer {
+func NewVertexBuffer(data interface{}, f BufferFlags) VertexBuffer {
 	p, s, st, err := pointerSizeAndStrideOf(data)
 	if err != nil {
 		setErr(err)
 		return VertexBuffer{}
 	}
 	var vb VertexBuffer
-	vb.object = C.NewBuffer(C.GLsizeiptr(s), p, C.GLenum(f))
+	vb.object = C.NewBuffer(C.GLsizeiptr(s), p, C.GLbitfield(f))
 	//TODO: error handling
 	vb.stride = st
 	return vb
@@ -137,18 +137,22 @@ func (vb *VertexBuffer) Bind(binding uint32, offset uintptr) {
 
 //------------------------------------------------------------------------------
 
-type bufferFlags uint32
+// BufferFlags specifiy which settings to use when creating a new buffer. Values
+// can be ORed together.
+type BufferFlags C.GLbitfield
 
-// Flags for buffer creation.
+// Used in 'NewUniformBuffer' and 'NewVertexBuffer'.
 const (
-	StaticStorage  bufferFlags = 0x0000 // Content will not be updated
-	MapRead        bufferFlags = 0x0001 // Data store will be mapped for reading
-	MapWrite       bufferFlags = 0x0002 // Data store will be mapped for writing
-	MapPersistent  bufferFlags = 0x0040 // Data store will be accessed by both application and GPU while mapped
-	MapCoherent    bufferFlags = 0x0080 // No synchronization needed when persistently mapped
-	DynamicStorage bufferFlags = 0x0100 // Content will be updated
-	ClientStorage  bufferFlags = 0x0200 // Prefer storage on application side
+	StaticStorage  BufferFlags = C.GL_NONE                // Content will not be updated
+	MapRead        BufferFlags = C.GL_MAP_READ_BIT        // Data store will be mapped for reading
+	MapWrite       BufferFlags = C.GL_MAP_WRITE_BIT       // Data store will be mapped for writing
+	MapPersistent  BufferFlags = C.GL_MAP_PERSISTENT_BIT  // Data store will be accessed by both application and GPU while mapped
+	MapCoherent    BufferFlags = C.GL_MAP_COHERENT_BIT    // No synchronization needed when persistently mapped
+	DynamicStorage BufferFlags = C.GL_DYNAMIC_STORAGE_BIT // Content will be updated
+	ClientStorage  BufferFlags = C.GL_CLIENT_STORAGE_BIT  // Prefer storage on application side
 )
+
+//------------------------------------------------------------------------------
 
 func pointerAndSizeOf(data interface{}) (ptr unsafe.Pointer, size uintptr, err error) {
 	var p unsafe.Pointer
