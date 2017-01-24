@@ -57,8 +57,6 @@ static inline void BindPipeline(GLuint p, GLuint vao) {
 
     glDepthFunc (GL_LEQUAL);
 
-    glCullFace (GL_BACK);
-
     glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glBindProgramPipeline(p);

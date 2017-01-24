@@ -98,7 +98,7 @@ func setup() error {
 		gfx.VertexFormat(0, perVertex{}),
 	)
 	gfx.Enable(gfx.DepthTest)
-	gfx.Enable(gfx.CullFace)
+	gfx.CullFace(false, true)
 	gfx.Enable(gfx.FramebufferSRGB)
 
 	// Create the uniform buffer

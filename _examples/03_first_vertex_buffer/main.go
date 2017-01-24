@@ -90,7 +90,6 @@ func setup() error {
 		gfx.FragmentShader(fragmentShader),
 		gfx.VertexFormat(0, perVertex{}),
 	)
-	gfx.Enable(gfx.CullFace)
 	gfx.Enable(gfx.FramebufferSRGB)
 
 	// Create the vertex buffer

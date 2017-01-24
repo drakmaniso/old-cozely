@@ -16,6 +16,14 @@ static inline void Enable(GLenum c) {
 static inline void Disable(GLenum c) {
 	glDisable(c);
 }
+
+static inline void CullFace(GLenum f) {
+	glCullFace(f);
+}
+
+static inline void FrontFace(GLenum d) {
+	glFrontFace(d);
+}
 */
 import "C"
 
@@ -40,7 +48,6 @@ type Capability C.GLenum
 const (
 	Blend                      Capability = C.GL_BLEND
 	ColorLogicOp               Capability = C.GL_COLOR_LOGIC_OP
-	CullFace                   Capability = C.GL_CULL_FACE
 	DebugOutput                Capability = C.GL_DEBUG_OUTPUT
 	DebugOutputSynchronous     Capability = C.GL_DEBUG_OUTPUT_SYNCHRONOUS
 	DepthClamp                 Capability = C.GL_DEPTH_CLAMP
@@ -60,6 +67,43 @@ const (
 	ScissorTest                Capability = C.GL_SCISSOR_TEST
 	StencilTest                Capability = C.GL_STENCIL_TEST
 	TextureCubeMapSeamless     Capability = C.GL_TEXTURE_CUBE_MAP_SEAMLESS
+)
+
+//------------------------------------------------------------------------------
+
+// CullFace specifies if front and/or back faces are culled.
+//
+// See also `FrontFace`.
+func CullFace(front, back bool) {
+	switch {
+	case front && back:
+		C.CullFace(C.GL_FRONT_AND_BACK)
+		C.Enable(C.GL_CULL_FACE)
+	case front:
+		C.CullFace(C.GL_FRONT)
+		C.Enable(C.GL_CULL_FACE)
+	case back:
+		C.CullFace(C.GL_BACK)
+		C.Enable(C.GL_CULL_FACE)
+	default:
+		C.Disable(C.GL_CULL_FACE)
+	}
+}
+
+// FrontFace specifies which winding direction is considered front.
+//
+// See also `CullFace`.
+func FrontFace(d WindingDirection) {
+	C.FrontFace(C.GLenum(d))
+}
+
+// A WindingDirection specifies a rotation direction.
+type WindingDirection C.GLenum
+
+// Used in `FrontFace`.
+const (
+	Clockwise        WindingDirection = C.GL_CW
+	CounterClockwise WindingDirection = C.GL_CCW
 )
 
 //------------------------------------------------------------------------------
