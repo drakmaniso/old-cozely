@@ -24,6 +24,14 @@ static inline void CullFace(GLenum f) {
 static inline void FrontFace(GLenum d) {
 	glFrontFace(d);
 }
+
+static inline void DepthComparison(GLenum cf) {
+	glDepthFunc(cf);
+}
+
+static inline void Blending(GLenum src, GLenum dst) {
+	glBlendFunc(src, dst);
+}
 */
 import "C"
 
@@ -104,6 +112,52 @@ type WindingDirection C.GLenum
 const (
 	Clockwise        WindingDirection = C.GL_CW
 	CounterClockwise WindingDirection = C.GL_CCW
+)
+
+//------------------------------------------------------------------------------
+
+// DepthComparison specifies the function used to compare pixel depth.
+//
+// Note that you must also `Enable(DepthTest)`. The default value is `Less`.
+func DepthComparison(op ComparisonOp) {
+	C.DepthComparison(C.GLenum(op))
+}
+
+//------------------------------------------------------------------------------
+
+// Blending specifies the formula used for blending pixels.
+//
+// Note that you must also `Enable(Blend)`. The default values are `One` and
+// `Zero`. For alpha-blending and antialiasing, the most useful choice is
+// `Blending(SrcAlpha, OneMinusSrcAlpha)`.
+func Blending(src, dst BlendFactor) {
+	C.Blending(C.GLenum(src), C.GLenum(dst))
+}
+
+// A BlendFactor is a formula used when blending pixels.
+type BlendFactor C.GLenum
+
+// Used in `Blending`.
+const (
+	Zero                  BlendFactor = C.GL_ZERO
+	One                   BlendFactor = C.GL_ONE
+	SrcColor              BlendFactor = C.GL_SRC_COLOR
+	OneMinusSrcColor      BlendFactor = C.GL_ONE_MINUS_SRC_COLOR
+	DstColor              BlendFactor = C.GL_DST_COLOR
+	OneMinusDstColor      BlendFactor = C.GL_ONE_MINUS_DST_COLOR
+	SrcAlpha              BlendFactor = C.GL_SRC_ALPHA
+	OneMinusSrcAlpha      BlendFactor = C.GL_ONE_MINUS_SRC_ALPHA
+	DstAlpha              BlendFactor = C.GL_DST_ALPHA
+	OneMinusDstAlpha      BlendFactor = C.GL_ONE_MINUS_DST_ALPHA
+	ConstantColor         BlendFactor = C.GL_CONSTANT_COLOR
+	OneMinusConstantColor BlendFactor = C.GL_ONE_MINUS_CONSTANT_COLOR
+	ConstantAlpha         BlendFactor = C.GL_CONSTANT_ALPHA
+	OneMinusConstantAlpha BlendFactor = C.GL_ONE_MINUS_CONSTANT_ALPHA
+	AlphaSaturate         BlendFactor = C.GL_SRC_ALPHA_SATURATE
+	Src1Color             BlendFactor = C.GL_SRC1_COLOR
+	OneMinusSrc1Color     BlendFactor = C.GL_ONE_MINUS_SRC1_COLOR
+	Src1Alpha             BlendFactor = C.GL_SRC1_ALPHA
+	OneMinuxSrc1Alpha     BlendFactor = C.GL_ONE_MINUS_SRC1_ALPHA
 )
 
 //------------------------------------------------------------------------------

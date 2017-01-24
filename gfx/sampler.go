@@ -172,25 +172,25 @@ func BorderColor(c color.RGBA) SamplerOption {
 
 // Comparison specifies the mode and operator used when comparing depth
 // textures.
-func Comparison(cf ComparisonFunc) SamplerOption {
+func Comparison(op ComparisonOp) SamplerOption {
 	return func(sa *Sampler) {
-		C.SamplerComparison(sa.object, C.GLenum(cf))
+		C.SamplerComparison(sa.object, C.GLenum(op))
 	}
 }
 
-// A ComparisonFunc specifies an operator for depth texture comparison.
-type ComparisonFunc C.GLuint
+// A ComparisonOp specifies an operator for depth texture comparison.
+type ComparisonOp C.GLuint
 
-// Used in `Sampler.Comparison`.
+// Used in `Sampler.Comparison` and `DepthComparison`.
 const (
-	LessOrEqual    ComparisonFunc = C.GL_LEQUAL
-	GreaterOrEqual ComparisonFunc = C.GL_GEQUAL
-	Less           ComparisonFunc = C.GL_LESS
-	Greater        ComparisonFunc = C.GL_GREATER
-	Equal          ComparisonFunc = C.GL_EQUAL
-	NotEqual       ComparisonFunc = C.GL_NOTEQUAL
-	Always         ComparisonFunc = C.GL_ALWAYS
-	Never          ComparisonFunc = C.GL_NEVER
+	LessOrEqual    ComparisonOp = C.GL_LEQUAL
+	GreaterOrEqual ComparisonOp = C.GL_GEQUAL
+	Less           ComparisonOp = C.GL_LESS
+	Greater        ComparisonOp = C.GL_GREATER
+	Equal          ComparisonOp = C.GL_EQUAL
+	NotEqual       ComparisonOp = C.GL_NOTEQUAL
+	Always         ComparisonOp = C.GL_ALWAYS
+	Never          ComparisonOp = C.GL_NEVER
 )
 
 //------------------------------------------------------------------------------

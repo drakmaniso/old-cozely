@@ -54,11 +54,6 @@ void ClosePipeline(GLuint p, GLuint vao) {
 }
 
 static inline void BindPipeline(GLuint p, GLuint vao) {
-
-    glDepthFunc (GL_LEQUAL);
-
-    glBlendFunc (GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
 	glBindProgramPipeline(p);
 	glBindVertexArray(vao);
 }
