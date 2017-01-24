@@ -21,7 +21,7 @@ GLuint NewBuffer(GLsizeiptr size, void* data, GLbitfield flags) {
 	return b;
 }
 
-static inline void UpdateBuffer(GLuint buffer, GLintptr offset, GLsizei size, void *data) {
+static inline void BufferLoad(GLuint buffer, GLintptr offset, GLsizei size, void *data) {
 	glNamedBufferSubData(buffer, offset, size, data);
 }
 
@@ -62,17 +62,17 @@ func NewUniformBuffer(data interface{}, f BufferFlags) UniformBuffer {
 	return ub
 }
 
-// Update the buffer with data, starting at a specified offset.
+// Load updates the buffer with data, starting at a specified offset.
 //
 // It is your responsability to ensure that the size of data plus the offset
 // does not exceed the buffer size.
-func (ub *UniformBuffer) Update(data interface{}, atOffset uintptr) {
+func (ub *UniformBuffer) Load(data interface{}, atOffset uintptr) {
 	p, s, err := pointerAndSizeOf(data)
 	if err != nil {
 		setErr(err)
 		return
 	}
-	C.UpdateBuffer(ub.object, C.GLintptr(atOffset), C.GLsizei(s), p)
+	C.BufferLoad(ub.object, C.GLintptr(atOffset), C.GLsizei(s), p)
 }
 
 // Bind to a uniform binding index.
@@ -110,16 +110,16 @@ func NewVertexBuffer(data interface{}, f BufferFlags) VertexBuffer {
 	return vb
 }
 
-// Update the buffer with data, starting at a specified offset. It is your
+// Load updates the buffer with data, starting at a specified offset. It is your
 // responsability to ensure that the size of data plus the offset does not
 // exceed the buffer size.
-func (vb *VertexBuffer) Update(data interface{}, atOffset uintptr) {
+func (vb *VertexBuffer) Load(data interface{}, atOffset uintptr) {
 	p, s, st, err := pointerSizeAndStrideOf(data)
 	if err != nil {
 		setErr(err)
 		return
 	}
-	C.UpdateBuffer(vb.object, C.GLintptr(atOffset), C.GLsizei(s), p)
+	C.BufferLoad(vb.object, C.GLintptr(atOffset), C.GLsizei(s), p)
 	if st != 0 {
 		// In case the stride was not specified at buffer creation, or the new data
 		// has a different stride.

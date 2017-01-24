@@ -63,8 +63,8 @@ func NewTexture2D(levels int32, size pixel.Coord, f TextureFormat) Texture2D {
 	return t
 }
 
-// Data loads an image into a texture at a specific position offset and level.
-func (t *Texture2D) Data(img image.Image, offset pixel.Coord, level int32) {
+// Load loads an image into a texture at a specific position offset and level.
+func (t *Texture2D) Load(img image.Image, offset pixel.Coord, level int32) {
 	p, pf, pt := pointerFormatAndTypeOf(img)
 	C.TextureSubImage2D(t.object, C.GLint(level), C.GLint(offset.X), C.GLint(offset.Y), C.GLsizei(img.Bounds().Dx()), C.GLsizei(img.Bounds().Dy()), pf, pt, p)
 }

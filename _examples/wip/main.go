@@ -124,7 +124,7 @@ func setup() error {
 	if err != nil {
 		return err
 	}
-	diffuse.Data(img, pixel.Coord{0, 0}, 0)
+	diffuse.Load(img, pixel.Coord{0, 0}, 0)
 	diffuse.GenerateMipmap()
 
 	// Initialize model and view matrices
@@ -221,7 +221,7 @@ func (l looper) Draw() {
 	t := perObject{
 		transform: mvp,
 	}
-	transform.Update(&t, 0)
+	transform.Load(&t, 0)
 
 	mesh.Bind(0, 0)
 	diffuse.Bind(0)

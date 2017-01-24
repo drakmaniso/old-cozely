@@ -141,7 +141,7 @@ func (l looper) Draw() {
 	t := perObject{
 		transform: m.GPU(),
 	}
-	transform.Update(&t, 0)
+	transform.Load(&t, 0)
 
 	triangle.Bind(0, 0)
 	gfx.Draw(gfx.Triangles, 0, 3)

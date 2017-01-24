@@ -194,7 +194,7 @@ func (l looper) Draw() {
 	t := perObject{
 		transform: mvp,
 	}
-	transform.Update(&t, 0)
+	transform.Load(&t, 0)
 
 	mesh.Bind(0, 0)
 	gfx.Draw(gfx.Triangles, 0, 6*2*3)
