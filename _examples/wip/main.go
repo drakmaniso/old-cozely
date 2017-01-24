@@ -62,6 +62,7 @@ var (
 	pipeline  gfx.Pipeline
 	transform gfx.UniformBuffer
 	mesh      gfx.VertexBuffer
+	sampler   gfx.Sampler
 	diffuse   gfx.Texture2D
 )
 
@@ -107,11 +108,10 @@ func setup() error {
 	mesh = gfx.NewVertexBuffer(cube(), gfx.StaticStorage)
 
 	// Create and bind the sampler
-	s := gfx.NewSampler(
+	sampler = gfx.NewSampler(
 		gfx.Minification(gfx.LinearMipmapLinear),
 		gfx.Anisotropy(16.0),
 	)
-	s.Bind(0)
 
 	// Create and load the textures
 	diffuse = gfx.NewTexture2D(8, pixel.Coord{512, 512}, gfx.SRGBA8)
@@ -213,6 +213,7 @@ func (l looper) Draw() {
 	gfx.ClearDepthBuffer(1.0)
 	gfx.ClearColorBuffer(color.RGBA{0.9, 0.9, 0.9, 1.0})
 	pipeline.Bind()
+	sampler.Bind(0)
 	transform.Bind(0)
 
 	mvp := projection.Times(view)
