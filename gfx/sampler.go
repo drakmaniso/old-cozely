@@ -22,9 +22,12 @@ static inline GLuint NewSampler() {
 	return s;
 }
 
-static inline void SamplerFilter(GLuint object, GLenum min, GLenum mag) {
-	glSamplerParameteri(object, GL_TEXTURE_MIN_FILTER, min);
-	glSamplerParameteri(object, GL_TEXTURE_MAG_FILTER, mag);
+static inline void SamplerMinification(GLuint object, GLenum fm) {
+	glSamplerParameteri(object, GL_TEXTURE_MIN_FILTER, fm);
+}
+
+static inline void SamplerMagnification(GLuint object, GLenum fm) {
+	glSamplerParameteri(object, GL_TEXTURE_MAG_FILTER, fm);
 }
 
 static inline void SamplerLevelOfDetail(GLuint object, GLfloat min, GLfloat max) {
@@ -36,7 +39,7 @@ static inline void SamplerAnisotropy(GLuint object, GLfloat max) {
 	glSamplerParameterf(object, 0x84FE, max); //GL_TEXTURE_MAX_ANISOTROPY_EXT
 }
 
-static inline void SamplerWrap(GLuint object, GLenum s, GLenum t, GLenum r) {
+static inline void SamplerWrapping(GLuint object, GLenum s, GLenum t, GLenum r) {
 	glSamplerParameteri(object, GL_TEXTURE_WRAP_S, s);
 	glSamplerParameteri(object, GL_TEXTURE_WRAP_T, t);
 	glSamplerParameteri(object, GL_TEXTURE_WRAP_R, r);
@@ -46,12 +49,9 @@ static inline void SamplerBorderColor(GLuint object, GLfloat* c) {
 	glSamplerParameterfv(object, GL_TEXTURE_BORDER_COLOR, c);
 }
 
-static inline void SamplerCompareMode(GLuint object, GLenum m) {
-	glSamplerParameteri(object, GL_TEXTURE_COMPARE_MODE, m);
-}
-
-static inline void SamplerCompareFunc(GLuint object, GLenum f) {
-	glSamplerParameteri(object, GL_TEXTURE_COMPARE_MODE, f);
+static inline void SamplerComparison(GLuint object, GLenum cf) {
+	glSamplerParameteri(object, GL_TEXTURE_COMPARE_MODE, GL_COMPARE_REF_TO_TEXTURE);
+	glSamplerParameteri(object, GL_TEXTURE_COMPARE_MODE, cf);
 }
 
 static inline void SamplerBind(GLuint binding, GLuint sampler) {
@@ -68,27 +68,46 @@ type Sampler struct {
 	object C.GLuint
 }
 
+// A SamplerOption is a setting used when creating a new `Sampler`.
+type SamplerOption func(sa *Sampler)
+
 //------------------------------------------------------------------------------
 
 // NewSampler returns a new sampler.
-func NewSampler() Sampler {
-	var s Sampler
-	s.object = C.NewSampler()
-	return s
+func NewSampler(o ...SamplerOption) Sampler {
+	var sa Sampler
+	sa.object = C.NewSampler()
+	for _, f := range o {
+		f(&sa)
+	}
+	return sa
 }
 
 //------------------------------------------------------------------------------
 
-// Filter specifies which function is used when minifying and magnifying
-// the texture.
-func (sa *Sampler) Filter(min, mag FilterMode) {
-	C.SamplerFilter(sa.object, C.GLenum(min), C.GLenum(mag))
+// Minification specifies which filter is used when minifying the texture.
+//
+// The default value is `NearestMipmapLinear`.
+func Minification(fm FilterMode) SamplerOption {
+	return func(sa *Sampler) {
+		C.SamplerMinification(sa.object, C.GLenum(fm))
+	}
+}
+
+// Magnification specifies which filter is used when minifying the texture.
+//
+// The default value is `Linear`.
+func Magnification(fm FilterMode) SamplerOption {
+	return func(sa *Sampler) {
+		C.SamplerMagnification(sa.object, C.GLenum(fm))
+	}
 }
 
 // A FilterMode specifies how to filter textures when minifying or magnifying.
 type FilterMode C.GLuint
 
-// Used in `Sampler.Filter`.
+// Used in `Sampler.Minification` and `Sampler.Magnification` (only `Nearest`
+// and `Linear` are valid for magnification).
 const (
 	Nearest             FilterMode = C.GL_NEAREST
 	Linear              FilterMode = C.GL_LINEAR
@@ -98,31 +117,35 @@ const (
 	LinearMipmapLinear  FilterMode = C.GL_LINEAR_MIPMAP_LINEAR
 )
 
-// func MinFilterNearest() SamplerOption {
-//   return func(sa *Sampler) {
-//     C.SamplerMinFilter(sa.object, C.GL_NEAREST)
-//   }
-// }
-
 //------------------------------------------------------------------------------
 
 // LevelOfDetail specifies the minimum and maximum LOD to use.
-func (sa *Sampler) LevelOfDetail(min, max float32) {
-	C.SamplerLevelOfDetail(sa.object, C.GLfloat(min), C.GLfloat(max))
+//
+// The default values are -1000 and 1000.
+func LevelOfDetail(min, max float32) SamplerOption {
+	return func(sa *Sampler) {
+		C.SamplerLevelOfDetail(sa.object, C.GLfloat(min), C.GLfloat(max))
+	}
 }
 
 //------------------------------------------------------------------------------
 
 // Anisotropy specifies the maximum anisotropy level.
-func (sa *Sampler) Anisotropy(max float32) {
-	C.SamplerAnisotropy(sa.object, C.GLfloat(max))
+func Anisotropy(max float32) SamplerOption {
+	return func(sa *Sampler) {
+		C.SamplerAnisotropy(sa.object, C.GLfloat(max))
+	}
 }
 
 //------------------------------------------------------------------------------
 
-// Wrap sets the wrapping modes for texture coordinates.
-func (sa *Sampler) Wrap(s, t, p WrapMode) {
-	C.SamplerWrap(sa.object, C.GLenum(s), C.GLenum(t), C.GLenum(p))
+// Wrapping sets the wrapping modes for texture coordinates.
+//
+// The default value is `Repeat` for all coordinates.
+func Wrapping(s, t, p WrapMode) SamplerOption {
+	return func(sa *Sampler) {
+		C.SamplerWrapping(sa.object, C.GLenum(s), C.GLenum(t), C.GLenum(p))
+	}
 }
 
 // A WrapMode specifies the way a texture wraps.
@@ -139,46 +162,35 @@ const (
 
 // BorderColor sets the color used for texture filtering when ClampToborder
 // wrapping mode is used.
-func (sa *Sampler) BorderColor(c color.RGBA) {
-	C.SamplerBorderColor(sa.object, (*C.GLfloat)(unsafe.Pointer(&c)))
+func BorderColor(c color.RGBA) SamplerOption {
+	return func(sa *Sampler) {
+		C.SamplerBorderColor(sa.object, (*C.GLfloat)(unsafe.Pointer(&c)))
+	}
 }
 
 //------------------------------------------------------------------------------
 
-// CompareMode specifies the texture comparison mode.
-func (sa *Sampler) CompareMode(m CompareMode) {
-	C.SamplerCompareMode(sa.object, C.GLenum(m))
+// Comparison specifies the mode and operator used when comparing depth
+// textures.
+func Comparison(cf ComparisonFunc) SamplerOption {
+	return func(sa *Sampler) {
+		C.SamplerComparison(sa.object, C.GLenum(cf))
+	}
 }
 
-// A CompareMode specifies a mode of texture comparison.
-type CompareMode C.GLuint
+// A ComparisonFunc specifies an operator for depth texture comparison.
+type ComparisonFunc C.GLuint
 
-// Used in `Sampler.CompareMode`.
+// Used in `Sampler.Comparison`.
 const (
-	None                CompareMode = C.GL_NONE
-	CompareRefToTexture CompareMode = C.GL_COMPARE_REF_TO_TEXTURE
-)
-
-//------------------------------------------------------------------------------
-
-// CompareFunc specifies the comparison operator.
-func (sa *Sampler) CompareFunc(f CompareFunc) {
-	C.SamplerCompareFunc(sa.object, C.GLenum(f))
-}
-
-// A CompareFunc specifies an operator for texture comparison.
-type CompareFunc C.GLuint
-
-// Used in `Sampler.CompareFunc`.
-const (
-	LessOrEqual    CompareFunc = C.GL_LEQUAL
-	GreaterOrEqual CompareFunc = C.GL_GEQUAL
-	Less           CompareFunc = C.GL_LESS
-	Greater        CompareFunc = C.GL_GREATER
-	Equal          CompareFunc = C.GL_EQUAL
-	NotEqual       CompareFunc = C.GL_NOTEQUAL
-	Always         CompareFunc = C.GL_ALWAYS
-	Never          CompareFunc = C.GL_NEVER
+	LessOrEqual    ComparisonFunc = C.GL_LEQUAL
+	GreaterOrEqual ComparisonFunc = C.GL_GEQUAL
+	Less           ComparisonFunc = C.GL_LESS
+	Greater        ComparisonFunc = C.GL_GREATER
+	Equal          ComparisonFunc = C.GL_EQUAL
+	NotEqual       ComparisonFunc = C.GL_NOTEQUAL
+	Always         ComparisonFunc = C.GL_ALWAYS
+	Never          ComparisonFunc = C.GL_NEVER
 )
 
 //------------------------------------------------------------------------------

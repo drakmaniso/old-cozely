@@ -107,11 +107,10 @@ func setup() error {
 	mesh = gfx.NewVertexBuffer(cube(), gfx.StaticStorage)
 
 	// Create and bind the sampler
-	s := gfx.NewSampler()
-	s.Filter(gfx.LinearMipmapLinear, gfx.Linear)
-	s.Anisotropy(16.0)
-	s.Wrap(gfx.Repeat, gfx.Repeat, gfx.Repeat)        // Default
-	s.BorderColor(color.RGBA{R: 0, G: 0, B: 0, A: 0}) // Default
+	s := gfx.NewSampler(
+		gfx.Minification(gfx.LinearMipmapLinear),
+		gfx.Anisotropy(16.0),
+	)
 	s.Bind(0)
 
 	// Create and load the textures
