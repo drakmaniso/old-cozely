@@ -32,6 +32,10 @@ static inline void DepthComparison(GLenum cf) {
 static inline void Blending(GLenum src, GLenum dst) {
 	glBlendFunc(src, dst);
 }
+
+static inline void PointSize(GLfloat s) {
+	glPointSize(s);
+}
 */
 import "C"
 
@@ -159,5 +163,12 @@ const (
 	Src1Alpha             BlendFactor = C.GL_SRC1_ALPHA
 	OneMinuxSrc1Alpha     BlendFactor = C.GL_ONE_MINUS_SRC1_ALPHA
 )
+
+//------------------------------------------------------------------------------
+
+// PointSize sets the size used when drawing points.
+func PointSize(s float32) {
+	C.PointSize(C.GLfloat(s))
+}
 
 //------------------------------------------------------------------------------
