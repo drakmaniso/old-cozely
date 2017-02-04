@@ -57,12 +57,6 @@ func OpenWindow(
 		C.SDL_GL_SetAttribute(C.SDL_GL_CONTEXT_FLAGS, C.SDL_GL_CONTEXT_DEBUG_FLAG)
 	}
 
-	var si C.int
-	if vsync {
-		si = 1
-	}
-	C.SDL_GL_SetSwapInterval(si)
-
 	t := C.CString(title)
 	defer C.free(unsafe.Pointer(t))
 
@@ -97,6 +91,12 @@ func OpenWindow(
 		return fmt.Errorf("could not create OpenGL context: %s", err)
 	}
 	Window.context = ctx
+
+	var si C.int
+	if vsync {
+		si = 1
+	}
+	C.SDL_GL_SetSwapInterval(si)
 
 	//TODO: logOpenGLInfos()
 
