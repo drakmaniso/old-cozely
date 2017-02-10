@@ -210,6 +210,7 @@ func (l looper) Update() {
 }
 
 func (l looper) Draw() {
+	printFrameTime()
 	gfx.ClearDepthBuffer(1.0)
 	gfx.ClearColorBuffer(color.RGBA{0.9, 0.9, 0.9, 1.0})
 	pipeline.Bind()
@@ -227,5 +228,15 @@ func (l looper) Draw() {
 	diffuse.Bind(0)
 	gfx.Draw(gfx.Triangles, 0, 6*2*3)
 }
+
+func printFrameTime() {
+	nbFrames++
+	if nbFrames >= 100 {
+		print(float32(glam.FrameAverage())/float32(time.Millisecond), "\n")
+		nbFrames = 0
+	}
+}
+
+var nbFrames int
 
 //------------------------------------------------------------------------------

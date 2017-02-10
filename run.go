@@ -62,19 +62,28 @@ func Run() error {
 
 	for !internal.QuitRequested {
 		now = internal.GetTime() * time.Millisecond
-		remain += now - then
+		frameTime = now - then
+
+		// Compute average frame time
+		frameSum += frameTime
+		nbFrames++
+		if nbFrames >= 100 {
+			frameAverage = frameSum / 100
+			frameSum = 0
+			nbFrames = 0
+		}
+
+		// Fixed time step for logic and physics updates
+		remain += frameTime
 		for remain >= TimeStep {
-			// Fixed time step for logic and physics updates.
+			remain -= TimeStep
 			events.Process()
 			Loop.Update()
-			remain -= TimeStep
 		}
+
 		Loop.Draw()
 		internal.SwapWindow()
-		if now-then < 10*time.Millisecond {
-			// Prevent using too much CPU on empty loops.
-			<-time.After(10 * time.Millisecond)
-		}
+
 		then = now
 	}
 	return nil
@@ -85,6 +94,24 @@ var now time.Duration
 
 // TimeStep is the fixed interval between each call to Update.
 var TimeStep = 1 * time.Second / 50
+
+//------------------------------------------------------------------------------
+
+var frameTime time.Duration
+var frameAverage time.Duration
+var frameSum time.Duration
+var nbFrames int
+
+// FrameTime returns the duration of the last frame
+func FrameTime() time.Duration {
+	return frameTime
+}
+
+// FrameAverage returns the average durations of frames; it is updated every 100
+// frames.
+func FrameAverage() time.Duration {
+	return frameAverage
+}
 
 //------------------------------------------------------------------------------
 
