@@ -171,6 +171,11 @@ func (h handler) MouseMotion(motion pixel.Coord, _ pixel.Coord, _ time.Duration)
 
 	switch {
 	case mouse.IsPressed(mouse.Left):
+		position.X += 2 * mx / sx
+		position.Y -= 2 * my / sy
+		updateModel()
+
+	case mouse.IsPressed(mouse.Right):
 		yaw += 4 * mx / sx
 		pitch += 4 * my / sy
 		switch {
@@ -179,11 +184,6 @@ func (h handler) MouseMotion(motion pixel.Coord, _ pixel.Coord, _ time.Duration)
 		case pitch > +math.Pi/2:
 			pitch = +math.Pi / 2
 		}
-		updateModel()
-
-	case mouse.IsPressed(mouse.Middle):
-		position.X += 2 * mx / sx
-		position.Y -= 2 * my / sy
 		updateModel()
 	}
 }
