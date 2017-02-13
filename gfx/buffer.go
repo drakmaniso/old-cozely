@@ -32,6 +32,10 @@ static inline void BindUniform(GLuint binding, GLuint buffer) {
 static inline void BindVertex(GLuint binding, GLuint buffer, GLintptr offset, GLsizei stride) {
 	glBindVertexBuffer(binding, buffer, offset, stride);
 }
+
+static inline void BindElement(GLuint buffer) {
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer);
+}
 */
 import "C"
 
@@ -134,6 +138,95 @@ func (vb *VertexBuffer) Load(data interface{}, atOffset uintptr) {
 func (vb *VertexBuffer) Bind(binding uint32, offset uintptr) {
 	C.BindVertex(C.GLuint(binding), vb.object, C.GLintptr(offset), C.GLsizei(vb.stride))
 }
+
+//------------------------------------------------------------------------------
+
+// A ElementBuffer is a block of memory owned by the GPU, used to store vertex
+// indices.
+type ElementBuffer struct {
+	object C.GLuint
+	gltype C.GLenum
+}
+
+// NewElementBuffer asks the GPU to allocate a new block of memory.
+//
+// If data is a uinptr, it is interpreted as the desired size for the buffer (in
+// bytes), and the content is not initialized. Otherwise data must be a slice of
+// uint8, uint16 or uin32. In all cases the size of the buffer is fixed at
+// creation.
+func NewElementBuffer(data interface{}, f BufferFlags) ElementBuffer {
+	p, s, t, err := pointerSizeAndUintTypeOf(data)
+	if err != nil {
+		setErr(err)
+		return ElementBuffer{}
+	}
+	var eb ElementBuffer
+	eb.object = C.NewBuffer(C.GLsizeiptr(s), p, C.GLbitfield(f))
+	//TODO: error handling
+	eb.gltype = t
+	return eb
+}
+
+// Load updates the buffer with data, starting at a specified offset. It is your
+// responsability to ensure that the size of data plus the offset does not
+// exceed the buffer size.
+func (eb *ElementBuffer) Load(data interface{}, atOffset uintptr) {
+	p, s, t, err := pointerSizeAndUintTypeOf(data)
+	if err != nil {
+		setErr(err)
+		return
+	}
+	C.BufferLoad(eb.object, C.GLintptr(atOffset), C.GLsizei(s), p)
+	if t != 0 {
+		// In case the stride was not specified at buffer creation, or the new data
+		// has a different stride.
+		eb.gltype = t
+	}
+}
+
+func pointerSizeAndUintTypeOf(data interface{}) (ptr unsafe.Pointer, size uintptr, gltype C.GLenum, err error) {
+	var p unsafe.Pointer
+	var s uintptr
+	var t C.GLenum
+	v := reflect.ValueOf(data)
+	k := v.Kind()
+	switch k {
+	case reflect.Uintptr:
+		p = nil
+		s = uintptr(v.Uint())
+		t = 0
+	case reflect.Slice:
+		l := v.Len()
+		if l == 0 {
+			return nil, 0, 0, fmt.Errorf("buffer data cannot be an empty slice")
+		}
+		p = unsafe.Pointer(v.Pointer())
+		switch v.Index(0).Kind() {
+		case reflect.Uint8:
+			t = C.GL_UNSIGNED_BYTE
+			s = uintptr(1 * l)
+		case reflect.Uint16:
+			t = C.GL_UNSIGNED_SHORT
+			s = uintptr(2 * l)
+		case reflect.Uint32:
+			t = C.GL_UNSIGNED_INT
+			s = uintptr(4 * l)
+		default:
+			return nil, 0, 0, fmt.Errorf("buffer data must be a slice of uint8, uint16 or uint32")
+		}
+	default:
+		return nil, 0, 0, fmt.Errorf("%s instead of slice or uintptr", reflect.TypeOf(data).Kind())
+	}
+	return p, s, t, nil
+}
+
+// Bind the element buffer.
+func (eb *ElementBuffer) Bind() {
+	C.BindElement(eb.object)
+	boundElement = *eb
+}
+
+var boundElement ElementBuffer
 
 //------------------------------------------------------------------------------
 

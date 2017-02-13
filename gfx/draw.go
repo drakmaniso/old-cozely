@@ -11,6 +11,10 @@ package gfx
 static inline void DrawArrays(GLenum m, GLuint f, GLuint c) {
 	glDrawArrays(m, f, c);
 }
+
+static inline void DrawElements(GLenum m, GLsizei c, GLenum t, GLsizeiptr i) {
+	glDrawElements(m, c, t, (const void *)i);
+}
 */
 import "C"
 
@@ -40,6 +44,22 @@ const (
 // Draw count primitives, starting at first.
 func Draw(mode Primitive, first int32, count int32) {
 	C.DrawArrays(C.GLenum(mode), C.GLuint(first), C.GLuint(count))
+}
+
+//------------------------------------------------------------------------------
+
+// DrawElements draws count indexed primitives, starting at first.
+func DrawElements(mode Primitive, first int32, count int32) {
+	var s int32
+	switch boundElement.gltype {
+	case C.GL_UNSIGNED_BYTE:
+		s = 1
+	case C.GL_UNSIGNED_SHORT:
+		s = 2
+	case C.GL_UNSIGNED_INT:
+		s = 4
+	}
+	C.DrawElements(C.GLenum(mode), C.GLsizei(count), boundElement.gltype, C.GLsizeiptr(first*s))
 }
 
 //------------------------------------------------------------------------------
