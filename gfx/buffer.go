@@ -44,7 +44,6 @@ import "C"
 // A UniformBuffer is a block of memory owned by the GPU.
 type UniformBuffer struct {
 	object C.GLuint
-	stride uintptr
 }
 
 // NewUniformBuffer asks the GPU to allocate a new block of memory.
@@ -62,7 +61,6 @@ func NewUniformBuffer(data interface{}, f BufferFlags) UniformBuffer {
 	var ub UniformBuffer
 	ub.object = C.NewBuffer(C.GLsizeiptr(s), p, C.GLbitfield(f))
 	//TODO: error handling
-	ub.stride = 0
 	return ub
 }
 
@@ -141,7 +139,7 @@ func (vb *VertexBuffer) Bind(binding uint32, offset uintptr) {
 
 //------------------------------------------------------------------------------
 
-// A ElementBuffer is a block of memory owned by the GPU, used to store vertex
+// An ElementBuffer is a block of memory owned by the GPU, used to store vertex
 // indices.
 type ElementBuffer struct {
 	object C.GLuint
