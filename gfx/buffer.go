@@ -29,6 +29,10 @@ static inline void BindUniform(GLuint binding, GLuint buffer) {
 	glBindBufferBase(GL_UNIFORM_BUFFER, binding, buffer);
 }
 
+static inline void BindStorage(GLuint binding, GLuint buffer) {
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, binding, buffer);
+}
+
 static inline void BindVertex(GLuint binding, GLuint buffer, GLintptr offset, GLsizei stride) {
 	glBindVertexBuffer(binding, buffer, offset, stride);
 }
@@ -83,6 +87,52 @@ func (ub *UniformBuffer) Load(data interface{}, atOffset uintptr) {
 // shaders.
 func (ub *UniformBuffer) Bind(binding uint32) {
 	C.BindUniform(C.GLuint(binding), ub.object)
+}
+
+//------------------------------------------------------------------------------
+
+// A StorageBuffer is a block of memory owned by the GPU.
+type StorageBuffer struct {
+	object C.GLuint
+}
+
+// NewStorageBuffer asks the GPU to allocate a new block of memory.
+//
+// If data is a uinptr, it is interpreted as the desired size for the buffer (in
+// bytes), and the content is not initialized. Otherwise data must be a pointer
+// to a struct of pure values (no nested references). In all cases the size of
+// the buffer is fixed at creation.
+func NewStorageBuffer(data interface{}, f BufferFlags) StorageBuffer {
+	p, s, err := pointerAndSizeOf(data)
+	if err != nil {
+		setErr(err)
+		return StorageBuffer{}
+	}
+	var sb StorageBuffer
+	sb.object = C.NewBuffer(C.GLsizeiptr(s), p, C.GLbitfield(f))
+	//TODO: error handling
+	return sb
+}
+
+// Load updates the buffer with data, starting at a specified offset.
+//
+// It is your responsability to ensure that the size of data plus the offset
+// does not exceed the buffer size.
+func (sb *StorageBuffer) Load(data interface{}, atOffset uintptr) {
+	p, s, err := pointerAndSizeOf(data)
+	if err != nil {
+		setErr(err)
+		return
+	}
+	C.BufferLoad(sb.object, C.GLintptr(atOffset), C.GLsizei(s), p)
+}
+
+// Bind to a storage binding index.
+//
+// This index should correspond to one indicated by a layout qualifier in the
+// shaders.
+func (sb *StorageBuffer) Bind(binding uint32) {
+	C.BindStorage(C.GLuint(binding), sb.object)
 }
 
 //------------------------------------------------------------------------------
