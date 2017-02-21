@@ -12,7 +12,7 @@ import (
 
 //------------------------------------------------------------------------------
 
-var perlinGradient = [12]space.Coord{
+var gradient = [12]space.Coord{
 	space.Coord{X: +1, Y: +1, Z: 0}, space.Coord{X: -1, Y: +1, Z: 0}, space.Coord{X: +1, Y: -1, Z: 0}, space.Coord{X: -1, Y: -1, Z: 0},
 	space.Coord{X: +1, Y: 0, Z: +1}, space.Coord{X: -1, Y: 0, Z: +1}, space.Coord{X: +1, Y: 0, Z: -1}, space.Coord{X: -1, Y: 0, Z: -1},
 	space.Coord{X: 0, Y: +1, Z: +1}, space.Coord{X: 0, Y: -1, Z: +1}, space.Coord{X: 0, Y: +1, Z: -1}, space.Coord{X: 0, Y: -1, Z: -1},
@@ -20,7 +20,7 @@ var perlinGradient = [12]space.Coord{
 
 //------------------------------------------------------------------------------
 
-var perlinPermutation = [512]int32{
+var permutation = [512]int32{
 	78, 24, 51, 138, 76, 67, 238, 181, 103, 5, 32, 79, 52, 43, 174, 58,
 	242, 37, 249, 233, 84, 122, 102, 217, 147, 189, 12, 115, 218, 142, 30, 197,
 	136, 50, 11, 172, 100, 33, 98, 131, 232, 169, 210, 63, 213, 129, 56, 200,
@@ -85,24 +85,24 @@ func Perlin3DAt(p space.Coord) float32 {
 	iz &= 0xFF
 
 	// Set of gradient indices
-	g000 := perlinPermutation[ix+perlinPermutation[iy+perlinPermutation[iz]]] % 12
-	g001 := perlinPermutation[ix+perlinPermutation[iy+perlinPermutation[iz+1]]] % 12
-	g010 := perlinPermutation[ix+perlinPermutation[iy+1+perlinPermutation[iz]]] % 12
-	g011 := perlinPermutation[ix+perlinPermutation[iy+1+perlinPermutation[iz+1]]] % 12
-	g100 := perlinPermutation[ix+1+perlinPermutation[iy+perlinPermutation[iz]]] % 12
-	g101 := perlinPermutation[ix+1+perlinPermutation[iy+perlinPermutation[iz+1]]] % 12
-	g110 := perlinPermutation[ix+1+perlinPermutation[iy+1+perlinPermutation[iz]]] % 12
-	g111 := perlinPermutation[ix+1+perlinPermutation[iy+1+perlinPermutation[iz+1]]] % 12
+	g000 := permutation[ix+permutation[iy+permutation[iz]]] % 12
+	g001 := permutation[ix+permutation[iy+permutation[iz+1]]] % 12
+	g010 := permutation[ix+permutation[iy+1+permutation[iz]]] % 12
+	g011 := permutation[ix+permutation[iy+1+permutation[iz+1]]] % 12
+	g100 := permutation[ix+1+permutation[iy+permutation[iz]]] % 12
+	g101 := permutation[ix+1+permutation[iy+permutation[iz+1]]] % 12
+	g110 := permutation[ix+1+permutation[iy+1+permutation[iz]]] % 12
+	g111 := permutation[ix+1+permutation[iy+1+permutation[iz+1]]] % 12
 
 	// Noise contribution for each corner
-	n000 := perlinGradient[g000].Dot(space.Coord{X: rx, Y: ry, Z: rz})
-	n100 := perlinGradient[g100].Dot(space.Coord{X: rx - 1, Y: ry, Z: rz})
-	n010 := perlinGradient[g010].Dot(space.Coord{X: rx, Y: ry - 1, Z: rz})
-	n110 := perlinGradient[g110].Dot(space.Coord{X: rx - 1, Y: ry - 1, Z: rz})
-	n001 := perlinGradient[g001].Dot(space.Coord{X: rx, Y: ry, Z: rz - 1})
-	n101 := perlinGradient[g101].Dot(space.Coord{X: rx - 1, Y: ry, Z: rz - 1})
-	n011 := perlinGradient[g011].Dot(space.Coord{X: rx, Y: ry - 1, Z: rz - 1})
-	n111 := perlinGradient[g111].Dot(space.Coord{X: rx - 1, Y: ry - 1, Z: rz - 1})
+	n000 := gradient[g000].Dot(space.Coord{X: rx, Y: ry, Z: rz})
+	n100 := gradient[g100].Dot(space.Coord{X: rx - 1, Y: ry, Z: rz})
+	n010 := gradient[g010].Dot(space.Coord{X: rx, Y: ry - 1, Z: rz})
+	n110 := gradient[g110].Dot(space.Coord{X: rx - 1, Y: ry - 1, Z: rz})
+	n001 := gradient[g001].Dot(space.Coord{X: rx, Y: ry, Z: rz - 1})
+	n101 := gradient[g101].Dot(space.Coord{X: rx - 1, Y: ry, Z: rz - 1})
+	n011 := gradient[g011].Dot(space.Coord{X: rx, Y: ry - 1, Z: rz - 1})
+	n111 := gradient[g111].Dot(space.Coord{X: rx - 1, Y: ry - 1, Z: rz - 1})
 
 	// Fade courbe
 	u := perlinFade(rx)
