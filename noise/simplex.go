@@ -40,9 +40,38 @@ var gradientPlane = [8]plane.Coord{
 const cos60 = 0.5
 const sin60 = 0.5 * sqrt3
 
-var gradientHex = []plane.Coord{
+var gradientHex = [6]plane.Coord{
 	plane.Coord{0.0, 1.0}, plane.Coord{sin60, cos60}, plane.Coord{-sin60, cos60},
 	plane.Coord{0.0, -1.0}, plane.Coord{-sin60, -cos60}, plane.Coord{sin60, -cos60},
+}
+
+const cos30 = 0.5 * sqrt3
+const sin30 = 0.5
+
+var gradientDodeca = [12]plane.Coord{
+	plane.Coord{0.0, 1.0}, plane.Coord{sin60, cos60}, plane.Coord{-sin60, cos60},
+	plane.Coord{1.0, 0.0}, plane.Coord{sin30, cos30}, plane.Coord{-sin30, cos30},
+	plane.Coord{0.0, -1.0}, plane.Coord{-sin60, -cos60}, plane.Coord{sin60, -cos60},
+	plane.Coord{-1.0, 0.0}, plane.Coord{-sin30, -cos30}, plane.Coord{sin30, -cos30},
+}
+
+const cos15 = 0.9659258262890682867497431997289
+const sin15 = 0.25881904510252076234889883762405
+
+// const cos45 = 0.70710678118654752440084436210485
+const sin45 = 0.7071067811865475244008443621048
+const cos75 = 0.2588190451025207623488988376240
+const sin75 = 0.9659258262890682867497431997289
+
+var gradient24 = [24]plane.Coord{
+	plane.Coord{0.0, 1.0}, plane.Coord{sin60, cos60}, plane.Coord{-sin60, cos60},
+	plane.Coord{1.0, 0.0}, plane.Coord{sin30, cos30}, plane.Coord{-sin30, cos30},
+	plane.Coord{0.0, -1.0}, plane.Coord{-sin60, -cos60}, plane.Coord{sin60, -cos60},
+	plane.Coord{-1.0, 0.0}, plane.Coord{-sin30, -cos30}, plane.Coord{sin30, -cos30},
+	plane.Coord{sin15, cos15}, plane.Coord{sin45, cos45}, plane.Coord{sin75, cos75},
+	plane.Coord{-sin15, cos15}, plane.Coord{-sin45, cos45}, plane.Coord{-sin75, cos75},
+	plane.Coord{sin15, -cos15}, plane.Coord{sin45, -cos45}, plane.Coord{sin75, -cos75},
+	plane.Coord{-sin15, -cos15}, plane.Coord{-sin45, -cos45}, plane.Coord{-sin75, -cos75},
 }
 
 //------------------------------------------------------------------------------
@@ -168,9 +197,9 @@ func Simplex2DAxialAt(q, r float32) float32 {
 	// Work out the hashed gradient indices of the three simplex corners
 	var qq = int32(q0) & 255
 	var rr = int32(r0) & 255
-	var gi0 = permutation[qq+v+permutation[rr+v]] % 6
-	var gi1 = permutation[qq+1+permutation[rr]] % 6
-	var gi2 = permutation[qq+permutation[rr+1]] % 6
+	var gi0 = permutation[qq+v+permutation[rr+v]] % 24
+	var gi1 = permutation[qq+1+permutation[rr]] % 24
+	var gi2 = permutation[qq+permutation[rr+1]] % 24
 
 	var x0 = (dq0 - float32(v)) + 0.5*(dr0-float32(v))
 	var y0 = (dr0 - float32(v)) * 0.5 * sqrt3
@@ -186,7 +215,7 @@ func Simplex2DAxialAt(q, r float32) float32 {
 		n0 = 0.0
 	} else {
 		t0 *= t0
-		n0 = t0 * t0 * (gradientHex[gi0].Dot(plane.Coord{x0, y0})) // (x,y) of grad3 used for 2D gradient
+		n0 = t0 * t0 * (gradient24[gi0].Dot(plane.Coord{x0, y0})) // (x,y) of grad3 used for 2D gradient
 	}
 
 	var t1 = 0.5 - x1*x1 - y1*y1
@@ -194,7 +223,7 @@ func Simplex2DAxialAt(q, r float32) float32 {
 		n1 = 0.0
 	} else {
 		t1 *= t1
-		n1 = t1 * t1 * (gradientHex[gi1].Dot(plane.Coord{x1, y1}))
+		n1 = t1 * t1 * (gradient24[gi1].Dot(plane.Coord{x1, y1}))
 	}
 
 	var t2 = 0.5 - x2*x2 - y2*y2
@@ -202,7 +231,7 @@ func Simplex2DAxialAt(q, r float32) float32 {
 		n2 = 0.0
 	} else {
 		t2 *= t2
-		n2 = t2 * t2 * (gradientHex[gi2].Dot(plane.Coord{x2, y2}))
+		n2 = t2 * t2 * (gradient24[gi2].Dot(plane.Coord{x2, y2}))
 	}
 
 	// Add contributions from each corner to get the final noise value.
