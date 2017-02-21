@@ -62,4 +62,9 @@ func Normalized(x float32) (y float32, exp int) {
 	return x, 0
 }
 
+func normalize(x float32) (y float32, exp int) {
+	//TODO: ???
+	return Normalized(x)
+}
+
 //------------------------------------------------------------------------------
