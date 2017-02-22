@@ -8,7 +8,7 @@ package noise
 import (
 	"github.com/drakmaniso/glam/math"
 	"github.com/drakmaniso/glam/plane"
-	"github.com/drakmaniso/glam/space"
+	// "github.com/drakmaniso/glam/space"
 )
 
 //------------------------------------------------------------------------------
@@ -23,22 +23,27 @@ const g3 = 1.0 / 6.0
 const f4 = (sqrt5 - 1.0) / 4.0
 const g4 = (5.0 - sqrt5) / 20.0
 
+const simplexNormalization = 99.204334582718712976990005025589
+
 //------------------------------------------------------------------------------
 
 // Simplex2DAtCartesian returns the 2D simplex noise at position p.
-func Simplex2DCartesianAt(p plane.Coord) float32 {
+func Simplex2DCartesianAt(p plane.Coord, grad []plane.Coord) float32 {
 	// Source: "Simplex Noise Demystified" by Stefan Gustavson
 	// http://www.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf
 	// and
 	// http://webstaff.itn.liu.se/~stegu/simplexnoise/SimplexNoise.java
+
+	// p = p.Times(0.70710678118654752440084436210485)
+	p = p.Times(0.816496580928)
 
 	// Noise contributions from the three corners
 	var n0, n1, n2 float32
 
 	// Skew the input space to determine which simplex cell we're in.
 	var s = (p.X + p.Y) * f2
-	var i = math.Floor(p.X + s)
-	var j = math.Floor(p.Y + s)
+	var i = float32(math.FastFloor(p.X + s))
+	var j = float32(math.FastFloor(p.Y + s))
 
 	// Unskew the cell origin back to (x,y) space.
 	var t = (i + j) * g2
@@ -71,7 +76,7 @@ func Simplex2DCartesianAt(p plane.Coord) float32 {
 	// Work out the hashed gradient indices of the three simplex corners
 	var ii = int32(i) & 255
 	var jj = int32(j) & 255
-	var gl = int32(len(Gradient3D))
+	var gl = int32(len(grad))
 	var gi0 = permutation[ii+permutation[jj]] % gl
 	var gi1 = permutation[ii+i1+permutation[jj+j1]] % gl
 	var gi2 = permutation[ii+1+permutation[jj+1]] % gl
@@ -83,7 +88,7 @@ func Simplex2DCartesianAt(p plane.Coord) float32 {
 		n0 = 0.0
 	} else {
 		t0 *= t0
-		n0 = t0 * t0 * (Gradient3D[gi0].Dot(space.Coord{x0, y0, 0})) // (x,y) of grad3 used for 2D gradient
+		n0 = t0 * t0 * (grad[gi0].Dot(plane.Coord{x0, y0}))
 	}
 
 	var t1 = 0.5 - x1*x1 - y1*y1
@@ -91,7 +96,7 @@ func Simplex2DCartesianAt(p plane.Coord) float32 {
 		n1 = 0.0
 	} else {
 		t1 *= t1
-		n1 = t1 * t1 * (Gradient3D[gi1].Dot(space.Coord{x1, y1, 0}))
+		n1 = t1 * t1 * (grad[gi1].Dot(plane.Coord{x1, y1}))
 	}
 
 	var t2 = 0.5 - x2*x2 - y2*y2
@@ -99,13 +104,13 @@ func Simplex2DCartesianAt(p plane.Coord) float32 {
 		n2 = 0.0
 	} else {
 		t2 *= t2
-		n2 = t2 * t2 * (Gradient3D[gi2].Dot(space.Coord{x2, y2, 0}))
+		n2 = t2 * t2 * (grad[gi2].Dot(plane.Coord{x2, y2}))
 	}
 
 	// Add contributions from each corner to get the final noise value.
 	// The result is scaled to return values in the interval [-1,1].
 
-	return 70.0 * (n0 + n1 + n2)
+	return simplexNormalization * (n0 + n1 + n2)
 }
 
 //------------------------------------------------------------------------------
@@ -122,8 +127,8 @@ func Simplex2DAxialAt(q, r float32, grad []plane.Coord) float32 {
 	var n0, n1, n2 float32
 
 	// Determine which simplex cell we're in.
-	var q0 = math.Floor(q)
-	var r0 = math.Floor(r)
+	var q0 = float32(math.FastFloor(q))
+	var r0 = float32(math.FastFloor(r))
 
 	// Unskew the cell origin back to (x,y) space.
 	var dq0 = q - float32(q0) // The x,y distances from the cell origin
@@ -159,6 +164,13 @@ func Simplex2DAxialAt(q, r float32, grad []plane.Coord) float32 {
 	var x2 = (dq0) + 0.5*(dr0-1)
 	var y2 = (dr0 - 1) * 0.5 * sqrt3
 
+	x0 *= 0.816496580928
+	y0 *= 0.816496580928
+	x1 *= 0.816496580928
+	y1 *= 0.816496580928
+	x2 *= 0.816496580928
+	y2 *= 0.816496580928
+
 	// Calculate the contribution from the three corners
 
 	var t0 = 0.5 - x0*x0 - y0*y0
@@ -166,7 +178,7 @@ func Simplex2DAxialAt(q, r float32, grad []plane.Coord) float32 {
 		n0 = 0.0
 	} else {
 		t0 *= t0
-		n0 = t0 * t0 * (grad[gi0].Dot(plane.Coord{x0, y0})) // (x,y) of grad3 used for 2D gradient
+		n0 = t0 * t0 * (grad[gi0].Dot(plane.Coord{x0, y0}))
 	}
 
 	var t1 = 0.5 - x1*x1 - y1*y1
@@ -188,7 +200,187 @@ func Simplex2DAxialAt(q, r float32, grad []plane.Coord) float32 {
 	// Add contributions from each corner to get the final noise value.
 	// The result is scaled to return values in the interval [-1,1].
 
-	return 70.0 * (n0 + n1 + n2)
+	return simplexNormalization * (n0 + n1 + n2)
+}
+
+//------------------------------------------------------------------------------
+
+// SimplexAxial returns the 2D simplex noise at position (q, r), expressed
+// in axial coordinates.
+func SimplexAxial(q, r float32, grad []plane.Coord) float32 {
+	// Source: "Simplex Noise Demystified" by Stefan Gustavson
+	// http://www.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf
+	// and
+	// http://webstaff.itn.liu.se/~stegu/simplexnoise/SimplexNoise.java
+
+	// Noise contributions from the three corners
+	var n0, n1, n2 float32
+
+	// Determine which simplex cell we're in.
+	var i = math.Floor(q + r)
+	var j = math.Floor(r)
+
+	var pX = q + r*0.5
+	var pY = r * 0.5 * sqrt3
+
+	// Unskew the cell origin back to (x,y) space.
+	var X0 = i - j*0.5
+	var Y0 = j * 0.5 * sqrt3
+	var x0 = pX - X0 // The x,y distances from the cell origin
+	var y0 = pY - Y0
+
+	// For the 2D case, the simplex shape is an equilateral triangle.
+	// Determine which simplex we are in.
+	var i1, j1 int32 // Offsets for second (middle) corner of simplex in (i,j) coords
+	if x0*sqrt3 > y0 {
+		// lower triangle, XY order: (0,0)->(1,0)->(1,1)
+		i1 = 1
+		j1 = 0
+	} else {
+		// upper triangle, YX order: (0,0)->(0,1)->(1,1)
+		i1 = 0
+		j1 = 1
+	}
+
+	var x1 = x0 + 0.5 - 1.5*float32(i1)
+	var y1 = y0 - 0.5*sqrt3*float32(j1)
+	var x2 = x0 - 0.5
+	var y2 = y0 - 0.5*sqrt3
+
+	x0 *= 0.816496580928
+	y0 *= 0.816496580928
+	x1 *= 0.816496580928
+	y1 *= 0.816496580928
+	x2 *= 0.816496580928
+	y2 *= 0.816496580928
+
+	// Work out the hashed gradient indices of the three simplex corners
+	var ii = int32(i) & 255
+	var jj = int32(j) & 255
+	var gl = int32(len(grad))
+	var gi0 = permutation[ii+permutation[jj]] % gl
+	var gi1 = permutation[ii+i1+permutation[jj+j1]] % gl
+	var gi2 = permutation[ii+1+permutation[jj+1]] % gl
+
+	// Calculate the contribution from the three corners
+
+	var t0 = 0.5 - x0*x0 - y0*y0
+	if t0 < 0 {
+		n0 = 0.0
+	} else {
+		t0 *= t0
+		n0 = t0 * t0 * (grad[gi0].Dot(plane.Coord{x0, y0}))
+	}
+
+	var t1 = 0.5 - x1*x1 - y1*y1
+	if t1 < 0 {
+		n1 = 0.0
+	} else {
+		t1 *= t1
+		n1 = t1 * t1 * (grad[gi1].Dot(plane.Coord{x1, y1}))
+	}
+
+	var t2 = 0.5 - x2*x2 - y2*y2
+	if t2 < 0 {
+		n2 = 0.0
+	} else {
+		t2 *= t2
+		n2 = t2 * t2 * (grad[gi2].Dot(plane.Coord{x2, y2}))
+	}
+
+	// Add contributions from each corner to get the final noise value.
+	// The result is scaled to return values in the interval [-1,1].
+
+	return simplexNormalization * (n0 + n1 + n2)
+}
+
+//------------------------------------------------------------------------------
+
+// Axial returns the 2D simplex noise at position (q, r), expressed
+// in axial coordinates.
+func Axial(q, r float32, grad []plane.Coord) float32 {
+	// Source: "Simplex Noise Demystified" by Stefan Gustavson
+	// http://www.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf
+	// and
+	// http://webstaff.itn.liu.se/~stegu/simplexnoise/SimplexNoise.java
+
+	// Noise contributions from the three corners
+	var n0, n1, n2 float32
+
+	// Determine which simplex cell we're in.
+	var q0 = float32(math.FastFloor(q))
+	var r0 = float32(math.FastFloor(r))
+
+	// Cartesian distance to cell origin
+	var x = q + 0.5*r
+	var y = r * 0.5 * sqrt3
+	var x0 = q0 + 0.5*r0
+	var y0 = r0 * 0.5 * sqrt3
+	var dx0 = x - x0
+	var dy0 = y - y0
+
+	// Determine which simplex we are in.
+	var v int32
+	if (q-q0)+(r-r0) < 1.0 {
+		v = 0
+	} else {
+		v = 1
+	}
+
+	// Work out the hashed gradient indices of the three simplex corners
+	var qq = int32(q0) & 255
+	var rr = int32(r0) & 255
+	var gl = int32(len(grad))
+	var gi0 = permutation[qq+v+permutation[rr+v]] % gl
+	var gi1 = permutation[qq+1+permutation[rr]] % gl
+	var gi2 = permutation[qq+permutation[rr+1]] % gl
+
+	var dx1 = dx0 - 1
+	var dy1 = dy0
+	var dx2 = dx0 - 0.5
+	var dy2 = dy0 - 0.5*sqrt3
+	if v == 1 {
+		dy0 = dy2
+		dx0 = dx0 - 1.5
+	}
+
+	dx0 *= 0.816496580928
+	dy0 *= 0.816496580928
+	dx1 *= 0.816496580928
+	dy1 *= 0.816496580928
+	dx2 *= 0.816496580928
+	dy2 *= 0.816496580928
+
+	// Calculate the contribution from the three corners
+
+	var t0 = 0.5 - dx0*dx0 - dy0*dy0
+	if t0 < 0 {
+		n0 = 0.0
+	} else {
+		t0 *= t0
+		n0 = t0 * t0 * (grad[gi0].Dot(plane.Coord{dx0, dy0}))
+	}
+
+	var t1 = 0.5 - dx1*dx1 - dy1*dy1
+	if t1 < 0 {
+		n1 = 0.0
+	} else {
+		t1 *= t1
+		n1 = t1 * t1 * (grad[gi1].Dot(plane.Coord{dx1, dy1}))
+	}
+
+	var t2 = 0.5 - dx2*dx2 - dy2*dy2
+	if t2 < 0 {
+		n2 = 0.0
+	} else {
+		t2 *= t2
+		n2 = t2 * t2 * (grad[gi2].Dot(plane.Coord{dx2, dy2}))
+	}
+
+	// Add contributions from each corner to get the final noise value.
+	// The result is scaled to return values in the interval [-1,1].
+
+	return simplexNormalization * (n0 + n1 + n2)
 }
 
 //------------------------------------------------------------------------------

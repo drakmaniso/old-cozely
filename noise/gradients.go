@@ -76,4 +76,14 @@ func Gradient(a0 float32, n uint) []plane.Coord {
 	return g
 }
 
+func GradientFrom(a []float32) []plane.Coord {
+	var n = len(a)
+	var g = make([]plane.Coord, n, n)
+	for i := 0; i < int(n); i++ {
+		g[i].X = math.Cos(a[i])
+		g[i].Y = math.Sin(a[i])
+	}
+	return g
+}
+
 //------------------------------------------------------------------------------
