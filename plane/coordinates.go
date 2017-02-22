@@ -57,16 +57,16 @@ func (v Coord) Inverse() Coord {
 	return Coord{-v.X, -v.Y}
 }
 
-// Times returns the product with another coordinate vector.
-func (v Coord) Times(o Coord) Coord {
-	return Coord{v.X * o.X, v.Y * o.Y}
+// Times returns the product with a scalar.
+func (v Coord) Times(s float32) Coord {
+	return Coord{v.X * s, v.Y * s}
 }
 
 // Slash returns the division by another coordinate vector.
 //
-// Important: both `o.X` and `o.Y` must be non-zero.
-func (v Coord) Slash(o Coord) Coord {
-	return Coord{v.X / o.X, v.Y / o.Y}
+// Important: `s` must be non-zero.
+func (v Coord) Slash(s float32) Coord {
+	return Coord{v.X / s, v.Y / s}
 }
 
 // Dot returns the dot product with another coordinate vector.
