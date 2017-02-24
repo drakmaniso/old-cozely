@@ -14,11 +14,11 @@ import (
 
 //------------------------------------------------------------------------------
 
-func ExamplePerlin3DAt() {
+func ExamplePerlin3D() {
 	for z := 0; z < 4; z++ {
 		for y := 0; y < 10; y++ {
 			for x := 0; x < 10; x++ {
-				v := Perlin3DAt(space.Coord{X: float32(x), Y: float32(y), Z: float32(z * 10)}.Slash(space.Coord{10.0, 10.0, 10.0}))
+				v := Perlin3D(space.Coord{X: float32(x), Y: float32(y), Z: float32(z * 10)}.Slash(space.Coord{10.0, 10.0, 10.0}))
 				iv := uint8(v*50.0 + 50.0)
 				fmt.Printf("%2d", iv)
 				if x < 9 {
@@ -77,8 +77,8 @@ func ExamplePerlin3DAt() {
 
 //------------------------------------------------------------------------------
 
-var outputPerlin3DAt [10][10][10]float32
-var resultsPerlin3DAt = [10][10][10]float32{
+var outputPerlin3D [10][10][10]float32
+var resultsPerlin3D = [10][10][10]float32{
 	[10][10]float32{
 		[10]float32{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 		[10]float32{-0.099144004, 0.106848, -0.106848, 0.099144004, 0.099144004, -0.106848, 0, 0, 0, 0.106848},
@@ -192,11 +192,11 @@ var resultsPerlin3DAt = [10][10][10]float32{
 	},
 }
 
-func TestPerlin3DAt(t *testing.T) {
+func TestPerlin3D(t *testing.T) {
 	for z := 0; z < 10; z++ {
 		for y := 0; y < 10; y++ {
 			for x := 0; x < 10; x++ {
-				outputPerlin3DAt[x][y][z] = Perlin3DAt(space.Coord{X: float32(x), Y: float32(y), Z: float32(z * 10)}.Slash(space.Coord{10.0, 10.0, 10.0}))
+				outputPerlin3D[x][y][z] = Perlin3D(space.Coord{X: float32(x), Y: float32(y), Z: float32(z * 10)}.Slash(space.Coord{10.0, 10.0, 10.0}))
 			}
 		}
 	}
@@ -204,8 +204,8 @@ func TestPerlin3DAt(t *testing.T) {
 	for z := 0; z < 10; z++ {
 		for y := 0; y < 10; y++ {
 			for x := 0; x < 10; x++ {
-				if outputPerlin3DAt[x][y][z] != resultsPerlin3DAt[x][y][z] {
-					t.Errorf("Wrong result at (%d,%d,%d): %f instead of %f", x, y, z, outputPerlin3DAt[x][y][z], resultsPerlin3DAt[x][y][z])
+				if outputPerlin3D[x][y][z] != resultsPerlin3D[x][y][z] {
+					t.Errorf("Wrong result at (%d,%d,%d): %f instead of %f", x, y, z, outputPerlin3D[x][y][z], resultsPerlin3D[x][y][z])
 					return
 				}
 			}

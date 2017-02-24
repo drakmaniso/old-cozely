@@ -56,8 +56,8 @@ func perlinFade(x float32) float32 {
 
 //------------------------------------------------------------------------------
 
-// Perlin3DAt returns the value of a 3D Perlin noise function at position `p`.
-func Perlin3DAt(p space.Coord) float32 {
+// Perlin3D returns the value of a 3D Perlin noise function at position `p`.
+func Perlin3D(p space.Coord) float32 {
 	// Source: "Simplex Noise Demystified" by Stefan Gustavson
 	// http://www.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf
 
