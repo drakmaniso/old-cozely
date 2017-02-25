@@ -27,6 +27,10 @@ void VertexAttribute(
 	glVertexArrayAttribBinding(vao, index, binding);
 	glEnableVertexArrayAttrib(vao, index);
 }
+
+static inline void VertexArrayBindingDivisor(GLuint vao, GLuint i, GLuint d) {
+  glVertexArrayBindingDivisor(vao, i, d);
+}
 */
 import "C"
 
@@ -43,66 +47,82 @@ func VertexFormat(binding uint32, format interface{}) PipelineOption {
 }
 
 func (p *Pipeline) setVertexFormat(binding uint32, format interface{}) {
-	f := reflect.TypeOf(format)
-	if f.Kind() != reflect.Struct {
-		setErr(fmt.Errorf("attributes binding format must be a struct, not a %s", f.Kind()))
+	t := reflect.TypeOf(format)
+	if t.Kind() != reflect.Struct {
+		setErr(fmt.Errorf("attributes binding format must be fld struct, not fld %s", t.Kind()))
 		return
 	}
 
-	for i := 0; i < f.NumField(); i++ {
-		a := f.Field(i)
-		al := a.Tag.Get("layout")
-		if al == "" {
+	for i := 0; i < t.NumField(); i++ {
+		fld := t.Field(i)
+
+		// Layout tag
+		layStr := fld.Tag.Get("layout")
+		if layStr == "" {
 			continue
 		}
-		ali, err := strconv.Atoi(al)
+		lay, err := strconv.Atoi(layStr)
 		if err != nil {
-			setErr(fmt.Errorf("invalid layout for attributes binding: %q", al))
+			setErr(fmt.Errorf("invalid layout for attributes binding: %q", layStr))
 			return
 		}
-		//TODO: check that ali is in range
-		at := a.Type
-		var as int32
-		ao := a.Offset
-		var ate C.GLenum
+		//TODO: check that lay is in range
+
+		//TODO: check that lay is in range
+		typ := fld.Type
+		var siz int32
+		off := fld.Offset
+		var typEnum C.GLenum
 		switch {
 		// Float32
-		case at.ConvertibleTo(float32Type):
-			as = 1
-			ate = C.GL_FLOAT
-		case at.ConvertibleTo(vec4Type), at.ConvertibleTo(rgbaType):
-			as = 4
-			ate = C.GL_FLOAT
-		case at.ConvertibleTo(vec3Type), at.ConvertibleTo(rgbType):
-			as = 3
-			ate = C.GL_FLOAT
-		case at.ConvertibleTo(vec2Type):
-			as = 2
-			ate = C.GL_FLOAT
+		case typ.ConvertibleTo(float32Type):
+			siz = 1
+			typEnum = C.GL_FLOAT
+		case typ.ConvertibleTo(vec4Type), typ.ConvertibleTo(rgbaType):
+			siz = 4
+			typEnum = C.GL_FLOAT
+		case typ.ConvertibleTo(vec3Type), typ.ConvertibleTo(rgbType):
+			siz = 3
+			typEnum = C.GL_FLOAT
+		case typ.ConvertibleTo(vec2Type):
+			siz = 2
+			typEnum = C.GL_FLOAT
 		// Int32
-		case at.ConvertibleTo(int32Type):
-			as = 1
-			ate = C.GL_INT
-		case at.ConvertibleTo(ivec4Type):
-			as = 4
-			ate = C.GL_INT
-		case at.ConvertibleTo(ivec3Type):
-			as = 3
-			ate = C.GL_INT
-		case at.ConvertibleTo(ivec2Type):
-			as = 2
-			ate = C.GL_INT
+		case typ.ConvertibleTo(int32Type):
+			siz = 1
+			typEnum = C.GL_INT
+		case typ.ConvertibleTo(ivec4Type):
+			siz = 4
+			typEnum = C.GL_INT
+		case typ.ConvertibleTo(ivec3Type):
+			siz = 3
+			typEnum = C.GL_INT
+		case typ.ConvertibleTo(ivec2Type):
+			siz = 2
+			typEnum = C.GL_INT
 		}
 
 		C.VertexAttribute(
 			p.vao,
-			C.GLuint(ali),
+			C.GLuint(lay),
 			C.GLuint(binding),
-			C.GLint(as),
-			ate,
+			C.GLint(siz),
+			typEnum,
 			C.GLboolean(0), //TODO
-			C.GLuint(ao),
+			C.GLuint(off),
 		)
+
+		// Divisor Tag
+		divStr := fld.Tag.Get("divisor")
+		if divStr != "" {
+			var div = 0
+			div, err = strconv.Atoi(divStr)
+			if err != nil {
+				setErr(fmt.Errorf("invalid divisor for attributes binding: %q", divStr))
+				return
+			}
+			C.VertexArrayBindingDivisor(p.vao, C.GLuint(binding), C.GLuint(div))
+		}
 	}
 	return
 }
