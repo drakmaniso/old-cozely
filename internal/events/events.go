@@ -131,6 +131,7 @@ func dispatch(e unsafe.Pointer) {
 		)
 	case C.SDL_MOUSEBUTTONDOWN:
 		e := (*C.SDL_MouseButtonEvent)(e)
+		internal.MouseButtons |= 1 << (e.button - 1)
 		mouse.Handle.MouseButtonDown(
 			mouse.Button(e.button),
 			int(e.clicks),
@@ -138,6 +139,7 @@ func dispatch(e unsafe.Pointer) {
 		)
 	case C.SDL_MOUSEBUTTONUP:
 		e := (*C.SDL_MouseButtonEvent)(e)
+		internal.MouseButtons &= ^(1 << (e.button - 1))
 		mouse.Handle.MouseButtonUp(
 			mouse.Button(e.button),
 			int(e.clicks),
