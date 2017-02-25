@@ -1,0 +1,12 @@
+{
+  "Title": "Instanced Array",
+  "Resolution": [
+    720,
+    720
+  ],
+  "Display": 0,
+  "Fullscreen": false,
+  "FullscreenMode": "Desktop",
+  "VSync": true,
+  "Debug": true
+}
