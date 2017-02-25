@@ -157,4 +157,9 @@ func (v Polar) Cartesian() (x, y float32) {
 	return v.R * math.Cos(v.Theta), v.R * math.Sin(v.Theta)
 }
 
+// Coord returns the cartesian representation of v.
+func (v Polar) Coord() Coord {
+	return Coord{v.R * math.Cos(v.Theta), v.R * math.Sin(v.Theta)}
+}
+
 //------------------------------------------------------------------------------
