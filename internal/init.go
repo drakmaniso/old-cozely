@@ -84,7 +84,7 @@ func init() {
 func loadConfig() {
 	f, err := os.Open(Path + "init.json")
 	if err != nil {
-		InitError = fmt.Errorf(`impossible to open configuration file "init.json": %s`, err)
+		// InitError = fmt.Errorf(`impossible to open configuration file "init.json": %s`, err)
 		return
 	}
 	d := json.NewDecoder(f)
