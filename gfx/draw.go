@@ -12,6 +12,10 @@ static inline void DrawArrays(GLenum m, GLuint f, GLuint c) {
 	glDrawArrays(m, f, c);
 }
 
+static inline void DrawArraysInstanced(GLenum m, GLuint f, GLuint c, GLuint ic) {
+	glDrawArraysInstanced(m, f, c, ic);
+}
+
 static inline void DrawElements(GLenum m, GLsizei c, GLenum t, GLsizeiptr i) {
 	glDrawElements(m, c, t, (const void *)i);
 }
@@ -44,6 +48,13 @@ const (
 // Draw count primitives, starting at first.
 func Draw(mode Primitive, first int32, count int32) {
 	C.DrawArrays(C.GLenum(mode), C.GLuint(first), C.GLuint(count))
+}
+
+//------------------------------------------------------------------------------
+
+// Draw count primitives, starting at first.
+func DrawInstanced(mode Primitive, first int32, count int32, instances int32) {
+	C.DrawArraysInstanced(C.GLenum(mode), C.GLuint(first), C.GLuint(count), C.GLuint(instances))
 }
 
 //------------------------------------------------------------------------------
