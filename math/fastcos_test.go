@@ -14,7 +14,7 @@ import (
 func TestFastCos(t *testing.T) {
 	var x float32
 	maxDiff := float32(0)
-	for _, tt := range cos_tests {
+	for _, tt := range cosTests {
 		x = FastCos(tt.in)
 		if Abs(x-tt.out) > maxDiff {
 			maxDiff = Abs(x - tt.out)

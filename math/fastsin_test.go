@@ -14,7 +14,7 @@ import (
 func TestFastSin(t *testing.T) {
 	var x float32
 	maxDiff := float32(0)
-	for _, tt := range sin_tests {
+	for _, tt := range sinTests {
 		x = FastSin(tt.in)
 		if Abs(x-tt.out) > maxDiff {
 			maxDiff = Abs(x - tt.out)
