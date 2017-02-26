@@ -131,10 +131,12 @@ func ClearStencilBuffer(m int32) {
 
 // Bind the pipeline for use by the GPU in all following draw commands.
 func (p *Pipeline) Bind() {
-	C.BindPipeline(
-		p.object,
-		p.vao,
-	)
+	C.BindPipeline(p.object, p.vao)
+}
+
+// Unbind the pipeline.
+func (p *Pipeline) Unbind() {
+	C.BindPipeline(0, 0)
 }
 
 //------------------------------------------------------------------------------
