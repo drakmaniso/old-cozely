@@ -7,5 +7,5 @@ in PerVertex {
 out vec4 Color;
 
 void main(void) {
-	Color = vec4(vert.Color, 1);
+	Color = vec4(0.20, 0.06, 0.02, 1.0);
 }

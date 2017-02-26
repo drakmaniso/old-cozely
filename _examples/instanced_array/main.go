@@ -42,11 +42,20 @@ func main() {
 
 //------------------------------------------------------------------------------
 
+// OpenGL objects
+var (
+	pipeline    gfx.Pipeline
+	perFrameUBO gfx.UniformBuffer
+	rosesINBO   gfx.VertexBuffer
+)
+
 // Uniform buffer
 var perFrame struct {
 	ratio float32
 	time  float32
 }
+
+// Instance Buffer
 
 type perInstance struct {
 	position    plane.Coord `layout:"0" divisor:"1"`
@@ -57,13 +66,60 @@ type perInstance struct {
 	speed       float32     `layout:"5"`
 }
 
-// OpenGL objects
-var (
-	pipeline        gfx.Pipeline
-	transform       gfx.UniformBuffer
-	instancesBuffer gfx.VertexBuffer
-	mesh            gfx.VertexBuffer
-)
+//------------------------------------------------------------------------------
+
+func setup() error {
+	// Setup the pipeline
+	var v, err = os.Open(glam.Path() + "shader.vert")
+	if err != nil {
+		return err
+	}
+	f, err := os.Open(glam.Path() + "shader.frag")
+	if err != nil {
+		return err
+	}
+	pipeline = gfx.NewPipeline(
+		gfx.VertexShader(v),
+		gfx.FragmentShader(f),
+		gfx.VertexFormat(1, perInstance{}),
+	)
+	gfx.Enable(gfx.FramebufferSRGB)
+
+	// Create the uniform buffer
+	perFrameUBO = gfx.NewUniformBuffer(&perFrame, gfx.DynamicStorage)
+
+	// Create the instance buffer
+	rosesINBO = gfx.NewVertexBuffer(generateInstances(), gfx.DynamicStorage)
+
+	// Bind the instance buffer to the pipeline
+	pipeline.Bind()
+	rosesINBO.Bind(1, 0)
+	pipeline.Unbind()
+
+	return gfx.Err()
+}
+
+//------------------------------------------------------------------------------
+
+type looper struct{}
+
+func (l looper) Update() {
+	perFrame.time += float32(glam.TimeStep) / float32(time.Second)
+}
+
+func (l looper) Draw() {
+	pipeline.Bind()
+	gfx.ClearDepthBuffer(1.0)
+	gfx.ClearColorBuffer(color.RGBA{0.9, 0.85, 0.80, 1.0})
+
+	perFrameUBO.Bind(0)
+	perFrameUBO.SubData(&perFrame, 0)
+	gfx.DrawInstanced(gfx.LineStrip, 0, nbPoints, int32(nbInstances))
+
+	pipeline.Unbind()
+}
+
+//------------------------------------------------------------------------------
 
 const nbPoints int32 = 512
 const nbInstances int = 64
@@ -87,37 +143,6 @@ func generateInstances() []perInstance {
 	return data
 }
 
-var instances []perInstance
-
-//------------------------------------------------------------------------------
-
-func setup() error {
-	// Setup the pipeline
-	var v, err = os.Open(glam.Path() + "shader.vert")
-	if err != nil {
-		return err
-	}
-	f, err := os.Open(glam.Path() + "shader.frag")
-	if err != nil {
-		return err
-	}
-	pipeline = gfx.NewPipeline(
-		gfx.VertexShader(v),
-		gfx.FragmentShader(f),
-		gfx.VertexFormat(1, perInstance{}),
-	)
-	gfx.Enable(gfx.FramebufferSRGB)
-
-	// Create the uniform buffer
-	transform = gfx.NewUniformBuffer(&perFrame, gfx.DynamicStorage)
-
-	// Create the instance buffer
-	instances = generateInstances()
-	instancesBuffer = gfx.NewVertexBuffer(instances, gfx.DynamicStorage)
-
-	return gfx.Err()
-}
-
 //------------------------------------------------------------------------------
 
 // func rose(nbPoints int, num int, den int, offset float32) []perVertex {
@@ -135,24 +160,6 @@ func setup() error {
 
 //------------------------------------------------------------------------------
 
-type looper struct{}
-
-func (l looper) Update() {
-	perFrame.time += float32(glam.TimeStep) / float32(time.Second)
-}
-
-func (l looper) Draw() {
-	gfx.ClearDepthBuffer(1.0)
-	gfx.ClearColorBuffer(color.RGBA{0.9, 0.9, 0.9, 1.0})
-	pipeline.Bind()
-	transform.Bind(0)
-	transform.SubData(&perFrame, 0)
-	instancesBuffer.Bind(1, 0)
-	gfx.DrawInstanced(gfx.LineStrip, 0, nbPoints, int32(len(instances)))
-}
-
-//------------------------------------------------------------------------------
-
 type handler struct {
 	basic.WindowHandler
 	basic.MouseHandler
@@ -164,8 +171,7 @@ func (h handler) WindowResized(s pixel.Coord, _ time.Duration) {
 }
 
 func (h handler) MouseButtonDown(b mouse.Button, _ int, _ time.Duration) {
-	instances = generateInstances()
-	instancesBuffer.SubData(instances, 0)
+	rosesINBO.SubData(generateInstances(), 0)
 }
 
 //------------------------------------------------------------------------------

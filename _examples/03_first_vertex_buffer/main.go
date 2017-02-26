@@ -33,22 +33,21 @@ func main() {
 
 //------------------------------------------------------------------------------
 
+// OpenGL objects
+var (
+	pipeline gfx.Pipeline
+)
+
 // Vertex buffer
 type vertex struct {
 	position plane.Coord `layout:"0"`
 	color    color.RGB   `layout:"1"`
 }
 
-// OpenGL objects
-var (
-	pipeline gfx.Pipeline
-	vbo      gfx.VertexBuffer
-)
-
 //------------------------------------------------------------------------------
 
 func setup() error {
-	// Setup the pipeline
+	// Create and configure the pipeline
 	vs, err := os.Open(glam.Path() + "/shader.vert")
 	if err != nil {
 		return err
@@ -64,13 +63,18 @@ func setup() error {
 	)
 	gfx.Enable(gfx.FramebufferSRGB)
 
-	// Fill and create the vertex buffer
+	// Create and fill the vertex buffer
 	triangle := []vertex{
 		{plane.Coord{0, 0.65}, color.RGB{R: 0.3, G: 0, B: 0.8}},
 		{plane.Coord{-0.65, -0.475}, color.RGB{R: 0.8, G: 0.3, B: 0}},
 		{plane.Coord{0.65, -0.475}, color.RGB{R: 0, G: 0.6, B: 0.2}},
 	}
-	vbo = gfx.NewVertexBuffer(triangle, gfx.StaticStorage)
+	vbo := gfx.NewVertexBuffer(triangle, gfx.StaticStorage)
+
+	// Bind the vertex buffer to the pipeline
+	pipeline.Bind()
+	vbo.Bind(0, 0)
+	pipeline.Unbind()
 
 	return gfx.Err()
 }
@@ -85,8 +89,8 @@ func (l looper) Update() {
 func (l looper) Draw() {
 	gfx.ClearColorBuffer(color.RGBA{0.9, 0.9, 0.9, 1.0})
 	pipeline.Bind()
-	vbo.Bind(0, 0)
 	gfx.Draw(gfx.Triangles, 0, 3)
+	pipeline.Unbind()
 }
 
 //------------------------------------------------------------------------------

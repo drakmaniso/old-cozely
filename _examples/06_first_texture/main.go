@@ -9,13 +9,10 @@ import (
 	"image"
 	_ "image/png"
 	"os"
-	"time"
 
 	"github.com/drakmaniso/glam"
-	"github.com/drakmaniso/glam/basic"
 	"github.com/drakmaniso/glam/color"
 	"github.com/drakmaniso/glam/gfx"
-	"github.com/drakmaniso/glam/math"
 	"github.com/drakmaniso/glam/mouse"
 	"github.com/drakmaniso/glam/pixel"
 	"github.com/drakmaniso/glam/plane"
@@ -45,24 +42,30 @@ func main() {
 
 //------------------------------------------------------------------------------
 
-// Vertex buffer layout
-type vertex struct {
-	position space.Coord `layout:"0"`
-	uv       plane.Coord `layout:"1"`
-}
+// OpenGL objects
+var (
+	pipeline    gfx.Pipeline
+	perFrameUBO gfx.UniformBuffer
+	sampler     gfx.Sampler
+	diffuse     gfx.Texture2D
+)
 
 // Uniform buffer
 var perFrame struct {
 	transform space.Matrix
 }
 
-// OpenGL objects
+// Vertex buffer
+type vertex struct {
+	position space.Coord `layout:"0"`
+	uv       plane.Coord `layout:"1"`
+}
+
+// Matrices
 var (
-	pipeline    gfx.Pipeline
-	perFrameUBO gfx.UniformBuffer
-	cubeVBO     gfx.VertexBuffer
-	sampler     gfx.Sampler
-	diffuse     gfx.Texture2D
+	model      space.Matrix
+	view       space.Matrix
+	projection space.Matrix
 )
 
 // Cube state
@@ -72,17 +75,10 @@ var (
 	yaw, pitch float32
 )
 
-// Matrices
-var (
-	model      space.Matrix
-	view       space.Matrix
-	projection space.Matrix
-)
-
 //------------------------------------------------------------------------------
 
 func setup() error {
-	// Setup the pipeline
+	// Create and configure the pipeline
 	v, err := os.Open(glam.Path() + "shader.vert")
 	if err != nil {
 		return err
@@ -104,7 +100,7 @@ func setup() error {
 	perFrameUBO = gfx.NewUniformBuffer(&perFrame, gfx.DynamicStorage)
 
 	// Create and fill the vertex buffer
-	cubeVBO = gfx.NewVertexBuffer(cube(), gfx.StaticStorage)
+	vbo := gfx.NewVertexBuffer(cube(), gfx.StaticStorage)
 
 	// Create and bind the sampler
 	sampler = gfx.NewSampler(
@@ -134,57 +130,12 @@ func setup() error {
 	distance = 3
 	updateView()
 
+	// Bind the vertex buffer to the pipeline
+	pipeline.Bind()
+	vbo.Bind(0, 0)
+	pipeline.Unbind()
+
 	return gfx.Err()
-}
-
-//------------------------------------------------------------------------------
-
-// Event handler
-type handler struct {
-	basic.WindowHandler
-	basic.MouseHandler
-}
-
-func (h handler) WindowResized(s pixel.Coord, _ time.Duration) {
-	sx, sy := window.Size().Cartesian()
-	r := sx / sy
-	projection = space.Perspective(math.Pi/4, r, 0.001, 1000.0)
-}
-
-func (h handler) MouseWheel(motion pixel.Coord, _ time.Duration) {
-	distance -= float32(motion.Y) / 4
-	updateView()
-}
-
-func (h handler) MouseButtonDown(b mouse.Button, _ int, _ time.Duration) {
-	mouse.SetRelativeMode(true)
-}
-
-func (h handler) MouseButtonUp(b mouse.Button, _ int, _ time.Duration) {
-	mouse.SetRelativeMode(false)
-}
-
-func (h handler) MouseMotion(motion pixel.Coord, _ pixel.Coord, _ time.Duration) {
-	mx, my := motion.Cartesian()
-	sx, sy := window.Size().Cartesian()
-
-	switch {
-	case mouse.IsPressed(mouse.Left):
-		position.X += 2 * mx / sx
-		position.Y -= 2 * my / sy
-		updateModel()
-
-	case mouse.IsPressed(mouse.Right):
-		yaw += 4 * mx / sx
-		pitch += 4 * my / sy
-		switch {
-		case pitch < -math.Pi/2:
-			pitch = -math.Pi / 2
-		case pitch > +math.Pi/2:
-			pitch = +math.Pi / 2
-		}
-		updateModel()
-	}
 }
 
 //------------------------------------------------------------------------------
@@ -209,19 +160,20 @@ func (l looper) Update() {
 }
 
 func (l looper) Draw() {
+	pipeline.Bind()
 	gfx.ClearDepthBuffer(1.0)
 	gfx.ClearColorBuffer(color.RGBA{0.9, 0.9, 0.9, 1.0})
-	pipeline.Bind()
-	sampler.Bind(0)
 
 	perFrame.transform = projection.Times(view)
 	perFrame.transform = perFrame.transform.Times(model)
 	perFrameUBO.SubData(&perFrame, 0)
 	perFrameUBO.Bind(0)
 
-	cubeVBO.Bind(0, 0)
 	diffuse.Bind(0)
+	sampler.Bind(0)
 	gfx.Draw(gfx.Triangles, 0, 6*2*3)
+
+	pipeline.Unbind()
 }
 
 //------------------------------------------------------------------------------

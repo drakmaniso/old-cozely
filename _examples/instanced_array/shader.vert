@@ -18,10 +18,6 @@ out gl_PerVertex {
 	vec4 gl_Position;
 };
 
-out PerVertex {
-	layout(location = 0) out vec3 Color;
-} vert;
-
 void main(void) {
   // Calculate the rose
   vec2 p = Position;
@@ -40,5 +36,4 @@ void main(void) {
   );
 
 	gl_Position = vec4(p, 0.5, 1);
-	vert.Color = vec3(0.2, 0.1, 0.05);
 }

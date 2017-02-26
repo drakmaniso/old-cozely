@@ -40,7 +40,7 @@ var (
 //------------------------------------------------------------------------------
 
 func setup() error {
-	// Setup the pipeline
+	// Create and configure the pipeline
 	vs, err := os.Open(glam.Path() + "shader.vert")
 	if err != nil {
 		return err
@@ -68,6 +68,7 @@ func (l looper) Draw() {
 	gfx.ClearColorBuffer(color.RGBA{0.9, 0.9, 0.9, 1.0})
 	pipeline.Bind()
 	gfx.Draw(gfx.Triangles, 0, 3)
+  pipeline.Unbind()
 }
 
 //------------------------------------------------------------------------------

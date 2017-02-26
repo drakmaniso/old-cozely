@@ -33,6 +33,12 @@ func main() {
 
 //------------------------------------------------------------------------------
 
+// OpenGL objects
+var (
+	pipeline    gfx.Pipeline
+	perFrameUBO gfx.UniformBuffer
+)
+
 // Uniform buffer
 var perFrame struct {
 	transform plane.GPUMatrix
@@ -44,13 +50,6 @@ type vertex struct {
 	color    color.RGB   `layout:"1"`
 }
 
-// OpenGL objects
-var (
-	pipeline    gfx.Pipeline
-	perFrameUBO gfx.UniformBuffer
-	triangleVBO gfx.VertexBuffer
-)
-
 // Animation state
 var (
 	angle float32
@@ -59,7 +58,7 @@ var (
 //------------------------------------------------------------------------------
 
 func setup() error {
-	// Setup the pipeline
+	// Create and configure the pipeline
 	vs, err := os.Open(glam.Path() + "/shader.vert")
 	if err != nil {
 		return err
@@ -84,7 +83,12 @@ func setup() error {
 		{plane.Coord{-0.65, -0.465}, color.RGB{R: 0.8, G: 0.3, B: 0}},
 		{plane.Coord{0.65, -0.465}, color.RGB{R: 0, G: 0.6, B: 0.2}},
 	}
-	triangleVBO = gfx.NewVertexBuffer(triangle, gfx.StaticStorage)
+	vbo := gfx.NewVertexBuffer(triangle, gfx.StaticStorage)
+
+	// Bind the vertex buffer to the pipeline
+	pipeline.Bind()
+	vbo.Bind(0, 0)
+	pipeline.Unbind()
 
 	return gfx.Err()
 }
@@ -98,15 +102,15 @@ func (l looper) Update() {
 }
 
 func (l looper) Draw() {
-	gfx.ClearColorBuffer(color.RGBA{0.9, 0.9, 0.9, 1.0})
 	pipeline.Bind()
+	gfx.ClearColorBuffer(color.RGBA{0.9, 0.9, 0.9, 1.0})
 
 	perFrame.transform = plane.Rotation(angle).GPU()
 	perFrameUBO.SubData(&perFrame, 0)
 	perFrameUBO.Bind(0)
 
-	triangleVBO.Bind(0, 0)
 	gfx.Draw(gfx.Triangles, 0, 3)
+	pipeline.Unbind()
 }
 
 //------------------------------------------------------------------------------
