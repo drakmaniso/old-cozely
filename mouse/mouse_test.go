@@ -23,7 +23,6 @@ func TestMain(m *testing.M) {
 
 	// Run the main loop
 	glam.Loop = looper{}
-	// glam.TimeStep = 250 * time.Millisecond
 	err := glam.Run()
 	if err != nil {
 		fmt.Printf("Glam: Error: %v\n", err)

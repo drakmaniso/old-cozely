@@ -15,7 +15,7 @@ import (
 
 //------------------------------------------------------------------------------
 
-var vertexShader = strings.NewReader(`
+var vertexShader = `
 #version 450 core
 
 out gl_PerVertex {
@@ -31,9 +31,9 @@ void main(void)
 	);
 	gl_Position = triangle[gl_VertexID];
 }
-`)
+`
 
-var fragmentShader = strings.NewReader(`
+var fragmentShader = `
 #version 450 core
 
 out vec4 color;
@@ -42,7 +42,7 @@ void main(void)
 {
 	color = vec4(0.3, 0.1, 0.6, 1.0);
 }
-`)
+`
 
 //------------------------------------------------------------------------------
 
@@ -73,8 +73,8 @@ var (
 func setup() error {
 	// Setup the pipeline
 	pipeline = gfx.NewPipeline(
-		gfx.VertexShader(vertexShader),
-		gfx.FragmentShader(fragmentShader),
+		gfx.VertexShader(strings.NewReader(vertexShader)),
+		gfx.FragmentShader(strings.NewReader(fragmentShader)),
 	)
 
 	return gfx.Err()
@@ -88,7 +88,6 @@ func (l looper) Update() {
 }
 
 func (l looper) Draw() {
-	gfx.ClearDepthBuffer(1.0)
 	gfx.ClearColorBuffer(color.RGBA{0.9, 0.9, 0.9, 1.0})
 	pipeline.Bind()
 	gfx.Draw(gfx.Triangles, 0, 3)

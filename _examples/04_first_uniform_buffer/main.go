@@ -7,7 +7,6 @@ package main
 
 import (
 	"strings"
-	"unsafe"
 
 	"github.com/drakmaniso/glam"
 	"github.com/drakmaniso/glam/color"
@@ -17,7 +16,7 @@ import (
 
 //------------------------------------------------------------------------------
 
-var vertexShader = strings.NewReader(`
+var vertexShader = `
 #version 450 core
 
 layout(location = 0) in vec2 Position;
@@ -40,9 +39,9 @@ void main(void) {
 	gl_Position = vec4(p.xy, 0.5, 1);
 	vert.Color = Color;
 }
-`)
+`
 
-var fragmentShader = strings.NewReader(`
+var fragmentShader = `
 #version 450 core
 
 in PerVertex {
@@ -54,12 +53,12 @@ out vec4 Color;
 void main(void) {
 	Color = vec4(vert.Color, 1);
 }
-`)
+`
 
 //------------------------------------------------------------------------------
 
 func main() {
-	err := setup()
+	var err = setup()
 	if err != nil {
 		glam.ErrorDialog(err)
 		return
@@ -75,22 +74,22 @@ func main() {
 
 //------------------------------------------------------------------------------
 
-// Vertex buffer layout
-type perVertex struct {
+// Uniform buffer
+var uniforms struct {
+	transform plane.GPUMatrix
+}
+
+// Vertex buffer
+type vertex struct {
 	position plane.Coord `layout:"0"`
 	color    color.RGB   `layout:"1"`
 }
 
-// Uniform buffer
-type perObject struct {
-	transform plane.GPUMatrix
-}
-
 // OpenGL objects
 var (
-	pipeline  gfx.Pipeline
-	transform gfx.UniformBuffer
-	triangle  gfx.VertexBuffer
+	pipeline gfx.Pipeline
+	ubo      gfx.UniformBuffer
+	vbo      gfx.VertexBuffer
 )
 
 // Animation state
@@ -103,22 +102,22 @@ var (
 func setup() error {
 	// Setup the pipeline
 	pipeline = gfx.NewPipeline(
-		gfx.VertexShader(vertexShader),
-		gfx.FragmentShader(fragmentShader),
-		gfx.VertexFormat(0, perVertex{}),
+		gfx.VertexShader(strings.NewReader(vertexShader)),
+		gfx.FragmentShader(strings.NewReader(fragmentShader)),
+		gfx.VertexFormat(0, vertex{}),
 	)
 	gfx.Enable(gfx.FramebufferSRGB)
 
 	// Create the uniform buffer
-	transform = gfx.NewUniformBuffer(unsafe.Sizeof(perObject{}), gfx.DynamicStorage)
+	ubo = gfx.NewUniformBuffer(&uniforms, gfx.DynamicStorage)
 
-	// Create the vertex buffer
-	data := []perVertex{
+	// Fill and create the vertex buffer
+	var vertices = []vertex{
 		{plane.Coord{0, 0.75}, color.RGB{R: 0.3, G: 0, B: 0.8}},
 		{plane.Coord{-0.65, -0.465}, color.RGB{R: 0.8, G: 0.3, B: 0}},
 		{plane.Coord{0.65, -0.465}, color.RGB{R: 0, G: 0.6, B: 0.2}},
 	}
-	triangle = gfx.NewVertexBuffer(data, 0)
+	vbo = gfx.NewVertexBuffer(vertices, gfx.StaticStorage)
 
 	return gfx.Err()
 }
@@ -132,18 +131,14 @@ func (l looper) Update() {
 }
 
 func (l looper) Draw() {
-	gfx.ClearDepthBuffer(1.0)
 	gfx.ClearColorBuffer(color.RGBA{0.9, 0.9, 0.9, 1.0})
 	pipeline.Bind()
-	transform.Bind(0)
 
-	m := plane.Rotation(angle)
-	t := perObject{
-		transform: m.GPU(),
-	}
-	transform.Load(&t, 0)
+	uniforms.transform = plane.Rotation(angle).GPU()
+	ubo.Load(&uniforms, 0)
+	ubo.Bind(0)
 
-	triangle.Bind(0, 0)
+	vbo.Bind(0, 0)
 	gfx.Draw(gfx.Triangles, 0, 3)
 }
 
