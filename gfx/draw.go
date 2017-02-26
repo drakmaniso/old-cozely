@@ -45,21 +45,23 @@ const (
 
 //------------------------------------------------------------------------------
 
-// Draw count primitives, starting at first.
+// Draw asks the GPU to draw a sequence of primitives.
 func Draw(mode Primitive, first int32, count int32) {
 	C.DrawArrays(C.GLenum(mode), C.GLuint(first), C.GLuint(count))
 }
 
 //------------------------------------------------------------------------------
 
-// Draw count primitives, starting at first.
+// DrawInstanced asks the GPU to draw several instances of a sequence of
+// primitives.
 func DrawInstanced(mode Primitive, first int32, count int32, instances int32) {
 	C.DrawArraysInstanced(C.GLenum(mode), C.GLuint(first), C.GLuint(count), C.GLuint(instances))
 }
 
 //------------------------------------------------------------------------------
 
-// DrawElements draws count indexed primitives, starting at first.
+// DrawElements asks the GPU to draw a sequence of primitives with index
+// vertices.
 func DrawElements(mode Primitive, first int32, count int32) {
 	var s int32
 	switch boundElement.gltype {
