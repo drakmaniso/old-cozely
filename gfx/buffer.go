@@ -188,26 +188,26 @@ func (vb *VertexBuffer) Bind(binding uint32, offset uintptr) {
 
 //------------------------------------------------------------------------------
 
-// An ElementBuffer is a block of memory owned by the GPU, used to store vertex
+// An IndexBuffer is a block of memory owned by the GPU, used to store vertex
 // indices.
-type ElementBuffer struct {
+type IndexBuffer struct {
 	object C.GLuint
 	gltype C.GLenum
 }
 
-// NewElementBuffer asks the GPU to allocate a new block of memory.
+// NewIndexBuffer asks the GPU to allocate a new block of memory.
 //
 // If data is a uinptr, it is interpreted as the desired size for the buffer (in
 // bytes), and the content is not initialized. Otherwise data must be a slice of
 // uint8, uint16 or uin32. In all cases the size of the buffer is fixed at
 // creation.
-func NewElementBuffer(data interface{}, f BufferFlags) ElementBuffer {
+func NewIndexBuffer(data interface{}, f BufferFlags) IndexBuffer {
 	p, s, t, err := pointerSizeAndUintTypeOf(data)
 	if err != nil {
 		setErr(err)
-		return ElementBuffer{}
+		return IndexBuffer{}
 	}
-	var eb ElementBuffer
+	var eb IndexBuffer
 	eb.object = C.NewBuffer(C.GLsizeiptr(s), p, C.GLbitfield(f))
 	//TODO: error handling
 	eb.gltype = t
@@ -218,7 +218,7 @@ func NewElementBuffer(data interface{}, f BufferFlags) ElementBuffer {
 //
 // It is your responsability to ensure that the size of data plus the offset
 // does not exceed the buffer size.
-func (eb *ElementBuffer) SubData(data interface{}, atOffset uintptr) {
+func (eb *IndexBuffer) SubData(data interface{}, atOffset uintptr) {
 	p, s, t, err := pointerSizeAndUintTypeOf(data)
 	if err != nil {
 		setErr(err)
@@ -267,12 +267,12 @@ func pointerSizeAndUintTypeOf(data interface{}) (ptr unsafe.Pointer, size uintpt
 }
 
 // Bind the element buffer.
-func (eb *ElementBuffer) Bind() {
+func (eb *IndexBuffer) Bind() {
 	C.BindElement(eb.object)
 	boundElement = *eb
 }
 
-var boundElement ElementBuffer
+var boundElement IndexBuffer
 
 //------------------------------------------------------------------------------
 

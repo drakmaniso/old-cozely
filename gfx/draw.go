@@ -16,7 +16,7 @@ static inline void DrawArraysInstanced(GLenum m, GLuint f, GLuint c, GLuint ic) 
 	glDrawArraysInstanced(m, f, c, ic);
 }
 
-static inline void DrawElements(GLenum m, GLsizei c, GLenum t, GLsizeiptr i) {
+static inline void DrawIndexed(GLenum m, GLsizei c, GLenum t, GLsizeiptr i) {
 	glDrawElements(m, c, t, (const void *)i);
 }
 */
@@ -60,9 +60,9 @@ func DrawInstanced(mode Primitive, first int32, count int32, instances int32) {
 
 //------------------------------------------------------------------------------
 
-// DrawElements asks the GPU to draw a sequence of primitives with index
+// DrawIndexed asks the GPU to draw a sequence of primitives with indexed
 // vertices.
-func DrawElements(mode Primitive, first int32, count int32) {
+func DrawIndexed(mode Primitive, first int32, count int32) {
 	var s int32
 	switch boundElement.gltype {
 	case C.GL_UNSIGNED_BYTE:
@@ -72,7 +72,7 @@ func DrawElements(mode Primitive, first int32, count int32) {
 	case C.GL_UNSIGNED_INT:
 		s = 4
 	}
-	C.DrawElements(C.GLenum(mode), C.GLsizei(count), boundElement.gltype, C.GLsizeiptr(first*s))
+	C.DrawIndexed(C.GLenum(mode), C.GLsizei(count), boundElement.gltype, C.GLsizeiptr(first*s))
 }
 
 //------------------------------------------------------------------------------
