@@ -222,7 +222,7 @@ func (l looper) Draw() {
 	t := perObject{
 		transform: mvp,
 	}
-	transform.Load(&t, 0)
+	transform.SubData(&t, 0)
 
 	mesh.Bind(0, 0)
 	diffuse.Bind(0)

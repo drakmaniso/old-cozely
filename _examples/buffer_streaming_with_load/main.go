@@ -6,7 +6,6 @@ package main
 //------------------------------------------------------------------------------
 
 import (
-	"fmt"
 	"math/rand"
 	"os"
 	"time"
@@ -185,26 +184,15 @@ func (l looper) Update() {
 }
 
 func (l looper) Draw() {
-	printFrameRate()
 	if updated {
 		pipeline.Bind()
 		transform.Bind(0)
-		transform.Load(&perFrame, 0)
-		mesh.Load(points, 0)
+		transform.SubData(&perFrame, 0)
+		mesh.SubData(points, 0)
 		mesh.Bind(0, 0)
 		gfx.Draw(gfx.Points, 0, int32(len(points)))
 		updated = false
 	}
 }
-
-func printFrameRate() {
-	nbFrames++
-	if nbFrames >= 100 {
-		fmt.Printf("\033[1A%f\n", float32(glam.FrameAverage())/float32(time.Millisecond))
-		nbFrames = 0
-	}
-}
-
-var nbFrames int
 
 //------------------------------------------------------------------------------

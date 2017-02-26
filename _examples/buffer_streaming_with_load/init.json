@@ -1,11 +1,11 @@
 {
   "Title": "Glam Example 06: First Texture",
   "Resolution": [
-    1280,
+    720,
     720
   ],
   "Display": 0,
-  "Fullscreen": true,
+  "Fullscreen": false,
   "FullscreenMode": "Desktop",
   "VSync": false,
   "Debug": true

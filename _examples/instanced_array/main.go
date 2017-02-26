@@ -146,7 +146,7 @@ func (l looper) Draw() {
 	gfx.ClearColorBuffer(color.RGBA{0.9, 0.9, 0.9, 1.0})
 	pipeline.Bind()
 	transform.Bind(0)
-	transform.Load(&perFrame, 0)
+	transform.SubData(&perFrame, 0)
 	instancesBuffer.Bind(1, 0)
 	gfx.DrawInstanced(gfx.LineStrip, 0, nbPoints, int32(len(instances)))
 }
@@ -165,7 +165,7 @@ func (h handler) WindowResized(s pixel.Coord, _ time.Duration) {
 
 func (h handler) MouseButtonDown(b mouse.Button, _ int, _ time.Duration) {
 	instances = generateInstances()
-	instancesBuffer.Load(instances, 0)
+	instancesBuffer.SubData(instances, 0)
 }
 
 //------------------------------------------------------------------------------

@@ -135,7 +135,7 @@ func (l looper) Draw() {
 	pipeline.Bind()
 
 	uniforms.transform = plane.Rotation(angle).GPU()
-	ubo.Load(&uniforms, 0)
+	ubo.SubData(&uniforms, 0)
 	ubo.Bind(0)
 
 	vbo.Bind(0, 0)
