@@ -21,7 +21,7 @@ GLuint NewBuffer(GLsizeiptr size, void* data, GLbitfield flags) {
 	return b;
 }
 
-static inline void BufferLoad(GLuint buffer, GLintptr offset, GLsizei size, void *data) {
+static inline void BufferSubData(GLuint buffer, GLintptr offset, GLsizei size, void *data) {
 	glNamedBufferSubData(buffer, offset, size, data);
 }
 
@@ -68,17 +68,17 @@ func NewUniformBuffer(data interface{}, f BufferFlags) UniformBuffer {
 	return ub
 }
 
-// Load updates the buffer with data, starting at a specified offset.
+// SubData updates the buffer with data, starting at a specified offset.
 //
 // It is your responsability to ensure that the size of data plus the offset
 // does not exceed the buffer size.
-func (ub *UniformBuffer) Load(data interface{}, atOffset uintptr) {
+func (ub *UniformBuffer) SubData(data interface{}, atOffset uintptr) {
 	p, s, err := pointerAndSizeOf(data)
 	if err != nil {
 		setErr(err)
 		return
 	}
-	C.BufferLoad(ub.object, C.GLintptr(atOffset), C.GLsizei(s), p)
+	C.BufferSubData(ub.object, C.GLintptr(atOffset), C.GLsizei(s), p)
 }
 
 // Bind to a uniform binding index.
@@ -114,17 +114,17 @@ func NewStorageBuffer(data interface{}, f BufferFlags) StorageBuffer {
 	return sb
 }
 
-// Load updates the buffer with data, starting at a specified offset.
+// SubData updates the buffer with data, starting at a specified offset.
 //
 // It is your responsability to ensure that the size of data plus the offset
 // does not exceed the buffer size.
-func (sb *StorageBuffer) Load(data interface{}, atOffset uintptr) {
+func (sb *StorageBuffer) SubData(data interface{}, atOffset uintptr) {
 	p, s, err := pointerAndSizeOf(data)
 	if err != nil {
 		setErr(err)
 		return
 	}
-	C.BufferLoad(sb.object, C.GLintptr(atOffset), C.GLsizei(s), p)
+	C.BufferSubData(sb.object, C.GLintptr(atOffset), C.GLsizei(s), p)
 }
 
 // Bind to a storage binding index.
@@ -162,21 +162,20 @@ func NewVertexBuffer(data interface{}, f BufferFlags) VertexBuffer {
 	return vb
 }
 
-// Load updates the buffer with data, starting at a specified offset. It is your
-// responsability to ensure that the size of data plus the offset does not
-// exceed the buffer size.
-func (vb *VertexBuffer) Load(data interface{}, atOffset uintptr) {
+// SubData updates the buffer with data, starting at a specified offset.
+//
+// It is your responsability to ensure that the size of data plus the offset
+// does not exceed the buffer size.
+func (vb *VertexBuffer) SubData(data interface{}, atOffset uintptr) {
 	p, s, st, err := pointerSizeAndStrideOf(data)
 	if err != nil {
 		setErr(err)
 		return
 	}
-	C.BufferLoad(vb.object, C.GLintptr(atOffset), C.GLsizei(s), p)
 	if st != 0 {
-		// In case the stride was not specified at buffer creation, or the new data
-		// has a different stride.
 		vb.stride = st
 	}
+	C.BufferSubData(vb.object, C.GLintptr(atOffset), C.GLsizei(s), p)
 }
 
 // Bind to a vertex buffer binding index.
@@ -215,21 +214,20 @@ func NewElementBuffer(data interface{}, f BufferFlags) ElementBuffer {
 	return eb
 }
 
-// Load updates the buffer with data, starting at a specified offset. It is your
-// responsability to ensure that the size of data plus the offset does not
-// exceed the buffer size.
-func (eb *ElementBuffer) Load(data interface{}, atOffset uintptr) {
+// SubData updates the buffer with data, starting at a specified offset.
+//
+// It is your responsability to ensure that the size of data plus the offset
+// does not exceed the buffer size.
+func (eb *ElementBuffer) SubData(data interface{}, atOffset uintptr) {
 	p, s, t, err := pointerSizeAndUintTypeOf(data)
 	if err != nil {
 		setErr(err)
 		return
 	}
-	C.BufferLoad(eb.object, C.GLintptr(atOffset), C.GLsizei(s), p)
 	if t != 0 {
-		// In case the stride was not specified at buffer creation, or the new data
-		// has a different stride.
 		eb.gltype = t
 	}
+	C.BufferSubData(eb.object, C.GLintptr(atOffset), C.GLsizei(s), p)
 }
 
 func pointerSizeAndUintTypeOf(data interface{}) (ptr unsafe.Pointer, size uintptr, gltype C.GLenum, err error) {
