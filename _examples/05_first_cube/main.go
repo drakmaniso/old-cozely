@@ -8,7 +8,6 @@ package main
 import (
 	"os"
 	"time"
-	"unsafe"
 
 	"github.com/drakmaniso/glam"
 	"github.com/drakmaniso/glam/basic"
@@ -43,22 +42,22 @@ func main() {
 
 //------------------------------------------------------------------------------
 
-// Vertex buffer layout
-type perVertex struct {
+// Vertex buffer
+type vertex struct {
 	position space.Coord `layout:"0"`
 	color    color.RGB   `layout:"1"`
 }
 
 // Uniform buffer
-type perObject struct {
+var perFrame struct {
 	transform space.Matrix
 }
 
 // OpenGL objects
 var (
-	pipeline  gfx.Pipeline
-	transform gfx.UniformBuffer
-	mesh      gfx.VertexBuffer
+	pipeline    gfx.Pipeline
+	perFrameUBO gfx.UniformBuffer
+	cubeVBO     gfx.VertexBuffer
 )
 
 // Cube state
@@ -90,17 +89,17 @@ func setup() error {
 	pipeline = gfx.NewPipeline(
 		gfx.VertexShader(v),
 		gfx.FragmentShader(f),
-		gfx.VertexFormat(0, perVertex{}),
+		gfx.VertexFormat(0, vertex{}),
 	)
 	gfx.Enable(gfx.DepthTest)
 	gfx.CullFace(false, true)
 	gfx.Enable(gfx.FramebufferSRGB)
 
 	// Create the uniform buffer
-	transform = gfx.NewUniformBuffer(unsafe.Sizeof(perObject{}), gfx.DynamicStorage)
+	perFrameUBO = gfx.NewUniformBuffer(&perFrame, gfx.DynamicStorage)
 
 	// Create and fill the vertex buffer
-	mesh = gfx.NewVertexBuffer(cube(), 0)
+	cubeVBO = gfx.NewVertexBuffer(cube(), 0)
 
 	// Initialize model and view matrices
 	position = space.Coord{0, 0, 0}
@@ -187,16 +186,13 @@ func (l looper) Draw() {
 	gfx.ClearDepthBuffer(1.0)
 	gfx.ClearColorBuffer(color.RGBA{0.9, 0.9, 0.9, 1.0})
 	pipeline.Bind()
-	transform.Bind(0)
 
-	mvp := projection.Times(view)
-	mvp = mvp.Times(model)
-	t := perObject{
-		transform: mvp,
-	}
-	transform.SubData(&t, 0)
+	perFrame.transform = projection.Times(view)
+	perFrame.transform = perFrame.transform.Times(model)
+	perFrameUBO.SubData(&perFrame, 0)
+	perFrameUBO.Bind(0)
 
-	mesh.Bind(0, 0)
+	cubeVBO.Bind(0, 0)
 	gfx.Draw(gfx.Triangles, 0, 6*2*3)
 }
 

@@ -6,43 +6,12 @@ package main
 //------------------------------------------------------------------------------
 
 import (
-	"strings"
+	"os"
 
 	"github.com/drakmaniso/glam"
 	"github.com/drakmaniso/glam/color"
 	"github.com/drakmaniso/glam/gfx"
 )
-
-//------------------------------------------------------------------------------
-
-var vertexShader = `
-#version 450 core
-
-out gl_PerVertex {
-	vec4 gl_Position;
-};
-
-void main(void)
-{
-	const vec4 triangle[3] = vec4[3](
-		vec4(0, 0.65, 0.5, 1),
-		vec4(-0.65, -0.475, 0.5, 1),
-		vec4(0.65, -0.475, 0.5, 1)
-	);
-	gl_Position = triangle[gl_VertexID];
-}
-`
-
-var fragmentShader = `
-#version 450 core
-
-out vec4 color;
-
-void main(void)
-{
-	color = vec4(0.3, 0.1, 0.6, 1.0);
-}
-`
 
 //------------------------------------------------------------------------------
 
@@ -72,9 +41,17 @@ var (
 
 func setup() error {
 	// Setup the pipeline
+	vs, err := os.Open(glam.Path() + "shader.vert")
+	if err != nil {
+		return err
+	}
+	fs, err := os.Open(glam.Path() + "shader.frag")
+	if err != nil {
+		return err
+	}
 	pipeline = gfx.NewPipeline(
-		gfx.VertexShader(strings.NewReader(vertexShader)),
-		gfx.FragmentShader(strings.NewReader(fragmentShader)),
+		gfx.VertexShader(vs),
+		gfx.FragmentShader(fs),
 	)
 
 	return gfx.Err()
