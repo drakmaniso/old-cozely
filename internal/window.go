@@ -98,7 +98,7 @@ func OpenWindow(
 	}
 	C.SDL_GL_SetSwapInterval(si)
 
-	//TODO: logOpenGLInfos()
+	logOpenGLInfos()
 
 	//Send a fake resize event, with window initial size
 	var w, h C.int
@@ -148,7 +148,7 @@ func logOpenGLInfos() {
 			s += ", NO vsync"
 		}
 	}
-	//TODO: log.Print(s)
+	Log(s)
 }
 
 func sdlGLAttribute(attr C.SDL_GLattr) (int, error) {

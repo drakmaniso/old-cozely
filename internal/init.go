@@ -16,6 +16,7 @@ import "C"
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -47,20 +48,19 @@ var config = struct {
 //------------------------------------------------------------------------------
 
 func init() {
-	//log.SetFlags(log.Ltime | log.Lshortfile)
-
-	//TODO: log.Printf("Path = \"%s\"", Path)
-
 	loadConfig()
 
 	if config.Debug {
 		Debug = true
 	}
 
+	Log("Path = \"%s\"", Path)
+
 	runtime.LockOSThread()
 
 	if errcode := C.SDL_Init(C.SDL_INIT_EVERYTHING); errcode != 0 {
 		InitError = fmt.Errorf("impossible to initialize SDL: %s", GetSDLError())
+		Log("%s", InitError)
 		return
 	}
 
@@ -77,22 +77,36 @@ func init() {
 	)
 	if err != nil {
 		InitError = err
+		Log("%s", InitError)
 		return
 	}
 }
 
+//------------------------------------------------------------------------------
+
 func loadConfig() {
 	f, err := os.Open(Path + "init.json")
 	if err != nil {
-		// InitError = fmt.Errorf(`impossible to open configuration file "init.json": %s`, err)
+		Log(`No configuration file ("init.json") found: %s`, err)
 		return
 	}
 	d := json.NewDecoder(f)
 	if err := d.Decode(&config); err != nil {
 		InitError = fmt.Errorf(`impossible to decode configuration file "init.json": %s`, err)
+		Log("%s", InitError)
 		return
 	}
-	//TODO: log.Printf("config = %+v", config)
+}
+
+//------------------------------------------------------------------------------
+
+var logger = log.New(os.Stderr, "glam: ", log.Ltime)
+
+// Log logs a formated message if Debug mode is enabled.
+func Log(format string, v ...interface{}) {
+	if Debug {
+		logger.Printf(format, v...)
+	}
 }
 
 //------------------------------------------------------------------------------

@@ -131,6 +131,7 @@ func Path() string {
 
 // ErrorDialog displays an error dialog box.
 func ErrorDialog(e error) {
+	internal.Log("ErrorDialog: %s", e)
 	err := internal.ErrorDialog(e.Error())
 	if err != nil {
 		fmt.Fprintln(os.Stderr, e.Error())

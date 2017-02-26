@@ -5,6 +5,10 @@ package gfx
 
 //------------------------------------------------------------------------------
 
+import "github.com/drakmaniso/glam/internal"
+
+//------------------------------------------------------------------------------
+
 // Err returns the first glam error since the previous call to Err().
 func Err() error {
 	err := stickyErr
@@ -16,16 +20,11 @@ func Err() error {
 
 func setErr(err error) {
 	// TODO: use two different functions and a *func variable
-	// if internal.Debug {
-	// 	//TODO: log?
-	// 	fmt.Print("gxf error")
-	// 	if stickyErr != nil {
-	// 		fmt.Print(" (unchecked)")
-	// 	}
-	// 	fmt.Println(": ", err)
-	// }
 	if stickyErr == nil {
+		internal.Log("gfx error: %s", err)
 		stickyErr = err
+	} else {
+		internal.Log("unchecked gfx error: %s", err)
 	}
 }
 
