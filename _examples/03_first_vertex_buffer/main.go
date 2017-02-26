@@ -39,7 +39,7 @@ var (
 )
 
 // Vertex buffer
-type vertex struct {
+type mesh []struct {
 	position plane.Coord `layout:"0"`
 	color    color.RGB   `layout:"1"`
 }
@@ -47,6 +47,8 @@ type vertex struct {
 //------------------------------------------------------------------------------
 
 func setup() error {
+	var triangle mesh
+
 	// Create and configure the pipeline
 	vs, err := os.Open(glam.Path() + "/shader.vert")
 	if err != nil {
@@ -59,12 +61,12 @@ func setup() error {
 	pipeline = gfx.NewPipeline(
 		gfx.VertexShader(vs),
 		gfx.FragmentShader(fs),
-		gfx.VertexFormat(0, vertex{}),
+		gfx.VertexFormat(0, triangle),
 	)
 	gfx.Enable(gfx.FramebufferSRGB)
 
 	// Create and fill the vertex buffer
-	triangle := []vertex{
+	triangle = mesh{
 		{plane.Coord{0, 0.65}, color.RGB{R: 0.3, G: 0, B: 0.8}},
 		{plane.Coord{-0.65, -0.475}, color.RGB{R: 0.8, G: 0.3, B: 0}},
 		{plane.Coord{0.65, -0.475}, color.RGB{R: 0, G: 0.6, B: 0.2}},

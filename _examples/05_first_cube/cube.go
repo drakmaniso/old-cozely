@@ -20,8 +20,8 @@ var (
 
 //------------------------------------------------------------------------------
 
-func cube() []vertex {
-	return []vertex{
+func cube() mesh {
+	return mesh{
 		// Front Face
 		{space.Coord{-0.5, -0.5, +0.5}, purple},
 		{space.Coord{+0.5, +0.5, +0.5}, purple},

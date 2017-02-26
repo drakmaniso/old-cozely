@@ -45,7 +45,7 @@ var perFrame struct {
 }
 
 // Vertex buffer
-type vertex struct {
+type mesh []struct {
 	position plane.Coord `layout:"0"`
 	color    color.RGB   `layout:"1"`
 }
@@ -58,6 +58,8 @@ var (
 //------------------------------------------------------------------------------
 
 func setup() error {
+	var triangle mesh
+
 	// Create and configure the pipeline
 	vs, err := os.Open(glam.Path() + "/shader.vert")
 	if err != nil {
@@ -70,7 +72,7 @@ func setup() error {
 	pipeline = gfx.NewPipeline(
 		gfx.VertexShader(vs),
 		gfx.FragmentShader(fs),
-		gfx.VertexFormat(0, vertex{}),
+		gfx.VertexFormat(0, triangle),
 	)
 	gfx.Enable(gfx.FramebufferSRGB)
 
@@ -78,7 +80,7 @@ func setup() error {
 	perFrameUBO = gfx.NewUniformBuffer(&perFrame, gfx.DynamicStorage)
 
 	// Fill and create the vertex buffer
-	var triangle = []vertex{
+	triangle = mesh{
 		{plane.Coord{0, 0.75}, color.RGB{R: 0.3, G: 0, B: 0.8}},
 		{plane.Coord{-0.65, -0.465}, color.RGB{R: 0.8, G: 0.3, B: 0}},
 		{plane.Coord{0.65, -0.465}, color.RGB{R: 0, G: 0.6, B: 0.2}},

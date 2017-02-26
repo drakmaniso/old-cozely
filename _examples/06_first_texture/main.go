@@ -56,7 +56,7 @@ var perFrame struct {
 }
 
 // Vertex buffer
-type vertex struct {
+type mesh []struct {
 	position space.Coord `layout:"0"`
 	uv       plane.Coord `layout:"1"`
 }
@@ -90,7 +90,7 @@ func setup() error {
 	pipeline = gfx.NewPipeline(
 		gfx.VertexShader(v),
 		gfx.FragmentShader(f),
-		gfx.VertexFormat(0, vertex{}),
+		gfx.VertexFormat(0, mesh{}),
 	)
 	gfx.Enable(gfx.DepthTest)
 	gfx.CullFace(false, true)

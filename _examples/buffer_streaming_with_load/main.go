@@ -58,25 +58,17 @@ var perFrame struct {
 }
 
 // Vertex buffer
-type vertex struct {
+var points [8192]struct {
 	Position plane.Coord `layout:"0"`
 }
 
-// Points data
-var (
-	points []vertex
-	angles []float32
-	speeds []float32
-)
-
-const nbPoints = 8192
-
-// Misc
-
+// Application State
 var (
 	bgColor  = color.RGBA{0.9, 0.87, 0.85, 1.0}
 	rotSpeed = float32(0.003)
 	jitter   = float32(0.002)
+	angles   []float32
+	speeds   []float32
 )
 
 //------------------------------------------------------------------------------
@@ -94,7 +86,7 @@ func setup() error {
 	pipeline = gfx.NewPipeline(
 		gfx.VertexShader(v),
 		gfx.FragmentShader(f),
-		gfx.VertexFormat(0, vertex{}),
+		gfx.VertexFormat(0, points[:]),
 	)
 	gfx.Enable(gfx.FramebufferSRGB)
 	gfx.Enable(gfx.Blend)
@@ -107,11 +99,11 @@ func setup() error {
 	perFrame.Rotation = 0.0
 
 	// Create and fill the vertex buffer
-	points = make([]vertex, nbPoints)
-	angles = make([]float32, nbPoints)
-	speeds = make([]float32, nbPoints)
+	// points = make(mesh, len(points))
+	angles = make([]float32, len(points))
+	speeds = make([]float32, len(points))
 	setupPoints()
-	pointsVBO = gfx.NewVertexBuffer(points, gfx.DynamicStorage)
+	pointsVBO = gfx.NewVertexBuffer(points[:], gfx.DynamicStorage)
 
 	// Bind the vertex buffer to the pipeline
 	pipeline.Bind()
@@ -137,7 +129,7 @@ func (l looper) Update() {
 			angles[i] += math.Pi / 4.0
 		}
 	}
-	pointsVBO.SubData(points, 0)
+	pointsVBO.SubData(points[:], 0)
 
 	perFrame.Rotation += rotSpeed
 

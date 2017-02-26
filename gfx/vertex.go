@@ -36,10 +36,11 @@ import "C"
 
 //------------------------------------------------------------------------------
 
-// VertexFormat prepares everything the pipeline needs to use a
-// vertex buffer of a specific format, and assign a binding index to it.
+// VertexFormat prepares everything the pipeline needs to use a vertex buffer of
+// a specific format, and assign a binding index to it.
 //
-// The format must be a struct with layout tags.
+// The format must be a slice of struct, and the struct must have with layout
+// tags.
 func VertexFormat(binding uint32, format interface{}) PipelineOption {
 	return func(p *Pipeline) {
 		p.setVertexFormat(binding, format)
@@ -48,8 +49,13 @@ func VertexFormat(binding uint32, format interface{}) PipelineOption {
 
 func (p *Pipeline) setVertexFormat(binding uint32, format interface{}) {
 	t := reflect.TypeOf(format)
+	if t.Kind() != reflect.Slice {
+		setErr(fmt.Errorf("vertex format must be a slice of struct, not a %s", t.Kind()))
+		return
+	}
+	t = t.Elem()
 	if t.Kind() != reflect.Struct {
-		setErr(fmt.Errorf("attributes binding format must be fld struct, not fld %s", t.Kind()))
+		setErr(fmt.Errorf("vertex format must be a slice of struct, not a slice of %s", t.Kind()))
 		return
 	}
 

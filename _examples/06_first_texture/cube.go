@@ -12,8 +12,8 @@ import (
 
 //------------------------------------------------------------------------------
 
-func cube() []vertex {
-	return []vertex{
+func cube() mesh {
+	return mesh{
 		// Front Face
 		{space.Coord{-0.5, -0.5, +0.5}, plane.Coord{0, 1}},
 		{space.Coord{+0.5, -0.5, +0.5}, plane.Coord{1, 1}},

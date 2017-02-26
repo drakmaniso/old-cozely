@@ -57,7 +57,7 @@ var perFrame struct {
 
 // Instance Buffer
 
-type perInstance struct {
+var roses [64]struct {
 	position    plane.Coord `layout:"0" divisor:"1"`
 	size        float32     `layout:"1"`
 	numerator   int32       `layout:"2"`
@@ -81,7 +81,7 @@ func setup() error {
 	pipeline = gfx.NewPipeline(
 		gfx.VertexShader(v),
 		gfx.FragmentShader(f),
-		gfx.VertexFormat(1, perInstance{}),
+		gfx.VertexFormat(1, roses[:]),
 	)
 	gfx.Enable(gfx.FramebufferSRGB)
 
@@ -89,7 +89,8 @@ func setup() error {
 	perFrameUBO = gfx.NewUniformBuffer(&perFrame, gfx.DynamicStorage)
 
 	// Create the instance buffer
-	rosesINBO = gfx.NewVertexBuffer(generateInstances(), gfx.DynamicStorage)
+	randomizeRosesData()
+	rosesINBO = gfx.NewVertexBuffer(roses[:], gfx.DynamicStorage)
 
 	// Bind the instance buffer to the pipeline
 	pipeline.Bind()
@@ -114,7 +115,7 @@ func (l looper) Draw() {
 
 	perFrameUBO.Bind(0)
 	perFrameUBO.SubData(&perFrame, 0)
-	gfx.DrawInstanced(gfx.LineStrip, 0, nbPoints, int32(nbInstances))
+	gfx.DrawInstanced(gfx.LineStrip, 0, nbPoints, int32(len(roses)))
 
 	pipeline.Unbind()
 }
@@ -122,25 +123,20 @@ func (l looper) Draw() {
 //------------------------------------------------------------------------------
 
 const nbPoints int32 = 512
-const nbInstances int = 64
 
-func generateInstances() []perInstance {
-	var data = []perInstance{}
-	for i := 0; i < nbInstances; i++ {
-		var inst = perInstance{}
-		inst.position.X = rand.Float32()*2.0 - 1.0
-		inst.position.Y = rand.Float32()*2.0 - 1.0
-		inst.size = rand.Float32()*0.20 + 0.1
-		inst.numerator = rand.Int31n(16) + 1
-		inst.denominator = rand.Int31n(16) + 1
-		inst.offset = rand.Float32()*2.8 + 0.2
-		inst.speed = 0.5 + 1.5*rand.Float32()
+func randomizeRosesData() {
+	for i := 0; i < len(roses); i++ {
+		roses[i].position.X = rand.Float32()*2.0 - 1.0
+		roses[i].position.Y = rand.Float32()*2.0 - 1.0
+		roses[i].size = rand.Float32()*0.20 + 0.1
+		roses[i].numerator = rand.Int31n(16) + 1
+		roses[i].denominator = rand.Int31n(16) + 1
+		roses[i].offset = rand.Float32()*2.8 + 0.2
+		roses[i].speed = 0.5 + 1.5*rand.Float32()
 		if rand.Int31n(2) > 0 {
-			inst.speed = -inst.speed
+			roses[i].speed = -roses[i].speed
 		}
-		data = append(data, inst)
 	}
-	return data
 }
 
 //------------------------------------------------------------------------------
@@ -171,7 +167,8 @@ func (h handler) WindowResized(s pixel.Coord, _ time.Duration) {
 }
 
 func (h handler) MouseButtonDown(b mouse.Button, _ int, _ time.Duration) {
-	rosesINBO.SubData(generateInstances(), 0)
+	randomizeRosesData()
+	rosesINBO.SubData(roses[:], 0)
 }
 
 //------------------------------------------------------------------------------
