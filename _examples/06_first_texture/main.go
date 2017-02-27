@@ -14,7 +14,7 @@ import (
 	"github.com/drakmaniso/glam/color"
 	"github.com/drakmaniso/glam/gfx"
 	"github.com/drakmaniso/glam/mouse"
-	"github.com/drakmaniso/glam/mtx"
+	_ "github.com/drakmaniso/glam/mtx"
 	"github.com/drakmaniso/glam/pixel"
 	"github.com/drakmaniso/glam/plane"
 	"github.com/drakmaniso/glam/space"
@@ -79,7 +79,6 @@ var (
 //------------------------------------------------------------------------------
 
 func setup() error {
-	mtx.Setup()
 	// Create and configure the pipeline
 	v, err := os.Open(glam.Path() + "shader.vert")
 	if err != nil {
@@ -176,7 +175,6 @@ func (l looper) Draw() {
 	gfx.Draw(gfx.Triangles, 0, 6*2*3)
 
 	pipeline.Unbind()
-	mtx.Draw()
 }
 
 //------------------------------------------------------------------------------

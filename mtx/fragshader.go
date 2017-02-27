@@ -5,20 +5,23 @@ const fragmentShader = `
 
 const uint charWidth = 8;
 const uint charHeight = 12;
-const uint nbCols = 120;
-const uint nbRows = 45;
 
 layout(std430, binding = 0) buffer Font {
   uint Data[1536 / 4];
 } font;
 
 layout(std430, binding = 1) buffer Screen {
-  uint Top;
   uint Left;
+  uint Top;
+  uint NbCols;
+  uint NbRows;
+  //
+  uint PixelSize;
+  uint unused0;
   uint unused1;
   uint unused2;
   vec4 Color;
-	uint Chars[(nbCols * nbRows) / 4];
+	uint Chars[];
 } screen;
 
 layout(origin_upper_left) in vec4 gl_FragCoord;
@@ -26,33 +29,33 @@ layout(origin_upper_left) in vec4 gl_FragCoord;
 out vec4 Color;
 
 uint screenChar(uint col, uint row) {
-  uint b = col + row * nbCols; // The byte we're looking for
-  uint v = screen.Chars[b / 4];
-  v = v >> (8 * (b % 4));
+  uint b = col + row * screen.NbCols; // The byte we're looking for
+  uint v = screen.Chars[b >> 2];
+  v = v >> (8 * (b & 0x3));
   v &= 0xFF;
   return v;
 }
 
 uint fontByte(uint c, uint l) {
   uint b = c * 12 + l; // The byte we're looking for
-  uint v = font.Data[b / 4];
-  v = v >> (8 * (b % 4));
+  uint v = font.Data[b >> 2];
+  v = v >> (8 * (b & 0x3));
   v &= 0xFF;
   return v;
 }
 
 void main(void) {
-  if (gl_FragCoord.x < screen.Left) {
+  if (gl_FragCoord.x < screen.Left || gl_FragCoord.y < screen.Top) {
     discard;
   }
-  uint x = uint(gl_FragCoord.x) >> 1;
-  uint y = uint(gl_FragCoord.y) >> 1;
+  uint x = uint(gl_FragCoord.x - screen.Left) / screen.PixelSize;
+  uint y = uint(gl_FragCoord.y - screen.Top)  / screen.PixelSize;
   uint col = x / charWidth;
-  if (col > nbCols) {
+  if (col >= screen.NbCols) {
     discard;
   }
   uint row = y / charHeight;
-  if (row > nbRows) {
+  if (row >= screen.NbRows) {
     discard;
   }
   uint chr = screenChar(col, row);

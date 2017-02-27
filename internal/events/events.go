@@ -27,6 +27,7 @@ import (
 	"github.com/drakmaniso/glam/internal"
 	"github.com/drakmaniso/glam/key"
 	"github.com/drakmaniso/glam/mouse"
+	"github.com/drakmaniso/glam/mtx"
 	"github.com/drakmaniso/glam/pixel"
 	"github.com/drakmaniso/glam/window"
 )
@@ -68,11 +69,10 @@ func dispatch(e unsafe.Pointer) {
 		case C.SDL_WINDOWEVENT_RESIZED:
 			internal.Window.Width = int32(e.data1)
 			internal.Window.Height = int32(e.data2)
-			gfx.Viewport(pixel.Coord{X: 0, Y: 0}, pixel.Coord{X: int32(e.data1), Y: int32(e.data2)})
-			window.Handle.WindowResized(
-				pixel.Coord{X: int32(e.data1), Y: int32(e.data2)},
-				ts,
-			)
+      s := pixel.Coord{X: int32(e.data1), Y: int32(e.data2)}
+			gfx.Viewport(pixel.Coord{X: 0, Y: 0}, s)
+			mtx.WindowResized(s, ts)
+			window.Handle.WindowResized(s, ts)
 		case C.SDL_WINDOWEVENT_SIZE_CHANGED:
 			//TODO
 		case C.SDL_WINDOWEVENT_MINIMIZED:

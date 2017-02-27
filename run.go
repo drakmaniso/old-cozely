@@ -15,6 +15,7 @@ import (
 	"github.com/drakmaniso/glam/internal/events"
 	"github.com/drakmaniso/glam/key"
 	"github.com/drakmaniso/glam/mouse"
+	"github.com/drakmaniso/glam/mtx"
 	"github.com/drakmaniso/glam/window"
 )
 
@@ -55,6 +56,9 @@ func Run() error {
 		key.Handle = basic.KeyHandler{}
 	}
 
+	// Setup mtx
+	mtx.Setup()
+
 	// Main Loop
 
 	then := internal.GetTime() * time.Millisecond
@@ -82,6 +86,7 @@ func Run() error {
 		}
 
 		Loop.Draw()
+		mtx.Draw()
 		internal.SwapWindow()
 
 		then = now
