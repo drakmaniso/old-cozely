@@ -34,6 +34,9 @@ func Setup() {
 	nc, nr := int(screen.nbCols), int(screen.nbRows)
 	for i := range screen.chars {
 		screen.chars[i] = byte(i & 0x7F)
+		if (i/4)%13 == 0 {
+			screen.chars[i] |= 0x80
+		}
 		if i%nc == 0 || i%nc == nc-1 {
 			screen.chars[i] = 5
 		}
@@ -46,8 +49,9 @@ func Setup() {
 	screen.chars[(nr-1)*nc] = 3
 	screen.chars[(nr-1)*nc+nc-1] = 9
 	fontSSBO = gfx.NewStorageBuffer(&Font, gfx.StaticStorage)
-	// WindowResized()
-	// updated = false
+	SetColor(color.RGB{0, 0, 0}, color.RGB{1, 1, 1})
+	SetOpaque(false)
+	updated = false
 	screenSSBO = gfx.NewStorageBuffer(&screen, gfx.DynamicStorage)
 }
 
@@ -60,11 +64,14 @@ var screen struct {
 	nbRows uint32
 	//
 	pixelSize uint32
-	_         uint32
-	_         uint32
-	_         uint32
+	fgRed     float32
+	fgGreen   float32
+	fgBlue    float32
 	//
-	txtColor color.RGBA
+	opaque  uint32
+	bgRed   float32
+	bgGreen float32
+	bgBlue  float32
 	//
 	chars [120 * 45]byte
 }
@@ -95,9 +102,13 @@ func WindowResized(s pixel.Coord, ts time.Duration) {
 	} else {
 		screen.left = 0
 	}
-	t := (s.Y - (charHeight * int32(screen.pixelSize) * int32(screen.nbRows))) / 2
-	if t > 0 {
-		screen.top = uint32(t)
+	if false {
+		t := (s.Y - (charHeight * int32(screen.pixelSize) * int32(screen.nbRows))) / 2
+		if t > 0 {
+			screen.top = uint32(t)
+		} else {
+			screen.top = 0
+		}
 	} else {
 		screen.top = 0
 	}
@@ -105,10 +116,22 @@ func WindowResized(s pixel.Coord, ts time.Duration) {
 	updated = true
 }
 
-func SetColor(c color.RGB) {
-	screen.txtColor.R = c.R
-	screen.txtColor.G = c.G
-	screen.txtColor.B = c.B
+func SetColor(fg, bg color.RGB) {
+	screen.fgRed = fg.R
+	screen.fgGreen = fg.G
+	screen.fgBlue = fg.B
+	screen.bgRed = bg.R
+	screen.bgGreen = bg.G
+	screen.bgBlue = bg.B
+	updated = true
+}
+
+func SetOpaque(o bool) {
+	if o {
+		screen.opaque = 1
+	} else {
+		screen.opaque = 0
+	}
 	updated = true
 }
 

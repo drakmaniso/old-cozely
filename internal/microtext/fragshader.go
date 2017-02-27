@@ -17,10 +17,15 @@ layout(std430, binding = 1) buffer Screen {
   uint NbRows;
   //
   uint PixelSize;
-  uint unused0;
-  uint unused1;
-  uint unused2;
-  vec4 Color;
+  float FgRed;
+  float FgGreen;
+  float FgBlue;
+  //
+  uint Opaque;
+  float BgRed;
+  float BgGreen;
+  float BgBlue;
+  //
 	uint Chars[];
 } screen;
 
@@ -62,11 +67,15 @@ void main(void) {
   uint dx = x - col*charWidth;
   uint dy = y - row*charHeight;
   uint v;
-  v = fontByte(chr, dy);
-  if (((v >> (7 - dx)) & 0x1) != 0) {
-	  Color = screen.Color;
+  v = fontByte(chr & 0x7F, dy);
+  bool fg = ((v >> (7 - dx)) & 0x1) != (chr >> 7);
+  if (fg) {
+	  Color = vec4(screen.FgRed, screen.FgGreen, screen.FgBlue, 1.0);
   } else {
-    discard;
+    if (screen.Opaque == 0 && ((chr & 0x80) == 0)) {
+      discard;
+    }
+    Color =  vec4(screen.BgRed, screen.BgGreen, screen.BgBlue, 1.0);
   }
 }
 `
