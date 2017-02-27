@@ -1,4 +1,4 @@
-package mtx
+package microtext
 
 const fragmentShader = `
 #version 450 core

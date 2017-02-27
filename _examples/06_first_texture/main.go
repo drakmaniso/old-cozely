@@ -14,7 +14,7 @@ import (
 	"github.com/drakmaniso/glam/color"
 	"github.com/drakmaniso/glam/gfx"
 	"github.com/drakmaniso/glam/mouse"
-	_ "github.com/drakmaniso/glam/mtx"
+	// _ "github.com/drakmaniso/glam/mtx"
 	"github.com/drakmaniso/glam/pixel"
 	"github.com/drakmaniso/glam/plane"
 	"github.com/drakmaniso/glam/space"

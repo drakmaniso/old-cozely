@@ -1,4 +1,4 @@
-package mtx
+package microtext
 
 const vertexShader = `
 #version 450 core

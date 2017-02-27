@@ -1,7 +1,7 @@
 // Derived from the font "Pixel Operator", Copyright(c) Jayvee Enayas 2009-2016
 // Licensed under the SIL OFL 1.1 <http;//scripts.sil.org/OFL>
 
-package mtx
+package microtext
 
 //------------------------------------------------------------------------------
 

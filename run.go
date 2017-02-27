@@ -15,7 +15,7 @@ import (
 	"github.com/drakmaniso/glam/internal/events"
 	"github.com/drakmaniso/glam/key"
 	"github.com/drakmaniso/glam/mouse"
-	"github.com/drakmaniso/glam/mtx"
+	"github.com/drakmaniso/glam/internal/microtext"
 	"github.com/drakmaniso/glam/window"
 )
 
@@ -57,7 +57,7 @@ func Run() error {
 	}
 
 	// Setup mtx
-	mtx.Setup()
+	microtext.Setup()
 
 	// Main Loop
 
@@ -86,7 +86,7 @@ func Run() error {
 		}
 
 		Loop.Draw()
-		mtx.Draw()
+		microtext.Draw()
 		internal.SwapWindow()
 
 		then = now
