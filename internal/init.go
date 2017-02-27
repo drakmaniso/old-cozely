@@ -54,7 +54,7 @@ func init() {
 		Debug = true
 	}
 
-	Log("Path = \"%s\"", Path)
+	// Log("Path = \"%s\"", Path)
 
 	runtime.LockOSThread()
 

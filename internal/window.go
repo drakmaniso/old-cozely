@@ -98,7 +98,7 @@ func OpenWindow(
 	}
 	C.SDL_GL_SetSwapInterval(si)
 
-	logOpenGLInfos()
+	// logOpenGLInfos()
 
 	//Send a fake resize event, with window initial size
 	var w, h C.int
