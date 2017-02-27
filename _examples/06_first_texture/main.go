@@ -14,6 +14,7 @@ import (
 	"github.com/drakmaniso/glam/color"
 	"github.com/drakmaniso/glam/gfx"
 	"github.com/drakmaniso/glam/mouse"
+	"github.com/drakmaniso/glam/mtx"
 	"github.com/drakmaniso/glam/pixel"
 	"github.com/drakmaniso/glam/plane"
 	"github.com/drakmaniso/glam/space"
@@ -78,6 +79,7 @@ var (
 //------------------------------------------------------------------------------
 
 func setup() error {
+	mtx.Setup()
 	// Create and configure the pipeline
 	v, err := os.Open(glam.Path() + "shader.vert")
 	if err != nil {
@@ -92,9 +94,6 @@ func setup() error {
 		gfx.FragmentShader(f),
 		gfx.VertexFormat(0, mesh{}),
 	)
-	gfx.Enable(gfx.DepthTest)
-	gfx.CullFace(false, true)
-	gfx.Enable(gfx.FramebufferSRGB)
 
 	// Create the uniform buffer
 	perFrameUBO = gfx.NewUniformBuffer(&perFrame, gfx.DynamicStorage)
@@ -163,6 +162,9 @@ func (l looper) Draw() {
 	pipeline.Bind()
 	gfx.ClearDepthBuffer(1.0)
 	gfx.ClearColorBuffer(color.RGBA{0.9, 0.9, 0.9, 1.0})
+	gfx.Enable(gfx.DepthTest)
+	gfx.CullFace(false, true)
+	gfx.Enable(gfx.FramebufferSRGB)
 
 	perFrame.transform = projection.Times(view)
 	perFrame.transform = perFrame.transform.Times(model)
@@ -174,6 +176,7 @@ func (l looper) Draw() {
 	gfx.Draw(gfx.Triangles, 0, 6*2*3)
 
 	pipeline.Unbind()
+	mtx.Draw()
 }
 
 //------------------------------------------------------------------------------
