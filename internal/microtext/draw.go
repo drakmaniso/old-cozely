@@ -33,21 +33,29 @@ func Setup() {
 	screen.pixelSize = 2
 	nc, nr := int(screen.nbCols), int(screen.nbRows)
 	for i := range screen.chars {
-		screen.chars[i] = byte(i & 0x7F)
-		if i/nc > nr/2 {
-			screen.chars[i] |= 0x80
+		screen.chars[i] = byte(i & 0xFF) // 0x20
+		if i%nc == 0 {
+			screen.chars[i] = 152
 		}
-		if i%nc == 0 || i%nc == nc-1 {
-			screen.chars[i] = 5
+		if i%nc == nc-1 {
+			screen.chars[i] = 153
 		}
-		if i/nc == 0 || i/nc == nr-1 {
-			screen.chars[i] = 10
+		if i/nc <= 2 {
+			screen.chars[i] = 160
+		}
+		if i/nc == nr-1 {
+			screen.chars[i] = 155
 		}
 	}
-	screen.chars[0] = 6
-	screen.chars[nc-1] = 12
-	screen.chars[(nr-1)*nc] = 3
-	screen.chars[(nr-1)*nc+nc-1] = 9
+	screen.chars[nc+1] = byte('D') | 0x80
+	screen.chars[nc+2] = byte('i') | 0x80
+	screen.chars[nc+3] = byte('a') | 0x80
+	screen.chars[nc+4] = byte('l') | 0x80
+	screen.chars[nc+5] = byte('o') | 0x80
+	screen.chars[nc+6] = byte('g') | 0x80
+	screen.chars[nc+nc-2] = 159
+	screen.chars[(nr-1)*nc] = 154
+	screen.chars[(nr-1)*nc+nc-1] = 156
 	fontSSBO = gfx.NewStorageBuffer(&Font, gfx.StaticStorage)
 	SetColor(color.RGB{0, 0, 0}, color.RGB{1, 1, 1})
 	SetOpaque(false)
@@ -102,7 +110,7 @@ func WindowResized(s pixel.Coord, ts time.Duration) {
 	} else {
 		screen.left = 0
 	}
-	if false {
+	if true {
 		t := (s.Y - (charHeight * int32(screen.pixelSize) * int32(screen.nbRows))) / 2
 		if t > 0 {
 			screen.top = uint32(t)
