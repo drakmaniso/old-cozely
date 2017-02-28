@@ -169,6 +169,31 @@ func SwapWindow() {
 
 //------------------------------------------------------------------------------
 
+func SetFullscreen(f bool) {
+	var fs C.Uint32
+	if f {
+		if config.FullscreenMode == "Desktop" {
+			fs = C.SDL_WINDOW_FULLSCREEN_DESKTOP
+		} else {
+			fs = C.SDL_WINDOW_FULLSCREEN
+		}
+	}
+	C.SDL_SetWindowFullscreen(Window.window, fs)
+}
+
+func GetFullscreen() bool {
+	fs := C.SDL_GetWindowFlags(Window.window)
+	fs &= (C.SDL_WINDOW_FULLSCREEN_DESKTOP | C.SDL_WINDOW_FULLSCREEN)
+	return fs != 0
+}
+
+func ToggleFullscreen() {
+	fs := !GetFullscreen()
+	SetFullscreen(fs)
+}
+
+//------------------------------------------------------------------------------
+
 // DestroyWindow closes the game window and delete the OpenGL context
 func DestroyWindow() {
 	C.SDL_GL_DeleteContext(Window.context)
