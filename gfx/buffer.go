@@ -306,6 +306,14 @@ func pointerAndSizeOf(data interface{}) (ptr unsafe.Pointer, size uintptr, err e
 		p = unsafe.Pointer(v.Pointer())
 		//TODO: check if pointer refer to a struct
 		s = v.Elem().Type().Size()
+	case reflect.Slice:
+		l := v.Len()
+		if l == 0 {
+			return nil, 0, fmt.Errorf("buffer data cannot be an empty slice")
+		}
+		p = unsafe.Pointer(v.Pointer())
+		st := v.Index(0).Type().Size()
+		s = uintptr(l) * st
 	default:
 		return nil, 0, fmt.Errorf("%s instead of point-to-struct or uinptr", reflect.TypeOf(data).Kind())
 	}
