@@ -50,6 +50,7 @@ uint fontByte(uint c, uint l) {
 }
 
 void main(void) {
+  // TODO: use alpha and mix/step instead of lots of if statements?
   if (gl_FragCoord.x < screen.Left || gl_FragCoord.y < screen.Top) {
     discard;
   }
@@ -64,6 +65,9 @@ void main(void) {
     discard;
   }
   uint chr = screenChar(col, row);
+  if (chr == 0xFF) {
+    discard;
+  }
   uint dx = x - col*charWidth;
   uint dy = y - row*charHeight;
   uint v;

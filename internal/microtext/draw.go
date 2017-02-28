@@ -50,7 +50,7 @@ func Setup() {
 	screen.chars[(nr-1)*nc+nc-1] = 9
 	fontSSBO = gfx.NewStorageBuffer(&Font, gfx.StaticStorage)
 	SetColor(color.RGB{0, 0, 0}, color.RGB{1, 1, 1})
-	SetOpaque(false)
+	SetOpaque(true)
 	updated = false
 	screenSSBO = gfx.NewStorageBuffer(&screen, gfx.DynamicStorage)
 }
