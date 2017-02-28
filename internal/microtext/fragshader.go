@@ -21,7 +21,7 @@ layout(std430, binding = 1) buffer Screen {
   float FgGreen;
   float FgBlue;
   //
-  uint Opaque;
+  uint Opacity;
   float BgRed;
   float BgGreen;
   float BgBlue;
@@ -76,7 +76,7 @@ void main(void) {
   if (fg) {
 	  Color = vec4(screen.FgRed, screen.FgGreen, screen.FgBlue, 1.0);
   } else {
-    if (screen.Opaque == 0) { // && ((chr & 0x80) == 0)) {
+    if (screen.Opacity == 0) { // && ((chr & 0x80) == 0)) {
       discard;
     }
     Color =  vec4(screen.BgRed, screen.BgGreen, screen.BgBlue, 1.0);

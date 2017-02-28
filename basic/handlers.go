@@ -8,10 +8,11 @@ package basic
 import (
 	"time"
 
-	"github.com/drakmaniso/glam/pixel"
 	"github.com/drakmaniso/glam/internal"
+	"github.com/drakmaniso/glam/internal/microtext"
 	"github.com/drakmaniso/glam/key"
 	"github.com/drakmaniso/glam/mouse"
+	"github.com/drakmaniso/glam/pixel"
 )
 
 //------------------------------------------------------------------------------
@@ -80,6 +81,13 @@ type KeyHandler struct{}
 func (dh KeyHandler) KeyDown(l key.Label, p key.Position, timestamp time.Duration) {
 	if l == key.LabelEscape {
 		internal.QuitRequested = true
+	}
+	if (key.IsPressed(key.PositionLAlt) || key.IsPressed(key.PositionRAlt)) &&
+		(key.IsPressed(key.PositionLCtrl) || key.IsPressed(key.PositionRCtrl)) {
+		switch l {
+		case key.LabelKPEnter:
+			microtext.ToggleOpacity()
+		}
 	}
 }
 

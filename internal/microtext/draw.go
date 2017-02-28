@@ -10,6 +10,7 @@ import (
 	"github.com/drakmaniso/glam/gfx"
 	"github.com/drakmaniso/glam/pixel"
 	"time"
+	"unsafe"
 )
 
 //------------------------------------------------------------------------------
@@ -31,60 +32,126 @@ func Setup() {
 	screen.nbCols = 80
 	screen.nbRows = 30
 	screen.pixelSize = 2
+
+	Text = make([]byte, screen.nbCols*screen.nbRows)
+
 	nc, nr := int(screen.nbCols), int(screen.nbRows)
-	for i := range screen.chars {
-		screen.chars[i] = byte(i & 0xFF) // 0x20
+	for i := range Text {
+		Text[i] = byte(i & 0xFF) // 0x20
 		if i%nc == 0 {
-			screen.chars[i] = 152
+			Text[i] = 152
 		}
 		if i%nc == nc-1 {
-			screen.chars[i] = 153
+			Text[i] = 153
 		}
 		if i/nc <= 2 {
-			screen.chars[i] = 160
+			Text[i] = 160
 		}
 		if i/nc == nr-1 {
-			screen.chars[i] = 155
+			Text[i] = 155
 		}
 	}
-	screen.chars[nc+1] = byte('D') | 0x80
-	screen.chars[nc+2] = byte('i') | 0x80
-	screen.chars[nc+3] = byte('a') | 0x80
-	screen.chars[nc+4] = byte('l') | 0x80
-	screen.chars[nc+5] = byte('o') | 0x80
-	screen.chars[nc+6] = byte('g') | 0x80
-	screen.chars[nc+nc-2] = 159
-	screen.chars[(nr-1)*nc] = 154
-	screen.chars[(nr-1)*nc+nc-1] = 156
+	Text[nc+1] = byte('D') | 0x80
+	Text[nc+2] = byte('i') | 0x80
+	Text[nc+3] = byte('a') | 0x80
+	Text[nc+4] = byte('l') | 0x80
+	Text[nc+5] = byte('o') | 0x80
+	Text[nc+6] = byte('g') | 0x80
+	Text[nc+nc-2] = 159
+	Text[(nr-1)*nc] = 154
+	Text[(nr-1)*nc+nc-1] = 156
 	fontSSBO = gfx.NewStorageBuffer(&Font, gfx.StaticStorage)
 	SetColor(color.RGB{0, 0, 0}, color.RGB{1, 1, 1})
-	SetOpaque(false)
-	updated = false
-	screenSSBO = gfx.NewStorageBuffer(&screen, gfx.DynamicStorage)
+	SetOpacity(false)
+	TextUpdated = true
+	screenSSBO = gfx.NewStorageBuffer(
+		unsafe.Sizeof(screen)+uintptr(screen.nbCols*screen.nbRows),
+		gfx.DynamicStorage,
+	)
 }
 
 //------------------------------------------------------------------------------
 
-var screen struct {
-	left   uint32
-	top    uint32
-	nbCols uint32
-	nbRows uint32
-	//
-	pixelSize uint32
-	fgRed     float32
-	fgGreen   float32
-	fgBlue    float32
-	//
-	opaque  uint32
-	bgRed   float32
-	bgGreen float32
-	bgBlue  float32
-	//
-	chars [120 * 45]byte
+func Draw() {
+	pipeline.Bind()
+	gfx.Disable(gfx.DepthTest)
+	gfx.CullFace(false, false)
+	if screenUpdated {
+		screenSSBO.SubData(&screen, 0)
+		screenUpdated = false
+	}
+	if TextUpdated {
+		screenSSBO.SubData(Text, unsafe.Sizeof(screen))
+		TextUpdated = false
+	}
+	fontSSBO.Bind(0)
+	screenSSBO.Bind(1)
+	gfx.Draw(gfx.TriangleStrip, 0, 4)
+	pipeline.Unbind()
 }
 
-var updated bool
+//------------------------------------------------------------------------------
+
+// Data for the SSBO
+var (
+	screen struct {
+		left   uint32
+		top    uint32
+		nbCols uint32
+		nbRows uint32
+		//
+		pixelSize uint32
+		fgRed     float32
+		fgGreen   float32
+		fgBlue    float32
+		//
+		opacity uint32
+		bgRed   float32
+		bgGreen float32
+		bgBlue  float32
+	}
+
+	Text []byte
+)
+
+var (
+	screenUpdated bool
+	TextUpdated   bool
+)
+
+//------------------------------------------------------------------------------
+
+func SetColor(fg, bg color.RGB) {
+	screen.fgRed = fg.R
+	screen.fgGreen = fg.G
+	screen.fgBlue = fg.B
+	screen.bgRed = bg.R
+	screen.bgGreen = bg.G
+	screen.bgBlue = bg.B
+	screenUpdated = true
+}
+
+func SetOpacity(o bool) {
+	if o {
+		screen.opacity = 1
+	} else {
+		screen.opacity = 0
+	}
+	screenUpdated = true
+}
+
+func ToggleOpacity() {
+	if screen.opacity != 0 {
+		screen.opacity = 0
+	} else {
+		screen.opacity = 1
+	}
+	screenUpdated = true
+}
+
+func Size() (cols, rows int) {
+	return int(screen.nbCols), int(screen.nbRows)
+}
 
 //------------------------------------------------------------------------------
 
@@ -121,42 +188,7 @@ func WindowResized(s pixel.Coord, ts time.Duration) {
 		screen.top = 0
 	}
 
-	updated = true
-}
-
-func SetColor(fg, bg color.RGB) {
-	screen.fgRed = fg.R
-	screen.fgGreen = fg.G
-	screen.fgBlue = fg.B
-	screen.bgRed = bg.R
-	screen.bgGreen = bg.G
-	screen.bgBlue = bg.B
-	updated = true
-}
-
-func SetOpaque(o bool) {
-	if o {
-		screen.opaque = 1
-	} else {
-		screen.opaque = 0
-	}
-	updated = true
-}
-
-//------------------------------------------------------------------------------
-
-func Draw() {
-	pipeline.Bind()
-	gfx.Disable(gfx.DepthTest)
-	gfx.CullFace(false, false)
-	if updated {
-		screenSSBO.SubData(&screen, 0)
-		updated = false
-	}
-	fontSSBO.Bind(0)
-	screenSSBO.Bind(1)
-	gfx.Draw(gfx.TriangleStrip, 0, 4)
-	pipeline.Unbind()
+	screenUpdated = true
 }
 
 //------------------------------------------------------------------------------
