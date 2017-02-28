@@ -34,7 +34,7 @@ func Setup() {
 	nc, nr := int(screen.nbCols), int(screen.nbRows)
 	for i := range screen.chars {
 		screen.chars[i] = byte(i & 0x7F)
-		if (i/4)%13 == 0 {
+		if i/nc > nr/2 {
 			screen.chars[i] |= 0x80
 		}
 		if i%nc == 0 || i%nc == nc-1 {
@@ -50,7 +50,7 @@ func Setup() {
 	screen.chars[(nr-1)*nc+nc-1] = 9
 	fontSSBO = gfx.NewStorageBuffer(&Font, gfx.StaticStorage)
 	SetColor(color.RGB{0, 0, 0}, color.RGB{1, 1, 1})
-	SetOpaque(true)
+	SetOpaque(false)
 	updated = false
 	screenSSBO = gfx.NewStorageBuffer(&screen, gfx.DynamicStorage)
 }

@@ -7,7 +7,7 @@ const uint charWidth = 8;
 const uint charHeight = 12;
 
 layout(std430, binding = 0) buffer Font {
-  uint Data[1536 / 4];
+  uint Data[3072 / 4];
 } font;
 
 layout(std430, binding = 1) buffer Screen {
@@ -71,12 +71,12 @@ void main(void) {
   uint dx = x - col*charWidth;
   uint dy = y - row*charHeight;
   uint v;
-  v = fontByte(chr & 0x7F, dy);
-  bool fg = ((v >> (7 - dx)) & 0x1) != (chr >> 7);
+  v = fontByte(chr, dy);
+  bool fg = bool((v >> (7 - dx)) & 0x1); // != (chr >> 7);
   if (fg) {
 	  Color = vec4(screen.FgRed, screen.FgGreen, screen.FgBlue, 1.0);
   } else {
-    if (screen.Opaque == 0 && ((chr & 0x80) == 0)) {
+    if (screen.Opaque == 0) { // && ((chr & 0x80) == 0)) {
       discard;
     }
     Color =  vec4(screen.BgRed, screen.BgGreen, screen.BgBlue, 1.0);
