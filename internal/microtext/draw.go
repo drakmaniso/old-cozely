@@ -23,47 +23,24 @@ var (
 
 //------------------------------------------------------------------------------
 
+func init() {
+	screen.nbCols = 80
+	screen.nbRows = 30
+	screen.pixelSize = 2
+	SetColor(color.RGB{0, 0, 0}, color.RGB{1, 1, 1})
+	SetOpacity(false)
+	Text = make([]byte, screen.nbCols*screen.nbRows)
+}
+
+//------------------------------------------------------------------------------
+
 func Setup() {
 	pipeline = gfx.NewPipeline(
 		gfx.VertexShader(strings.NewReader(vertexShader)),
 		gfx.FragmentShader(strings.NewReader(fragmentShader)),
 	)
 
-	screen.nbCols = 80
-	screen.nbRows = 30
-	screen.pixelSize = 2
-
-	Text = make([]byte, screen.nbCols*screen.nbRows)
-
-	nc, nr := int(screen.nbCols), int(screen.nbRows)
-	for i := range Text {
-		Text[i] = byte(i & 0xFF) // 0x20
-		if i%nc == 0 {
-			Text[i] = 152
-		}
-		if i%nc == nc-1 {
-			Text[i] = 153
-		}
-		if i/nc <= 2 {
-			Text[i] = 160
-		}
-		if i/nc == nr-1 {
-			Text[i] = 155
-		}
-	}
-	Text[nc+1] = byte('D') | 0x80
-	Text[nc+2] = byte('i') | 0x80
-	Text[nc+3] = byte('a') | 0x80
-	Text[nc+4] = byte('l') | 0x80
-	Text[nc+5] = byte('o') | 0x80
-	Text[nc+6] = byte('g') | 0x80
-	Text[nc+nc-2] = 159
-	Text[(nr-1)*nc] = 154
-	Text[(nr-1)*nc+nc-1] = 156
 	fontSSBO = gfx.NewStorageBuffer(&Font, gfx.StaticStorage)
-	SetColor(color.RGB{0, 0, 0}, color.RGB{1, 1, 1})
-	SetOpacity(false)
-	TextUpdated = true
 	screenSSBO = gfx.NewStorageBuffer(
 		unsafe.Sizeof(screen)+uintptr(screen.nbCols*screen.nbRows),
 		gfx.DynamicStorage,

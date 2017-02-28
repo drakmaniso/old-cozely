@@ -14,7 +14,7 @@ import (
 	"github.com/drakmaniso/glam/color"
 	"github.com/drakmaniso/glam/gfx"
 	"github.com/drakmaniso/glam/mouse"
-	// _ "github.com/drakmaniso/glam/mtx"
+	"github.com/drakmaniso/glam/mtx"
 	"github.com/drakmaniso/glam/pixel"
 	"github.com/drakmaniso/glam/plane"
 	"github.com/drakmaniso/glam/space"
@@ -132,6 +132,20 @@ func setup() error {
 	pipeline.Bind()
 	vbo.Bind(0, 0)
 	pipeline.Unbind()
+
+	// MTX
+	mtx.Clear('\377')
+	mtx.Print("Un es", "sai ", 2, " print ", 1.1, "\n")
+	mtx.Print("Essai\n")
+	mtx.Print("\nint=", 33)
+	mtx.Invert(true)
+	mtx.Print("\nbool=", true)
+	mtx.Print("\nfloat32=", 12.123456789123456789123456789)
+	mtx.Print("\nfloat64=", 12.123456789123456789123456789)
+	mtx.Invert(false)
+	mtx.SetPrecision(2)
+	mtx.Print("\nfloat32=", 12.123456789123456789123456789)
+	mtx.Print("\nfloat64=", 12.123456789123456789123456789)
 
 	return gfx.Err()
 }
