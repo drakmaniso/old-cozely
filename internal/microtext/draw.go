@@ -34,6 +34,60 @@ func init() {
 
 //------------------------------------------------------------------------------
 
+const charWidth = 8
+const charHeight = 12
+
+func WindowResized(s pixel.Coord, ts time.Duration) {
+	//TODO: should take into account the DPI?
+	ps := int32(1)
+	for ps < 256 && s.X/(charWidth*ps) > 120 {
+		ps++
+	}
+	for ps > 1 && s.X/(charWidth*ps) < 80 {
+		ps--
+	}
+	for ps > 1 && s.Y/(charHeight*ps) < 30 {
+		ps--
+	}
+	if ps < 1 {
+		ps = 1
+	}
+	screen.pixelSize = ps
+	screen.nbCols = s.X / (charWidth * ps)
+	screen.nbRows = s.Y / (charHeight * ps)
+	screen.top = 0
+	screen.left = 0
+
+	// Reallocate the SSBO
+	screenSSBO.Delete()
+	screenSSBO = gfx.NewStorageBuffer(
+		unsafe.Sizeof(screen)+uintptr(screen.nbCols*screen.nbRows),
+		gfx.DynamicStorage,
+	)
+
+	// Calculate the margins
+	l := (s.X - (charWidth * int32(screen.pixelSize) * int32(screen.nbCols))) / 2
+	if l > 0 {
+		screen.left = int32(l)
+	} else {
+		screen.left = 0
+	}
+	if true {
+		t := (s.Y - (charHeight * int32(screen.pixelSize) * int32(screen.nbRows))) / 2
+		if t > 0 {
+			screen.top = int32(t)
+		} else {
+			screen.top = 0
+		}
+	} else {
+		screen.top = 0
+	}
+
+	screenUpdated = true
+}
+
+//------------------------------------------------------------------------------
+
 func Setup() {
 	pipeline = gfx.NewPipeline(
 		gfx.VertexShader(strings.NewReader(vertexShader)),
@@ -41,10 +95,6 @@ func Setup() {
 	)
 
 	fontSSBO = gfx.NewStorageBuffer(&Font, gfx.StaticStorage)
-	screenSSBO = gfx.NewStorageBuffer(
-		unsafe.Sizeof(screen)+uintptr(screen.nbCols*screen.nbRows),
-		gfx.DynamicStorage,
-	)
 }
 
 //------------------------------------------------------------------------------
@@ -72,12 +122,12 @@ func Draw() {
 // Data for the SSBO
 var (
 	screen struct {
-		left   uint32
-		top    uint32
-		nbCols uint32
-		nbRows uint32
+		left   int32
+		top    int32
+		nbCols int32
+		nbRows int32
 		//
-		pixelSize uint32
+		pixelSize int32
 		fgRed     float32
 		fgGreen   float32
 		fgBlue    float32
@@ -128,44 +178,6 @@ func ToggleOpacity() {
 
 func Size() (cols, rows int) {
 	return int(screen.nbCols), int(screen.nbRows)
-}
-
-//------------------------------------------------------------------------------
-
-const charWidth = 8
-const charHeight = 12
-
-func WindowResized(s pixel.Coord, ts time.Duration) {
-	// First, calculate the pixel size needed to display the whole screen
-	px := s.X / (charWidth * int32(screen.nbCols))
-	py := s.Y / (charHeight * int32(screen.nbRows))
-	if py < px {
-		px = py
-	}
-	if px < 1 {
-		px = 1
-	}
-	screen.pixelSize = uint32(px)
-
-	// Calculate the margins
-	l := (s.X - (charWidth * int32(screen.pixelSize) * int32(screen.nbCols))) / 2
-	if l > 0 {
-		screen.left = uint32(l)
-	} else {
-		screen.left = 0
-	}
-	if true {
-		t := (s.Y - (charHeight * int32(screen.pixelSize) * int32(screen.nbRows))) / 2
-		if t > 0 {
-			screen.top = uint32(t)
-		} else {
-			screen.top = 0
-		}
-	} else {
-		screen.top = 0
-	}
-
-	screenUpdated = true
 }
 
 //------------------------------------------------------------------------------

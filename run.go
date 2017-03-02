@@ -13,9 +13,9 @@ import (
 	"github.com/drakmaniso/glam/basic"
 	"github.com/drakmaniso/glam/internal"
 	"github.com/drakmaniso/glam/internal/events"
+	"github.com/drakmaniso/glam/internal/microtext"
 	"github.com/drakmaniso/glam/key"
 	"github.com/drakmaniso/glam/mouse"
-	"github.com/drakmaniso/glam/internal/microtext"
 	"github.com/drakmaniso/glam/window"
 )
 
@@ -76,6 +76,9 @@ func Run() error {
 			frameSum = 0
 			nbFrames = 0
 		}
+
+		// Process events before the first time step
+		events.Process()
 
 		// Fixed time step for logic and physics updates
 		remain += frameTime
