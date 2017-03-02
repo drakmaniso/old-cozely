@@ -21,6 +21,10 @@ GLuint NewBuffer(GLsizeiptr size, void* data, GLbitfield flags) {
 	return b;
 }
 
+void DeleteBuffer(GLuint b) {
+	glDeleteBuffers(1, &b);
+}
+
 static inline void BufferSubData(GLuint buffer, GLintptr offset, GLsizei size, void *data) {
 	glNamedBufferSubData(buffer, offset, size, data);
 }
@@ -89,6 +93,11 @@ func (ub *UniformBuffer) Bind(binding uint32) {
 	C.BindUniform(C.GLuint(binding), ub.object)
 }
 
+// Delete frees the buffer.
+func (ub *UniformBuffer) Delete() {
+	C.DeleteBuffer(C.GLuint(ub.object))
+}
+
 //------------------------------------------------------------------------------
 
 // A StorageBuffer is a block of memory owned by the GPU.
@@ -133,6 +142,11 @@ func (sb *StorageBuffer) SubData(data interface{}, atOffset uintptr) {
 // shaders.
 func (sb *StorageBuffer) Bind(binding uint32) {
 	C.BindStorage(C.GLuint(binding), sb.object)
+}
+
+// Delete frees the buffer.
+func (sb *StorageBuffer) Delete() {
+	C.DeleteBuffer(C.GLuint(sb.object))
 }
 
 //------------------------------------------------------------------------------
@@ -184,6 +198,11 @@ func (vb *VertexBuffer) SubData(data interface{}, atOffset uintptr) {
 // corresponding call to Pipeline.VertexFormat.
 func (vb *VertexBuffer) Bind(binding uint32, offset uintptr) {
 	C.BindVertex(C.GLuint(binding), vb.object, C.GLintptr(offset), C.GLsizei(vb.stride))
+}
+
+// Delete frees the buffer.
+func (vb *VertexBuffer) Delete() {
+	C.DeleteBuffer(C.GLuint(vb.object))
 }
 
 //------------------------------------------------------------------------------
@@ -273,6 +292,11 @@ func (eb *IndexBuffer) Bind() {
 }
 
 var boundElement IndexBuffer
+
+// Delete frees the buffer.
+func (eb *IndexBuffer) Delete() {
+	C.DeleteBuffer(C.GLuint(eb.object))
+}
 
 //------------------------------------------------------------------------------
 
