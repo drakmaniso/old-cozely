@@ -10,111 +10,123 @@ import (
 
 //------------------------------------------------------------------------------
 
-var curX, curY int
-
-func Cursor() (x, y int) {
-	return curX, curY
+func Size() (x, y int) {
+	return micro.Size()
 }
 
-func Move(x, y int) {
+func Clamp(x, y int) (int, int) {
 	sx, sy := micro.Size()
-	if x <= 0 {
-		curX = sx + x
-		if curX < 0 {
-			curX = 0
-		}
-	} else {
-		curX = x
-		if curX >= sx {
-			curX = sx - 1
-		}
-	}
-	if y <= 0 {
-		curY = sy + y
-		if curY < 0 {
-			curY = 0
-		}
-	} else {
-		curY = y
-		if curY >= sy {
-			curY = sy - 1
-		}
-	}
-}
 
-func Step(x, y int) {
-	sx, sy := micro.Size()
-	switch {
-	case curX+x < 0:
-		curX = 0
-	case curX+x >= sx:
-		curX = sx - 1
-	default:
-		curX += x
+	if x < 0 {
+		x += sx
+		if x < 0 {
+			x = 0
+		}
 	}
-	switch {
-	case curY+y < 0:
-		curY = 0
-	case curY+y >= sy:
-		curY = sy - 1
-	default:
-		curY += y
+	if x >= sx {
+		x = sx - 1
 	}
+
+	if y < 0 {
+		y += sy
+		if y < 0 {
+			y = 0
+		}
+	}
+	if y >= sy {
+		y = sy - 1
+	}
+
+	return x, y
 }
 
 //------------------------------------------------------------------------------
 
-var hibit = byte(0)
+var colour = byte(0)
 
-func Invert(i bool) {
+func ReverseVideo(i bool) {
 	if i {
-		hibit = 0200
+		colour = 0x80
 	} else {
-		hibit = 0
-	}
-}
-
-func ToggleInvert() {
-	if hibit == 0 {
-		hibit = 0200
-	} else {
-		hibit = 0
+		colour = 0
 	}
 }
 
 //------------------------------------------------------------------------------
 
-func Clear(c byte) {
+func Clear() {
 	for i := range micro.Text {
-		micro.Text[i] = c
+		micro.Text[i] = '\x00'
 	}
-	curX, curY = 0, 0
 	micro.TextUpdated = true
 }
 
 //------------------------------------------------------------------------------
 
 func Peek(x, y int) byte {
-	sx, sy := micro.Size()
-	x %= sx
-	y %= sy
-	return micro.Text[x+y*sy]
+	sx, _ := micro.Size()
+	x, y = Clamp(x, y)
+	return micro.Text[x+y*sx]
 }
 
 func Poke(x, y int, value byte) {
-	sx, sy := micro.Size()
-	x %= sx
-	y %= sy
-	ov := micro.Text[x+y*sy]
+	sx, _ := micro.Size()
+	x, y = Clamp(x, y)
+	ov := micro.Text[x+y*sx]
 	if value != ov {
-		micro.Text[x+y*sy] = value
+		micro.Text[x+y*sx] = value
 		micro.TextUpdated = true
 	}
 }
 
 //------------------------------------------------------------------------------
 
-func pString(s string) {
+func Print(x, y int, things ...interface{}) (int, int) {
+	origX, origY = x, y
+	x, y = Clamp(x, y)
+	for _, v := range things {
+		switch v := v.(type) {
+		case string:
+			x, y = pString(x, y, v)
+		case int:
+			x, y = pString(x, y, strconv.Itoa(v))
+		case uint:
+			x, y = pString(x, y, strconv.FormatUint(uint64(v), 10))
+		case int32:
+			x, y = pString(x, y, strconv.FormatInt(int64(v), 10))
+		case uint32:
+			x, y = pString(x, y, strconv.FormatUint(uint64(v), 10))
+		case int64:
+			x, y = pString(x, y, strconv.FormatInt(v, 10))
+		case uint64:
+			x, y = pString(x, y, strconv.FormatUint(v, 10))
+		case float32:
+			x, y = pString(x, y, strconv.FormatFloat(float64(v), 'f', precision, 32))
+		case float64:
+			x, y = pString(x, y, strconv.FormatFloat(v, 'f', precision, 64))
+		case bool:
+			x, y = pString(x, y, strconv.FormatBool(v))
+		case stringer:
+			x, y = pString(x, y, v.String())
+		case goStringer:
+			x, y = pString(x, y, v.GoString())
+		}
+	}
+
+	return x, y
+}
+
+var origX, origY int
+
+var precision = -1
+
+func SetPrecision(p int) {
+	precision = p
+}
+
+//------------------------------------------------------------------------------
+
+func pString(x, y int, s string) (int, int) {
 	sx, sy := micro.Size()
 
 	for i := range s {
@@ -123,12 +135,16 @@ func pString(s string) {
 		if c < ' ' {
 			switch c {
 			case '\a':
-				ToggleInvert()
+				if colour != 0 {
+					colour = 0
+				} else {
+					colour = 0x80
+				}
 				continue
 
 			case '\n':
-				curX = 0 //TODO
-				curY++
+				x = origX
+				y++
 				continue
 			}
 
@@ -138,57 +154,22 @@ func pString(s string) {
 			c = '\177'
 		}
 
-		if curX < sx && curY < sy {
-			micro.Text[curX+curY*sx] = c | hibit
+		if x < sx && y < sy {
+			micro.Text[x+y*sx] = c | colour
 		}
-		curX++
+		x++
 	}
 	// Sanitize cursor position
-	if curX >= sx {
-		curX = sx - 1
+	if x >= sx {
+		x = sx - 1
 	}
-	if curY >= sy {
-		curY = sy - 1
+	if y >= sy {
+		y = sy - 1
 	}
-}
 
-//------------------------------------------------------------------------------
+	micro.TextUpdated = true
 
-func Print(things ...interface{}) {
-	for _, v := range things {
-		switch v := v.(type) {
-		case string:
-			pString(v)
-		case int:
-			pInt(v)
-		case uint:
-			pUint(v)
-		case int32:
-			pInt32(v)
-		case uint32:
-			pUint32(v)
-		case int64:
-			pInt64(v)
-		case uint64:
-			pUint64(v)
-		case float32:
-			pFloat32(v)
-		case float64:
-			pFloat64(v)
-		case bool:
-			pBool(v)
-		case stringer:
-			pString(v.String())
-		case goStringer:
-			pString(v.GoString())
-		}
-	}
-}
-
-var precision = -1
-
-func SetPrecision(p int) {
-	precision = p
+	return x, y
 }
 
 //------------------------------------------------------------------------------
@@ -199,42 +180,6 @@ type stringer interface {
 
 type goStringer interface {
 	GoString() string
-}
-
-func pInt(value int) {
-	pString(strconv.Itoa(value))
-}
-
-func pInt32(value int32) {
-	pString(strconv.FormatInt(int64(value), 10))
-}
-
-func pInt64(value int64) {
-	pString(strconv.FormatInt(value, 10))
-}
-
-func pUint(value uint) {
-	pString(strconv.FormatUint(uint64(value), 10))
-}
-
-func pUint32(value uint32) {
-	pString(strconv.FormatUint(uint64(value), 10))
-}
-
-func pUint64(value uint64) {
-	pString(strconv.FormatUint(value, 10))
-}
-
-func pBool(value bool) {
-	pString(strconv.FormatBool(value))
-}
-
-func pFloat64(value float64) {
-	pString(strconv.FormatFloat(value, 'f', precision, 64))
-}
-
-func pFloat32(value float32) {
-	pString(strconv.FormatFloat(float64(value), 'f', precision, 32))
 }
 
 //------------------------------------------------------------------------------

@@ -134,18 +134,6 @@ func setup() error {
 	pipeline.Unbind()
 
 	// MTX
-	mtx.Clear('\377')
-	mtx.Print("Un es", "sai ", 2, " print ", 1.1, "\n")
-	mtx.Print("Essai\n")
-	mtx.Print("\nint=", 33)
-	mtx.Invert(true)
-	mtx.Print("\nbool=", true)
-	mtx.Print("\nfloat32=", 12.123456789123456789123456789)
-	mtx.Print("\nfloat64=", 12.123456789123456789123456789)
-	mtx.Invert(false)
-	mtx.SetPrecision(2)
-	mtx.Print("\nfloat32=", 12.123456789123456789123456789)
-	mtx.Print("\nfloat64=", 12.123456789123456789123456789)
 
 	return gfx.Err()
 }
@@ -169,6 +157,48 @@ func updateView() {
 type looper struct{}
 
 func (l looper) Update() {
+	x, y := 1, 1
+	x, y = mtx.Print(x, y, "One two Three ", "FOUR ", "FIVE", "\n")
+	x, y = mtx.Print(x, y, "Six\n")
+	x, y = mtx.Print(x, y, "Seven\n")
+	mtx.Print(0, 0, "TOP LEFT")
+	mtx.Print(-12, -1, "BOTTOM RIGHT")
+
+	_, y = mtx.Print(0, y, "Un es", "sai ", 2, " print ", 1.1, "\n")
+	mtx.ReverseVideo(true)
+	_, y = mtx.Print(0, y, "Essai\n")
+	mtx.ReverseVideo(false)
+	_, y = mtx.Print(0, y, "int=", 33)
+	_, y = mtx.Print(0, y, "\nbool=", true)
+	mtx.SetPrecision(-1)
+	_, y = mtx.Print(0, y, "\nZoom=", 33.0/27.0)
+	_, y = mtx.Print(0, y, "\nPosition: x=", 114.0/23.0)
+	_, y = mtx.Print(0, y, "\nOther:    y=", 237.0/31.0)
+	mtx.SetPrecision(6)
+	_, y = mtx.Print(0, y, "\nfloat32=", 12.123456789123456789123456789*1.65487)
+	_, y = mtx.Print(0, y, "\nfloat64=", 4.56789123456789123456789*1.1543)
+	mtx.Print(5, y+1, `
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec libero ligula,
+consectetur at congue et, ultricies placerat velit. Pellentesque finibus
+tristique orci sit amet pharetra. Nullam arcu urna, tempus malesuada aliquet
+quis, semper blandit ante. Proin vitae dignissim lacus. Etiam in rutrum
+tortor. Nulla sed maximus dolor, quis venenatis ante. Maecenas nec ante vel
+massa elementum varius nec vitae odio. Proin tincidunt iaculis elit eu luctus.
+Donec dignissim ipsum in orci congue rutrum a at turpis. Aliquam congue
+tristique dapibus. Pellentesque sed aliquam ex, id blandit metus. Mauris
+egestas magna quis elit dignissim, a laoreet sem facilisis. Duis tristique
+dapibus dictum. Lorem ipsum dolor sit amet, consectetur adipiscing elit.`)
+
+	// mtx.Clear('\000')
+	// c := byte(0)
+	// sx, sy := mtx.Size()
+	// for y := 0; y < sy; y++ {
+	// 	for x := 0; x < sx && x < 128; x++ {
+	// 		mtx.Poke(x, y, c)
+	// 		c++
+	// 	}
+	// }
+
 }
 
 func (l looper) Draw() {
