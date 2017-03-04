@@ -4,6 +4,7 @@
 package mtx
 
 import (
+	"fmt"
 	micro "github.com/drakmaniso/glam/internal/microtext"
 	"strconv"
 )
@@ -180,6 +181,18 @@ type stringer interface {
 
 type goStringer interface {
 	GoString() string
+}
+
+//------------------------------------------------------------------------------
+
+func Printf(x, y int, format string, a ...interface{}) (int, int) {
+	var w micro.Writer
+	w.Left, w.Top = Clamp(x, y)
+	w.Right, w.Bottom = micro.Size()
+	w.X, w.Y = w.Left, w.Top
+
+	fmt.Fprintf(&w, format, a...)
+	return x, y //TODO
 }
 
 //------------------------------------------------------------------------------
