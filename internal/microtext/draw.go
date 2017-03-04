@@ -34,36 +34,25 @@ func init() {
 
 //------------------------------------------------------------------------------
 
-const charWidth = 8
-const charHeight = 12
+const charWidth = 7
+const charHeight = 13
 
 func WindowResized(s pixel.Coord, ts time.Duration) {
-	//TODO: should take into account the DPI?
-	ps := int32(1)
-	for ps < 256 && s.X/(charWidth*ps) > 120 {
-		ps++
-	}
-	for ps > 1 && s.X/(charWidth*ps) < 80 {
-		ps--
-	}
-	for ps > 1 && s.Y/(charHeight*ps) < 30 {
-		ps--
-	}
-	if ps < 1 {
-		ps = 1
-	}
-	screen.pixelSize = ps
-	screen.nbCols = s.X / (charWidth * ps)
-	screen.nbRows = s.Y / (charHeight * ps)
+	screen.pixelSize = 2 //TODO
+	screen.nbCols = s.X / (charWidth * screen.pixelSize)
+	screen.nbRows = s.Y / (charHeight * screen.pixelSize)
 	screen.top = 0
 	screen.left = 0
 
 	// Reallocate the SSBO
+	Text = make([]byte, screen.nbCols*screen.nbRows)
 	screenSSBO.Delete()
 	screenSSBO = gfx.NewStorageBuffer(
 		unsafe.Sizeof(screen)+uintptr(screen.nbCols*screen.nbRows),
 		gfx.DynamicStorage,
 	)
+
+	TextUpdated = true
 
 	// Calculate the margins
 	l := (s.X - (charWidth * int32(screen.pixelSize) * int32(screen.nbCols))) / 2
@@ -127,15 +116,15 @@ var (
 		nbCols int32
 		nbRows int32
 		//
-		pixelSize int32
 		fgRed     float32
 		fgGreen   float32
 		fgBlue    float32
+		pixelSize int32
 		//
-		opacity uint32
 		bgRed   float32
 		bgGreen float32
 		bgBlue  float32
+		opacity float32
 	}
 
 	Text []byte
@@ -160,9 +149,9 @@ func SetColor(fg, bg color.RGB) {
 
 func SetOpacity(o bool) {
 	if o {
-		screen.opacity = 1
+		screen.opacity = 1.0
 	} else {
-		screen.opacity = 0
+		screen.opacity = 0.0
 	}
 	screenUpdated = true
 }
