@@ -24,11 +24,11 @@ var (
 //------------------------------------------------------------------------------
 
 func init() {
-	screen.nbCols = 80
-	screen.nbRows = 30
+	screen.nbCols = 1
+	screen.nbRows = 1
 	screen.pixelSize = 2
-	SetColor(color.RGB{0, 0, 0}, color.RGB{1, 1, 1})
-	SetOpacity(false)
+	SetColor(color.RGB{1, 1, 1}, color.RGB{0, 0, 0})
+	SetBgAlpha(true)
 	Text = make([]byte, screen.nbCols*screen.nbRows)
 }
 
@@ -38,7 +38,6 @@ const charWidth = 7
 const charHeight = 13
 
 func WindowResized(s pixel.Coord, ts time.Duration) {
-	screen.pixelSize = 2 //TODO
 	screen.nbCols = s.X / (charWidth * screen.pixelSize)
 	screen.nbRows = s.Y / (charHeight * screen.pixelSize)
 	screen.top = 0
@@ -124,7 +123,7 @@ var (
 		bgRed   float32
 		bgGreen float32
 		bgBlue  float32
-		opacity float32
+		bgAlpha float32
 	}
 
 	Text []byte
@@ -141,26 +140,32 @@ func SetColor(fg, bg color.RGB) {
 	screen.fgRed = fg.R
 	screen.fgGreen = fg.G
 	screen.fgBlue = fg.B
+
 	screen.bgRed = bg.R
 	screen.bgGreen = bg.G
 	screen.bgBlue = bg.B
+
 	screenUpdated = true
 }
 
-func SetOpacity(o bool) {
+func SetBgAlpha(o bool) {
 	if o {
-		screen.opacity = 1.0
+		screen.bgAlpha = 1.0
 	} else {
-		screen.opacity = 0.0
+		screen.bgAlpha = 0.0
 	}
 	screenUpdated = true
 }
 
-func ToggleOpacity() {
-	if screen.opacity != 0 {
-		screen.opacity = 0
+func GetBgAlpha() bool {
+	return screen.bgAlpha != 0.0
+}
+
+func ToggleBgAlpha() {
+	if screen.bgAlpha != 0 {
+		screen.bgAlpha = 0
 	} else {
-		screen.opacity = 1
+		screen.bgAlpha = 1
 	}
 	screenUpdated = true
 }

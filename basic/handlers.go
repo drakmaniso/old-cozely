@@ -86,7 +86,7 @@ func (dh KeyHandler) KeyDown(l key.Label, p key.Position, timestamp time.Duratio
 		(key.IsPressed(key.PositionLCtrl) || key.IsPressed(key.PositionRCtrl)) {
 		switch l {
 		case key.LabelKPEnter:
-			microtext.ToggleOpacity()
+			microtext.ToggleBgAlpha()
 		case key.LabelF11, key.LabelReturn:
 			internal.ToggleFullscreen()
 		}

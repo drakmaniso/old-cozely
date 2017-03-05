@@ -44,7 +44,7 @@ func (h handler) WindowResized(s pixel.Coord, _ time.Duration) {
 	// w.Clip(2, 2, -2, -2)
 	// w.SetClearChar('*')
 	// w.Clear()
-	w.SetOverwrite(true)
+	// w.SetOverwrite(true)
 	w.Print("Hello world!\n")
 	w.Print("Essai %x\n", 33333)
 	w.Print("123456\b\b\b\b\b\b\aBoo!\n\a")
@@ -65,7 +65,6 @@ dapibus dictum. Lorem ipsum dolor sit amet, consectetur adipiscing elit.`)
 
 	w.Locate(0, -1)
 	w.Print("Abc \a%f,\a %10.3f", 1.2345678901234567890, 1.2345678901234567890)
-
 }
 
 //------------------------------------------------------------------------------

@@ -13,12 +13,15 @@ import (
 
 	"github.com/drakmaniso/glam"
 	"github.com/drakmaniso/glam/mouse"
+	"github.com/drakmaniso/glam/mtx"
 	"github.com/drakmaniso/glam/pixel"
 )
 
 //------------------------------------------------------------------------------
 
 func TestMain(m *testing.M) {
+	topbar.Clip(1, 0, -1, 5)
+
 	mouse.Handle = handler{}
 
 	// Run the main loop
@@ -94,10 +97,19 @@ func (l looper) Draw() {}
 
 var timer time.Duration
 
+var topbar mtx.Writer
+
 func (l looper) Update() {
 	timer += glam.TimeStep
-	if timer > time.Second {
+	if timer > time.Second/10 {
 		timer = 0
+
+		topbar.Clear()
+
+		d := mouse.Delta()
+		topbar.Print("   mouse.Delta()=%+6d, %+6d\n", d.X, d.Y)
+		topbar.Print("mouse.Position()=%v\n", mouse.Position())
+
 		fmt.Print("Update: buttons=")
 		if mouse.IsPressed(mouse.Left) {
 			fmt.Print("LEFT_")

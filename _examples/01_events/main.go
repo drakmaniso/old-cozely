@@ -12,6 +12,7 @@ import (
 	"github.com/drakmaniso/glam"
 	"github.com/drakmaniso/glam/key"
 	"github.com/drakmaniso/glam/mouse"
+	"github.com/drakmaniso/glam/mtx"
 	"github.com/drakmaniso/glam/pixel"
 	"github.com/drakmaniso/glam/window"
 )
@@ -114,7 +115,10 @@ func (h handler) WindowQuit(ts time.Duration) {
 
 type looper struct{}
 
-func (l looper) Draw() {}
+func (l looper) Draw() {
+	mtx.Print(1, 0, "   mouse.Delta()=%+6d, %+6d", mouse.Delta().X, mouse.Delta().Y)
+	mtx.Print(1, 1, "mouse.Position()=%v", mouse.Position())
+}
 
 func (l looper) Update() {
 	// fmt.Printf("--- Update delta=%v pos=%v rightBttn=%v\n",

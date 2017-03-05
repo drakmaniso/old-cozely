@@ -7,6 +7,7 @@ package mtx
 
 import (
 	"fmt"
+	"github.com/drakmaniso/glam/color"
 	micro "github.com/drakmaniso/glam/internal/microtext"
 )
 
@@ -102,6 +103,33 @@ func Print(x, y int, format string, a ...interface{}) {
 	w.x, w.y = w.left, w.top
 
 	fmt.Fprintf(&w, format, a...)
+}
+
+//------------------------------------------------------------------------------
+
+func Color(fg, bg color.RGB, o Opacity) {
+	micro.SetColor(fg, bg)
+
+	switch o {
+	case Transparent:
+		micro.SetBgAlpha(false)
+	case Opaque:
+		micro.SetBgAlpha(true)
+	case Toggle:
+		micro.ToggleBgAlpha()
+	}
+}
+
+type Opacity int
+
+const (
+	Transparent Opacity = iota
+	Opaque
+	Toggle
+)
+
+func IsOpaque() bool {
+	return micro.GetBgAlpha()
 }
 
 //------------------------------------------------------------------------------

@@ -6,6 +6,7 @@ package main
 //------------------------------------------------------------------------------
 
 import "github.com/drakmaniso/glam"
+import "github.com/drakmaniso/glam/mtx"
 
 //------------------------------------------------------------------------------
 
@@ -22,6 +23,7 @@ func main() {
 type looper struct{}
 
 func (l looper) Update() {
+	mtx.Print(2, 2, "hello, world\n")
 }
 
 func (l looper) Draw() {

@@ -25,30 +25,40 @@ type Writer struct {
 //------------------------------------------------------------------------------
 
 func (w *Writer) Clip(left, top int, right, bottom int) {
-	w.left, w.top = Clamp(left, top)
-	w.right, w.bottom = clampBR(right, bottom)
+	w.left, w.top = left, top
+	w.right, w.bottom = right, bottom
 	w.x, w.y = w.left, w.top
 }
 
 func (w *Writer) Clamp(x, y int) (int, int) {
+	r, b := w.right, w.bottom
+	sx, sy := micro.Size()
+	// Clip bounds can be outside window size
+	if r > sx {
+		r = sx
+	}
+	if b > sy {
+		b = sy
+	}
+
 	if x < 0 {
 		x += w.right
 	}
 	if x < w.left {
 		x = w.left
 	}
-	if x >= w.right {
-		x = w.right - 1
+	if x >= r {
+		x = r - 1
 	}
 
 	if y < 0 {
-		y += w.bottom
+		y += b
 	}
 	if y < w.top {
 		y = w.top
 	}
-	if y >= w.bottom {
-		y = w.bottom - 1
+	if y >= b {
+		y = b - 1
 	}
 
 	return x, y
@@ -127,8 +137,15 @@ func (w *Writer) Write(p []byte) (n int, err error) {
 				continue
 
 			case '\v':
-				x = w.left
-				y = w.top
+				i := x
+				if i < w.left {
+					i = w.left
+				}
+				if y >= w.top && y < w.bottom {
+					for ; i < w.right; i++ {
+						micro.Poke(i, y, w.clear)
+					}
+				}
 				continue
 
 			case '\t':
