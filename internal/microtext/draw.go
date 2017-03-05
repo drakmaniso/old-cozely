@@ -170,3 +170,13 @@ func Size() (cols, rows int) {
 }
 
 //------------------------------------------------------------------------------
+
+func Peek(x, y int) byte {
+	return Text[x+y*int(screen.nbCols)]
+}
+
+func Poke(x, y int, c byte) {
+	Text[x+y*int(screen.nbCols)] = c
+}
+
+//------------------------------------------------------------------------------

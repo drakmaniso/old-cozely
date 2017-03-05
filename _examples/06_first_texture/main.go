@@ -14,7 +14,6 @@ import (
 	"github.com/drakmaniso/glam/color"
 	"github.com/drakmaniso/glam/gfx"
 	"github.com/drakmaniso/glam/mouse"
-	"github.com/drakmaniso/glam/mtx"
 	"github.com/drakmaniso/glam/pixel"
 	"github.com/drakmaniso/glam/plane"
 	"github.com/drakmaniso/glam/space"
@@ -157,30 +156,6 @@ func updateView() {
 type looper struct{}
 
 func (l looper) Update() {
-	mtx.Printf(2, 2, "Abc \a%f,\a %10.3f", 1.2345678901234567890, 1.2345678901234567890)
-
-	mtx.Printf(5, 5, `
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec libero ligula,
-consectetur at congue et, ultricies placerat velit. Pellentesque finibus
-tristique orci sit amet pharetra. Nullam arcu urna, tempus malesuada aliquet
-quis, semper blandit ante. Proin vitae dignissim lacus. Etiam in rutrum
-tortor. Nulla sed maximus dolor, quis venenatis ante. Maecenas nec ante vel
-massa elementum varius nec vitae odio. Proin tincidunt iaculis elit eu luctus.
-Donec dignissim ipsum in orci congue rutrum a at turpis. Aliquam congue
-tristique dapibus. Pellentesque sed aliquam ex, id blandit metus. Mauris
-egestas magna quis elit dignissim, a laoreet sem facilisis. Duis tristique
-dapibus dictum. Lorem ipsum dolor sit amet, consectetur adipiscing elit.`)
-
-	// mtx.Clear('\000')
-	// c := byte(0)
-	// sx, sy := mtx.Size()
-	// for y := 0; y < sy; y++ {
-	// 	for x := 0; x < sx && x < 128; x++ {
-	// 		mtx.Poke(x, y, c)
-	// 		c++
-	// 	}
-	// }
-
 }
 
 func (l looper) Draw() {

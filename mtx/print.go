@@ -3,6 +3,8 @@
 
 package mtx
 
+//------------------------------------------------------------------------------
+
 import (
 	"fmt"
 	micro "github.com/drakmaniso/glam/internal/microtext"
@@ -40,6 +42,32 @@ func Clamp(x, y int) (int, int) {
 	return x, y
 }
 
+func clampBR(x, y int) (int, int) {
+	sx, sy := micro.Size()
+
+	if x < 0 {
+		x += sx
+	}
+	if x < 1 {
+		x = 1
+	}
+	if x > sx {
+		x = sx
+	}
+
+	if y < 0 {
+		y += sy
+	}
+	if y < 1 {
+		y = 1
+	}
+	if y > sy {
+		y = sy
+	}
+
+	return x, y
+}
+
 //------------------------------------------------------------------------------
 
 func Clear() {
@@ -52,31 +80,28 @@ func Clear() {
 //------------------------------------------------------------------------------
 
 func Peek(x, y int) byte {
-	sx, _ := micro.Size()
 	x, y = Clamp(x, y)
-	return micro.Text[x+y*sx]
+	return micro.Peek(x, y)
 }
 
 func Poke(x, y int, value byte) {
-	sx, _ := micro.Size()
 	x, y = Clamp(x, y)
-	ov := micro.Text[x+y*sx]
+	ov := micro.Peek(x, y)
 	if value != ov {
-		micro.Text[x+y*sx] = value
+		micro.Poke(x, y, value)
 		micro.TextUpdated = true
 	}
 }
 
 //------------------------------------------------------------------------------
 
-func Printf(x, y int, format string, a ...interface{}) (int, int) {
-	var w micro.Writer
-	w.Left, w.Top = Clamp(x, y)
-	w.Right, w.Bottom = micro.Size()
-	w.X, w.Y = w.Left, w.Top
+func Print(x, y int, format string, a ...interface{}) {
+	var w Writer
+	w.left, w.top = Clamp(x, y)
+	w.right, w.bottom = micro.Size()
+	w.x, w.y = w.left, w.top
 
 	fmt.Fprintf(&w, format, a...)
-	return x, y //TODO
 }
 
 //------------------------------------------------------------------------------
