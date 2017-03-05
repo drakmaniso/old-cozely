@@ -20,6 +20,8 @@ import (
 //------------------------------------------------------------------------------
 
 func main() {
+	glam.Setup()
+
 	window.Handle = handler{}
 	mouse.Handle = handler{}
 	key.Handle = handler{}

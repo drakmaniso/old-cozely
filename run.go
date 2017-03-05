@@ -10,14 +10,34 @@ import (
 	"os"
 	"time"
 
+	"errors"
 	"github.com/drakmaniso/glam/basic"
+	"github.com/drakmaniso/glam/gfx"
 	"github.com/drakmaniso/glam/internal"
 	"github.com/drakmaniso/glam/internal/events"
 	"github.com/drakmaniso/glam/internal/microtext"
 	"github.com/drakmaniso/glam/key"
 	"github.com/drakmaniso/glam/mouse"
+	"github.com/drakmaniso/glam/pixel"
 	"github.com/drakmaniso/glam/window"
 )
+
+//------------------------------------------------------------------------------
+
+func Setup() {
+	s := pixel.Coord{internal.Window.Width, internal.Window.Height}
+	gfx.Viewport(pixel.Coord{X: 0, Y: 0}, s)
+
+	// Setup mtx
+	microtext.Setup()
+	microtext.WindowResized(s, internal.GetTime())
+
+	isSetUp = true
+
+	//TODO: error handling?
+}
+
+var isSetUp bool
 
 //------------------------------------------------------------------------------
 
@@ -45,6 +65,10 @@ func Run() error {
 	defer internal.SDLQuit()
 	defer internal.DestroyWindow()
 
+	if !isSetUp {
+		return errors.New("glam.Setup must be called before glam.Run")
+	}
+
 	// Setup Fallback Handlers
 	if window.Handle == nil {
 		window.Handle = basic.WindowHandler{}
@@ -56,8 +80,12 @@ func Run() error {
 		key.Handle = basic.KeyHandler{}
 	}
 
-	// Setup mtx
-	microtext.Setup()
+	// Process events once before the first time step
+	{
+		s := pixel.Coord{internal.Window.Width, internal.Window.Height}
+		window.Handle.WindowResized(s, internal.GetTime())
+		events.Process()
+	}
 
 	// Main Loop
 
@@ -76,9 +104,6 @@ func Run() error {
 			frameSum = 0
 			nbFrames = 0
 		}
-
-		// Process events before the first time step
-		events.Process()
 
 		// Fixed time step for logic and physics updates
 		remain += frameTime

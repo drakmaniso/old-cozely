@@ -11,6 +11,10 @@ import "github.com/drakmaniso/glam/mtx"
 //------------------------------------------------------------------------------
 
 func main() {
+	glam.Setup()
+
+	mtx.Print(2, 2, "hello, world\n")
+
 	glam.Loop = looper{}
 	err := glam.Run()
 	if err != nil {
@@ -23,7 +27,6 @@ func main() {
 type looper struct{}
 
 func (l looper) Update() {
-	mtx.Print(2, 2, "hello, world\n")
 }
 
 func (l looper) Draw() {

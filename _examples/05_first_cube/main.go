@@ -12,6 +12,7 @@ import (
 	"github.com/drakmaniso/glam/color"
 	"github.com/drakmaniso/glam/gfx"
 	"github.com/drakmaniso/glam/mouse"
+	"github.com/drakmaniso/glam/mtx"
 	"github.com/drakmaniso/glam/space"
 	"github.com/drakmaniso/glam/window"
 )
@@ -19,6 +20,8 @@ import (
 //------------------------------------------------------------------------------
 
 func main() {
+	glam.Setup()
+
 	err := setup()
 	if err != nil {
 		glam.ErrorDialog(err)
@@ -86,8 +89,6 @@ func setup() error {
 		gfx.FragmentShader(f),
 		gfx.VertexFormat(0, mesh{}),
 	)
-	gfx.Enable(gfx.DepthTest)
-	gfx.CullFace(false, true)
 	gfx.Enable(gfx.FramebufferSRGB)
 
 	// Create the uniform buffer
@@ -103,6 +104,10 @@ func setup() error {
 	updateModel()
 	distance = 3
 	updateView()
+
+	// MTX
+	mtx.Color(color.RGB{0, 0, 0}, color.RGB{1, 1, 1}, mtx.Transparent)
+	printState()
 
 	// Bind the vertex buffer to the pipeline
 	pipeline.Bind()
@@ -121,6 +126,8 @@ func (l looper) Update() {
 
 func (l looper) Draw() {
 	pipeline.Bind()
+	gfx.Enable(gfx.DepthTest)
+	gfx.CullFace(false, true)
 	gfx.ClearDepthBuffer(1.0)
 	gfx.ClearColorBuffer(color.RGBA{0.9, 0.9, 0.9, 1.0})
 

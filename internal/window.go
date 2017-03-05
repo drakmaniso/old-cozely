@@ -100,16 +100,6 @@ func OpenWindow(
 
 	// logOpenGLInfos()
 
-	//Send a fake resize event, with window initial size
-	var w, h C.int
-	C.SDL_GetWindowSize(Window.window, &w, &h)
-	var e C.SDL_WindowEvent
-	e._type = C.SDL_WINDOWEVENT
-	e.event = C.SDL_WINDOWEVENT_RESIZED
-	e.data1 = C.Sint32(w)
-	e.data2 = C.Sint32(h)
-	C.SDL_PushEvent((*C.SDL_Event)(unsafe.Pointer(&e)))
-
 	return nil
 }
 

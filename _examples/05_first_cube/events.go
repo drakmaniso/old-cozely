@@ -11,6 +11,7 @@ import (
 	"github.com/drakmaniso/glam/basic"
 	"github.com/drakmaniso/glam/math"
 	"github.com/drakmaniso/glam/mouse"
+	"github.com/drakmaniso/glam/mtx"
 	"github.com/drakmaniso/glam/pixel"
 	"github.com/drakmaniso/glam/space"
 	"github.com/drakmaniso/glam/window"
@@ -29,6 +30,7 @@ func (h handler) WindowResized(s pixel.Coord, _ time.Duration) {
 	sx, sy := window.Size().Cartesian()
 	r := sx / sy
 	projection = space.Perspective(math.Pi/4, r, 0.001, 1000.0)
+	printState()
 }
 
 //------------------------------------------------------------------------------
@@ -36,6 +38,7 @@ func (h handler) WindowResized(s pixel.Coord, _ time.Duration) {
 func (h handler) MouseWheel(motion pixel.Coord, _ time.Duration) {
 	distance -= float32(motion.Y) / 4
 	updateView()
+	printState()
 }
 
 func (h handler) MouseButtonDown(b mouse.Button, _ int, _ time.Duration) {
@@ -55,6 +58,7 @@ func (h handler) MouseMotion(motion pixel.Coord, _ pixel.Coord, _ time.Duration)
 		position.X += 2 * mx / sx
 		position.Y -= 2 * my / sy
 		updateModel()
+		printState()
 
 	case mouse.IsPressed(mouse.Right):
 		yaw += 4 * mx / sx
@@ -66,7 +70,17 @@ func (h handler) MouseMotion(motion pixel.Coord, _ pixel.Coord, _ time.Duration)
 			pitch = +math.Pi / 2
 		}
 		updateModel()
+		printState()
 	}
+}
+
+//------------------------------------------------------------------------------
+
+func printState() {
+	mtx.Print(1, 0, "position={%5.2f, %5.2f}\v", position.X, position.Y)
+	mtx.Print(1, 1, "     yaw=%+6.2f\v", yaw)
+	mtx.Print(1, 2, "   pitch=%+6.2f\v", pitch)
+	mtx.Print(1, 3, "distance=% 6.2f\v", distance)
 }
 
 //------------------------------------------------------------------------------

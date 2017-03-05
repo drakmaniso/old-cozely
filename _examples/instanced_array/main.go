@@ -23,6 +23,8 @@ import (
 //------------------------------------------------------------------------------
 
 func main() {
+	glam.Setup()
+
 	err := setup()
 	if err != nil {
 		glam.ErrorDialog(err)

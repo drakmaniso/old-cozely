@@ -16,6 +16,8 @@ import (
 //------------------------------------------------------------------------------
 
 func main() {
+	glam.Setup()
+
 	err := setup()
 	if err != nil {
 		glam.ErrorDialog(err)
@@ -68,7 +70,7 @@ func (l looper) Draw() {
 	gfx.ClearColorBuffer(color.RGBA{0.9, 0.9, 0.9, 1.0})
 	pipeline.Bind()
 	gfx.Draw(gfx.Triangles, 0, 3)
-  pipeline.Unbind()
+	pipeline.Unbind()
 }
 
 //------------------------------------------------------------------------------
