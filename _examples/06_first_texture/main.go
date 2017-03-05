@@ -157,39 +157,19 @@ func updateView() {
 type looper struct{}
 
 func (l looper) Update() {
-	mtx.Printf(2, 2, "Abc\n%v, %10.3x", 1.2345678901234567890, 1.2345678901234567890)
+	mtx.Printf(2, 2, "Abc \a%f,\a %10.3f", 1.2345678901234567890, 1.2345678901234567890)
 
-	// 	x, y := 1, 1
-	// 	x, y = mtx.Print(x, y, "One two Three ", "FOUR ", "FIVE", "\n")
-	// 	x, y = mtx.Print(x, y, "Six\n")
-	// 	x, y = mtx.Print(x, y, "Seven\n")
-	// 	mtx.Print(0, 0, "TOP LEFT")
-	// 	mtx.Print(-12, -1, "BOTTOM RIGHT")
-
-	// 	_, y = mtx.Print(0, y, "Un es", "sai ", 2, " print ", 1.1, "\n")
-	// 	mtx.ReverseVideo(true)
-	// 	_, y = mtx.Print(0, y, "Essai\n")
-	// 	mtx.ReverseVideo(false)
-	// 	_, y = mtx.Print(0, y, "int=", 33)
-	// 	_, y = mtx.Print(0, y, "\nbool=", true)
-	// 	mtx.SetPrecision(-1)
-	// 	_, y = mtx.Print(0, y, "\nZoom=", 33.0/27.0)
-	// 	_, y = mtx.Print(0, y, "\nPosition: x=", 114.0/23.0)
-	// 	_, y = mtx.Print(0, y, "\nOther:    y=", 237.0/31.0)
-	// 	mtx.SetPrecision(6)
-	// 	_, y = mtx.Print(0, y, "\nfloat32=", 12.123456789123456789123456789*1.65487)
-	// 	_, y = mtx.Print(0, y, "\nfloat64=", 4.56789123456789123456789*1.1543)
-	// 	mtx.Print(5, y+1, `
-	// Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec libero ligula,
-	// consectetur at congue et, ultricies placerat velit. Pellentesque finibus
-	// tristique orci sit amet pharetra. Nullam arcu urna, tempus malesuada aliquet
-	// quis, semper blandit ante. Proin vitae dignissim lacus. Etiam in rutrum
-	// tortor. Nulla sed maximus dolor, quis venenatis ante. Maecenas nec ante vel
-	// massa elementum varius nec vitae odio. Proin tincidunt iaculis elit eu luctus.
-	// Donec dignissim ipsum in orci congue rutrum a at turpis. Aliquam congue
-	// tristique dapibus. Pellentesque sed aliquam ex, id blandit metus. Mauris
-	// egestas magna quis elit dignissim, a laoreet sem facilisis. Duis tristique
-	// dapibus dictum. Lorem ipsum dolor sit amet, consectetur adipiscing elit.`)
+	mtx.Printf(5, 5, `
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec libero ligula,
+consectetur at congue et, ultricies placerat velit. Pellentesque finibus
+tristique orci sit amet pharetra. Nullam arcu urna, tempus malesuada aliquet
+quis, semper blandit ante. Proin vitae dignissim lacus. Etiam in rutrum
+tortor. Nulla sed maximus dolor, quis venenatis ante. Maecenas nec ante vel
+massa elementum varius nec vitae odio. Proin tincidunt iaculis elit eu luctus.
+Donec dignissim ipsum in orci congue rutrum a at turpis. Aliquam congue
+tristique dapibus. Pellentesque sed aliquam ex, id blandit metus. Mauris
+egestas magna quis elit dignissim, a laoreet sem facilisis. Duis tristique
+dapibus dictum. Lorem ipsum dolor sit amet, consectetur adipiscing elit.`)
 
 	// mtx.Clear('\000')
 	// c := byte(0)

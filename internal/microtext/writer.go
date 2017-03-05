@@ -9,6 +9,7 @@ type Writer struct {
 	Left, Top     int
 	Right, Bottom int
 	X, Y          int
+	colour        byte
 }
 
 func (w *Writer) Write(p []byte) (n int, err error) {
@@ -22,6 +23,14 @@ func (w *Writer) Write(p []byte) (n int, err error) {
 				x = w.Left
 				continue
 
+			case '\a':
+				if w.colour != 0 {
+					w.colour = 0
+				} else {
+					w.colour = 0x80
+				}
+				continue
+
 			default:
 				b = '\x7F'
 			}
@@ -31,7 +40,7 @@ func (w *Writer) Write(p []byte) (n int, err error) {
 		}
 
 		if x < w.Right && y < w.Bottom {
-			Text[x+y*int(screen.nbCols)] = b //TODO: | colour
+			Text[x+y*int(screen.nbCols)] = b | w.colour
 		}
 		x++
 	}
