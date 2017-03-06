@@ -29,7 +29,7 @@ func init() {
 	screen.pixelSize = 2
 	SetColor(color.RGB{1, 1, 1}, color.RGB{0, 0, 0})
 	SetBgAlpha(true)
-	Text = make([]byte, screen.nbCols*screen.nbRows)
+	text = make([]byte, screen.nbCols*screen.nbRows)
 }
 
 //------------------------------------------------------------------------------
@@ -37,6 +37,8 @@ func init() {
 const charWidth = 7
 const charHeight = 11
 
+// WindowResized is called each time resolution changes. It reallocates all GPU
+// ressources accordingly.
 func WindowResized(s pixel.Coord, ts time.Duration) {
 	screen.nbCols = s.X / (charWidth * screen.pixelSize)
 	screen.nbRows = s.Y / (charHeight * screen.pixelSize)
@@ -44,14 +46,14 @@ func WindowResized(s pixel.Coord, ts time.Duration) {
 	screen.left = 0
 
 	// Reallocate the SSBO
-	Text = make([]byte, screen.nbCols*screen.nbRows)
+	text = make([]byte, screen.nbCols*screen.nbRows)
 	screenSSBO.Delete()
 	screenSSBO = gfx.NewStorageBuffer(
 		unsafe.Sizeof(screen)+uintptr(screen.nbCols*screen.nbRows),
 		gfx.DynamicStorage,
 	)
 
-	TextUpdated = true
+	textUpdated = true
 
 	// Calculate the margins
 	l := (s.X - (charWidth * int32(screen.pixelSize) * int32(screen.nbCols))) / 2
@@ -76,6 +78,7 @@ func WindowResized(s pixel.Coord, ts time.Duration) {
 
 //------------------------------------------------------------------------------
 
+// Setup is called during glam setup.
 func Setup() {
 	pipeline = gfx.NewPipeline(
 		gfx.VertexShader(strings.NewReader(vertexShader)),
@@ -87,6 +90,7 @@ func Setup() {
 
 //------------------------------------------------------------------------------
 
+// Draw is called during teh main loop, after the user's Draw.
 func Draw() {
 	pipeline.Bind()
 	gfx.Disable(gfx.DepthTest)
@@ -95,9 +99,9 @@ func Draw() {
 		screenSSBO.SubData(&screen, 0)
 		screenUpdated = false
 	}
-	if TextUpdated {
-		screenSSBO.SubData(Text, unsafe.Sizeof(screen))
-		TextUpdated = false
+	if textUpdated {
+		screenSSBO.SubData(text, unsafe.Sizeof(screen))
+		textUpdated = false
 	}
 	fontSSBO.Bind(0)
 	screenSSBO.Bind(1)
@@ -126,16 +130,17 @@ var (
 		bgAlpha float32
 	}
 
-	Text []byte
+	text []byte
 )
 
 var (
 	screenUpdated bool
-	TextUpdated   bool
+	textUpdated   bool
 )
 
 //------------------------------------------------------------------------------
 
+// SetColor changes the foreground and background colors.
 func SetColor(fg, bg color.RGB) {
 	screen.fgRed = fg.R
 	screen.fgGreen = fg.G
@@ -148,6 +153,7 @@ func SetColor(fg, bg color.RGB) {
 	screenUpdated = true
 }
 
+// SetBgAlpha sets wether the background of letters is dran or not.
 func SetBgAlpha(o bool) {
 	if o {
 		screen.bgAlpha = 1.0
@@ -157,10 +163,12 @@ func SetBgAlpha(o bool) {
 	screenUpdated = true
 }
 
+// GetBgAlpha returns true if the background of letters is currently drawn.
 func GetBgAlpha() bool {
 	return screen.bgAlpha != 0.0
 }
 
+// ToggleBgAlpha inverts the status of background transparency.
 func ToggleBgAlpha() {
 	if screen.bgAlpha != 0 {
 		screen.bgAlpha = 0
@@ -170,18 +178,37 @@ func ToggleBgAlpha() {
 	screenUpdated = true
 }
 
+//------------------------------------------------------------------------------
+
+// Size returns the number of column and rows in the MTX screen.
 func Size() (cols, rows int) {
 	return int(screen.nbCols), int(screen.nbRows)
 }
 
 //------------------------------------------------------------------------------
 
+// Peek returns the character at given coordinates.
 func Peek(x, y int) byte {
-	return Text[x+y*int(screen.nbCols)]
+	return text[x+y*int(screen.nbCols)]
 }
 
+// Poke sets the character at given coordinates.
 func Poke(x, y int, c byte) {
-	Text[x+y*int(screen.nbCols)] = c
+	text[x+y*int(screen.nbCols)] = c
+}
+
+// Touch indicates that the text has been modified.
+func Touch() {
+	textUpdated = true
+}
+
+//------------------------------------------------------------------------------
+
+// Clear erases the MTX screen.
+func Clear() {
+	for i := range text {
+		text[i] = '\x00'
+	}
 }
 
 //------------------------------------------------------------------------------

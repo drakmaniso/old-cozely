@@ -50,10 +50,8 @@ func Clamp(x, y int) (int, int) {
 
 // Clear erases the MTX screen.
 func Clear() {
-	for i := range micro.Text {
-		micro.Text[i] = '\x00'
-	}
-	micro.TextUpdated = true
+	micro.Clear()
+	micro.Touch()
 }
 
 //------------------------------------------------------------------------------
@@ -70,7 +68,7 @@ func Poke(x, y int, value byte) {
 	ov := micro.Peek(x, y)
 	if value != ov {
 		micro.Poke(x, y, value)
-		micro.TextUpdated = true
+		micro.Touch()
 	}
 }
 

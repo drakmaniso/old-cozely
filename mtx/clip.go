@@ -119,7 +119,7 @@ func (cl *Clip) Clear() {
 		}
 	}
 
-	micro.TextUpdated = true
+	micro.Touch()
 }
 
 //------------------------------------------------------------------------------
@@ -163,7 +163,7 @@ func (cl *Clip) Write(p []byte) (n int, err error) {
 					for ; i <= r; i++ {
 						micro.Poke(l+i, l+y, cl.ClearChar)
 					}
-					micro.TextUpdated = true
+					micro.Touch()
 				}
 				continue
 
@@ -172,6 +172,7 @@ func (cl *Clip) Write(p []byte) (n int, err error) {
 				for i := 0; i < n; i++ {
 					micro.Poke(l+x+i, l+y, ' ')
 				}
+				micro.Touch()
 				x += n
 				continue
 
@@ -199,7 +200,7 @@ func (cl *Clip) Write(p []byte) (n int, err error) {
 			oc := micro.Peek(l+x, t+y)
 			if oc != c|cl.colour {
 				micro.Poke(l+x, t+y, c|cl.colour)
-				micro.TextUpdated = true
+				micro.Touch()
 			}
 		}
 		if x == sx && cl.HScroll {
@@ -284,7 +285,7 @@ func (cl *Clip) Scroll(dx, dy int) {
 		}
 	}
 
-	micro.TextUpdated = true
+	micro.Touch()
 }
 
 //------------------------------------------------------------------------------
