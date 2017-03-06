@@ -77,7 +77,7 @@ func (h handler) MouseMotion(motion pixel.Coord, _ pixel.Coord, _ time.Duration)
 //------------------------------------------------------------------------------
 
 func printState() {
-	mtx.Print(1, 0, "position={%5.2f, %5.2f}\v", position.X, position.Y)
+	mtx.Print(1, 0, "position=%+6.2f,%+6.2f\v", position.X, position.Y)
 	mtx.Print(1, 1, "     yaw=%+6.2f\v", yaw)
 	mtx.Print(1, 2, "   pitch=%+6.2f\v", pitch)
 	mtx.Print(1, 3, "distance=% 6.2f\v", distance)

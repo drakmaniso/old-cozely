@@ -13,7 +13,7 @@ import "github.com/drakmaniso/glam/mtx"
 func main() {
 	glam.Setup()
 
-	mtx.Print(2, 2, "hello, world\n")
+	mtx.Print(1, 1, "hello, world\n")
 
 	glam.Loop = looper{}
 	err := glam.Run()

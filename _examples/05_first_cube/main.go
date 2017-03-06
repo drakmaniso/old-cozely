@@ -106,7 +106,7 @@ func setup() error {
 	updateView()
 
 	// MTX
-	mtx.Color(color.RGB{0, 0, 0}, color.RGB{1, 1, 1}, mtx.Transparent)
+	mtx.Color(color.RGB{0.0, 0.05, 0.1}, color.RGB{0.7, 0.6, 0.45}, mtx.Transparent)
 	printState()
 
 	// Bind the vertex buffer to the pipeline

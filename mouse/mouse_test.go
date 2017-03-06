@@ -22,8 +22,6 @@ import (
 func TestMain(m *testing.M) {
 	glam.Setup()
 
-	topbar.Clip(1, 0, -1, 5)
-
 	mouse.Handle = handler{}
 
 	// Run the main loop
@@ -99,7 +97,10 @@ func (l looper) Draw() {}
 
 var timer time.Duration
 
-var topbar mtx.Writer
+var topbar = mtx.Writer{
+	Left: 1, Top: 0,
+	Right: -2, Bottom: 5,
+}
 
 func (l looper) Update() {
 	timer += glam.TimeStep
@@ -109,36 +110,36 @@ func (l looper) Update() {
 		topbar.Clear()
 
 		d := mouse.Delta()
-		topbar.Print("   mouse.Delta()=%+6d, %+6d\n", d.X, d.Y)
-		topbar.Print("mouse.Position()=%v\n", mouse.Position())
+		topbar.Print("   mouse.Delta():%+6d,%+6d\n", d.X, d.Y)
+		p := mouse.Position()
+		topbar.Print("mouse.Position():%+6d,%+6d\n", p.X, p.Y)
 
-		fmt.Print("Update: buttons=")
+		topbar.Print("   mouse buttons: ")
 		if mouse.IsPressed(mouse.Left) {
-			fmt.Print("LEFT_")
+			topbar.Print("\aleft\a ")
 		} else {
-			fmt.Print("left_")
+			topbar.Print("left ")
 		}
 		if mouse.IsPressed(mouse.Middle) {
-			fmt.Print("MIDDLE_")
+			topbar.Print("\amiddle\a ")
 		} else {
-			fmt.Print("middle_")
+			topbar.Print("middle ")
 		}
 		if mouse.IsPressed(mouse.Right) {
-			fmt.Print("RIGHT_")
+			topbar.Print("\aright\a ")
 		} else {
-			fmt.Print("right_")
+			topbar.Print("right ")
 		}
 		if mouse.IsPressed(mouse.Extra1) {
-			fmt.Print("EXTRA1_")
+			topbar.Print("\aextra1\a ")
 		} else {
-			fmt.Print("extra1_")
+			topbar.Print("extra1 ")
 		}
 		if mouse.IsPressed(mouse.Extra2) {
-			fmt.Print("EXTRA2, ")
+			topbar.Print("\aextra2\a\n")
 		} else {
-			fmt.Print("extra2, ")
+			topbar.Print("extra2\n")
 		}
-		fmt.Printf("delta=%v, position=%v\n", mouse.Delta(), mouse.Position())
 	}
 }
 
