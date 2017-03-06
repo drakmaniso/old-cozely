@@ -4,10 +4,10 @@ const fragmentShader = `
 #version 450 core
 
 const int charWidth = 7;
-const int charHeight = 13;
+const int charHeight = 11;
 
 layout(std430, binding = 0) buffer Font {
-  uint Data[3328 / 4];
+  uint Data[2816 / 4];
 } font;
 
 layout(std430, binding = 1) buffer Screen {

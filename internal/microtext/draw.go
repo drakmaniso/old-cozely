@@ -35,7 +35,7 @@ func init() {
 //------------------------------------------------------------------------------
 
 const charWidth = 7
-const charHeight = 13
+const charHeight = 11
 
 func WindowResized(s pixel.Coord, ts time.Duration) {
 	screen.nbCols = s.X / (charWidth * screen.pixelSize)
