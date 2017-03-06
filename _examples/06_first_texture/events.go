@@ -27,6 +27,11 @@ type handler struct {
 
 //------------------------------------------------------------------------------
 
+var writer = mtx.Clip{
+	Left: 1, Top: 0,
+	Right: -20, Bottom: -1,
+}
+
 func (h handler) WindowResized(s pixel.Coord, _ time.Duration) {
 	sx, sy := window.Size().Cartesian()
 	r := sx / sy
@@ -36,23 +41,24 @@ func (h handler) WindowResized(s pixel.Coord, _ time.Duration) {
 
 	for y := 0; y < 16; y++ {
 		for x := 0; x < 16; x++ {
-			mtx.Poke(-16+x, -16+y, byte(x+16*y))
+			mtx.Poke(-16+x, -16+y, byte(x+15*y))
+		}
+	}
+	for y := 0; y < 60; y++ {
+		for x := 0; x < 200; x++ {
+			mtx.Poke(x, y, ('A'+byte(x+16*y)&0x1F)|0x80)
 		}
 	}
 
-	w := mtx.Writer{
-		Left: 1, Top: 1,
-		Right: -20, Bottom: -2,
-	}
 	// w.SetClearChar(' ')
-	w.Clear()
-	w.Locate(1, 1)
-	w.Print("hello, world\n")
-	w.Print("Essai %x\n", 33333)
-	w.Print("123456\b\b\b\b\b\b\aBoo!\n\a")
+	// writer.Clear()
+	// w.Locate(1, 1)
+	// w.Print("hello, world\n")
+	// w.Print("Essai %x\n", 33333)
+	// w.Print("123456\b\b\b\b\b\b\aBoo!\n\a")
 
 	if true {
-		w.Print(`
+		writer.Print(`
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec libero
 ligula, consectetur at congue et, ultricies placerat velit. Pellentesque
 finibus tristique orci sit amet pharetra. Nullam arcu urna, tempus
@@ -78,6 +84,8 @@ func (h handler) MouseWheel(motion pixel.Coord, _ time.Duration) {
 }
 
 func (h handler) MouseButtonDown(b mouse.Button, _ int, _ time.Duration) {
+	// writer.SetClearChar('*')
+	writer.Scroll(0, -1)
 	mouse.SetRelativeMode(true)
 }
 

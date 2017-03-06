@@ -13,8 +13,8 @@ import (
 
 //------------------------------------------------------------------------------
 
-// A Writer is to output text to a part of the MTX screen.
-type Writer struct {
+// A Clip is used to output text to a part of the MTX screen.
+type Clip struct {
 	// Bounds in screen coordinates (i.e. 0,0 is the top left of the screen; -1,-1
 	// is at bottom right). Both corners are included in the resulting rectangle.
 	Left, Top     int
@@ -26,21 +26,18 @@ type Writer struct {
 	// ReverseVideo mask
 	colour byte
 
-	// Character used to clear
-	clear byte
-
-	// Whether whitespace is opaque or transparent
-	overwrite bool
+	// Character used to clear the clip
+	ClearChar byte
 }
 
 //------------------------------------------------------------------------------
 
-// Clamp returns x and y clipped to the bounds of the Writer. Both the input and
-// output are relative to the Writer bounds. If an input is negative, it is
+// Clamp returns x and y clipped to the bounds of the Clip. Both the input and
+// output are relative to the Clip bounds. If an input is negative, it is
 // interpreted relative to the bottom right corner. The output is always
 // positive.
-func (w *Writer) Clamp(x, y int) (int, int) {
-	l, t, r, b := w.Bounds()
+func (cl *Clip) Clamp(x, y int) (int, int) {
+	l, t, r, b := cl.Bounds()
 	sx, sy := r-l, b-t
 
 	if x < 0 {
@@ -66,12 +63,12 @@ func (w *Writer) Clamp(x, y int) (int, int) {
 	return x, y
 }
 
-// Bounds returns the top left and bottom right corners of the Writer, in
+// Bounds returns the top left and bottom right corners of the Clip, in
 // screen coordinates.
-func (w *Writer) Bounds() (left, top int, right, bottom int) {
-	left, top = Clamp(w.Left, w.Top)
-	right, bottom = Clamp(w.Right, w.Bottom)
-	if w.Right == 0 && w.Bottom == 0 && w.Left == 0 && w.Top == 0 {
+func (cl *Clip) Bounds() (left, top int, right, bottom int) {
+	left, top = Clamp(cl.Left, cl.Top)
+	right, bottom = Clamp(cl.Right, cl.Bottom)
+	if cl.Right == 0 && cl.Bottom == 0 && cl.Left == 0 && cl.Top == 0 {
 		right, bottom = micro.Size()
 		right--
 		bottom--
@@ -81,59 +78,49 @@ func (w *Writer) Bounds() (left, top int, right, bottom int) {
 
 //------------------------------------------------------------------------------
 
-// Locate positions the Writer cursor, in coordinates relative to the Writer
+// Locate positions the Clip cursor, in coordinates relative to the Clip
 // bounds. Positive coordinates are interpreted from the top left corner, while
 // negative coordinates are interpreted from the bottom-right corner.
-func (w *Writer) Locate(x, y int) {
-	w.x, w.y = w.Clamp(x, y)
+func (cl *Clip) Locate(x, y int) {
+	cl.x, cl.y = cl.Clamp(x, y)
 }
 
 //------------------------------------------------------------------------------
 
-func (w *Writer) ReverseVideo(r bool) {
+func (cl *Clip) ReverseVideo(r bool) {
 	if r {
-		w.colour = 0x80
+		cl.colour = 0x80
 	} else {
-		w.colour = 0x00
+		cl.colour = 0x00
 	}
 }
 
 //------------------------------------------------------------------------------
 
-func (w *Writer) Clear() {
-	l, t, r, b := w.Bounds()
-	w.x, w.y = 0, 0
+func (cl *Clip) Clear() {
+	l, t, r, b := cl.Bounds()
+	cl.x, cl.y = 0, 0
 
 	for y := t; y <= b; y++ {
 		for x := l; x <= r; x++ {
-			micro.Poke(x, y, w.clear)
+			micro.Poke(x, y, cl.ClearChar)
 		}
 	}
 
 	micro.TextUpdated = true
 }
 
-func (w *Writer) SetClearChar(c byte) {
-	w.clear = c
-}
-
 //------------------------------------------------------------------------------
 
-func (w *Writer) Write(p []byte) (n int, err error) {
-	l, t, r, b := w.Bounds()
+func (cl *Clip) Write(p []byte) (n int, err error) {
+	l, t, r, b := cl.Bounds()
 	sx, sy := r-l, b-t
 
-	x, y := w.x, w.y
+	x, y := cl.x, cl.y
 	for _, c := range p {
 		switch {
-		case c <= ' ':
+		case c < ' ':
 			switch c {
-			case ' ':
-				if w.overwrite {
-					x++
-					continue
-				}
-
 			case '\n':
 				y++
 				x = 0
@@ -144,7 +131,7 @@ func (w *Writer) Write(p []byte) (n int, err error) {
 				continue
 
 			case '\f':
-				w.Clear()
+				cl.Clear()
 				continue
 
 			case '\v':
@@ -154,13 +141,13 @@ func (w *Writer) Write(p []byte) (n int, err error) {
 				}
 				if y >= t && y <= b {
 					for ; i <= r; i++ {
-						micro.Poke(i, y, w.clear)
+						micro.Poke(i, y, cl.ClearChar)
 					}
 				}
 				continue
 
 			case '\t':
-				//TODO: should insert spaces if no overwrite
+				//TODO: should insert spaces
 				x = ((x / 8) + 1) * 8
 				continue
 
@@ -169,10 +156,10 @@ func (w *Writer) Write(p []byte) (n int, err error) {
 				continue
 
 			case '\a':
-				if w.colour != 0 {
-					w.colour = 0
+				if cl.colour != 0 {
+					cl.colour = 0
 				} else {
-					w.colour = 0x80
+					cl.colour = 0x80
 				}
 				continue
 
@@ -185,26 +172,83 @@ func (w *Writer) Write(p []byte) (n int, err error) {
 		}
 
 		if x >= 0 && x <= sx && y >= 0 && y <= sy {
-			micro.Poke(l+x, t+y, c|w.colour)
+			micro.Poke(l+x, t+y, c|cl.colour)
 		}
 		x++
 	}
 
-	w.x, w.y = x, y
+	cl.x, cl.y = x, y
 
 	micro.TextUpdated = true
 
 	return len(p), nil
 }
 
-func (w *Writer) SetOverwrite(o bool) {
-	w.overwrite = o
+//------------------------------------------------------------------------------
+
+func (cl *Clip) Print(format string, a ...interface{}) {
+	fmt.Fprintf(cl, format, a...)
 }
 
 //------------------------------------------------------------------------------
 
-func (w *Writer) Print(format string, a ...interface{}) {
-	fmt.Fprintf(w, format, a...)
+func (cl *Clip) Scroll(dx, dy int) {
+	l, t, r, b := cl.Bounds()
+
+	var x1, x2, x3, incX, y1, y2, y3, incY int
+	var cmpX, cmpY func(int, int) bool
+	if dx >= 0 {
+		x1 = r
+		if dx > r-l {
+			dx = r - l + 1
+		}
+		x2 = l + dx
+		x3 = l
+		incX = -1
+		cmpX = func(a, b int) bool { return a >= b }
+	} else {
+		x1 = l
+		if dx < l-r {
+			dx = l - r - 1
+		}
+		x2 = r + dx
+		x3 = r
+		incX = +1
+		cmpX = func(a, b int) bool { return a <= b }
+	}
+	if dy >= 0 {
+		y1 = b
+		if dy > b-t {
+			dy = b - t + 1
+		}
+		y2 = t + dy
+		y3 = t
+		incY = -1
+		cmpY = func(a, b int) bool { return a >= b }
+	} else {
+		y1 = t
+		if dy < t-b {
+			dy = t - b - 1
+		}
+		y2 = b + dy
+		y3 = b
+		incY = +1
+		cmpY = func(a, b int) bool { return a <= b }
+	}
+
+	for y := y1; cmpY(y, y2); y += incY {
+		for x := x1; cmpX(x, x2); x += incX {
+			Poke(x, y, Peek(x-dx, y-dy))
+		}
+		for x := x2 + incX; cmpX(x, x3); x += incX {
+			Poke(x, y, cl.ClearChar)
+		}
+	}
+	for y := y2 + incY; cmpY(y, y3); y += incY {
+		for x := l; x <= r; x++ {
+			Poke(x, y, cl.ClearChar)
+		}
+	}
 }
 
 //------------------------------------------------------------------------------

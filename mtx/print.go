@@ -71,10 +71,14 @@ func Poke(x, y int, value byte) {
 //------------------------------------------------------------------------------
 
 func Print(x, y int, format string, a ...interface{}) {
-	var w Writer
-	w.Locate(x, y)
+	stdClip.Locate(x, y)
 
-	fmt.Fprintf(&w, format, a...)
+	fmt.Fprintf(&stdClip, format, a...)
+}
+
+var stdClip = Clip{
+	Left: 0, Top: 0,
+	Right: -1, Bottom: -1,
 }
 
 //------------------------------------------------------------------------------

@@ -97,7 +97,7 @@ func (l looper) Draw() {}
 
 var timer time.Duration
 
-var topbar = mtx.Writer{
+var topbar = mtx.Clip{
 	Left: 1, Top: 0,
 	Right: -2, Bottom: 5,
 }
