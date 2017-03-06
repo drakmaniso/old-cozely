@@ -13,10 +13,13 @@ import (
 
 //------------------------------------------------------------------------------
 
+// Size returns the size of the MTX screen.
 func Size() (x, y int) {
 	return micro.Size()
 }
 
+// Clamp restricts the given coordinates to the screen boundaries. Negative
+// coordinates are anchored to the bottom right instead of the top left.
 func Clamp(x, y int) (int, int) {
 	sx, sy := micro.Size()
 
@@ -45,6 +48,7 @@ func Clamp(x, y int) (int, int) {
 
 //------------------------------------------------------------------------------
 
+// Clear erases the MTX screen.
 func Clear() {
 	for i := range micro.Text {
 		micro.Text[i] = '\x00'
@@ -54,11 +58,13 @@ func Clear() {
 
 //------------------------------------------------------------------------------
 
+// Peek returns the character at given coordinates.
 func Peek(x, y int) byte {
 	x, y = Clamp(x, y)
 	return micro.Peek(x, y)
 }
 
+// Poke sets the character at given coordinates.
 func Poke(x, y int, value byte) {
 	x, y = Clamp(x, y)
 	ov := micro.Peek(x, y)
@@ -70,6 +76,7 @@ func Poke(x, y int, value byte) {
 
 //------------------------------------------------------------------------------
 
+// Print writes formatted text to the screen, at given coordinates.
 func Print(x, y int, format string, a ...interface{}) {
 	stdClip.Locate(x, y)
 
@@ -83,27 +90,21 @@ var stdClip = Clip{
 
 //------------------------------------------------------------------------------
 
-func Color(fg, bg color.RGB, o Opacity) {
+// Color sets the foreground and background color.
+func Color(fg, bg color.RGB) {
 	micro.SetColor(fg, bg)
-
-	switch o {
-	case Transparent:
-		micro.SetBgAlpha(false)
-	case Opaque:
-		micro.SetBgAlpha(true)
-	case Toggle:
-		micro.ToggleBgAlpha()
-	}
 }
 
-type Opacity int
+// Opaque selects wether the background is drawn or not. If set to false,
+// letters are drawn without background. If set to true, letters are drawn on
+// colored background. In all cases but blank space is always transparent.
+//
+// Note: You can toggle this settings in game, using Control+Alt+NumPadEnter.
+func Opaque(t bool) {
+	micro.SetBgAlpha(t)
+}
 
-const (
-	Transparent Opacity = iota
-	Opaque
-	Toggle
-)
-
+// IsOpaque returns wether the background is currently opaque or not.
 func IsOpaque() bool {
 	return micro.GetBgAlpha()
 }

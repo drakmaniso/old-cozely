@@ -84,15 +84,17 @@ func (cl *Clip) Bounds() (left, top int, right, bottom int) {
 
 //------------------------------------------------------------------------------
 
-// Locate positions the Clip cursor, in coordinates relative to the Clip
-// bounds. Positive coordinates are interpreted from the top left corner, while
-// negative coordinates are interpreted from the bottom-right corner.
+// Locate positions the Clip cursor, in coordinates relative to its bounds.
+// Positive coordinates are interpreted from the top left corner, while negative
+// coordinates are interpreted from the bottom-right corner.
 func (cl *Clip) Locate(x, y int) {
 	cl.x, cl.y = cl.Clamp(x, y)
 }
 
 //------------------------------------------------------------------------------
 
+// ReverseVideo specifies how the following print or write will be displayed:
+// normal or video inversed.
 func (cl *Clip) ReverseVideo(r bool) {
 	if r {
 		cl.colour = 0x80
@@ -103,6 +105,10 @@ func (cl *Clip) ReverseVideo(r bool) {
 
 //------------------------------------------------------------------------------
 
+// Clear erases all text from the clip.
+//
+// Note: you can customize the character used to erase by setting the ClearChar
+// field of the clip.
 func (cl *Clip) Clear() {
 	l, t, r, b := cl.Bounds()
 	cl.x, cl.y = 0, 0
@@ -118,6 +124,10 @@ func (cl *Clip) Clear() {
 
 //------------------------------------------------------------------------------
 
+// Write outputs text to the clip, starting at the cursor position. Special
+// characters such as newline and tabs are recognized. It always returns the
+// total number of bytes in the slice, even if some characters are clipped
+// because out-of-bounds.
 func (cl *Clip) Write(p []byte) (n int, err error) {
 	l, t, r, b := cl.Bounds()
 	sx, sy := r-l, b-t
@@ -206,12 +216,16 @@ func (cl *Clip) Write(p []byte) (n int, err error) {
 
 //------------------------------------------------------------------------------
 
+// Print writes formatted text on the clip. It is equivalent to a call to
+// fmt.Fprintf on the clip.
 func (cl *Clip) Print(format string, a ...interface{}) {
 	fmt.Fprintf(cl, format, a...)
 }
 
 //------------------------------------------------------------------------------
 
+// Scroll moves the content of the clip by a specified amount. Everything that
+// move out of bounds is discarded, and the liberated space is cleared.
 func (cl *Clip) Scroll(dx, dy int) {
 	l, t, r, b := cl.Bounds()
 
