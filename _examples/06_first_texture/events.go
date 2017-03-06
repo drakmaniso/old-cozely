@@ -28,10 +28,10 @@ type handler struct {
 //------------------------------------------------------------------------------
 
 var writer = mtx.Clip{
-	Left: 1, Top: 0,
-	Right: -20, Bottom: -1,
+	Left: 1, Top: 1,
+	Right: -20, Bottom: -2,
 	VScroll: true,
-	HScroll: true,
+	HScroll: false,
 }
 
 func (h handler) WindowResized(s pixel.Coord, _ time.Duration) {
@@ -54,8 +54,8 @@ func (h handler) WindowResized(s pixel.Coord, _ time.Duration) {
 
 	// w.SetClearChar(' ')
 	// writer.Clear()
-	// w.Locate(1, 1)
-	// w.Print("hello, world\n")
+	writer.Locate(0, 0)
+	writer.Print("\tworld\n")
 	// w.Print("Essai %x\n", 33333)
 	// w.Print("123456\b\b\b\b\b\b\aBoo!\n\a")
 

@@ -151,15 +151,18 @@ func (cl *Clip) Write(p []byte) (n int, err error) {
 				}
 				if y >= t && y <= b {
 					for ; i <= r; i++ {
-						micro.Poke(i, y, cl.ClearChar)
+						micro.Poke(l+i, l+y, cl.ClearChar)
 					}
 					micro.TextUpdated = true
 				}
 				continue
 
 			case '\t':
-				//TODO: should insert spaces
-				x = ((x / 8) + 1) * 8
+				n := ((x/8)+1)*8 - x
+				for i := 0; i < n; i++ {
+					micro.Poke(l+x+i, l+y, ' ')
+				}
+				x += n
 				continue
 
 			case '\b':
