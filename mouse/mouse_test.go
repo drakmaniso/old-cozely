@@ -44,7 +44,7 @@ type handler struct {
 }
 
 func (h handler) MouseMotion(rel pixel.Coord, pos pixel.Coord, ts time.Duration) {
-	scroller.Print("%s:  Motion: relative=%v, position=%v\n", ts, rel, pos)
+	scroller.Print("%s:  motion  %+d,%+d  %d,%d\n", ts, rel.X, rel.Y, pos.X, pos.Y)
 }
 
 func (h handler) MouseButtonDown(b mouse.Button, clicks int, ts time.Duration) {
@@ -63,7 +63,7 @@ func (h handler) MouseButtonDown(b mouse.Button, clicks int, ts time.Duration) {
 	default:
 		n = "UNKOWN!"
 	}
-	scroller.Print("%v:  Button Down: %s (%v), clicks=%v\n", ts, n, b, clicks)
+	scroller.Print("%v:  button down  %s (%v), clicks=%v\n", ts, n, b, clicks)
 }
 
 func (h handler) MouseButtonUp(b mouse.Button, clicks int, ts time.Duration) {
@@ -82,11 +82,11 @@ func (h handler) MouseButtonUp(b mouse.Button, clicks int, ts time.Duration) {
 	default:
 		n = "UNKOWN!"
 	}
-	scroller.Print("%v:  Button Up: %s (%v), clicks=%v\n", ts, n, b, clicks)
+	scroller.Print("%v:  button up: %s (%v), clicks=%v\n", ts, n, b, clicks)
 }
 
 func (h handler) MouseWheel(w pixel.Coord, ts time.Duration) {
-	scroller.Print("%v:  Wheel: %v\n", ts, w)
+	scroller.Print("%v:  wheel: %+d,%+d\n", ts, w.X, w.Y)
 }
 
 var scroller = mtx.Clip{
@@ -112,7 +112,7 @@ func (l looper) Update() {
 		d := mouse.Delta()
 		topbar.Print("   mouse.Delta():%+6d,%+6d\n", d.X, d.Y)
 		p := mouse.Position()
-		topbar.Print("mouse.Position():%+6d,%+6d\n", p.X, p.Y)
+		topbar.Print("mouse.Position():%6d,%6d\n", p.X, p.Y)
 
 		topbar.Print("   mouse buttons: ")
 		if mouse.IsPressed(mouse.Left) {

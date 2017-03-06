@@ -122,7 +122,7 @@ func (cl *Clip) Write(p []byte) (n int, err error) {
 	l, t, r, b := cl.Bounds()
 	sx, sy := r-l, b-t
 
-	x, y := cl.x, cl.y
+	x, y := cl.Clamp(cl.x, cl.y)
 	for _, c := range p {
 		switch {
 		case c < ' ':
@@ -153,6 +153,7 @@ func (cl *Clip) Write(p []byte) (n int, err error) {
 					for ; i <= r; i++ {
 						micro.Poke(i, y, cl.ClearChar)
 					}
+					micro.TextUpdated = true
 				}
 				continue
 
@@ -182,7 +183,11 @@ func (cl *Clip) Write(p []byte) (n int, err error) {
 		}
 
 		if x >= 0 && x <= sx && y >= 0 && y <= sy {
-			micro.Poke(l+x, t+y, c|cl.colour)
+			oc := micro.Peek(l+x, t+y)
+			if oc != c|cl.colour {
+				micro.Poke(l+x, t+y, c|cl.colour)
+				micro.TextUpdated = true
+			}
 		}
 		if x == sx && cl.HScroll {
 			cl.Scroll(-1, 0)
@@ -192,8 +197,6 @@ func (cl *Clip) Write(p []byte) (n int, err error) {
 	}
 
 	cl.x, cl.y = x, y
-
-	micro.TextUpdated = true
 
 	return len(p), nil
 }
@@ -263,6 +266,8 @@ func (cl *Clip) Scroll(dx, dy int) {
 			Poke(x, y, cl.ClearChar)
 		}
 	}
+
+	micro.TextUpdated = true
 }
 
 //------------------------------------------------------------------------------
