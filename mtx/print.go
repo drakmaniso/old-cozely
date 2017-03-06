@@ -43,32 +43,6 @@ func Clamp(x, y int) (int, int) {
 	return x, y
 }
 
-func clampBR(x, y int) (int, int) {
-	sx, sy := micro.Size()
-
-	if x < 0 {
-		x += sx
-	}
-	if x < 1 {
-		x = 1
-	}
-	if x > sx {
-		x = sx
-	}
-
-	if y < 0 {
-		y += sy
-	}
-	if y < 1 {
-		y = 1
-	}
-	if y > sy {
-		y = sy
-	}
-
-	return x, y
-}
-
 //------------------------------------------------------------------------------
 
 func Clear() {
@@ -98,9 +72,7 @@ func Poke(x, y int, value byte) {
 
 func Print(x, y int, format string, a ...interface{}) {
 	var w Writer
-	w.left, w.top = Clamp(x, y)
-	w.right, w.bottom = micro.Size()
-	w.x, w.y = w.left, w.top
+	w.Locate(x, y)
 
 	fmt.Fprintf(&w, format, a...)
 }

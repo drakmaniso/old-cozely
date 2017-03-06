@@ -13,63 +13,78 @@ import (
 
 //------------------------------------------------------------------------------
 
+// A Writer is to output text to a part of the MTX screen.
 type Writer struct {
-	left, top     int
-	right, bottom int
-	x, y          int
-	colour        byte
-	clear         byte
-	overwrite     bool
+	// Bounds in screen coordinates (i.e. 0,0 is the top left of the screen; -1,-1
+	// is at bottom right). Both corners are included in the resulting rectangle.
+	Left, Top     int
+	Right, Bottom int
+
+	// Cursor position, relative to top-left corner
+	x, y int
+
+	// ReverseVideo mask
+	colour byte
+
+	// Character used to clear
+	clear byte
+
+	// Whether whitespace is opaque or transparent
+	overwrite bool
 }
 
 //------------------------------------------------------------------------------
 
-func (w *Writer) Clip(left, top int, right, bottom int) {
-	w.left, w.top = left, top
-	w.right, w.bottom = right, bottom
-	w.x, w.y = w.left, w.top
-}
-
+// Clamp returns x and y clipped to the bounds of the Writer. Both the input and
+// output are relative to the Writer bounds. If an input is negative, it is
+// interpreted relative to the bottom right corner. The output is always
+// positive.
 func (w *Writer) Clamp(x, y int) (int, int) {
-	r, b := w.right, w.bottom
-	sx, sy := micro.Size()
-	// Clip bounds can be outside window size
-	if r > sx {
-		r = sx
-	}
-	if b > sy {
-		b = sy
-	}
+	l, t, r, b := w.Bounds()
+	sx, sy := r-l, b-t
 
 	if x < 0 {
-		x += w.right
+		x += sx
 	}
-	if x < w.left {
-		x = w.left
+	if x < 0 {
+		x = 0
 	}
-	if x >= r {
-		x = r - 1
+	if x > sx {
+		x = sx
 	}
 
 	if y < 0 {
-		y += b
+		y += sy
 	}
-	if y < w.top {
-		y = w.top
+	if y < 0 {
+		y = 0
 	}
-	if y >= b {
-		y = b - 1
+	if y > sy {
+		y = sy
 	}
 
 	return x, y
 }
 
+// Bounds returns the top left and bottom right corners of the Writer, in
+// screen coordinates.
+func (w *Writer) Bounds() (left, top int, right, bottom int) {
+	left, top = Clamp(w.Left, w.Top)
+	right, bottom = Clamp(w.Right, w.Bottom)
+	if w.Right == 0 && w.Bottom == 0 && w.Left == 0 && w.Top == 0 {
+		right, bottom = micro.Size()
+		right--
+		bottom--
+	}
+	return left, top, right, bottom
+}
+
 //------------------------------------------------------------------------------
 
+// Locate positions the Writer cursor, in coordinates relative to the Writer
+// bounds. Positive coordinates are interpreted from the top left corner, while
+// negative coordinates are interpreted from the bottom-right corner.
 func (w *Writer) Locate(x, y int) {
-	if w.right == 0 && w.bottom == 0 && w.left == 0 && w.top == 0 {
-		w.right, w.bottom = micro.Size()
-	}
 	w.x, w.y = w.Clamp(x, y)
 }
 
@@ -86,15 +101,11 @@ func (w *Writer) ReverseVideo(r bool) {
 //------------------------------------------------------------------------------
 
 func (w *Writer) Clear() {
-	if w.right == 0 && w.bottom == 0 && w.left == 0 && w.top == 0 {
-		w.right, w.bottom = micro.Size()
-	}
-	w.left, w.top = Clamp(w.left, w.top)
-	w.right, w.bottom = clampBR(w.right, w.bottom)
-	w.x, w.y = w.left, w.top
+	l, t, r, b := w.Bounds()
+	w.x, w.y = 0, 0
 
-	for y := w.top; y < w.bottom; y++ {
-		for x := w.left; x < w.right; x++ {
+	for y := t; y <= b; y++ {
+		for x := l; x <= r; x++ {
 			micro.Poke(x, y, w.clear)
 		}
 	}
@@ -109,14 +120,14 @@ func (w *Writer) SetClearChar(c byte) {
 //------------------------------------------------------------------------------
 
 func (w *Writer) Write(p []byte) (n int, err error) {
-	if w.right == 0 && w.bottom == 0 && w.left == 0 && w.top == 0 {
-		w.right, w.bottom = micro.Size()
-	}
+	l, t, r, b := w.Bounds()
+	sx, sy := r-l, b-t
+
 	x, y := w.x, w.y
-	for _, b := range p {
+	for _, c := range p {
 		switch {
-		case b <= ' ':
-			switch b {
+		case c <= ' ':
+			switch c {
 			case ' ':
 				if w.overwrite {
 					x++
@@ -125,11 +136,11 @@ func (w *Writer) Write(p []byte) (n int, err error) {
 
 			case '\n':
 				y++
-				x = w.left
+				x = 0
 				continue
 
 			case '\r':
-				x = w.left
+				x = 0
 				continue
 
 			case '\f':
@@ -138,11 +149,11 @@ func (w *Writer) Write(p []byte) (n int, err error) {
 
 			case '\v':
 				i := x
-				if i < w.left {
-					i = w.left
+				if i < l {
+					i = l
 				}
-				if y >= w.top && y < w.bottom {
-					for ; i < w.right; i++ {
+				if y >= t && y <= b {
+					for ; i <= r; i++ {
 						micro.Poke(i, y, w.clear)
 					}
 				}
@@ -150,7 +161,7 @@ func (w *Writer) Write(p []byte) (n int, err error) {
 
 			case '\t':
 				//TODO: should insert spaces if no overwrite
-				x = w.left + (((x-w.left)/8)+1)*8
+				x = ((x / 8) + 1) * 8
 				continue
 
 			case '\b':
@@ -166,20 +177,20 @@ func (w *Writer) Write(p []byte) (n int, err error) {
 				continue
 
 			default:
-				b = '\x7F'
+				c = '\x7F'
 			}
 
-		case b > '~':
-			b = '\x7F'
+		case c > '~':
+			c = '\x7F'
 		}
 
-		if x >= w.left && x < w.right && y >= w.top && y < w.bottom {
-			micro.Poke(x, y, b|w.colour)
+		if x >= 0 && x <= sx && y >= 0 && y <= sy {
+			micro.Poke(l+x, t+y, c|w.colour)
 		}
 		x++
 	}
 
-	w.x, w.y = w.Clamp(x, y)
+	w.x, w.y = x, y
 
 	micro.TextUpdated = true
 
@@ -193,14 +204,6 @@ func (w *Writer) SetOverwrite(o bool) {
 //------------------------------------------------------------------------------
 
 func (w *Writer) Print(format string, a ...interface{}) {
-	if w.right == 0 && w.bottom == 0 && w.left == 0 && w.top == 0 {
-		w.right, w.bottom = micro.Size()
-	} else {
-		w.left, w.top = Clamp(w.left, w.top)
-		w.right, w.bottom = clampBR(w.right, w.bottom)
-	}
-	w.x, w.y = w.Clamp(w.x, w.y)
-
 	fmt.Fprintf(w, format, a...)
 }
 
