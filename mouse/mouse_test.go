@@ -44,7 +44,7 @@ type handler struct {
 }
 
 func (h handler) MouseMotion(rel pixel.Coord, pos pixel.Coord, ts time.Duration) {
-	fmt.Printf("Event:  Mouse Motion: relative=%v, position=%v, time=%v\n", rel, pos, ts)
+	scroller.Print("%s:  Motion: relative=%v, position=%v\n", ts, rel, pos)
 }
 
 func (h handler) MouseButtonDown(b mouse.Button, clicks int, ts time.Duration) {
@@ -63,7 +63,7 @@ func (h handler) MouseButtonDown(b mouse.Button, clicks int, ts time.Duration) {
 	default:
 		n = "UNKOWN!"
 	}
-	fmt.Printf("Event:  Mouse Button Down: %s (%v), clicks=%v, time=%v\n", n, b, clicks, ts)
+	scroller.Print("%v:  Button Down: %s (%v), clicks=%v\n", ts, n, b, clicks)
 }
 
 func (h handler) MouseButtonUp(b mouse.Button, clicks int, ts time.Duration) {
@@ -82,11 +82,18 @@ func (h handler) MouseButtonUp(b mouse.Button, clicks int, ts time.Duration) {
 	default:
 		n = "UNKOWN!"
 	}
-	fmt.Printf("Event:  Mouse Button Up: %s (%v), clicks=%v, time=%v\n", n, b, clicks, ts)
+	scroller.Print("%v:  Button Up: %s (%v), clicks=%v\n", ts, n, b, clicks)
 }
 
 func (h handler) MouseWheel(w pixel.Coord, ts time.Duration) {
-	fmt.Printf("Event:  Mouse Wheel: %v, time=%v\n", w, ts)
+	scroller.Print("%v:  Wheel: %v\n", ts, w)
+}
+
+var scroller = mtx.Clip{
+	Left: 1, Top: 4,
+	Right: -2, Bottom: -1,
+	VScroll:   true,
+	ClearChar: ' ',
 }
 
 //------------------------------------------------------------------------------
@@ -94,13 +101,6 @@ func (h handler) MouseWheel(w pixel.Coord, ts time.Duration) {
 type looper struct{}
 
 func (l looper) Draw() {}
-
-var timer time.Duration
-
-var topbar = mtx.Clip{
-	Left: 1, Top: 0,
-	Right: -2, Bottom: 5,
-}
 
 func (l looper) Update() {
 	timer += glam.TimeStep
@@ -141,6 +141,13 @@ func (l looper) Update() {
 			topbar.Print("extra2\n")
 		}
 	}
+}
+
+var timer time.Duration
+
+var topbar = mtx.Clip{
+	Left: 1, Top: 0,
+	Right: -2, Bottom: 2,
 }
 
 //------------------------------------------------------------------------------

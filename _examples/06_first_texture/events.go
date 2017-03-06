@@ -30,6 +30,8 @@ type handler struct {
 var writer = mtx.Clip{
 	Left: 1, Top: 0,
 	Right: -20, Bottom: -1,
+	VScroll: true,
+	HScroll: true,
 }
 
 func (h handler) WindowResized(s pixel.Coord, _ time.Duration) {
@@ -44,11 +46,11 @@ func (h handler) WindowResized(s pixel.Coord, _ time.Duration) {
 			mtx.Poke(-16+x, -16+y, byte(x+15*y))
 		}
 	}
-	for y := 0; y < 60; y++ {
-		for x := 0; x < 200; x++ {
-			mtx.Poke(x, y, ('A'+byte(x+16*y)&0x1F)|0x80)
-		}
-	}
+	// for y := 0; y < 60; y++ {
+	// 	for x := 0; x < 200; x++ {
+	// 		mtx.Poke(x, y, ('A'+byte(x+16*y)&0x1F)|0x80)
+	// 	}
+	// }
 
 	// w.SetClearChar(' ')
 	// writer.Clear()
@@ -69,7 +71,8 @@ tincidunt iaculis elit eu luctus. Donec dignissim ipsum in orci congue
 rutrum a at turpis. Aliquam congue tristique dapibus. Pellentesque sed
 aliquam ex, id blandit metus. Mauris egestas magna quis elit dignissim, a
 laoreet sem facilisis. Duis tristique dapibus dictum. Lorem ipsum dolor
-sit amet, consectetur adipiscing elit.`)
+sit amet, consectetur adipiscing elit.
+`)
 	}
 
 	// w.Locate(-2, 1)
@@ -83,9 +86,13 @@ func (h handler) MouseWheel(motion pixel.Coord, _ time.Duration) {
 	updateView()
 }
 
+var ccc int
+
 func (h handler) MouseButtonDown(b mouse.Button, _ int, _ time.Duration) {
 	// writer.SetClearChar('*')
-	writer.Scroll(0, -1)
+	// writer.Scroll(0, -1)
+	writer.Print("\n%v", ccc)
+	ccc++
 	mouse.SetRelativeMode(true)
 }
 

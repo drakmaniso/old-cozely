@@ -14,6 +14,8 @@ import (
 //------------------------------------------------------------------------------
 
 // A Clip is used to output text to a part of the MTX screen.
+//
+// It implements the io.Writer interface.
 type Clip struct {
 	// Bounds in screen coordinates (i.e. 0,0 is the top left of the screen; -1,-1
 	// is at bottom right). Both corners are included in the resulting rectangle.
@@ -28,6 +30,10 @@ type Clip struct {
 
 	// Character used to clear the clip
 	ClearChar byte
+
+	// Whether vertical and horizontal auto-scrolling are active
+	HScroll bool
+	VScroll bool
 }
 
 //------------------------------------------------------------------------------
@@ -122,8 +128,12 @@ func (cl *Clip) Write(p []byte) (n int, err error) {
 		case c < ' ':
 			switch c {
 			case '\n':
-				y++
 				x = 0
+				if y == sy && cl.VScroll {
+					cl.Scroll(0, -1)
+				} else {
+					y++
+				}
 				continue
 
 			case '\r':
@@ -174,7 +184,11 @@ func (cl *Clip) Write(p []byte) (n int, err error) {
 		if x >= 0 && x <= sx && y >= 0 && y <= sy {
 			micro.Poke(l+x, t+y, c|cl.colour)
 		}
-		x++
+		if x == sx && cl.HScroll {
+			cl.Scroll(-1, 0)
+		} else {
+			x++
+		}
 	}
 
 	cl.x, cl.y = x, y
