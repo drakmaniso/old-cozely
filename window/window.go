@@ -7,8 +7,6 @@ package window
 //------------------------------------------------------------------------------
 
 import (
-	"time"
-
 	"github.com/drakmaniso/glam/internal"
 	"github.com/drakmaniso/glam/pixel"
 )
@@ -17,17 +15,17 @@ import (
 
 // Handler receives window events.
 type Handler interface {
-	WindowShown(timestamp time.Duration)
-	WindowHidden(timestamp time.Duration)
-	WindowResized(newSize pixel.Coord, timestamp time.Duration)
-	WindowMinimized(timestamp time.Duration)
-	WindowMaximized(timestamp time.Duration)
-	WindowRestored(timestamp time.Duration)
-	WindowMouseEnter(timestamp time.Duration)
-	WindowMouseLeave(timestamp time.Duration)
-	WindowFocusGained(timestamp time.Duration)
-	WindowFocusLost(timestamp time.Duration)
-	WindowQuit(timestamp time.Duration)
+	WindowShown(timestamp uint32)
+	WindowHidden(timestamp uint32)
+	WindowResized(newSize pixel.Coord, timestamp uint32)
+	WindowMinimized(timestamp uint32)
+	WindowMaximized(timestamp uint32)
+	WindowRestored(timestamp uint32)
+	WindowMouseEnter(timestamp uint32)
+	WindowMouseLeave(timestamp uint32)
+	WindowFocusGained(timestamp uint32)
+	WindowFocusLost(timestamp uint32)
+	WindowQuit(timestamp uint32)
 }
 
 // Handle is the current handlers for window events

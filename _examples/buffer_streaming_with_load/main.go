@@ -196,13 +196,13 @@ type handler struct {
 	basic.MouseHandler
 }
 
-func (h handler) WindowResized(s pixel.Coord, _ time.Duration) {
+func (h handler) WindowResized(s pixel.Coord, _ uint32) {
 	gfx.ClearColorBuffer(bgColor)
 	setupPoints()
 	updateView()
 }
 
-func (h handler) MouseButtonDown(b mouse.Button, _ int, _ time.Duration) {
+func (h handler) MouseButtonDown(b mouse.Button, _ int, _ uint32) {
 	gfx.ClearColorBuffer(bgColor)
 	setupPoints()
 }

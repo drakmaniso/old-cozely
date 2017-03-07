@@ -6,8 +6,6 @@ package basic
 //------------------------------------------------------------------------------
 
 import (
-	"time"
-
 	"github.com/drakmaniso/glam/internal"
 	"github.com/drakmaniso/glam/internal/microtext"
 	"github.com/drakmaniso/glam/key"
@@ -21,37 +19,37 @@ import (
 type WindowHandler struct{}
 
 // WindowShown does nothing.
-func (dh WindowHandler) WindowShown(timestamp time.Duration) {}
+func (dh WindowHandler) WindowShown(timestamp uint32) {}
 
 // WindowHidden does nothing.
-func (dh WindowHandler) WindowHidden(timestamp time.Duration) {}
+func (dh WindowHandler) WindowHidden(timestamp uint32) {}
 
 // WindowResized does nothing.
-func (dh WindowHandler) WindowResized(s pixel.Coord, timestamp time.Duration) {}
+func (dh WindowHandler) WindowResized(s pixel.Coord, timestamp uint32) {}
 
 // WindowMinimized does nothing.
-func (dh WindowHandler) WindowMinimized(timestamp time.Duration) {}
+func (dh WindowHandler) WindowMinimized(timestamp uint32) {}
 
 // WindowMaximized does nothing.
-func (dh WindowHandler) WindowMaximized(timestamp time.Duration) {}
+func (dh WindowHandler) WindowMaximized(timestamp uint32) {}
 
 // WindowRestored does nothing.
-func (dh WindowHandler) WindowRestored(timestamp time.Duration) {}
+func (dh WindowHandler) WindowRestored(timestamp uint32) {}
 
 // WindowMouseEnter does nothing.
-func (dh WindowHandler) WindowMouseEnter(timestamp time.Duration) {}
+func (dh WindowHandler) WindowMouseEnter(timestamp uint32) {}
 
 // WindowMouseLeave does nothing.
-func (dh WindowHandler) WindowMouseLeave(timestamp time.Duration) {}
+func (dh WindowHandler) WindowMouseLeave(timestamp uint32) {}
 
 // WindowFocusGained does nothing.
-func (dh WindowHandler) WindowFocusGained(timestamp time.Duration) {}
+func (dh WindowHandler) WindowFocusGained(timestamp uint32) {}
 
 // WindowFocusLost does nothing.
-func (dh WindowHandler) WindowFocusLost(timestamp time.Duration) {}
+func (dh WindowHandler) WindowFocusLost(timestamp uint32) {}
 
 // WindowQuit requests the game loop to stop.
-func (dh WindowHandler) WindowQuit(timestamp time.Duration) {
+func (dh WindowHandler) WindowQuit(timestamp uint32) {
 	internal.QuitRequested = true
 }
 
@@ -61,16 +59,16 @@ func (dh WindowHandler) WindowQuit(timestamp time.Duration) {
 type MouseHandler struct{}
 
 // MouseMotion does nothing.
-func (dh MouseHandler) MouseMotion(rel pixel.Coord, pos pixel.Coord, timestamp time.Duration) {}
+func (dh MouseHandler) MouseMotion(rel pixel.Coord, pos pixel.Coord, timestamp uint32) {}
 
 // MouseButtonDown does nothing.
-func (dh MouseHandler) MouseButtonDown(b mouse.Button, clicks int, timestamp time.Duration) {}
+func (dh MouseHandler) MouseButtonDown(b mouse.Button, clicks int, timestamp uint32) {}
 
 // MouseButtonUp does nothing.
-func (dh MouseHandler) MouseButtonUp(b mouse.Button, clicks int, timestamp time.Duration) {}
+func (dh MouseHandler) MouseButtonUp(b mouse.Button, clicks int, timestamp uint32) {}
 
 // MouseWheel does nothing.
-func (dh MouseHandler) MouseWheel(w pixel.Coord, timestamp time.Duration) {}
+func (dh MouseHandler) MouseWheel(w pixel.Coord, timestamp uint32) {}
 
 //------------------------------------------------------------------------------
 
@@ -78,7 +76,7 @@ func (dh MouseHandler) MouseWheel(w pixel.Coord, timestamp time.Duration) {}
 type KeyHandler struct{}
 
 // KeyDown requests the game loop to stop if Escape is pressed.
-func (dh KeyHandler) KeyDown(l key.Label, p key.Position, timestamp time.Duration) {
+func (dh KeyHandler) KeyDown(l key.Label, p key.Position, timestamp uint32) {
 	if l == key.LabelEscape {
 		internal.QuitRequested = true
 	}
@@ -94,7 +92,7 @@ func (dh KeyHandler) KeyDown(l key.Label, p key.Position, timestamp time.Duratio
 }
 
 // KeyUp does nothing.
-func (dh KeyHandler) KeyUp(l key.Label, p key.Position, timestamp time.Duration) {
+func (dh KeyHandler) KeyUp(l key.Label, p key.Position, timestamp uint32) {
 }
 
 //------------------------------------------------------------------------------

@@ -7,7 +7,6 @@ package main
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/drakmaniso/glam"
 	"github.com/drakmaniso/glam/key"
@@ -38,77 +37,77 @@ func main() {
 
 type handler struct{}
 
-func (h handler) KeyDown(l key.Label, p key.Position, ts time.Duration) {
+func (h handler) KeyDown(l key.Label, p key.Position, ts uint32) {
 	if l == key.LabelEscape {
 		glam.Stop()
 	}
 	fmt.Println("*** Key Down: ", l, p, ts)
 }
 
-func (h handler) KeyUp(l key.Label, p key.Position, ts time.Duration) {
+func (h handler) KeyUp(l key.Label, p key.Position, ts uint32) {
 	fmt.Println("*** Key Up: ", l, p, ts)
 }
 
-func (h handler) MouseMotion(rel pixel.Coord, pos pixel.Coord, ts time.Duration) {
+func (h handler) MouseMotion(rel pixel.Coord, pos pixel.Coord, ts uint32) {
 	fmt.Println("*** Mouse Motion: ", rel, pos, ts)
 }
 
-func (h handler) MouseButtonDown(b mouse.Button, clicks int, ts time.Duration) {
+func (h handler) MouseButtonDown(b mouse.Button, clicks int, ts uint32) {
 	fmt.Println("*** Mouse Button Down: ", b, clicks, ts)
 	if b == mouse.Left {
 		fmt.Println("    (Click!)")
 	}
 }
 
-func (h handler) MouseButtonUp(b mouse.Button, clicks int, ts time.Duration) {
+func (h handler) MouseButtonUp(b mouse.Button, clicks int, ts uint32) {
 	fmt.Println("*** Mouse Button Up: ", b, clicks, ts)
 }
 
-func (h handler) MouseWheel(w pixel.Coord, ts time.Duration) {
+func (h handler) MouseWheel(w pixel.Coord, ts uint32) {
 	fmt.Println("*** Mouse Wheel: ", w, ts)
 }
 
-func (h handler) WindowShown(ts time.Duration) {
+func (h handler) WindowShown(ts uint32) {
 	fmt.Println("*** Window Shown: ", ts)
 }
 
-func (h handler) WindowHidden(ts time.Duration) {
+func (h handler) WindowHidden(ts uint32) {
 	fmt.Println("*** Window Hidden: ", ts)
 }
 
-func (h handler) WindowResized(s pixel.Coord, ts time.Duration) {
+func (h handler) WindowResized(s pixel.Coord, ts uint32) {
 	fmt.Println("*** Window Resized: ", s, ts)
 }
 
-func (h handler) WindowMinimized(ts time.Duration) {
+func (h handler) WindowMinimized(ts uint32) {
 	fmt.Println("*** Window Minimized: ", ts)
 }
 
-func (h handler) WindowMaximized(ts time.Duration) {
+func (h handler) WindowMaximized(ts uint32) {
 	fmt.Println("*** Window Maximized: ", ts)
 }
 
-func (h handler) WindowRestored(ts time.Duration) {
+func (h handler) WindowRestored(ts uint32) {
 	fmt.Println("*** Window Restored: ", ts)
 }
 
-func (h handler) WindowMouseEnter(ts time.Duration) {
+func (h handler) WindowMouseEnter(ts uint32) {
 	fmt.Println("*** Window Mouse Enter: ", ts)
 }
 
-func (h handler) WindowMouseLeave(ts time.Duration) {
+func (h handler) WindowMouseLeave(ts uint32) {
 	fmt.Println("*** Window Mouse Leave: ", ts)
 }
 
-func (h handler) WindowFocusGained(ts time.Duration) {
+func (h handler) WindowFocusGained(ts uint32) {
 	fmt.Println("*** Window Focus Gained: ", ts)
 }
 
-func (h handler) WindowFocusLost(ts time.Duration) {
+func (h handler) WindowFocusLost(ts uint32) {
 	fmt.Println("*** Window Focus Lost: ", ts)
 }
 
-func (h handler) WindowQuit(ts time.Duration) {
+func (h handler) WindowQuit(ts uint32) {
 	fmt.Println("*** Window Quit ***")
 	glam.Stop()
 }

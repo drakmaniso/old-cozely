@@ -30,7 +30,7 @@ func Setup() {
 
 	// Setup mtx
 	microtext.Setup()
-	microtext.WindowResized(s, internal.GetTime())
+	microtext.WindowResized(s, 0)
 
 	isSetUp = true
 
@@ -83,7 +83,7 @@ func Run() error {
 	// Process events once before the first time step
 	{
 		s := pixel.Coord{internal.Window.Width, internal.Window.Height}
-		window.Handle.WindowResized(s, internal.GetTime())
+		window.Handle.WindowResized(s, 0)
 		events.Process()
 	}
 

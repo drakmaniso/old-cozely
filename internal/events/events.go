@@ -20,7 +20,6 @@ int PeepEvents();
 import "C"
 
 import (
-	"time"
 	"unsafe"
 
 	"github.com/drakmaniso/glam/gfx"
@@ -48,7 +47,7 @@ func Process() {
 }
 
 func dispatch(e unsafe.Pointer) {
-	ts := time.Duration(((*C.SDL_CommonEvent)(e)).timestamp) * time.Millisecond
+	ts := uint32(((*C.SDL_CommonEvent)(e)).timestamp)
 	switch ((*C.SDL_CommonEvent)(e))._type {
 	case C.SDL_QUIT:
 		window.Handle.WindowQuit(ts)

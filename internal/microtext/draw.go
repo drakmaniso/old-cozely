@@ -9,7 +9,6 @@ import (
 	"github.com/drakmaniso/glam/color"
 	"github.com/drakmaniso/glam/gfx"
 	"github.com/drakmaniso/glam/pixel"
-	"time"
 	"unsafe"
 )
 
@@ -39,7 +38,7 @@ const charHeight = 11
 
 // WindowResized is called each time resolution changes. It reallocates all GPU
 // ressources accordingly.
-func WindowResized(s pixel.Coord, ts time.Duration) {
+func WindowResized(s pixel.Coord, ts uint32) {
 	screen.nbCols = s.X / (charWidth * screen.pixelSize)
 	screen.nbRows = s.Y / (charHeight * screen.pixelSize)
 	screen.top = 0

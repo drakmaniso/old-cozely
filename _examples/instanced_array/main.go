@@ -163,12 +163,12 @@ type handler struct {
 	basic.MouseHandler
 }
 
-func (h handler) WindowResized(s pixel.Coord, _ time.Duration) {
+func (h handler) WindowResized(s pixel.Coord, _ uint32) {
 	var sx, sy = window.Size().Cartesian()
 	perFrame.ratio = sy / sx
 }
 
-func (h handler) MouseButtonDown(b mouse.Button, _ int, _ time.Duration) {
+func (h handler) MouseButtonDown(b mouse.Button, _ int, _ uint32) {
 	randomizeRosesData()
 	rosesINBO.SubData(roses[:], 0)
 }

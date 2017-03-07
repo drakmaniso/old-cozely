@@ -12,7 +12,6 @@ import "C"
 
 import (
 	"fmt"
-	"time"
 
 	"github.com/drakmaniso/glam/internal"
 	"github.com/drakmaniso/glam/pixel"
@@ -22,10 +21,10 @@ import (
 
 // Handler receives the mouse events.
 type Handler interface {
-	MouseMotion(motion pixel.Coord, position pixel.Coord, timestamp time.Duration)
-	MouseButtonDown(b Button, clicks int, timestamp time.Duration)
-	MouseButtonUp(b Button, clicks int, timestamp time.Duration)
-	MouseWheel(motion pixel.Coord, timestamp time.Duration)
+	MouseMotion(motion pixel.Coord, position pixel.Coord, timestamp uint32)
+	MouseButtonDown(b Button, clicks int, timestamp uint32)
+	MouseButtonUp(b Button, clicks int, timestamp uint32)
+	MouseWheel(motion pixel.Coord, timestamp uint32)
 }
 
 // Handle is the current handlers for mouse events

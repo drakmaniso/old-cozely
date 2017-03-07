@@ -6,8 +6,6 @@ package main
 //------------------------------------------------------------------------------
 
 import (
-	"time"
-
 	"github.com/drakmaniso/glam/basic"
 	"github.com/drakmaniso/glam/math"
 	"github.com/drakmaniso/glam/mouse"
@@ -34,7 +32,7 @@ var writer = mtx.Clip{
 	HScroll: false,
 }
 
-func (h handler) WindowResized(s pixel.Coord, _ time.Duration) {
+func (h handler) WindowResized(s pixel.Coord, _ uint32) {
 	sx, sy := window.Size().Cartesian()
 	r := sx / sy
 	projection = space.Perspective(math.Pi/4, r, 0.001, 1000.0)
@@ -81,14 +79,14 @@ sit amet, consectetur adipiscing elit.
 
 //------------------------------------------------------------------------------
 
-func (h handler) MouseWheel(motion pixel.Coord, _ time.Duration) {
+func (h handler) MouseWheel(motion pixel.Coord, _ uint32) {
 	distance -= float32(motion.Y) / 4
 	updateView()
 }
 
 var ccc int
 
-func (h handler) MouseButtonDown(b mouse.Button, _ int, _ time.Duration) {
+func (h handler) MouseButtonDown(b mouse.Button, _ int, _ uint32) {
 	// writer.SetClearChar('*')
 	// writer.Scroll(0, -1)
 	writer.Print("\n%v", ccc)
@@ -96,11 +94,11 @@ func (h handler) MouseButtonDown(b mouse.Button, _ int, _ time.Duration) {
 	mouse.SetRelativeMode(true)
 }
 
-func (h handler) MouseButtonUp(b mouse.Button, _ int, _ time.Duration) {
+func (h handler) MouseButtonUp(b mouse.Button, _ int, _ uint32) {
 	mouse.SetRelativeMode(false)
 }
 
-func (h handler) MouseMotion(motion pixel.Coord, _ pixel.Coord, _ time.Duration) {
+func (h handler) MouseMotion(motion pixel.Coord, _ pixel.Coord, _ uint32) {
 	mx, my := motion.Cartesian()
 	sx, sy := window.Size().Cartesian()
 
