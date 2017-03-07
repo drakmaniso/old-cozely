@@ -16,6 +16,7 @@ import (
 	"github.com/drakmaniso/glam/gfx"
 	"github.com/drakmaniso/glam/math"
 	"github.com/drakmaniso/glam/mouse"
+	"github.com/drakmaniso/glam/mtx"
 	"github.com/drakmaniso/glam/pixel"
 	"github.com/drakmaniso/glam/plane"
 	"github.com/drakmaniso/glam/window"
@@ -60,7 +61,7 @@ var perFrame struct {
 }
 
 // Vertex buffer
-var points [8192]struct {
+var points [4 * 8192]struct {
 	Position plane.Coord `layout:"0"`
 }
 
@@ -136,6 +137,13 @@ func (l looper) Update() {
 	perFrame.Rotation += rotSpeed
 
 	updated = true
+	ftclip.Print("\f%9.2f", glam.FrameAverage())
+	ftclip.Print("\n%9.2f", glam.FrameTimeSmoothed())
+}
+
+var ftclip = mtx.Clip{
+	Left: -10, Top: 0,
+	Right: -1, Bottom: 1,
 }
 
 func (l looper) Draw() {

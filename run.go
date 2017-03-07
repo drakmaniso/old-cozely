@@ -96,13 +96,15 @@ func Run() error {
 		now = internal.GetTime() * time.Millisecond
 		frameTime = now - then
 
+		// Compute smoothed frame time
+		ftSmoothed = (ftSmoothed * ftSmoothing) + float64(frameTime)*(1.0-ftSmoothing)
 		// Compute average frame time
-		frameSum += frameTime
-		nbFrames++
-		if nbFrames >= 100 {
-			frameAverage = frameSum / 100
-			frameSum = 0
-			nbFrames = 0
+		ftSum += frameTime
+		ftCount++
+		if ftSum >= ftInterval {
+			ftAverage = float64(ftSum) / float64(ftCount)
+			ftSum -= ftInterval
+			ftCount = 0
 		}
 
 		// Fixed time step for logic and physics updates
@@ -131,9 +133,6 @@ var TimeStep = 1 * time.Second / 50
 //------------------------------------------------------------------------------
 
 var frameTime time.Duration
-var frameAverage time.Duration
-var frameSum time.Duration
-var nbFrames int
 
 // FrameTime returns the duration of the last frame
 func FrameTime() time.Duration {
@@ -142,9 +141,23 @@ func FrameTime() time.Duration {
 
 // FrameAverage returns the average durations of frames; it is updated every 100
 // frames.
-func FrameAverage() time.Duration {
-	return frameAverage
+func FrameAverage() float64 {
+	return ftAverage / float64(time.Millisecond)
 }
+
+var ftAverage float64
+var ftSum time.Duration
+var ftCount int
+
+const ftInterval = (time.Second / 4)
+
+// FrameTimeSmoothed returns the frame time smoothed over time.
+func FrameTimeSmoothed() float64 {
+	return ftSmoothed / float64(time.Millisecond)
+}
+
+var ftSmoothing = 0.99
+var ftSmoothed float64
 
 //------------------------------------------------------------------------------
 
