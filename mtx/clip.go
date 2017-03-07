@@ -152,6 +152,7 @@ func (cl *Clip) Write(p []byte) (n int, err error) {
 
 			case '\f':
 				cl.Clear()
+				x, y = 0, 0
 				continue
 
 			case '\v':
