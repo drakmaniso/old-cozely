@@ -8,7 +8,6 @@ package main
 import (
 	"math/rand"
 	"os"
-	"time"
 
 	"github.com/drakmaniso/glam"
 	"github.com/drakmaniso/glam/basic"
@@ -37,7 +36,7 @@ func main() {
 	mouse.Handle = handler{}
 
 	// Run the main loop
-	glam.TimeStep = time.Second / 240
+	glam.TimeStep = 1.0 / 240
 	glam.Loop = looper{}
 	err = glam.Run()
 	if err != nil {
@@ -61,7 +60,7 @@ var perFrame struct {
 }
 
 // Vertex buffer
-var points [4 * 8192]struct {
+var points [8192]struct {
 	Position plane.Coord `layout:"0"`
 }
 
@@ -142,17 +141,15 @@ func (l looper) Update() {
 
 	updated = true
 	if glam.Overruns() > 0 {
-		ftclip.Print("\f\a%6.1f\a", glam.AverageFrameTime())
+		ftclip.Print("\f\a%5.1f\a", glam.AverageFrameTime()*1000.0)
 	} else {
-		ftclip.Print("\f%6.1f", glam.AverageFrameTime())
+		ftclip.Print("\f%5.1f", glam.AverageFrameTime()*1000.0)
 	}
-	ftclip.Print("\n%6.1f", glam.SmoothedFrameTime())
-	ftclip.Print("\n%6d                   ", glam.Overruns())
 }
 
 var ftclip = mtx.Clip{
-	Left: -10, Top: 0,
-	Right: -1, Bottom: 3,
+	Left: -5, Top: 0,
+	Right: -1, Bottom: 0,
 }
 
 func (l looper) Draw() {

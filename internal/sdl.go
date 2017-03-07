@@ -10,7 +10,6 @@ import "C"
 
 import (
 	"errors"
-	"time"
 )
 
 //------------------------------------------------------------------------------
@@ -22,10 +21,22 @@ func SDLQuit() {
 
 //------------------------------------------------------------------------------
 
-// GetTime returns the time elapsed since program start.
-func GetTime() time.Duration {
-	return time.Duration(C.SDL_GetTicks())
+// GetMilliseconds returns the number of milliseconds elapsed since program start.
+func GetMilliseconds() uint32 {
+	return uint32(C.SDL_GetTicks())
 }
+
+//------------------------------------------------------------------------------
+
+func GetTime() float64 {
+	return float64(C.SDL_GetPerformanceCounter()) * perfUnit
+}
+
+func init() {
+	perfUnit = 1.0 / float64(C.SDL_GetPerformanceFrequency())
+}
+
+var perfUnit float64
 
 //------------------------------------------------------------------------------
 

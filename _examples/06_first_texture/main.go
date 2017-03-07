@@ -161,13 +161,16 @@ func updateView() {
 type looper struct{}
 
 func (l looper) Update() {
-	ftclip.Print("\f%5.2f", glam.AverageFrameTime())
-	ftclip.Print("\n%5.2f", glam.SmoothedFrameTime())
+	if glam.Overruns() > 0 {
+		ftclip.Print("\f\a%5.1f\a", glam.AverageFrameTime()*1000.0)
+	} else {
+		ftclip.Print("\f%5.1f", glam.AverageFrameTime()*1000.0)
+	}
 }
 
 var ftclip = mtx.Clip{
-	Left: -6, Top: 0,
-	Right: -2, Bottom: 2,
+	Left: -5, Top: 0,
+	Right: -1, Bottom: 0,
 }
 
 func (l looper) Draw() {

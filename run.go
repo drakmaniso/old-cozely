@@ -8,7 +8,6 @@ package glam
 import (
 	"fmt"
 	"os"
-	"time"
 
 	"errors"
 	"github.com/drakmaniso/glam/basic"
@@ -89,15 +88,15 @@ func Run() error {
 
 	// Main Loop
 
-	then := internal.GetTime() * time.Millisecond
-	remain := time.Duration(0)
+	then := internal.GetTime()
+	remain := 0.0
 
 	for !internal.QuitRequested {
-		now = internal.GetTime() * time.Millisecond
+		now = internal.GetTime()
 		frameTime = now - then
 
 		// Compute smoothed frame time
-		ftSmoothed = (ftSmoothed * ftSmoothing) + float64(frameTime)*(1.0-ftSmoothing)
+		ftSmoothed = (ftSmoothed * ftSmoothing) + frameTime*(1.0-ftSmoothing)
 		// Compute average frame time
 		ftCount++
 		ftSum += frameTime
@@ -105,7 +104,7 @@ func Run() error {
 			xrunCount++
 		}
 		if ftSum >= ftInterval {
-			ftAverage = float64(ftSum) / float64(ftCount)
+			ftAverage = ftSum / float64(ftCount)
 			xrunPrevious = xrunCount
 			ftSum = 0
 			ftCount = 0
@@ -130,31 +129,31 @@ func Run() error {
 }
 
 // now is the current time
-var now time.Duration
+var now float64
 
 // TimeStep is the fixed interval between each call to Update.
-var TimeStep = 1 * time.Second / 50
+var TimeStep = 1.0 / 50.0
 
 //------------------------------------------------------------------------------
 
-var frameTime time.Duration
+var frameTime float64
 
 // FrameTime returns the duration of the last frame
-func FrameTime() time.Duration {
+func FrameTime() float64 {
 	return frameTime
 }
 
 // AverageFrameTime returns the average durations of frames; it is updated 4
 // times per second.
 func AverageFrameTime() float64 {
-	return ftAverage / float64(time.Millisecond)
+	return ftAverage
 }
 
 var ftAverage float64
-var ftSum time.Duration
+var ftSum float64
 var ftCount int
 
-const ftInterval = (time.Second / 4)
+const ftInterval = 1.0 / 4.0
 
 // Overruns returns the number of overruns (i.e. frame time longer than the
 // threshold) during the last measurment interval.
@@ -164,11 +163,11 @@ func Overruns() int {
 
 var xrunCount, xrunPrevious int
 
-const xrunThreshold time.Duration = 17 * time.Millisecond
+const xrunThreshold float64 = 17 / 1000.0
 
 // SmoothedFrameTime returns the frame time smoothed over time.
 func SmoothedFrameTime() float64 {
-	return ftSmoothed / float64(time.Millisecond)
+	return ftSmoothed
 }
 
 var ftSmoothing = 0.995
