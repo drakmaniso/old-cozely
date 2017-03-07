@@ -99,12 +99,17 @@ func Run() error {
 		// Compute smoothed frame time
 		ftSmoothed = (ftSmoothed * ftSmoothing) + float64(frameTime)*(1.0-ftSmoothing)
 		// Compute average frame time
-		ftSum += frameTime
 		ftCount++
+		ftSum += frameTime
+		if frameTime > xrunThreshold {
+			xrunCount++
+		}
 		if ftSum >= ftInterval {
 			ftAverage = float64(ftSum) / float64(ftCount)
-			ftSum -= ftInterval
+			xrunPrevious = xrunCount
+			ftSum = 0
 			ftCount = 0
+			xrunCount = 0
 		}
 
 		// Fixed time step for logic and physics updates
@@ -139,9 +144,9 @@ func FrameTime() time.Duration {
 	return frameTime
 }
 
-// FrameAverage returns the average durations of frames; it is updated every 100
-// frames.
-func FrameAverage() float64 {
+// AverageFrameTime returns the average durations of frames; it is updated 4
+// times per second.
+func AverageFrameTime() float64 {
 	return ftAverage / float64(time.Millisecond)
 }
 
@@ -151,12 +156,22 @@ var ftCount int
 
 const ftInterval = (time.Second / 4)
 
-// FrameTimeSmoothed returns the frame time smoothed over time.
-func FrameTimeSmoothed() float64 {
+// Overruns returns the number of overruns (i.e. frame time longer than the
+// threshold) during the last measurment interval.
+func Overruns() int {
+	return xrunPrevious
+}
+
+var xrunCount, xrunPrevious int
+
+const xrunThreshold time.Duration = 17 * time.Millisecond
+
+// SmoothedFrameTime returns the frame time smoothed over time.
+func SmoothedFrameTime() float64 {
 	return ftSmoothed / float64(time.Millisecond)
 }
 
-var ftSmoothing = 0.99
+var ftSmoothing = 0.995
 var ftSmoothed float64
 
 //------------------------------------------------------------------------------

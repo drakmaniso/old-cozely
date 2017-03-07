@@ -113,6 +113,10 @@ func setup() error {
 	pointsVBO.Bind(0, 0)
 	pipeline.Unbind()
 
+	// MTX
+	mtx.Color(color.RGB{0, 0, 0}, color.RGB{1, 1, 1})
+	mtx.Opaque(true)
+
 	return gfx.Err()
 }
 
@@ -137,13 +141,18 @@ func (l looper) Update() {
 	perFrame.Rotation += rotSpeed
 
 	updated = true
-	ftclip.Print("\f%9.2f", glam.FrameAverage())
-	ftclip.Print("\n%9.2f", glam.FrameTimeSmoothed())
+	if glam.Overruns() > 0 {
+		ftclip.Print("\f\a%6.1f\a", glam.AverageFrameTime())
+	} else {
+		ftclip.Print("\f%6.1f", glam.AverageFrameTime())
+	}
+	ftclip.Print("\n%6.1f", glam.SmoothedFrameTime())
+	ftclip.Print("\n%6d                   ", glam.Overruns())
 }
 
 var ftclip = mtx.Clip{
 	Left: -10, Top: 0,
-	Right: -1, Bottom: 1,
+	Right: -1, Bottom: 3,
 }
 
 func (l looper) Draw() {
