@@ -53,11 +53,13 @@ func Color(fg, bg color.RGB) {
 	micro.SetColor(fg, bg)
 }
 
-// Opaque selects wether the background is drawn or not. If set to false,
-// letters are drawn without background. If set to true, letters are drawn on
-// colored background. In all cases but blank space is always transparent.
+// Opaque selects wether the background is drawn or not. When set to false, the
+// text is drawn directly over the game screen. When set to true, it is are
+// drawn over a colored background. Note that blank space (i.e. areas without
+// MTX content, not white space) is always transparent.
 //
-// Note: You can toggle this settings in game, using Control+Alt+NumPadEnter.
+// Note: It's possiblt to toggle this settings in game, using
+// Control+Alt+NumPadEnter.
 func Opaque(t bool) {
 	micro.SetBgAlpha(t)
 }
@@ -69,7 +71,10 @@ func IsOpaque() bool {
 
 //------------------------------------------------------------------------------
 
-// Clear erases the MTX screen.
+// Clear removes all MTX content.
+//
+// Note that the text won't disappear from the screen until the screen itself is
+// cleared or drawn over.
 func Clear() {
 	micro.Clear()
 	micro.Touch()
