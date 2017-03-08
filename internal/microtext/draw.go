@@ -29,6 +29,20 @@ func init() {
 	SetColor(color.RGB{1, 1, 1}, color.RGB{0, 0, 0})
 	SetBgAlpha(true)
 	text = make([]byte, screen.nbCols*screen.nbRows)
+	layer1 = make([]byte, screen.nbCols*screen.nbRows)
+	layer2 = make([]byte, screen.nbCols*screen.nbRows)
+}
+
+//------------------------------------------------------------------------------
+
+// Setup is called during glam setup.
+func Setup() {
+	pipeline = gfx.NewPipeline(
+		gfx.VertexShader(strings.NewReader(vertexShader)),
+		gfx.FragmentShader(strings.NewReader(fragmentShader)),
+	)
+
+	fontSSBO = gfx.NewStorageBuffer(&Font, gfx.StaticStorage)
 }
 
 //------------------------------------------------------------------------------
@@ -46,6 +60,8 @@ func WindowResized(s pixel.Coord, ts uint32) {
 
 	// Reallocate the SSBO
 	text = make([]byte, screen.nbCols*screen.nbRows)
+	layer1 = make([]byte, screen.nbCols*screen.nbRows)
+	layer2 = make([]byte, screen.nbCols*screen.nbRows)
 	screenSSBO.Delete()
 	screenSSBO = gfx.NewStorageBuffer(
 		unsafe.Sizeof(screen)+uintptr(screen.nbCols*screen.nbRows),
@@ -73,23 +89,13 @@ func WindowResized(s pixel.Coord, ts uint32) {
 	}
 
 	screenUpdated = true
+
+	ShowFrameTime(ftenabled, ftx, fty, opaque)
 }
 
 //------------------------------------------------------------------------------
 
-// Setup is called during glam setup.
-func Setup() {
-	pipeline = gfx.NewPipeline(
-		gfx.VertexShader(strings.NewReader(vertexShader)),
-		gfx.FragmentShader(strings.NewReader(fragmentShader)),
-	)
-
-	fontSSBO = gfx.NewStorageBuffer(&Font, gfx.StaticStorage)
-}
-
-//------------------------------------------------------------------------------
-
-// Draw is called during teh main loop, after the user's Draw.
+// Draw is called during the main loop, after the user's Draw.
 func Draw() {
 	pipeline.Bind()
 	gfx.Disable(gfx.DepthTest)
@@ -129,13 +135,22 @@ var (
 		bgAlpha float32
 	}
 
-	text []byte
+	text   []byte
+	layer1 []byte
+	layer2 []byte
 )
 
 var (
 	screenUpdated bool
 	textUpdated   bool
 )
+
+//------------------------------------------------------------------------------
+
+// Size returns the number of column and rows in the MTX screen.
+func Size() (cols, rows int) {
+	return int(screen.nbCols), int(screen.nbRows)
+}
 
 //------------------------------------------------------------------------------
 
@@ -179,21 +194,28 @@ func ToggleBgAlpha() {
 
 //------------------------------------------------------------------------------
 
-// Size returns the number of column and rows in the MTX screen.
-func Size() (cols, rows int) {
-	return int(screen.nbCols), int(screen.nbRows)
+// Clear erases the MTX screen.
+func Clear() {
+	for i := range text {
+		layer1[i] = '\x00'
+		text[i] = layer2[i]
+	}
 }
 
 //------------------------------------------------------------------------------
 
 // Peek returns the character at given coordinates.
 func Peek(x, y int) byte {
-	return text[x+y*int(screen.nbCols)]
+	return layer1[x+y*int(screen.nbCols)]
 }
 
 // Poke sets the character at given coordinates.
 func Poke(x, y int, c byte) {
-	text[x+y*int(screen.nbCols)] = c
+	i := x + y*int(screen.nbCols)
+	layer1[i] = c
+	if layer2[i] == '\x00' {
+		text[i] = c
+	}
 }
 
 // Touch indicates that the text has been modified.
@@ -203,11 +225,121 @@ func Touch() {
 
 //------------------------------------------------------------------------------
 
-// Clear erases the MTX screen.
-func Clear() {
-	for i := range text {
-		text[i] = '\x00'
+func ShowFrameTime(enable bool, x, y int, opaque bool) {
+	ftenabled = enable
+	opaque = opaque
+	ftx, fty = x, y
+
+	if x < 0 {
+		x += int(screen.nbCols)
+		if x < 0 {
+			x = 0
+		}
 	}
+	if x > int(screen.nbCols)-5 {
+		x = int(screen.nbCols) - 5
+	}
+
+	switch {
+	case y < 0:
+		y += int(screen.nbRows)
+		if y < 0 {
+			y = 0
+		}
+	case y > int(screen.nbRows)-1:
+		y = int(screen.nbRows) - 1
+	}
+
+	ftloc = x + y*int(screen.nbCols)
 }
+
+func PrintFrameTime(frametime float64, xruns int) {
+	if !ftenabled {
+		return
+	}
+
+	colour := byte(0x00)
+	if xruns > 0 {
+		colour = 0x80
+	}
+
+	// Convert to milliseconds
+	frametime *= 1000.0
+	// Round to the first decimal
+	frametime = float64(int64(frametime*10.0+0.5)) / 10.0
+	// Isolate digits
+	v100 := uint(frametime / 100)
+	v10 := uint(frametime/10) - v100*10
+	v1 := uint(frametime) - v100*100 - v10*10
+	v01 := uint(frametime*10) - v100*1000 - v10*100 - v1*10
+
+	var c100, c10, c1, c01 byte
+
+	switch {
+	case v100 > 9:
+		c100 = '~' + 1 | colour
+	case v100 == 0:
+		if opaque {
+			c100 = ' ' | colour
+		} else {
+			c100 = '\x00'
+		}
+	default:
+		c100 = '0' + byte(v100) | colour
+	}
+
+	switch {
+	case v100 > 9 || v10 > 9:
+		c10 = '~' + 1 | colour
+	case v100 == 0 && v10 == 0:
+		if opaque {
+			c10 = ' ' | colour
+		} else {
+			c10 = '\x00'
+		}
+	default:
+		c10 = '0' + byte(v10) | colour
+	}
+
+	switch {
+	case v100 > 9 || v1 > 9:
+		c1 = '~' + 1 | colour
+	default:
+		c1 = '0' + byte(v1) | colour
+	}
+
+	switch {
+	case v100 > 9 || v01 > 9:
+		c01 = '~' + 1 | colour
+	default:
+		c01 = '0' + byte(v01) | colour
+	}
+
+	layer2[ftloc+0] = c100
+	layer2[ftloc+1] = c10
+	layer2[ftloc+2] = c1
+	layer2[ftloc+3] = '.' | colour
+	layer2[ftloc+4] = c01
+	if c100 == '\x00' {
+		text[ftloc+0] = layer1[ftloc+0]
+	} else {
+		text[ftloc+0] = layer2[ftloc+0]
+	}
+	if c10 == '\x00' {
+		text[ftloc+1] = layer1[ftloc+1]
+	} else {
+		text[ftloc+1] = layer2[ftloc+1]
+	}
+	text[ftloc+2] = layer2[ftloc+2]
+	text[ftloc+3] = layer2[ftloc+3]
+	text[ftloc+4] = layer2[ftloc+4]
+
+	textUpdated = true
+}
+
+var ftx, fty int
+var ftenabled bool
+var opaque bool
+var ftloc int
 
 //------------------------------------------------------------------------------

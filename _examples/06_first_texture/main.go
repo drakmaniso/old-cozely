@@ -138,6 +138,7 @@ func setup() error {
 	// MTX
 	mtx.Color(color.RGB{0.0, 0.05, 0.1}, color.RGB{0.7, 0.6, 0.45})
 	mtx.Opaque(true)
+	mtx.ShowFrameTime(true, -1, 0, false)
 
 	return gfx.Err()
 }
@@ -161,17 +162,6 @@ func updateView() {
 type looper struct{}
 
 func (l looper) Update(_, _ float64) {
-	if glam.Overruns() > 0 {
-		ftclip.Print("\f\a%5.1f\a", glam.AverageFrameTime()*1000.0)
-	} else {
-		ftclip.Print("\f%5.1f", glam.AverageFrameTime()*1000.0)
-	}
-}
-
-var ftclip = mtx.Clip{
-	Left: -5, Top: 0,
-	Right: -1, Bottom: 0,
-	TransparentSpace: true,
 }
 
 func (l looper) Draw(_ float64) {

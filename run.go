@@ -107,6 +107,7 @@ func Run() error {
 		if ftSum >= ftInterval {
 			ftAverage = ftSum / float64(ftCount)
 			xrunPrevious = xrunCount
+			microtext.PrintFrameTime(ftAverage, xrunCount)
 			ftSum = 0
 			ftCount = 0
 			xrunCount = 0

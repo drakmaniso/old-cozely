@@ -48,6 +48,27 @@ func Clamp(x, y int) (int, int) {
 
 //------------------------------------------------------------------------------
 
+// Color sets the foreground and background color.
+func Color(fg, bg color.RGB) {
+	micro.SetColor(fg, bg)
+}
+
+// Opaque selects wether the background is drawn or not. If set to false,
+// letters are drawn without background. If set to true, letters are drawn on
+// colored background. In all cases but blank space is always transparent.
+//
+// Note: You can toggle this settings in game, using Control+Alt+NumPadEnter.
+func Opaque(t bool) {
+	micro.SetBgAlpha(t)
+}
+
+// IsOpaque returns wether the background is currently opaque or not.
+func IsOpaque() bool {
+	return micro.GetBgAlpha()
+}
+
+//------------------------------------------------------------------------------
+
 // Clear erases the MTX screen.
 func Clear() {
 	micro.Clear()
@@ -88,23 +109,9 @@ var stdClip = Clip{
 
 //------------------------------------------------------------------------------
 
-// Color sets the foreground and background color.
-func Color(fg, bg color.RGB) {
-	micro.SetColor(fg, bg)
-}
-
-// Opaque selects wether the background is drawn or not. If set to false,
-// letters are drawn without background. If set to true, letters are drawn on
-// colored background. In all cases but blank space is always transparent.
-//
-// Note: You can toggle this settings in game, using Control+Alt+NumPadEnter.
-func Opaque(t bool) {
-	micro.SetBgAlpha(t)
-}
-
-// IsOpaque returns wether the background is currently opaque or not.
-func IsOpaque() bool {
-	return micro.GetBgAlpha()
+// ShowFrameTime enable or disable a mini widget showing average frame time.
+func ShowFrameTime(enable bool, x, y int, opaque bool) {
+	micro.ShowFrameTime(enable, x, y, opaque)
 }
 
 //------------------------------------------------------------------------------

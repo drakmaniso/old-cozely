@@ -15,6 +15,7 @@ import (
 	"github.com/drakmaniso/glam/gfx"
 	"github.com/drakmaniso/glam/math"
 	"github.com/drakmaniso/glam/mouse"
+	"github.com/drakmaniso/glam/mtx"
 	"github.com/drakmaniso/glam/pixel"
 	"github.com/drakmaniso/glam/plane"
 	"github.com/drakmaniso/glam/window"
@@ -59,7 +60,7 @@ var perFrame struct {
 }
 
 // Vertex buffer
-var points [8192]struct {
+var points [4 * 8192]struct {
 	Position plane.Coord `layout:"0"`
 }
 
@@ -110,6 +111,9 @@ func setup() error {
 	pipeline.Bind()
 	pointsVBO.Bind(0, 0)
 	pipeline.Unbind()
+
+	// MTX
+	mtx.Color(color.RGB{0.1, 0.05, 0.0}, color.RGB{1, 1, 1})
 
 	return gfx.Err()
 }
