@@ -52,12 +52,12 @@ func (h handler) WindowResized(s pixel.Coord, _ uint32) {
 
 	// w.SetClearChar(' ')
 	// writer.Clear()
-	writer.Locate(0, 0)
-	writer.Print("\tworld\n")
+	// writer.Locate(0, 0)
+	// writer.Print("\tworld\n")
 	// w.Print("Essai %x\n", 33333)
 	// w.Print("123456\b\b\b\b\b\b\aBoo!\n\a")
 
-	if true {
+	if false {
 		writer.Print(`
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec libero
 ligula, consectetur at congue et, ultricies placerat velit. Pellentesque

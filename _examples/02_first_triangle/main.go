@@ -63,10 +63,10 @@ func setup() error {
 
 type looper struct{}
 
-func (l looper) Update() {
+func (l looper) Update(_, _ float64) {
 }
 
-func (l looper) Draw() {
+func (l looper) Draw(_ float64) {
 	gfx.ClearColorBuffer(color.RGBA{0.9, 0.9, 0.9, 1.0})
 	pipeline.Bind()
 	gfx.Draw(gfx.Triangles, 0, 3)

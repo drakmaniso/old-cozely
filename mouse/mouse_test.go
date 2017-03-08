@@ -43,7 +43,7 @@ type handler struct {
 }
 
 func (h handler) MouseMotion(rel pixel.Coord, pos pixel.Coord, ts uint32) {
-	scroller.Print("%s:  motion  %+d,%+d  %d,%d\n", ts, rel.X, rel.Y, pos.X, pos.Y)
+	scroller.Print("%v:  motion  %+d,%+d  %d,%d\n", ts, rel.X, rel.Y, pos.X, pos.Y)
 }
 
 func (h handler) MouseButtonDown(b mouse.Button, clicks int, ts uint32) {
@@ -99,9 +99,9 @@ var scroller = mtx.Clip{
 
 type looper struct{}
 
-func (l looper) Draw() {}
+func (l looper) Draw(_ float64) {}
 
-func (l looper) Update() {
+func (l looper) Update(_, _ float64) {
 	// timer += glam.TimeStep
 	// if timer > time.Second/10 {
 	// 	timer = 0
@@ -115,27 +115,27 @@ func (l looper) Update() {
 
 	topbar.Print("   mouse buttons: ")
 	if mouse.IsPressed(mouse.Left) {
-		topbar.Print("\aleft\a ")
+		topbar.Print("\aleft ")
 	} else {
 		topbar.Print("left ")
 	}
 	if mouse.IsPressed(mouse.Middle) {
-		topbar.Print("\amiddle\a ")
+		topbar.Print("\amiddle ")
 	} else {
 		topbar.Print("middle ")
 	}
 	if mouse.IsPressed(mouse.Right) {
-		topbar.Print("\aright\a ")
+		topbar.Print("\aright ")
 	} else {
 		topbar.Print("right ")
 	}
 	if mouse.IsPressed(mouse.Extra1) {
-		topbar.Print("\aextra1\a ")
+		topbar.Print("\aextra1 ")
 	} else {
 		topbar.Print("extra1 ")
 	}
 	if mouse.IsPressed(mouse.Extra2) {
-		topbar.Print("\aextra2\a\n")
+		topbar.Print("\aextra2\n")
 	} else {
 		topbar.Print("extra2\n")
 	}

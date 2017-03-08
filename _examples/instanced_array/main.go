@@ -8,7 +8,6 @@ package main
 import (
 	"math/rand"
 	"os"
-	"time"
 
 	"github.com/drakmaniso/glam"
 	"github.com/drakmaniso/glam/basic"
@@ -106,11 +105,11 @@ func setup() error {
 
 type looper struct{}
 
-func (l looper) Update() {
-	perFrame.time += float32(glam.TimeStep) / float32(time.Second)
+func (l looper) Update(_, dt float64) {
+	perFrame.time += float32(dt)
 }
 
-func (l looper) Draw() {
+func (l looper) Draw(_ float64) {
 	pipeline.Bind()
 	gfx.ClearDepthBuffer(1.0)
 	gfx.ClearColorBuffer(color.RGBA{0.9, 0.85, 0.80, 1.0})

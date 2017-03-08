@@ -26,10 +26,10 @@ func main() {
 
 type looper struct{}
 
-func (l looper) Update() {
+func (l looper) Update(_, _ float64) {
 }
 
-func (l looper) Draw() {
+func (l looper) Draw(_ float64) {
 }
 
 //------------------------------------------------------------------------------

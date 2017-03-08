@@ -15,7 +15,6 @@ import (
 	"github.com/drakmaniso/glam/gfx"
 	"github.com/drakmaniso/glam/math"
 	"github.com/drakmaniso/glam/mouse"
-	"github.com/drakmaniso/glam/mtx"
 	"github.com/drakmaniso/glam/pixel"
 	"github.com/drakmaniso/glam/plane"
 	"github.com/drakmaniso/glam/window"
@@ -112,10 +111,6 @@ func setup() error {
 	pointsVBO.Bind(0, 0)
 	pipeline.Unbind()
 
-	// MTX
-	mtx.Color(color.RGB{0, 0, 0}, color.RGB{1, 1, 1})
-	mtx.Opaque(true)
-
 	return gfx.Err()
 }
 
@@ -125,7 +120,7 @@ type looper struct{}
 
 var updated bool
 
-func (l looper) Update() {
+func (l looper) Update(_, _ float64) {
 	for i, pt := range points {
 		points[i].Position = plane.Coord{
 			pt.Position.X + speeds[i]*math.Cos(angles[i]) + jitter*(rand.Float32()-0.5),
@@ -140,19 +135,9 @@ func (l looper) Update() {
 	perFrame.Rotation += rotSpeed
 
 	updated = true
-	if glam.Overruns() > 0 {
-		ftclip.Print("\f\a%5.1f\a", glam.AverageFrameTime()*1000.0)
-	} else {
-		ftclip.Print("\f%5.1f", glam.AverageFrameTime()*1000.0)
-	}
 }
 
-var ftclip = mtx.Clip{
-	Left: -5, Top: 0,
-	Right: -1, Bottom: 0,
-}
-
-func (l looper) Draw() {
+func (l looper) Draw(_ float64) {
 	if updated {
 		pipeline.Bind()
 

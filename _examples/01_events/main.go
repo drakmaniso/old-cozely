@@ -116,17 +116,17 @@ func (h handler) WindowQuit(ts uint32) {
 
 type looper struct{}
 
-func (l looper) Draw() {
-	mtx.Print(1, 0, "   mouse.Delta()=%+6d, %+6d", mouse.Delta().X, mouse.Delta().Y)
-	mtx.Print(1, 1, "mouse.Position()=%v", mouse.Position())
-}
-
-func (l looper) Update() {
+func (l looper) Update(_, _ float64) {
 	// fmt.Printf("--- Update delta=%v pos=%v rightBttn=%v\n",
 	// 	mouse.Delta(), mouse.Position(), mouse.IsPressed(mouse.Right))
 	// fmt.Printf("--- w = %v\n", key.IsPressed(key.PositionW))
 	// fmt.Printf("--- window.HasFocus = %v\n", window.HasFocus())
 	// fmt.Printf("--- window.HasMouseFocus = %v\n", window.HasMouseFocus())
+}
+
+func (l looper) Draw(_ float64) {
+	mtx.Print(1, 0, "   mouse.Delta()=%+6d, %+6d", mouse.Delta().X, mouse.Delta().Y)
+	mtx.Print(1, 1, "mouse.Position()=%v", mouse.Position())
 }
 
 //------------------------------------------------------------------------------

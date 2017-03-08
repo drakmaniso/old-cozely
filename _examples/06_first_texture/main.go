@@ -160,7 +160,7 @@ func updateView() {
 
 type looper struct{}
 
-func (l looper) Update() {
+func (l looper) Update(_, _ float64) {
 	if glam.Overruns() > 0 {
 		ftclip.Print("\f\a%5.1f\a", glam.AverageFrameTime()*1000.0)
 	} else {
@@ -174,7 +174,7 @@ var ftclip = mtx.Clip{
 	TransparentSpace: true,
 }
 
-func (l looper) Draw() {
+func (l looper) Draw(_ float64) {
 	pipeline.Bind()
 	gfx.ClearDepthBuffer(1.0)
 	gfx.ClearColorBuffer(color.RGBA{0.9, 0.9, 0.9, 1.0})

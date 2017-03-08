@@ -42,8 +42,8 @@ var isSetUp bool
 
 // A Looper implements a game loop.
 type Looper interface {
-	Update()
-	Draw()
+	Update(t, dt float64)
+	Draw(interpolation float64)
 }
 
 // Loop is the current game loop.
@@ -88,11 +88,12 @@ func Run() error {
 
 	// Main Loop
 
-	then := internal.GetTime()
+	then := internal.GetSeconds()
+	stepNow := then
 	remain := 0.0
 
 	for !internal.QuitRequested {
-		now = internal.GetTime()
+		now = internal.GetSeconds()
 		frameTime = now - then
 
 		// Compute smoothed frame time
@@ -111,15 +112,18 @@ func Run() error {
 			xrunCount = 0
 		}
 
+		//TODO: clamp frameTime ?
+
 		// Fixed time step for logic and physics updates
 		remain += frameTime
 		for remain >= TimeStep {
 			remain -= TimeStep
+			stepNow += TimeStep
 			events.Process()
-			Loop.Update()
+			Loop.Update(stepNow, TimeStep)
 		}
 
-		Loop.Draw()
+		Loop.Draw(remain / TimeStep)
 		microtext.Draw()
 		internal.SwapWindow()
 
