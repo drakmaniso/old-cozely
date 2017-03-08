@@ -41,7 +41,7 @@ func (h handler) WindowResized(s pixel.Coord, _ uint32) {
 
 	for y := 0; y < 16; y++ {
 		for x := 0; x < 16; x++ {
-			mtx.Poke(-16+x, -16+y, byte(x+15*y))
+			mtx.Poke(-16+x, -16+y, byte(x+16*y))
 		}
 	}
 	// for y := 0; y < 60; y++ {

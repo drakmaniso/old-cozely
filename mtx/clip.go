@@ -25,11 +25,14 @@ type Clip struct {
 	// Cursor position, relative to top-left corner
 	x, y int
 
-	// ReverseVideo mask
-	colour byte
+	// Should characters be drawn in reverse video?
+	ReverseVideo bool
 
 	// Character used to clear the clip
 	ClearChar byte
+
+	// Should space characters be opaque or "see-through"?
+	TransparentSpace bool
 
 	// Whether vertical and horizontal auto-scrolling are active
 	HScroll bool
@@ -93,18 +96,6 @@ func (cl *Clip) Locate(x, y int) {
 
 //------------------------------------------------------------------------------
 
-// ReverseVideo specifies how the following print or write will be displayed:
-// normal or video inversed.
-func (cl *Clip) ReverseVideo(r bool) {
-	if r {
-		cl.colour = 0x80
-	} else {
-		cl.colour = 0x00
-	}
-}
-
-//------------------------------------------------------------------------------
-
 // Clear erases all text from the clip.
 //
 // Note: you can customize the character used to erase by setting the ClearChar
@@ -126,84 +117,99 @@ func (cl *Clip) Clear() {
 
 // Write outputs text to the clip, starting at the cursor position. Special
 // characters such as newline and tabs are recognized. It always returns the
-// total number of bytes in the slice, even if some characters are clipped
-// because out-of-bounds.
+// total number of bytes in the slice, even if some characters are out-of-bounds
+// and clipped.
 func (cl *Clip) Write(p []byte) (n int, err error) {
 	l, t, r, b := cl.Bounds()
 	sx, sy := r-l, b-t
 
+	colour := byte(0x00)
+	// Prepare reverse video mask
+	if cl.ReverseVideo {
+		colour = byte(0x80)
+	}
+
+	// Prepare space character
+	spCh := byte(' ') | colour
+	if cl.TransparentSpace {
+		spCh = '\000'
+	}
+
 	x, y := cl.Clamp(cl.x, cl.y)
 	for _, c := range p {
 		switch {
-		case c < ' ':
-			switch c {
-			case '\n':
-				x = 0
-				if y == sy && cl.VScroll {
-					cl.Scroll(0, -1)
-				} else {
-					y++
-				}
-				continue
+		case ' ' < c && c <= '~':
+			c |= colour
 
-			case '\r':
-				x = 0
-				continue
+		case c == ' ':
+			c = spCh
 
-			case '\f':
-				cl.Clear()
-				x, y = 0, 0
-				continue
+		case c == '\n':
+			x = 0
+			if y == sy && cl.VScroll {
+				cl.Scroll(0, -1)
+			} else {
+				y++
+			}
+			continue
 
-			case '\v':
-				i := x
-				if i < l {
-					i = l
-				}
-				if y >= t && y <= b {
-					for ; i <= r; i++ {
-						micro.Poke(l+i, l+y, cl.ClearChar)
-					}
-					micro.Touch()
-				}
-				continue
+		case c == '\r':
+			x = 0
+			continue
 
-			case '\t':
-				n := ((x/8)+1)*8 - x
-				for i := 0; i < n; i++ {
-					micro.Poke(l+x+i, l+y, ' ')
+		case c == '\f':
+			cl.Clear()
+			x, y = 0, 0
+			continue
+
+		case c == '\v':
+			i := x
+			if i < l {
+				i = l
+			}
+			if y >= 0 && y <= sy {
+				for ; i <= r; i++ {
+					micro.Poke(l+i, l+y, cl.ClearChar)
 				}
 				micro.Touch()
-				x += n
-				continue
-
-			case '\b':
-				x--
-				continue
-
-			case '\a':
-				if cl.colour != 0 {
-					cl.colour = 0
-				} else {
-					cl.colour = 0x80
-				}
-				continue
-
-			default:
-				c = '\x7F'
 			}
+			continue
 
-		case c > '~':
-			c = '\x7F'
+		case c == '\t':
+			n := ((x/8)+1)*8 - x
+			for i := 0; i < n; i++ {
+				micro.Poke(l+x+i, l+y, spCh)
+			}
+			micro.Touch()
+			x += n
+			continue
+
+		case c == '\b':
+			x--
+			continue
+
+		case c == '\a':
+			if colour != 0 {
+				colour = 0
+			} else {
+				colour = 0x80
+			}
+			continue
+
+		default:
+			c = '\x7F' | colour
 		}
 
+		// Write the character
 		if x >= 0 && x <= sx && y >= 0 && y <= sy {
 			oc := micro.Peek(l+x, t+y)
-			if oc != c|cl.colour {
-				micro.Poke(l+x, t+y, c|cl.colour)
+			if oc != c {
+				micro.Poke(l+x, t+y, c)
 				micro.Touch()
 			}
 		}
+
+		// Either scroll or advance the cursor
 		if x == sx && cl.HScroll {
 			cl.Scroll(-1, 0)
 		} else {

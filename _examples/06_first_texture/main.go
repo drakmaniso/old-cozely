@@ -171,6 +171,7 @@ func (l looper) Update() {
 var ftclip = mtx.Clip{
 	Left: -5, Top: 0,
 	Right: -1, Bottom: 0,
+	TransparentSpace: true,
 }
 
 func (l looper) Draw() {
