@@ -60,7 +60,7 @@ var perFrame struct {
 }
 
 // Vertex buffer
-var points [4 * 8192]struct {
+var points [4096]struct {
 	Position plane.Coord `layout:"0"`
 }
 

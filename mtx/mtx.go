@@ -7,6 +7,7 @@ package mtx
 
 import (
 	"fmt"
+
 	"github.com/drakmaniso/glam/color"
 	micro "github.com/drakmaniso/glam/internal/microtext"
 )
@@ -77,7 +78,6 @@ func IsOpaque() bool {
 // cleared or drawn over.
 func Clear() {
 	micro.Clear()
-	micro.Touch()
 }
 
 //------------------------------------------------------------------------------
@@ -91,11 +91,7 @@ func Peek(x, y int) byte {
 // Poke sets the character at given coordinates.
 func Poke(x, y int, value byte) {
 	x, y = Clamp(x, y)
-	ov := micro.Peek(x, y)
-	if value != ov {
-		micro.Poke(x, y, value)
-		micro.Touch()
-	}
+	micro.Poke(x, y, value)
 }
 
 //------------------------------------------------------------------------------

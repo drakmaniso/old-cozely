@@ -128,7 +128,7 @@ func (l looper) Update(_, dt float64) {
 	perFrame.time += float32(dt)
 
 	timer += dt
-	if timer < 0.5 {
+	if timer < 0.1 {
 		return
 	}
 
@@ -142,16 +142,25 @@ func (l looper) Update(_, dt float64) {
 		}
 	}
 	clip1.Print("\n%s", scanner.Text())
+
+	clip2.Print("%c", ' '+incr%('~'-' '))
+	incr++
 }
 
 var clip1 = mtx.Clip{
-	Left: 1, Top: 0,
+	Left: 1, Top: 2,
 	Right: -20, Bottom: -1,
 	VScroll: true,
-	HScroll: false,
+}
+
+var clip2 = mtx.Clip{
+	Left: 0, Top: 0,
+	Right: -7, Bottom: 0,
+	HScroll: true,
 }
 
 var timer float64
+var incr int
 
 func (l looper) Draw(_ float64) {
 	pipeline.Bind()

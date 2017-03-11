@@ -194,6 +194,7 @@ func Clear() {
 	for i := range text {
 		text[i] = '\x00'
 	}
+	textUpdated = true
 }
 
 //------------------------------------------------------------------------------
@@ -206,12 +207,10 @@ func Peek(x, y int) byte {
 // Poke sets the character at given coordinates.
 func Poke(x, y int, c byte) {
 	i := x + y*int(screen.nbCols)
-	text[i] = c
-}
-
-// Touch indicates that the text has been modified.
-func Touch() {
-	textUpdated = true
+	if text[i] != c {
+		text[i] = c
+		textUpdated = true
+	}
 }
 
 //------------------------------------------------------------------------------

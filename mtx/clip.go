@@ -109,8 +109,6 @@ func (cl *Clip) Clear() {
 			micro.Poke(x, y, cl.ClearChar)
 		}
 	}
-
-	micro.Touch()
 }
 
 //------------------------------------------------------------------------------
@@ -136,6 +134,7 @@ func (cl *Clip) Write(p []byte) (n int, err error) {
 	}
 
 	x, y := cl.Clamp(cl.x, cl.y)
+
 	for _, c := range p {
 		switch {
 		case ' ' < c && c <= '~':
@@ -163,27 +162,25 @@ func (cl *Clip) Write(p []byte) (n int, err error) {
 			continue
 
 		case c == '\v':
-			i := x
-			if i < l {
-				i = l
-			}
-			if y >= 0 && y <= sy {
-				for ; i <= r; i++ {
+			if 0 <= y && y <= sy {
+				i := x
+				if i < 0 {
+					i = 0
+				}
+				for ; i <= sx; i++ {
 					micro.Poke(l+i, l+y, cl.ClearChar)
 				}
-				micro.Touch()
 			}
 			continue
 
 		case c == '\t':
-			n := ((x/8)+1)*8 - x
-			for i := 0; i < n; i++ {
-				if x >= 0 && x <= sx && y >= 0 && y <= sy {
+			if 0 <= y && y <= sy {
+				n := ((x/8)+1)*8 - x
+				for i := 0; i < n && l+x+i <= sy; i++ {
 					micro.Poke(l+x+i, t+y, spCh)
 				}
+				x += n
 			}
-			micro.Touch()
-			x += n
 			continue
 
 		case c == '\b':
@@ -202,16 +199,32 @@ func (cl *Clip) Write(p []byte) (n int, err error) {
 			c = '\x7F' | colour
 		}
 
-		// Write the character
-		if x >= 0 && x <= sx && y >= 0 && y <= sy {
-			oc := micro.Peek(l+x, t+y)
-			if oc != c {
-				micro.Poke(l+x, t+y, c)
-				micro.Touch()
-			}
+		// Handle out of bounds
+		var xx, yy int
+
+		if x < 0 {
+			c = '~' + 1
+			xx = l
+		} else if x > sx {
+			c = '~' + 1
+			xx = r
+		} else {
+			xx = l + x
 		}
 
-		// Either scroll or advance the cursor
+		if y < 0 {
+			c = '~' + 1
+			yy = t
+		} else if y > sy {
+			c = '~' + 1
+			yy = b
+		} else {
+			yy = t + y
+		}
+
+		micro.Poke(xx, yy, c)
+
+		// Either scroll horizontally or move cursor
 		if x == sx && cl.HScroll {
 			cl.Scroll(-1, 0)
 		} else {
@@ -282,19 +295,17 @@ func (cl *Clip) Scroll(dx, dy int) {
 
 	for y := y1; cmpY(y, y2); y += incY {
 		for x := x1; cmpX(x, x2); x += incX {
-			Poke(x, y, Peek(x-dx, y-dy))
+			micro.Poke(x, y, micro.Peek(x-dx, y-dy))
 		}
 		for x := x2 + incX; cmpX(x, x3); x += incX {
-			Poke(x, y, cl.ClearChar)
+			micro.Poke(x, y, cl.ClearChar)
 		}
 	}
 	for y := y2 + incY; cmpY(y, y3); y += incY {
 		for x := l; x <= r; x++ {
-			Poke(x, y, cl.ClearChar)
+			micro.Poke(x, y, cl.ClearChar)
 		}
 	}
-
-	micro.Touch()
 }
 
 //------------------------------------------------------------------------------
