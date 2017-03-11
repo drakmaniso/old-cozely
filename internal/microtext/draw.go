@@ -6,10 +6,11 @@ package microtext
 import (
 	"strings"
 
+	"unsafe"
+
 	"github.com/drakmaniso/glam/color"
 	"github.com/drakmaniso/glam/gfx"
 	"github.com/drakmaniso/glam/pixel"
-	"unsafe"
 )
 
 //------------------------------------------------------------------------------
@@ -29,8 +30,6 @@ func init() {
 	SetColor(color.RGB{1, 1, 1}, color.RGB{0, 0, 0})
 	SetBgAlpha(true)
 	text = make([]byte, screen.nbCols*screen.nbRows)
-	layer1 = make([]byte, screen.nbCols*screen.nbRows)
-	layer2 = make([]byte, screen.nbCols*screen.nbRows)
 }
 
 //------------------------------------------------------------------------------
@@ -60,8 +59,6 @@ func WindowResized(s pixel.Coord, ts uint32) {
 
 	// Reallocate the SSBO
 	text = make([]byte, screen.nbCols*screen.nbRows)
-	layer1 = make([]byte, screen.nbCols*screen.nbRows)
-	layer2 = make([]byte, screen.nbCols*screen.nbRows)
 	screenSSBO.Delete()
 	screenSSBO = gfx.NewStorageBuffer(
 		unsafe.Sizeof(screen)+uintptr(screen.nbCols*screen.nbRows),
@@ -135,9 +132,7 @@ var (
 		bgAlpha float32
 	}
 
-	text   []byte
-	layer1 []byte
-	layer2 []byte
+	text []byte
 )
 
 var (
@@ -197,8 +192,7 @@ func ToggleBgAlpha() {
 // Clear erases the MTX screen.
 func Clear() {
 	for i := range text {
-		layer1[i] = '\x00'
-		text[i] = layer2[i]
+		text[i] = '\x00'
 	}
 }
 
@@ -206,16 +200,13 @@ func Clear() {
 
 // Peek returns the character at given coordinates.
 func Peek(x, y int) byte {
-	return layer1[x+y*int(screen.nbCols)]
+	return text[x+y*int(screen.nbCols)]
 }
 
 // Poke sets the character at given coordinates.
 func Poke(x, y int, c byte) {
 	i := x + y*int(screen.nbCols)
-	layer1[i] = c
-	if layer2[i] == '\x00' {
-		text[i] = c
-	}
+	text[i] = c
 }
 
 // Touch indicates that the text has been modified.
@@ -315,24 +306,11 @@ func PrintFrameTime(frametime float64, xruns int) {
 		c01 = '0' + byte(v01) | colour
 	}
 
-	layer2[ftloc+0] = c100
-	layer2[ftloc+1] = c10
-	layer2[ftloc+2] = c1
-	layer2[ftloc+3] = '.' | colour
-	layer2[ftloc+4] = c01
-	if c100 == '\x00' {
-		text[ftloc+0] = layer1[ftloc+0]
-	} else {
-		text[ftloc+0] = layer2[ftloc+0]
-	}
-	if c10 == '\x00' {
-		text[ftloc+1] = layer1[ftloc+1]
-	} else {
-		text[ftloc+1] = layer2[ftloc+1]
-	}
-	text[ftloc+2] = layer2[ftloc+2]
-	text[ftloc+3] = layer2[ftloc+3]
-	text[ftloc+4] = layer2[ftloc+4]
+	text[ftloc+0] = c100
+	text[ftloc+1] = c10
+	text[ftloc+2] = c1
+	text[ftloc+3] = '.' | colour
+	text[ftloc+4] = c01
 
 	textUpdated = true
 }
