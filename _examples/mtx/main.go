@@ -6,8 +6,7 @@ package main
 //------------------------------------------------------------------------------
 
 import (
-	"image"
-	_ "image/png"
+	"bufio"
 	"os"
 
 	"github.com/drakmaniso/glam"
@@ -15,8 +14,6 @@ import (
 	"github.com/drakmaniso/glam/gfx"
 	"github.com/drakmaniso/glam/mouse"
 	"github.com/drakmaniso/glam/mtx"
-	"github.com/drakmaniso/glam/pixel"
-	"github.com/drakmaniso/glam/plane"
 	"github.com/drakmaniso/glam/space"
 	"github.com/drakmaniso/glam/window"
 )
@@ -35,7 +32,7 @@ func main() {
 	window.Handle = handler{}
 	mouse.Handle = handler{}
 
-	// Run the main loop
+	// Run the Game Loop
 	glam.Loop = looper{}
 	err = glam.Run()
 	if err != nil {
@@ -49,33 +46,30 @@ func main() {
 var (
 	pipeline    gfx.Pipeline
 	perFrameUBO gfx.UniformBuffer
-	sampler     gfx.Sampler
-	diffuse     gfx.Texture2D
 )
 
 // Uniform buffer
 var perFrame struct {
-	transform space.Matrix
+	viewProjection space.Matrix
+	time           float32
 }
 
 // Vertex buffer
 type mesh []struct {
 	position space.Coord `layout:"0"`
-	uv       plane.Coord `layout:"1"`
+	color    color.RGB   `layout:"1"`
 }
 
 // Matrices
 var (
-	model      space.Matrix
 	view       space.Matrix
 	projection space.Matrix
 )
 
-// Cube state
+// State
 var (
-	distance   float32
-	position   space.Coord
-	yaw, pitch float32
+	file    *os.File
+	scanner *bufio.Scanner
 )
 
 //------------------------------------------------------------------------------
@@ -95,93 +89,93 @@ func setup() error {
 		gfx.FragmentShader(f),
 		gfx.VertexFormat(0, mesh{}),
 	)
+	gfx.Enable(gfx.FramebufferSRGB)
 
 	// Create the uniform buffer
 	perFrameUBO = gfx.NewUniformBuffer(&perFrame, gfx.DynamicStorage)
 
 	// Create and fill the vertex buffer
-	vbo := gfx.NewVertexBuffer(cube(), gfx.StaticStorage)
-
-	// Create and bind the sampler
-	sampler = gfx.NewSampler(
-		gfx.Minification(gfx.LinearMipmapLinear),
-		gfx.Anisotropy(16.0),
-	)
-
-	// Create and load the textures
-	diffuse = gfx.NewTexture2D(8, pixel.Coord{512, 512}, gfx.SRGBA8)
-	r, err := os.Open(glam.Path() + "../shared/testpattern.png")
-	if err != nil {
-		return err
-	}
-	defer r.Close()
-	img, _, err := image.Decode(r)
-	if err != nil {
-		return err
-	}
-	diffuse.Load(img, pixel.Coord{0, 0}, 0)
-	diffuse.GenerateMipmap()
+	vbo := gfx.NewVertexBuffer(cube(), 0)
 
 	// Initialize model and view matrices
-	position = space.Coord{0, 0, 0}
-	yaw = -0.6
-	pitch = 0.3
-	updateModel()
-	distance = 3
 	updateView()
+
+	// MTX
+	mtx.Color(color.RGB{1.00, 0.98, 0.89}, color.RGB{0.0, 0.0, 0.0})
+	mtx.Opaque(false)
+	mtx.ShowFrameTime(true, -1, 0, false)
+
+	// File
+	file, err := os.Open(glam.Path() + "main.go")
+	if err != nil {
+		return err
+	}
+	scanner = bufio.NewScanner(file)
 
 	// Bind the vertex buffer to the pipeline
 	pipeline.Bind()
 	vbo.Bind(0, 0)
 	pipeline.Unbind()
 
-	// MTX
-	mtx.Color(color.RGB{0.0, 0.05, 0.1}, color.RGB{0.7, 0.6, 0.45})
-	mtx.Opaque(false)
-	mtx.ShowFrameTime(true, -1, 0, false)
-
 	return gfx.Err()
-}
-
-//------------------------------------------------------------------------------
-
-func updateModel() {
-	model = space.Translation(position)
-	model = model.Times(space.EulerZXY(pitch, yaw, 0))
-}
-
-func updateView() {
-	if distance < 1 {
-		distance = 1
-	}
-	view = space.LookAt(space.Coord{0, 0, distance}, space.Coord{0, 0, 0}, space.Coord{0, 1, 0})
 }
 
 //------------------------------------------------------------------------------
 
 type looper struct{}
 
-func (l looper) Update(_, _ float64) {
+func (l looper) Update(_, dt float64) {
+	perFrame.time += float32(dt)
+
+	timer += dt
+	if timer < 0.5 {
+		return
+	}
+
+	timer = 0
+
+	if !scanner.Scan() {
+		file.Close()
+		file, err := os.Open(glam.Path() + "main.go")
+		if err == nil {
+			scanner = bufio.NewScanner(file)
+		}
+	}
+	clip1.Print("\n%s", scanner.Text())
 }
+
+var clip1 = mtx.Clip{
+	Left: 1, Top: 0,
+	Right: -20, Bottom: -1,
+	VScroll: true,
+	HScroll: false,
+}
+
+var timer float64
 
 func (l looper) Draw(_ float64) {
 	pipeline.Bind()
-	gfx.ClearDepthBuffer(1.0)
-	gfx.ClearColorBuffer(color.RGBA{0.9, 0.9, 0.9, 1.0})
 	gfx.Enable(gfx.DepthTest)
 	gfx.CullFace(false, true)
-	gfx.Enable(gfx.FramebufferSRGB)
+	gfx.ClearDepthBuffer(1.0)
+	gfx.ClearColorBuffer(color.RGBA{0.05, 0.10, 0.11, 1.0})
 
-	perFrame.transform = projection.Times(view)
-	perFrame.transform = perFrame.transform.Times(model)
+	perFrame.viewProjection = projection.Times(view)
 	perFrameUBO.SubData(&perFrame, 0)
 	perFrameUBO.Bind(0)
 
-	diffuse.Bind(0)
-	sampler.Bind(0)
-	gfx.Draw(gfx.Triangles, 0, 6*2*3)
+	gfx.DrawInstanced(gfx.Triangles, 0, 6*2*3, 28*1)
 
 	pipeline.Unbind()
+}
+
+//------------------------------------------------------------------------------
+
+func updateView() {
+	view = space.LookAt(
+		space.Coord{0, 0, 10},
+		space.Coord{0, 0, 0}, space.Coord{0, 1, 0},
+	)
 }
 
 //------------------------------------------------------------------------------
