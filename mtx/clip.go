@@ -178,7 +178,9 @@ func (cl *Clip) Write(p []byte) (n int, err error) {
 		case c == '\t':
 			n := ((x/8)+1)*8 - x
 			for i := 0; i < n; i++ {
-				micro.Poke(l+x+i, l+y, spCh)
+				if x >= 0 && x <= sx && y >= 0 && y <= sy {
+					micro.Poke(l+x+i, t+y, spCh)
+				}
 			}
 			micro.Touch()
 			x += n
