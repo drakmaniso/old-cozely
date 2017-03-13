@@ -168,7 +168,7 @@ func (cl *Clip) Write(p []byte) (n int, err error) {
 					i = 0
 				}
 				for ; i <= sx; i++ {
-					micro.Poke(l+i, l+y, cl.ClearChar)
+					micro.Poke(l+i, t+y, cl.ClearChar)
 				}
 			}
 			continue
