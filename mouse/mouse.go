@@ -53,10 +53,13 @@ func SetRelativeMode(enabled bool) error {
 	var m C.SDL_bool
 	if enabled {
 		m = 1
+		C.SDL_ShowCursor(C.SDL_DISABLE)
 	}
 	if C.SDL_SetRelativeMouseMode(m) != 0 {
+		C.SDL_ShowCursor(C.SDL_ENABLE)
 		return fmt.Errorf("impossible to set relative mouse mode: %s", internal.GetSDLError())
 	}
+	C.SDL_ShowCursor(C.SDL_ENABLE)
 	return nil
 }
 
