@@ -10,6 +10,7 @@ import (
 	"os"
 
 	"errors"
+
 	"github.com/drakmaniso/glam/basic"
 	"github.com/drakmaniso/glam/gfx"
 	"github.com/drakmaniso/glam/internal"
@@ -79,11 +80,10 @@ func Run() error {
 		key.Handle = basic.KeyHandler{}
 	}
 
-	// Process events once before the first time step
+	// First, send a fake resize window event
 	{
 		s := pixel.Coord{internal.Window.Width, internal.Window.Height}
 		window.Handle.WindowResized(s, 0)
-		events.Process()
 	}
 
 	// Main Loop
@@ -115,12 +115,14 @@ func Run() error {
 
 		//TODO: clamp frameTime ?
 
+		// Process events
+		events.Process()
+
 		// Fixed time step for logic and physics updates
 		remain += frameTime
 		for remain >= TimeStep {
 			remain -= TimeStep
 			stepNow += TimeStep
-			events.Process()
 			Loop.Update(stepNow, TimeStep)
 		}
 
