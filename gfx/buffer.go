@@ -44,6 +44,10 @@ static inline void BindVertex(GLuint binding, GLuint buffer, GLintptr offset, GL
 static inline void BindElement(GLuint buffer) {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer);
 }
+
+static inline void BindIndirect(GLuint buffer) {
+	glBindBuffer(GL_DRAW_INDIRECT_BUFFER, buffer);
+}
 */
 import "C"
 
@@ -296,6 +300,57 @@ var boundElement IndexBuffer
 // Delete frees the buffer.
 func (eb *IndexBuffer) Delete() {
 	C.DeleteBuffer(C.GLuint(eb.object))
+}
+
+//------------------------------------------------------------------------------
+
+// An IndirectBuffer is a block of memory owned by the GPU.
+type IndirectBuffer struct {
+	object C.GLuint
+}
+
+// NewIndirectBuffer asks the GPU to allocate a new block of memory.
+//
+// If data is a
+//
+// In all cases the size of the buffer is
+// fixed at creation.
+func NewIndirectBuffer(data interface{}, f BufferFlags) IndirectBuffer {
+	p, s, err := pointerAndSizeOf(data)
+	if err != nil {
+		setErr(err)
+		return IndirectBuffer{}
+	}
+	var ib IndirectBuffer
+	ib.object = C.NewBuffer(C.GLsizeiptr(s), p, C.GLbitfield(f))
+	//TODO: error handling
+	return ib
+}
+
+// SubData updates the buffer with data, starting at a specified offset.
+//
+// It is your responsability to ensure that the size of data plus the offset
+// does not exceed the buffer size.
+func (ib *IndirectBuffer) SubData(data interface{}, atOffset uintptr) {
+	p, s, err := pointerAndSizeOf(data)
+	if err != nil {
+		setErr(err)
+		return
+	}
+	C.BufferSubData(ib.object, C.GLintptr(atOffset), C.GLsizei(s), p)
+}
+
+// Bind the indirect buffer.
+//
+// The buffer should use the same struct type than the one used in the
+// corresponding call to Pipeline.IndirectFormat.
+func (ib *IndirectBuffer) Bind() {
+	C.BindIndirect(ib.object)
+}
+
+// Delete frees the buffer.
+func (ib *IndirectBuffer) Delete() {
+	C.DeleteBuffer(C.GLuint(ib.object))
 }
 
 //------------------------------------------------------------------------------

@@ -19,6 +19,12 @@ static inline void DrawArraysInstanced(GLenum m, GLuint f, GLuint c, GLuint ic) 
 static inline void DrawIndexed(GLenum m, GLsizei c, GLenum t, GLsizeiptr i) {
 	glDrawElements(m, c, t, (const void *)i);
 }
+
+
+static inline void DrawIndirect(GLenum m, GLsizeiptr f, GLsizei dc, GLsizei s) {
+	glMultiDrawArraysIndirect(m, (void*)(f*16), dc, s);
+}
+
 */
 import "C"
 
@@ -73,6 +79,23 @@ func DrawIndexed(mode Primitive, first int32, count int32) {
 		s = 4
 	}
 	C.DrawIndexed(C.GLenum(mode), C.GLsizei(count), boundElement.gltype, C.GLsizeiptr(first*s))
+}
+
+//------------------------------------------------------------------------------
+
+// A DrawIndirectCommand describes a single draw call. A slice of these is used
+// to fill indirect buffers.
+type DrawIndirectCommand struct {
+	VertexCount   uint32
+	InstanceCount uint32
+	FirstVertex   uint32
+	BaseInstance  uint32
+}
+
+// DrawIndirect asks the GPU to read the Indirect Buffer starting at firstdraw,
+// and make drawcount draw calls.
+func DrawIndirect(mode Primitive, firstdraw uintptr, drawcount int32) {
+	C.DrawIndirect(C.GLenum(mode), C.GLsizeiptr(firstdraw), C.GLsizei(drawcount), C.GLsizei(0))
 }
 
 //------------------------------------------------------------------------------
