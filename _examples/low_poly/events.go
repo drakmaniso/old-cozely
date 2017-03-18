@@ -49,11 +49,15 @@ func (h handler) MouseMotion(motion pixel.Coord, _ pixel.Coord, _ uint32) {
 	sx, sy := window.Size().Cartesian()
 
 	switch {
+	case mouse.IsPressed(mouse.Middle):
+		fallthrough
 	case mouse.IsPressed(mouse.Left):
 		position.X += 2 * mx / sx
 		position.Y -= 2 * my / sy
 		updateModel()
 
+	case mouse.IsPressed(mouse.Extra2):
+		fallthrough
 	case mouse.IsPressed(mouse.Right):
 		yaw += 4 * mx / sx
 		pitch += 4 * my / sy

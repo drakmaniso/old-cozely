@@ -78,6 +78,8 @@ func setup() error {
 	frameUBO = gfx.NewUniformBuffer(&frame, gfx.DynamicStorage)
 
 	//
+	meshes = poly.Meshes{}
+	meshes.AddObj(glam.Path() + "../shared/teapot.obj")
 	poly.SetupMeshBuffers(meshes)
 
 	// Initialize view matrix
@@ -163,7 +165,7 @@ func (l looper) Draw(_ float64) {
 	poly.BindMeshBuffers()
 
 	// poly.Draw()
-	gfx.Draw(gfx.Triangles, 0, 6*2*3)
+	gfx.Draw(gfx.Triangles, 0, int32(len(meshes.Faces)*3)) //6*2*3)
 
 	poly.UnbindPipeline()
 }

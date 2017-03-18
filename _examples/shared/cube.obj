@@ -1,7 +1,7 @@
 # Blender v2.78 (sub 0) OBJ File: ''
 # www.blender.org
 mtllib cube.mtl
-o Cube
+o cube
 v 1.000000 1.000000 -1.000000
 v 1.000000 1.000000 1.000000
 v 1.000000 -1.000000 -1.000000
@@ -31,27 +31,27 @@ vn 0.0000 -1.0000 0.0000
 vn -1.0000 0.0000 0.0000
 vn 1.0000 0.0000 0.0000
 g Example Cube Front
-usemtl CubeFront
+usemtl 0
 s off
 f 6/1/1 1/2/1 5/3/1
 f 6/1/1 2/4/1 1/2/1
 g Example Cube Top
-usemtl CubeTop
+usemtl 1
 f 4/5/2 6/1/2 8/6/2
 f 4/5/2 2/7/2 6/1/2
 g Example Cube Bottom
-usemtl CubeBottom
+usemtl 2
 f 7/8/3 1/9/3 3/10/3
 f 7/8/3 5/3/3 1/9/3
 g Example Cube Back
-usemtl CubeBack
+usemtl 3
 f 4/11/4 7/8/4 3/12/4
 f 4/11/4 8/6/4 7/8/4
 g Example Cube Left
-usemtl CubeLeft
+usemtl 4
 f 8/6/5 5/3/5 7/8/5
 f 8/6/5 6/1/5 5/3/5
 g Example Cube Right
-usemtl CubeRight
+usemtl 5
 f 2/13/6 3/12/6 1/14/6
 f 2/13/6 4/11/6 3/12/6

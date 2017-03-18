@@ -23,7 +23,7 @@ func SetupPipeline(o ...gfx.PipelineOption) {
 func BindPipeline() {
 	pipeline.Bind()
 	gfx.Enable(gfx.DepthTest)
-	// gfx.CullFace(false, true)
+	gfx.CullFace(false, true)
 	gfx.ClearDepthBuffer(1.0)
 }
 

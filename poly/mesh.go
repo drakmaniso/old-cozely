@@ -6,6 +6,11 @@ package poly
 //------------------------------------------------------------------------------
 
 import (
+	"os"
+
+	"strconv"
+
+	"github.com/drakmaniso/glam/formats/obj"
 	"github.com/drakmaniso/glam/gfx"
 	"github.com/drakmaniso/glam/space"
 )
@@ -62,9 +67,63 @@ type MeshID struct {
 	VertexID uint32
 }
 
-// func (m *Meshes) AddObj(filename string) (MeshID, error) {
-// 	// return 0, 0, nil
-// }
+func (m *Meshes) AddObj(filename string) (MeshID, error) {
+	mid := MeshID{FaceID: uint32(len(m.Faces)), VertexID: uint32(len(m.Vertices))}
+
+	f, err := os.Open(filename)
+	if err != nil {
+		return MeshID{}, err //TODO: error wrapping
+	}
+	b := builder{
+		meshes: m,
+	}
+	obj.Parse(f, &b)
+
+	return mid, nil
+}
+
+type builder struct {
+	obj.DefaultBuilder
+	meshes  *Meshes
+	currMat uint16
+}
+
+func (b *builder) V(coords ...float32) error {
+	if len(coords) < 3 {
+		return nil //TODO:error handling
+	}
+
+	v := space.Coord{coords[0], coords[1], coords[2]}
+	b.meshes.Vertices = append(b.meshes.Vertices, v)
+
+	return nil
+}
+
+func (b *builder) F(verts ...obj.Indices) error {
+	if len(verts) != 3 {
+		return nil //TODO:error handling
+	}
+
+	f := Face{
+		Material: b.currMat,
+		Faces: [3]uint16{
+			uint16(verts[0].Vertex - 1),
+			uint16(verts[1].Vertex - 1),
+			uint16(verts[2].Vertex - 1),
+		},
+	}
+	//TODO: handle negative indices
+	b.meshes.Faces = append(b.meshes.Faces, f)
+
+	return nil
+}
+
+func (b *builder) UseMtl(name string) error {
+	v, _ := strconv.Atoi(name)
+	b.currMat = uint16(v)
+
+	return nil
+}
 
 //------------------------------------------------------------------------------
 
