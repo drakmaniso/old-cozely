@@ -115,17 +115,17 @@ var meshes = poly.Meshes{
 		poly.Face{1, [3]uint16{3, 5, 7}},
 		poly.Face{1, [3]uint16{3, 1, 5}},
 		// Bottom
-		poly.Face{1, [3]uint16{6, 0, 2}},
-		poly.Face{1, [3]uint16{6, 4, 0}},
+		poly.Face{2, [3]uint16{6, 0, 2}},
+		poly.Face{2, [3]uint16{6, 4, 0}},
 		// Back
-		poly.Face{0, [3]uint16{3, 6, 2}},
-		poly.Face{0, [3]uint16{3, 7, 6}},
+		poly.Face{3, [3]uint16{3, 6, 2}},
+		poly.Face{3, [3]uint16{3, 7, 6}},
 		// Left
-		poly.Face{2, [3]uint16{7, 4, 6}},
-		poly.Face{2, [3]uint16{7, 5, 4}},
+		poly.Face{4, [3]uint16{7, 4, 6}},
+		poly.Face{4, [3]uint16{7, 5, 4}},
 		// Right
-		poly.Face{2, [3]uint16{1, 2, 0}},
-		poly.Face{2, [3]uint16{1, 3, 2}},
+		poly.Face{5, [3]uint16{1, 2, 0}},
+		poly.Face{5, [3]uint16{1, 3, 2}},
 	},
 	Vertices: []space.Coord{
 		// space.Coord{0, 0.65, 0.5},

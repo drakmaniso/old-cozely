@@ -18,11 +18,14 @@ layout(std140, binding = 0) uniform Frame {
 } frame;
 
 layout(std430, binding = 0) buffer FaceSSBO {
-	uint []faces;
+	uvec2 []faces;
 } faceSSBO;
 
+struct vec3tight {
+	float x, y, z;
+};
 layout(std430, binding = 1) buffer VertexSSBO {
-	float []vertices;
+	vec3tight []vertices;
 } vertexSSBO;
 
 out gl_PerVertex {
@@ -38,44 +41,25 @@ void main(void) {
 	uint faceID = gl_VertexID / 3;
 	uint currVert = gl_VertexID - (3 * faceID);
 
-	// faceID = 2;
-	uvec2 face;
-	face.x = faceSSBO.faces[faceID*2+0];
-	face.y = faceSSBO.faces[faceID*2+1];
+	uvec2 face = faceSSBO.faces[faceID];
 	vertex.Material = face.x & 0xFFFF;
-	uint vert1 = face.x >> 16;
-	uint vert2 = face.y & 0xFFFF;
-	uint vert3 = face.y >> 16;
+	uint vertID[3];
+	vertID[0] = face.x >> 16;
+	vertID[1] = face.y & 0xFFFF;
+	vertID[2] = face.y >> 16;
 
+	vec3tight verts[3];
+	verts[0] = vertexSSBO.vertices[vertID[0]];
+	verts[1] = vertexSSBO.vertices[vertID[1]];
+	verts[2] = vertexSSBO.vertices[vertID[2]];
 	vec3 p[3];
-	p[0].x = vertexSSBO.vertices[vert1*3 + 0];
-	p[0].y = vertexSSBO.vertices[vert1*3 + 1];
-	p[0].z = vertexSSBO.vertices[vert1*3 + 2];
-	p[1].x = vertexSSBO.vertices[vert2*3 + 0];
-	p[1].y = vertexSSBO.vertices[vert2*3 + 1];
-	p[1].z = vertexSSBO.vertices[vert2*3 + 2];
-	p[2].x = vertexSSBO.vertices[vert3*3 + 0];
-	p[2].y = vertexSSBO.vertices[vert3*3 + 1];
-	p[2].z = vertexSSBO.vertices[vert3*3 + 2];
+	p[0] = vec3(frame.Model * vec4(verts[0].x, verts[0].y, verts[0].z, 1.0));
+	p[1] = vec3(frame.Model * vec4(verts[1].x, verts[1].y, verts[1].z, 1.0));
+	p[2] = vec3(frame.Model * vec4(verts[2].x, verts[2].y, verts[2].z, 1.0));
 
-	// vec3 v1 = p[1] - p[0];
-	// vec3 v2 = p[2] - p[0];
-	// vertex.Normal = normalize(cross(v1, v2));
+	vertex.Normal = normalize(cross(p[1] - p[0], p[2] - p[0]));
 
-	gl_Position = frame.Projection * frame.View * frame.Model * vec4(p[currVert], 1);
-
-	// gl_Position.x = 0.5*vertexSSBO.vertices[gl_VertexID * 3];
-	// gl_Position.y = 0.5*vertexSSBO.vertices[gl_VertexID * 3 + 1];
-	// gl_Position.z = 0.5*vertexSSBO.vertices[gl_VertexID * 3 + 2];
-	// gl_Position.w = 1.0;
-	// gl_Position = frame.Projection * frame.View * frame.Model * gl_Position;
-
-	// const vec4 triangle[3] = vec4[3](
-	// 	vec4(0, 0.65, 0.5, 1),
-	// 	vec4(-0.65, -0.475, 0.5, 1),
-	// 	vec4(0.65, -0.475, 0.5, 1)
-	// );
-	// gl_Position = triangle[gl_VertexID];
+	gl_Position = frame.Projection * frame.View * vec4(p[currVert], 1);
 }
 `
 

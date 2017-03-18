@@ -8,15 +8,20 @@ in PerVertex {
 out vec4 Color;
 
 const vec4 palette[] = {
-  {1, 0.5, 0, 1},
-  {0.5, 0, 1, 1},
-  {0, 0.5, 1, 1},
-  {1, 0, 0, 1},
-  {0, 1, 0, 1},
-  {0, 0, 1, 1},
+  {0.2, 0.0, 0.6, 1.0},
+  {0.8, 0.2, 0.0, 1.0},
+  {0.0, 0.3, 0.1, 1.0},
+  {0.0, 0.2, 0.6, 1.0},
+  {0.7, 0.0, 0.3, 1.0},
+  {0.8, 0.5, 0.0, 1.0}
 };
 
 void main(void) {
-	Color = palette[vertex.Material];
-  // Color = vec4(0, 0, 0, 1);
+
+  // Simplistic diffuse lighting
+  const vec3 L = normalize(vec3(0.4, 0.6, 0.8));
+  float NdotL = dot(vertex.Normal, L);
+  float diff = clamp(NdotL, 0.2, 1.0);
+
+	Color = diff * palette[vertex.Material];
 }
