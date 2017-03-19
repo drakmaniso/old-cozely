@@ -20,7 +20,7 @@ import (
 func SetupMeshBuffers(m Meshes) error {
 	faceSSBO.Delete()
 	faceSSBO = gfx.NewStorageBuffer(
-		uintptr(len(m.Faces)*8),
+		uintptr(len(m.Faces)*12),
 		gfx.DynamicStorage,
 	)
 	faceSSBO.SubData(m.Faces, 0)
@@ -85,7 +85,7 @@ func (m *Meshes) AddObj(filename string) (MeshID, error) {
 type builder struct {
 	obj.DefaultBuilder
 	meshes  *Meshes
-	currMat uint16
+	currMat uint32
 }
 
 func (b *builder) V(coords ...float32) error {
@@ -100,17 +100,22 @@ func (b *builder) V(coords ...float32) error {
 }
 
 func (b *builder) F(verts ...obj.Indices) error {
-	if len(verts) != 3 {
+	if len(verts) < 3 {
 		return nil //TODO:error handling
 	}
 
 	f := Face{
 		Material: b.currMat,
-		Faces: [3]uint16{
+		Faces: [4]uint16{
 			uint16(verts[0].Vertex - 1),
 			uint16(verts[1].Vertex - 1),
 			uint16(verts[2].Vertex - 1),
 		},
+	}
+	if len(verts) >= 4 {
+		f.Faces[3] = uint16(verts[3].Vertex - 1)
+	} else {
+		f.Faces[3] = f.Faces[2]
 	}
 	//TODO: handle negative indices
 	b.meshes.Faces = append(b.meshes.Faces, f)
@@ -120,7 +125,7 @@ func (b *builder) F(verts ...obj.Indices) error {
 
 func (b *builder) UseMtl(name string) error {
 	v, _ := strconv.Atoi(name)
-	b.currMat = uint16(v)
+	b.currMat = uint32(v)
 
 	return nil
 }
@@ -128,8 +133,8 @@ func (b *builder) UseMtl(name string) error {
 //------------------------------------------------------------------------------
 
 type Face struct {
-	Material uint16
-	Faces    [3]uint16
+	Material uint32
+	Faces    [4]uint16
 }
 
 //------------------------------------------------------------------------------
