@@ -1,7 +1,6 @@
 # Blender v2.78 (sub 0) OBJ File: 'suzanne_quads.blend'
 # www.blender.org
-mtllib suzanne.mtl
-o Suzanne
+o suzanne
 v 0.437500 0.164062 0.765625
 v -0.437500 0.164062 0.765625
 v 0.491899 0.100593 0.679290

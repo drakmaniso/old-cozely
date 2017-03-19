@@ -54,6 +54,8 @@ var frame struct {
 	model      space.Matrix
 }
 
+var meshes poly.Meshes
+
 // Camera
 var (
 	distance   float32
@@ -79,14 +81,14 @@ func setup() error {
 
 	//
 	meshes = poly.Meshes{}
-	meshes.AddObj(glam.Path() + "../shared/teapot.obj")
+	meshes.AddObj(glam.Path() + "../shared/suzanne.obj")
 	// meshes.AddObj("E:/objtestfiles/scifigirl.obj")
 	poly.SetupMeshBuffers(meshes)
 
 	// Initialize view matrix
 	position = space.Coord{0, 0, 0}
-	// yaw = -0.6
-	pitch = 0.3
+	yaw = 0.3
+	pitch = 0.2
 	updateModel()
 	distance = 6
 	updateView()
@@ -107,50 +109,6 @@ func setup() error {
 
 //------------------------------------------------------------------------------
 
-var meshes = poly.Meshes{
-	Faces: []poly.Face{
-		// poly.Face{0, [4]uint16{0, 1, 2}},
-		// poly.Face{1, [4]uint16{3, 4, 5}},
-		// Front
-		poly.Face{0, [4]uint16{5, 0, 4}},
-		poly.Face{0, [4]uint16{5, 1, 0}},
-		// Top
-		poly.Face{1, [4]uint16{3, 5, 7}},
-		poly.Face{1, [4]uint16{3, 1, 5}},
-		// Bottom
-		poly.Face{2, [4]uint16{6, 0, 2}},
-		poly.Face{2, [4]uint16{6, 4, 0}},
-		// Back
-		poly.Face{3, [4]uint16{3, 6, 2}},
-		poly.Face{3, [4]uint16{3, 7, 6}},
-		// Left
-		poly.Face{4, [4]uint16{7, 4, 6}},
-		poly.Face{4, [4]uint16{7, 5, 4}},
-		// Right
-		poly.Face{5, [4]uint16{1, 2, 0}},
-		poly.Face{5, [4]uint16{1, 3, 2}},
-	},
-	Vertices: []space.Coord{
-		// space.Coord{0, 0.65, 0.5},
-		// space.Coord{-0.65, -0.475, 0.5},
-		// space.Coord{0.65, -0.475, 0.5},
-		// space.Coord{0, -0.65, 0.6},
-		// space.Coord{0.65, +0.475, 0.6},
-		// space.Coord{-0.65, +0.475, 0.6},
-
-		space.Coord{1.000000, 1.000000, -1.000000},
-		space.Coord{1.000000, 1.000000, 1.000000},
-		space.Coord{1.000000, -1.000000, -1.000000},
-		space.Coord{1.000000, -1.000000, 1.000000},
-		space.Coord{-1.000000, 1.000000, -1.000000},
-		space.Coord{-1.000000, 1.000000, 1.000000},
-		space.Coord{-1.000000, -1.000000, -1.000000},
-		space.Coord{-1.000000, -1.000000, 1.000000},
-	},
-}
-
-//------------------------------------------------------------------------------
-
 type looper struct{}
 
 func (l looper) Update(_, _ float64) {
@@ -166,7 +124,7 @@ func (l looper) Draw(_ float64) {
 	poly.BindMeshBuffers()
 
 	// poly.Draw()
-	gfx.Draw(gfx.Triangles, 0, int32(len(meshes.Faces)*6)) //6*2*3)
+	gfx.Draw(gfx.Triangles, 0, int32(len(meshes.Faces)*6))
 
 	poly.UnbindPipeline()
 }

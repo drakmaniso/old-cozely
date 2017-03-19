@@ -1,6 +1,5 @@
 # Blender v2.78 (sub 0) OBJ File: 'teapot_quads.blend'
 # www.blender.org
-mtllib teapot.mtl
 o teapot
 v 0.456016 0.751405 0.000000
 v 0.433106 0.751405 0.145487

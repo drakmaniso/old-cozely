@@ -7,7 +7,6 @@ package poly
 
 import (
 	"os"
-
 	"strconv"
 
 	"github.com/drakmaniso/glam/formats/obj"
@@ -20,7 +19,7 @@ import (
 func SetupMeshBuffers(m Meshes) error {
 	faceSSBO.Delete()
 	faceSSBO = gfx.NewStorageBuffer(
-		uintptr(len(m.Faces)*12),
+		uintptr(len(m.Faces)*8),
 		gfx.DynamicStorage,
 	)
 	faceSSBO.SubData(m.Faces, 0)
@@ -85,7 +84,7 @@ func (m *Meshes) AddObj(filename string) (MeshID, error) {
 type builder struct {
 	obj.DefaultBuilder
 	meshes  *Meshes
-	currMat uint32
+	currMat byte
 }
 
 func (b *builder) V(coords ...float32) error {
@@ -104,18 +103,33 @@ func (b *builder) F(verts ...obj.Indices) error {
 		return nil //TODO:error handling
 	}
 
-	f := Face{
-		Material: b.currMat,
-		Faces: [4]uint16{
-			uint16(verts[0].Vertex - 1),
-			uint16(verts[1].Vertex - 1),
-			uint16(verts[2].Vertex - 1),
-		},
-	}
+	f := Face{}
+	// f := Face{
+	// 	Material: b.currMat,
+	// 	Faces: [4]uint16{
+	// 		uint16(verts[0].Vertex - 1),
+	// 		uint16(verts[1].Vertex - 1),
+	// 		uint16(verts[2].Vertex - 1),
+	// 	},
+	// }
 	if len(verts) >= 4 {
-		f.Faces[3] = uint16(verts[3].Vertex - 1)
+		f.MakeFace(
+			b.currMat,
+			uint32(verts[0].Vertex-1),
+			uint32(verts[1].Vertex-1),
+			uint32(verts[2].Vertex-1),
+			uint32(verts[3].Vertex-1),
+		)
+		// f.Faces[3] = uint16(verts[3].Vertex - 1)
 	} else {
-		f.Faces[3] = f.Faces[2]
+		f.MakeFace(
+			b.currMat,
+			uint32(verts[0].Vertex-1),
+			uint32(verts[1].Vertex-1),
+			uint32(verts[2].Vertex-1),
+			uint32(verts[2].Vertex-1),
+		)
+		// f.Faces[3] = f.Faces[2]
 	}
 	//TODO: handle negative indices
 	b.meshes.Faces = append(b.meshes.Faces, f)
@@ -125,7 +139,7 @@ func (b *builder) F(verts ...obj.Indices) error {
 
 func (b *builder) UseMtl(name string) error {
 	v, _ := strconv.Atoi(name)
-	b.currMat = uint32(v)
+	b.currMat = byte(v)
 
 	return nil
 }
@@ -133,8 +147,19 @@ func (b *builder) UseMtl(name string) error {
 //------------------------------------------------------------------------------
 
 type Face struct {
-	Material uint32
-	Faces    [4]uint16
+	MathiVert0Vert1 uint32
+	MatloVert2Vert3 uint32
+}
+
+func (f *Face) MakeFace(material byte, a, b, c, d uint32) {
+	m1 := uint32(material&0xF0) >> 4
+	m2 := uint32(material & 0x0F)
+	a &= 0x3FFF
+	b &= 0x3FFF
+	c &= 0x3FFF
+	d &= 0x3FFF
+	f.MathiVert0Vert1 = (m1 << 28) | (a << 14) | b
+	f.MatloVert2Vert3 = (m2 << 28) | (c << 14) | d
 }
 
 //------------------------------------------------------------------------------

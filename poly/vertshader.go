@@ -18,9 +18,8 @@ layout(std140, binding = 0) uniform Frame {
 } frame;
 
 struct facetight {
-	uint material;
-	uint vert01;
-	uint vert23;
+	uint mathivert0vert1;
+	uint matlovert2vert3;
 };
 layout(std430, binding = 0) buffer FaceSSBO {
 	facetight []faces;
@@ -49,12 +48,16 @@ void main(void) {
 	uint currVert = triangulate[gl_VertexID - (6 * faceID)];
 
 	facetight face = faceSSBO.faces[faceID];
-	vertex.Material = face.material & 0xFFFF;
 	uint vertID[4];
-	vertID[0] = face.vert01 & 0xFFFF;
-	vertID[1] = face.vert01 >> 16;
-	vertID[2] = face.vert23 & 0xFFFF;
-	vertID[3] = face.vert23 >> 16;
+	vertID[1] = face.mathivert0vert1 & 0x3FFF;
+	face.mathivert0vert1 >>= 14;
+	vertID[0] = face.mathivert0vert1 & 0x3FFF;
+	face.mathivert0vert1 >>= 14;
+	vertID[3] = face.matlovert2vert3 & 0x3FFF;
+	face.matlovert2vert3 >>= 14;
+	vertID[2] = face.matlovert2vert3 & 0x3FFF;
+	face.matlovert2vert3 >>= 14;
+	vertex.Material = face.mathivert0vert1 << 4 | face.matlovert2vert3;
 
 	vec3tight verts[4];
 	verts[0] = vertexSSBO.vertices[vertID[0]];
