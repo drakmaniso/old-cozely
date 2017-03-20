@@ -9,6 +9,8 @@ import (
 	"os"
 	"strconv"
 
+	"fmt"
+
 	"github.com/drakmaniso/glam/formats/obj"
 	"github.com/drakmaniso/glam/gfx"
 	"github.com/drakmaniso/glam/space"
@@ -77,6 +79,13 @@ func (m *Meshes) AddObj(filename string) (MeshID, error) {
 		meshes: m,
 	}
 	obj.Parse(f, &b)
+
+	fmt.Printf(
+		"Loaded %s: \n    vertices: %d, faces: %d\n",
+		filename,
+		len(m.Vertices)-int(mid.VertexID),
+		len(m.Faces)-int(mid.FaceID),
+	)
 
 	return mid, nil
 }
