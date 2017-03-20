@@ -14,7 +14,7 @@ import (
 //------------------------------------------------------------------------------
 
 func SetupPipeline(o ...gfx.PipelineOption) {
-	o = append(o, gfx.VertexShader(strings.NewReader(vertshader2)))
+	o = append(o, gfx.VertexShader(strings.NewReader(vertshader)))
 	pipeline = gfx.NewPipeline(o...)
 }
 
