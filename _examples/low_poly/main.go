@@ -15,6 +15,7 @@ import (
 	"github.com/drakmaniso/glam/math"
 	"github.com/drakmaniso/glam/mouse"
 	"github.com/drakmaniso/glam/mtx"
+	"github.com/drakmaniso/glam/plane"
 	"github.com/drakmaniso/glam/poly"
 	"github.com/drakmaniso/glam/space"
 	"github.com/drakmaniso/glam/window"
@@ -116,6 +117,7 @@ func setup() error {
 	// MTX
 	mtx.Color(color.RGB{0.0, 0.05, 0.1}, color.RGB{0.7, 0.6, 0.45})
 	mtx.Opaque(false)
+	mtx.ShowFrameTime(true, -1, 0, false)
 
 	// Bind the vertex buffer to the pipeline
 	poly.BindPipeline()
@@ -134,17 +136,22 @@ type looper struct{}
 func (l looper) Update(_, dt float64) {
 	v := camera.velocity.Times(float32(dt))
 	camera.position = cameraNext.position
-
-	cameraNext.position.X += v.X*math.Cos(camera.yaw) - v.Z*math.Sin(camera.yaw)
-	cameraNext.position.Z += v.X*math.Sin(camera.yaw) + v.Z*math.Cos(camera.yaw)
-
 	camera.yaw = cameraNext.yaw
 	camera.pitch = cameraNext.pitch
+
+	cameraNext.position.X += v.X*math.Cos(cameraNext.yaw) - v.Z*math.Sin(cameraNext.yaw)
+	cameraNext.position.Z += v.X*math.Sin(cameraNext.yaw) + v.Z*math.Cos(cameraNext.yaw)
+
 	if firstPerson {
 		mx, my := mouse.Delta().Cartesian()
+
+		const d = 0.5
+		smoothedMouse.X += (mx - smoothedMouse.X) * d
+		smoothedMouse.Y += (my - smoothedMouse.Y) * d
+
 		sx, sy := window.Size().Cartesian()
-		cameraNext.yaw += 2 * mx / sx
-		cameraNext.pitch += 2 * my / sy
+		cameraNext.yaw += 2 * smoothedMouse.X / sx
+		cameraNext.pitch += 2 * smoothedMouse.Y / sy
 		switch {
 		case cameraNext.pitch < -math.Pi/2:
 			cameraNext.pitch = -math.Pi / 2
@@ -153,6 +160,10 @@ func (l looper) Update(_, dt float64) {
 		}
 	}
 }
+
+var smoothedMouse plane.Coord
+
+//------------------------------------------------------------------------------
 
 func (l looper) Draw(interpolation float64) {
 	poly.BindPipeline()

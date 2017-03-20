@@ -65,8 +65,6 @@ func (h handler) MouseMotion(motion pixel.Coord, _ pixel.Coord, _ uint32) {
 
 	switch {
 	case mouse.IsPressed(mouse.Middle):
-		fallthrough
-	case mouse.IsPressed(mouse.Left):
 		object.position.X += 2 * mx / sx
 		object.position.Y -= 2 * my / sy
 		updateModel()
@@ -93,7 +91,7 @@ func (h handler) MouseMotion(motion pixel.Coord, _ pixel.Coord, _ uint32) {
 		// case camera.pitch > +math.Pi/2:
 		// 	camera.pitch = +math.Pi / 2
 		// }
-		// updateView()
+		// updateView(camera.position, camera.yaw, camera.pitch)
 	}
 }
 
