@@ -57,6 +57,7 @@ var (
 var frame struct {
 	ProjectionView space.Matrix
 	Model          space.Matrix
+	CameraPosition space.Coord
 }
 
 var meshes poly.Meshes
@@ -108,8 +109,8 @@ func setup() error {
 
 	// Initialize view matrix
 	object.position = space.Coord{0, 0, -4.0}
-	object.yaw = 0.3
-	object.pitch = 0.2
+	// object.yaw = 0.3
+	// object.pitch = 0.2
 	object.scale = 1.0
 	updateModel()
 	updateView(camera.position, camera.yaw, camera.pitch)
@@ -175,6 +176,7 @@ func (l looper) Draw(interpolation float64) {
 	p := (1.0-float32(interpolation))*camera.pitch + float32(interpolation)*cameraNext.pitch
 	updateView(pos, y, p)
 	frame.ProjectionView = projection.Times(view)
+	frame.CameraPosition = space.Coord{-pos.X, -pos.Y, -pos.Z}
 	frameUBO.SubData(&frame, 0)
 	frameUBO.Bind(0)
 

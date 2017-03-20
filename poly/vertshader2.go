@@ -14,6 +14,7 @@ const vertshader2 = `
 layout(std140, binding = 0) uniform frameBlock {
 	mat4 ProjectionView;
 	mat4 Model;
+	vec3 CameraPosition;
 } frame;
 
 struct face {
@@ -39,6 +40,7 @@ out gl_PerVertex {
 out PerVertex {
 	layout(location = 0) out vec3 Normal; // in world space
 	layout(location = 1) flat out uint Material;
+	layout(location = 2) out vec3 SurfaceToCamera;
 } vertex;
 
 void main(void) {
@@ -95,7 +97,11 @@ void main(void) {
 	vertex.Normal = (normalize(nm * vec3(vertex.Normal))).xyz;
 
 	// Compute screen coordinates
-	gl_Position = frame.ProjectionView * frame.Model * vec4(p[currVert], 1);
+	vec4 wp = frame.Model * vec4(p[currVert], 1);
+	gl_Position = frame.ProjectionView * wp;
+
+	//
+	vertex.SurfaceToCamera = frame.CameraPosition - wp.xyz/wp.w;
 }
 `
 
