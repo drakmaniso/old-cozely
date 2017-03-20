@@ -26,7 +26,7 @@ type handler struct {
 func (h handler) WindowResized(s pixel.Coord, _ uint32) {
 	sx, sy := window.Size().Cartesian()
 	r := sx / sy
-	frame.projection = space.Perspective(math.Pi/4, r, 0.001, 1000.0)
+	projection = space.Perspective(math.Pi/4, r, 0.001, 1000.0)
 }
 
 //------------------------------------------------------------------------------

@@ -49,9 +49,8 @@ var (
 
 // Uniform buffer
 var frame struct {
-	projection space.Matrix
-	view       space.Matrix
-	model      space.Matrix
+	ProjectionView space.Matrix
+	Model          space.Matrix
 }
 
 var meshes poly.Meshes
@@ -61,6 +60,11 @@ var (
 	distance   float32
 	position   space.Coord
 	yaw, pitch float32
+)
+
+var (
+	projection space.Matrix
+	view       space.Matrix
 )
 
 //------------------------------------------------------------------------------
@@ -118,6 +122,7 @@ func (l looper) Draw(_ float64) {
 	poly.BindPipeline()
 	gfx.ClearColorBuffer(color.RGBA{0.8, 0.8, 0.8, 1.0})
 
+	frame.ProjectionView = projection.Times(view)
 	frameUBO.SubData(&frame, 0)
 	frameUBO.Bind(0)
 
@@ -130,15 +135,16 @@ func (l looper) Draw(_ float64) {
 }
 
 func updateModel() {
-	frame.model = space.Translation(position)
-	frame.model = frame.model.Times(space.EulerZXY(pitch, yaw, 0))
+	frame.Model = space.Translation(position)
+	frame.Model = frame.Model.Times(space.EulerZXY(pitch, yaw, 0))
+	// frame.Model = frame.Model.Times(space.Scaling(space.Coord{2, 2, 2}))
 }
 
 func updateView() {
 	if distance < 1 {
 		distance = 1
 	}
-	frame.view = space.LookAt(
+	view = space.LookAt(
 		space.Coord{0, 0, distance},
 		space.Coord{0, 0, 0},
 		space.Coord{0, 1, 0},

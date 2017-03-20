@@ -12,8 +12,7 @@ const vertshader = `
 #version 450 core
 
 layout(std140, binding = 0) uniform frameBlock {
-	mat4 Projection;
-	mat4 View;
+	mat4 ProjectionView;
 	mat4 Model;
 } frame;
 
@@ -38,7 +37,7 @@ out gl_PerVertex {
 };
 
 out PerVertex {
-	layout(location = 0) flat out vec3 Normal;
+	layout(location = 0) flat out vec3 Normal; // in world space
 	layout(location = 1) flat out uint Material;
 } vertex;
 
@@ -70,19 +69,22 @@ void main(void) {
 	v[1] = vertexBuffer.Vertices[vi[1]];
 	v[2] = vertexBuffer.Vertices[vi[2]];
 	v[3] = vertexBuffer.Vertices[vi[3]];
-
-	// Compute world coordinates for all 4 vertices
+	// Convert to vec3
 	vec3 p[4];
-	p[0] = vec3(frame.Model * vec4(v[0].x, v[0].y, v[0].z, 1.0));
-	p[1] = vec3(frame.Model * vec4(v[1].x, v[1].y, v[1].z, 1.0));
-	p[2] = vec3(frame.Model * vec4(v[2].x, v[2].y, v[2].z, 1.0));
-	p[3] = vec3(frame.Model * vec4(v[3].x, v[3].y, v[3].z, 1.0));
+	p[0] = vec3(v[0].x, v[0].y, v[0].z);
+	p[1] = vec3(v[1].x, v[1].y, v[1].z);
+	p[2] = vec3(v[2].x, v[2].y, v[2].z);
+	p[3] = vec3(v[3].x, v[3].y, v[3].z);
 
-	// Compute face normal (in world coordinates)
-	vertex.Normal = normalize(cross(p[2] - p[0], p[3] - p[1]));
+	// Compute face normal
+	vertex.Normal = cross(p[2] - p[0], p[3] - p[1]);
+	// Transform normal to world space
+	mat3 nm = mat3(frame.Model);
+	nm = transpose(inverse(nm));
+	vertex.Normal = (normalize(nm * vec3(vertex.Normal))).xyz;
 
 	// Compute screen coordinates
-	gl_Position = frame.Projection * frame.View * vec4(p[currVert], 1);
+	gl_Position = frame.ProjectionView * frame.Model * vec4(p[currVert], 1);
 }
 `
 
