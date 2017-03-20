@@ -70,7 +70,8 @@ func (h handler) MouseMotion(motion pixel.Coord, _ pixel.Coord, _ uint32) {
 		updateModel()
 
 	case mouse.IsPressed(mouse.Extra1):
-		fallthrough
+		object.yaw += 4 * mx / sx
+		updateModel()
 	case mouse.IsPressed(mouse.Left):
 		object.yaw += 4 * mx / sx
 		object.pitch += 4 * my / sy

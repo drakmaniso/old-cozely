@@ -104,7 +104,7 @@ func setup() error {
 	//
 	meshes = poly.Meshes{}
 	meshes.AddObj(glam.Path() + "../shared/suzanne.obj")
-	// meshes.AddObj("E:/objtestfiles/scifigirl.obj")
+	// meshes.AddObj("E:/objtestfiles/elephant_quads.obj")
 	poly.SetupMeshBuffers(meshes)
 
 	// Initialize view matrix
@@ -112,6 +112,8 @@ func setup() error {
 	// object.yaw = 0.3
 	// object.pitch = 0.2
 	object.scale = 1.0
+	camera.position = space.Coord{0, 0, 0.0}
+	cameraNext.position = camera.position
 	updateModel()
 	updateView(camera.position, camera.yaw, camera.pitch)
 
@@ -142,6 +144,7 @@ func (l looper) Update(_, dt float64) {
 
 	cameraNext.position.X += v.X*math.Cos(cameraNext.yaw) - v.Z*math.Sin(cameraNext.yaw)
 	cameraNext.position.Z += v.X*math.Sin(cameraNext.yaw) + v.Z*math.Cos(cameraNext.yaw)
+	mtx.Print(1, 0, "cam: %6.2f,%6.2f", cameraNext.position.X, cameraNext.position.Z)
 
 	if firstPerson {
 		mx, my := mouse.Delta().Cartesian()
@@ -176,7 +179,7 @@ func (l looper) Draw(interpolation float64) {
 	p := (1.0-float32(interpolation))*camera.pitch + float32(interpolation)*cameraNext.pitch
 	updateView(pos, y, p)
 	frame.ProjectionView = projection.Times(view)
-	frame.CameraPosition = space.Coord{-pos.X, -pos.Y, -pos.Z}
+	frame.CameraPosition = pos
 	frameUBO.SubData(&frame, 0)
 	frameUBO.Bind(0)
 
@@ -196,7 +199,7 @@ func updateModel() {
 
 func updateView(pos space.Coord, yaw, pitch float32) {
 	view = space.EulerZXY(pitch, yaw, 0)
-	view = view.Times(space.Translation(object.position.Minus(pos)))
+	view = view.Times(space.Translation(pos.Inverse()))
 }
 
 //------------------------------------------------------------------------------

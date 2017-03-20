@@ -194,7 +194,7 @@ void main(void) {
     vec3 base_color;
     float smoothness  = 0.35;
     float metal_mask  = 0.00;
-    float reflectance = 0.04;
+    float reflectance = 0.20;
 
     base_color = palette[vertex.Material].rgb;
 
@@ -218,7 +218,7 @@ void main(void) {
 
     // Lighting
 
-    vec3 V = normalize (vertex.SurfaceToCamera);
+    vec3 V =  normalize(vertex.SurfaceToCamera);
     vec3 L = normalize(vec3(0.4, 0.6, 0.8)); //w_direction_to_sun;
 
     //vec3 luminance = (N + 1.0) / 2.0 + 0.000000001 * base_color;
@@ -226,6 +226,7 @@ void main(void) {
     //vec3 luminance = sun_illuminance * normalized_blinn_phong_lighting (L, V, N, base_color, f0, 1000.0 * smoothness * smoothness * smoothness * smoothness) + base_color * ambient_luminance;
     //vec3 luminance = sun_illuminance * minimalist_cook_torrance_lighting (L, V, N, base_color, f0, 500.0 * smoothness * smoothness * smoothness * smoothness) + base_color * ambient_luminance;
     vec3 luminance = light_luminance (sun_illuminance, L, V, N, base_color, f0, roughness) + base_color * ambient_luminance;
+
 
     // Dithering
 
@@ -235,7 +236,7 @@ void main(void) {
     // luminance *= dither;
 
     Color = vec4 (luminance * exposure, 1.0);
-
+    // Color = vec4(V, 1.0);
 }
 
 //--------------------------------------------------------------------------------------------------
