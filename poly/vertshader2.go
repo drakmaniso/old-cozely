@@ -15,6 +15,9 @@ layout(std140, binding = 0) uniform frameBlock {
 	mat4 ProjectionView;
 	mat4 Model;
 	vec3 CameraPosition;
+  float CameraExposure;
+	vec3 SunIlluminance;
+  float unused1;
 } frame;
 
 struct face {

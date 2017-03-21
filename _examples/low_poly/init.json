@@ -5,7 +5,7 @@
     720
   ],
   "Display": 0,
-  "Fullscreen": false,
+  "Fullscreen": true,
   "FullscreenMode": "Desktop",
   "VSync": true,
   "Debug": true

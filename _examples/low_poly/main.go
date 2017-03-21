@@ -15,6 +15,7 @@ import (
 	"github.com/drakmaniso/glam/math"
 	"github.com/drakmaniso/glam/mouse"
 	"github.com/drakmaniso/glam/mtx"
+	"github.com/drakmaniso/glam/pbr"
 	"github.com/drakmaniso/glam/plane"
 	"github.com/drakmaniso/glam/poly"
 	"github.com/drakmaniso/glam/space"
@@ -58,6 +59,9 @@ var frame struct {
 	ProjectionView space.Matrix
 	Model          space.Matrix
 	CameraPosition space.Coord
+	CameraExposure float32
+	SunIlluminance color.RGB
+	_              byte
 }
 
 var meshes poly.Meshes
@@ -65,9 +69,9 @@ var meshes poly.Meshes
 // Camera
 var (
 	object struct {
-		position   space.Coord
-		yaw, pitch float32
-		scale      float32
+		position         space.Coord
+		yaw, pitch, roll float32
+		scale            float32
 	}
 	camera struct {
 		position   space.Coord
@@ -104,18 +108,20 @@ func setup() error {
 	//
 	meshes = poly.Meshes{}
 	meshes.AddObj(glam.Path() + "../shared/suzanne.obj")
-	// meshes.AddObj("E:/objtestfiles/elephant_quads.obj")
+	// meshes.AddObj("E:/objtestfiles/stygirl.obj")
 	poly.SetupMeshBuffers(meshes)
 
 	// Initialize view matrix
 	object.position = space.Coord{0, 0, -4.0}
-	// object.yaw = 0.3
-	// object.pitch = 0.2
 	object.scale = 1.0
 	camera.position = space.Coord{0, 0, 0.0}
 	cameraNext.position = camera.position
 	updateModel()
 	updateView(camera.position, camera.yaw, camera.pitch)
+	frame.SunIlluminance = pbr.DirectionalLightSpectralIlluminance(116400.0, 5400.0)
+	frame.CameraExposure = float32(pbr.Exposure(16.0, 1.0/125.0, 100.0))
+	print(frame.CameraExposure, "\n")
+	print(frame.SunIlluminance.R, "  ", frame.SunIlluminance.G, "  ", frame.SunIlluminance.B, "\n")
 
 	// MTX
 	mtx.Color(color.RGB{0.0, 0.05, 0.1}, color.RGB{0.7, 0.6, 0.45})
@@ -193,7 +199,7 @@ func (l looper) Draw(interpolation float64) {
 
 func updateModel() {
 	frame.Model = space.Translation(object.position)
-	frame.Model = frame.Model.Times(space.EulerZXY(object.pitch, object.yaw, 0))
+	frame.Model = frame.Model.Times(space.EulerXZY(object.pitch, object.yaw, object.roll))
 	frame.Model = frame.Model.Times(space.Scaling(space.Coord{object.scale, object.scale, object.scale}))
 }
 

@@ -70,17 +70,26 @@ func (h handler) MouseMotion(motion pixel.Coord, _ pixel.Coord, _ uint32) {
 		updateModel()
 
 	case mouse.IsPressed(mouse.Extra1):
-		object.yaw += 4 * mx / sx
+		object.roll -= 4 * mx / sx
+		switch {
+		case object.roll > 2*math.Pi:
+			object.roll = 2 * math.Pi
+		case object.roll < -2*math.Pi:
+			object.roll = -2 * math.Pi
+		}
 		updateModel()
 	case mouse.IsPressed(mouse.Left):
 		object.yaw += 4 * mx / sx
 		object.pitch += 4 * my / sy
 		switch {
-		case object.pitch < -math.Pi/2:
-			object.pitch = -math.Pi / 2
-		case object.pitch > +math.Pi/2:
-			object.pitch = +math.Pi / 2
+		case object.pitch < -2*math.Pi:
+			object.pitch = -2 * math.Pi
+		case object.pitch > +2*math.Pi:
+			object.pitch = +2 * math.Pi
 		}
+		updateModel()
+	case mouse.IsPressed(mouse.Extra2):
+		object.yaw += 4 * mx / sx
 		updateModel()
 
 	case firstPerson:
