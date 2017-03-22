@@ -11,42 +11,49 @@ package poly
 const vertshader = `
 #version 450 core
 
-layout(std140, binding = 0) uniform frameBlock {
-	mat4 ProjectionView;
-	mat4 Model;
-	vec3 CameraPosition;
-  float CameraExposure;
-	vec3 SunIlluminance;
-  float unused1;
-} frame;
+//------------------------------------------------------------------------------
 
-struct face {
+layout(std140, binding = 0) uniform glam_Camera {
+	mat4  glam_ProjectionView;
+	mat4  glam_Model;
+	vec3  glam_CameraPosition;
+  float glam_CameraExposure;
+	vec3  glam_SunIlluminance;
+  float glam_unused1;
+};
+
+//------------------------------------------------------------------------------
+
+struct glam_Face {
 	uint MatHiVert0Vert1;
 	uint MatLoVert2Vert3;
 };
-layout(std430, binding = 0) buffer FaceBuffer {
-	face []Faces;
-} faceBuffer;
+layout(std430, binding = 0) buffer glam_FaceBuffer {
+	glam_Face []glam_Faces;
+};
 
-struct vec3tight {
+struct glam_Vec3Tight {
 	// Needed because vec3 arrays are not tighlty packed on some hardware
 	float x, y, z;
 };
-layout(std430, binding = 1) buffer VertexBuffer {
-	vec3tight []Vertices;
-} vertexBuffer;
+layout(std430, binding = 1) buffer glam_VertexBuffer {
+	glam_Vec3Tight []glam_Vertices;
+};
+
+//------------------------------------------------------------------------------
 
 out gl_PerVertex {
 	vec4 gl_Position;
 };
+out glam_PerVertex {
+	layout(location = 0) flat vec3 glam_Normal; // in world space
+	layout(location = 1)      vec3 glam_SurfaceToCamera;
+	layout(location = 2) flat uint glam_Material;
+};
 
-out PerVertex {
-	layout(location = 0) flat out vec3 Normal; // in world space
-	layout(location = 1) flat out uint Material;
-	layout(location = 2) out vec3 SurfaceToCamera;
-} vertex;
+//------------------------------------------------------------------------------
 
-void main(void) {
+void glam_PrepareVertex() {
 	// Calculate index in face buffer
 	uint faceID = gl_VertexID / 6;
 	// Determine which face vertex this is
@@ -54,7 +61,7 @@ void main(void) {
 	uint currVert = triangulate[gl_VertexID - (6 * faceID)];
 
 	// Read the face buffer
-	face f = faceBuffer.Faces[faceID];
+	glam_Face f = glam_Faces[faceID];
 
 	// Compute indices for the vertex buffer
 	uint vi[4];
@@ -66,14 +73,14 @@ void main(void) {
 	f.MatLoVert2Vert3 >>= 14;
 	vi[2] = f.MatLoVert2Vert3 & 0x3FFF;
 	f.MatLoVert2Vert3 >>= 14;
-	vertex.Material = f.MatHiVert0Vert1 << 4 | f.MatLoVert2Vert3;
+	glam_Material = f.MatHiVert0Vert1 << 4 | f.MatLoVert2Vert3;
 
 	// Read the vertex buffer
-	vec3tight v[4];
-	v[0] = vertexBuffer.Vertices[vi[0]];
-	v[1] = vertexBuffer.Vertices[vi[1]];
-	v[2] = vertexBuffer.Vertices[vi[2]];
-	v[3] = vertexBuffer.Vertices[vi[3]];
+	glam_Vec3Tight v[4];
+	v[0] = glam_Vertices[vi[0]];
+	v[1] = glam_Vertices[vi[1]];
+	v[2] = glam_Vertices[vi[2]];
+	v[3] = glam_Vertices[vi[3]];
 	// Convert to vec3
 	vec3 p[4];
 	p[0] = vec3(v[0].x, v[0].y, v[0].z);
@@ -82,19 +89,21 @@ void main(void) {
 	p[3] = vec3(v[3].x, v[3].y, v[3].z);
 
 	// Compute face normal
-	vertex.Normal = cross(p[2] - p[0], p[3] - p[1]);
+	glam_Normal = cross(p[2] - p[0], p[3] - p[1]);
 	// Transform normal to world space
-	mat3 nm = mat3(frame.Model);
+	mat3 nm = mat3(glam_Model);
 	nm = transpose(inverse(nm));
-	vertex.Normal = (normalize(nm * vec3(vertex.Normal))).xyz;
+	glam_Normal = (normalize(nm * vec3(glam_Normal))).xyz;
 
 	// Compute screen coordinates
-	vec4 wp = frame.Model * vec4(p[currVert], 1);
-	gl_Position = frame.ProjectionView * wp;
+	vec4 wp = glam_Model * vec4(p[currVert], 1);
+	gl_Position = glam_ProjectionView * wp;
 
-	//
-	vertex.SurfaceToCamera = frame.CameraPosition - wp.xyz/wp.w;
+	// Compute surface to camera vector
+	glam_SurfaceToCamera = glam_CameraPosition - wp.xyz/wp.w;
 }
+
+//------------------------------------------------------------------------------
 `
 
 //------------------------------------------------------------------------------

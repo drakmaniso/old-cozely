@@ -6,6 +6,7 @@ package main
 //------------------------------------------------------------------------------
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/drakmaniso/glam"
@@ -29,7 +30,7 @@ func main() {
 
 	err := setup()
 	if err != nil {
-		glam.ErrorDialog(err)
+		fmt.Println(err)
 		return
 	}
 
@@ -43,7 +44,7 @@ func main() {
 	glam.Loop = looper{}
 	err = glam.Run()
 	if err != nil {
-		glam.ErrorDialog(err)
+		fmt.Println(err)
 	}
 }
 
@@ -93,12 +94,16 @@ var (
 
 func setup() error {
 	// Create and configure the pipeline
-	f, err := os.Open(glam.Path() + "shader.frag")
+	vs, err := os.Open(glam.Path() + "shader.vert")
 	if err != nil {
 		return err
 	}
-	poly.SetupPipeline(
-		gfx.FragmentShader(f),
+	fs, err := os.Open(glam.Path() + "shader.frag")
+	if err != nil {
+		return err
+	}
+	poly.SetupPipeline(gfx.VertexShader(vs),
+		gfx.FragmentShader(fs),
 	)
 	gfx.Enable(gfx.FramebufferSRGB)
 

@@ -9,11 +9,11 @@ layout(std140, binding = 0) uniform frameBlock {
   float unused1;
 } frame;
 
-in PerVertex {
-	layout(location = 0) in vec3 Normal;
-  layout(location = 1) flat in uint Material;
-  layout(location = 2) in vec3 SurfaceToCamera;
-} vertex;
+in glam_PerVertex {
+	layout(location = 0)      vec3 glam_Normal;
+  layout(location = 1)      vec3 glam_SurfaceToCamera;
+  layout(location = 2) flat uint glam_Material;
+};
 
 out vec3 Color;
 
@@ -190,7 +190,7 @@ void main(void) {
 	// Color = diff * palette[vertex.Material];
 
 
-    vec3 N = vertex.Normal;
+    vec3 N = glam_Normal;
 
     // Material
 
@@ -200,7 +200,7 @@ void main(void) {
 
     float reflectance = 0.04;
 
-    base_color = palette[vertex.Material].rgb;
+    base_color = palette[glam_Material].rgb;
 
     // base_color = vec3 (1.000000, 0.765557, 0.336057); // Gold
     // base_color = vec3 (0.971519, 0.959915, 0.915324); // Silver
@@ -224,7 +224,7 @@ void main(void) {
 
     // Lighting
 
-    vec3 V =  normalize(vertex.SurfaceToCamera);
+    vec3 V =  normalize(glam_SurfaceToCamera);
     vec3 L = normalize(vec3(0.4, 0.6, 0.8)); //w_direction_to_sun;
 
     //vec3 luminance = (N + 1.0) / 2.0 + 0.000000001 * base_color;
