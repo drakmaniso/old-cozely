@@ -11,7 +11,6 @@ import (
 	"github.com/drakmaniso/glam/math"
 	"github.com/drakmaniso/glam/mouse"
 	"github.com/drakmaniso/glam/pixel"
-	"github.com/drakmaniso/glam/space"
 	"github.com/drakmaniso/glam/window"
 )
 
@@ -26,9 +25,7 @@ type handler struct {
 //------------------------------------------------------------------------------
 
 func (h handler) WindowResized(s pixel.Coord, _ uint32) {
-	sx, sy := window.Size().Cartesian()
-	r := sx / sy
-	projection = space.Perspective(math.Pi/4, r, 0.001, 1000.0)
+	camera.WindowResized()
 }
 
 //------------------------------------------------------------------------------
@@ -91,17 +88,6 @@ func (h handler) MouseMotion(motion pixel.Coord, _ pixel.Coord, _ uint32) {
 	case mouse.IsPressed(mouse.Extra2):
 		object.yaw += 4 * mx / sx
 		updateModel()
-
-	case firstPerson:
-		// camera.yaw += 2 * mx / sx
-		// camera.pitch += 2 * my / sy
-		// switch {
-		// case camera.pitch < -math.Pi/2:
-		// 	camera.pitch = -math.Pi / 2
-		// case camera.pitch > +math.Pi/2:
-		// 	camera.pitch = +math.Pi / 2
-		// }
-		// updateView(camera.position, camera.yaw, camera.pitch)
 	}
 }
 
@@ -113,13 +99,13 @@ func (h handler) KeyDown(l key.Label, p key.Position, t uint32) {
 	const s = 2.0
 	switch p {
 	case key.PositionW:
-		camera.velocity.Z = -s
+		cameraVelocity.Z = -s
 	case key.PositionS:
-		camera.velocity.Z = s
+		cameraVelocity.Z = s
 	case key.PositionA:
-		camera.velocity.X = -s
+		cameraVelocity.X = -s
 	case key.PositionD:
-		camera.velocity.X = s
+		cameraVelocity.X = s
 	default:
 		h.KeyHandler.KeyDown(l, p, t)
 	}
@@ -129,9 +115,9 @@ func (h handler) KeyUp(_ key.Label, p key.Position, _ uint32) {
 	const s = 5.0
 	switch p {
 	case key.PositionW, key.PositionS:
-		camera.velocity.Z = 0.0
+		cameraVelocity.Z = 0.0
 	case key.PositionA, key.PositionD:
-		camera.velocity.X = 0.0
+		cameraVelocity.X = 0.0
 	}
 }
 

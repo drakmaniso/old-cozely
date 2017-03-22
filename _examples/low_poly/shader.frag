@@ -1,19 +1,28 @@
 #version 450 core
 
-layout(std140, binding = 0) uniform frameBlock {
-	mat4 ProjectionView;
-	mat4 Model;
-	vec3 CameraPosition;
-  float CameraExposure;
-	vec3 SunIlluminance;
-  float unused1;
-} frame;
+//------------------------------------------------------------------------------
+
+layout(std140, binding = 0) uniform glam_Camera {
+	mat4  glam_ProjectionView;
+	vec3  glam_CameraPosition;
+  float glam_CameraExposure;
+};
+
+layout(std140, binding = 1) uniform Misc {
+	mat4  glam_Model;
+	vec3  glam_SunIlluminance;
+  float glam_unused1;
+};
+
+//------------------------------------------------------------------------------
 
 in glam_PerVertex {
 	layout(location = 0)      vec3 glam_Normal;
   layout(location = 1)      vec3 glam_SurfaceToCamera;
   layout(location = 2) flat uint glam_Material;
 };
+
+//------------------------------------------------------------------------------
 
 out vec3 Color;
 
@@ -228,10 +237,10 @@ void main(void) {
     vec3 L = normalize(vec3(0.4, 0.6, 0.8)); //w_direction_to_sun;
 
     //vec3 luminance = (N + 1.0) / 2.0 + 0.000000001 * base_color;
-    // vec3 luminance = frame.SunIlluminance * phong_lighting (L, V, N, base_color, mix (vec3 (0.0), vec3 (0.9), smoothness * smoothness)) + base_color * ambient_luminance;
-    // vec3 luminance = frame.SunIlluminance * normalized_blinn_phong_lighting (L, V, N, base_color, f0, 1000.0 * smoothness * smoothness * smoothness * smoothness) + base_color * ambient_luminance;
-    // vec3 luminance = frame.SunIlluminance * minimalist_cook_torrance_lighting (L, V, N, base_color, f0, 500.0 * smoothness * smoothness * smoothness * smoothness) + base_color * ambient_luminance;
-    vec3 luminance = light_luminance (frame.SunIlluminance, L, V, N, base_color, f0, roughness) + base_color * ambient_luminance;
+    // vec3 luminance = glam_SunIlluminance * phong_lighting (L, V, N, base_color, mix (vec3 (0.0), vec3 (0.9), smoothness * smoothness)) + base_color * ambient_luminance;
+    // vec3 luminance = glam_SunIlluminance * normalized_blinn_phong_lighting (L, V, N, base_color, f0, 1000.0 * smoothness * smoothness * smoothness * smoothness) + base_color * ambient_luminance;
+    // vec3 luminance = glam_SunIlluminance * minimalist_cook_torrance_lighting (L, V, N, base_color, f0, 500.0 * smoothness * smoothness * smoothness * smoothness) + base_color * ambient_luminance;
+    vec3 luminance = light_luminance (glam_SunIlluminance, L, V, N, base_color, f0, roughness) + base_color * ambient_luminance;
 
 
     // Dithering
@@ -241,7 +250,7 @@ void main(void) {
     // dither = 0.75 + dither * 0.25;
     // luminance *= dither;
 
-    Color = luminance * frame.CameraExposure;
+    Color = luminance * glam_CameraExposure;
 
     // Color = Color / (Color + vec3(1.0));
 

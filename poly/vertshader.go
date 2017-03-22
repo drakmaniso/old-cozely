@@ -15,9 +15,12 @@ const vertshader = `
 
 layout(std140, binding = 0) uniform glam_Camera {
 	mat4  glam_ProjectionView;
-	mat4  glam_Model;
 	vec3  glam_CameraPosition;
   float glam_CameraExposure;
+};
+
+layout(std140, binding = 1) uniform Misc {
+	mat4  glam_Model;
 	vec3  glam_SunIlluminance;
   float glam_unused1;
 };

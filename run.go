@@ -126,7 +126,8 @@ func Run() error {
 			Loop.Update(stepNow, TimeStep)
 		}
 
-		Loop.Draw(remain / TimeStep)
+		internal.DrawInterpolation = remain / TimeStep
+		Loop.Draw(internal.DrawInterpolation)
 		microtext.Draw()
 		internal.SwapWindow()
 
