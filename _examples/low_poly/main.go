@@ -120,8 +120,6 @@ func setup() error {
 	updateView(camera.position, camera.yaw, camera.pitch)
 	frame.SunIlluminance = pbr.DirectionalLightSpectralIlluminance(116400.0, 5400.0)
 	frame.CameraExposure = float32(pbr.Exposure(16.0, 1.0/125.0, 100.0))
-	print(frame.CameraExposure, "\n")
-	print(frame.SunIlluminance.R, "  ", frame.SunIlluminance.G, "  ", frame.SunIlluminance.B, "\n")
 
 	// MTX
 	mtx.Color(color.RGB{0.0, 0.05, 0.1}, color.RGB{0.7, 0.6, 0.45})

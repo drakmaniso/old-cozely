@@ -15,7 +15,7 @@ in PerVertex {
   layout(location = 2) in vec3 SurfaceToCamera;
 } vertex;
 
-out vec4 Color;
+out vec3 Color;
 
 //--------------------------------------------------------------------------------------------------
 
@@ -195,9 +195,10 @@ void main(void) {
     // Material
 
     vec3 base_color;
-    float smoothness  = 0.35;
+    float smoothness  = 0.60;
     float metal_mask  = 0.00;
-    float reflectance = 0.20;
+
+    float reflectance = 0.04;
 
     base_color = palette[vertex.Material].rgb;
 
@@ -213,6 +214,8 @@ void main(void) {
     // base_color = vec3 (0.56, 0.57, 0.58); // Iron
     //base_color = vec3 (1.00, 0.71, 0.29); // Gold
     //base_color = vec3 (0.95, 0.93, 0.88); // Silver
+
+    // base_color = vec3 (0.42, 0.72, 0.86); // Cartoonish Iron
 
     float roughness = 1 - smoothness;
     vec3 f0 = mix (vec3 (reflectance), base_color, metal_mask);
@@ -238,8 +241,40 @@ void main(void) {
     // dither = 0.75 + dither * 0.25;
     // luminance *= dither;
 
-    Color = vec4 (luminance * frame.CameraExposure, 1.0);
-    // Color = vec4(V, 1.0);
+    Color = luminance * frame.CameraExposure;
+
+    // Color = Color / (Color + vec3(1.0));
+
+    // float exposure = 1.5;
+    // Color *= exposure/(1.0 + Color / exposure);
+
+  // float luma = dot(Color, vec3(0.2126, 0.7152, 0.0722));
+	// float toneMappedLuma = luma / (1. + luma);
+	// Color *= toneMappedLuma / luma;
+
+	// float white = 2.;
+	// float luma = dot(Color, vec3(0.2126, 0.7152, 0.0722));
+	// float toneMappedLuma = luma * (1. + luma / (white*white)) / (1. + luma);
+	// Color *= toneMappedLuma / luma;
+
+  // Color = exp( -1.0 / ( 2.72*Color + 0.15 ) );
+
+	// float A = 0.15;
+	// float B = 0.50;
+	// float C = 0.10;
+	// float D = 0.20;
+	// float E = 0.02;
+	// float F = 0.30;
+	// float W = 11.2;
+	// float exposure = 2.;
+	// Color *= exposure;
+	// Color = ((Color * (A * Color + C * B) + D * E) / (Color * (A * Color + B) + D * F)) - E / F;
+	// float white = ((W * (A * W + C * B) + D * E) / (W * (A * W + B) + D * F)) - E / F;
+	// Color /= white;
+
+  // float crush = 0.05;
+  // float frange = 10;
+  // Color.rgb = smoothstep(crush, frange + crush, log2(1+Color.rgb*30.0));
 }
 
 //--------------------------------------------------------------------------------------------------
