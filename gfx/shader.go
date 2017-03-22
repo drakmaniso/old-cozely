@@ -18,23 +18,23 @@ import (
 #include "glad.h"
 
 GLuint CompileShader(GLenum t, const GLchar* b) {
-	GLuint s = glCreateShaderProgramv(t, 1, &b);
-	if (s == 0) {
-		return 0;
-	}
+	GLuint s = glCreateShader(t);
+	const GLchar*bb[] = {b};
+	glShaderSource(s, 1, bb, NULL);
+	glCompileShader(s);
 
 	return s;
 }
 
-char* ShaderLinkError(GLuint p) {
+char* ShaderCompileError(GLuint p) {
     GLint ok = GL_TRUE;
-    glGetProgramiv (p, GL_LINK_STATUS, &ok);
+    glGetShaderiv (p, GL_COMPILE_STATUS, &ok);
     if (ok != GL_TRUE)
     {
         GLint l = 0;
-        glGetProgramiv (p, GL_INFO_LOG_LENGTH, &l);
+        glGetShaderiv (p, GL_INFO_LOG_LENGTH, &l);
         char *m = calloc(l + 1, sizeof(char));
-        glGetProgramInfoLog (p, l, &l, m);
+        glGetShaderInfoLog (p, l, &l, m);
         return m;
     }
 
@@ -63,7 +63,7 @@ func VertexShader(r io.Reader) PipelineOption {
 		setErr(fmt.Errorf("error in vertex shader: %s", err))
 	}
 	return func(p *Pipeline) {
-		p.useShader(s)
+		p.attachShader(s)
 	}
 }
 
@@ -77,7 +77,7 @@ func FragmentShader(r io.Reader) PipelineOption {
 		setErr(fmt.Errorf("error in fragment shader: %s", err))
 	}
 	return func(p *Pipeline) {
-		p.useShader(s)
+		p.attachShader(s)
 	}
 }
 
@@ -91,7 +91,7 @@ func GeometryShader(r io.Reader) PipelineOption {
 		setErr(fmt.Errorf("error in geometry shader: %s", err))
 	}
 	return func(p *Pipeline) {
-		p.useShader(s)
+		p.attachShader(s)
 	}
 }
 
@@ -105,7 +105,7 @@ func TessControlShader(r io.Reader) PipelineOption {
 		setErr(fmt.Errorf("error in tesselation control shader: %s", err))
 	}
 	return func(p *Pipeline) {
-		p.useShader(s)
+		p.attachShader(s)
 	}
 }
 
@@ -119,7 +119,7 @@ func TessEvaluationShader(r io.Reader) PipelineOption {
 		setErr(fmt.Errorf("error in tesselation evaluation shader: %s", err))
 	}
 	return func(p *Pipeline) {
-		p.useShader(s)
+		p.attachShader(s)
 	}
 }
 
@@ -133,7 +133,7 @@ func ComputeShader(r io.Reader) PipelineOption {
 		setErr(fmt.Errorf("error in compute shader: %s", err))
 	}
 	return func(p *Pipeline) {
-		p.useShader(s)
+		p.attachShader(s)
 	}
 }
 
@@ -146,7 +146,7 @@ func newShader(t uint32, r io.Reader) (C.GLuint, error) {
 	defer C.free(unsafe.Pointer(cb))
 
 	s := C.CompileShader(C.GLenum(t), (*C.GLchar)(unsafe.Pointer(cb)))
-	if errm := C.ShaderLinkError(s); errm != nil {
+	if errm := C.ShaderCompileError(s); errm != nil {
 		defer C.free(unsafe.Pointer(errm))
 		return 0, errors.New(C.GoString(errm))
 	}

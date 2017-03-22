@@ -18,9 +18,7 @@ import (
 #include "glad.h"
 
 GLuint NewPipeline() {
-	GLuint p;
-	glCreateProgramPipelines(1, &p);
-	return p;
+	return glCreateProgram();
 }
 
 GLuint CreateVAO() {
@@ -44,8 +42,12 @@ char* PipelineLinkError(GLuint pr) {
 	return NULL;
 }
 
-void PipelineUseShader(GLuint p, GLenum stages, GLuint shader) {
-	glUseProgramStages(p, stages, shader);
+void PipelineAttachShader(GLuint p, GLenum stages, GLuint shader) {
+	glAttachShader(p, shader);
+}
+
+void PipelineLinkProgram(GLuint p) {
+	glLinkProgram(p);
 }
 
 void ClosePipeline(GLuint p, GLuint vao) {
@@ -54,7 +56,7 @@ void ClosePipeline(GLuint p, GLuint vao) {
 }
 
 static inline void BindPipeline(GLuint p, GLuint vao) {
-	glBindProgramPipeline(p);
+	glUseProgram(p);
 	glBindVertexArray(vao);
 }
 
@@ -96,17 +98,18 @@ func NewPipeline(o ...PipelineOption) Pipeline {
 	for _, f := range o {
 		f(&p)
 	}
-	return p
-}
-
-func (p *Pipeline) useShader(s shader) {
-	C.PipelineUseShader(p.object, s.stages, s.shader)
+	C.PipelineLinkProgram(p.object)
 	if errm := C.PipelineLinkError(p.object); errm != nil {
 		defer C.free(unsafe.Pointer(errm))
 		setErr(
 			fmt.Errorf("shader link error:\n    %s", errors.New(C.GoString(errm))),
 		)
 	}
+	return p
+}
+
+func (p *Pipeline) attachShader(s shader) {
+	C.PipelineAttachShader(p.object, s.stages, s.shader)
 	return
 }
 
