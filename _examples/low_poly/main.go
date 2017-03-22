@@ -59,8 +59,8 @@ var misc struct {
 
 // Camera
 
-var camera pbr.Camera
-var cameraVelocity space.Coord
+var camera *pbr.Camera
+var forward, lateral, vertical, rolling float32
 
 // Model
 
@@ -100,13 +100,13 @@ func setup() error {
 
 	// Setup camera
 
-	camera.Setup()
+	camera = pbr.NewCamera()
 	camera.SetExposure(16.0, 1.0/125.0, 100.0)
 	camera.SetPosition(space.Coord{0, 0, 0})
 
 	// Setup model
 
-	object.position = space.Coord{0, 0, -4.0}
+	object.position = space.Coord{0, 0, -4}
 	object.scale = 1.0
 	updateModel()
 
@@ -134,13 +134,8 @@ type looper struct{}
 
 func (l looper) Update(_, dt float64) {
 	camera.NextState()
-	v := cameraVelocity.Times(float32(dt))
-	camera.Move(v.Z, v.X, 0)
 
-	p := camera.Position()
-	y, pt := camera.Orientation()
-	mtx.Print(1, 0, "cam: %6.2f,%6.2f", p.X, p.Z)
-	mtx.Print(1, 1, "     %6.2f,%6.2f", y, pt)
+	camera.Move(forward*float32(dt), lateral*float32(dt), vertical*float32(dt))
 
 	if firstPerson {
 		mx, my := mouse.Delta().Cartesian()
@@ -151,8 +146,13 @@ func (l looper) Update(_, dt float64) {
 
 		sx, sy := window.Size().Cartesian()
 
-		camera.Rotate(2*smoothedMouse.X/sx, 2*smoothedMouse.Y/sy)
+		camera.Rotate(2*smoothedMouse.X/sx, 2*smoothedMouse.Y/sy, rolling*float32(dt))
 	}
+
+	p := camera.Position()
+	y, pt, r := camera.Orientation()
+	mtx.Print(1, 0, "cam: %6.2f,%6.2f,%6.2f", p.X, p.Y, p.Z)
+	mtx.Print(1, 1, "     %6.2f,%6.2f,%6.2f", y, pt, r)
 }
 
 var smoothedMouse plane.Coord
@@ -179,6 +179,8 @@ func updateModel() {
 	misc.Model = space.Translation(object.position)
 	misc.Model = misc.Model.Times(space.EulerXZY(object.pitch, object.yaw, object.roll))
 	misc.Model = misc.Model.Times(space.Scaling(space.Coord{object.scale, object.scale, object.scale}))
+	mtx.Print(1, 3, "obj: %6.2f,%6.2f,%6.2f", object.position.X, object.position.Y, object.position.Z)
+	mtx.Print(1, 4, "     %6.2f,%6.2f", object.yaw, object.pitch)
 }
 
 //------------------------------------------------------------------------------

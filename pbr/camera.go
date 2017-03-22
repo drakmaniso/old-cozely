@@ -31,13 +31,13 @@ type Camera struct {
 	near, far   float32
 
 	current struct {
-		position   space.Coord
-		yaw, pitch float32
+		position         space.Coord
+		yaw, pitch, roll float32
 	}
 
 	previous struct {
-		position   space.Coord
-		yaw, pitch float32
+		position         space.Coord
+		yaw, pitch, roll float32
 	}
 
 	ubo gfx.UniformBuffer
@@ -45,10 +45,13 @@ type Camera struct {
 
 //------------------------------------------------------------------------------
 
-func (c *Camera) Setup() {
+func NewCamera() *Camera {
+	var c Camera
 	c.ubo = gfx.NewUniformBuffer(&c.buffer, gfx.DynamicStorage)
 	c.SetExposure(16.0, 1.0/125.0, 100.0)
 	c.SetFieldOfView(math.Pi/4, 0.001, 1000.0)
+
+	return &c
 }
 
 //------------------------------------------------------------------------------
@@ -76,6 +79,7 @@ func (c *Camera) SetPosition(p space.Coord) {
 func (c *Camera) Move(forward, lateral, vertical float32) {
 	c.current.position.X += lateral*math32.Cos(c.current.yaw) - forward*math32.Sin(c.current.yaw)
 	c.current.position.Z += lateral*math32.Sin(c.current.yaw) + forward*math32.Cos(c.current.yaw)
+	c.current.position.Y += vertical
 }
 
 func (c *Camera) Position() space.Coord {
@@ -84,12 +88,13 @@ func (c *Camera) Position() space.Coord {
 
 //------------------------------------------------------------------------------
 
-func (c *Camera) SetOrientation(yaw, pitch float32) {
+func (c *Camera) SetOrientation(yaw, pitch, roll float32) {
 	c.current.yaw = yaw
 	c.current.pitch = pitch
+	c.current.roll = roll
 }
 
-func (c *Camera) Rotate(yaw, pitch float32) {
+func (c *Camera) Rotate(yaw, pitch, roll float32) {
 	c.current.yaw += yaw
 	for c.current.yaw > math32.Pi {
 		c.current.yaw -= 2 * math32.Pi
@@ -109,10 +114,22 @@ func (c *Camera) Rotate(yaw, pitch float32) {
 	case c.current.pitch > +math.Pi/2:
 		c.current.pitch = +math.Pi / 2
 	}
+
+	c.current.roll += roll
+	for c.current.roll > math32.Pi {
+		c.current.roll -= 2 * math32.Pi
+		// Need to update previous state too, because of interpolation
+		c.previous.roll -= 2 * math32.Pi
+	}
+	for c.current.roll < -math32.Pi {
+		c.current.roll += 2 * math32.Pi
+		// Need to update previous state too, because of interpolation
+		c.previous.roll += 2 * math32.Pi
+	}
 }
 
-func (c *Camera) Orientation() (yaw, pitch float32) {
-	return c.current.yaw, c.current.pitch
+func (c *Camera) Orientation() (yaw, pitch, roll float32) {
+	return c.current.yaw, c.current.pitch, c.current.roll
 }
 
 //------------------------------------------------------------------------------
@@ -146,8 +163,9 @@ func (c *Camera) updateView() {
 	pos := c.previous.position.Times(1 - a).Plus(c.current.position.Times(a))
 	yaw := c.previous.yaw*(1-a) + c.current.yaw*a
 	pitch := c.previous.pitch*(1-a) + c.current.pitch*a
+	roll := c.previous.roll*(1-a) + c.current.roll*a
 
-	c.view = space.EulerZXY(pitch, yaw, 0)
+	c.view = space.EulerZXY(pitch, yaw, roll)
 	c.view = c.view.Times(space.Translation(pos.Inverse()))
 
 	c.buffer.CameraPosition = pos

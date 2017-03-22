@@ -99,13 +99,21 @@ func (h handler) KeyDown(l key.Label, p key.Position, t uint32) {
 	const s = 2.0
 	switch p {
 	case key.PositionW:
-		cameraVelocity.Z = -s
+		forward = -s
 	case key.PositionS:
-		cameraVelocity.Z = s
+		forward = s
 	case key.PositionA:
-		cameraVelocity.X = -s
+		lateral = -s
 	case key.PositionD:
-		cameraVelocity.X = s
+		lateral = s
+	case key.PositionSpace:
+		vertical = s
+	case key.PositionLShift:
+		vertical = -s
+	case key.PositionQ:
+		rolling = -1.0
+	case key.PositionE:
+		rolling = 1.0
 	default:
 		h.KeyHandler.KeyDown(l, p, t)
 	}
@@ -115,9 +123,13 @@ func (h handler) KeyUp(_ key.Label, p key.Position, _ uint32) {
 	const s = 5.0
 	switch p {
 	case key.PositionW, key.PositionS:
-		cameraVelocity.Z = 0.0
+		forward = 0.0
 	case key.PositionA, key.PositionD:
-		cameraVelocity.X = 0.0
+		lateral = 0.0
+	case key.PositionSpace, key.PositionLShift:
+		vertical = 0.0
+	case key.PositionQ, key.PositionE:
+		rolling = 0.0
 	}
 }
 
