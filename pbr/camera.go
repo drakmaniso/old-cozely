@@ -167,7 +167,7 @@ func (c *Camera) updateView() {
 	pitch := c.previous.pitch*(1-a) + c.current.pitch*a
 	roll := c.previous.roll*(1-a) + c.current.roll*a
 
-	c.view = space.EulerYXZ(pitch, yaw, roll)
+	c.view = space.EulerZXY(pitch, yaw, roll)
 	c.view = c.view.Times(space.Translation(pos.Inverse()))
 
 	c.buffer.CameraPosition = pos
