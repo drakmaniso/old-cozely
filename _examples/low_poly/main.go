@@ -95,7 +95,7 @@ func setup() error {
 	//
 	meshes = poly.Meshes{}
 	meshes.AddObj(glam.Path() + "../shared/suzanne.obj")
-	// meshes.AddObj("E:/objtestfiles/stygirl.obj")
+	// meshes.AddObj("E:/objtestfiles/halfsphere.obj")
 	poly.SetupMeshBuffers(meshes)
 
 	// Setup camera
@@ -161,7 +161,7 @@ var smoothedMouse plane.Coord
 
 func (l looper) Draw(interpolation float64) {
 	poly.BindPipeline()
-	gfx.ClearColorBuffer(color.RGBA{0.8, 0.8, 0.8, 1.0})
+	gfx.ClearColorBuffer(color.RGBA{0.4, 0.45, 0.5, 1.0})
 
 	camera.Bind()
 	miscUBO.SubData(&misc, 0)

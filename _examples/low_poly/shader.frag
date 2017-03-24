@@ -32,7 +32,7 @@ const float PI = 3.14159265358979323846;
 
 const vec3 ambient_luminance = vec3(99.0/256.0, 155.0/256.0, 196.0/256.0) * 29000.0 / PI;
 //const vec3 ambient_luminance = vec3(29000.0) / PI;
-
+// const vec3 ambient_luminance = vec3(0.0);
 
 //--------------------------------------------------------------------------------------------------
 
@@ -48,9 +48,21 @@ const vec4 palette[] = {
 
 //--------------------------------------------------------------------------------------------------
 
-vec3 phong_lighting (vec3 L, vec3 V, vec3 N, vec3 diffuse_color, vec3 specular_color)
+// Material
+
+vec3 glam_BaseColor;
+float glam_Smoothness = 0.7;
+float glam_Metallic  = 0.0;
+float glam_Reflectance = 0.5;
+
+float glam_Roughness;
+vec3 glam_F0;
+
+//--------------------------------------------------------------------------------------------------
+
+vec3 phong_lighting (vec3 illuminance, vec3 L, vec3 V, vec3 N, vec3 glam_BaseColor, vec3 specular_color)
 {
-    vec3 diffuse = diffuse_color * max (0.0, dot (N, L));
+    vec3 diffuse = glam_BaseColor * max (0.0, dot (N, L));
 
     vec3 R = reflect (-L, N);
     float RdotV = max (0.0, dot (R, V));
@@ -60,29 +72,29 @@ vec3 phong_lighting (vec3 L, vec3 V, vec3 N, vec3 diffuse_color, vec3 specular_c
 }
 
 
-vec3 normalized_blinn_phong_lighting (vec3 L, vec3 V, vec3 N, vec3 diffuse_color, vec3 specular_color, float roughness)
+vec3 normalized_blinn_phong_lighting (vec3 illuminance, vec3 L, vec3 V, vec3 N, vec3 glam_BaseColor, vec3 specular_color, float glam_Roughness)
 {
     vec3 H = normalize (V + L);
     float NdotH = max (0.0, dot (N, H));
 
-    vec3 diffuse = diffuse_color * max (0.0, dot (N, L));
+    vec3 diffuse = glam_BaseColor * max (0.0, dot (N, L));
 
-    vec3 specular = ((roughness + 8.0) / 8.0) * specular_color * pow (NdotH, roughness);
+    vec3 specular = ((glam_Roughness + 8.0) / 8.0) * specular_color * pow (NdotH, glam_Roughness);
 
     return diffuse + specular;
 }
 
 
-vec3 minimalist_cook_torrance_lighting (vec3 L, vec3 V, vec3 N, vec3 diffuse_color, vec3 specular_color, float roughness)
+vec3 minimalist_cook_torrance_lighting (vec3 illuminance, vec3 L, vec3 V, vec3 N, vec3 glam_BaseColor, vec3 specular_color, float glam_Roughness)
 {
     vec3 H = normalize (V + L);
     float NdotH = max (0.0, dot (N, H));
     float NdotL = max (0.0, dot (N, L));
     float LdotH = max (0.0, dot (L, H));
 
-    vec3 diffuse = diffuse_color * NdotL;
+    vec3 diffuse = glam_BaseColor * NdotL;
 
-    vec3 specular = specular_color * (roughness + 1) * pow (NdotH, roughness) / (8.0 * pow (LdotH, 3));
+    vec3 specular = specular_color * (glam_Roughness + 1) * pow (NdotH, glam_Roughness) / (8.0 * pow (LdotH, 3));
 
     return diffuse + specular;
 }
@@ -90,85 +102,105 @@ vec3 minimalist_cook_torrance_lighting (vec3 L, vec3 V, vec3 N, vec3 diffuse_col
 
 //--------------------------------------------------------------------------------------------------
 
-
-float schlick_fresnel (float f0 , float f90, float u)
-{
-    return f0 + (f90 - f0) * pow (1.0 - u , 5.0);
+void glam_SetupPBR() {
+  glam_Roughness = 1.0 - glam_Smoothness;
+  glam_F0 = mix (vec3 (0.16*glam_Reflectance*glam_Reflectance), glam_BaseColor, glam_Metallic);
+  glam_BaseColor = (1.0 - glam_Metallic) * glam_BaseColor;
 }
 
+//--------------------------------------------------------------------------------------------------
 
-vec3 schlick_fresnel_rgb (vec3 f0 , float f90, float u)
+// Fresnel: Schlick approximation
+float fresnel(float f0 , float f90, float u)
 {
-    return f0 + (f90 - f0) * pow (1.0 - u , 5.0);
+  return f0 + (f90 - f0) * pow (1.0 - u , 5.0);
 }
 
-
-vec3 burley_diffuse_brdf (float NdotV, float NdotL, float LdotH, vec3 diffuse_color, float linear_roughness)
+vec3 fresnelRGB (vec3 f0 , float f90, float u)
 {
-    // Renormalization to keep total energy (diffuse + specular) below 1.0 [LaDe14]
-    float normalization_bias = mix (0.0 , 0.5 , linear_roughness);
-    float normalization_factor = mix (1.0, 1.0 / 1.51, linear_roughness);
-
-    // Burley's diffuse BRDF, aka Disney Diffuse [Burley12]
-    float fd90 = normalization_bias + 2.0 * LdotH * LdotH * linear_roughness;
-    float f0 = 1.0;
-    float light_scatter = schlick_fresnel (f0 , fd90 , NdotL);
-    float view_scatter = schlick_fresnel (f0 , fd90 , NdotV);
-
-    return normalization_factor * diffuse_color * light_scatter * view_scatter; // Division by PI omitted (it's factored in light intensity)
+  return f0 + (f90 - f0) * pow (1.0 - u , 5.0);
 }
 
+//--------------------------------------------------------------------------------------------------
 
-float smith_ggx_height_correlated_visibility (float NdotL , float NdotV, float roughness)
+// Burley Diffuse BRDF
+vec3 diffuseBRDF (float NdotV, float NdotL, float LdotH)
 {
-    // First, reduce specular "hotness" for small roughness values [Burley12]
-    float alpha = 0.5 + roughness / 2.0;
+  // Renormalization to keep total energy (diffuse + specular) below 1.0 [LaDe14]
+  float normalization_bias = mix (0.0 , 0.5 , glam_Roughness);
+  float normalization_factor = mix (1.0, 1.0 / 1.51, glam_Roughness);
 
-    // Height-correlated masking and shadowing function [Heitz14]
-    // (Optimized version from [LaDe14])
-    float alpha2 = alpha * alpha;
-    float lambda_V = NdotL * sqrt ((-NdotV * alpha2 + NdotV) * NdotV + alpha2);
-    float lambda_L = NdotV * sqrt ((-NdotL * alpha2 + NdotL) * NdotL + alpha2);
+  // Burley's diffuse BRDF, aka Disney Diffuse [Burley12]
+  float fd90 = normalization_bias + 2.0 * LdotH * LdotH * glam_Roughness;
+  float f0 = 1.0;
+  float light_scatter = fresnel(f0 , fd90 , NdotL);
+  float view_scatter = fresnel(f0 , fd90 , NdotV);
 
-    return 0.5 / (lambda_V + lambda_L);
+  return normalization_factor * glam_BaseColor * light_scatter * view_scatter;
+  // (division by PI omitted, it's factored in light intensity)
 }
 
+//--------------------------------------------------------------------------------------------------
 
-float ggx_ndf (float NdotH , float m)
+// Geometry function: Height-correlated Smith GGX visibility [Heitz14]
+float geometry(float NdotL , float NdotV, float a)
 {
-    // Microfacet normal distribution function: GGX [WMLT07] aka Trowbridge-Reitz
-    float m2 = m * m ;
-    float f = (NdotH * m2 - NdotH) * NdotH + 1;
+  // Original formulation of Smith GGX height-correlated:
+  // lambdaV = 0.5 * (-1 + sqrt(a2 * (1-NdotL2)/NdotL2 + 1))
+  // lambdaL = 0.5 * (-1 + sqrt(a2 * (1-NdotV2)/NdotV2 + 1))
+  // G = 1 / (1 + lambdaV + lambdaL)
+  // V = G / (4 * NdotL * NdotV)
+  //
+  // Optimized version from [LaDe14]:
+  float a2 = a * a;
+  float lambdaV = NdotL * sqrt ((-NdotV * a2 + NdotV) * NdotV + a2);
+  float lambdaL = NdotV * sqrt ((-NdotL * a2 + NdotL) * NdotL + a2);
 
-    return m2 / (f * f); // Division by PI omitted (it's factored in light intensity)
+  return 0.5 / (lambdaV + lambdaL);
 }
 
+//--------------------------------------------------------------------------------------------------
 
-vec3 specular_brdf (float NdotV, float NdotL, float NdotH, float LdotH, vec3 f0, float roughness)
+// Normal distribution function: GGX [WMLT07], aka Trowbridge-Reitz
+float ndf(float NdotH, float a)
 {
-    float ggx_roughness = roughness * roughness;
-    vec3 fresnel = schlick_fresnel_rgb (f0, 1.0, LdotH);
-    float visibility = smith_ggx_height_correlated_visibility (NdotV, NdotL, ggx_roughness);
-    float ndf = ggx_ndf (NdotH, ggx_roughness);
+  float a2 = a * a ;
+  float f = (NdotH * a2 - NdotH) * NdotH + 1;
 
-    return fresnel * visibility * ndf;
+  return a2 / (f * f);
+  // (division by PI omitted, it's factored in light intensity)
 }
 
+//--------------------------------------------------------------------------------------------------
 
-vec3 light_luminance (vec3 illuminance, vec3 L, vec3 V, vec3 N, vec3 base_color, vec3 f0, float roughness)
+// Specular BRDF
+vec3 specularBRDF (float NdotV, float NdotL, float NdotH, float LdotH)
 {
-    float NdotV = abs (dot (N , V)) + 0.000000001;
+  vec3 F = fresnelRGB(glam_F0, 1.0, LdotH);
+  float a = glam_Roughness * glam_Roughness;
+  float G = geometry(NdotV, NdotL, a);
+  float D = ndf(NdotH, a);
 
-    vec3 H = normalize (V + L);
-    float LdotH = max (0.0, dot (L, H));
-    float NdotH = max (0.0, dot (N, H));
-    float NdotL = max (0.0, dot (N, L));
+  return F * G * D;
+}
 
-    vec3 specular = specular_brdf (NdotV, NdotL, NdotH, LdotH, f0, roughness);
+//--------------------------------------------------------------------------------------------------
 
-    vec3 diffuse = burley_diffuse_brdf (NdotV, NdotL, LdotH, base_color, roughness);
+vec3 lightLuminance(vec3 L, vec3 V, vec3 N)
+{
+  float NdotV = abs(dot(N , V)) + 0.000000001; //TODO: factorize out of function
 
-    return illuminance * max (0.0, dot (N, L)) * (specular + diffuse); // Division by PI omitted (it's factored in light intensity)
+  vec3 H = normalize(V + L);
+  float LdotH = max(0.0, dot(L, H));
+  float NdotH = max(0.0, dot(N, H));
+  float NdotL = max(0.0, dot(N, L));
+
+  vec3 specular = specularBRDF(NdotV, NdotL, NdotH, LdotH);
+
+  vec3 diffuse = diffuseBRDF(NdotV, NdotL, LdotH);
+
+  return NdotL * (specular + diffuse);
+  // (division by PI omitted, it's factored in light intensity)
 }
 
 
@@ -189,101 +221,125 @@ vec3 light_luminance (vec3 illuminance, vec3 L, vec3 V, vec3 N, vec3 base_color,
 
 //--------------------------------------------------------------------------------------------------
 
+// Main sources are:
+// http://filmicworlds.com/blog/filmic-tonemapping-operators/
+// https://www.shadertoy.com/view/lslGzl
+// http://duikerresearch.com/2015/09/filmic-tonemapping-for-real-time-rendering/
+
+// First, the classics:
+
+// Reinhardt Operator.
+// (luma based version)
+void tonemapReinhardt() {
+	const float white = 2.0;
+
+	float luma = dot(Color, vec3(0.2126, 0.7152, 0.0722));
+	float toneMappedLuma = luma * (1. + luma / (white*white)) / (1. + luma);
+	Color *= toneMappedLuma / luma;
+}
+
+// Jim Hejl and Richard Burgess-Dawson approximation of a filmic curve.
+// Note that it incorporates the gamma correction (i.e. don't use with sRGB buffers)
+void tonemapHejlBurgessDawson() {
+  Color = max(vec3(0.0), Color - vec3(0.004));
+  Color = (Color * (6.2 * Color + 0.5)) / (Color * (6.2 * Color + 1.7) + 0.06);
+}
+
+// John Hable approximation of a filmic curve.
+// aka "uncharted 2"
+void tonemapHable() {
+  const float exposureBias = 2.0;
+	const float W = 4;//11.2;
+
+	const float A = 0.15;
+	const float B = 0.50;
+	const float C = 0.10;
+	const float D = 0.20;
+	const float E = 0.02;
+	const float F = 0.30;
+
+	Color *= exposureBias;
+	Color = ((Color * (A * Color + C * B) + D * E) / (Color * (A * Color + B) + D * F)) - E / F;
+	float white = ((W * (A * W + C * B) + D * E) / (W * (A * W + B) + D * F)) - E / F;
+
+  Color /= white;
+}
+
+
+
+// aka RomBinDaHouse
+void tonemapGalashov() {
+  const float exposureBias = 2.72;
+  const float blackPoint = 0.15;
+
+  Color = exp(-1.0 / (exposureBias*Color + blackPoint));
+}
+
+// Found in the comments of:
+// https://mynameismjp.wordpress.com/2010/04/30/a-closer-look-at-tone-mapping/
+void tonemapSteveM() {
+  const float exposureBias = 1.0;
+
+	float a = 1.8; /// Mid
+  float b = 1.4; /// Toe
+  float c = 0.5; /// Shoulder
+  float d = 1.5; /// Mid
+
+  Color *= exposureBias;
+  Color = (Color * (a * Color + b)) / (Color * (a * Color + c) + d);
+}
+
+//--------------------------------------------------------------------------------------------------
+
 void main(void) {
 
-  // // Simplistic diffuse lighting
-  // const vec3 L = normalize(vec3(0.4, 0.6, 0.8));
-  // float NdotL = dot(vertex.Normal, L);
-  // float diff = clamp(NdotL, 0.2, 1.0);
+  // Material
 
-	// Color = diff * palette[vertex.Material];
+  glam_BaseColor = palette[glam_Material].rgb;
 
+  // glam_BaseColor = vec3 (1.000000, 0.765557, 0.336057); // Gold
+  // glam_BaseColor = vec3 (0.971519, 0.959915, 0.915324); // Silver
+  // glam_BaseColor = vec3 (0.913183, 0.921494, 0.924524); // Aluminium
+  // glam_BaseColor = vec3 (0.955008, 0.637427, 0.538163); // Copper
+  // glam_BaseColor = vec3 (0.549585, 0.556114, 0.554256); // Chromium
+  //glam_BaseColor = vec3 (0.659777, 0.608679, 0.525649); // Nickel
+  //glam_BaseColor = vec3 (0.541931, 0.496791, 0.449419); // Titanium
+  //glam_BaseColor = vec3 (0.662124, 0.654864, 0.633732); // Cobalt
+  //glam_BaseColor = vec3 (0.672411, 0.637331, 0.585456); // Platinum
+  // glam_BaseColor = vec3 (0.56, 0.57, 0.58); // Iron
+  //glam_BaseColor = vec3 (1.00, 0.71, 0.29); // Gold
+  //glam_BaseColor = vec3 (0.95, 0.93, 0.88); // Silver
 
-    vec3 N = glam_Normal;
+  // glam_BaseColor = vec3 (0.42, 0.72, 0.86); // Cartoonish Iron
 
-    // Material
+  glam_SetupPBR();
 
-    vec3 base_color;
-    float smoothness  = 0.60;
-    float metal_mask  = 0.00;
+  // Lighting
 
-    float reflectance = 0.04;
+  vec3 N = glam_Normal;
+  vec3 V = glam_SurfaceToCamera;
+  vec3 L = normalize(vec3(-0.4, 0.6, 0.8)); //w_direction_to_sun;
 
-    base_color = palette[glam_Material].rgb;
-
-    // base_color = vec3 (1.000000, 0.765557, 0.336057); // Gold
-    // base_color = vec3 (0.971519, 0.959915, 0.915324); // Silver
-    // base_color = vec3 (0.913183, 0.921494, 0.924524); // Aluminium
-    // base_color = vec3 (0.955008, 0.637427, 0.538163); // Copper
-    // base_color = vec3 (0.549585, 0.556114, 0.554256); // Chromium
-    //base_color = vec3 (0.659777, 0.608679, 0.525649); // Nickel
-    //base_color = vec3 (0.541931, 0.496791, 0.449419); // Titanium
-    //base_color = vec3 (0.662124, 0.654864, 0.633732); // Cobalt
-    //base_color = vec3 (0.672411, 0.637331, 0.585456); // Platinum
-    // base_color = vec3 (0.56, 0.57, 0.58); // Iron
-    //base_color = vec3 (1.00, 0.71, 0.29); // Gold
-    //base_color = vec3 (0.95, 0.93, 0.88); // Silver
-
-    // base_color = vec3 (0.42, 0.72, 0.86); // Cartoonish Iron
-
-    float roughness = 1 - smoothness;
-    vec3 f0 = mix (vec3 (reflectance), base_color, metal_mask);
-    base_color = (1.0 - metal_mask) * base_color;
+  // vec3 luminance = glam_SunIlluminance * phong_lighting (L, V, N, glam_BaseColor, mix (vec3 (0.9), vec3 (0.0), glam_Roughness * glam_Roughness)) + glam_BaseColor * ambient_luminance;
+  // vec3 luminance = glam_SunIlluminance * normalized_blinn_phong_lighting (L, V, N, glam_BaseColor, glam_F0, 1000.0 * smoothness * smoothness * smoothness * smoothness) + glam_BaseColor * ambient_luminance;
+  // vec3 luminance = glam_SunIlluminance * minimalist_cook_torrance_lighting (L, V, N, glam_BaseColor, glam_F0, 500.0 * smoothness * smoothness * smoothness * smoothness) + glam_BaseColor * ambient_luminance;
+  vec3 luminance = glam_SunIlluminance * lightLuminance(L, V, N) + glam_BaseColor * ambient_luminance;
 
 
-    // Lighting
+  // Dithering
 
-    vec3 V =  normalize(glam_SurfaceToCamera);
-    vec3 L = normalize(vec3(0.4, 0.6, 0.8)); //w_direction_to_sun;
+  // vec3 dither = vec3 (dot (vec2 (171.0, 231.0), gl_FragCoord.xy + time));
+  // dither = fract (dither / vec3(103.0, 71.0, 97.0)) - vec3(0.5, 0.5, 0.5);
+  // dither = 0.75 + dither * 0.25;
+  // luminance *= dither;
 
-    //vec3 luminance = (N + 1.0) / 2.0 + 0.000000001 * base_color;
-    // vec3 luminance = glam_SunIlluminance * phong_lighting (L, V, N, base_color, mix (vec3 (0.0), vec3 (0.9), smoothness * smoothness)) + base_color * ambient_luminance;
-    // vec3 luminance = glam_SunIlluminance * normalized_blinn_phong_lighting (L, V, N, base_color, f0, 1000.0 * smoothness * smoothness * smoothness * smoothness) + base_color * ambient_luminance;
-    // vec3 luminance = glam_SunIlluminance * minimalist_cook_torrance_lighting (L, V, N, base_color, f0, 500.0 * smoothness * smoothness * smoothness * smoothness) + base_color * ambient_luminance;
-    vec3 luminance = light_luminance (glam_SunIlluminance, L, V, N, base_color, f0, roughness) + base_color * ambient_luminance;
+  Color = luminance * glam_CameraExposure;
 
-
-    // Dithering
-
-    // vec3 dither = vec3 (dot (vec2 (171.0, 231.0), gl_FragCoord.xy + time));
-    // dither = fract (dither / vec3(103.0, 71.0, 97.0)) - vec3(0.5, 0.5, 0.5);
-    // dither = 0.75 + dither * 0.25;
-    // luminance *= dither;
-
-    Color = luminance * glam_CameraExposure;
-
-    // Color = Color / (Color + vec3(1.0));
-
-    // float exposure = 1.5;
-    // Color *= exposure/(1.0 + Color / exposure);
-
-  // float luma = dot(Color, vec3(0.2126, 0.7152, 0.0722));
-	// float toneMappedLuma = luma / (1. + luma);
-	// Color *= toneMappedLuma / luma;
-
-	// float white = 2.;
-	// float luma = dot(Color, vec3(0.2126, 0.7152, 0.0722));
-	// float toneMappedLuma = luma * (1. + luma / (white*white)) / (1. + luma);
-	// Color *= toneMappedLuma / luma;
-
-  // Color = exp( -1.0 / ( 2.72*Color + 0.15 ) );
-
-	// float A = 0.15;
-	// float B = 0.50;
-	// float C = 0.10;
-	// float D = 0.20;
-	// float E = 0.02;
-	// float F = 0.30;
-	// float W = 11.2;
-	// float exposure = 2.;
-	// Color *= exposure;
-	// Color = ((Color * (A * Color + C * B) + D * E) / (Color * (A * Color + B) + D * F)) - E / F;
-	// float white = ((W * (A * W + C * B) + D * E) / (W * (A * W + B) + D * F)) - E / F;
-	// Color /= white;
-
-  // float crush = 0.05;
-  // float frange = 10;
-  // Color.rgb = smoothstep(crush, frange + crush, log2(1+Color.rgb*30.0));
+  // tonemapGalashov();
+  // tonemapReinhardt();
+  // tonemapHejlBurgessDawson();
+  tonemapHable();
+  // tonemapSteveM();
 }
 
 //--------------------------------------------------------------------------------------------------
