@@ -29,7 +29,7 @@ func main() {
 	glam.Loop = looper{}
 	err := glam.Run()
 	if err != nil {
-		glam.ErrorDialog(err)
+		glam.Log("ERROR: %s\n", err)
 	}
 }
 

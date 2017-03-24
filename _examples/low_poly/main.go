@@ -78,11 +78,11 @@ func setup() error {
 	// Create and configure the pipeline
 	vs, err := os.Open(glam.Path() + "shader.vert")
 	if err != nil {
-		return err
+		return glam.Error("unable to open vertex shader", err)
 	}
 	fs, err := os.Open(glam.Path() + "shader.frag")
 	if err != nil {
-		return err
+		return glam.Error("unable to fragment shader", err)
 	}
 	poly.SetupPipeline(gfx.VertexShader(vs),
 		gfx.FragmentShader(fs),
@@ -125,7 +125,7 @@ func setup() error {
 	// vbo.Bind(0, 0)
 	// pipeline.Unbind()
 
-	return gfx.Err()
+	return glam.Error("setup", gfx.Err())
 }
 
 //------------------------------------------------------------------------------

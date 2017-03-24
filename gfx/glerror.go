@@ -74,7 +74,7 @@ func logGLError(
 		ty = ""
 	}
 
-	internal.Log("%s %s%s: %s\n", sou, sev, ty, C.GoString(m))
+	internal.DebugLog("%s %s%s: %s\n", sou, sev, ty, C.GoString(m))
 }
 
 //------------------------------------------------------------------------------

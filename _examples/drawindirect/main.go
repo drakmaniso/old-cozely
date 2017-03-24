@@ -24,7 +24,7 @@ func main() {
 
 	err := setup()
 	if err != nil {
-		glam.ErrorDialog(err)
+		glam.Log("ERROR during setup: %s\n", err)
 		return
 	}
 
@@ -35,7 +35,7 @@ func main() {
 	glam.Loop = looper{}
 	err = glam.Run()
 	if err != nil {
-		glam.ErrorDialog(err)
+		glam.Log("ERROR: %s\n", err)
 	}
 }
 
@@ -130,11 +130,11 @@ func setup() error {
 	// Create and configure the pipeline
 	v, err := os.Open(glam.Path() + "shader.vert")
 	if err != nil {
-		return err
+		return glam.Error("unable to open vertex shader", err)
 	}
 	f, err := os.Open(glam.Path() + "shader.frag")
 	if err != nil {
-		return err
+		return glam.Error("unable to fragment shader", err)
 	}
 	pipeline = gfx.NewPipeline(
 		gfx.VertexShader(v),
@@ -173,7 +173,7 @@ func setup() error {
 	ibo.Bind(1, 0)
 	pipeline.Unbind()
 
-	return gfx.Err()
+	return glam.Error("setup", gfx.Err())
 }
 
 //------------------------------------------------------------------------------

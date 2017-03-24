@@ -6,6 +6,7 @@ package internal
 //------------------------------------------------------------------------------
 
 import (
+	"fmt"
 	"unsafe"
 )
 
@@ -18,8 +19,10 @@ import "C"
 //------------------------------------------------------------------------------
 
 // ErrorDialog displays a dialog box.
-func ErrorDialog(msg string) error {
-	t := config.Title + " - Error"
+func ErrorDialog(format string, v ...interface{}) error {
+	msg := fmt.Sprintf(format, v...)
+
+	t := Config.Title + " - Error"
 	ct := C.CString(t)
 	defer C.free(unsafe.Pointer(ct))
 

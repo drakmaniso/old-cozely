@@ -25,6 +25,9 @@ import (
 //------------------------------------------------------------------------------
 
 func Setup() {
+	internal.Setup()
+	gfx.Setup()
+
 	s := pixel.Coord{internal.Window.Width, internal.Window.Height}
 	gfx.Viewport(pixel.Coord{X: 0, Y: 0}, s)
 
@@ -197,12 +200,36 @@ func Path() string {
 
 //------------------------------------------------------------------------------
 
-// ErrorDialog displays an error dialog box.
-func ErrorDialog(e error) {
-	internal.Log("ErrorDialog: %s", e)
-	err := internal.ErrorDialog(e.Error())
+// Error returns nil if err is nil, or a wrapped error otherwise.
+func Error(source string, err error) error {
+	if err == nil {
+		return nil
+	}
+	return wrappedError{source, err}
+}
+
+type wrappedError struct {
+	source string
+	err    error
+}
+
+func (e wrappedError) Error() string {
+	return e.source + ": " + e.err.Error()
+}
+
+//------------------------------------------------------------------------------
+
+// Log logs a formated message.
+func Log(format string, v ...interface{}) {
+	internal.Log(format, v...)
+}
+
+// ErrorDialog displays a message in an error dialog box.
+func ErrorDialog(format string, v ...interface{}) {
+	internal.DebugLog(format, v...)
+	err := internal.ErrorDialog(format, v...)
 	if err != nil {
-		fmt.Fprintln(os.Stderr, e.Error())
+		fmt.Fprintf(os.Stderr, format, v...)
 	}
 }
 

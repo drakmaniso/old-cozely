@@ -21,7 +21,7 @@ import (
 
 //------------------------------------------------------------------------------
 
-func init() {
+func Setup() {
 	var d C.int
 	if internal.Debug {
 		d = 1

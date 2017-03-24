@@ -162,7 +162,7 @@ func SwapWindow() {
 func SetFullscreen(f bool) {
 	var fs C.Uint32
 	if f {
-		if config.FullscreenMode == "Desktop" {
+		if Config.FullscreenMode == "Desktop" {
 			fs = C.SDL_WINDOW_FULLSCREEN_DESKTOP
 		} else {
 			fs = C.SDL_WINDOW_FULLSCREEN

@@ -21,10 +21,10 @@ func Err() error {
 func setErr(err error) {
 	// TODO: use two different functions and a *func variable
 	if stickyErr == nil {
-		internal.Log("gfx error: %s", err)
+		internal.Error("gfx", err)
 		stickyErr = err
 	} else {
-		internal.Log("unchecked gfx error: %s", err)
+		internal.Error("gfx(unchecked)", err)
 	}
 }
 

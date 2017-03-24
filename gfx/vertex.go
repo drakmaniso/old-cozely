@@ -50,12 +50,12 @@ func VertexFormat(binding uint32, format interface{}) PipelineOption {
 func (p *Pipeline) setVertexFormat(binding uint32, format interface{}) {
 	t := reflect.TypeOf(format)
 	if t.Kind() != reflect.Slice {
-		setErr(fmt.Errorf("vertex format must be a slice of struct, not a %s", t.Kind()))
+		setErr(fmt.Errorf("invalid vertex format: %s", t.Kind()))
 		return
 	}
 	t = t.Elem()
 	if t.Kind() != reflect.Struct {
-		setErr(fmt.Errorf("vertex format must be a slice of struct, not a slice of %s", t.Kind()))
+		setErr(fmt.Errorf("invalid vertex format: slice of %s", t.Kind()))
 		return
 	}
 

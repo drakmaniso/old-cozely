@@ -60,7 +60,7 @@ func VertexShader(r io.Reader) PipelineOption {
 	s.stages = C.GL_VERTEX_SHADER_BIT
 	s.shader, err = newShader(C.GL_VERTEX_SHADER, r)
 	if err != nil {
-		setErr(fmt.Errorf("error in vertex shader: %s", err))
+		setErr(fmt.Errorf("unable to compile vertex shader: %s", err))
 	}
 	return func(p *Pipeline) {
 		p.attachShader(s)
@@ -74,7 +74,7 @@ func FragmentShader(r io.Reader) PipelineOption {
 	s.stages = C.GL_FRAGMENT_SHADER_BIT
 	s.shader, err = newShader(C.GL_FRAGMENT_SHADER, r)
 	if err != nil {
-		setErr(fmt.Errorf("error in fragment shader: %s", err))
+		setErr(fmt.Errorf("unable to compile fragment shader: %s", err))
 	}
 	return func(p *Pipeline) {
 		p.attachShader(s)
@@ -88,7 +88,7 @@ func GeometryShader(r io.Reader) PipelineOption {
 	s.stages = C.GL_GEOMETRY_SHADER_BIT
 	s.shader, err = newShader(C.GL_GEOMETRY_SHADER, r)
 	if err != nil {
-		setErr(fmt.Errorf("error in geometry shader: %s", err))
+		setErr(fmt.Errorf("unable to compile geometry shader: %s", err))
 	}
 	return func(p *Pipeline) {
 		p.attachShader(s)
@@ -102,7 +102,7 @@ func TessControlShader(r io.Reader) PipelineOption {
 	s.stages = C.GL_TESS_CONTROL_SHADER_BIT
 	s.shader, err = newShader(C.GL_TESS_CONTROL_SHADER, r)
 	if err != nil {
-		setErr(fmt.Errorf("error in tesselation control shader: %s", err))
+		setErr(fmt.Errorf("unable to compile tesselation control shader: %s", err))
 	}
 	return func(p *Pipeline) {
 		p.attachShader(s)
@@ -116,7 +116,7 @@ func TessEvaluationShader(r io.Reader) PipelineOption {
 	s.stages = C.GL_TESS_EVALUATION_SHADER_BIT
 	s.shader, err = newShader(C.GL_TESS_EVALUATION_SHADER, r)
 	if err != nil {
-		setErr(fmt.Errorf("error in tesselation evaluation shader: %s", err))
+		setErr(fmt.Errorf("unable to compile tesselation evaluation shader: %s", err))
 	}
 	return func(p *Pipeline) {
 		p.attachShader(s)
@@ -130,7 +130,7 @@ func ComputeShader(r io.Reader) PipelineOption {
 	s.stages = C.GL_COMPUTE_SHADER_BIT
 	s.shader, err = newShader(C.GL_COMPUTE_SHADER, r)
 	if err != nil {
-		setErr(fmt.Errorf("error in compute shader: %s", err))
+		setErr(fmt.Errorf("unable to compile compute shader: %s", err))
 	}
 	return func(p *Pipeline) {
 		p.attachShader(s)

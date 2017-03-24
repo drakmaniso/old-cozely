@@ -28,7 +28,7 @@ func main() {
 
 	err := setup()
 	if err != nil {
-		glam.ErrorDialog(err)
+		glam.Log("ERROR during setup: %s\n", err)
 		return
 	}
 
@@ -39,7 +39,7 @@ func main() {
 	glam.Loop = looper{}
 	err = glam.Run()
 	if err != nil {
-		glam.ErrorDialog(err)
+		glam.Log("ERROR: %s\n", err)
 	}
 }
 
@@ -84,11 +84,11 @@ func setup() error {
 	// Create and configure the pipeline
 	v, err := os.Open(glam.Path() + "shader.vert")
 	if err != nil {
-		return err
+		return glam.Error("unable to open vertex shader", err)
 	}
 	f, err := os.Open(glam.Path() + "shader.frag")
 	if err != nil {
-		return err
+		return glam.Error("unable to fragment shader", err)
 	}
 	pipeline = gfx.NewPipeline(
 		gfx.VertexShader(v),
@@ -112,12 +112,12 @@ func setup() error {
 	diffuse = gfx.NewTexture2D(8, pixel.Coord{512, 512}, gfx.SRGBA8)
 	r, err := os.Open(glam.Path() + "../shared/testpattern.png")
 	if err != nil {
-		return err
+		return glam.Error("unable to open texture", err)
 	}
 	defer r.Close()
 	img, _, err := image.Decode(r)
 	if err != nil {
-		return err
+		return glam.Error("unable to decode texture", err)
 	}
 	diffuse.Load(img, pixel.Coord{0, 0}, 0)
 	diffuse.GenerateMipmap()
@@ -140,7 +140,7 @@ func setup() error {
 	mtx.Opaque(false)
 	mtx.ShowFrameTime(true, -1, 0, false)
 
-	return gfx.Err()
+	return glam.Error("setup", gfx.Err())
 }
 
 //------------------------------------------------------------------------------
