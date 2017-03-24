@@ -89,7 +89,7 @@ func setup() error {
 		gfx.FragmentShader(f),
 		gfx.VertexFormat(0, mesh{}),
 		gfx.Topology(gfx.Triangles),
-		gfx.CullFace(false, false),
+		gfx.CullFace(false, true),
 		gfx.DepthTest(true),
 	)
 	gfx.Enable(gfx.FramebufferSRGB)

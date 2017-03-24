@@ -171,6 +171,14 @@ void ClosePipeline(GLuint p, GLuint vao) {
 	glDeleteProgramPipelines(1, &p);
 }
 
+void DeletePipelineProgram(GLuint p) {
+	glDeleteProgramPipelines(1, &p);
+}
+
+void DeletePipelineVAO(GLuint vao) {
+	glDeleteVertexArrays(1, &vao);
+}
+
 static inline void ClearColorBuffer(GLfloat *c) {
 	glClearBufferfv(GL_COLOR, 0, c);
 }
@@ -242,6 +250,7 @@ func NewPipeline(o ...PipelineConfig) *Pipeline {
 
 	p.object = C.NewPipeline() //TODO: Error Handling
 	p.vao = C.CreateVAO()      //TODO: Error Handling
+	oObj, oVao := p.object, p.vao
 	for _, f := range o {
 		f(&p)
 	}
@@ -251,6 +260,13 @@ func NewPipeline(o ...PipelineConfig) *Pipeline {
 		setErr(
 			fmt.Errorf("shader link error:\n    %s", errors.New(C.GoString(errm))),
 		)
+	}
+	// A bit inelegant, but makes the API easier
+	if oObj != p.object {
+		C.DeletePipelineProgram(oObj)
+	}
+	if oVao != p.vao {
+		C.DeletePipelineVAO(oVao)
 	}
 
 	return &p
@@ -443,6 +459,20 @@ func StencilTest(enable bool) PipelineConfig {
 	}
 	return func(p *Pipeline) {
 		p.state.stencilTest = C.GL_FALSE
+	}
+}
+
+//------------------------------------------------------------------------------
+
+func ShareShadersWith(other *Pipeline) PipelineConfig {
+	return func(p *Pipeline) {
+		p.object = other.object
+	}
+}
+
+func ShareVertexFormatsWith(other *Pipeline) PipelineConfig {
+	return func(p *Pipeline) {
+		p.vao = other.vao
 	}
 }
 
