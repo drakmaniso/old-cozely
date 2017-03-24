@@ -112,8 +112,8 @@ void glam_PrepareVertex() {
 	vec4 wp = glam_Model * vec4(p[currVert], 1);
 	gl_Position = glam_ProjectionView * wp;
 
-	//
-	glam_SurfaceToCamera = glam_CameraPosition - wp.xyz/wp.w;
+	// Compute surface to camera vector
+	glam_SurfaceToCamera = normalize(glam_CameraPosition - wp.xyz/wp.w);
 }
 `
 
