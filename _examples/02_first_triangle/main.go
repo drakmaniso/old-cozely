@@ -54,6 +54,7 @@ func setup() error {
 	pipeline = gfx.NewPipeline(
 		gfx.VertexShader(vs),
 		gfx.FragmentShader(fs),
+		gfx.Topology(gfx.Triangles),
 	)
 
 	return glam.Error("setup", gfx.Err())
@@ -69,7 +70,7 @@ func (l looper) Update(_, _ float64) {
 func (l looper) Draw(_ float64) {
 	gfx.ClearColorBuffer(color.RGBA{0.9, 0.9, 0.9, 1.0})
 	pipeline.Bind()
-	gfx.Draw(gfx.Triangles, 0, 3)
+	gfx.Draw(0, 3)
 	pipeline.Unbind()
 }
 

@@ -83,6 +83,7 @@ func setup() error {
 		gfx.VertexShader(v),
 		gfx.FragmentShader(f),
 		gfx.VertexFormat(1, roses[:]),
+		gfx.Topology(gfx.LineStrip),
 	)
 	gfx.Enable(gfx.FramebufferSRGB)
 
@@ -116,7 +117,7 @@ func (l looper) Draw(_ float64) {
 
 	perFrameUBO.Bind(0)
 	perFrameUBO.SubData(&perFrame, 0)
-	gfx.DrawInstanced(gfx.LineStrip, 0, nbPoints, int32(len(roses)))
+	gfx.DrawInstanced(0, nbPoints, int32(len(roses)))
 
 	pipeline.Unbind()
 }

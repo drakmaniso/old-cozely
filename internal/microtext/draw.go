@@ -41,6 +41,7 @@ func Setup() {
 		gfx.FragmentShader(strings.NewReader(fragmentShader)),
 		gfx.CullFace(false, false),
 		gfx.DepthTest(false),
+		gfx.Topology(gfx.TriangleStrip),
 	)
 
 	fontSSBO = gfx.NewStorageBuffer(&Font, gfx.StaticStorage)
@@ -107,7 +108,7 @@ func Draw() {
 	}
 	fontSSBO.Bind(0)
 	screenSSBO.Bind(1)
-	gfx.Draw(gfx.TriangleStrip, 0, 4)
+	gfx.Draw(0, 4)
 	pipeline.Unbind()
 }
 

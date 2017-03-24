@@ -94,8 +94,9 @@ func setup() error {
 		gfx.VertexShader(v),
 		gfx.FragmentShader(f),
 		gfx.VertexFormat(0, mesh{}),
-		gfx.DepthTest(true),
+		gfx.Topology(gfx.Triangles),
 		gfx.CullFace(false, true),
+		gfx.DepthTest(true),
 	)
 
 	// Create the uniform buffer
@@ -179,7 +180,7 @@ func (l looper) Draw(_ float64) {
 
 	diffuse.Bind(0)
 	sampler.Bind(0)
-	gfx.Draw(gfx.Triangles, 0, 6*2*3)
+	gfx.Draw(0, 6*2*3)
 
 	pipeline.Unbind()
 }

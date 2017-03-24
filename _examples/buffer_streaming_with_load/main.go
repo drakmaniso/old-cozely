@@ -88,6 +88,7 @@ func setup() error {
 	pipeline = gfx.NewPipeline(
 		gfx.VertexShader(v),
 		gfx.FragmentShader(f),
+		gfx.Topology(gfx.Points),
 		gfx.VertexFormat(0, points[:]),
 	)
 	gfx.Enable(gfx.FramebufferSRGB)
@@ -148,7 +149,7 @@ func (l looper) Draw(_ float64) {
 		perFrameUBO.Bind(0)
 		perFrameUBO.SubData(&perFrame, 0)
 
-		gfx.Draw(gfx.Points, 0, int32(len(points)))
+		gfx.Draw(0, int32(len(points)))
 
 		pipeline.Unbind()
 		updated = false

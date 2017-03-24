@@ -17,10 +17,6 @@ static inline void Disable(GLenum c) {
 	glDisable(c);
 }
 
-static inline void DepthComparison(GLenum cf) {
-	glDepthFunc(cf);
-}
-
 static inline void Blending(GLenum src, GLenum dst) {
 	glBlendFunc(src, dst);
 }

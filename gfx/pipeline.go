@@ -52,6 +52,7 @@ void PipelineLinkProgram(GLuint p) {
 
 typedef struct {
 	// Input Assembly State
+	GLenum    topology;
 	GLboolean primitiveRestart;
 
 	// Rasterization State
@@ -73,6 +74,10 @@ static inline void BindPipeline(GLuint p, GLuint vao, PipelineState *state) {
 	glBindVertexArray(vao);
 
 	// Input Assembly State
+
+	if (state->topology != currentState.topology) {
+		currentState.topology = state->topology;
+	}
 
 	if (state->primitiveRestart != currentState.primitiveRestart) {
 		if (state->primitiveRestart) {
@@ -184,6 +189,7 @@ import "C"
 
 func init() {
 	// VkPipelineInputAssemblyStateCreateInfo
+	C.currentState.topology = C.GL_TRIANGLES
 	C.currentState.primitiveRestart = C.GL_FALSE
 	// VkPipelineRasterizationStateCreateInfo
 	C.currentState.depthClamp = C.GL_TRUE
@@ -222,6 +228,7 @@ func NewPipeline(o ...PipelineConfig) *Pipeline {
 	var p Pipeline
 
 	// Input Assembly State
+	p.state.topology = C.GL_TRIANGLES
 	p.state.primitiveRestart = C.GL_FALSE
 	// Rasterization State
 	p.state.depthClamp = C.GL_TRUE
@@ -275,13 +282,19 @@ func ClearStencilBuffer(m int32) {
 
 // Bind the pipeline for use by the GPU in all following draw commands.
 func (p *Pipeline) Bind() {
-	C.BindPipeline(p.object, p.vao, &p.state)
+	if currentPipeline != p {
+		C.BindPipeline(p.object, p.vao, &p.state)
+		currentPipeline = p
+	}
 }
 
 // Unbind the pipeline.
 func (p *Pipeline) Unbind() {
 	C.UnbindPipeline()
+	currentPipeline = nil
 }
+
+var currentPipeline *Pipeline
 
 //------------------------------------------------------------------------------
 
@@ -293,6 +306,31 @@ func (p *Pipeline) Close() {
 //------------------------------------------------------------------------------
 
 // Input Assembly State
+
+func Topology(m Primitive) PipelineConfig {
+	return func(p *Pipeline) {
+		p.state.topology = C.GLenum(m)
+	}
+}
+
+// A Primitive specifies what kind of object to draw.
+type Primitive C.GLenum
+
+// Used in `Topology`.
+const (
+	Points               Primitive = C.GL_POINTS
+	Lines                Primitive = C.GL_LINES
+	LineLoop             Primitive = C.GL_LINE_LOOP
+	LineStrip            Primitive = C.GL_LINE_STRIP
+	Triangles            Primitive = C.GL_TRIANGLES
+	TriangleStrip        Primitive = C.GL_TRIANGLE_STRIP
+	TriangleFan          Primitive = C.GL_TRIANGLE_FAN
+	LinesAdjency         Primitive = C.GL_LINES_ADJACENCY
+	LineStripAdjency     Primitive = C.GL_LINE_STRIP_ADJACENCY
+	TrianglesAdjency     Primitive = C.GL_TRIANGLES_ADJACENCY
+	TriangleStripAdjency Primitive = C.GL_TRIANGLE_STRIP_ADJACENCY
+	Patches              Primitive = C.GL_PATCHES
+)
 
 func PrimitiveRestart(enable bool) PipelineConfig {
 	if enable {

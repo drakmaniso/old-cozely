@@ -169,7 +169,7 @@ func (l looper) Draw(interpolation float64) {
 	poly.BindMeshBuffers()
 
 	// poly.Draw()
-	gfx.Draw(gfx.Triangles, 0, int32(len(meshes.Faces)*6))
+	gfx.Draw(0, int32(len(meshes.Faces)*6))
 
 	poly.UnbindPipeline()
 }

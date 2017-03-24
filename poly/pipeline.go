@@ -15,6 +15,9 @@ import (
 
 func SetupPipeline(o ...gfx.PipelineConfig) {
 	o = append(o, gfx.VertexShader(strings.NewReader(vertshader)))
+	o = append(o, gfx.Topology(gfx.Triangles))
+	o = append(o, gfx.CullFace(false, true))
+	o = append(o, gfx.DepthTest(true))
 	pipeline = gfx.NewPipeline(o...)
 }
 
@@ -22,8 +25,6 @@ func SetupPipeline(o ...gfx.PipelineConfig) {
 
 func BindPipeline() {
 	pipeline.Bind()
-	gfx.Enable(gfx.DepthTest)
-	gfx.CullFace(false, true)
 	gfx.ClearDepthBuffer(1.0)
 }
 
@@ -39,6 +40,6 @@ func ClosePipeline() {
 
 //------------------------------------------------------------------------------
 
-var pipeline gfx.Pipeline
+var pipeline *gfx.Pipeline
 
 //------------------------------------------------------------------------------

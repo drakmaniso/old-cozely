@@ -30,45 +30,26 @@ import "C"
 
 //------------------------------------------------------------------------------
 
-// A Primitive specifies what kind of object to draw.
-type Primitive C.GLenum
-
-// Used in `Draw`.
-const (
-	Points               Primitive = C.GL_POINTS
-	Lines                Primitive = C.GL_LINES
-	LineLoop             Primitive = C.GL_LINE_LOOP
-	LineStrip            Primitive = C.GL_LINE_STRIP
-	Triangles            Primitive = C.GL_TRIANGLES
-	TriangleStrip        Primitive = C.GL_TRIANGLE_STRIP
-	TriangleFan          Primitive = C.GL_TRIANGLE_FAN
-	LinesAdjency         Primitive = C.GL_LINES_ADJACENCY
-	LineStripAdjency     Primitive = C.GL_LINE_STRIP_ADJACENCY
-	TrianglesAdjency     Primitive = C.GL_TRIANGLES_ADJACENCY
-	TriangleStripAdjency Primitive = C.GL_TRIANGLE_STRIP_ADJACENCY
-	Patches              Primitive = C.GL_PATCHES
-)
-
 //------------------------------------------------------------------------------
 
 // Draw asks the GPU to draw a sequence of primitives.
-func Draw(mode Primitive, first int32, count int32) {
-	C.DrawArrays(C.GLenum(mode), C.GLuint(first), C.GLuint(count))
+func Draw(first int32, count int32) {
+	C.DrawArrays(currentPipeline.state.topology, C.GLuint(first), C.GLuint(count))
 }
 
 //------------------------------------------------------------------------------
 
 // DrawInstanced asks the GPU to draw several instances of a sequence of
 // primitives.
-func DrawInstanced(mode Primitive, first int32, count int32, instances int32) {
-	C.DrawArraysInstanced(C.GLenum(mode), C.GLuint(first), C.GLuint(count), C.GLuint(instances))
+func DrawInstanced(first int32, count int32, instances int32) {
+	C.DrawArraysInstanced(currentPipeline.state.topology, C.GLuint(first), C.GLuint(count), C.GLuint(instances))
 }
 
 //------------------------------------------------------------------------------
 
 // DrawIndexed asks the GPU to draw a sequence of primitives with indexed
 // vertices.
-func DrawIndexed(mode Primitive, first int32, count int32) {
+func DrawIndexed(first int32, count int32) {
 	var s int32
 	switch boundElement.gltype {
 	case C.GL_UNSIGNED_BYTE:
@@ -78,7 +59,7 @@ func DrawIndexed(mode Primitive, first int32, count int32) {
 	case C.GL_UNSIGNED_INT:
 		s = 4
 	}
-	C.DrawIndexed(C.GLenum(mode), C.GLsizei(count), boundElement.gltype, C.GLsizeiptr(first*s))
+	C.DrawIndexed(currentPipeline.state.topology, C.GLsizei(count), boundElement.gltype, C.GLsizeiptr(first*s))
 }
 
 //------------------------------------------------------------------------------
@@ -94,8 +75,8 @@ type DrawIndirectCommand struct {
 
 // DrawIndirect asks the GPU to read the Indirect Buffer starting at firstdraw,
 // and make drawcount draw calls.
-func DrawIndirect(mode Primitive, firstdraw uintptr, drawcount int32) {
-	C.DrawIndirect(C.GLenum(mode), C.GLsizeiptr(firstdraw), C.GLsizei(drawcount), C.GLsizei(0))
+func DrawIndirect(firstdraw uintptr, drawcount int32) {
+	C.DrawIndirect(currentPipeline.state.topology, C.GLsizeiptr(firstdraw), C.GLsizei(drawcount), C.GLsizei(0))
 }
 
 //------------------------------------------------------------------------------

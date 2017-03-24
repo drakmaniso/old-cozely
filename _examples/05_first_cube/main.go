@@ -88,6 +88,7 @@ func setup() error {
 		gfx.VertexShader(v),
 		gfx.FragmentShader(f),
 		gfx.VertexFormat(0, mesh{}),
+		gfx.Topology(gfx.Triangles),
 		gfx.CullFace(false, false),
 		gfx.DepthTest(true),
 	)
@@ -137,7 +138,7 @@ func (l looper) Draw(_ float64) {
 	perFrameUBO.SubData(&perFrame, 0)
 	perFrameUBO.Bind(0)
 
-	gfx.Draw(gfx.Triangles, 0, 6*2*3)
+	gfx.Draw(0, 6*2*3)
 
 	pipeline.Unbind()
 }

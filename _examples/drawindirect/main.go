@@ -141,8 +141,9 @@ func setup() error {
 		gfx.FragmentShader(f),
 		gfx.VertexFormat(0, mesh{}),
 		gfx.VertexFormat(1, draws),
-		gfx.DepthTest(true),
+		gfx.Topology(gfx.Triangles),
 		gfx.CullFace(false, true),
+		gfx.DepthTest(true),
 	)
 	gfx.Enable(gfx.FramebufferSRGB)
 
@@ -195,7 +196,7 @@ func (l looper) Draw(_ float64) {
 	perFrameUBO.SubData(&perFrame, 0)
 	perFrameUBO.Bind(0)
 
-	gfx.DrawIndirect(gfx.Triangles, 0, 6)
+	gfx.DrawIndirect(0, 6)
 
 	pipeline.Unbind()
 }
