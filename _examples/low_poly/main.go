@@ -6,7 +6,6 @@ package main
 //------------------------------------------------------------------------------
 
 import (
-	"fmt"
 	"os"
 
 	"github.com/drakmaniso/glam"
@@ -29,7 +28,7 @@ func main() {
 
 	err := setup()
 	if err != nil {
-		fmt.Println(err)
+		glam.Log("ERROR during setup: %s\n", err)
 		return
 	}
 
@@ -43,7 +42,7 @@ func main() {
 	glam.Loop = looper{}
 	err = glam.Run()
 	if err != nil {
-		fmt.Println(err)
+		glam.Log("ERROR: %s\n", err)
 	}
 }
 

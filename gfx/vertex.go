@@ -41,7 +41,7 @@ import "C"
 //
 // The format must be a slice of struct, and the struct must have with layout
 // tags.
-func VertexFormat(binding uint32, format interface{}) PipelineOption {
+func VertexFormat(binding uint32, format interface{}) PipelineConfig {
 	return func(p *Pipeline) {
 		p.setVertexFormat(binding, format)
 	}

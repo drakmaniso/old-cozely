@@ -54,7 +54,7 @@ type shader struct {
 //------------------------------------------------------------------------------
 
 // VertexShader compiles a vertex shader.
-func VertexShader(r io.Reader) PipelineOption {
+func VertexShader(r io.Reader) PipelineConfig {
 	var s shader
 	var err error
 	s.stages = C.GL_VERTEX_SHADER_BIT
@@ -68,7 +68,7 @@ func VertexShader(r io.Reader) PipelineOption {
 }
 
 // FragmentShader compiles a fragment shader.
-func FragmentShader(r io.Reader) PipelineOption {
+func FragmentShader(r io.Reader) PipelineConfig {
 	var s shader
 	var err error
 	s.stages = C.GL_FRAGMENT_SHADER_BIT
@@ -82,7 +82,7 @@ func FragmentShader(r io.Reader) PipelineOption {
 }
 
 // GeometryShader compiles a geometry shader.
-func GeometryShader(r io.Reader) PipelineOption {
+func GeometryShader(r io.Reader) PipelineConfig {
 	var s shader
 	var err error
 	s.stages = C.GL_GEOMETRY_SHADER_BIT
@@ -96,7 +96,7 @@ func GeometryShader(r io.Reader) PipelineOption {
 }
 
 // TessControlShader compiles a tesselation control shader.
-func TessControlShader(r io.Reader) PipelineOption {
+func TessControlShader(r io.Reader) PipelineConfig {
 	var s shader
 	var err error
 	s.stages = C.GL_TESS_CONTROL_SHADER_BIT
@@ -110,7 +110,7 @@ func TessControlShader(r io.Reader) PipelineOption {
 }
 
 // TessEvaluationShader compiles a tesselation evaluation shader.
-func TessEvaluationShader(r io.Reader) PipelineOption {
+func TessEvaluationShader(r io.Reader) PipelineConfig {
 	var s shader
 	var err error
 	s.stages = C.GL_TESS_EVALUATION_SHADER_BIT
@@ -124,7 +124,7 @@ func TessEvaluationShader(r io.Reader) PipelineOption {
 }
 
 // ComputeShader compiles a comput shader.
-func ComputeShader(r io.Reader) PipelineOption {
+func ComputeShader(r io.Reader) PipelineConfig {
 	var s shader
 	var err error
 	s.stages = C.GL_COMPUTE_SHADER_BIT

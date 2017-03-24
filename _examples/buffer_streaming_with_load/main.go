@@ -48,7 +48,7 @@ func main() {
 
 // OpenGL objects
 var (
-	pipeline    gfx.Pipeline
+	pipeline    *gfx.Pipeline
 	perFrameUBO gfx.UniformBuffer
 	pointsVBO   gfx.VertexBuffer
 )

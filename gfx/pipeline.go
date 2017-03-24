@@ -50,14 +50,120 @@ void PipelineLinkProgram(GLuint p) {
 	glLinkProgram(p);
 }
 
+typedef struct {
+	// Input Assembly State
+	GLboolean primitiveRestart;
+
+	// Rasterization State
+	GLboolean depthClamp;
+	GLboolean  rasterizerDiscard;
+	GLenum    cullMode;
+	GLenum    frontFace;
+
+	// Depth and Stencil State
+	GLboolean	depthTest;
+	GLenum    depthComparison;
+	GLboolean	stencilTest;
+} PipelineState;
+
+PipelineState currentState;
+
+static inline void BindPipeline(GLuint p, GLuint vao, PipelineState *state) {
+	glUseProgram(p);
+	glBindVertexArray(vao);
+
+	// Input Assembly State
+
+	if (state->primitiveRestart != currentState.primitiveRestart) {
+		if (state->primitiveRestart) {
+			glEnable(GL_PRIMITIVE_RESTART);
+			glEnable(GL_PRIMITIVE_RESTART_FIXED_INDEX);
+		} else {
+			glDisable(GL_PRIMITIVE_RESTART);
+		}
+		currentState.primitiveRestart = state->primitiveRestart;
+	}
+
+	// Rasterization State
+
+	if (state->depthClamp != currentState.depthClamp) {
+		if (state->depthClamp) {
+			glDisable(GL_DEPTH_CLAMP);
+		} else {
+			glEnable(GL_DEPTH_CLAMP);
+		}
+		currentState.depthClamp = state->depthClamp;
+	}
+
+	if (state->rasterizerDiscard != currentState.rasterizerDiscard) {
+		if (state->rasterizerDiscard) {
+			glEnable(GL_RASTERIZER_DISCARD);
+		} else {
+			glDisable(GL_RASTERIZER_DISCARD);
+		}
+		currentState.rasterizerDiscard = state->rasterizerDiscard;
+	}
+
+	if (state->cullMode != currentState.cullMode) {
+		switch(state->cullMode) {
+		case GL_BACK:
+			glCullFace(GL_BACK);
+			glEnable(GL_CULL_FACE);
+			break;
+		case GL_NONE:
+			glDisable(GL_CULL_FACE);
+			break;
+		case GL_FRONT:
+			glCullFace(GL_FRONT);
+			glEnable(GL_CULL_FACE);
+			break;
+		case GL_FRONT_AND_BACK:
+			glCullFace(GL_FRONT_AND_BACK);
+			glEnable(GL_CULL_FACE);
+			break;
+		}
+		currentState.cullMode = state->cullMode;
+	}
+
+	if (state->frontFace != currentState.frontFace) {
+		glFrontFace(state->frontFace);
+		currentState.frontFace = state->frontFace;
+	}
+
+	// Depth and Stencil State
+
+	if (state->depthTest != currentState.depthTest) {
+		if (state->depthTest) {
+			glEnable(GL_DEPTH_TEST);
+		} else {
+			glDisable(GL_DEPTH_TEST);
+		}
+		currentState.depthTest = state->depthTest;
+	}
+
+	if (state->depthComparison != currentState.depthComparison) {
+		glDepthFunc(state->depthComparison);
+		currentState.depthComparison = state->depthComparison;
+	}
+
+	if (state->stencilTest != currentState.stencilTest) {
+		if (state->stencilTest) {
+			glEnable(GL_STENCIL_TEST);
+		} else {
+			glDisable(GL_STENCIL_TEST);
+		}
+		currentState.stencilTest = state->stencilTest;
+	}
+}
+
+static inline void UnbindPipeline() {
+	glUseProgram(0);
+	glBindVertexArray(0);
+}
+
 void ClosePipeline(GLuint p, GLuint vao) {
 	glDeleteVertexArrays(1, &vao);
 	glDeleteProgramPipelines(1, &p);
-}
-
-static inline void BindPipeline(GLuint p, GLuint vao) {
-	glUseProgram(p);
-	glBindVertexArray(vao);
 }
 
 static inline void ClearColorBuffer(GLfloat *c) {
@@ -76,23 +182,57 @@ import "C"
 
 //------------------------------------------------------------------------------
 
-// A Pipeline consists of shaders and state for the GPU.
-type Pipeline struct {
-	object C.GLuint
-	vao    C.GLuint
+func init() {
+	// VkPipelineInputAssemblyStateCreateInfo
+	C.currentState.primitiveRestart = C.GL_FALSE
+	// VkPipelineRasterizationStateCreateInfo
+	C.currentState.depthClamp = C.GL_TRUE
+	C.currentState.rasterizerDiscard = C.GL_FALSE
+	C.currentState.cullMode = C.GL_NONE
+	C.currentState.frontFace = C.GL_CCW
+	// VkPipelineDepthStencilStateCreateInfo
+	C.currentState.depthTest = C.GL_FALSE
+	C.currentState.depthComparison = C.GL_LESS
+	C.currentState.stencilTest = C.GL_FALSE
 }
 
 //------------------------------------------------------------------------------
 
-// A PipelineOption represents a configuration option used when creating a new
+// A Pipeline consists of shaders and state for the GPU.
+type Pipeline struct {
+	object C.GLuint
+	vao    C.GLuint
+	state  C.PipelineState
+}
+
+type pipelineState struct {
+	cullMode C.GLuint
+}
+
+//------------------------------------------------------------------------------
+
+// A PipelineConfig represents a configuration option used when creating a new
 // pipeline.
-type PipelineOption func(*Pipeline)
+type PipelineConfig func(*Pipeline)
 
 //------------------------------------------------------------------------------
 
 // NewPipeline returns a pipeline with created from a specific set of shaders.
-func NewPipeline(o ...PipelineOption) Pipeline {
+func NewPipeline(o ...PipelineConfig) *Pipeline {
 	var p Pipeline
+
+	// Input Assembly State
+	p.state.primitiveRestart = C.GL_FALSE
+	// Rasterization State
+	p.state.depthClamp = C.GL_TRUE
+	p.state.rasterizerDiscard = C.GL_FALSE
+	p.state.cullMode = C.GL_NONE
+	p.state.frontFace = C.GL_CCW
+	// DepthStencil State
+	p.state.depthTest = C.GL_FALSE
+	p.state.depthComparison = C.GL_LESS
+	p.state.stencilTest = C.GL_FALSE
+
 	p.object = C.NewPipeline() //TODO: Error Handling
 	p.vao = C.CreateVAO()      //TODO: Error Handling
 	for _, f := range o {
@@ -105,7 +245,8 @@ func NewPipeline(o ...PipelineOption) Pipeline {
 			fmt.Errorf("shader link error:\n    %s", errors.New(C.GoString(errm))),
 		)
 	}
-	return p
+
+	return &p
 }
 
 func (p *Pipeline) attachShader(s shader) {
@@ -134,12 +275,12 @@ func ClearStencilBuffer(m int32) {
 
 // Bind the pipeline for use by the GPU in all following draw commands.
 func (p *Pipeline) Bind() {
-	C.BindPipeline(p.object, p.vao)
+	C.BindPipeline(p.object, p.vao, &p.state)
 }
 
 // Unbind the pipeline.
 func (p *Pipeline) Unbind() {
-	C.BindPipeline(0, 0)
+	C.UnbindPipeline()
 }
 
 //------------------------------------------------------------------------------
@@ -147,6 +288,124 @@ func (p *Pipeline) Unbind() {
 // Close the pipeline.
 func (p *Pipeline) Close() {
 	C.ClosePipeline(p.object, p.vao)
+}
+
+//------------------------------------------------------------------------------
+
+// Input Assembly State
+
+func PrimitiveRestart(enable bool) PipelineConfig {
+	if enable {
+		return func(p *Pipeline) {
+			p.state.primitiveRestart = C.GL_TRUE
+		}
+	}
+	return func(p *Pipeline) {
+		p.state.primitiveRestart = C.GL_FALSE
+	}
+}
+
+//------------------------------------------------------------------------------
+
+// Rasterization State
+
+func DepthClamp(enable bool) PipelineConfig {
+	if enable {
+		return func(p *Pipeline) {
+			p.state.depthClamp = C.GL_TRUE
+		}
+	}
+	return func(p *Pipeline) {
+		p.state.depthClamp = C.GL_FALSE
+	}
+}
+
+func RasterizerDiscard(enable bool) PipelineConfig {
+	if enable {
+		return func(p *Pipeline) {
+			p.state.rasterizerDiscard = C.GL_TRUE
+		}
+	}
+	return func(p *Pipeline) {
+		p.state.rasterizerDiscard = C.GL_FALSE
+	}
+}
+
+// CullFace specifies if front and/or back faces are culled.
+//
+// See also `FrontFace`.
+func CullFace(front, back bool) PipelineConfig {
+	switch {
+	case front && back:
+		return func(p *Pipeline) {
+			p.state.cullMode = C.GL_FRONT_AND_BACK
+		}
+	case front:
+		return func(p *Pipeline) {
+			p.state.cullMode = C.GL_FRONT
+		}
+	case back:
+		return func(p *Pipeline) {
+			p.state.cullMode = C.GL_BACK
+		}
+	default:
+		return func(p *Pipeline) {
+			p.state.cullMode = C.GL_NONE
+		}
+	}
+}
+
+// FrontFace specifies which winding direction is considered front.
+//
+// See also `CullFace`.
+func FrontFace(d WindingDirection) PipelineConfig {
+	return func(p *Pipeline) {
+		p.state.frontFace = C.GLenum(d)
+	}
+}
+
+// A WindingDirection specifies a rotation direction.
+type WindingDirection C.GLenum
+
+// Used in `FrontFace`.
+const (
+	Clockwise        WindingDirection = C.GL_CW
+	CounterClockwise WindingDirection = C.GL_CCW
+)
+
+//------------------------------------------------------------------------------
+
+// Depth and Stencil State
+
+func DepthTest(enable bool) PipelineConfig {
+	if enable {
+		return func(p *Pipeline) {
+			p.state.depthTest = C.GL_TRUE
+		}
+	}
+	return func(p *Pipeline) {
+		p.state.depthTest = C.GL_FALSE
+	}
+}
+
+// DepthComparison specifies the function used to compare pixel depth.
+//
+// Note that you must also `Enable(DepthTest)`. The default value is `Less`.
+func DepthComparison(op ComparisonOp) PipelineConfig {
+	return func(p *Pipeline) {
+		p.state.depthComparison = C.GLenum(op)
+	}
+}
+
+func StencilTest(enable bool) PipelineConfig {
+	if enable {
+		return func(p *Pipeline) {
+			p.state.stencilTest = C.GL_TRUE
+		}
+	}
+	return func(p *Pipeline) {
+		p.state.stencilTest = C.GL_FALSE
+	}
 }
 
 //------------------------------------------------------------------------------

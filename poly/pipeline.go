@@ -13,7 +13,7 @@ import (
 
 //------------------------------------------------------------------------------
 
-func SetupPipeline(o ...gfx.PipelineOption) {
+func SetupPipeline(o ...gfx.PipelineConfig) {
 	o = append(o, gfx.VertexShader(strings.NewReader(vertshader)))
 	pipeline = gfx.NewPipeline(o...)
 }

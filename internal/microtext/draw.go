@@ -16,7 +16,7 @@ import (
 //------------------------------------------------------------------------------
 
 var (
-	pipeline   gfx.Pipeline
+	pipeline   *gfx.Pipeline
 	fontSSBO   gfx.StorageBuffer
 	screenSSBO gfx.StorageBuffer
 )
@@ -39,6 +39,8 @@ func Setup() {
 	pipeline = gfx.NewPipeline(
 		gfx.VertexShader(strings.NewReader(vertexShader)),
 		gfx.FragmentShader(strings.NewReader(fragmentShader)),
+		gfx.CullFace(false, false),
+		gfx.DepthTest(false),
 	)
 
 	fontSSBO = gfx.NewStorageBuffer(&Font, gfx.StaticStorage)
@@ -95,8 +97,6 @@ func WindowResized(s pixel.Coord, ts uint32) {
 // Draw is called during the main loop, after the user's Draw.
 func Draw() {
 	pipeline.Bind()
-	gfx.Disable(gfx.DepthTest)
-	gfx.CullFace(false, false)
 	if screenUpdated {
 		screenSSBO.SubData(&screen, 0)
 		screenUpdated = false

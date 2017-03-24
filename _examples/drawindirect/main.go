@@ -43,7 +43,7 @@ func main() {
 
 // OpenGL objects
 var (
-	pipeline    gfx.Pipeline
+	pipeline    *gfx.Pipeline
 	perFrameUBO gfx.UniformBuffer
 )
 
@@ -141,6 +141,8 @@ func setup() error {
 		gfx.FragmentShader(f),
 		gfx.VertexFormat(0, mesh{}),
 		gfx.VertexFormat(1, draws),
+		gfx.DepthTest(true),
+		gfx.CullFace(false, true),
 	)
 	gfx.Enable(gfx.FramebufferSRGB)
 
@@ -185,8 +187,6 @@ func (l looper) Update(_, _ float64) {
 
 func (l looper) Draw(_ float64) {
 	pipeline.Bind()
-	gfx.Enable(gfx.DepthTest)
-	gfx.CullFace(false, true)
 	gfx.ClearDepthBuffer(1.0)
 	gfx.ClearColorBuffer(color.RGBA{0.9, 0.9, 0.9, 1.0})
 

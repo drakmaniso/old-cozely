@@ -226,28 +226,26 @@ vec3 lightLuminance(vec3 L, vec3 V, vec3 N)
 // https://www.shadertoy.com/view/lslGzl
 // http://duikerresearch.com/2015/09/filmic-tonemapping-for-real-time-rendering/
 
-// First, the classics:
-
 // Reinhardt Operator.
 // (luma based version)
-void tonemapReinhardt() {
+vec3 tonemapReinhardt(vec3 color) {
 	const float white = 2.0;
 
-	float luma = dot(Color, vec3(0.2126, 0.7152, 0.0722));
+	float luma = dot(color, vec3(0.2126, 0.7152, 0.0722));
 	float toneMappedLuma = luma * (1. + luma / (white*white)) / (1. + luma);
-	Color *= toneMappedLuma / luma;
+	return color * toneMappedLuma / luma;
 }
 
 // Jim Hejl and Richard Burgess-Dawson approximation of a filmic curve.
 // Note that it incorporates the gamma correction (i.e. don't use with sRGB buffers)
-void tonemapHejlBurgessDawson() {
-  Color = max(vec3(0.0), Color - vec3(0.004));
-  Color = (Color * (6.2 * Color + 0.5)) / (Color * (6.2 * Color + 1.7) + 0.06);
+vec3 tonemapHejlBurgessDawson(vec3 color) {
+  color = max(vec3(0.0), color - vec3(0.004));
+  return (color * (6.2 * color + 0.5)) / (color * (6.2 * color + 1.7) + 0.06);
 }
 
 // John Hable approximation of a filmic curve.
 // aka "uncharted 2"
-void tonemapHable() {
+vec3 tonemapHable(vec3 color) {
   const float exposureBias = 2.0;
 	const float W = 4;//11.2;
 
@@ -258,26 +256,24 @@ void tonemapHable() {
 	const float E = 0.02;
 	const float F = 0.30;
 
-	Color *= exposureBias;
-	Color = ((Color * (A * Color + C * B) + D * E) / (Color * (A * Color + B) + D * F)) - E / F;
+	color *= exposureBias;
+	color = ((color * (A * color + C * B) + D * E) / (color * (A * color + B) + D * F)) - E / F;
 	float white = ((W * (A * W + C * B) + D * E) / (W * (A * W + B) + D * F)) - E / F;
 
-  Color /= white;
+  return color / white;
 }
 
-
-
 // aka RomBinDaHouse
-void tonemapGalashov() {
+vec3 tonemapGalashov(vec3 color) {
   const float exposureBias = 2.72;
   const float blackPoint = 0.15;
 
-  Color = exp(-1.0 / (exposureBias*Color + blackPoint));
+  return exp(-1.0 / (exposureBias*color + blackPoint));
 }
 
 // Found in the comments of:
 // https://mynameismjp.wordpress.com/2010/04/30/a-closer-look-at-tone-mapping/
-void tonemapSteveM() {
+vec3 tonemapSteveM(vec3 color) {
   const float exposureBias = 1.0;
 
 	float a = 1.8; /// Mid
@@ -285,8 +281,8 @@ void tonemapSteveM() {
   float c = 0.5; /// Shoulder
   float d = 1.5; /// Mid
 
-  Color *= exposureBias;
-  Color = (Color * (a * Color + b)) / (Color * (a * Color + c) + d);
+  color *= exposureBias;
+  return (color * (a * color + b)) / (color * (a * color + c) + d);
 }
 
 //--------------------------------------------------------------------------------------------------
@@ -335,11 +331,11 @@ void main(void) {
 
   Color = luminance * glam_CameraExposure;
 
-  // tonemapGalashov();
-  // tonemapReinhardt();
-  // tonemapHejlBurgessDawson();
-  tonemapHable();
-  // tonemapSteveM();
+  // Color = tonemapGalashov(Color);
+  // Color = tonemapReinhardt(Color);
+  // Color = tonemapHejlBurgessDawson(Color);
+  Color = tonemapHable(Color);
+  // Color = tonemapSteveM(Color);
 }
 
 //--------------------------------------------------------------------------------------------------

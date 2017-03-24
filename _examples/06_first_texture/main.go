@@ -47,7 +47,7 @@ func main() {
 
 // OpenGL objects
 var (
-	pipeline    gfx.Pipeline
+	pipeline    *gfx.Pipeline
 	perFrameUBO gfx.UniformBuffer
 	sampler     gfx.Sampler
 	diffuse     gfx.Texture2D
@@ -94,6 +94,8 @@ func setup() error {
 		gfx.VertexShader(v),
 		gfx.FragmentShader(f),
 		gfx.VertexFormat(0, mesh{}),
+		gfx.DepthTest(true),
+		gfx.CullFace(false, true),
 	)
 
 	// Create the uniform buffer
@@ -168,8 +170,6 @@ func (l looper) Draw(_ float64) {
 	pipeline.Bind()
 	gfx.ClearDepthBuffer(1.0)
 	gfx.ClearColorBuffer(color.RGBA{0.9, 0.9, 0.9, 1.0})
-	gfx.Enable(gfx.DepthTest)
-	gfx.CullFace(false, true)
 	gfx.Enable(gfx.FramebufferSRGB)
 
 	perFrame.transform = projection.Times(view)

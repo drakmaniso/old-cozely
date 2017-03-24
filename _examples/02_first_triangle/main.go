@@ -36,7 +36,7 @@ func main() {
 
 // OpenGL pipeline object
 var (
-	pipeline gfx.Pipeline
+	pipeline *gfx.Pipeline
 )
 
 //------------------------------------------------------------------------------
