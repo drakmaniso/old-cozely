@@ -11,6 +11,7 @@ import (
 	"path/filepath"
 
 	"github.com/drakmaniso/glam/formats/obj"
+	"github.com/drakmaniso/glam"
 )
 
 //------------------------------------------------------------------------------
@@ -19,7 +20,7 @@ func main() {
 	path := filepath.Dir(os.Args[0]) + "/"
 	f, err := os.Open(path + "../shared/cube.obj")
 	if err != nil {
-		fmt.Printf("ERROR: %s\n", err)
+		glam.ShowError("opening obj file", err)
 		return
 	}
 	obj.Parse(f, builder{})

@@ -6,10 +6,9 @@ package glam
 //------------------------------------------------------------------------------
 
 import (
+	"errors"
 	"fmt"
 	"os"
-
-	"errors"
 
 	"github.com/drakmaniso/glam/basic"
 	"github.com/drakmaniso/glam/gfx"
@@ -24,20 +23,22 @@ import (
 
 //------------------------------------------------------------------------------
 
-func Setup() {
-	internal.Setup()
+// Setup initializes all subsystems and open the game window.
+func Setup() error {
+	err := internal.Setup()
+	if err != nil {
+		return internal.Error("setting up internal", err)
+	}
+
 	gfx.Setup()
+	if err != nil {
+		return internal.Error("setting up gfx", err)
+	}
 
-	s := pixel.Coord{internal.Window.Width, internal.Window.Height}
-	gfx.Viewport(pixel.Coord{X: 0, Y: 0}, s)
-
-	// Setup mtx
 	microtext.Setup()
-	microtext.WindowResized(s, 0)
 
 	isSetUp = true
-
-	//TODO: error handling?
+	return nil
 }
 
 var isSetUp bool
@@ -62,9 +63,6 @@ var Loop Looper
 // Important: must be called from main.main, or at least from a function that is
 // known to run on the main OS thread.
 func Run() error {
-	if internal.InitError != nil {
-		return internal.InitError
-	}
 	defer internal.SDLQuit()
 	defer internal.DestroyWindow()
 
@@ -214,10 +212,20 @@ type wrappedError struct {
 }
 
 func (e wrappedError) Error() string {
-	return e.source + ": " + e.err.Error()
+	msg := e.source + ":\n\t"
+	a := e.err
+	for b, ok := a.(wrappedError); ok; {
+		msg += b.source + ":\n\t"
+		a = b.err
+		b, ok = a.(wrappedError)
+	}
+	return msg + a.Error()
 }
 
-//------------------------------------------------------------------------------
+func ShowError(source string, err error) {
+	e := Error("setting up", err)
+	Log("ERROR:\n\t%s", e)
+}
 
 // Log logs a formated message.
 func Log(format string, v ...interface{}) {

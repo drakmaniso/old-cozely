@@ -11,14 +11,19 @@ import "github.com/drakmaniso/glam/mtx"
 //------------------------------------------------------------------------------
 
 func main() {
-	glam.Setup()
+	err := glam.Setup()
+	if err != nil {
+		glam.ShowError("setting up glam", err)
+		return
+	}
 
 	mtx.Print(1, 1, "hello, world\n")
 
 	glam.Loop = looper{}
 	err := glam.Run()
 	if err != nil {
-		glam.Log("ERROR: %s\n", err)
+		glam.ShowError("running", err)
+		return
 	}
 }
 

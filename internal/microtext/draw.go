@@ -5,11 +5,11 @@ package microtext
 
 import (
 	"strings"
-
 	"unsafe"
 
 	"github.com/drakmaniso/glam/color"
 	"github.com/drakmaniso/glam/gfx"
+	"github.com/drakmaniso/glam/internal"
 	"github.com/drakmaniso/glam/pixel"
 )
 
@@ -45,6 +45,9 @@ func Setup() {
 	)
 
 	fontSSBO = gfx.NewStorageBuffer(&Font, gfx.StaticStorage)
+
+	s := pixel.Coord{internal.Window.Width, internal.Window.Height}
+	WindowResized(s, 0)
 }
 
 //------------------------------------------------------------------------------

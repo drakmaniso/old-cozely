@@ -15,7 +15,6 @@ import "C"
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"os"
 	"path/filepath"
@@ -53,31 +52,22 @@ func init() {
 
 //------------------------------------------------------------------------------
 
-func Setup() {
+func Setup() error {
 	// Load config file
 
 	f, err := os.Open(Path + "init.json")
 	if err != nil {
-		Log(`No configuration file ("init.json") found: %s`, err)
-		return
+		return Error(`opening configuration file "init.json"`, err)
 	}
 	d := json.NewDecoder(f)
 	if err := d.Decode(&Config); err != nil {
-		InitError = fmt.Errorf(`impossible to decode configuration file "init.json": %s`, err)
-		Log("%s", InitError)
-		return
-	}
-
-	if Config.Debug {
-		Debug = true
+		return Error("decoding configuration file", err)
 	}
 
 	// Initialize SDL
 
 	if errcode := C.SDL_Init(C.SDL_INIT_EVERYTHING); errcode != 0 {
-		InitError = fmt.Errorf("impossible to initialize SDL: %s", GetSDLError())
-		Log("%s", InitError)
-		return
+		return Error("initializing SDL", GetSDLError())
 	}
 
 	C.SDL_StopTextInput()
@@ -94,10 +84,10 @@ func Setup() {
 		Config.Debug,
 	)
 	if err != nil {
-		InitError = err
-		Log("%s", InitError)
-		return
+		return Error("opening window", err)
 	}
+
+	return nil
 }
 
 //------------------------------------------------------------------------------
@@ -111,7 +101,7 @@ func Log(format string, v ...interface{}) {
 
 // DebugLog logs a formated message if Debug mode is enabled.
 func DebugLog(format string, v ...interface{}) {
-	if Debug {
+	if Config.Debug {
 		logger.Printf(format, v...)
 	}
 }
@@ -132,7 +122,14 @@ type wrappedError struct {
 }
 
 func (e wrappedError) Error() string {
-	return e.source + ": " + e.err.Error()
+	msg := e.source + ":\n\t"
+	a := e.err
+	for b, ok := a.(wrappedError); ok; {
+		msg += b.source + ":\n\t"
+		a = b.err
+		b, ok = a.(wrappedError)
+	}
+	return msg + a.Error()
 }
 
 //------------------------------------------------------------------------------

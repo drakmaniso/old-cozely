@@ -20,11 +20,15 @@ import (
 //------------------------------------------------------------------------------
 
 func main() {
-	glam.Setup()
+	err := glam.Setup()
+	if err != nil {
+		glam.ShowError("setting up glam", err)
+		return
+	}
 
 	err := setup()
 	if err != nil {
-		glam.Log("ERROR during setup: %s\n", err)
+		glam.ShowError("setting up the game", err)
 		return
 	}
 
@@ -35,7 +39,8 @@ func main() {
 	glam.Loop = looper{}
 	err = glam.Run()
 	if err != nil {
-		glam.Log("ERROR: %s\n", err)
+		glam.ShowError("running", err)
+		return
 	}
 }
 

@@ -9,12 +9,6 @@ import "github.com/drakmaniso/glam/pixel"
 
 //------------------------------------------------------------------------------
 
-// Debug specifies if the game runs in debug mode or not.
-var Debug = false
-
-// InitError is non-nil if an error occured during initialisation.
-var InitError error
-
 // QuitRequested makes the game loop stop if true.
 var QuitRequested = false
 

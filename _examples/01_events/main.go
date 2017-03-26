@@ -19,7 +19,11 @@ import (
 //------------------------------------------------------------------------------
 
 func main() {
-	glam.Setup()
+	err := glam.Setup()
+	if err != nil {
+		glam.ShowError("setting up glam", err)
+		return
+	}
 
 	window.Handle = handler{}
 	mouse.Handle = handler{}
@@ -29,7 +33,8 @@ func main() {
 	glam.Loop = looper{}
 	err := glam.Run()
 	if err != nil {
-		glam.Log("ERROR: %s\n", err)
+		glam.ShowError("running", err)
+		return
 	}
 }
 
