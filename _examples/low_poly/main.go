@@ -36,15 +36,13 @@ func main() {
 		return
 	}
 
+	glam.Update = update
+	glam.Draw = draw
 	window.Handle = handler{}
 	mouse.Handle = handler{}
 	key.Handle = handler{}
 
-	glam.TimeStep = 1.0 / 60.0
-
-	// Run the Game Loop
-	glam.Loop = looper{}
-	err = glam.Run()
+	err = glam.LoopStable(1 / 60.0)
 	if err != nil {
 		glam.ShowError("running", err)
 		return
@@ -134,9 +132,7 @@ func setup() error {
 
 //------------------------------------------------------------------------------
 
-type looper struct{}
-
-func (l looper) Update(_, dt float64) {
+func update(dt, _ float64) {
 	camera.NextState()
 
 	camera.Move(forward*float32(dt), lateral*float32(dt), vertical*float32(dt))
@@ -163,7 +159,7 @@ var smoothedMouse plane.Coord
 
 //------------------------------------------------------------------------------
 
-func (l looper) Draw(interpolation float64) {
+func draw() {
 	poly.BindPipeline()
 	gfx.ClearColorBuffer(color.RGBA{0.4, 0.45, 0.5, 1.0})
 

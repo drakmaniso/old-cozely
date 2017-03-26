@@ -34,12 +34,12 @@ func main() {
 		return
 	}
 
+	glam.Update = update
+	glam.Draw = draw
 	window.Handle = handler{}
 	mouse.Handle = handler{}
 
-	// Run the main loop
-	glam.Loop = looper{}
-	err = glam.Run()
+	err = glam.Loop()
 	if err != nil {
 		glam.ShowError("running", err)
 		return
@@ -109,13 +109,11 @@ func setup() error {
 
 //------------------------------------------------------------------------------
 
-type looper struct{}
-
-func (l looper) Update(_, dt float64) {
+func update(dt, _ float64) {
 	perFrame.time += float32(dt)
 }
 
-func (l looper) Draw(_ float64) {
+func draw() {
 	pipeline.Bind()
 	gfx.ClearDepthBuffer(1.0)
 	gfx.ClearColorBuffer(color.RGBA{0.9, 0.85, 0.80, 1.0})

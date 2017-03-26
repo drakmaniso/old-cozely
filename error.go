@@ -12,11 +12,11 @@ import (
 //------------------------------------------------------------------------------
 
 // Error returns nil if err is nil, or a wrapped error otherwise.
-func Error(source string, err error) error {
+func Error(context string, err error) error {
 	if err == nil {
 		return nil
 	}
-	return wrappedError{source, err}
+	return wrappedError{context, err}
 }
 
 type wrappedError struct {

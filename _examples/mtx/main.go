@@ -33,12 +33,12 @@ func main() {
 		return
 	}
 
+	glam.Update = update
+	glam.Draw = draw
 	window.Handle = handler{}
 	mouse.Handle = handler{}
 
-	// Run the Game Loop
-	glam.Loop = looper{}
-	err = glam.Run()
+	err = glam.Loop()
 	if err != nil {
 		glam.ShowError("running", err)
 		return
@@ -130,9 +130,7 @@ func setup() error {
 
 //------------------------------------------------------------------------------
 
-type looper struct{}
-
-func (l looper) Update(_, dt float64) {
+func update(dt, _ float64) {
 	perFrame.time += float32(dt)
 
 	timer += dt
@@ -170,7 +168,7 @@ var clip2 = mtx.Clip{
 var timer float64
 var incr int
 
-func (l looper) Draw(_ float64) {
+func draw() {
 	pipeline.Bind()
 	gfx.ClearDepthBuffer(1.0)
 	gfx.ClearColorBuffer(color.RGBA{0.05, 0.10, 0.11, 1.0})

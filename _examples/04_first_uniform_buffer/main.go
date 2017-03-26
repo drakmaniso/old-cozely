@@ -29,9 +29,10 @@ func main() {
 		return
 	}
 
-	// Run the main loop
-	glam.Loop = looper{}
-	err = glam.Run()
+	glam.Update = update
+	glam.Draw = draw
+
+	err = glam.Loop()
 	if err != nil {
 		glam.ShowError("running", err)
 		return
@@ -59,7 +60,7 @@ type mesh []struct {
 
 // Animation state
 var (
-	angle float32
+	angle float64
 )
 
 //------------------------------------------------------------------------------
@@ -105,17 +106,15 @@ func setup() error {
 
 //------------------------------------------------------------------------------
 
-type looper struct{}
-
-func (l looper) Update(_, _ float64) {
-	angle -= 0.01
+func update(dt, _ float64) {
+	angle -= 1.0 * dt
 }
 
-func (l looper) Draw(_ float64) {
+func draw() {
 	pipeline.Bind()
 	gfx.ClearColorBuffer(color.RGBA{0.9, 0.9, 0.9, 1.0})
 
-	perFrame.transform = plane.Rotation(angle).GPU()
+	perFrame.transform = plane.Rotation(float32(angle)).GPU()
 	perFrameUBO.SubData(&perFrame, 0)
 	perFrameUBO.Bind(0)
 

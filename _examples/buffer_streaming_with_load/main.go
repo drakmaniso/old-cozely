@@ -36,13 +36,12 @@ func main() {
 		return
 	}
 
+	glam.Update = update
+	glam.Draw = draw
 	window.Handle = handler{}
 	mouse.Handle = handler{}
 
-	// Run the main loop
-	glam.TimeStep = 1.0 / 240
-	glam.Loop = looper{}
-	err = glam.Run()
+	err = glam.LoopStable(1.0 / 60.0)
 	if err != nil {
 		glam.ShowError("running", err)
 		return
@@ -126,11 +125,9 @@ func setup() error {
 
 //------------------------------------------------------------------------------
 
-type looper struct{}
-
 var updated bool
 
-func (l looper) Update(_, _ float64) {
+func update(_, _ float64) {
 	for i, pt := range points {
 		points[i].Position = plane.Coord{
 			pt.Position.X + speeds[i]*math.Cos(angles[i]) + jitter*(rand.Float32()-0.5),
@@ -147,7 +144,7 @@ func (l looper) Update(_, _ float64) {
 	updated = true
 }
 
-func (l looper) Draw(_ float64) {
+func draw() {
 	if updated {
 		pipeline.Bind()
 
@@ -171,9 +168,9 @@ func setupPoints() {
 		a = a * (2.0 * math.Pi) / n
 		points[i].Position = plane.Coord{0.75 * math.Cos(a), 0.75 * math.Sin(a)}
 		angles[i] = a + float32(i)*math.Pi/float32(len(points)) + math.Pi/2.0
-		speeds[i] = 0.001 * rand.Float32()
+		speeds[i] = 0.004 * rand.Float32()
 	}
-	rotSpeed = 0.005 * (rand.Float32() - 0.5)
+	rotSpeed = 0.01 * (rand.Float32() - 0.5)
 	jitter = 0.006*rand.Float32() - 0.001
 	if jitter < 0.0 {
 		jitter = 0.0

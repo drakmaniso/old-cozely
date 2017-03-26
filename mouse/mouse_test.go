@@ -25,7 +25,7 @@ func TestMain(m *testing.M) {
 
 	// Run the main loop
 	glam.Loop = looper{}
-	err := glam.Run()
+	err := glam.Loop()
 	if err != nil {
 		fmt.Printf("Glam: Error: %v\n", err)
 		os.Exit(-1)
