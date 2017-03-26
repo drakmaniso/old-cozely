@@ -90,6 +90,7 @@ func Loop() error {
 		updateFrameTime()
 
 		events.Process()
+		Interpolate(1.0)
 		Update(frameTime, now)
 		Draw()
 
@@ -135,15 +136,13 @@ func LoopStable(timeStep float64) error {
 		now = internal.GetSeconds()
 		updateFrameTime()
 
-		// Process events
-		events.Process()
-
 		// Fixed time step for logic and physics updates
 		remain += frameTime
 		for remain >= timeStep {
+			events.Process()
+			Update(timeStep, stepNow)
 			remain -= timeStep
 			stepNow += timeStep
-			Update(timeStep, stepNow)
 		}
 
 		// Interpolate and draw
