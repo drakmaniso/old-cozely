@@ -12,7 +12,7 @@ import (
 
 //------------------------------------------------------------------------------
 
-var logger = log.New(os.Stderr, "glam: ", log.Ltime)
+var logger = log.New(os.Stderr, "*** ", log.Ltime)
 
 // Log logs a formated message.
 func Log(format string, v ...interface{}) {
@@ -42,10 +42,10 @@ type wrappedError struct {
 }
 
 func (e wrappedError) Error() string {
-	msg := e.context + ":\n\t"
+	msg := "- " + e.context + ",\n"
 	a := e.err
 	for b, ok := a.(wrappedError); ok; {
-		msg += b.context + ":\n\t"
+		msg += "- " + b.context + ",\n"
 		a = b.err
 		b, ok = a.(wrappedError)
 	}

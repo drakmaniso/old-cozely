@@ -7,8 +7,6 @@ package glam
 
 import (
 	"errors"
-	"fmt"
-	"os"
 
 	"github.com/drakmaniso/glam/basic"
 	"github.com/drakmaniso/glam/gfx"
@@ -97,8 +95,6 @@ func Run() error {
 		now = internal.GetSeconds()
 		frameTime = now - then
 
-		// Compute smoothed frame time
-		ftSmoothed = (ftSmoothed * ftSmoothing) + frameTime*(1.0-ftSmoothing)
 		// Compute average frame time
 		ftCount++
 		ftSum += frameTime
@@ -174,14 +170,6 @@ var xrunCount, xrunPrevious int
 
 const xrunThreshold float64 = 17 / 1000.0
 
-// SmoothedFrameTime returns the frame time smoothed over time.
-func SmoothedFrameTime() float64 {
-	return ftSmoothed
-}
-
-var ftSmoothing = 0.995
-var ftSmoothed float64
-
 //------------------------------------------------------------------------------
 
 // Stop request the game loop to stop.
@@ -194,51 +182,6 @@ func Stop() {
 // Path returns the executable path.
 func Path() string {
 	return internal.Path
-}
-
-//------------------------------------------------------------------------------
-
-// Error returns nil if err is nil, or a wrapped error otherwise.
-func Error(source string, err error) error {
-	if err == nil {
-		return nil
-	}
-	return wrappedError{source, err}
-}
-
-type wrappedError struct {
-	context string
-	err    error
-}
-
-func (e wrappedError) Error() string {
-	msg := e.context + ":\n\t"
-	a := e.err
-	for b, ok := a.(wrappedError); ok; {
-		msg += b.context + ":\n\t"
-		a = b.err
-		b, ok = a.(wrappedError)
-	}
-	return msg + a.Error()
-}
-
-func ShowError(context string, err error) {
-	e := Error(context, err)
-	Log("ERROR:\n\t%s", e)
-}
-
-// Log logs a formated message.
-func Log(format string, v ...interface{}) {
-	internal.Log(format, v...)
-}
-
-// ErrorDialog displays a message in an error dialog box.
-func ErrorDialog(format string, v ...interface{}) {
-	internal.DebugLog(format, v...)
-	err := internal.ErrorDialog(format, v...)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, format, v...)
-	}
 }
 
 //------------------------------------------------------------------------------
