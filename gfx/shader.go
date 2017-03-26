@@ -10,6 +10,8 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"os"
+	"strings"
 	"unsafe"
 )
 
@@ -49,6 +51,41 @@ import "C"
 type shader struct {
 	shader C.GLuint
 	stages C.GLenum
+}
+
+//------------------------------------------------------------------------------
+
+// Shader compiles a shader. The filename extension determine the type of
+// shader:
+//
+// - ".vert" for a vertex shader
+// - ".frag" for a fragment shader
+// - ".comp" for a compute shader
+// - ".geom" for a geometry shader
+// - ".tesc" for a tesselation control shader
+// - ".tese" for a tesselation evaluation shader
+func Shader(filename string) PipelineConfig {
+	f, err := os.Open(filename)
+	if err != nil {
+		setErr("opening shader file", err)
+	}
+	defer f.Close()
+	switch {
+	case strings.HasSuffix(filename, ".vert"):
+		return VertexShader(f)
+	case strings.HasSuffix(filename, ".frag"):
+		return FragmentShader(f)
+	case strings.HasSuffix(filename, ".tesc"):
+		return TessControlShader(f)
+	case strings.HasSuffix(filename, ".tese"):
+		return TessEvaluationShader(f)
+	case strings.HasSuffix(filename, ".geom"):
+		return GeometryShader(f)
+	case strings.HasSuffix(filename, ".comp"):
+		return ComputeShader(f)
+	}
+	setErr("opening shader file", errors.New("unkown shader file extension"))
+	return func(*Pipeline) {}
 }
 
 //------------------------------------------------------------------------------

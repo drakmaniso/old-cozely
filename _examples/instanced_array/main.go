@@ -7,7 +7,6 @@ package main
 
 import (
 	"math/rand"
-	"os"
 
 	"github.com/drakmaniso/glam"
 	"github.com/drakmaniso/glam/basic"
@@ -76,17 +75,9 @@ var roses [64]struct {
 
 func setup() error {
 	// Setup the pipeline
-	var v, err = os.Open(glam.Path() + "shader.vert")
-	if err != nil {
-		return glam.Error("opening vertex shader", err)
-	}
-	f, err := os.Open(glam.Path() + "shader.frag")
-	if err != nil {
-		return glam.Error("opening fragment shader", err)
-	}
 	pipeline = gfx.NewPipeline(
-		gfx.VertexShader(v),
-		gfx.FragmentShader(f),
+		gfx.Shader(glam.Path()+"shader.vert"),
+		gfx.Shader(glam.Path()+"shader.frag"),
 		gfx.VertexFormat(1, roses[:]),
 		gfx.Topology(gfx.LineStrip),
 	)

@@ -87,17 +87,9 @@ var (
 
 func setup() error {
 	// Create and configure the pipeline
-	v, err := os.Open(glam.Path() + "shader.vert")
-	if err != nil {
-		return glam.Error("opening vertex shader", err)
-	}
-	f, err := os.Open(glam.Path() + "shader.frag")
-	if err != nil {
-		return glam.Error("opening fragment shader", err)
-	}
 	pipeline = gfx.NewPipeline(
-		gfx.VertexShader(v),
-		gfx.FragmentShader(f),
+		gfx.Shader(glam.Path()+"shader.vert"),
+		gfx.Shader(glam.Path()+"shader.frag"),
 		gfx.VertexFormat(0, mesh{}),
 		gfx.Topology(gfx.Triangles),
 		gfx.CullFace(false, true),

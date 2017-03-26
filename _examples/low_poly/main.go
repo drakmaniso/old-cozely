@@ -6,8 +6,6 @@ package main
 //------------------------------------------------------------------------------
 
 import (
-	"os"
-
 	"github.com/drakmaniso/glam"
 	"github.com/drakmaniso/glam/color"
 	"github.com/drakmaniso/glam/gfx"
@@ -77,17 +75,9 @@ var object struct {
 //------------------------------------------------------------------------------
 
 func setup() error {
-	// Create and configure the pipeline
-	vs, err := os.Open(glam.Path() + "shader.vert")
-	if err != nil {
-		return glam.Error("opening vertex shader", err)
-	}
-	fs, err := os.Open(glam.Path() + "shader.frag")
-	if err != nil {
-		return glam.Error("opening fragment shader", err)
-	}
-	poly.SetupPipeline(gfx.VertexShader(vs),
-		gfx.FragmentShader(fs),
+	poly.SetupPipeline(
+		gfx.Shader(glam.Path()+"shader.vert"),
+		gfx.Shader(glam.Path()+"shader.frag"),
 	)
 	gfx.Enable(gfx.FramebufferSRGB)
 
