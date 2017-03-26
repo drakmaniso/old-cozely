@@ -27,7 +27,7 @@ func main() {
 		return
 	}
 
-	err := setup()
+	err = setup()
 	if err != nil {
 		glam.ShowError("setting up the game", err)
 		return
@@ -116,7 +116,7 @@ func setup() error {
 	// File
 	file, err := os.Open(glam.Path() + "main.go")
 	if err != nil {
-		return glam.Error("unable to open text file", err)
+		return glam.Error("opening text file", err)
 	}
 	scanner = bufio.NewScanner(file)
 

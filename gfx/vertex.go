@@ -6,7 +6,7 @@ package gfx
 //------------------------------------------------------------------------------
 
 import (
-	"fmt"
+	"errors"
 	"reflect"
 	"strconv"
 )
@@ -50,12 +50,12 @@ func VertexFormat(binding uint32, format interface{}) PipelineConfig {
 func (p *Pipeline) setVertexFormat(binding uint32, format interface{}) {
 	t := reflect.TypeOf(format)
 	if t.Kind() != reflect.Slice {
-		setErr(fmt.Errorf("invalid vertex format: %s", t.Kind()))
+		setErr("configuring vertext format", errors.New("invalid type: "+t.Kind().String()))
 		return
 	}
 	t = t.Elem()
 	if t.Kind() != reflect.Struct {
-		setErr(fmt.Errorf("invalid vertex format: slice of %s", t.Kind()))
+		setErr("configuring vertext format", errors.New("invalid slice type: slice of "+t.Kind().String()))
 		return
 	}
 
@@ -69,7 +69,7 @@ func (p *Pipeline) setVertexFormat(binding uint32, format interface{}) {
 		}
 		lay, err := strconv.Atoi(layStr)
 		if err != nil {
-			setErr(fmt.Errorf("invalid layout for attributes binding: %q", layStr))
+			setErr("configuring vertext format", errors.New("invalid layout tag: "+layStr))
 			return
 		}
 		//TODO: check that lay is in range
@@ -124,7 +124,7 @@ func (p *Pipeline) setVertexFormat(binding uint32, format interface{}) {
 			var div = 0
 			div, err = strconv.Atoi(divStr)
 			if err != nil {
-				setErr(fmt.Errorf("invalid divisor for attributes binding: %q", divStr))
+				setErr("configuring vertex format", errors.New("invalid divisor tag: "+divStr))
 				return
 			}
 			C.VertexArrayBindingDivisor(p.vao, C.GLuint(binding), C.GLuint(div))

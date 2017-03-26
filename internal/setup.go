@@ -15,7 +15,6 @@ import "C"
 
 import (
 	"encoding/json"
-	"log"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -88,48 +87,6 @@ func Setup() error {
 	}
 
 	return nil
-}
-
-//------------------------------------------------------------------------------
-
-var logger = log.New(os.Stderr, "glam: ", log.Ltime)
-
-// Log logs a formated message.
-func Log(format string, v ...interface{}) {
-	logger.Printf(format, v...)
-}
-
-// DebugLog logs a formated message if Debug mode is enabled.
-func DebugLog(format string, v ...interface{}) {
-	if Config.Debug {
-		logger.Printf(format, v...)
-	}
-}
-
-//------------------------------------------------------------------------------
-
-// Error returns nil if err is nil, or a wrapped error otherwise.
-func Error(source string, err error) error {
-	if err == nil {
-		return nil
-	}
-	return wrappedError{source, err}
-}
-
-type wrappedError struct {
-	source string
-	err    error
-}
-
-func (e wrappedError) Error() string {
-	msg := e.source + ":\n\t"
-	a := e.err
-	for b, ok := a.(wrappedError); ok; {
-		msg += b.source + ":\n\t"
-		a = b.err
-		b, ok = a.(wrappedError)
-	}
-	return msg + a.Error()
 }
 
 //------------------------------------------------------------------------------

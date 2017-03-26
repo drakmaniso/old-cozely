@@ -207,23 +207,23 @@ func Error(source string, err error) error {
 }
 
 type wrappedError struct {
-	source string
+	context string
 	err    error
 }
 
 func (e wrappedError) Error() string {
-	msg := e.source + ":\n\t"
+	msg := e.context + ":\n\t"
 	a := e.err
 	for b, ok := a.(wrappedError); ok; {
-		msg += b.source + ":\n\t"
+		msg += b.context + ":\n\t"
 		a = b.err
 		b, ok = a.(wrappedError)
 	}
 	return msg + a.Error()
 }
 
-func ShowError(source string, err error) {
-	e := Error("setting up", err)
+func ShowError(context string, err error) {
+	e := Error(context, err)
 	Log("ERROR:\n\t%s", e)
 }
 

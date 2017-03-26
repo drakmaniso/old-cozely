@@ -60,7 +60,7 @@ func VertexShader(r io.Reader) PipelineConfig {
 	s.stages = C.GL_VERTEX_SHADER_BIT
 	s.shader, err = newShader(C.GL_VERTEX_SHADER, r)
 	if err != nil {
-		setErr(fmt.Errorf("unable to compile vertex shader: %s", err))
+		setErr("compiling vertex shader", err)
 	}
 	return func(p *Pipeline) {
 		p.attachShader(s)
@@ -74,7 +74,7 @@ func FragmentShader(r io.Reader) PipelineConfig {
 	s.stages = C.GL_FRAGMENT_SHADER_BIT
 	s.shader, err = newShader(C.GL_FRAGMENT_SHADER, r)
 	if err != nil {
-		setErr(fmt.Errorf("unable to compile fragment shader: %s", err))
+		setErr("compiling fragment shader", err)
 	}
 	return func(p *Pipeline) {
 		p.attachShader(s)
@@ -88,7 +88,7 @@ func GeometryShader(r io.Reader) PipelineConfig {
 	s.stages = C.GL_GEOMETRY_SHADER_BIT
 	s.shader, err = newShader(C.GL_GEOMETRY_SHADER, r)
 	if err != nil {
-		setErr(fmt.Errorf("unable to compile geometry shader: %s", err))
+		setErr("compiling geometry shader", err)
 	}
 	return func(p *Pipeline) {
 		p.attachShader(s)
@@ -102,7 +102,7 @@ func TessControlShader(r io.Reader) PipelineConfig {
 	s.stages = C.GL_TESS_CONTROL_SHADER_BIT
 	s.shader, err = newShader(C.GL_TESS_CONTROL_SHADER, r)
 	if err != nil {
-		setErr(fmt.Errorf("unable to compile tesselation control shader: %s", err))
+		setErr("compiling tesselation control shader", err)
 	}
 	return func(p *Pipeline) {
 		p.attachShader(s)
@@ -116,7 +116,7 @@ func TessEvaluationShader(r io.Reader) PipelineConfig {
 	s.stages = C.GL_TESS_EVALUATION_SHADER_BIT
 	s.shader, err = newShader(C.GL_TESS_EVALUATION_SHADER, r)
 	if err != nil {
-		setErr(fmt.Errorf("unable to compile tesselation evaluation shader: %s", err))
+		setErr("compiling tesselation evaluation shader", err)
 	}
 	return func(p *Pipeline) {
 		p.attachShader(s)
@@ -130,7 +130,7 @@ func ComputeShader(r io.Reader) PipelineConfig {
 	s.stages = C.GL_COMPUTE_SHADER_BIT
 	s.shader, err = newShader(C.GL_COMPUTE_SHADER, r)
 	if err != nil {
-		setErr(fmt.Errorf("unable to compile compute shader: %s", err))
+		setErr("compiling compute shader", err)
 	}
 	return func(p *Pipeline) {
 		p.attachShader(s)

@@ -31,7 +31,7 @@ func main() {
 
 	// Run the main loop
 	glam.Loop = looper{}
-	err := glam.Run()
+	err = glam.Run()
 	if err != nil {
 		glam.ShowError("running", err)
 		return

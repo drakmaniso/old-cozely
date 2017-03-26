@@ -28,7 +28,7 @@ func main() {
 		return
 	}
 
-	err := setup()
+	err = setup()
 	if err != nil {
 		glam.ShowError("setting up the game", err)
 		return
@@ -78,11 +78,11 @@ func setup() error {
 	// Setup the pipeline
 	var v, err = os.Open(glam.Path() + "shader.vert")
 	if err != nil {
-		return glam.Error("unable to open vertex shader", err)
+		return glam.Error("opening vertex shader", err)
 	}
 	f, err := os.Open(glam.Path() + "shader.frag")
 	if err != nil {
-		return glam.Error("unable to fragment shader", err)
+		return glam.Error("opening fragment shader", err)
 	}
 	pipeline = gfx.NewPipeline(
 		gfx.VertexShader(v),
@@ -104,7 +104,7 @@ func setup() error {
 	rosesINBO.Bind(1, 0)
 	pipeline.Unbind()
 
-	return glam.Error("setup", gfx.Err())
+	return glam.Error("gfx", gfx.Err())
 }
 
 //------------------------------------------------------------------------------

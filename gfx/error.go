@@ -18,13 +18,14 @@ func Err() error {
 
 //------------------------------------------------------------------------------
 
-func setErr(err error) {
+func setErr(context string, err error) {
 	// TODO: use two different functions and a *func variable
 	if stickyErr == nil {
-		internal.Error("gfx", err)
-		stickyErr = err
+		stickyErr = internal.Error(context, err)
 	} else {
-		internal.Error("gfx(unchecked)", err)
+		if internal.Config.Debug {
+			internal.Log("gfx unchecked error:", internal.Error(context, err))
+		}
 	}
 }
 

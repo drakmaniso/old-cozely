@@ -22,7 +22,7 @@ func main() {
 		return
 	}
 
-	err := setup()
+	err = setup()
 	if err != nil {
 		glam.ShowError("setting up the game", err)
 		return

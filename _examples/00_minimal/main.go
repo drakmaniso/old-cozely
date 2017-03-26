@@ -20,7 +20,7 @@ func main() {
 	mtx.Print(1, 1, "hello, world\n")
 
 	glam.Loop = looper{}
-	err := glam.Run()
+	err = glam.Run()
 	if err != nil {
 		glam.ShowError("running", err)
 		return

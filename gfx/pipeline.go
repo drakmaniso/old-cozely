@@ -7,7 +7,6 @@ package gfx
 
 import (
 	"errors"
-	"fmt"
 	"unsafe"
 
 	"github.com/drakmaniso/glam/color"
@@ -257,9 +256,7 @@ func NewPipeline(o ...PipelineConfig) *Pipeline {
 	C.PipelineLinkProgram(p.object)
 	if errm := C.PipelineLinkError(p.object); errm != nil {
 		defer C.free(unsafe.Pointer(errm))
-		setErr(
-			fmt.Errorf("shader link error:\n    %s", errors.New(C.GoString(errm))),
-		)
+		setErr("linking shaders", errors.New(C.GoString(errm)))
 	}
 	// A bit inelegant, but makes the API easier
 	if oObj != p.object {
