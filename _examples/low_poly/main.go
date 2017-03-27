@@ -13,7 +13,6 @@ import (
 	"github.com/drakmaniso/glam/mouse"
 	"github.com/drakmaniso/glam/mtx"
 	"github.com/drakmaniso/glam/pbr"
-	"github.com/drakmaniso/glam/plane"
 	"github.com/drakmaniso/glam/poly"
 	"github.com/drakmaniso/glam/space"
 	"github.com/drakmaniso/glam/window"
@@ -128,15 +127,9 @@ func update(dt, _ float64) {
 	camera.Move(forward*float32(dt), lateral*float32(dt), vertical*float32(dt))
 
 	if firstPerson {
-		mx, my := mouse.Delta().Cartesian()
-
-		const d = 0.4
-		smoothedMouse.X += (mx - smoothedMouse.X) * d
-		smoothedMouse.Y += (my - smoothedMouse.Y) * d
-
+		mx, my := mouse.SmoothDelta()
 		sx, sy := window.Size().Cartesian()
-
-		camera.Rotate(2*smoothedMouse.X/sx, 2*smoothedMouse.Y/sy, rolling*float32(dt))
+		camera.Rotate(float32(2*mx/float64(sx)), float32(2*my/float64(sy)), rolling*float32(dt))
 	}
 
 	p := camera.Position()
@@ -144,8 +137,6 @@ func update(dt, _ float64) {
 	mtx.Print(1, 0, "cam: %6.2f,%6.2f,%6.2f", p.X, p.Y, p.Z)
 	mtx.Print(1, 1, "     %6.2f,%6.2f,%6.2f", y, pt, r)
 }
-
-var smoothedMouse plane.Coord
 
 //------------------------------------------------------------------------------
 

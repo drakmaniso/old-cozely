@@ -11,8 +11,6 @@ package mouse
 import "C"
 
 import (
-	"fmt"
-
 	"github.com/drakmaniso/glam/internal"
 	"github.com/drakmaniso/glam/pixel"
 )
@@ -57,7 +55,7 @@ func SetRelativeMode(enabled bool) error {
 	}
 	if C.SDL_SetRelativeMouseMode(m) != 0 {
 		C.SDL_ShowCursor(C.SDL_ENABLE)
-		return fmt.Errorf("impossible to set relative mouse mode: %s", internal.GetSDLError())
+		return internal.Error("setting relative mouse mode", internal.GetSDLError())
 	}
 	C.SDL_ShowCursor(C.SDL_ENABLE)
 	return nil
@@ -67,5 +65,25 @@ func SetRelativeMode(enabled bool) error {
 func GetRelativeMode() bool {
 	return C.SDL_GetRelativeMouseMode() == C.SDL_TRUE
 }
+
+//------------------------------------------------------------------------------
+
+// SetSmoothing sets the smoothing factor for SmoothDelta.
+func SetSmoothing(s float64) {
+	smoothing = s
+}
+
+// SmoothDelta returns relative to the last call of SmoothDelta (or Delta), but
+// smoothed to avoid jitter. The is best used with a fixed timestep (see
+// glam.LoopStable).
+func SmoothDelta() (x, y float64) {
+	dx, dy := Delta().Cartesian()
+	smx += (float64(dx) - smx) * smoothing
+	smy += (float64(dy) - smy) * smoothing
+	return smx, smy
+}
+
+var smx, smy float64
+var smoothing = 0.4
 
 //------------------------------------------------------------------------------
