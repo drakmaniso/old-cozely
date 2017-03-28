@@ -6,7 +6,7 @@ package noise
 //------------------------------------------------------------------------------
 
 import (
-	"github.com/drakmaniso/glam/math"
+	"github.com/drakmaniso/glam/math32"
 	"github.com/drakmaniso/glam/plane"
 )
 
@@ -41,8 +41,8 @@ func Simplex2D(p plane.Coord, grad []plane.Coord) float32 {
 
 	// Skew the input space to determine which simplex cell we're in.
 	var s = (p.X + p.Y) * f2
-	var i = float32(math.FastFloor(p.X + s))
-	var j = float32(math.FastFloor(p.Y + s))
+	var i = float32(math32.FastFloor(p.X + s))
+	var j = float32(math32.FastFloor(p.Y + s))
 
 	// Unskew the cell origin back to (x,y) space.
 	var t = (i + j) * g2
@@ -123,8 +123,8 @@ func SimplexAxial(q, r float32, grad []plane.Coord) float32 {
 	// http://webstaff.itn.liu.se/~stegu/simplexnoise/SimplexNoise.java
 
 	// Determine origin of simplex cell
-	var q0 = math.Floor(q + r)
-	var r0 = math.Floor(r)
+	var q0 = math32.Floor(q + r)
+	var r0 = math32.Floor(r)
 
 	// Calculate the cartesian distance to cell origin
 	var x = q + r*0.5

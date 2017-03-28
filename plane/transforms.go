@@ -5,7 +5,7 @@ package plane
 
 //------------------------------------------------------------------------------
 
-import "github.com/drakmaniso/glam/math"
+import "github.com/drakmaniso/glam/math32"
 
 //------------------------------------------------------------------------------
 
@@ -47,8 +47,8 @@ func Translation(t Vector) Matrix {
 
 // Rotation by an angle.
 func Rotation(angle float32) Matrix {
-	c := math.Cos(angle)
-	s := math.Sin(angle)
+	c := math32.Cos(angle)
+	s := math32.Sin(angle)
 
 	return Matrix{
 		{c, -s, 0},
@@ -61,8 +61,8 @@ func Rotation(angle float32) Matrix {
 
 // RotationAround a point.
 func RotationAround(angle float32, center Vector) Matrix {
-	c := math.Cos(angle)
-	s := math.Sin(angle)
+	c := math32.Cos(angle)
+	s := math32.Sin(angle)
 
 	x, y := center.Cartesian()
 

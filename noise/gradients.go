@@ -6,7 +6,7 @@ package noise
 //------------------------------------------------------------------------------
 
 import (
-	"github.com/drakmaniso/glam/math"
+	"github.com/drakmaniso/glam/math32"
 	"github.com/drakmaniso/glam/plane"
 	"github.com/drakmaniso/glam/space"
 )
@@ -68,10 +68,10 @@ var Gradient24 = []plane.Coord{
 
 func Gradient(a0 float32, n uint) []plane.Coord {
 	var g = make([]plane.Coord, n, n)
-	var a = 2.0 * math.Pi / float32(n)
+	var a = 2.0 * math32.Pi / float32(n)
 	for i := 0; i < int(n); i++ {
-		g[i].X = math.Cos(a0 + float32(i)*a)
-		g[i].Y = math.Sin(a0 + float32(i)*a)
+		g[i].X = math32.Cos(a0 + float32(i)*a)
+		g[i].Y = math32.Sin(a0 + float32(i)*a)
 	}
 	return g
 }
@@ -80,8 +80,8 @@ func GradientFrom(a []float32) []plane.Coord {
 	var n = len(a)
 	var g = make([]plane.Coord, n, n)
 	for i := 0; i < int(n); i++ {
-		g[i].X = math.Cos(a[i])
-		g[i].Y = math.Sin(a[i])
+		g[i].X = math32.Cos(a[i])
+		g[i].Y = math32.Sin(a[i])
 	}
 	return g
 }

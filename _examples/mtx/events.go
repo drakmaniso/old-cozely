@@ -7,7 +7,7 @@ package main
 
 import (
 	"github.com/drakmaniso/glam/basic"
-	"github.com/drakmaniso/glam/math"
+	"github.com/drakmaniso/glam/math32"
 	"github.com/drakmaniso/glam/mouse"
 	"github.com/drakmaniso/glam/mtx"
 	"github.com/drakmaniso/glam/pixel"
@@ -27,7 +27,7 @@ type handler struct {
 func (h handler) WindowResized(s pixel.Coord, _ uint32) {
 	sx, sy := window.Size().Cartesian()
 	r := sx / sy
-	projection = space.Perspective(math.Pi/4, r, 0.001, 1000.0)
+	projection = space.Perspective(math32.Pi/4, r, 0.001, 1000.0)
 
 	// MTX
 

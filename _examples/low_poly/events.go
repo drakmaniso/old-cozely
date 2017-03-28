@@ -8,7 +8,7 @@ package main
 import (
 	"github.com/drakmaniso/glam/basic"
 	"github.com/drakmaniso/glam/key"
-	"github.com/drakmaniso/glam/math"
+	"github.com/drakmaniso/glam/math32"
 	"github.com/drakmaniso/glam/mouse"
 	"github.com/drakmaniso/glam/pixel"
 	"github.com/drakmaniso/glam/window"
@@ -69,20 +69,20 @@ func (h handler) MouseMotion(motion pixel.Coord, _ pixel.Coord, _ uint32) {
 	case mouse.IsPressed(mouse.Extra1):
 		object.roll -= 4 * mx / sx
 		switch {
-		case object.roll > 2*math.Pi:
-			object.roll = 2 * math.Pi
-		case object.roll < -2*math.Pi:
-			object.roll = -2 * math.Pi
+		case object.roll > 2*math32.Pi:
+			object.roll = 2 * math32.Pi
+		case object.roll < -2*math32.Pi:
+			object.roll = -2 * math32.Pi
 		}
 		updateModel()
 	case mouse.IsPressed(mouse.Left):
 		object.yaw += 4 * mx / sx
 		object.pitch += 4 * my / sy
 		switch {
-		case object.pitch < -2*math.Pi:
-			object.pitch = -2 * math.Pi
-		case object.pitch > +2*math.Pi:
-			object.pitch = +2 * math.Pi
+		case object.pitch < -2*math32.Pi:
+			object.pitch = -2 * math32.Pi
+		case object.pitch > +2*math32.Pi:
+			object.pitch = +2 * math32.Pi
 		}
 		updateModel()
 	case mouse.IsPressed(mouse.Extra2):

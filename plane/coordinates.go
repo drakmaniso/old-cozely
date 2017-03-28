@@ -6,7 +6,7 @@ package plane
 //------------------------------------------------------------------------------
 
 import (
-	"github.com/drakmaniso/glam/math"
+	"github.com/drakmaniso/glam/math32"
 )
 
 //------------------------------------------------------------------------------
@@ -76,7 +76,7 @@ func (v Coord) Dot(o Coord) float32 {
 
 // Length returns the euclidian length of the vector.
 func (v Coord) Length() float32 {
-	return math.Sqrt(v.X*v.X + v.Y*v.Y)
+	return math32.Sqrt(v.X*v.X + v.Y*v.Y)
 }
 
 // Normalized return the normalization of the vector (i.e. the vector divided
@@ -95,8 +95,8 @@ func (v Coord) Normalized() Coord {
 //
 // See also `IsNearlyEqual` and `IsRoughlyEqual`.
 func (v Coord) IsAlmostEqual(o Coord, ulps uint32) bool {
-	return math.IsAlmostEqual(v.X, o.X, ulps) &&
-		math.IsAlmostEqual(v.Y, o.Y, ulps)
+	return math32.IsAlmostEqual(v.X, o.X, ulps) &&
+		math32.IsAlmostEqual(v.Y, o.Y, ulps)
 }
 
 // IsNearlyEqual Returns true if the relative error between the two vectors is
@@ -106,8 +106,8 @@ func (v Coord) IsAlmostEqual(o Coord, ulps uint32) bool {
 //
 // See also `IsAlmostEqual` and `IsRoughlyEqual`.
 func (v Coord) IsNearlyEqual(o Coord, epsilon float32) bool {
-	return math.IsNearlyEqual(v.X, o.X, epsilon) &&
-		math.IsNearlyEqual(v.Y, o.Y, epsilon)
+	return math32.IsNearlyEqual(v.X, o.X, epsilon) &&
+		math32.IsNearlyEqual(v.Y, o.Y, epsilon)
 }
 
 // IsRoughlyEqual Returns true if the absolute error between the two vectors is
@@ -115,8 +115,8 @@ func (v Coord) IsNearlyEqual(o Coord, epsilon float32) bool {
 //
 // See also `IsNearlyEqual` and `IsAlmostEqual`.
 func (v Coord) IsRoughlyEqual(o Coord, epsilon float32) bool {
-	return math.IsRoughlyEqual(v.X, o.X, epsilon) &&
-		math.IsRoughlyEqual(v.Y, o.Y, epsilon)
+	return math32.IsRoughlyEqual(v.X, o.X, epsilon) &&
+		math32.IsRoughlyEqual(v.Y, o.Y, epsilon)
 }
 
 //------------------------------------------------------------------------------
@@ -154,12 +154,12 @@ type Polar struct {
 // Cartesian returns the cartesian representation of v. It implements the
 // `Vector` interface.
 func (v Polar) Cartesian() (x, y float32) {
-	return v.R * math.Cos(v.Theta), v.R * math.Sin(v.Theta)
+	return v.R * math32.Cos(v.Theta), v.R * math32.Sin(v.Theta)
 }
 
 // Coord returns the cartesian representation of v.
 func (v Polar) Coord() Coord {
-	return Coord{v.R * math.Cos(v.Theta), v.R * math.Sin(v.Theta)}
+	return Coord{v.R * math32.Cos(v.Theta), v.R * math32.Sin(v.Theta)}
 }
 
 //------------------------------------------------------------------------------

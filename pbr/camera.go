@@ -10,7 +10,7 @@ import (
 
 	"github.com/drakmaniso/glam/gfx"
 	"github.com/drakmaniso/glam/internal"
-	math32 "github.com/drakmaniso/glam/math"
+	math32 "github.com/drakmaniso/glam/math32"
 	"github.com/drakmaniso/glam/space"
 )
 

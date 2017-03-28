@@ -12,7 +12,7 @@ import (
 	"github.com/drakmaniso/glam/basic"
 	"github.com/drakmaniso/glam/color"
 	"github.com/drakmaniso/glam/gfx"
-	"github.com/drakmaniso/glam/math"
+	"github.com/drakmaniso/glam/math32"
 	"github.com/drakmaniso/glam/mouse"
 	"github.com/drakmaniso/glam/mtx"
 	"github.com/drakmaniso/glam/pixel"
@@ -121,11 +121,11 @@ var updated bool
 func update(_, _ float64) {
 	for i, pt := range points {
 		points[i].Position = plane.Coord{
-			pt.Position.X + speeds[i]*math.Cos(angles[i]) + jitter*(rand.Float32()-0.5),
-			pt.Position.Y + speeds[i]*math.Sin(angles[i]) + jitter*(rand.Float32()-0.5),
+			pt.Position.X + speeds[i]*math32.Cos(angles[i]) + jitter*(rand.Float32()-0.5),
+			pt.Position.Y + speeds[i]*math32.Sin(angles[i]) + jitter*(rand.Float32()-0.5),
 		}
 		if points[i].Position.Length() > 0.75 {
-			angles[i] += math.Pi / 4.0
+			angles[i] += math32.Pi / 4.0
 		}
 	}
 	pointsVBO.SubData(points[:], 0)
@@ -155,10 +155,10 @@ func setupPoints() {
 	n := float32(6 + rand.Intn(60))
 	for i := range points {
 		points[i].Position = plane.Coord{rand.Float32(), rand.Float32()}
-		a := math.Floor(rand.Float32() * n)
-		a = a * (2.0 * math.Pi) / n
-		points[i].Position = plane.Coord{0.75 * math.Cos(a), 0.75 * math.Sin(a)}
-		angles[i] = a + float32(i)*math.Pi/float32(len(points)) + math.Pi/2.0
+		a := math32.Floor(rand.Float32() * n)
+		a = a * (2.0 * math32.Pi) / n
+		points[i].Position = plane.Coord{0.75 * math32.Cos(a), 0.75 * math32.Sin(a)}
+		angles[i] = a + float32(i)*math32.Pi/float32(len(points)) + math32.Pi/2.0
 		speeds[i] = 0.004 * rand.Float32()
 	}
 	rotSpeed = 0.01 * (rand.Float32() - 0.5)

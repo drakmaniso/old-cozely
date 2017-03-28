@@ -8,7 +8,7 @@ package space
 import (
 	"testing"
 
-	"github.com/drakmaniso/glam/math"
+	"github.com/drakmaniso/glam/math32"
 )
 
 //-----------------------------------------------------------------------------
@@ -99,7 +99,7 @@ func (v *Homogen) divide(o Homogen, s Homogen) {
 }
 
 func (v *Homogen) normalize() {
-	length := math.Sqrt(v.X*v.X + v.Y*v.Y + v.Z*v.Z + v.W*v.W)
+	length := math32.Sqrt(v.X*v.X + v.Y*v.Y + v.Z*v.Z + v.W*v.W)
 	v.X /= length
 	v.Y /= length
 	v.Z /= length
@@ -604,8 +604,8 @@ func BenchmarkMatrix_Times_RecvByValAddr_ArgByVal(b *testing.B) {
 //------------------------------------------------------------------------------
 
 func (m *Matrix) rotationSetAndReturn(angle float32, axis Coord) Matrix {
-	c := math.Cos(angle)
-	s := math.Sin(angle)
+	c := math32.Cos(angle)
+	s := math32.Sin(angle)
 
 	m[0][0] = c + axis.X*axis.X*(1-c)
 	m[0][1] = -axis.Z*s + axis.X*axis.Y*(1-c)
@@ -631,8 +631,8 @@ func (m *Matrix) rotationSetAndReturn(angle float32, axis Coord) Matrix {
 }
 
 func (m *Matrix) rotationSetOnly(angle float32, axis Coord) {
-	c := math.Cos(angle)
-	s := math.Sin(angle)
+	c := math32.Cos(angle)
+	s := math32.Sin(angle)
 
 	m[0][0] = c + axis.X*axis.X*(1-c)
 	m[0][1] = -axis.Z*s + axis.X*axis.Y*(1-c)

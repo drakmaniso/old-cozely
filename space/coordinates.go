@@ -6,7 +6,7 @@ package space
 //------------------------------------------------------------------------------
 
 import (
-	"github.com/drakmaniso/glam/math"
+	"github.com/drakmaniso/glam/math32"
 )
 
 //------------------------------------------------------------------------------
@@ -86,7 +86,7 @@ func (v Coord) Cross(o Coord) Coord {
 
 // Length returns the euclidian length of the vector.
 func (v Coord) Length() float32 {
-	return math.Sqrt(v.X*v.X + v.Y*v.Y + v.Z*v.Z)
+	return math32.Sqrt(v.X*v.X + v.Y*v.Y + v.Z*v.Z)
 }
 
 // Normalized return the normalization of the vector (i.e. the vector divided
@@ -105,9 +105,9 @@ func (v Coord) Normalized() Coord {
 //
 // See also `IsNearlyEqual` and `IsRoughlyEqual`.
 func (v Coord) IsAlmostEqual(o Coord, ulps uint32) bool {
-	return math.IsAlmostEqual(v.X, o.X, ulps) &&
-		math.IsAlmostEqual(v.Y, o.Y, ulps) &&
-		math.IsAlmostEqual(v.Z, o.Z, ulps)
+	return math32.IsAlmostEqual(v.X, o.X, ulps) &&
+		math32.IsAlmostEqual(v.Y, o.Y, ulps) &&
+		math32.IsAlmostEqual(v.Z, o.Z, ulps)
 }
 
 // IsNearlyEqual Returns true if the relative error between the two vectors is
@@ -117,9 +117,9 @@ func (v Coord) IsAlmostEqual(o Coord, ulps uint32) bool {
 //
 // See also `IsAlmostEqual` and `IsRoughlyEqual`.
 func (v Coord) IsNearlyEqual(o Coord, epsilon float32) bool {
-	return math.IsNearlyEqual(v.X, o.X, epsilon) &&
-		math.IsNearlyEqual(v.Y, o.Y, epsilon) &&
-		math.IsNearlyEqual(v.Z, o.Z, epsilon)
+	return math32.IsNearlyEqual(v.X, o.X, epsilon) &&
+		math32.IsNearlyEqual(v.Y, o.Y, epsilon) &&
+		math32.IsNearlyEqual(v.Z, o.Z, epsilon)
 }
 
 // IsRoughlyEqual Returns true if the absolute error between the two vectors is
@@ -127,9 +127,9 @@ func (v Coord) IsNearlyEqual(o Coord, epsilon float32) bool {
 //
 // See also `IsNearlyEqual` and `IsAlmostEqual`.
 func (v Coord) IsRoughlyEqual(o Coord, epsilon float32) bool {
-	return math.IsRoughlyEqual(v.X, o.X, epsilon) &&
-		math.IsRoughlyEqual(v.Y, o.Y, epsilon) &&
-		math.IsRoughlyEqual(v.Z, o.Z, epsilon)
+	return math32.IsRoughlyEqual(v.X, o.X, epsilon) &&
+		math32.IsRoughlyEqual(v.Y, o.Y, epsilon) &&
+		math32.IsRoughlyEqual(v.Z, o.Z, epsilon)
 }
 
 //------------------------------------------------------------------------------
@@ -190,7 +190,7 @@ func (v Homogen) Dot(o Homogen) float32 {
 
 // Length returns the euclidian length of the vector.
 func (v Homogen) Length() float32 {
-	return math.Sqrt(v.X*v.X + v.Y*v.Y + v.Z*v.Z + v.W*v.W)
+	return math32.Sqrt(v.X*v.X + v.Y*v.Y + v.Z*v.Z + v.W*v.W)
 }
 
 // Normalized return the normalization of the vector (i.e. the vector divided

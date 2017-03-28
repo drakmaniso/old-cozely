@@ -5,7 +5,9 @@ package space
 
 //------------------------------------------------------------------------------
 
-import "github.com/drakmaniso/glam/math"
+import (
+	"github.com/drakmaniso/glam/math32"
+)
 
 //------------------------------------------------------------------------------
 
@@ -50,8 +52,8 @@ func Translation(t Vector) Matrix {
 
 // Rotation around an axis.
 func Rotation(angle float32, axis Vector) Matrix {
-	c := math.Cos(angle)
-	s := math.Sin(angle)
+	c := math32.Cos(angle)
+	s := math32.Sin(angle)
 
 	x, y, z := axis.Cartesian()
 
@@ -68,12 +70,12 @@ func Rotation(angle float32, axis Vector) Matrix {
 // EulerYXZ returns a transform matrix corresponding to a sequence of three
 // intrinsic rotations around the (local) axis Y, X, Z, in that order.
 func EulerYXZ(angleX, angleY, angleZ float32) Matrix {
-	c1 := math.Cos(angleY)
-	s1 := math.Sin(angleY)
-	c2 := math.Cos(angleX)
-	s2 := math.Sin(angleX)
-	c3 := math.Cos(angleZ)
-	s3 := math.Sin(angleZ)
+	c1 := math32.Cos(angleY)
+	s1 := math32.Sin(angleY)
+	c2 := math32.Cos(angleX)
+	s2 := math32.Sin(angleX)
+	c3 := math32.Cos(angleZ)
+	s3 := math32.Sin(angleZ)
 
 	return Matrix{
 		{c1*c3 + s1*s2*s3, c2 * s3, c1*s2*s3 - c3*s1},
@@ -86,12 +88,12 @@ func EulerYXZ(angleX, angleY, angleZ float32) Matrix {
 // EulerXYZ returns a transform matrix corresponding to a sequence of three
 // intrinsic rotations around the (local) axis X, Y, Z, in that order.
 func EulerXYZ(angleX, angleY, angleZ float32) Matrix {
-	c1 := math.Cos(angleX)
-	s1 := math.Sin(angleX)
-	c2 := math.Cos(angleY)
-	s2 := math.Sin(angleY)
-	c3 := math.Cos(angleZ)
-	s3 := math.Sin(angleZ)
+	c1 := math32.Cos(angleX)
+	s1 := math32.Sin(angleX)
+	c2 := math32.Cos(angleY)
+	s2 := math32.Sin(angleY)
+	c3 := math32.Cos(angleZ)
+	s3 := math32.Sin(angleZ)
 
 	return Matrix{
 		{c2 * c3, c1*s3 + c3*s1*s2, s1*s3 - c1*c3*s2},
@@ -104,12 +106,12 @@ func EulerXYZ(angleX, angleY, angleZ float32) Matrix {
 // EulerZYX returns a transform matrix corresponding to a sequence of three
 // intrinsic rotations around the (local) axis Z, Y, X, in that order.
 func EulerZYX(angleX, angleY, angleZ float32) Matrix {
-	c1 := math.Cos(angleZ)
-	s1 := math.Sin(angleZ)
-	c2 := math.Cos(angleY)
-	s2 := math.Sin(angleY)
-	c3 := math.Cos(angleX)
-	s3 := math.Sin(angleX)
+	c1 := math32.Cos(angleZ)
+	s1 := math32.Sin(angleZ)
+	c2 := math32.Cos(angleY)
+	s2 := math32.Sin(angleY)
+	c3 := math32.Cos(angleX)
+	s3 := math32.Sin(angleX)
 
 	return Matrix{
 		{c1 * c2, c2 * s1, -s2},
@@ -122,12 +124,12 @@ func EulerZYX(angleX, angleY, angleZ float32) Matrix {
 // EulerXZY returns a transform matrix corresponding to a sequence of three
 // intrinsic rotations around the (local) axis X, Z, Y, in that order.
 func EulerXZY(angleX, angleY, angleZ float32) Matrix {
-	c1 := math.Cos(angleX)
-	s1 := math.Sin(angleX)
-	c2 := math.Cos(angleZ)
-	s2 := math.Sin(angleZ)
-	c3 := math.Cos(angleY)
-	s3 := math.Sin(angleY)
+	c1 := math32.Cos(angleX)
+	s1 := math32.Sin(angleX)
+	c2 := math32.Cos(angleZ)
+	s2 := math32.Sin(angleZ)
+	c3 := math32.Cos(angleY)
+	s3 := math32.Sin(angleY)
 
 	return Matrix{
 		{c2 * c3, s1*s3 + c1*c3*s2, c3*s1*s2 - c1*s3},
@@ -140,12 +142,12 @@ func EulerXZY(angleX, angleY, angleZ float32) Matrix {
 // EulerYZX returns a transform matrix corresponding to a sequence of three
 // intrinsic rotations around the (local) axis Y, Z, X, in that order.
 func EulerYZX(angleX, angleY, angleZ float32) Matrix {
-	c1 := math.Cos(angleY)
-	s1 := math.Sin(angleY)
-	c2 := math.Cos(angleZ)
-	s2 := math.Sin(angleZ)
-	c3 := math.Cos(angleX)
-	s3 := math.Sin(angleX)
+	c1 := math32.Cos(angleY)
+	s1 := math32.Sin(angleY)
+	c2 := math32.Cos(angleZ)
+	s2 := math32.Sin(angleZ)
+	c3 := math32.Cos(angleX)
+	s3 := math32.Sin(angleX)
 
 	return Matrix{
 		{c1 * c2, s2, -c2 * s1},
@@ -158,12 +160,12 @@ func EulerYZX(angleX, angleY, angleZ float32) Matrix {
 // EulerZXY returns a transform matrix corresponding to a sequence of three
 // intrinsic rotations around the (local) axis Z, X, Y, in that order.
 func EulerZXY(angleX, angleY, angleZ float32) Matrix {
-	c1 := math.Cos(angleZ)
-	s1 := math.Sin(angleZ)
-	c2 := math.Cos(angleX)
-	s2 := math.Sin(angleX)
-	c3 := math.Cos(angleY)
-	s3 := math.Sin(angleY)
+	c1 := math32.Cos(angleZ)
+	s1 := math32.Sin(angleZ)
+	c2 := math32.Cos(angleX)
+	s2 := math32.Sin(angleX)
+	c3 := math32.Cos(angleY)
+	s3 := math32.Sin(angleY)
 
 	return Matrix{
 		{c1*c3 - s1*s2*s3, c3*s1 + c1*s2*s3, -c2 * s3},
@@ -211,7 +213,7 @@ func LookAt(eye, target, up Vector) Matrix {
 
 // Perspective returns a perspective projection matrix.
 func Perspective(fieldOfView, aspectRatio, near, far float32) Matrix {
-	f := float32(1.0) / math.Tan(fieldOfView/float32(2.0))
+	f := float32(1.0) / math32.Tan(fieldOfView/float32(2.0))
 
 	return Matrix{
 		{f / aspectRatio, 0, 0, 0},
