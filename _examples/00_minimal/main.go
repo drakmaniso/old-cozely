@@ -5,8 +5,10 @@ package main
 
 //------------------------------------------------------------------------------
 
-import "github.com/drakmaniso/glam"
-import "github.com/drakmaniso/glam/mtx"
+import (
+	"github.com/drakmaniso/glam"
+	"github.com/drakmaniso/glam/mtx"
+)
 
 //------------------------------------------------------------------------------
 

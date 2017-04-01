@@ -22,8 +22,8 @@ import (
 
 //------------------------------------------------------------------------------
 
-// Path of the executable.
-var Path = filepath.Dir(os.Args[0]) + "/"
+// Path of the executable (uses slash separators, and ends with one).
+var Path string
 
 var Config = struct {
 	Title          string
@@ -47,6 +47,17 @@ var Config = struct {
 
 func init() {
 	runtime.LockOSThread()
+
+	e1, err := os.Executable()
+	if err == nil {
+		e2, err := filepath.EvalSymlinks(e1)
+		if err == nil {
+			Path = filepath.ToSlash(filepath.Dir(e2)) + "/"
+		}
+	}
+	if Path == "" {
+		Path = filepath.ToSlash(filepath.Dir(os.Args[0])) + "/"
+	}
 }
 
 //------------------------------------------------------------------------------

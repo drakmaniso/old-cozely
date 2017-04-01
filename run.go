@@ -239,7 +239,8 @@ func Stop() {
 
 //------------------------------------------------------------------------------
 
-// Path returns the executable path.
+// Path returns the (slash-separated) path of the executable, with a trailing
+// slash.
 func Path() string {
 	return internal.Path
 }
