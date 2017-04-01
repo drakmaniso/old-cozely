@@ -24,19 +24,28 @@ func TestSqrt(t *testing.T) {
 
 //------------------------------------------------------------------------------
 
-func BenchmarkSqrt_math64(b *testing.B) {
+func BenchmarkSqrt_math(b *testing.B) {
 	a := float64(3.3)
 	for i := 0; i < b.N; i++ {
-		_ = math.Sqrt(a)
+		result64 = math.Sqrt(a)
 	}
 }
 
 //------------------------------------------------------------------------------
 
-func BenchmarkSqrt_math32(b *testing.B) {
+func BenchmarkSqrt_float32math(b *testing.B) {
 	a := float32(3.3)
 	for i := 0; i < b.N; i++ {
-		_ = float32(math.Sqrt(float64(a)))
+		result = float32(math.Sqrt(float64(a)))
+	}
+}
+
+//------------------------------------------------------------------------------
+
+func BenchmarkSqrt_asm(b *testing.B) {
+	a := float32(3.3)
+	for i := 0; i < b.N; i++ {
+		result = Sqrt(a)
 	}
 }
 
@@ -45,7 +54,7 @@ func BenchmarkSqrt_math32(b *testing.B) {
 func BenchmarkSqrt_glam(b *testing.B) {
 	a := float32(3.3)
 	for i := 0; i < b.N; i++ {
-		_ = Sqrt(a)
+		result = Sqrt(a)
 	}
 }
 

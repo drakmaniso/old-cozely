@@ -7,7 +7,7 @@
 
 #include "textflag.h"
 
-// func Abs(x float32) float32
+// func absAsm(x float32) float32
 TEXT ·absAsm(SB),NOSPLIT,$0
 	MOVL   x+0(FP), AX
 	SHLL   $1, AX

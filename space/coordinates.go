@@ -6,6 +6,8 @@ package space
 //------------------------------------------------------------------------------
 
 import (
+	"math"
+
 	"github.com/drakmaniso/glam/math32"
 )
 
@@ -118,7 +120,9 @@ func (v Coord) Cross(o Coord) Coord {
 
 // Length returns the euclidian length of the vector.
 func (v Coord) Length() float32 {
-	return math32.Sqrt(v.X*v.X + v.Y*v.Y + v.Z*v.Z)
+	// Double conversion is faster than math32.Sqrt because the Go compiler
+	// optimizes it.
+	return float32(math.Sqrt(float64(v.X*v.X + v.Y*v.Y + v.Z*v.Z)))
 }
 
 // Length2 returns the square of the euclidian length of the vector.
@@ -129,7 +133,7 @@ func (v Coord) Length2() float32 {
 // Distance returns the distance with another vector.
 func (v Coord) Distance(o Coord) float32 {
 	d := Coord{v.X - o.X, v.Y - o.Y, v.Z - o.Z}
-	return math32.Sqrt(d.X*d.X + d.Y*d.Y + d.Z*d.Z)
+	return float32(math.Sqrt(float64(d.X*d.X + d.Y*d.Y + d.Z*d.Z)))
 }
 
 // Distance2 returns the square of the distance with another vector.
@@ -141,7 +145,9 @@ func (v Coord) Distance2(o Coord) float32 {
 // Normalized return the normalization of the vector (i.e. the vector divided
 // by its length, which must be non-zero).
 func (v Coord) Normalized() Coord {
-	l := v.Length()
+	// Double conversion is faster than math32.Sqrt because the Go compiler
+	// optimizes it.
+	l := float32(math.Sqrt(float64(v.X*v.X + v.Y*v.Y + v.Z*v.Z)))
 	return Coord{v.X / l, v.Y / l, v.Z / l}
 }
 

@@ -33,23 +33,23 @@ func TestFloor(t *testing.T) {
 
 //------------------------------------------------------------------------------
 
-func BenchmarkFloor_math64(b *testing.B) {
+func BenchmarkFloor_math(b *testing.B) {
 	x := float64(3.3)
 	y := float64(-3.3)
 	for i := 0; i < b.N; i++ {
-		_ = math.Floor(x)
-		_ = math.Floor(y)
+		result64 = math.Floor(x)
+		result64 = math.Floor(y)
 	}
 }
 
 //------------------------------------------------------------------------------
 
-func BenchmarkFloor_math32(b *testing.B) {
+func BenchmarkFloor_float32math(b *testing.B) {
 	x := float32(3.3)
 	y := float32(-3.3)
 	for i := 0; i < b.N; i++ {
-		_ = float32(math.Floor(float64(x)))
-		_ = float32(math.Floor(float64(y)))
+		result = float32(math.Floor(float64(x)))
+		result = float32(math.Floor(float64(y)))
 	}
 }
 
@@ -59,8 +59,8 @@ func BenchmarkFloor_glam(b *testing.B) {
 	x := float32(3.3)
 	y := float32(-3.3)
 	for i := 0; i < b.N; i++ {
-		_ = Floor(x)
-		_ = Floor(y)
+		result = Floor(x)
+		result = Floor(y)
 	}
 }
 

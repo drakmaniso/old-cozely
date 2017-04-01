@@ -27,19 +27,19 @@ func TestCos(t *testing.T) {
 
 //------------------------------------------------------------------------------
 
-func BenchmarkCos_math64(b *testing.B) {
+func BenchmarkCos_math(b *testing.B) {
 	a := float64(0.5)
 	for i := 0; i < b.N; i++ {
-		_ = math.Cos(a)
+		result64 = math.Cos(a)
 	}
 }
 
 //------------------------------------------------------------------------------
 
-func BenchmarkCos_math32(b *testing.B) {
+func BenchmarkCos_float32math(b *testing.B) {
 	a := float32(0.5)
 	for i := 0; i < b.N; i++ {
-		_ = float32(math.Cos(float64(a)))
+		result = float32(math.Cos(float64(a)))
 	}
 }
 
@@ -48,7 +48,7 @@ func BenchmarkCos_math32(b *testing.B) {
 func BenchmarkCos_glam(b *testing.B) {
 	a := float32(0.5)
 	for i := 0; i < b.N; i++ {
-		_ = Cos(a)
+		result = Cos(a)
 	}
 }
 

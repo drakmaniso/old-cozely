@@ -31,7 +31,7 @@ func TestFastSin(t *testing.T) {
 func BenchmarkFastSin_go(b *testing.B) {
 	a := float32(0.5)
 	for i := 0; i < b.N; i++ {
-		_ = fastSin(a)
+		result = fastSin(a)
 	}
 }
 
@@ -40,7 +40,7 @@ func BenchmarkFastSin_go(b *testing.B) {
 func BenchmarkFastSin_glam(b *testing.B) {
 	a := float32(0.5)
 	for i := 0; i < b.N; i++ {
-		_ = FastSin(a)
+		result = FastSin(a)
 	}
 }
 

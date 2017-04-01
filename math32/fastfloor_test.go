@@ -43,8 +43,8 @@ func BenchmarkFastFloor_cast(b *testing.B) {
 	x := float32(3.3)
 	y := float32(-3.3)
 	for i := 0; i < b.N; i++ {
-		_ = fastFloorCast(x)
-		_ = fastFloorCast(y)
+		resultInt32 = fastFloorCast(x)
+		resultInt32 = fastFloorCast(y)
 	}
 }
 
@@ -56,8 +56,8 @@ func BenchmarkFastFloor_asm(b *testing.B) {
 	x := float32(3.3)
 	y := float32(-3.3)
 	for i := 0; i < b.N; i++ {
-		_ = fastFloorAsm(x)
-		_ = fastFloorAsm(y)
+		resultInt32 = fastFloorAsm(x)
+		resultInt32 = fastFloorAsm(y)
 	}
 }
 
@@ -67,8 +67,8 @@ func BenchmarkFastFloor_glam(b *testing.B) {
 	x := float32(3.3)
 	y := float32(-3.3)
 	for i := 0; i < b.N; i++ {
-		_ = FastFloor(x)
-		_ = FastFloor(y)
+		resultInt32 = FastFloor(x)
+		resultInt32 = FastFloor(y)
 	}
 }
 

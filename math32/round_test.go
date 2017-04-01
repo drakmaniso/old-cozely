@@ -51,8 +51,8 @@ func BenchmarkRound_cast(b *testing.B) {
 	x := float32(3.3)
 	y := float32(-3.3)
 	for i := 0; i < b.N; i++ {
-		_ = roundCast(x)
-		_ = roundCast(y)
+		resultInt32 = roundCast(x)
+		resultInt32 = roundCast(y)
 	}
 }
 
@@ -64,8 +64,8 @@ func BenchmarkRound_asm(b *testing.B) {
 	x := float32(3.3)
 	y := float32(-3.3)
 	for i := 0; i < b.N; i++ {
-		_ = roundAsm(x)
-		_ = roundAsm(y)
+		result = roundAsm(x)
+		result = roundAsm(y)
 	}
 }
 
@@ -75,8 +75,8 @@ func BenchmarkRound_glam(b *testing.B) {
 	x := float32(3.3)
 	y := float32(-3.3)
 	for i := 0; i < b.N; i++ {
-		_ = Round(x)
-		_ = Round(y)
+		resultInt32 = Round(x)
+		resultInt32 = Round(y)
 	}
 }
 

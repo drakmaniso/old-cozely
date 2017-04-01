@@ -34,23 +34,29 @@ func TestAbs(t *testing.T) {
 
 //------------------------------------------------------------------------------
 
-func BenchmarkAbs_math64(b *testing.B) {
+var result64 float64
+var result float32
+var resultInt32 int32
+
+//------------------------------------------------------------------------------
+
+func BenchmarkAbs_math(b *testing.B) {
 	x := float64(3.3)
 	y := float64(-3.3)
 	for i := 0; i < b.N; i++ {
-		_ = math.Abs(x)
-		_ = math.Abs(y)
+		result64 = math.Abs(x)
+		result64 = math.Abs(y)
 	}
 }
 
 //------------------------------------------------------------------------------
 
-func BenchmarkAbs_math32(b *testing.B) {
+func BenchmarkAbs_float32math(b *testing.B) {
 	x := float32(3.3)
 	y := float32(-3.3)
 	for i := 0; i < b.N; i++ {
-		_ = float64(math.Abs(float64(x)))
-		_ = float64(math.Abs(float64(y)))
+		result = float32(math.Abs(float64(x)))
+		result = float32(math.Abs(float64(y)))
 	}
 }
 
@@ -70,8 +76,8 @@ func BenchmarkAbs_switch(b *testing.B) {
 	x := float32(3.3)
 	y := float32(-3.3)
 	for i := 0; i < b.N; i++ {
-		_ = switchAbs(x)
-		_ = switchAbs(y)
+		result = switchAbs(x)
+		result = switchAbs(y)
 	}
 }
 
@@ -85,8 +91,8 @@ func BenchmarkAbs_bits(b *testing.B) {
 	x := float32(3.3)
 	y := float32(-3.3)
 	for i := 0; i < b.N; i++ {
-		_ = bitsAbs(x)
-		_ = bitsAbs(y)
+		result = bitsAbs(x)
+		result = bitsAbs(y)
 	}
 }
 
@@ -101,8 +107,8 @@ func BenchmarkAbs_unsafe(b *testing.B) {
 	x := float32(3.3)
 	y := float32(-3.3)
 	for i := 0; i < b.N; i++ {
-		_ = unsafeAbs(x)
-		_ = unsafeAbs(y)
+		result = unsafeAbs(x)
+		result = unsafeAbs(y)
 	}
 }
 
@@ -114,8 +120,29 @@ func BenchmarkAbs_asm(b *testing.B) {
 	x := float32(3.3)
 	y := float32(-3.3)
 	for i := 0; i < b.N; i++ {
-		_ = absAsm(x)
-		_ = absAsm(y)
+		result = absAsm(x)
+		result = absAsm(y)
+	}
+}
+
+//------------------------------------------------------------------------------
+
+func ifAbs(x float32) float32 {
+	if x < 0 {
+		return -x
+	}
+	if x == 0 {
+		return 0 // return correctly abs(-0)
+	}
+	return x
+}
+
+func BenchmarkAbs_if(b *testing.B) {
+	x := float32(3.3)
+	y := float32(-3.3)
+	for i := 0; i < b.N; i++ {
+		result = ifAbs(x)
+		result = ifAbs(y)
 	}
 }
 
@@ -125,8 +152,8 @@ func BenchmarkAbs_glam(b *testing.B) {
 	x := float32(3.3)
 	y := float32(-3.3)
 	for i := 0; i < b.N; i++ {
-		_ = Abs(x)
-		_ = Abs(y)
+		result = Abs(x)
+		result = Abs(y)
 	}
 }
 
