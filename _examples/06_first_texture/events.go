@@ -10,6 +10,7 @@ import (
 	"github.com/drakmaniso/glam/math32"
 	"github.com/drakmaniso/glam/mouse"
 	"github.com/drakmaniso/glam/pixel"
+	"github.com/drakmaniso/glam/plane"
 	"github.com/drakmaniso/glam/space"
 	"github.com/drakmaniso/glam/window"
 )
@@ -24,9 +25,9 @@ type handler struct {
 
 //------------------------------------------------------------------------------
 
-func (h handler) WindowResized(s pixel.Coord, _ uint32) {
-	sx, sy := window.Size().Cartesian()
-	r := sx / sy
+func (h handler) WindowResized(is pixel.Coord, _ uint32) {
+	s := plane.CoordOf(is)
+	r := s.X / s.Y
 	projection = space.Perspective(math32.Pi/4, r, 0.001, 1000.0)
 }
 
@@ -46,18 +47,19 @@ func (h handler) MouseButtonUp(b mouse.Button, _ int, _ uint32) {
 }
 
 func (h handler) MouseMotion(motion pixel.Coord, _ pixel.Coord, _ uint32) {
-	mx, my := motion.Cartesian()
-	sx, sy := window.Size().Cartesian()
+	m := plane.CoordOf(motion)
+	s := plane.CoordOf(window.Size())
 
 	switch {
 	case mouse.IsPressed(mouse.Left):
-		position.X += 2 * mx / sx
-		position.Y -= 2 * my / sy
+		d := m.Times(2).SlashCW(s)
+		position.X += d.X
+		position.Y -= d.Y
 		updateModel()
 
 	case mouse.IsPressed(mouse.Right):
-		yaw += 4 * mx / sx
-		pitch += 4 * my / sy
+		yaw += 4 * m.X / s.X
+		pitch += 4 * m.Y / s.Y
 		switch {
 		case pitch < -math32.Pi/2:
 			pitch = -math32.Pi / 2

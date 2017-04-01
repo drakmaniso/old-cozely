@@ -11,8 +11,8 @@ import (
 	"github.com/drakmaniso/glam/mouse"
 	"github.com/drakmaniso/glam/mtx"
 	"github.com/drakmaniso/glam/pixel"
+	"github.com/drakmaniso/glam/plane"
 	"github.com/drakmaniso/glam/space"
-	"github.com/drakmaniso/glam/window"
 )
 
 //------------------------------------------------------------------------------
@@ -24,9 +24,9 @@ type handler struct {
 
 //------------------------------------------------------------------------------
 
-func (h handler) WindowResized(s pixel.Coord, _ uint32) {
-	sx, sy := window.Size().Cartesian()
-	r := sx / sy
+func (h handler) WindowResized(is pixel.Coord, _ uint32) {
+	s := plane.CoordOf(is)
+	r := s.X / s.Y
 	projection = space.Perspective(math32.Pi/4, r, 0.001, 1000.0)
 
 	// MTX

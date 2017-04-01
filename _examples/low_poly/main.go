@@ -13,6 +13,7 @@ import (
 	"github.com/drakmaniso/glam/mouse"
 	"github.com/drakmaniso/glam/mtx"
 	"github.com/drakmaniso/glam/pbr"
+	"github.com/drakmaniso/glam/plane"
 	"github.com/drakmaniso/glam/poly"
 	"github.com/drakmaniso/glam/space"
 	"github.com/drakmaniso/glam/window"
@@ -121,15 +122,17 @@ func setup() error {
 
 //------------------------------------------------------------------------------
 
-func update(dt, _ float64) {
+func update(dt64, _ float64) {
+	dt := float32(dt64)
+
 	camera.NextState()
 
-	camera.Move(forward*float32(dt), lateral*float32(dt), vertical*float32(dt))
+	camera.Move(forward*dt, lateral*dt, vertical*dt)
 
 	if firstPerson {
-		mx, my := mouse.SmoothDelta()
-		sx, sy := window.Size().Cartesian()
-		camera.Rotate(float32(2*mx/float64(sx)), float32(2*my/float64(sy)), rolling*float32(dt))
+		m := mouse.SmoothDelta()
+		s := plane.CoordOf(window.Size())
+		camera.Rotate(2*m.X/s.X, 2*m.Y/s.Y, rolling*dt)
 	}
 
 	p := camera.Position()

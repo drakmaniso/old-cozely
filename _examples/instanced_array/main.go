@@ -157,9 +157,9 @@ type handler struct {
 	basic.MouseHandler
 }
 
-func (h handler) WindowResized(s pixel.Coord, _ uint32) {
-	var sx, sy = window.Size().Cartesian()
-	perFrame.ratio = sy / sx
+func (h handler) WindowResized(is pixel.Coord, _ uint32) {
+	s := plane.CoordOf(is)
+	perFrame.ratio = s.Y / s.X
 }
 
 func (h handler) MouseButtonDown(b mouse.Button, _ int, _ uint32) {

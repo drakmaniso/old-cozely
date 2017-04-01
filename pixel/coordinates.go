@@ -5,16 +5,17 @@ package pixel
 
 //------------------------------------------------------------------------------
 
-// A Coord is the pair of coordinates of a pixel.
+// Coord represents a pair of pixel coordinates.
 type Coord struct {
 	X, Y int32
 }
 
 //------------------------------------------------------------------------------
 
-// Cartesian returns the floating point conversion of the coordinates, thus
-// implementing the `plane.Vector` interface.
-func (p Coord) Cartesian() (x, y float32) {
+// XY returns the floating point conversion of the coordinates.
+//
+// This function implements the plane.Vector interface.
+func (p Coord) XY() (x, y float32) {
 	return float32(p.X), float32(p.Y)
 }
 
@@ -30,25 +31,42 @@ func (p Coord) Minus(o Coord) Coord {
 	return Coord{p.X - o.X, p.Y - o.Y}
 }
 
-// Inverse returns the product with another pair of coordinates.
-func (p Coord) Inverse() Coord {
+// Opposite returns the opposite pair of coordinates.
+func (p Coord) Opposite() Coord {
 	return Coord{-p.X, -p.Y}
 }
 
-// Times returns the product with another pair of coordinates.
-func (p Coord) Times(o Coord) Coord {
+// Times returns the product with a scalar.
+func (p Coord) Times(s int32) Coord {
+	return Coord{p.X * s, p.Y * s}
+}
+
+// TimesCW returns the component-wise product with another pair of coordinates.
+func (p Coord) TimesCW(o Coord) Coord {
 	return Coord{p.X * o.X, p.Y * o.Y}
 }
 
-// Slash returns the integer quotient of the division by another pair of
-// coordinates (of which both X and Y must be non-zero).
-func (p Coord) Slash(o Coord) Coord {
+// Slash returns the integer quotient of the division by a scalar (which must be
+// non-zero).
+func (p Coord) Slash(s int32) Coord {
+	return Coord{p.X / s, p.Y / s}
+}
+
+// SlashCW returns the integer quotients of the component-wise division by
+// another pair of coordinates (of which both X and Y must be non-zero).
+func (p Coord) SlashCW(o Coord) Coord {
 	return Coord{p.X / o.X, p.Y / o.Y}
 }
 
-// Mod returns the remainder (modulus) of the division by another pair of
-// coordinates (of which both X and Y must be non-zero).
-func (p Coord) Mod(o Coord) Coord {
+// Mod returns the remainder (modulus) of the division by a scalar (which must
+// be non-zero).
+func (p Coord) Mod(s int32) Coord {
+	return Coord{p.X % s, p.Y % s}
+}
+
+// ModCW returns the remainder (modulus) of the component-wise division by
+// another pair of coordinates (of which both X and Y must be non-zero).
+func (p Coord) ModCW(o Coord) Coord {
 	return Coord{p.X % o.X, p.Y % o.Y}
 }
 

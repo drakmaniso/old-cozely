@@ -5,7 +5,7 @@ package plane
 
 //------------------------------------------------------------------------------
 
-// Matrix is a transformation matrix.
+// Matrix represents a transformation matrix.
 //
 // Note: due to alignment rules, it's not possible to pass a Matrix directly
 // to the GPU. You should convert it to a GPUMatrix first.
@@ -45,8 +45,8 @@ func (m *Matrix) Times(o Matrix) Matrix {
 
 //------------------------------------------------------------------------------
 
-// GPUMatrix is a transformation matrix with a memory layout compatible with the
-// GPU.
+// GPUMatrix represents a transformation matrix with a memory layout compatible
+// with the GPU.
 type GPUMatrix [3][4]float32
 
 // GPU returns a GPUMatrix version of the matrix.

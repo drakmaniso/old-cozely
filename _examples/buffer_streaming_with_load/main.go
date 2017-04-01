@@ -190,11 +190,11 @@ func (h handler) MouseButtonDown(b mouse.Button, _ int, _ uint32) {
 //------------------------------------------------------------------------------
 
 func updateView() {
-	sx, sy := window.Size().Cartesian()
-	if sx > sy {
-		perFrame.Scale = plane.Coord{sy / sx, 1.0}
+	s := plane.CoordOf(window.Size())
+	if s.X > s.Y {
+		perFrame.Scale = plane.Coord{s.Y / s.X, 1.0}
 	} else {
-		perFrame.Scale = plane.Coord{1.0, sx / sy}
+		perFrame.Scale = plane.Coord{1.0, s.X / s.Y}
 	}
 	pipeline.Bind()
 }

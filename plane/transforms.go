@@ -33,13 +33,12 @@ func (m Matrix) Transform(v Homogen) Homogen {
 //------------------------------------------------------------------------------
 
 // Translation by a vector.
-func Translation(t Vector) Matrix {
-	x, y := t.Cartesian()
+func Translation(t Coord) Matrix {
 
 	return Matrix{
 		{1, 0, 0},
 		{0, 1, 0},
-		{x, y, 1},
+		{t.X, t.Y, 1},
 	}
 }
 
@@ -60,11 +59,11 @@ func Rotation(angle float32) Matrix {
 //------------------------------------------------------------------------------
 
 // RotationAround a point.
-func RotationAround(angle float32, center Vector) Matrix {
+func RotationAround(angle float32, center Coord) Matrix {
 	c := math32.Cos(angle)
 	s := math32.Sin(angle)
 
-	x, y := center.Cartesian()
+	x, y := center.X, center.Y
 
 	return Matrix{
 		{c, -s, 0},
@@ -76,12 +75,10 @@ func RotationAround(angle float32, center Vector) Matrix {
 //------------------------------------------------------------------------------
 
 // Scaling and/or mirror along both axis.
-func Scaling(s Vector) Matrix {
-	x, y := s.Cartesian()
-
+func Scaling(s Coord) Matrix {
 	return Matrix{
-		{x, 0, 0},
-		{0, y, 0},
+		{s.X, 0, 0},
+		{0, s.Y, 0},
 		{0, 0, 1},
 	}
 }
@@ -89,9 +86,9 @@ func Scaling(s Vector) Matrix {
 //------------------------------------------------------------------------------
 
 // ScalingAround a point (and/or mirror).
-func ScalingAround(s Vector, center Vector) Matrix {
-	cx, cy := center.Cartesian()
-	sx, sy := s.Cartesian()
+func ScalingAround(s Coord, center Coord) Matrix {
+	sx, sy := s.X, s.Y
+	cx, cy := center.X, center.Y
 
 	return Matrix{
 		{sx, 0, 0},
@@ -103,12 +100,10 @@ func ScalingAround(s Vector, center Vector) Matrix {
 //------------------------------------------------------------------------------
 
 // Shearing along both axis.
-func Shearing(s Vector) Matrix {
-	x, y := s.Cartesian()
-
+func Shearing(s Coord) Matrix {
 	return Matrix{
-		{1, y, 0},
-		{x, 1, 0},
+		{1, s.Y, 0},
+		{s.X, 1, 0},
 		{0, 0, 1},
 	}
 }

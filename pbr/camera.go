@@ -11,6 +11,7 @@ import (
 	"github.com/drakmaniso/glam/gfx"
 	"github.com/drakmaniso/glam/internal"
 	math32 "github.com/drakmaniso/glam/math32"
+	"github.com/drakmaniso/glam/plane"
 	"github.com/drakmaniso/glam/space"
 )
 
@@ -67,8 +68,11 @@ func (c *Camera) SetFieldOfView(fov float32, near, far float32) {
 //------------------------------------------------------------------------------
 
 func (c *Camera) WindowResized() {
-	sx, sy := float32(internal.Window.Width), float32(internal.Window.Height)
-	r := sx / sy
+	s := plane.Coord{
+		float32(internal.Window.Width),
+		float32(internal.Window.Height),
+	}
+	r := s.X / s.Y
 	c.projection = space.Perspective(c.fieldOfView, r, c.near, c.far)
 }
 
@@ -168,7 +172,7 @@ func (c *Camera) updateView() {
 	roll := c.previous.roll*(1-a) + c.current.roll*a
 
 	c.view = space.EulerZXY(pitch, yaw, roll)
-	c.view = c.view.Times(space.Translation(pos.Inverse()))
+	c.view = c.view.Times(space.Translation(pos.Opposite()))
 
 	c.buffer.CameraPosition = pos
 }

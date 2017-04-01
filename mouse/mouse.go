@@ -13,6 +13,7 @@ import "C"
 import (
 	"github.com/drakmaniso/glam/internal"
 	"github.com/drakmaniso/glam/pixel"
+	"github.com/drakmaniso/glam/plane"
 )
 
 //------------------------------------------------------------------------------
@@ -69,21 +70,20 @@ func GetRelativeMode() bool {
 //------------------------------------------------------------------------------
 
 // SetSmoothing sets the smoothing factor for SmoothDelta.
-func SetSmoothing(s float64) {
+func SetSmoothing(s float32) {
 	smoothing = s
 }
 
 // SmoothDelta returns relative to the last call of SmoothDelta (or Delta), but
 // smoothed to avoid jitter. The is best used with a fixed timestep (see
 // glam.LoopStable).
-func SmoothDelta() (x, y float64) {
-	dx, dy := Delta().Cartesian()
-	smx += (float64(dx) - smx) * smoothing
-	smy += (float64(dy) - smy) * smoothing
-	return smx, smy
+func SmoothDelta() plane.Coord {
+	d := plane.CoordOf(Delta())
+	smoothed = smoothed.Plus(d.Minus(smoothed).Times(smoothing))
+	return smoothed
 }
 
-var smx, smy float64
-var smoothing = 0.4
+var smoothed plane.Coord
+var smoothing = float32(0.4)
 
 //------------------------------------------------------------------------------

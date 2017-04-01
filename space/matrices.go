@@ -5,7 +5,7 @@ package space
 
 //------------------------------------------------------------------------------
 
-// Matrix is a transformation matrix.
+// Matrix represents a transformation matrix.
 type Matrix [4][4]float32
 
 //------------------------------------------------------------------------------

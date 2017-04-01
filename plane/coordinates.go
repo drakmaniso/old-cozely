@@ -11,49 +11,51 @@ import (
 
 //------------------------------------------------------------------------------
 
-// A Vector is a euclidian vector in 2 dimensions.
+// Vector represents any two-dimensional vector.
 type Vector interface {
-	Cartesian() (x, y float32)
+	// XY returns the cartesian coordinates of the vector.
+	XY() (x, y float32)
 }
 
 //------------------------------------------------------------------------------
 
-// A Coord is a cartesian coordinate vector.
+// Coord represents a two-dimensional vector, defined by its cartesian
+// coordinates.
 type Coord struct {
 	X float32
 	Y float32
 }
 
-// NewCoord returns a new `Coord` corresponding to v.
-func NewCoord(v Vector) Coord {
-	x, y := v.Cartesian()
-	return Coord{x, y}
-}
-
-// Cartesian returns X and Y. This function is here to implement the `Vector`
-// interface.
-func (v Coord) Cartesian() (x, y float32) {
+// XY returns the cartesian coordinates of the vector.
+//
+// This function implements the Vector interface.
+func (v Coord) XY() (x, y float32) {
 	return v.X, v.Y
 }
 
-// Homogen returns an homogenous coordinate vector corresponding to `v`, with
-// `v.Z` set to 1.
+// CoordOf returns the cartesian representation of v.
+func CoordOf(v Vector) Coord {
+	x, y := v.XY()
+	return Coord{x, y}
+}
+
+// Homogen returns the homogenous coordinates of the vector, with Z set to 1.
 func (v Coord) Homogen() Homogen {
 	return Homogen{v.X, v.Y, 1.0}
 }
 
-// Plus returns the sum with another coordinate vector.
+// Plus returns the sum with another vector.
 func (v Coord) Plus(o Coord) Coord {
 	return Coord{v.X + o.X, v.Y + o.Y}
 }
 
-// Minus returns the difference with another coordinate vector.
+// Minus returns the difference with another vector.
 func (v Coord) Minus(o Coord) Coord {
 	return Coord{v.X - o.X, v.Y - o.Y}
 }
 
-// Inverse returns the product with another coordinate vector.
-func (v Coord) Inverse() Coord {
+// Opposite returns the opposite of the vector.
+func (v Coord) Opposite() Coord {
 	return Coord{-v.X, -v.Y}
 }
 
@@ -62,14 +64,43 @@ func (v Coord) Times(s float32) Coord {
 	return Coord{v.X * s, v.Y * s}
 }
 
-// Slash returns the division by another coordinate vector.
-//
-// Important: `s` must be non-zero.
+// TimesCW returns the component-wise product with another vector.
+func (v Coord) TimesCW(o Coord) Coord {
+	return Coord{v.X * o.X, v.Y * o.Y}
+}
+
+// Slash returns the division by a scalar (which must be non-zero).
 func (v Coord) Slash(s float32) Coord {
 	return Coord{v.X / s, v.Y / s}
 }
 
-// Dot returns the dot product with another coordinate vector.
+// SlashCW returns the component-wise division by another vector (of which both
+// X and Y must be non-zero).
+func (v Coord) SlashCW(o Coord) Coord {
+	return Coord{v.X / o.X, v.Y / o.Y}
+}
+
+// Mod returns the remainder (modulus) of the division by a scalar (which must
+// be non-zero).
+func (v Coord) Mod(s float32) Coord {
+	return Coord{math32.Mod(v.X, s), math32.Mod(v.Y, s)}
+}
+
+// ModCW returns the remainders (modulus) of the component-wise division by
+// another vector (of which both X and Y must be non-zero).
+func (v Coord) ModCW(o Coord) Coord {
+	return Coord{math32.Mod(v.X, o.X), math32.Mod(v.Y, o.Y)}
+}
+
+// Modf returns the integer part and the fractional part of (each component of)
+// the vector.
+func (v Coord) Modf() (intg, frac Coord) {
+	xintg, xfrac := math32.Modf(v.X)
+	yintg, yfrac := math32.Modf(v.Y)
+	return Coord{xintg, yintg}, Coord{xfrac, yfrac}
+}
+
+// Dot returns the dot product with another vector.
 func (v Coord) Dot(o Coord) float32 {
 	return v.X*o.X + v.Y*o.Y
 }
@@ -79,12 +110,27 @@ func (v Coord) Length() float32 {
 	return math32.Sqrt(v.X*v.X + v.Y*v.Y)
 }
 
+// Length2 returns the square of the euclidian length of the vector.
+func (v Coord) Length2() float32 {
+	return v.X*v.X + v.Y*v.Y
+}
+
+// Distance returns the distance with another vector.
+func (v Coord) Distance(o Coord) float32 {
+	d := Coord{v.X - o.X, v.Y - o.Y}
+	return math32.Sqrt(d.X*d.X + d.Y*d.Y)
+}
+
+// Distance2 returns the square of the distance with another vector.
+func (v Coord) Distance2(o Coord) float32 {
+	d := Coord{v.X - o.X, v.Y - o.Y}
+	return d.X*d.X + d.Y*d.Y
+}
+
 // Normalized return the normalization of the vector (i.e. the vector divided
-// by its length).
-//
-// Important: `v.Length()` must be non-zero.
+// by its length, which must be non-zero).
 func (v Coord) Normalized() Coord {
-	l := v.Length()
+	l := math32.Sqrt(v.X*v.X + v.Y*v.Y)
 	return Coord{v.X / l, v.Y / l}
 }
 
@@ -93,7 +139,7 @@ func (v Coord) Normalized() Coord {
 //
 // Handle special cases: zero, infinites, denormals.
 //
-// See also `IsNearlyEqual` and `IsRoughlyEqual`.
+// See also IsNearlyEqual and IsRoughlyEqual.
 func (v Coord) IsAlmostEqual(o Coord, ulps uint32) bool {
 	return math32.IsAlmostEqual(v.X, o.X, ulps) &&
 		math32.IsAlmostEqual(v.Y, o.Y, ulps)
@@ -104,7 +150,7 @@ func (v Coord) IsAlmostEqual(o Coord, ulps uint32) bool {
 //
 // Handles special cases: zero, infinites, denormals.
 //
-// See also `IsAlmostEqual` and `IsRoughlyEqual`.
+// See also IsAlmostEqual and IsRoughlyEqual.
 func (v Coord) IsNearlyEqual(o Coord, epsilon float32) bool {
 	return math32.IsNearlyEqual(v.X, o.X, epsilon) &&
 		math32.IsNearlyEqual(v.Y, o.Y, epsilon)
@@ -113,7 +159,7 @@ func (v Coord) IsNearlyEqual(o Coord, epsilon float32) bool {
 // IsRoughlyEqual Returns true if the absolute error between the two vectors is
 // less than epsilon.
 //
-// See also `IsNearlyEqual` and `IsAlmostEqual`.
+// See also IsNearlyEqual and IsAlmostEqual.
 func (v Coord) IsRoughlyEqual(o Coord, epsilon float32) bool {
 	return math32.IsRoughlyEqual(v.X, o.X, epsilon) &&
 		math32.IsRoughlyEqual(v.Y, o.Y, epsilon)
@@ -121,43 +167,41 @@ func (v Coord) IsRoughlyEqual(o Coord, epsilon float32) bool {
 
 //------------------------------------------------------------------------------
 
-// A Homogen is an homogeneous coordinate vector.
+// Homogen represents a two-dimensional vector, defined by its homogeneous
+// coordinates.
 type Homogen struct {
 	X float32
 	Y float32
 	Z float32
 }
 
-// Cartesian implements the `Vector` interface: it returns the dehomogenization
-// of the vector (i.e. perspective divide).
-//
-// Important: `v.Z` must be non-zero.
-func (v Homogen) Cartesian() (x, y float32) {
+// XY returns the cartesian coordinates of the vector (i.e. the perspective
+// divide of the homogeneous coordinates). Z must be non-zero.
+func (v Homogen) XY() (x, y float32) {
 	return v.X / v.Z, v.Y / v.Z
 }
 
-// Coord returns the dehomogenization of the vector (i.e. perspective divide).
-//
-// Important: `v.Z` must be non-zero.
+// Coord returns the cartesian representation of the vector (i.e. the
+// perspective divide of the homogeneous coordinates). Z must be non-zero.
 func (v Homogen) Coord() Coord {
 	return Coord{v.X / v.Z, v.Y / v.Z}
 }
 
 //------------------------------------------------------------------------------
 
-// A Polar is a pair of polar coordinates.
+// Polar represents a two dimensional vector, defined by its polar coordinates.
 type Polar struct {
 	R     float32 // Radius (i.e. distance from origin)
 	Theta float32 // Angle //TODO: what angle?
 }
 
-// Cartesian returns the cartesian representation of v. It implements the
-// `Vector` interface.
-func (v Polar) Cartesian() (x, y float32) {
+// XY returns the cartesian coordinates of the vector. This implements the
+// Vector interface.
+func (v Polar) XY() (x, y float32) {
 	return v.R * math32.Cos(v.Theta), v.R * math32.Sin(v.Theta)
 }
 
-// Coord returns the cartesian representation of v.
+// Coord returns the cartesian representation of the vector.
 func (v Polar) Coord() Coord {
 	return Coord{v.R * math32.Cos(v.Theta), v.R * math32.Sin(v.Theta)}
 }

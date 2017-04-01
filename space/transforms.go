@@ -11,7 +11,7 @@ import (
 
 //------------------------------------------------------------------------------
 
-// Identity matrix.
+// Identity returns the identity matrix.
 func Identity() Matrix {
 	return Matrix{
 		{1, 0, 0, 0},
@@ -37,25 +37,23 @@ func Apply(m Matrix, v Homogen) Homogen {
 //------------------------------------------------------------------------------
 
 // Translation by a vector.
-func Translation(t Vector) Matrix {
-	x, y, z := t.Cartesian()
-
+func Translation(t Coord) Matrix {
 	return Matrix{
 		{1, 0, 0, 0},
 		{0, 1, 0, 0},
 		{0, 0, 1, 0},
-		{x, y, z, 1},
+		{t.X, t.Y, t.Z, 1},
 	}
 }
 
 //------------------------------------------------------------------------------
 
 // Rotation around an axis.
-func Rotation(angle float32, axis Vector) Matrix {
+func Rotation(angle float32, axis Coord) Matrix {
 	c := math32.Cos(angle)
 	s := math32.Sin(angle)
 
-	x, y, z := axis.Cartesian()
+	x, y, z := axis.X, axis.Y, axis.Z
 
 	return Matrix{
 		{c + x*x*(1-c), -z*s + x*y*(1-c), y*s + x*z*(1-c), 0},
@@ -178,13 +176,11 @@ func EulerZXY(angleX, angleY, angleZ float32) Matrix {
 //------------------------------------------------------------------------------
 
 // Scaling along the 3 axis.
-func Scaling(s Vector) Matrix {
-	x, y, z := s.Cartesian()
-
+func Scaling(s Coord) Matrix {
 	return Matrix{
-		{x, 0, 0, 0},
-		{0, y, 0, 0},
-		{0, 0, z, 0},
+		{s.X, 0, 0, 0},
+		{0, s.Y, 0, 0},
+		{0, 0, s.Z, 0},
 		{0, 0, 0, 1},
 	}
 }
@@ -194,18 +190,16 @@ func Scaling(s Vector) Matrix {
 // LookAt returns a transform which put eye at origin and target along
 // negative Z. In other words, if a projection matrix is applied to the result,
 // target will be in the center of the viewport.
-func LookAt(eye, target, up Vector) Matrix {
-	e := NewCoord(eye)
-	f := NewCoord(target).Minus(e).Normalized()
-	u := NewCoord(up).Normalized()
-	s := f.Cross(u).Normalized()
-	u = s.Cross(f)
+func LookAt(eye, target, up Coord) Matrix {
+	f := target.Minus(eye).Normalized()
+	s := f.Cross(up.Normalized()).Normalized()
+	u := s.Cross(f)
 
 	return Matrix{
 		{s.X, u.X, -f.X, 0},
 		{s.Y, u.Y, -f.Y, 0},
 		{s.Z, u.Z, -f.Z, 0},
-		{-s.Dot(e), -u.Dot(e), f.Dot(e), 1},
+		{-s.Dot(eye), -u.Dot(eye), f.Dot(eye), 1},
 	}
 }
 
