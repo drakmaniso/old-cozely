@@ -42,6 +42,10 @@ char* ShaderCompileError(GLuint p) {
 
 	return NULL;
 }
+
+void BindSubroutines(GLenum st, GLsizei c, void *ind) {
+	glUniformSubroutinesuiv(st, c, (const GLuint *)ind);
+}
 */
 import "C"
 
@@ -189,6 +193,42 @@ func newShader(t uint32, r io.Reader) (C.GLuint, error) {
 	}
 
 	return s, nil
+}
+
+//------------------------------------------------------------------------------
+
+// BindVertexSubroutines binds the vertex shader subroutines to indices in s.
+func BindVertexSubroutines(s []uint32) {
+	C.BindSubroutines(C.GL_VERTEX_SHADER, C.GLsizei(len(s)), unsafe.Pointer(&s[0]))
+}
+
+// BindFragmentSubroutines binds the fragment shader subroutines to indices in
+// s.
+func BindFragmentSubroutines(s []uint32) {
+	C.BindSubroutines(C.GL_FRAGMENT_SHADER, C.GLsizei(len(s)), unsafe.Pointer(&s[0]))
+}
+
+// BindGeometrySubroutines binds the geometry shader subroutines to indices in
+// s.
+func BindGeometrySubroutines(s []uint32) {
+	C.BindSubroutines(C.GL_GEOMETRY_SHADER, C.GLsizei(len(s)), unsafe.Pointer(&s[0]))
+}
+
+// BindTessControlSubroutines binds the tesselation control shader subroutines
+// to indices in s.
+func BindTessControlSubroutines(s []uint32) {
+	C.BindSubroutines(C.GL_TESS_CONTROL_SHADER, C.GLsizei(len(s)), unsafe.Pointer(&s[0]))
+}
+
+// BindTessEvaluationSubroutines binds the tesselation evaluation shader
+// subroutines to indices in s.
+func BindTessEvaluationSubroutines(s []uint32) {
+	C.BindSubroutines(C.GL_TESS_EVALUATION_SHADER, C.GLsizei(len(s)), unsafe.Pointer(&s[0]))
+}
+
+// BindComputeSubroutines binds the compute shader subroutines to indices in s.
+func BindComputeSubroutines(s []uint32) {
+	C.BindSubroutines(C.GL_COMPUTE_SHADER, C.GLsizei(len(s)), unsafe.Pointer(&s[0]))
 }
 
 //------------------------------------------------------------------------------
