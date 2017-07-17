@@ -87,7 +87,7 @@ func setup() error {
 	//
 	meshes = poly.Meshes{}
 	meshes.AddObj(glam.Path() + "../shared/suzanne.obj")
-	// meshes.AddObj("E:/objtestfiles/halfsphere.obj")
+	// meshes.AddObj("E:/objtestfiles/elephant_quads.obj")
 	poly.SetupMeshBuffers(meshes)
 
 	// Setup camera
