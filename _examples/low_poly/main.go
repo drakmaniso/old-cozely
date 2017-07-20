@@ -49,6 +49,8 @@ func main() {
 
 //------------------------------------------------------------------------------
 
+var pipeline *gfx.Pipeline
+
 // Uniform buffer
 var miscUBO gfx.UniformBuffer
 var misc struct {
@@ -75,7 +77,8 @@ var object struct {
 //------------------------------------------------------------------------------
 
 func setup() error {
-	poly.SetupPipeline(
+	pipeline = gfx.NewPipeline(
+		poly.PipelineSetup(),
 		gfx.Shader(glam.Path()+"shader.vert"),
 		gfx.Shader(glam.Path()+"shader.frag"),
 	)
@@ -111,7 +114,7 @@ func setup() error {
 	mtx.ShowFrameTime(true, -1, 0, false)
 
 	// Bind the vertex buffer to the pipeline
-	poly.BindPipeline()
+	// pipeline.Bind()
 
 	// pipeline.Bind()
 	// vbo.Bind(0, 0)
@@ -144,7 +147,8 @@ func update(dt64, _ float64) {
 //------------------------------------------------------------------------------
 
 func draw() {
-	poly.BindPipeline()
+	pipeline.Bind()
+	gfx.ClearDepthBuffer(1.0)
 	gfx.ClearColorBuffer(color.RGBA{0.4, 0.45, 0.5, 1.0})
 
 	camera.Bind()
@@ -156,7 +160,7 @@ func draw() {
 	// poly.Draw()
 	gfx.Draw(0, int32(len(meshes.Faces)*6))
 
-	poly.UnbindPipeline()
+	pipeline.Unbind()
 }
 
 func updateModel() {

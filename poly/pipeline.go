@@ -13,33 +13,13 @@ import (
 
 //------------------------------------------------------------------------------
 
-func SetupPipeline(o ...gfx.PipelineConfig) {
-	o = append(o, gfx.VertexShader(strings.NewReader(vertshader)))
-	o = append(o, gfx.Topology(gfx.Triangles))
-	o = append(o, gfx.CullFace(false, true))
-	o = append(o, gfx.DepthTest(true))
-	pipeline = gfx.NewPipeline(o...)
+func PipelineSetup() gfx.PipelineConfig {
+	return func(p *gfx.Pipeline) {
+		gfx.VertexShader(strings.NewReader(vertshader))(p)
+		gfx.Topology(gfx.Triangles)(p)
+		gfx.CullFace(false, true)(p)
+		gfx.DepthTest(true)(p)
+	}
 }
-
-//------------------------------------------------------------------------------
-
-func BindPipeline() {
-	pipeline.Bind()
-	gfx.ClearDepthBuffer(1.0)
-}
-
-func UnbindPipeline() {
-	pipeline.Unbind()
-}
-
-//------------------------------------------------------------------------------
-
-func ClosePipeline() {
-	pipeline.Close()
-}
-
-//------------------------------------------------------------------------------
-
-var pipeline *gfx.Pipeline
 
 //------------------------------------------------------------------------------
