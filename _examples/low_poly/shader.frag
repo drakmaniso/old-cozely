@@ -26,6 +26,10 @@ in glam_PerVertex {
 
 out vec3 Color;
 
+//------------------------------------------------------------------------------
+
+vec3 glam_ToneMap(vec3 Color);
+
 //--------------------------------------------------------------------------------------------------
 
 const float PI = 3.14159265358979323846;
@@ -60,7 +64,7 @@ vec3 glam_F0;
 
 //--------------------------------------------------------------------------------------------------
 
-vec3 phong_lighting (vec3 illuminance, vec3 L, vec3 V, vec3 N, vec3 glam_BaseColor, vec3 specular_color)
+vec3 phong_lighting (vec3 L, vec3 V, vec3 N, vec3 glam_BaseColor, vec3 specular_color)
 {
     vec3 diffuse = glam_BaseColor * max (0.0, dot (N, L));
 
@@ -72,7 +76,7 @@ vec3 phong_lighting (vec3 illuminance, vec3 L, vec3 V, vec3 N, vec3 glam_BaseCol
 }
 
 
-vec3 normalized_blinn_phong_lighting (vec3 illuminance, vec3 L, vec3 V, vec3 N, vec3 glam_BaseColor, vec3 specular_color, float glam_Roughness)
+vec3 normalized_blinn_phong_lighting (vec3 L, vec3 V, vec3 N, vec3 glam_BaseColor, vec3 specular_color, float glam_Roughness)
 {
     vec3 H = normalize (V + L);
     float NdotH = max (0.0, dot (N, H));
@@ -85,7 +89,7 @@ vec3 normalized_blinn_phong_lighting (vec3 illuminance, vec3 L, vec3 V, vec3 N, 
 }
 
 
-vec3 minimalist_cook_torrance_lighting (vec3 illuminance, vec3 L, vec3 V, vec3 N, vec3 glam_BaseColor, vec3 specular_color, float glam_Roughness)
+vec3 minimalist_cook_torrance_lighting (vec3 L, vec3 V, vec3 N, vec3 glam_BaseColor, vec3 specular_color, float glam_Roughness)
 {
     vec3 H = normalize (V + L);
     float NdotH = max (0.0, dot (N, H));
@@ -221,145 +225,6 @@ vec3 lightLuminance(vec3 L, vec3 V, vec3 N)
 
 //--------------------------------------------------------------------------------------------------
 
-// Main sources are:
-// http://filmicworlds.com/blog/filmic-tonemapping-operators/
-// https://www.shadertoy.com/view/lslGzl
-// http://duikerresearch.com/2015/09/filmic-tonemapping-for-real-time-rendering/
-
-// Reinhardt Operator.
-// (luma based version)
-vec3 tonemapReinhardt(vec3 color) {
-	const float white = 2.0;
-
-	float luma = dot(color, vec3(0.2126, 0.7152, 0.0722));
-	float toneMappedLuma = luma * (1. + luma / (white*white)) / (1. + luma);
-	return color * toneMappedLuma / luma;
-}
-
-// Jim Hejl and Richard Burgess-Dawson approximation of a filmic curve.
-// Note that it incorporates the gamma correction (i.e. don't use with sRGB buffers)
-vec3 tonemapHejlBurgessDawson(vec3 color) {
-  color = max(vec3(0.0), color - vec3(0.004));
-  return (color * (6.2 * color + 0.5)) / (color * (6.2 * color + 1.7) + 0.06);
-}
-
-// John Hable approximation of a filmic curve.
-// aka "uncharted 2"
-vec3 tonemapHable(vec3 color) {
-	const float W = 11.2;
-
-	const float A = 0.15;
-	const float B = 0.50;
-	const float C = 0.10;
-	const float D = 0.20;
-	const float E = 0.02;
-	const float F = 0.30;
-
-	color = ((color * (A * color + C * B) + D * E) / (color * (A * color + B) + D * F)) - E / F;
-	float white = ((W * (A * W + C * B) + D * E) / (W * (A * W + B) + D * F)) - E / F;
-
-  return color / white;
-}
-
-// aka RomBinDaHouse
-vec3 tonemapGalashov(vec3 color) {
-  const float exposureBias = 2.72;
-  const float blackPoint = 0.15;
-
-  return exp(-1.0 / (exposureBias*color + blackPoint));
-}
-
-// Found in the comments of:
-// https://mynameismjp.wordpress.com/2010/04/30/a-closer-look-at-tone-mapping/
-vec3 tonemapSteveM(vec3 color) {
-  const float exposureBias = 1.0;
-
-	float a = 1.8; /// Mid
-  float b = 1.4; /// Toe
-  float c = 0.5; /// Shoulder
-  float d = 1.5; /// Mid
-
-  color *= exposureBias;
-  return (color * (a * color + b)) / (color * (a * color + c) + d);
-}
-
-//--------------------------------------------------------------------------------------------------
-
-// From https://knarkowicz.wordpress.com/2016/01/06/aces-filmic-tone-mapping-curve/
-vec3 ACESFilm( vec3 x )
-{
-    float a = 2.51f;
-    float b = 0.03f;
-    float c = 2.43f;
-    float d = 0.59f;
-    float e = 0.14f;
-    return clamp((x*(a*x+b))/(x*(c*x+d)+e), vec3(0), vec3(1));
-}
-
-//--------------------------------------------------------------------------------------------------
-
-vec3 ff_filmic_gamma3(vec3 linear) {
-    vec3 x = max(vec3(0.0), linear-0.004);
-    return (x*(x*6.2+0.5))/(x*(x*6.2+1.7)+0.06);
-}
-
-//--------------------------------------------------------------------------------------------------
-
-
-// The code in this file was originally written by Stephen Hill (@self_shadow), who deserves all
-// credit for coming up with this fit and implementing it. Buy him a beer next time you see him. :)
-
-// sRGB => XYZ => D65_2_D60 => AP1 => RRT_SAT
-const mat3 ACESInputMat =
-{
-    {0.59719, 0.35458, 0.04823},
-    {0.07600, 0.90834, 0.01566},
-    {0.02840, 0.13383, 0.83777}
-};
-const mat3 ACESInputMatGL =
-{
-    {0.59719, 0.07600, 0.02840},
-    {0.35458, 0.90834, 0.13383},
-    {0.04823, 0.01566, 0.83777}
-};
-
-// ODT_SAT => XYZ => D60_2_D65 => sRGB
-const mat3 ACESOutputMat =
-{
-    { 1.60475, -0.53108, -0.07367},
-    {-0.10208,  1.10813, -0.00605},
-    {-0.00327, -0.07276,  1.07602}
-};
-const mat3 ACESOutputMatGL =
-{
-    { 1.60475, -0.10208, -0.00327},
-    {-0.53108, 1.10813, -0.07276},
-    {-0.07367, -0.00605, 1.07602}
-};
-
-vec3 RRTAndODTFit(vec3 v)
-{
-    vec3 a = v * (v + 0.0245786) - 0.000090537;
-    vec3 b = v * (0.983729 * v + 0.4329510) + 0.238081;
-    return a / b;
-}
-
-vec3 ACESFitted(vec3 color)
-{
-    color = color * ACESInputMat;
-
-    // Apply RRT and ODT
-    color = RRTAndODTFit(color);
-
-    color = color * ACESOutputMat;
-
-    // Clamp to [0, 1]
-    color = clamp(color, vec3(0.0), vec3(1.0));
-
-    return color;
-}
-//--------------------------------------------------------------------------------------------------
-
 void main(void) {
 
   // Material
@@ -390,8 +255,8 @@ void main(void) {
   vec3 L = normalize(vec3(-0.4, 0.6, 0.8)); //w_direction_to_sun;
 
   // vec3 luminance = glam_SunIlluminance * phong_lighting (L, V, N, glam_BaseColor, mix (vec3 (0.9), vec3 (0.0), glam_Roughness * glam_Roughness)) + glam_BaseColor * ambient_luminance;
-  // vec3 luminance = glam_SunIlluminance * normalized_blinn_phong_lighting (L, V, N, glam_BaseColor, glam_F0, 1000.0 * smoothness * smoothness * smoothness * smoothness) + glam_BaseColor * ambient_luminance;
-  // vec3 luminance = glam_SunIlluminance * minimalist_cook_torrance_lighting (L, V, N, glam_BaseColor, glam_F0, 500.0 * smoothness * smoothness * smoothness * smoothness) + glam_BaseColor * ambient_luminance;
+  // vec3 luminance = glam_SunIlluminance * normalized_blinn_phong_lighting (L, V, N, glam_BaseColor, glam_F0, 1000.0 * glam_Smoothness * glam_Smoothness * glam_Smoothness * glam_Smoothness) + glam_BaseColor * ambient_luminance;
+  // vec3 luminance = glam_SunIlluminance * minimalist_cook_torrance_lighting (L, V, N, glam_BaseColor, glam_F0, 500.0 * glam_Smoothness * glam_Smoothness * glam_Smoothness * glam_Smoothness) + glam_BaseColor * ambient_luminance;
   vec3 luminance = glam_SunIlluminance * lightLuminance(L, V, N) + glam_BaseColor * ambient_luminance;
 
 
@@ -404,14 +269,7 @@ void main(void) {
 
   Color = luminance * glam_CameraExposure;
 
-  // Color = tonemapGalashov(Color);
-  // Color = tonemapReinhardt(Color);
-  // Color = tonemapHejlBurgessDawson(Color);
-  // Color = tonemapHable(Color);
-  // Color = tonemapSteveM(Color);
-  Color = ACESFitted(Color);
-  // Color = ACESFilm(Color);
-  // Color = ff_filmic_gamma3(Color);
+  Color = glam_ToneMap(Color);
 }
 
 //--------------------------------------------------------------------------------------------------

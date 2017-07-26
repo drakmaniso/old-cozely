@@ -79,6 +79,7 @@ var object struct {
 func setup() error {
 	pipeline = gfx.NewPipeline(
 		poly.PipelineSetup(),
+		pbr.ToneMapACES(),
 		gfx.Shader(glam.Path()+"shader.vert"),
 		gfx.Shader(glam.Path()+"shader.frag"),
 	)
