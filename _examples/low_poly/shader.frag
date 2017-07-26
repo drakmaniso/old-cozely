@@ -59,6 +59,8 @@ float glam_Smoothness = 0.5;
 float glam_Metallic  = 0.0;
 float glam_Reflectance = 0.5;
 
+float glam_Subsurface = 0.5;
+
 float glam_Roughness;
 vec3 glam_F0;
 
@@ -144,6 +146,33 @@ vec3 diffuseBRDF (float NdotV, float NdotL, float LdotH)
   // (division by PI omitted, it's factored in light intensity)
 }
 
+// Burley Diffuse BRDF
+vec3 diffuseAndSubsurfBRDF (float NdotV, float NdotL, float LdotH)
+{
+  // Renormalization to keep total energy (diffuse + specular) below 1.0 [LaDe14]
+  float normalization_bias = mix (0.0 , 0.5 , glam_Roughness);
+  float normalization_factor = mix (1.0, 1.0 / 1.51, glam_Roughness);
+
+  // Burley's diffuse BRDF, aka Disney Diffuse [Burley12]
+  float fd90 = normalization_bias + 2.0 * LdotH * LdotH * glam_Roughness;
+  float f0 = 1.0;
+  float light_scatter = fresnel(f0 , fd90 , NdotL);
+  float view_scatter = fresnel(f0 , fd90 , NdotV);
+
+  float Fd90 = 0.5 + 2 * LdotH*LdotH * glam_Roughness;
+  float Fd = light_scatter * view_scatter;
+
+  // Based on Hanrahan-Krueger brdf approximation of isotropic bssrdf
+  // 1.25 scale is used to (roughly) preserve albedo
+  // Fss90 used to "flatten" retroreflection based on roughness
+  float Fss90 = LdotH*LdotH*glam_Roughness;
+  float Fss = fresnel(f0 , Fss90 , NdotL) * fresnel(f0 , Fss90 , NdotV);
+  float ss = 1.25 * (Fss * (1 / (NdotL + NdotV) - .5) + .5);
+
+  return normalization_factor * glam_BaseColor * mix(Fd, ss, glam_Subsurface);
+  // (division by PI omitted, it's factored in light intensity)
+}
+
 //--------------------------------------------------------------------------------------------------
 
 // Geometry function: Height-correlated Smith GGX visibility [Heitz14]
@@ -201,7 +230,7 @@ vec3 lightLuminance(vec3 L, vec3 V, vec3 N)
 
   vec3 specular = specularBRDF(NdotV, NdotL, NdotH, LdotH);
 
-  vec3 diffuse = diffuseBRDF(NdotV, NdotL, LdotH);
+  vec3 diffuse = diffuseAndSubsurfBRDF(NdotV, NdotL, LdotH);
 
   return NdotL * (specular + diffuse);
   // (division by PI omitted, it's factored in light intensity)
