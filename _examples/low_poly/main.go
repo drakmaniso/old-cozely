@@ -10,6 +10,7 @@ import (
 	"github.com/drakmaniso/glam/color"
 	"github.com/drakmaniso/glam/gfx"
 	"github.com/drakmaniso/glam/key"
+	"github.com/drakmaniso/glam/math32"
 	"github.com/drakmaniso/glam/mouse"
 	"github.com/drakmaniso/glam/mtx"
 	"github.com/drakmaniso/glam/pbr"
@@ -99,6 +100,7 @@ func setup() error {
 	camera = pbr.NewCamera()
 	camera.SetExposure(16.0, 1.0/125.0, 100.0)
 	camera.SetPosition(space.Coord{0, 0, 0})
+	camera.SetOrientation(0*math32.Pi/2, 0*math32.Pi/8, 0.0)
 
 	// Setup model
 
@@ -136,7 +138,10 @@ func update(dt64, _ float64) {
 	if firstPerson {
 		m := mouse.SmoothDelta()
 		s := plane.CoordOf(window.Size())
-		camera.Rotate(2*m.X/s.X, 2*m.Y/s.Y, rolling*dt)
+		camera.Rotate(2*m.X/s.X, space.Coord{0, 1, 0})
+		camera.Pitch(2 * m.Y / s.Y)
+		// camera.RotateFP(2*m.X/s.X, 2*m.Y/s.Y)
+		camera.Roll(rolling * dt)
 	}
 
 	p := camera.Position()
