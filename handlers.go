@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2016 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
-package basic
+package glam
 
 //------------------------------------------------------------------------------
 
@@ -15,77 +15,64 @@ import (
 
 //------------------------------------------------------------------------------
 
-// Handlers implements default behavior for all events.
-type Handlers struct {
-	WindowHandlers
-	MouseHandlers
-	KeyHandlers
-}
+// DefaultHandlers implements default behavior for all events.
+type DefaultHandlers struct{}
 
 //------------------------------------------------------------------------------
 
-// WindowHandlers implements default behavior for all window events.
-type WindowHandlers struct{}
-
 // WindowShown does nothing.
-func (dh WindowHandlers) WindowShown() {}
+func (dh DefaultHandlers) WindowShown() {}
 
 // WindowHidden does nothing.
-func (dh WindowHandlers) WindowHidden() {}
+func (dh DefaultHandlers) WindowHidden() {}
 
 // WindowResized does nothing.
-func (dh WindowHandlers) WindowResized(s pixel.Coord) {}
+func (dh DefaultHandlers) WindowResized(s pixel.Coord) {}
 
 // WindowMinimized does nothing.
-func (dh WindowHandlers) WindowMinimized() {}
+func (dh DefaultHandlers) WindowMinimized() {}
 
 // WindowMaximized does nothing.
-func (dh WindowHandlers) WindowMaximized() {}
+func (dh DefaultHandlers) WindowMaximized() {}
 
 // WindowRestored does nothing.
-func (dh WindowHandlers) WindowRestored() {}
+func (dh DefaultHandlers) WindowRestored() {}
 
 // WindowMouseEnter does nothing.
-func (dh WindowHandlers) WindowMouseEnter() {}
+func (dh DefaultHandlers) WindowMouseEnter() {}
 
 // WindowMouseLeave does nothing.
-func (dh WindowHandlers) WindowMouseLeave() {}
+func (dh DefaultHandlers) WindowMouseLeave() {}
 
 // WindowFocusGained does nothing.
-func (dh WindowHandlers) WindowFocusGained() {}
+func (dh DefaultHandlers) WindowFocusGained() {}
 
 // WindowFocusLost does nothing.
-func (dh WindowHandlers) WindowFocusLost() {}
+func (dh DefaultHandlers) WindowFocusLost() {}
 
 // WindowQuit requests the game loop to stop.
-func (dh WindowHandlers) WindowQuit() {
+func (dh DefaultHandlers) WindowQuit() {
 	internal.QuitRequested = true
 }
 
 //------------------------------------------------------------------------------
 
-// MouseHandlers implements default behavior for all mouse events.
-type MouseHandlers struct{}
-
 // MouseMotion does nothing.
-func (dh MouseHandlers) MouseMotion(rel pixel.Coord, pos pixel.Coord) {}
+func (dh DefaultHandlers) MouseMotion(rel pixel.Coord, pos pixel.Coord) {}
 
 // MouseButtonDown does nothing.
-func (dh MouseHandlers) MouseButtonDown(b mouse.Button, clicks int) {}
+func (dh DefaultHandlers) MouseButtonDown(b mouse.Button, clicks int) {}
 
 // MouseButtonUp does nothing.
-func (dh MouseHandlers) MouseButtonUp(b mouse.Button, clicks int) {}
+func (dh DefaultHandlers) MouseButtonUp(b mouse.Button, clicks int) {}
 
 // MouseWheel does nothing.
-func (dh MouseHandlers) MouseWheel(w pixel.Coord) {}
+func (dh DefaultHandlers) MouseWheel(w pixel.Coord) {}
 
 //------------------------------------------------------------------------------
 
-// KeyHandlers implements default behavior for all keyboard events.
-type KeyHandlers struct{}
-
 // KeyDown requests the game loop to stop if Escape is pressed.
-func (dh KeyHandlers) KeyDown(l key.Label, p key.Position) {
+func (dh DefaultHandlers) KeyDown(l key.Label, p key.Position) {
 	if l == key.LabelEscape {
 		internal.QuitRequested = true
 	}
@@ -101,7 +88,7 @@ func (dh KeyHandlers) KeyDown(l key.Label, p key.Position) {
 }
 
 // KeyUp does nothing.
-func (dh KeyHandlers) KeyUp(l key.Label, p key.Position) {
+func (dh DefaultHandlers) KeyUp(l key.Label, p key.Position) {
 }
 
 //------------------------------------------------------------------------------
