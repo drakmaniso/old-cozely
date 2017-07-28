@@ -7,7 +7,7 @@ package mouse
 
 // #cgo windows LDFLAGS: -lSDL2
 // #cgo linux freebsd darwin pkg-config: sdl2
-// #include "../internal/sdl.h"
+// #include "../sdl.h"
 import "C"
 
 import (
@@ -15,21 +15,6 @@ import (
 	"github.com/drakmaniso/glam/pixel"
 	"github.com/drakmaniso/glam/plane"
 )
-
-//------------------------------------------------------------------------------
-
-// Handler receives the mouse events.
-type Handler interface {
-	MouseMotion(motion pixel.Coord, position pixel.Coord, timestamp uint32)
-	MouseButtonDown(b Button, clicks int, timestamp uint32)
-	MouseButtonUp(b Button, clicks int, timestamp uint32)
-	MouseWheel(motion pixel.Coord, timestamp uint32)
-}
-
-// Handle is the current handlers for mouse events
-//
-// It can be changed while the loop is running, but must never be nil.
-var Handle Handler
 
 //------------------------------------------------------------------------------
 

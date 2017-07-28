@@ -5,7 +5,7 @@ package mouse
 
 //------------------------------------------------------------------------------
 
-// #include "../internal/sdl.h"
+// #include "../sdl.h"
 import "C"
 
 import (

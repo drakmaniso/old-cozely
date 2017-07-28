@@ -7,25 +7,12 @@ package key
 
 // #cgo windows LDFLAGS: -lSDL2
 // #cgo linux freebsd darwin pkg-config: sdl2
-// #include "../internal/sdl.h"
+// #include "../sdl.h"
 import "C"
 
 import (
 	"github.com/drakmaniso/glam/internal"
 )
-
-//------------------------------------------------------------------------------
-
-// Handler receives the key events.
-type Handler interface {
-	KeyDown(l Label, p Position, timestamp uint32)
-	KeyUp(l Label, p Position, timestamp uint32)
-}
-
-// Handle is the current handlers for key events
-//
-// It can be changed while the loop is running, but must never be nil.
-var Handle Handler
 
 //------------------------------------------------------------------------------
 

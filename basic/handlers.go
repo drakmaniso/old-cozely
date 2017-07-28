@@ -15,68 +15,77 @@ import (
 
 //------------------------------------------------------------------------------
 
-// WindowHandler implements default behavior for all window events.
-type WindowHandler struct{}
+// Handlers implements default behavior for all events.
+type Handlers struct {
+	WindowHandlers
+	MouseHandlers
+	KeyHandlers
+}
+
+//------------------------------------------------------------------------------
+
+// WindowHandlers implements default behavior for all window events.
+type WindowHandlers struct{}
 
 // WindowShown does nothing.
-func (dh WindowHandler) WindowShown(timestamp uint32) {}
+func (dh WindowHandlers) WindowShown() {}
 
 // WindowHidden does nothing.
-func (dh WindowHandler) WindowHidden(timestamp uint32) {}
+func (dh WindowHandlers) WindowHidden() {}
 
 // WindowResized does nothing.
-func (dh WindowHandler) WindowResized(s pixel.Coord, timestamp uint32) {}
+func (dh WindowHandlers) WindowResized(s pixel.Coord) {}
 
 // WindowMinimized does nothing.
-func (dh WindowHandler) WindowMinimized(timestamp uint32) {}
+func (dh WindowHandlers) WindowMinimized() {}
 
 // WindowMaximized does nothing.
-func (dh WindowHandler) WindowMaximized(timestamp uint32) {}
+func (dh WindowHandlers) WindowMaximized() {}
 
 // WindowRestored does nothing.
-func (dh WindowHandler) WindowRestored(timestamp uint32) {}
+func (dh WindowHandlers) WindowRestored() {}
 
 // WindowMouseEnter does nothing.
-func (dh WindowHandler) WindowMouseEnter(timestamp uint32) {}
+func (dh WindowHandlers) WindowMouseEnter() {}
 
 // WindowMouseLeave does nothing.
-func (dh WindowHandler) WindowMouseLeave(timestamp uint32) {}
+func (dh WindowHandlers) WindowMouseLeave() {}
 
 // WindowFocusGained does nothing.
-func (dh WindowHandler) WindowFocusGained(timestamp uint32) {}
+func (dh WindowHandlers) WindowFocusGained() {}
 
 // WindowFocusLost does nothing.
-func (dh WindowHandler) WindowFocusLost(timestamp uint32) {}
+func (dh WindowHandlers) WindowFocusLost() {}
 
 // WindowQuit requests the game loop to stop.
-func (dh WindowHandler) WindowQuit(timestamp uint32) {
+func (dh WindowHandlers) WindowQuit() {
 	internal.QuitRequested = true
 }
 
 //------------------------------------------------------------------------------
 
-// MouseHandler implements default behavior for all mouse events.
-type MouseHandler struct{}
+// MouseHandlers implements default behavior for all mouse events.
+type MouseHandlers struct{}
 
 // MouseMotion does nothing.
-func (dh MouseHandler) MouseMotion(rel pixel.Coord, pos pixel.Coord, timestamp uint32) {}
+func (dh MouseHandlers) MouseMotion(rel pixel.Coord, pos pixel.Coord) {}
 
 // MouseButtonDown does nothing.
-func (dh MouseHandler) MouseButtonDown(b mouse.Button, clicks int, timestamp uint32) {}
+func (dh MouseHandlers) MouseButtonDown(b mouse.Button, clicks int) {}
 
 // MouseButtonUp does nothing.
-func (dh MouseHandler) MouseButtonUp(b mouse.Button, clicks int, timestamp uint32) {}
+func (dh MouseHandlers) MouseButtonUp(b mouse.Button, clicks int) {}
 
 // MouseWheel does nothing.
-func (dh MouseHandler) MouseWheel(w pixel.Coord, timestamp uint32) {}
+func (dh MouseHandlers) MouseWheel(w pixel.Coord) {}
 
 //------------------------------------------------------------------------------
 
-// KeyHandler implements default behavior for all keyboard events.
-type KeyHandler struct{}
+// KeyHandlers implements default behavior for all keyboard events.
+type KeyHandlers struct{}
 
 // KeyDown requests the game loop to stop if Escape is pressed.
-func (dh KeyHandler) KeyDown(l key.Label, p key.Position, timestamp uint32) {
+func (dh KeyHandlers) KeyDown(l key.Label, p key.Position) {
 	if l == key.LabelEscape {
 		internal.QuitRequested = true
 	}
@@ -92,7 +101,7 @@ func (dh KeyHandler) KeyDown(l key.Label, p key.Position, timestamp uint32) {
 }
 
 // KeyUp does nothing.
-func (dh KeyHandler) KeyUp(l key.Label, p key.Position, timestamp uint32) {
+func (dh KeyHandlers) KeyUp(l key.Label, p key.Position) {
 }
 
 //------------------------------------------------------------------------------

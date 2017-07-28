@@ -47,7 +47,7 @@ func Setup() {
 	fontSSBO = gfx.NewStorageBuffer(&Font, gfx.StaticStorage)
 
 	s := pixel.Coord{internal.Window.Width, internal.Window.Height}
-	WindowResized(s, 0)
+	WindowResized(s)
 }
 
 //------------------------------------------------------------------------------
@@ -57,7 +57,7 @@ const charHeight = 11
 
 // WindowResized is called each time resolution changes. It reallocates all GPU
 // ressources accordingly.
-func WindowResized(s pixel.Coord, ts uint32) {
+func WindowResized(s pixel.Coord) {
 	screen.nbCols = s.X / (charWidth * screen.pixelSize)
 	screen.nbRows = s.Y / (charHeight * screen.pixelSize)
 	screen.top = 0

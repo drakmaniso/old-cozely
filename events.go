@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2016 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
-package events
+package glam
 
 //------------------------------------------------------------------------------
 
@@ -9,13 +9,18 @@ package events
 #cgo windows LDFLAGS: -lSDL2
 #cgo linux freebsd darwin pkg-config: sdl2
 
-#include "../sdl.h"
+#include "sdl.h"
 
 #define PEEP_SIZE 128
 
 SDL_Event Events[PEEP_SIZE];
 
-int PeepEvents();
+int PeepEvents()
+{
+  SDL_PumpEvents();
+  int n = SDL_PeepEvents(Events, PEEP_SIZE, SDL_GETEVENT, SDL_FIRSTEVENT, SDL_LASTEVENT);
+  return n;
+}
 */
 import "C"
 
@@ -28,18 +33,17 @@ import (
 	"github.com/drakmaniso/glam/key"
 	"github.com/drakmaniso/glam/mouse"
 	"github.com/drakmaniso/glam/pixel"
-	"github.com/drakmaniso/glam/window"
 )
 
 //------------------------------------------------------------------------------
 
-// Process and dispatch the events.
-func Process() {
+// processEvents processes and dispatches all events.
+func processEvents() {
 	more := true
 	for more && !internal.QuitRequested {
-		n := PeepEvents()
+		n := peepEvents()
 		for i := 0; i < n && !internal.QuitRequested; i++ {
-			e := EventAt(i)
+			e := eventAt(i)
 			dispatch(e)
 		}
 		more = n >= C.PEEP_SIZE
@@ -48,9 +52,10 @@ func Process() {
 
 func dispatch(e unsafe.Pointer) {
 	ts := uint32(((*C.SDL_CommonEvent)(e)).timestamp)
+	visibleNow = float64(ts) / 1000.0
 	switch ((*C.SDL_CommonEvent)(e))._type {
 	case C.SDL_QUIT:
-		window.Handle.WindowQuit(ts)
+		loop.WindowQuit()
 	// Window Events
 	case C.SDL_WINDOWEVENT:
 		e := (*C.SDL_WindowEvent)(e)
@@ -58,9 +63,9 @@ func dispatch(e unsafe.Pointer) {
 		case C.SDL_WINDOWEVENT_NONE:
 			// Ignore
 		case C.SDL_WINDOWEVENT_SHOWN:
-			window.Handle.WindowShown(ts)
+			loop.WindowShown()
 		case C.SDL_WINDOWEVENT_HIDDEN:
-			window.Handle.WindowHidden(ts)
+			loop.WindowHidden()
 		case C.SDL_WINDOWEVENT_EXPOSED:
 			// Ignore
 		case C.SDL_WINDOWEVENT_MOVED:
@@ -70,28 +75,28 @@ func dispatch(e unsafe.Pointer) {
 			internal.Window.Height = int32(e.data2)
 			s := pixel.Coord{X: int32(e.data1), Y: int32(e.data2)}
 			gfx.Viewport(pixel.Coord{X: 0, Y: 0}, s)
-			microtext.WindowResized(s, ts)
-			window.Handle.WindowResized(s, ts)
+			microtext.WindowResized(s)
+			loop.WindowResized(s)
 		case C.SDL_WINDOWEVENT_SIZE_CHANGED:
 			//TODO
 		case C.SDL_WINDOWEVENT_MINIMIZED:
-			window.Handle.WindowMinimized(ts)
+			loop.WindowMinimized()
 		case C.SDL_WINDOWEVENT_MAXIMIZED:
-			window.Handle.WindowMaximized(ts)
+			loop.WindowMaximized()
 		case C.SDL_WINDOWEVENT_RESTORED:
-			window.Handle.WindowRestored(ts)
+			loop.WindowRestored()
 		case C.SDL_WINDOWEVENT_ENTER:
 			internal.HasMouseFocus = true
-			window.Handle.WindowMouseEnter(ts)
+			loop.WindowMouseEnter()
 		case C.SDL_WINDOWEVENT_LEAVE:
 			internal.HasMouseFocus = false
-			window.Handle.WindowMouseLeave(ts)
+			loop.WindowMouseLeave()
 		case C.SDL_WINDOWEVENT_FOCUS_GAINED:
 			internal.HasFocus = true
-			window.Handle.WindowFocusGained(ts)
+			loop.WindowFocusGained()
 		case C.SDL_WINDOWEVENT_FOCUS_LOST:
 			internal.HasFocus = false
-			window.Handle.WindowFocusLost(ts)
+			loop.WindowFocusLost()
 		case C.SDL_WINDOWEVENT_CLOSE:
 			// Ignore
 		default:
@@ -102,19 +107,17 @@ func dispatch(e unsafe.Pointer) {
 		e := (*C.SDL_KeyboardEvent)(e)
 		if e.repeat == 0 {
 			internal.KeyState[e.keysym.scancode] = true
-			key.Handle.KeyDown(
+			loop.KeyDown(
 				key.Label(e.keysym.sym),
 				key.Position(e.keysym.scancode),
-				ts,
 			)
 		}
 	case C.SDL_KEYUP:
 		e := (*C.SDL_KeyboardEvent)(e)
 		internal.KeyState[e.keysym.scancode] = false
-		key.Handle.KeyUp(
+		loop.KeyUp(
 			key.Label(e.keysym.sym),
 			key.Position(e.keysym.scancode),
-			ts,
 		)
 	// Mouse Events
 	case C.SDL_MOUSEMOTION:
@@ -123,26 +126,23 @@ func dispatch(e unsafe.Pointer) {
 		internal.MouseDelta = internal.MouseDelta.Plus(rel)
 		internal.MousePosition = pixel.Coord{X: int32(e.x), Y: int32(e.y)}
 		internal.MouseButtons = uint32(e.state)
-		mouse.Handle.MouseMotion(
+		loop.MouseMotion(
 			rel,
 			internal.MousePosition,
-			ts,
 		)
 	case C.SDL_MOUSEBUTTONDOWN:
 		e := (*C.SDL_MouseButtonEvent)(e)
 		internal.MouseButtons |= 1 << (e.button - 1)
-		mouse.Handle.MouseButtonDown(
+		loop.MouseButtonDown(
 			mouse.Button(e.button),
 			int(e.clicks),
-			ts,
 		)
 	case C.SDL_MOUSEBUTTONUP:
 		e := (*C.SDL_MouseButtonEvent)(e)
 		internal.MouseButtons &= ^(1 << (e.button - 1))
-		mouse.Handle.MouseButtonUp(
+		loop.MouseButtonUp(
 			mouse.Button(e.button),
 			int(e.clicks),
-			ts,
 		)
 	case C.SDL_MOUSEWHEEL:
 		e := (*C.SDL_MouseWheelEvent)(e)
@@ -150,9 +150,8 @@ func dispatch(e unsafe.Pointer) {
 		if e.direction == C.SDL_MOUSEWHEEL_FLIPPED {
 			d = -1
 		}
-		mouse.Handle.MouseWheel(
+		loop.MouseWheel(
 			pixel.Coord{X: int32(e.x) * d, Y: int32(e.y) * d},
-			ts,
 		)
 	//TODO: Joystick Events
 	case C.SDL_JOYAXISMOTION:
@@ -177,13 +176,13 @@ func dispatch(e unsafe.Pointer) {
 	}
 }
 
-// PeepEvents fill the event buffer and returns the number of events fetched.
-func PeepEvents() int {
+// peepEvents fill the event buffer and returns the number of events fetched.
+func peepEvents() int {
 	return int(C.PeepEvents())
 }
 
 // EventAt returns a pointer to an event in the event buffer.
-func EventAt(i int) unsafe.Pointer {
+func eventAt(i int) unsafe.Pointer {
 	return unsafe.Pointer(&C.Events[i])
 }
 

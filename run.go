@@ -8,15 +8,12 @@ package glam
 import (
 	"errors"
 
-	"github.com/drakmaniso/glam/basic"
 	"github.com/drakmaniso/glam/gfx"
 	"github.com/drakmaniso/glam/internal"
-	"github.com/drakmaniso/glam/internal/events"
 	"github.com/drakmaniso/glam/internal/microtext"
 	"github.com/drakmaniso/glam/key"
 	"github.com/drakmaniso/glam/mouse"
 	"github.com/drakmaniso/glam/pixel"
-	"github.com/drakmaniso/glam/window"
 )
 
 //------------------------------------------------------------------------------
@@ -43,17 +40,40 @@ var isSetUp bool
 
 //------------------------------------------------------------------------------
 
-func UpdateWith(u func()) {
-	update = u
+type Looper interface {
+	// Window events
+	WindowShown()
+	WindowHidden()
+	WindowResized(newSize pixel.Coord)
+	WindowMinimized()
+	WindowMaximized()
+	WindowRestored()
+	WindowMouseEnter()
+	WindowMouseLeave()
+	WindowFocusGained()
+	WindowFocusLost()
+	WindowQuit()
+
+	// Keyboard events
+	KeyDown(l key.Label, p key.Position)
+	KeyUp(l key.Label, p key.Position)
+
+	// Mouse events
+	MouseMotion(motion pixel.Coord, position pixel.Coord)
+	MouseButtonDown(b mouse.Button, clicks int)
+	MouseButtonUp(b mouse.Button, clicks int)
+	MouseWheel(motion pixel.Coord)
+
+	// Update and Draw
+	Update()
+	Draw(dt, interpolation float64)
 }
 
-var update func()
-
-func DrawWith(d func(dt, interpolation float64)) {
-	draw = d
+func Loop(l Looper) {
+	loop = l
 }
 
-var draw func(dt, interpolation float64)
+var loop Looper
 
 //------------------------------------------------------------------------------
 
@@ -65,11 +85,11 @@ func TimeStep() float64 {
 	return timeStep
 }
 
-var timeStep float64 = 1 / 60
+var timeStep float64 = 1.0 / 60
 
 //------------------------------------------------------------------------------
 
-// Loop starts the game loop.
+// Run starts the game loop.
 //
 // The update callback is called with a fixed time step, while event handlers
 // and the draw callback are called once for each frame displayed. The loop runs
@@ -77,7 +97,7 @@ var timeStep float64 = 1 / 60
 //
 // Important: must be called from main.main, or at least from a function that is
 // known to run on the main OS thread.
-func Loop() error {
+func Run() error {
 	defer internal.SDLQuit()
 	defer internal.DestroyWindow()
 
@@ -86,20 +106,11 @@ func Loop() error {
 	}
 
 	// Setup fallback handlers
-	if window.Handle == nil {
-		window.Handle = basic.WindowHandler{}
-	}
-	if mouse.Handle == nil {
-		mouse.Handle = basic.MouseHandler{}
-	}
-	if key.Handle == nil {
-		key.Handle = basic.KeyHandler{}
-	}
 
 	// First, send a fake resize window event
 	{
 		s := pixel.Coord{internal.Window.Width, internal.Window.Height}
-		window.Handle.WindowResized(s, 0)
+		loop.WindowResized(s)
 	}
 
 	// Main Loop
@@ -115,20 +126,27 @@ func Loop() error {
 		//TODO: clamp delta ?
 		countFrames()
 
-		events.Process()
+		processEvents()
 
-		// Fixed time step for logic and physics updates
+		// Update with fixed time step
+
 		remain += delta
-		//TODO: add cap to avoid "spiral of death"
+		// Cap remain to avoid "spiral of death"
+		for remain > 2*timeStep {
+			remain -= timeStep
+			stepNow += timeStep
+		}
 		for remain >= timeStep {
 			visibleNow = stepNow
-			update()
+			loop.Update()
 			remain -= timeStep
 			stepNow += timeStep
 		}
 
+		// Draw
+
 		visibleNow = now
-		draw(delta, remain/timeStep)
+		loop.Draw(delta, remain/timeStep)
 		microtext.Draw()
 		internal.SwapWindow()
 
@@ -148,7 +166,10 @@ var delta float64
 //
 // If called during the update callback, it corresponds to the current time
 // step. If called during the draw callback, it corresponds to the current
-// frame. It shouldn't be used outside of these two callbacks.
+// frame. And if called during an event callback, it corresponds to the event
+// time stamp.
+//
+// It shouldn't be used outside of these three contexts.
 func Now() float64 {
 	return visibleNow
 }

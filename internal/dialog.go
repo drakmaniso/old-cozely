@@ -12,7 +12,7 @@ import (
 
 /*
 #include <stdlib.h>
-#include "sdl.h"
+#include "../sdl.h"
 */
 import "C"
 
