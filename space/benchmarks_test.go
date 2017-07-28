@@ -54,153 +54,145 @@ func (m *Matrix) setTo(
 	m[3][3] = p
 }
 
-func add(a, b Homogen) Homogen {
-	return Homogen{
+func add(a, b Coord) Coord {
+	return Coord{
 		a.X + b.X,
 		a.Y + b.Y,
 		a.Z + b.Z,
-		a.W + b.W,
 	}
 }
 
-func (v *Homogen) add(a, b Homogen) {
+func (v *Coord) add(a, b Coord) {
 	v.X = a.X + b.X
 	v.Y = a.Y + b.Y
 	v.Z = a.Z + b.Z
-	v.W = a.W + b.W
 }
 
-func (v *Homogen) subtract(a, b Homogen) {
+func (v *Coord) subtract(a, b Coord) {
 	v.X = a.X - b.X
 	v.Y = a.Y - b.Y
 	v.Z = a.Z - b.Z
-	v.W = a.W - b.W
 }
 
-func (v *Homogen) invert() {
+func (v *Coord) invert() {
 	v.X = -v.X
 	v.Y = -v.Y
 	v.Z = -v.Z
-	v.W = -v.W
 }
 
-func (v *Homogen) multiply(o Homogen, s Homogen) {
-	v.X = o.X * s.X
-	v.Y = o.Y * s.Y
-	v.Z = o.Z * s.Z
-	v.W = o.W * s.W
+func (v *Coord) multiply(o Coord, s float32) {
+	v.X = o.X * s
+	v.Y = o.Y * s
+	v.Z = o.Z * s
 }
 
-func (v *Homogen) divide(o Homogen, s Homogen) {
-	v.X = o.X / s.X
-	v.Y = o.Y / s.Y
-	v.Z = o.Z / s.Z
-	v.W = o.W / s.W
+func (v *Coord) divide(o Coord, s float32) {
+	v.X = o.X / s
+	v.Y = o.Y / s
+	v.Z = o.Z / s
 }
 
-func (v *Homogen) normalize() {
-	length := math32.Sqrt(v.X*v.X + v.Y*v.Y + v.Z*v.Z + v.W*v.W)
+func (v *Coord) normalize() {
+	length := math32.Sqrt(v.X*v.X + v.Y*v.Y + v.Z*v.Z)
 	v.X /= length
 	v.Y /= length
 	v.Z /= length
-	v.W /= length
 }
 
-type arrayHomogen [4]float32
+type arrayCoord [3]float32
 
-func (v arrayHomogen) plus(o arrayHomogen) arrayHomogen {
-	return arrayHomogen{v[0] + o[0], v[1] + o[1], v[2] + o[2], v[3] + o[3]}
+func (v arrayCoord) plus(o arrayCoord) arrayCoord {
+	return arrayCoord{v[0] + o[0], v[1] + o[1], v[2] + o[2]}
 }
 
-func (v *arrayHomogen) add(a, b arrayHomogen) {
+func (v *arrayCoord) add(a, b arrayCoord) {
 	v[0] = a[0] + b[0]
 	v[1] = a[1] + b[1]
 	v[2] = a[2] + b[2]
-	v[3] = a[3] + b[3]
 }
 
 //-----------------------------------------------------------------------------
 
-func BenchmarkHomogen_Plus(b *testing.B) {
-	m := Homogen{1.1, 2.2, 3.3, 4.4}
-	n := Homogen{5.5, 6.6, 7.7, 8.8}
-	var o Homogen
+func BenchmarkCoord_Plus(b *testing.B) {
+	m := Coord{1.1, 2.2, 3.3}
+	n := Coord{5.5, 6.6, 7.7}
+	var o Coord
 	for i := 0; i < b.N; i++ {
 		o = m.Plus(n)
 	}
 	_ = o
 }
 
-func BenchmarkHomogen_Plus_Add(b *testing.B) {
-	m := Homogen{1.1, 2.2, 3.3, 4.4}
-	n := Homogen{5.5, 6.6, 7.7, 8.8}
-	var o Homogen
+func BenchmarkCoord_Plus_Add(b *testing.B) {
+	m := Coord{1.1, 2.2, 3.3}
+	n := Coord{5.5, 6.6, 7.7}
+	var o Coord
 	for i := 0; i < b.N; i++ {
 		o = add(m, n)
 	}
 	_ = o
 }
 
-func BenchmarkHomogen_Plus_Array(b *testing.B) {
-	m := arrayHomogen{1.1, 2.2, 3.3, 4.4}
-	n := arrayHomogen{5.5, 6.6, 7.7, 8.8}
-	var o arrayHomogen
+func BenchmarkCoord_Plus_Array(b *testing.B) {
+	m := arrayCoord{1.1, 2.2, 3.3}
+	n := arrayCoord{5.5, 6.6, 7.7}
+	var o arrayCoord
 	for i := 0; i < b.N; i++ {
 		o = m.plus(n)
 	}
 	_ = o
 }
 
-func BenchmarkHomogen_Plus_Self(b *testing.B) {
-	m := Homogen{1.1, 2.2, 3.3, 4.4}
-	n := Homogen{5.5, 6.6, 7.7, 8.8}
+func BenchmarkCoord_Plus_Self(b *testing.B) {
+	m := Coord{1.1, 2.2, 3.3}
+	n := Coord{5.5, 6.6, 7.7}
 	for i := 0; i < b.N; i++ {
 		m = m.Plus(n)
 	}
 	_ = m
 }
 
-func BenchmarkHomogen_Plus_ArraySelf(b *testing.B) {
-	m := arrayHomogen{1.1, 2.2, 3.3, 4.4}
-	n := arrayHomogen{5.5, 6.6, 7.7, 8.8}
+func BenchmarkCoord_Plus_ArraySelf(b *testing.B) {
+	m := arrayCoord{1.1, 2.2, 3.3}
+	n := arrayCoord{5.5, 6.6, 7.7}
 	for i := 0; i < b.N; i++ {
 		m = m.plus(n)
 	}
 	_ = m
 }
 
-func BenchmarkHomogen_Plus_ByRef(b *testing.B) {
-	m := Homogen{1.1, 2.2, 3.3, 4.4}
-	n := Homogen{5.5, 6.6, 7.7, 8.8}
-	var o Homogen
+func BenchmarkCoord_Plus_ByRef(b *testing.B) {
+	m := Coord{1.1, 2.2, 3.3}
+	n := Coord{5.5, 6.6, 7.7}
+	var o Coord
 	for i := 0; i < b.N; i++ {
 		o.add(m, n)
 	}
 	_ = o
 }
 
-func BenchmarkHomogen_Plus_ArrayByRef(b *testing.B) {
-	m := arrayHomogen{1.1, 2.2, 3.3, 4.4}
-	n := arrayHomogen{5.5, 6.6, 7.7, 8.8}
-	var o arrayHomogen
+func BenchmarkCoord_Plus_ArrayByRef(b *testing.B) {
+	m := arrayCoord{1.1, 2.2, 3.3}
+	n := arrayCoord{5.5, 6.6, 7.7}
+	var o arrayCoord
 	for i := 0; i < b.N; i++ {
 		o.add(m, n)
 	}
 	_ = o
 }
 
-func BenchmarkHomogen_Plus_ByRefSelf(b *testing.B) {
-	m := Homogen{1.1, 2.2, 3.3, 4.4}
-	n := Homogen{5.5, 6.6, 7.7, 8.8}
+func BenchmarkCoord_Plus_ByRefSelf(b *testing.B) {
+	m := Coord{1.1, 2.2, 3.3}
+	n := Coord{5.5, 6.6, 7.7}
 	for i := 0; i < b.N; i++ {
 		m.add(m, n)
 	}
 	_ = m
 }
 
-func BenchmarkHomogen_Plus_ArrayByRefSelf(b *testing.B) {
-	m := arrayHomogen{1.1, 2.2, 3.3, 4.4}
-	n := arrayHomogen{5.5, 6.6, 7.7, 8.8}
+func BenchmarkCoord_Plus_ArrayByRefSelf(b *testing.B) {
+	m := arrayCoord{1.1, 2.2, 3.3}
+	n := arrayCoord{5.5, 6.6, 7.7}
 	for i := 0; i < b.N; i++ {
 		m.add(m, n)
 	}
@@ -209,105 +201,105 @@ func BenchmarkHomogen_Plus_ArrayByRefSelf(b *testing.B) {
 
 //-----------------------------------------------------------------------------
 
-func BenchmarkHomogen_Times(b *testing.B) {
-	m := Homogen{1.1, 2.2, 3.3, 4.4}
+func BenchmarkCoord_Times(b *testing.B) {
+	m := Coord{1.1, 2.2, 3.3}
 	n := float32(5.5)
-	var o Homogen
+	var o Coord
 	for i := 0; i < b.N; i++ {
-		o = m.Times(Homogen{n, n, n, n})
+		o = m.Times(n)
 	}
 	_ = o
 }
 
-func BenchmarkHomogen_Times_Self(b *testing.B) {
-	m := Homogen{1.1, 2.2, 3.3, 4.4}
+func BenchmarkCoord_Times_Self(b *testing.B) {
+	m := Coord{1.1, 2.2, 3.3}
 	n := float32(5.5)
 	for i := 0; i < b.N; i++ {
-		m = m.Times(Homogen{n, n, n, n})
+		m = m.Times(n)
 	}
 	_ = m
 }
 
-func BenchmarkHomogen_Times_ByRef(b *testing.B) {
-	m := Homogen{1.1, 2.2, 3.3, 4.4}
+func BenchmarkCoord_Times_ByRef(b *testing.B) {
+	m := Coord{1.1, 2.2, 3.3}
 	n := float32(5.5)
-	var o Homogen
+	var o Coord
 	for i := 0; i < b.N; i++ {
-		o.multiply(m, Homogen{n, n, n, n})
+		o.multiply(m, n)
 	}
 	_ = o
 }
 
-func BenchmarkHomogen_Times_ByRefSelf(b *testing.B) {
-	m := Homogen{1.1, 2.2, 3.3, 4.4}
+func BenchmarkCoord_Times_ByRefSelf(b *testing.B) {
+	m := Coord{1.1, 2.2, 3.3}
 	n := float32(5.5)
 	for i := 0; i < b.N; i++ {
-		m.multiply(m, Homogen{n, n, n, n})
-	}
-	_ = m
-}
-
-//-----------------------------------------------------------------------------
-
-func BenchmarkHomogen_Slash(b *testing.B) {
-	m := Homogen{1.1, 2.2, 3.3, 4.4}
-	n := float32(5.5)
-	var o Homogen
-	for i := 0; i < b.N; i++ {
-		o = m.Slash(Homogen{n, n, n, n})
-	}
-	_ = o
-}
-
-func BenchmarkHomogen_Slash_Self(b *testing.B) {
-	m := Homogen{1.1, 2.2, 3.3, 4.4}
-	n := float32(5.5)
-	for i := 0; i < b.N; i++ {
-		m = m.Slash(Homogen{n, n, n, n})
-	}
-	_ = m
-}
-
-func BenchmarkHomogen_Slash_ByRef(b *testing.B) {
-	m := Homogen{1.1, 2.2, 3.3, 4.4}
-	n := float32(5.5)
-	var o Homogen
-	for i := 0; i < b.N; i++ {
-		o.divide(m, Homogen{n, n, n, n})
-	}
-	_ = o
-}
-
-func BenchmarkHomogen_Slash_ByRefSelf(b *testing.B) {
-	m := Homogen{1.1, 2.2, 3.3, 4.4}
-	n := float32(5.5)
-	for i := 0; i < b.N; i++ {
-		m.divide(m, Homogen{n, n, n, n})
+		m.multiply(m, n)
 	}
 	_ = m
 }
 
 //-----------------------------------------------------------------------------
 
-func BenchmarkHomogen_Normalized(b *testing.B) {
-	m := Homogen{1.1, 2.2, 3.3, 4.4}
-	var o Homogen
+func BenchmarkCoord_Slash(b *testing.B) {
+	m := Coord{1.1, 2.2, 3.3}
+	n := float32(5.5)
+	var o Coord
+	for i := 0; i < b.N; i++ {
+		o = m.Slash(n)
+	}
+	_ = o
+}
+
+func BenchmarkCoord_Slash_Self(b *testing.B) {
+	m := Coord{1.1, 2.2, 3.3}
+	n := float32(5.5)
+	for i := 0; i < b.N; i++ {
+		m = m.Slash(n)
+	}
+	_ = m
+}
+
+func BenchmarkCoord_Slash_ByRef(b *testing.B) {
+	m := Coord{1.1, 2.2, 3.3}
+	n := float32(5.5)
+	var o Coord
+	for i := 0; i < b.N; i++ {
+		o.divide(m, n)
+	}
+	_ = o
+}
+
+func BenchmarkCoord_Slash_ByRefSelf(b *testing.B) {
+	m := Coord{1.1, 2.2, 3.3}
+	n := float32(5.5)
+	for i := 0; i < b.N; i++ {
+		m.divide(m, n)
+	}
+	_ = m
+}
+
+//-----------------------------------------------------------------------------
+
+func BenchmarkCoord_Normalized(b *testing.B) {
+	m := Coord{1.1, 2.2, 3.3}
+	var o Coord
 	for i := 0; i < b.N; i++ {
 		o = m.Normalized()
 	}
 	_ = o
 }
 
-func BenchmarkHomogen_Normalized_Self(b *testing.B) {
-	m := Homogen{1.1, 2.2, 3.3, 4.4}
+func BenchmarkCoord_Normalized_Self(b *testing.B) {
+	m := Coord{1.1, 2.2, 3.3}
 	for i := 0; i < b.N; i++ {
 		m = m.Normalized()
 	}
 	_ = m
 }
 
-func BenchmarkHomogen_Normalize_ByRef(b *testing.B) {
-	m := Homogen{1.1, 2.2, 3.3, 4.4}
+func BenchmarkCoord_Normalize_ByRef(b *testing.B) {
+	m := Coord{1.1, 2.2, 3.3}
 	for i := 0; i < b.N; i++ {
 		m.normalize()
 	}
@@ -482,7 +474,7 @@ func BenchmarkMatrix_SetTo(b *testing.B) {
 //------------------------------------------------------------------------------
 
 func BenchmarkMatrix_Times(b *testing.B) {
-	m := &Matrix{
+	m := Matrix{
 		{1.1, 2.1, 3.1, 4.1},
 		{1.2, 2.2, 3.2, 4.2},
 		{1.3, 2.3, 3.3, 4.3},

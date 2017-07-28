@@ -65,7 +65,7 @@ func Rotation(angle float32, axis Coord) Matrix {
 
 //------------------------------------------------------------------------------
 
-// EulerYXZ returns a transform matrix corresponding to a sequence of three
+// EulerYXZ returns a transformation matrix corresponding to a sequence of three
 // intrinsic rotations around the (local) axis Y, X, Z, in that order.
 func EulerYXZ(angleX, angleY, angleZ float32) Matrix {
 	c1 := math32.Cos(angleY)
@@ -83,7 +83,7 @@ func EulerYXZ(angleX, angleY, angleZ float32) Matrix {
 	}
 }
 
-// EulerXYZ returns a transform matrix corresponding to a sequence of three
+// EulerXYZ returns a transformation matrix corresponding to a sequence of three
 // intrinsic rotations around the (local) axis X, Y, Z, in that order.
 func EulerXYZ(angleX, angleY, angleZ float32) Matrix {
 	c1 := math32.Cos(angleX)
@@ -101,7 +101,7 @@ func EulerXYZ(angleX, angleY, angleZ float32) Matrix {
 	}
 }
 
-// EulerZYX returns a transform matrix corresponding to a sequence of three
+// EulerZYX returns a transformation matrix corresponding to a sequence of three
 // intrinsic rotations around the (local) axis Z, Y, X, in that order.
 func EulerZYX(angleX, angleY, angleZ float32) Matrix {
 	c1 := math32.Cos(angleZ)
@@ -119,7 +119,7 @@ func EulerZYX(angleX, angleY, angleZ float32) Matrix {
 	}
 }
 
-// EulerXZY returns a transform matrix corresponding to a sequence of three
+// EulerXZY returns a transformation matrix corresponding to a sequence of three
 // intrinsic rotations around the (local) axis X, Z, Y, in that order.
 func EulerXZY(angleX, angleY, angleZ float32) Matrix {
 	c1 := math32.Cos(angleX)
@@ -137,7 +137,7 @@ func EulerXZY(angleX, angleY, angleZ float32) Matrix {
 	}
 }
 
-// EulerYZX returns a transform matrix corresponding to a sequence of three
+// EulerYZX returns a transformation matrix corresponding to a sequence of three
 // intrinsic rotations around the (local) axis Y, Z, X, in that order.
 func EulerYZX(angleX, angleY, angleZ float32) Matrix {
 	c1 := math32.Cos(angleY)
@@ -155,7 +155,7 @@ func EulerYZX(angleX, angleY, angleZ float32) Matrix {
 	}
 }
 
-// EulerZXY returns a transform matrix corresponding to a sequence of three
+// EulerZXY returns a transformation matrix corresponding to a sequence of three
 // intrinsic rotations around the (local) axis Z, X, Y, in that order.
 func EulerZXY(angleX, angleY, angleZ float32) Matrix {
 	c1 := math32.Cos(angleZ)
@@ -187,9 +187,9 @@ func Scaling(s Coord) Matrix {
 
 //------------------------------------------------------------------------------
 
-// LookAt returns a transform which put eye at origin and target along
-// negative Z. In other words, if a projection matrix is applied to the result,
-// target will be in the center of the viewport.
+// LookAt returns a transformation matrix which put eye at origin and target
+// along negative Z. In other words, if a projection matrix is applied to the
+// result, target will be in the center of the viewport.
 func LookAt(eye, target, up Coord) Matrix {
 	f := target.Minus(eye).Normalized()
 	s := f.Cross(up.Normalized()).Normalized()

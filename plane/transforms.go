@@ -110,7 +110,8 @@ func Shearing(s Coord) Matrix {
 
 //------------------------------------------------------------------------------
 
-// Viewport returns a matrix that scale to an aspect ratio and zoom.
+// Viewport returns a transformation matrix that scale to an aspect ratio and
+// zoom.
 func Viewport(zoom, aspectRatio float32) Matrix {
 	height := zoom / 2
 	width := height * aspectRatio
