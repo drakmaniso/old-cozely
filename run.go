@@ -43,24 +43,37 @@ var isSetUp bool
 
 //------------------------------------------------------------------------------
 
-// Update is called by Loop and LoopStable. It should update the (physics and
-// logic) state of the game.
-var Update func(dt, now float64)
+func UpdateWith(u func()) {
+	update = u
+}
 
-// Interpolate is called by LoopStable. It should interpolate between the current
-// and previous state.
-var Interpolate func(a float64)
+var update func()
 
-// Draw is called by Loop and LoopStable. It should draw the current or
-// interpolated state.
-var Draw func()
+func DrawWith(d func(dt, interpolation float64)) {
+	draw = d
+}
+
+var draw func(dt, interpolation float64)
 
 //------------------------------------------------------------------------------
 
-// Loop starts the game loop. There is one iteration for each frame displayed.
-// Each iteration starts by calling the event handlers, then the Update
-// callback, and finally the Draw callback. The loop runs until Stop() is
-// called.
+func SetTimeStep(t float64) {
+	timeStep = t
+}
+
+func TimeStep() float64 {
+	return timeStep
+}
+
+var timeStep float64 = 1 / 60
+
+//------------------------------------------------------------------------------
+
+// Loop starts the game loop.
+//
+// The update callback is called with a fixed time step, while event handlers
+// and the draw callback are called once for each frame displayed. The loop runs
+// until Stop() is called.
 //
 // Important: must be called from main.main, or at least from a function that is
 // known to run on the main OS thread.
@@ -69,98 +82,10 @@ func Loop() error {
 	defer internal.DestroyWindow()
 
 	if !isSetUp {
-		return errors.New("glam.Setup must be called before glam.Loop")
-	}
-
-	setupFallbackHandlers()
-
-	// First, send a fake resize window event
-	{
-		s := pixel.Coord{internal.Window.Width, internal.Window.Height}
-		window.Handle.WindowResized(s, 0)
-	}
-
-	// Main Loop
-
-	internal.DrawInterpolation = 1.0
-	then = internal.GetSeconds()
-
-	for !internal.QuitRequested {
-		now = internal.GetSeconds()
-		updateFrameTime()
-
-		events.Process()
-		Interpolate(1.0)
-		Update(frameTime, now)
-		Draw()
-
-		microtext.Draw()
-		internal.SwapWindow()
-
-		then = now
-	}
-	return nil
-}
-
-//------------------------------------------------------------------------------
-
-// LoopStable starts the game loop, whith a fixed time step for the Update
-// callback. Event handlers and the Draw callback are called once for each frame
-// displayed. The loop runs until Stop() is called.
-//
-// Important: must be called from main.main, or at least from a function that is
-// known to run on the main OS thread.
-func LoopStable(timeStep float64) error {
-	defer internal.SDLQuit()
-	defer internal.DestroyWindow()
-
-	if !isSetUp {
 		return errors.New("glam.Setup must be called before glam.LoopStable")
 	}
 
-	setupFallbackHandlers()
-
-	// First, send a fake resize window event
-	{
-		s := pixel.Coord{internal.Window.Width, internal.Window.Height}
-		window.Handle.WindowResized(s, 0)
-	}
-
-	// Main Loop
-
-	then = internal.GetSeconds()
-	stepNow := then
-	remain := 0.0
-
-	for !internal.QuitRequested {
-		now = internal.GetSeconds()
-		updateFrameTime()
-
-		// Fixed time step for logic and physics updates
-		remain += frameTime
-		for remain >= timeStep {
-			events.Process()
-			Update(timeStep, stepNow)
-			remain -= timeStep
-			stepNow += timeStep
-		}
-
-		// Interpolate and draw
-		internal.DrawInterpolation = remain / timeStep
-		Interpolate(internal.DrawInterpolation)
-		Draw()
-
-		microtext.Draw()
-		internal.SwapWindow()
-
-		then = now
-	}
-	return nil
-}
-
-//------------------------------------------------------------------------------
-
-func setupFallbackHandlers() {
+	// Setup fallback handlers
 	if window.Handle == nil {
 		window.Handle = basic.WindowHandler{}
 	}
@@ -170,61 +95,101 @@ func setupFallbackHandlers() {
 	if key.Handle == nil {
 		key.Handle = basic.KeyHandler{}
 	}
-	if Update == nil {
-		Update = func(_, _ float64) {}
+
+	// First, send a fake resize window event
+	{
+		s := pixel.Coord{internal.Window.Width, internal.Window.Height}
+		window.Handle.WindowResized(s, 0)
 	}
-	if Interpolate == nil {
-		Interpolate = func(_ float64) {}
+
+	// Main Loop
+
+	then := internal.GetSeconds()
+	now := then
+	stepNow := now
+	remain := 0.0
+
+	for !internal.QuitRequested {
+		now = internal.GetSeconds()
+		delta = now - then
+		//TODO: clamp delta ?
+		countFrames()
+
+		events.Process()
+
+		// Fixed time step for logic and physics updates
+		remain += delta
+		//TODO: add cap to avoid "spiral of death"
+		for remain >= timeStep {
+			visibleNow = stepNow
+			update()
+			remain -= timeStep
+			stepNow += timeStep
+		}
+
+		visibleNow = now
+		draw(delta, remain/timeStep)
+		microtext.Draw()
+		internal.SwapWindow()
+
+		then = now
 	}
-	if Draw == nil {
-		Draw = func() {}
-	}
+	return nil
 }
 
 //------------------------------------------------------------------------------
 
-// now is the current time
-var now, then float64
+// delta is the time elapsed between current and previous frames
+var delta float64
 
 //------------------------------------------------------------------------------
 
-func updateFrameTime() {
-	frameTime = now - then
-	ftCount++
-	ftSum += frameTime
-	if frameTime > xrunThreshold {
+// Now returns the current time (elapsed since program start).
+//
+// If called during the update callback, it corresponds to the current time
+// step. If called during the draw callback, it corresponds to the current
+// frame. It shouldn't be used outside of these two callbacks.
+func Now() float64 {
+	return visibleNow
+}
+
+var visibleNow float64
+
+//------------------------------------------------------------------------------
+
+func countFrames() {
+	frCount++
+	frSum += delta
+	if delta > xrunThreshold {
 		xrunCount++
 	}
-	if ftSum >= ftInterval {
-		ftAverage = ftSum / float64(ftCount)
+	if frSum >= frInterval {
+		frAverage = frSum / float64(frCount)
 		xrunPrevious = xrunCount
-		microtext.PrintFrameTime(ftAverage, xrunCount)
-		ftSum = 0
-		ftCount = 0
+		microtext.PrintFrameTime(frAverage, xrunCount)
+		frSum = 0
+		frCount = 0
 		xrunCount = 0
 	}
-	//TODO: clamp frameTime ?
 }
-
-var frameTime float64
 
 // FrameTime returns the duration of the last frame
 func FrameTime() float64 {
-	return frameTime
+	return delta
 }
 
 // AverageFrameTime returns the average durations of frames; it is updated 4
 // times per second. It also returns the number of overruns (i.e. frame time
 // longer than the threshold) during the last measurment interval.
 func AverageFrameTime() (t float64, overruns int) {
-	return ftAverage, xrunPrevious
+	return frAverage, xrunPrevious
 }
 
-const ftInterval = 1.0 / 4.0
+const frInterval = 1.0 / 4.0
 
-var ftAverage float64
-var ftSum float64
-var ftCount int
+var frAverage float64
+var frSum float64
+var frCount int
 
 const xrunThreshold float64 = 17 / 1000.0
 

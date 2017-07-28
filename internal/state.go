@@ -29,9 +29,3 @@ var MousePosition pixel.Coord
 var MouseButtons uint32
 
 //------------------------------------------------------------------------------
-
-// DrawInterpolation is blend factor to use between previous and current
-// (physics) state when rendering.
-var DrawInterpolation float64
-
-//------------------------------------------------------------------------------
