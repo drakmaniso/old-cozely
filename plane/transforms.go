@@ -20,9 +20,9 @@ func Identity() Matrix {
 
 //------------------------------------------------------------------------------
 
-// Transform applies the tranformation matrix to a vector (i.e. returns matrix
-// multiplied by column vector).
-func (m Matrix) Transform(v Homogen) Homogen {
+// Apply a tranformation matrix to a vector (i.e. returns matrix multiplied by
+// column vector).
+func Apply(m Matrix, v Homogen) Homogen {
 	return Homogen{
 		X: m[0][0]*v.X + m[1][0]*v.Y + m[2][0]*v.Z,
 		Y: m[0][1]*v.X + m[1][1]*v.Y + m[2][1]*v.Z,
