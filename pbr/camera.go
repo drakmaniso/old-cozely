@@ -17,39 +17,45 @@ import (
 
 //------------------------------------------------------------------------------
 
-//TODO: use quaternion or rotation matrix directly
+//TODO: add another camera class using quaternions
 
-type Camera struct {
+// A PlanarCamera is a camera designed to move on a plane. Rotation is locked
+// around the "up" axis.
+type PlanarCamera struct {
+	// Uniform buffer
+
+	ubo gfx.UniformBuffer
+
 	buffer struct {
 		ProjectionView space.Matrix
 		CameraPosition space.Coord
 		CameraExposure float32
 	}
 
+	ready bool
+
+	// Projection matrix
+
 	projection space.Matrix
-	view       space.Matrix
 
 	aspectRatio float32
 	fieldOfView float32
 	near, far   float32
 
-	current struct {
-		position         space.Coord
-		yaw, pitch, roll float32
-	}
+	// View matrix
 
-	previous struct {
-		position         space.Coord
-		yaw, pitch, roll float32
-	}
+	view space.Matrix
 
-	ubo gfx.UniformBuffer
+	focus            space.Coord
+	distance         float32
+	yaw, pitch, roll float32
 }
 
 //------------------------------------------------------------------------------
 
-func NewCamera() *Camera {
-	var c Camera
+// NewPlanarCamera returns a new camera.
+func NewPlanarCamera() *PlanarCamera {
+	var c PlanarCamera
 	c.ubo = gfx.NewUniformBuffer(&c.buffer, gfx.DynamicStorage)
 	c.SetExposure(16.0, 1.0/125.0, 100.0)
 	c.SetFieldOfView(math.Pi/4, 0.001, 1000.0)
@@ -59,7 +65,18 @@ func NewCamera() *Camera {
 
 //------------------------------------------------------------------------------
 
-func (c *Camera) SetFieldOfView(fov float32, near, far float32) {
+func (c *PlanarCamera) View() space.Matrix {
+	if !c.ready {
+		c.prepare()
+	}
+	return c.view
+}
+
+//------------------------------------------------------------------------------
+
+func (c *PlanarCamera) SetFieldOfView(fov float32, near, far float32) {
+	c.ready = false
+
 	c.fieldOfView = fov
 	c.near, c.far = near, far
 	c.WindowResized()
@@ -67,7 +84,7 @@ func (c *Camera) SetFieldOfView(fov float32, near, far float32) {
 
 //------------------------------------------------------------------------------
 
-func (c *Camera) WindowResized() {
+func (c *PlanarCamera) WindowResized() {
 	s := plane.Coord{
 		float32(internal.Window.Width),
 		float32(internal.Window.Height),
@@ -78,75 +95,94 @@ func (c *Camera) WindowResized() {
 
 //------------------------------------------------------------------------------
 
-func (c *Camera) SetPosition(p space.Coord) {
-	c.current.position = p
+func (c *PlanarCamera) SetFocus(p space.Coord) {
+	c.ready = false
+
+	c.focus = p
 }
 
-func (c *Camera) Move(forward, lateral, vertical float32) {
-	c.current.position.X += lateral*math32.Cos(c.current.yaw) - forward*math32.Sin(c.current.yaw)
-	c.current.position.Z += lateral*math32.Sin(c.current.yaw) + forward*math32.Cos(c.current.yaw)
-	c.current.position.Y += vertical
+func (c *PlanarCamera) Focus() space.Coord {
+	return c.focus
 }
 
-func (c *Camera) Position() space.Coord {
-	return c.current.position
+func (c *PlanarCamera) Move(forward, lateral, vertical float32) {
+	c.ready = false
+
+	cos := math32.Cos(c.yaw)
+	sin := math32.Sin(c.yaw)
+	c.focus.X += lateral*cos - forward*sin
+	c.focus.Z += lateral*sin + forward*cos
+	c.focus.Y += vertical
 }
 
 //------------------------------------------------------------------------------
 
-func (c *Camera) SetOrientation(yaw, pitch, roll float32) {
-	c.current.yaw = yaw
-	c.current.pitch = pitch
-	c.current.roll = roll
+func (c *PlanarCamera) SetDistance(d float32) {
+	c.distance = d
 }
 
-func (c *Camera) Rotate(yaw, pitch, roll float32) {
-	c.current.yaw += yaw
-	for c.current.yaw > math32.Pi {
-		c.current.yaw -= 2 * math32.Pi
-		// Need to update previous state too, because of interpolation
-		c.previous.yaw -= 2 * math32.Pi
-	}
-	for c.current.yaw < -math32.Pi {
-		c.current.yaw += 2 * math32.Pi
-		// Need to update previous state too, because of interpolation
-		c.previous.yaw += 2 * math32.Pi
+func (c *PlanarCamera) ChangeDistance(d float32) {
+	c.ready = false
+
+	c.distance += d
+}
+
+func (c *PlanarCamera) Distance() float32 {
+	return c.distance
+}
+
+//------------------------------------------------------------------------------
+
+func (c *PlanarCamera) SetOrientation(yaw, pitch, roll float32) {
+	c.ready = false
+
+	c.yaw = yaw
+	c.pitch = pitch
+	c.roll = roll
+}
+
+func (c *PlanarCamera) Rotate(yaw, pitch, roll float32) {
+	c.ready = false
+
+	if c.roll != 0 {
+		cos := math32.Cos(c.roll)
+		sin := math32.Sin(c.roll)
+		yaw, pitch = cos*yaw-sin*pitch, sin*yaw+cos*pitch
 	}
 
-	c.current.pitch += pitch
+	c.yaw += yaw
+	for c.yaw > math32.Pi {
+		c.yaw -= 2 * math32.Pi
+	}
+	for c.yaw < -math32.Pi {
+		c.yaw += 2 * math32.Pi
+	}
+
+	c.pitch += pitch
 	switch {
-	case c.current.pitch < -math.Pi/2:
-		c.current.pitch = -math.Pi / 2
-	case c.current.pitch > +math.Pi/2:
-		c.current.pitch = +math.Pi / 2
+	case c.pitch < -math.Pi/2:
+		c.pitch = -math.Pi / 2
+	case c.pitch > +math.Pi/2:
+		c.pitch = +math.Pi / 2
 	}
 
-	c.current.roll += roll
-	for c.current.roll > math32.Pi {
-		c.current.roll -= 2 * math32.Pi
-		// Need to update previous state too, because of interpolation
-		c.previous.roll -= 2 * math32.Pi
+	c.roll += roll
+	for c.roll > math32.Pi {
+		c.roll -= 2 * math32.Pi
 	}
-	for c.current.roll < -math32.Pi {
-		c.current.roll += 2 * math32.Pi
-		// Need to update previous state too, because of interpolation
-		c.previous.roll += 2 * math32.Pi
+	for c.roll < -math32.Pi {
+		c.roll += 2 * math32.Pi
 	}
 }
 
-func (c *Camera) Orientation() (yaw, pitch, roll float32) {
-	return c.current.yaw, c.current.pitch, c.current.roll
+func (c *PlanarCamera) Orientation() (yaw, pitch, roll float32) {
+	c.ready = false
+	return c.yaw, c.pitch, c.roll
 }
 
 //------------------------------------------------------------------------------
 
-func (c *Camera) NextState() {
-	c.previous = c.current
-}
-
-//------------------------------------------------------------------------------
-
-func (c *Camera) SetExposure(aperture, shutterTime, sensitivity float64) {
+func (c *PlanarCamera) SetExposure(aperture, shutterTime, sensitivity float64) {
 	// See "Moving Frostbite to Physically Based Rendering", Lagarde, de Rousiers (SIGGRAPH 2014)
 	ev100 := math.Log2((aperture * aperture) / shutterTime * 100.0 / sensitivity)
 	maxLum := 1.2 * math.Pow(2.0, ev100)
@@ -155,26 +191,30 @@ func (c *Camera) SetExposure(aperture, shutterTime, sensitivity float64) {
 
 //------------------------------------------------------------------------------
 
-func (c *Camera) Bind() {
-	c.updateView()
-	c.buffer.ProjectionView = c.projection.Times(c.view)
+func (c *PlanarCamera) Bind() {
+	if !c.ready {
+		c.prepare()
+	}
 	c.ubo.SubData(&c.buffer, 0)
 	c.ubo.Bind(0)
 }
 
 //------------------------------------------------------------------------------
 
-func (c *Camera) updateView() {
-	a := float32(internal.DrawInterpolation)
-	pos := c.previous.position.Times(1 - a).Plus(c.current.position.Times(a))
-	yaw := c.previous.yaw*(1-a) + c.current.yaw*a
-	pitch := c.previous.pitch*(1-a) + c.current.pitch*a
-	roll := c.previous.roll*(1-a) + c.current.roll*a
+func (c *PlanarCamera) prepare() {
+	// Compute the view and projection matrices
+	r := space.EulerZXY(c.pitch, c.yaw, c.roll)
+	c.view = space.Translation(space.Coord{0, 0, -c.distance})
+	c.view = c.view.Times(r)
+	c.view = c.view.Times(space.Translation(c.focus.Opposite()))
 
-	c.view = space.EulerZXY(pitch, yaw, roll)
-	c.view = c.view.Times(space.Translation(pos.Opposite()))
+	c.buffer.ProjectionView = c.projection.Times(c.view)
 
-	c.buffer.CameraPosition = pos
+	// Compute the focus point position
+	d := space.Apply(r.Transpose(), space.Homogen{0, 0, c.distance, 1}).Coord()
+	c.buffer.CameraPosition = c.focus.Plus(d)
+
+	c.ready = true
 }
 
 //------------------------------------------------------------------------------
