@@ -118,9 +118,10 @@ func (cl *Clip) Clear() {
 // and clipped.
 //
 // Special characters:
+// - '~' blank space (i.e. fully transparent)
 // - '\a' toggle highlight
 // - '\b' move cursor one character left
-// - '\f' transparent space
+// - '\f' escaped ~
 // - '\n' newline
 // - '\r' move cursor to beginning of line
 // - '\t' tabulation
@@ -144,10 +145,30 @@ func (cl *Clip) Write(p []byte) (n int, err error) {
 
 	for _, c := range p {
 		switch {
-		case ' ' <= c && c <= '~':
+		case ' ' <= c && c <= '}':
 			c |= colour
 
+		case c == '\r':
+			x = 0
+			continue
+
+		case c == '\f':
+			c = '~'
+		case c == '~':
+			c = '\x00'
+
 		case c == '\n':
+			// First, clear to end of line
+			if 0 <= y && y <= sy {
+				i := x
+				if i < 0 {
+					i = 0
+				}
+				for ; i <= sx; i++ {
+					micro.Poke(l+i, t+y, clr)
+				}
+			}
+			// Go to next line
 			x = 0
 			if y == sy {
 				cl.Scroll(0, -1)
@@ -155,15 +176,8 @@ func (cl *Clip) Write(p []byte) (n int, err error) {
 				y++
 			}
 			continue
-
-		case c == '\r':
-			x = 0
-			continue
-
-		case c == '\f':
-			c = '\x00'
-
 		case c == '\v':
+			// Clear to end of line
 			if 0 <= y && y <= sy {
 				i := x
 				if i < 0 {
