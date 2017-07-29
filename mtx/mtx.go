@@ -8,7 +8,6 @@ package mtx
 import (
 	"fmt"
 
-	"github.com/drakmaniso/glam/color"
 	micro "github.com/drakmaniso/glam/internal/microtext"
 )
 
@@ -49,25 +48,19 @@ func Clamp(x, y int) (int, int) {
 
 //------------------------------------------------------------------------------
 
-// Color sets the foreground and background color.
-func Color(fg, bg color.RGB) {
-	micro.SetColor(fg, bg)
+// SetReverseVideo activates or deactivates reverse video.
+func SetReverseVideo(t bool) {
+	micro.SetReverseVideo(t)
 }
 
-// Opaque selects wether the background is drawn or not. When set to false, the
-// text is drawn directly over the game screen. When set to true, it is are
-// drawn over a colored background. Note that blank space (i.e. areas without
-// MTX content, not white space) is always transparent.
-//
-// Note: It's possiblt to toggle this settings in game, using
-// Control+Alt+NumPadEnter.
-func Opaque(t bool) {
-	micro.SetBgAlpha(t)
+// GetReverseVideo returns true if microtext is in reverse video.
+func GetReverseVideo() bool {
+	return micro.GetReverseVideo()
 }
 
-// IsOpaque returns wether the background is currently opaque or not.
-func IsOpaque() bool {
-	return micro.GetBgAlpha()
+// ToggleReverseVideo toggles reverse video mode.
+func ToggleReverseVideo() {
+	micro.ToggleReverseVideo()
 }
 
 //------------------------------------------------------------------------------
@@ -96,10 +89,16 @@ func Poke(x, y int, value byte) {
 
 //------------------------------------------------------------------------------
 
-// Print writes formatted text to the screen, at given coordinates.
-func Print(x, y int, format string, a ...interface{}) {
+// Locate positions the cursor, in coordinates relative to screen bounds.
+// Positive coordinates are interpreted from the top left corner, while negative
+// coordinates are interpreted from the bottom-right corner.
+func Locate(x, y int) {
 	stdClip.Locate(x, y)
+}
 
+// Print writes formatted text to the screen, at the current cursor position. If
+// the bottom of the screen is reached, the whole screen is scrolled updward.
+func Print(format string, a ...interface{}) {
 	fmt.Fprintf(&stdClip, format, a...)
 }
 
@@ -111,8 +110,8 @@ var stdClip = Clip{
 //------------------------------------------------------------------------------
 
 // ShowFrameTime enable or disable a mini widget showing average frame time.
-func ShowFrameTime(enable bool, x, y int, opaque bool) {
-	micro.ShowFrameTime(enable, x, y, opaque)
+func ShowFrameTime(enable bool, x, y int) {
+	micro.ShowFrameTime(enable, x, y)
 }
 
 //------------------------------------------------------------------------------

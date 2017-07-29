@@ -16,10 +16,11 @@ layout(std430, binding = 1) buffer Screen {
   int NbCols;
   int NbRows;
   //
-  vec3 Foreground;
-  int PixelSize;
-  //
-	vec4 Background;
+	int PixelSize;
+	bool ReverseVideo;
+	int unused1;
+	int unused2;
+
   //
 	uint Chars[];
 } screen;
@@ -50,9 +51,6 @@ void main(void) {
 
 	if (chr == 0) {discard;}
 
-	vec4 fg = vec4(screen.Foreground, 1.0);
-	vec4 bg = screen.Background;
-
   int dx = x - col*charWidth;
   int dy = y - row*charHeight;
 
@@ -69,10 +67,19 @@ void main(void) {
 	uint fnt = (fntB >> (7 - dx)) & 0x1;
 
 	// Calculate the color
-	bg.a *= float(fntB & 0x01);
+
+	vec4 fg = vec4(1.0, 1.0, 1.0, 1.0);
+	vec4 bg = vec4(0.0, 0.0, 0.0, 0.66);
+	if (screen.ReverseVideo) {
+		fg = vec4(0.0, 0.0, 0.0, 1.0);
+		bg = vec4(1.0, 1.0, 1.0, 0.33);
+	}
+	if (chr == 0) {
+		bg.a = 0.0;
+	}
 	Color = fnt * fg + (1 - fnt) * bg;
 
-	if (Color.a == 0) {
+	if (Color.a == 0.0) {
 		discard;
 	}
 }

@@ -25,18 +25,12 @@ type Clip struct {
 	// Cursor position, relative to top-left corner
 	x, y int
 
-	// Should characters be drawn in reverse video?
-	ReverseVideo bool
+	// Should characters be drawn highlighted?
+	Highlighted bool
 
-	// Character used to clear the clip
-	ClearChar byte
-
-	// Should space characters be opaque or "see-through"?
-	TransparentSpace bool
-
-	// Whether vertical and horizontal auto-scrolling are active
-	HScroll bool
-	VScroll bool
+	// If true, the clip will be cleared with normal space characters
+	// (translucents), otherwise with blanks (fully transparents).
+	Solid bool
 }
 
 //------------------------------------------------------------------------------
@@ -104,9 +98,14 @@ func (cl *Clip) Clear() {
 	l, t, r, b := cl.Bounds()
 	cl.x, cl.y = 0, 0
 
+	clr := byte('\x00')
+	if cl.Solid {
+		clr = ' '
+	}
+
 	for y := t; y <= b; y++ {
 		for x := l; x <= r; x++ {
-			micro.Poke(x, y, cl.ClearChar)
+			micro.Poke(x, y, clr)
 		}
 	}
 }
@@ -117,35 +116,40 @@ func (cl *Clip) Clear() {
 // characters such as newline and tabs are recognized. It always returns the
 // total number of bytes in the slice, even if some characters are out-of-bounds
 // and clipped.
+//
+// Special characters:
+// - '\a' toggle highlight
+// - '\b' move cursor one character left
+// - '\f' transparent space
+// - '\n' newline
+// - '\r' move cursor to beginning of line
+// - '\t' tabulation
+// - '\v' clear until end of line
 func (cl *Clip) Write(p []byte) (n int, err error) {
 	l, t, r, b := cl.Bounds()
 	sx, sy := r-l, b-t
 
 	colour := byte(0x00)
 	// Prepare reverse video mask
-	if cl.ReverseVideo {
+	if cl.Highlighted {
 		colour = byte(0x80)
 	}
 
-	// Prepare space character
-	spCh := byte(' ') | colour
-	if cl.TransparentSpace {
-		spCh = '\000'
+	clr := byte('\x00')
+	if cl.Solid {
+		clr = ' '
 	}
 
 	x, y := cl.Clamp(cl.x, cl.y)
 
 	for _, c := range p {
 		switch {
-		case ' ' < c && c <= '~':
+		case ' ' <= c && c <= '~':
 			c |= colour
-
-		case c == ' ':
-			c = spCh
 
 		case c == '\n':
 			x = 0
-			if y == sy && cl.VScroll {
+			if y == sy {
 				cl.Scroll(0, -1)
 			} else {
 				y++
@@ -157,9 +161,7 @@ func (cl *Clip) Write(p []byte) (n int, err error) {
 			continue
 
 		case c == '\f':
-			cl.Clear()
-			x, y = 0, 0
-			continue
+			c = '\x00'
 
 		case c == '\v':
 			if 0 <= y && y <= sy {
@@ -168,7 +170,7 @@ func (cl *Clip) Write(p []byte) (n int, err error) {
 					i = 0
 				}
 				for ; i <= sx; i++ {
-					micro.Poke(l+i, t+y, cl.ClearChar)
+					micro.Poke(l+i, t+y, clr)
 				}
 			}
 			continue
@@ -176,8 +178,8 @@ func (cl *Clip) Write(p []byte) (n int, err error) {
 		case c == '\t':
 			if 0 <= y && y <= sy {
 				n := ((x/8)+1)*8 - x
-				for i := 0; i < n && l+x+i <= sy; i++ {
-					micro.Poke(l+x+i, t+y, spCh)
+				for i := 0; i < n && x+i <= sy; i++ {
+					micro.Poke(l+x+i, t+y, ' ')
 				}
 				x += n
 			}
@@ -225,8 +227,13 @@ func (cl *Clip) Write(p []byte) (n int, err error) {
 		micro.Poke(xx, yy, c)
 
 		// Either scroll horizontally or move cursor
-		if x == sx && cl.HScroll {
-			cl.Scroll(-1, 0)
+		if x == sx {
+			x = 0
+			if y == sy {
+				cl.Scroll(0, -1)
+			} else {
+				y++
+			}
 		} else {
 			x++
 		}
@@ -251,6 +258,11 @@ func (cl *Clip) Print(format string, a ...interface{}) {
 // move out of bounds is discarded, and the liberated space is cleared.
 func (cl *Clip) Scroll(dx, dy int) {
 	l, t, r, b := cl.Bounds()
+
+	clr := byte('\x00')
+	if cl.Solid {
+		clr = ' '
+	}
 
 	var x1, x2, x3, incX, y1, y2, y3, incY int
 	var cmpX, cmpY func(int, int) bool
@@ -298,12 +310,12 @@ func (cl *Clip) Scroll(dx, dy int) {
 			micro.Poke(x, y, micro.Peek(x-dx, y-dy))
 		}
 		for x := x2 + incX; cmpX(x, x3); x += incX {
-			micro.Poke(x, y, cl.ClearChar)
+			micro.Poke(x, y, clr)
 		}
 	}
 	for y := y2 + incY; cmpY(y, y3); y += incY {
 		for x := l; x <= r; x++ {
-			micro.Poke(x, y, cl.ClearChar)
+			micro.Poke(x, y, clr)
 		}
 	}
 }

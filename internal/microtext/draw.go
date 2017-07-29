@@ -7,7 +7,6 @@ import (
 	"strings"
 	"unsafe"
 
-	"github.com/drakmaniso/glam/color"
 	"github.com/drakmaniso/glam/gfx"
 	"github.com/drakmaniso/glam/internal"
 	"github.com/drakmaniso/glam/pixel"
@@ -27,8 +26,6 @@ func init() {
 	screen.nbCols = 1
 	screen.nbRows = 1
 	screen.pixelSize = 2
-	SetColor(color.RGB{1, 1, 1}, color.RGB{0, 0, 0})
-	SetBgAlpha(true)
 	text = make([]byte, screen.nbCols*screen.nbRows)
 }
 
@@ -93,7 +90,7 @@ func WindowResized(s pixel.Coord) {
 
 	screenUpdated = true
 
-	ShowFrameTime(ftenabled, ftx, fty, opaque)
+	ShowFrameTime(ftenabled, ftx, fty)
 }
 
 //------------------------------------------------------------------------------
@@ -101,6 +98,8 @@ func WindowResized(s pixel.Coord) {
 // Draw is called during the main loop, after the user's Draw.
 func Draw() {
 	pipeline.Bind()
+	gfx.Blending(gfx.SrcAlpha, gfx.OneMinusSrcAlpha)
+	gfx.Enable(gfx.Blend)
 	if screenUpdated {
 		screenSSBO.SubData(&screen, 0)
 		screenUpdated = false
@@ -125,15 +124,10 @@ var (
 		nbCols int32
 		nbRows int32
 		//
-		fgRed     float32
-		fgGreen   float32
-		fgBlue    float32
-		pixelSize int32
-		//
-		bgRed   float32
-		bgGreen float32
-		bgBlue  float32
-		bgAlpha float32
+		pixelSize    int32
+		reverseVideo int32
+		_            int32
+		_            int32
 	}
 
 	text []byte
@@ -153,40 +147,27 @@ func Size() (cols, rows int) {
 
 //------------------------------------------------------------------------------
 
-// SetColor changes the foreground and background colors.
-func SetColor(fg, bg color.RGB) {
-	screen.fgRed = fg.R
-	screen.fgGreen = fg.G
-	screen.fgBlue = fg.B
-
-	screen.bgRed = bg.R
-	screen.bgGreen = bg.G
-	screen.bgBlue = bg.B
-
-	screenUpdated = true
-}
-
-// SetBgAlpha sets wether the background of letters is dran or not.
-func SetBgAlpha(o bool) {
+// SetReverseVideo activates or deactivates reverse video.
+func SetReverseVideo(o bool) {
 	if o {
-		screen.bgAlpha = 1.0
+		screen.reverseVideo = 1
 	} else {
-		screen.bgAlpha = 0.0
+		screen.reverseVideo = 0
 	}
 	screenUpdated = true
 }
 
-// GetBgAlpha returns true if the background of letters is currently drawn.
-func GetBgAlpha() bool {
-	return screen.bgAlpha != 0.0
+// GetReverseVideo returns true if microtext is in reverse video.
+func GetReverseVideo() bool {
+	return screen.reverseVideo != 0
 }
 
-// ToggleBgAlpha inverts the status of background transparency.
-func ToggleBgAlpha() {
-	if screen.bgAlpha != 0 {
-		screen.bgAlpha = 0
+// ToggleReverseVideo toggles reverse video mode.
+func ToggleReverseVideo() {
+	if screen.reverseVideo != 0 {
+		screen.reverseVideo = 0
 	} else {
-		screen.bgAlpha = 1
+		screen.reverseVideo = 1
 	}
 	screenUpdated = true
 }
@@ -219,9 +200,8 @@ func Poke(x, y int, c byte) {
 
 //------------------------------------------------------------------------------
 
-func ShowFrameTime(enable bool, x, y int, opaque bool) {
+func ShowFrameTime(enable bool, x, y int) {
 	ftenabled = enable
-	opaque = opaque
 	ftx, fty = x, y
 
 	if x < 0 {
@@ -230,8 +210,8 @@ func ShowFrameTime(enable bool, x, y int, opaque bool) {
 			x = 0
 		}
 	}
-	if x > int(screen.nbCols)-5 {
-		x = int(screen.nbCols) - 5
+	if x > int(screen.nbCols)-6 {
+		x = int(screen.nbCols) - 6
 	}
 
 	switch {
@@ -260,24 +240,21 @@ func PrintFrameTime(frametime float64, xruns int) {
 	// Convert to milliseconds
 	frametime *= 1000.0
 	// Round to the first decimal
-	frametime = float64(int64(frametime*10.0+0.5)) / 10.0
+	frametime = float64(int64(frametime*100.0+0.5)) / 100.0
 	// Isolate digits
 	v100 := uint(frametime / 100)
 	v10 := uint(frametime/10) - v100*10
 	v1 := uint(frametime) - v100*100 - v10*10
 	v01 := uint(frametime*10) - v100*1000 - v10*100 - v1*10
+	v001 := uint(frametime*100) - v100*10000 - v10*1000 - v1*100 - v01*10
 
-	var c100, c10, c1, c01 byte
+	var c100, c10, c1, c01, c001 byte
 
 	switch {
 	case v100 > 9:
 		c100 = '~' + 1 | colour
 	case v100 == 0:
-		if opaque {
-			c100 = ' ' | colour
-		} else {
-			c100 = '\x00'
-		}
+		c100 = '\x00'
 	default:
 		c100 = '0' + byte(v100) | colour
 	}
@@ -286,11 +263,7 @@ func PrintFrameTime(frametime float64, xruns int) {
 	case v100 > 9 || v10 > 9:
 		c10 = '~' + 1 | colour
 	case v100 == 0 && v10 == 0:
-		if opaque {
-			c10 = ' ' | colour
-		} else {
-			c10 = '\x00'
-		}
+		c10 = '\x00'
 	default:
 		c10 = '0' + byte(v10) | colour
 	}
@@ -309,18 +282,25 @@ func PrintFrameTime(frametime float64, xruns int) {
 		c01 = '0' + byte(v01) | colour
 	}
 
+	switch {
+	case v100 > 9 || v01 > 9:
+		c001 = '~' + 1 | colour
+	default:
+		c001 = '0' + byte(v001) | colour
+	}
+
 	text[ftloc+0] = c100
 	text[ftloc+1] = c10
 	text[ftloc+2] = c1
 	text[ftloc+3] = '.' | colour
 	text[ftloc+4] = c01
+	text[ftloc+5] = c001
 
 	textUpdated = true
 }
 
 var ftx, fty int
 var ftenabled bool
-var opaque bool
 var ftloc int
 
 //------------------------------------------------------------------------------

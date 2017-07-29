@@ -73,17 +73,13 @@ func (dh DefaultHandlers) MouseWheel(w pixel.Coord) {}
 
 // KeyDown requests the game loop to stop if Escape is pressed.
 func (dh DefaultHandlers) KeyDown(l key.Label, p key.Position) {
-	if l == key.LabelEscape {
+	switch l {
+	case key.LabelEscape:
 		internal.QuitRequested = true
-	}
-	if (key.IsPressed(key.PositionLAlt) || key.IsPressed(key.PositionRAlt)) &&
-		(key.IsPressed(key.PositionLCtrl) || key.IsPressed(key.PositionRCtrl)) {
-		switch l {
-		case key.LabelKPEnter:
-			microtext.ToggleBgAlpha()
-		case key.LabelF11, key.LabelReturn:
-			internal.ToggleFullscreen()
-		}
+	case key.LabelF11:
+		internal.ToggleFullscreen()
+	case key.LabelF12:
+		microtext.ToggleReverseVideo()
 	}
 }
 
