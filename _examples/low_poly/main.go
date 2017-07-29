@@ -50,9 +50,9 @@ var pipeline *gfx.Pipeline
 // Uniform buffer
 var miscUBO gfx.UniformBuffer
 var misc struct {
-	worldFromObject          space.Matrix
-	SunIlluminance color.RGB
-	_              byte
+	worldFromObject space.Matrix
+	SunIlluminance  color.RGB
+	_               byte
 }
 
 // PlanarCamera
@@ -112,9 +112,7 @@ func setup() error {
 	misc.SunIlluminance = pbr.DirectionalLightSpectralIlluminance(116400.0, 5400.0)
 
 	// MTX
-	mtx.Color(color.RGB{0.0, 0.05, 0.1}, color.RGB{0.7, 0.6, 0.45})
-	mtx.Opaque(false)
-	mtx.ShowFrameTime(true, -1, 0, false)
+	mtx.ShowFrameTime(true, -1, 0)
 
 	return glam.Error("gfx", gfx.Err())
 }
@@ -133,9 +131,10 @@ func (loop) Update() {
 	p := camera.Focus()
 	d := camera.Distance()
 	y, pt, r := camera.Orientation()
-	mtx.Print(1, 0, "cam: %6.2f,%6.2f,%6.2f", p.X, p.Y, p.Z)
-	mtx.Print(1, 1, "     %6.2f", d)
-	mtx.Print(1, 2, "     %6.2f,%6.2f,%6.2f", y, pt, r)
+	mtx.Locate(0, 0)
+	mtx.Print("cam: %6.2f,%6.2f,%6.2f\n", p.X, p.Y, p.Z)
+	mtx.Print("~~~~~%6.2f\n", d)
+	mtx.Print("~~~~~%6.2f,%6.2f,%6.2f\n", y, pt, r)
 }
 
 //------------------------------------------------------------------------------
@@ -146,6 +145,7 @@ func (loop) Draw(dt64, _ float64) {
 	pipeline.Bind()
 	gfx.ClearDepthBuffer(1.0)
 	gfx.ClearColorBuffer(color.RGBA{0.4, 0.45, 0.5, 1.0})
+	gfx.Disable(gfx.Blend)
 
 	camera.Bind()
 	miscUBO.SubData(&misc, 0)
@@ -163,7 +163,8 @@ func (loop) Draw(dt64, _ float64) {
 func prepare(dt64 float64) {
 	dt := float32(dt64)
 
-	mtx.Print(1, 4, "%6.2f", glam.Now())
+	mtx.Locate(1, 4)
+	mtx.Print("%6.2f", glam.Now())
 
 	camera.Move(forward*dt, lateral*dt, vertical*dt)
 

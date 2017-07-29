@@ -129,9 +129,8 @@ func setup() error {
 	pipeline.Unbind()
 
 	// MTX
-	mtx.Color(color.RGB{0.0, 0.05, 0.1}, color.RGB{0.7, 0.6, 0.45})
-	mtx.Opaque(false)
-	mtx.ShowFrameTime(true, -1, 0, false)
+	mtx.SetReverseVideo(true)
+	mtx.ShowFrameTime(true, -1, 0)
 
 	return glam.Error("gfx", gfx.Err())
 }

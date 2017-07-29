@@ -28,7 +28,8 @@ func (l loop) MouseWheel(motion pixel.Coord) {
 }
 
 func (l loop) MouseButtonDown(b mouse.Button, _ int) {
-	mtx.Print(1, 5, "%6.2f", glam.Now())
+	mtx.Locate(1, 5)
+	mtx.Print("%6.2f", glam.Now())
 	switch b {
 	case mouse.Left:
 		dragStart = misc.worldFromObject

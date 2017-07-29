@@ -13,7 +13,6 @@ import (
 	"github.com/drakmaniso/glam/gfx"
 	"github.com/drakmaniso/glam/math32"
 	"github.com/drakmaniso/glam/mouse"
-	"github.com/drakmaniso/glam/mtx"
 	"github.com/drakmaniso/glam/pixel"
 	"github.com/drakmaniso/glam/plane"
 )
@@ -101,9 +100,6 @@ func setup() error {
 	pipeline.Bind()
 	pointsVBO.Bind(0, 0)
 	pipeline.Unbind()
-
-	// MTX
-	mtx.Color(color.RGB{0.1, 0.05, 0.0}, color.RGB{1, 1, 1})
 
 	return glam.Error("gfx", gfx.Err())
 }

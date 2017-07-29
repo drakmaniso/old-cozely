@@ -24,7 +24,7 @@ in glam_PerVertex {
 
 //------------------------------------------------------------------------------
 
-out vec3 Color;
+out vec4 Color;
 
 //------------------------------------------------------------------------------
 
@@ -320,9 +320,7 @@ void main(void) {
   // dither = 0.75 + dither * 0.25;
   // luminance *= dither;
 
-  Color = luminance * glam_CameraExposure;
-
-  Color = glam_ToneMap(Color);
+  Color = vec4(glam_ToneMap(luminance * glam_CameraExposure), 1.0);
 }
 
 //--------------------------------------------------------------------------------------------------

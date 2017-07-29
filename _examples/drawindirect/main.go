@@ -9,7 +9,6 @@ import (
 	"github.com/drakmaniso/glam"
 	"github.com/drakmaniso/glam/color"
 	"github.com/drakmaniso/glam/gfx"
-	"github.com/drakmaniso/glam/mtx"
 	"github.com/drakmaniso/glam/space"
 )
 
@@ -152,10 +151,6 @@ func setup() error {
 	pitch = 0.3
 	computeWorldFromObject()
 	computeViewFromWorld()
-
-	// MTX
-	mtx.Color(color.RGB{0.0, 0.05, 0.1}, color.RGB{0.7, 0.6, 0.45})
-	mtx.Opaque(false)
 
 	// Bind the vertex buffer to the pipeline
 	pipeline.Bind()

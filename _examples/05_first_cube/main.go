@@ -96,14 +96,14 @@ func setup() error {
 	computeWorldFromObject()
 	computeViewFromWorld()
 
-	// MTX
-	mtx.Color(color.RGB{0.0, 0.05, 0.1}, color.RGB{0.7, 0.6, 0.45})
-	mtx.Opaque(false)
-
 	// Bind the vertex buffer to the pipeline
 	pipeline.Bind()
 	vbo.Bind(0, 0)
 	pipeline.Unbind()
+
+	// MTX
+	mtx.SetReverseVideo(true)
+	mtx.ShowFrameTime(true, -1, 0)
 
 	return glam.Error("gfx", gfx.Err())
 }
@@ -140,9 +140,10 @@ func computeWorldFromObject() {
 	rot := space.EulerZXY(pitch, yaw, 0)
 	worldFromObject = space.Translation(position).Times(rot)
 
-	mtx.Print(1, 0, "position=%+6.2f,%+6.2f,%+6.2f\v", position.X, position.Y, position.Z)
-	mtx.Print(1, 1, "     yaw=%+6.2f\v", yaw)
-	mtx.Print(1, 2, "   pitch=%+6.2f\v", pitch)
+	mtx.Locate(0, 0)
+	mtx.Print("~position =%+6.2f,%+6.2f,%+6.2f\n", position.X, position.Y, position.Z)
+	mtx.Print("~~~~~~yaw =%+6.2f\n", yaw)
+	mtx.Print("~~~~pitch =%+6.2f\n", pitch)
 }
 
 func computeViewFromWorld() {

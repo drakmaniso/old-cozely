@@ -7,6 +7,8 @@ package main
 
 import (
 	"github.com/drakmaniso/glam"
+	"github.com/drakmaniso/glam/color"
+	"github.com/drakmaniso/glam/gfx"
 	"github.com/drakmaniso/glam/key"
 	"github.com/drakmaniso/glam/mouse"
 	"github.com/drakmaniso/glam/mtx"
@@ -148,8 +150,6 @@ func (loop) WindowQuit() {
 var scroller = mtx.Clip{
 	Left: 1, Top: 4,
 	Right: -2, Bottom: -1,
-	VScroll:   true,
-	ClearChar: ' ',
 }
 
 //------------------------------------------------------------------------------
@@ -196,6 +196,7 @@ var topbar = mtx.Clip{
 }
 
 func (loop) Draw(_, _ float64) {
+	gfx.ClearColorBuffer(color.RGBA{})
 }
 
 //------------------------------------------------------------------------------

@@ -35,7 +35,8 @@ type loop struct {
 }
 
 func (loop) Update() {
-	mtx.Print(1, 1, "hello, world\n")
+	mtx.Locate(1, 1)
+	mtx.Print("hello, world\n")
 }
 
 func (loop) Draw(_, _ float64) {

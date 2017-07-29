@@ -13,6 +13,7 @@ import (
 	"github.com/drakmaniso/glam/color"
 	"github.com/drakmaniso/glam/gfx"
 	"github.com/drakmaniso/glam/math32"
+	"github.com/drakmaniso/glam/mouse"
 	"github.com/drakmaniso/glam/mtx"
 	"github.com/drakmaniso/glam/pixel"
 	"github.com/drakmaniso/glam/plane"
@@ -54,7 +55,7 @@ var (
 // Uniform buffer
 var perFrame struct {
 	screenFromWorld space.Matrix
-	time           float32
+	time            float32
 }
 
 // Vertex buffer
@@ -66,7 +67,7 @@ type mesh []struct {
 // Matrices
 var (
 	screenFromView space.Matrix
-	viewFromWorld       space.Matrix
+	viewFromWorld  space.Matrix
 )
 
 // State
@@ -99,9 +100,7 @@ func setup() error {
 	updateView()
 
 	// MTX
-	mtx.Color(color.RGB{1.00, 0.98, 0.89}, color.RGB{0.0, 0.0, 0.0})
-	mtx.Opaque(false)
-	mtx.ShowFrameTime(true, -1, 0, false)
+	mtx.ShowFrameTime(true, -1, 0)
 
 	// File
 	file, err := os.Open(glam.Path() + "main.go")
@@ -127,8 +126,12 @@ type loop struct {
 func (loop) Update() {
 	perFrame.time += float32(glam.TimeStep())
 
+	if paused {
+		return
+	}
+
 	timer += glam.TimeStep()
-	if timer < 0.1 {
+	if timer < 0.25 {
 		return
 	}
 
@@ -141,26 +144,34 @@ func (loop) Update() {
 			scanner = bufio.NewScanner(file)
 		}
 	}
-	clip1.Print("\n%s", scanner.Text())
+	rightScroller.Print("\n%s", scanner.Text())
+	leftScroller.Print("\n%s", scanner.Text())
 
-	clip2.Print("%c", ' '+incr%('~'-' '))
+	// wrapper.Print("%c", ' '+incr%('~'-' '+1))
 	incr++
 }
 
-var clip1 = mtx.Clip{
-	Left: 1, Top: 2,
-	Right: -20, Bottom: -1,
-	VScroll: true,
+var paused bool
+
+var leftScroller = mtx.Clip{
+	Left: 0, Top: 17,
+	Right: 30, Bottom: -1,
+	Solid: true,
 }
 
-var clip2 = mtx.Clip{
-	Left: 0, Top: 0,
-	Right: -7, Bottom: 0,
-	HScroll: true,
+var rightScroller = mtx.Clip{
+	Left: leftScroller.Right + 2, Top: 17,
+	Right: -1, Bottom: -1,
+	Solid: true,
+}
+
+var wrapper = mtx.Clip{
+	Left: 0, Top: 17,
+	Right: 15, Bottom: -1,
 }
 
 var timer float64
-var incr int
+var incr uint64
 
 func (loop) Draw(_, _ float64) {
 	pipeline.Bind()
@@ -196,8 +207,40 @@ func (loop) WindowResized(is pixel.Coord) {
 	// MTX
 	for y := 0; y < 16; y++ {
 		for x := 0; x < 16; x++ {
-			mtx.Poke(-16+x, -16+y, byte(x+16*y))
+			mtx.Poke(x, y, byte(x+16*y))
 		}
+	}
+
+	leftScroller.Clear()
+	rightScroller.Clear()
+
+	var description = mtx.Clip{
+		Left: 17, Top: 0,
+		Right: -18, Bottom: leftScroller.Top - 2,
+	}
+	description.Clear()
+	description.Print("MTX is a \"text mode\" overlay, useful for debugging.\n")
+	description.Print("\nSpecial characters:\n")
+	description.Print("\t- '\f' : blank~space (i.e. fully transparent)\n")
+	description.Print("\t- '\\a': toggle \ahighlight\a\n")
+	description.Print("\t- '\\b': move cursor two\b\b\bone character left\n")
+	description.Print("\t- '\\f': escaped \f\n")
+	description.Print("\t- '\\n': newline\n")
+	description.Print("\t- '\\r': move cursor to beginning of line\n")
+	description.Print("\t- '\\t': tabulation\n")
+	description.Print("\t- '\\v': clear until end of line\n")
+	description.Print("INVISIBLE\r\v")
+	description.Locate(0, 0)
+	description.Print("PLOP\nPLIP\nPLUP\n")
+}
+
+func (l loop) MouseButtonDown(b mouse.Button, _ int) {
+	paused = !paused
+	mtx.Locate(-15, 0)
+	if paused {
+		mtx.Print("\a*PAUSED*\a")
+	} else {
+		mtx.Print("\f\f\f\f\f\f\f\f\f")
 	}
 }
 
