@@ -41,13 +41,13 @@ const vec3 ambient_luminance = vec3(99.0/256.0, 155.0/256.0, 196.0/256.0) * 2900
 //--------------------------------------------------------------------------------------------------
 
 const vec4 palette[] = {
-  {0.6, 0.4, 0.2, 1.0},
-  {0.6, 0.2, 0.4, 1.0},
+  {0.4, 0.3, 0.2, 1.0},
+  {0.6, 0.26, 0.38, 1.0},
+  {0.27, 0.07, 0.12, 1.0},
+  {0.07, 0.07, 0.12, 1.0},
+  {1.0, 1.0, 1.0, 1.0},
   {0.4, 0.5, 0.2, 1.0},
   {0.2, 0.5, 0.4, 1.0},
-  {0.4, 0.2, 0.6, 1.0},
-  {0.2, 0.35, 0.55, 1.0},
-  {1.0, 1.0, 1.0, 1.0},
 };
 
 //--------------------------------------------------------------------------------------------------
@@ -128,7 +128,20 @@ vec3 fresnelRGB (vec3 f0 , float f90, float u)
 //--------------------------------------------------------------------------------------------------
 
 // Burley Diffuse BRDF
-vec3 diffuseBRDF (float NdotV, float NdotL, float LdotH)
+vec3 diffuseBurleyBRDF (float NdotV, float NdotL, float LdotH)
+{
+  // Burley's diffuse BRDF, aka Disney Diffuse [Burley12]
+  float fd90 = 0.5 + 2.0 * LdotH * LdotH * glam_Roughness;
+  float f0 = 1.0;
+  float light_scatter = fresnel(f0 , fd90 , NdotL);
+  float view_scatter = fresnel(f0 , fd90 , NdotV);
+
+  return glam_BaseColor * light_scatter * view_scatter;
+  // (division by PI omitted, it's factored in light intensity)
+}
+
+// Normalized Burley Diffuse BRDF
+vec3 diffuseNormalizedBurleyBRDF (float NdotV, float NdotL, float LdotH)
 {
   // Renormalization to keep total energy (diffuse + specular) below 1.0 [LaDe14]
   float normalization_bias = mix (0.0 , 0.5 , glam_Roughness);
@@ -178,9 +191,10 @@ float ndf(float NdotH, float a)
 //--------------------------------------------------------------------------------------------------
 
 // Specular BRDF
-vec3 specularBRDF (float NdotV, float NdotL, float NdotH, float LdotH)
+vec3 specularBRDF (float NdotV, float NdotL, float NdotH, float LdotH, out vec3 specF)
 {
   vec3 F = fresnelRGB(glam_F0, 1.0, LdotH);
+  specF = F;
   float a = glam_Roughness * glam_Roughness;
   float G = geometry(NdotV, NdotL, a);
   float D = ndf(NdotH, a);
@@ -190,7 +204,7 @@ vec3 specularBRDF (float NdotV, float NdotL, float NdotH, float LdotH)
 
 //--------------------------------------------------------------------------------------------------
 
-vec3 lightLuminance(vec3 L, vec3 V, vec3 N)
+vec3 pbr_lightingSimple(vec3 L, vec3 V, vec3 N)
 {
   float NdotV = abs(dot(N , V)) + 0.000000001; //TODO: factorize out of function
 
@@ -199,9 +213,45 @@ vec3 lightLuminance(vec3 L, vec3 V, vec3 N)
   float NdotH = max(0.0, dot(N, H));
   float NdotL = max(0.0, dot(N, L));
 
-  vec3 specular = specularBRDF(NdotV, NdotL, NdotH, LdotH);
+  vec3 specF;
+  vec3 specular = specularBRDF(NdotV, NdotL, NdotH, LdotH, specF);
 
-  vec3 diffuse = diffuseBRDF(NdotV, NdotL, LdotH);
+
+  return NdotL * (specular + (1 - specF)*glam_BaseColor);
+  // (division by PI omitted, it's factored in light intensity)
+}
+
+vec3 pbr_lightingBurley(vec3 L, vec3 V, vec3 N)
+{
+  float NdotV = abs(dot(N , V)) + 0.000000001; //TODO: factorize out of function
+
+  vec3 H = normalize(V + L);
+  float LdotH = max(0.0, dot(L, H));
+  float NdotH = max(0.0, dot(N, H));
+  float NdotL = max(0.0, dot(N, L));
+
+  vec3 specF;
+  vec3 specular = specularBRDF(NdotV, NdotL, NdotH, LdotH, specF);
+
+  vec3 diffuse = diffuseBurleyBRDF(NdotV, NdotL, LdotH);
+
+  return NdotL * (specular + diffuse);
+  // (division by PI omitted, it's factored in light intensity)
+}
+
+vec3 pbr_lightingNormalizedBurley(vec3 L, vec3 V, vec3 N)
+{
+  float NdotV = abs(dot(N , V)) + 0.000000001; //TODO: factorize out of function
+
+  vec3 H = normalize(V + L);
+  float LdotH = max(0.0, dot(L, H));
+  float NdotH = max(0.0, dot(N, H));
+  float NdotL = max(0.0, dot(N, L));
+
+  vec3 specF;
+  vec3 specular = specularBRDF(NdotV, NdotL, NdotH, LdotH, specF);
+
+  vec3 diffuse = diffuseNormalizedBurleyBRDF(NdotV, NdotL, LdotH);
 
   return NdotL * (specular + diffuse);
   // (division by PI omitted, it's factored in light intensity)
@@ -236,15 +286,16 @@ void main(void) {
   // glam_BaseColor = vec3 (0.913183, 0.921494, 0.924524); // Aluminium
   // glam_BaseColor = vec3 (0.955008, 0.637427, 0.538163); // Copper
   // glam_BaseColor = vec3 (0.549585, 0.556114, 0.554256); // Chromium
-  //glam_BaseColor = vec3 (0.659777, 0.608679, 0.525649); // Nickel
+  // glam_BaseColor = vec3 (0.659777, 0.608679, 0.525649); // Nickel
   //glam_BaseColor = vec3 (0.541931, 0.496791, 0.449419); // Titanium
   //glam_BaseColor = vec3 (0.662124, 0.654864, 0.633732); // Cobalt
-  //glam_BaseColor = vec3 (0.672411, 0.637331, 0.585456); // Platinum
+  // glam_BaseColor = vec3 (0.672411, 0.637331, 0.585456); // Platinum
   // glam_BaseColor = vec3 (0.56, 0.57, 0.58); // Iron
   //glam_BaseColor = vec3 (1.00, 0.71, 0.29); // Gold
   //glam_BaseColor = vec3 (0.95, 0.93, 0.88); // Silver
 
   // glam_BaseColor = vec3 (0.42, 0.72, 0.86); // Cartoonish Iron
+  // glam_BaseColor = vec3 (0.99, 0.76, 0.073); // Cartoonish Gold
 
   glam_SetupPBR();
 
@@ -257,7 +308,9 @@ void main(void) {
   // vec3 luminance = glam_SunIlluminance * phong_lighting (L, V, N, glam_BaseColor, mix (vec3 (0.9), vec3 (0.0), glam_Roughness * glam_Roughness)) + glam_BaseColor * ambient_luminance;
   // vec3 luminance = glam_SunIlluminance * normalized_blinn_phong_lighting (L, V, N, glam_BaseColor, glam_F0, 1000.0 * glam_Smoothness * glam_Smoothness * glam_Smoothness * glam_Smoothness) + glam_BaseColor * ambient_luminance;
   // vec3 luminance = glam_SunIlluminance * minimalist_cook_torrance_lighting (L, V, N, glam_BaseColor, glam_F0, 500.0 * glam_Smoothness * glam_Smoothness * glam_Smoothness * glam_Smoothness) + glam_BaseColor * ambient_luminance;
-  vec3 luminance = glam_SunIlluminance * lightLuminance(L, V, N) + glam_BaseColor * ambient_luminance;
+  // vec3 luminance = glam_SunIlluminance * pbr_lightingSimple(L, V, N) + glam_BaseColor * ambient_luminance;
+  vec3 luminance = glam_SunIlluminance * pbr_lightingBurley(L, V, N) + glam_BaseColor * ambient_luminance;
+  // vec3 luminance = glam_SunIlluminance * pbr_lightingNormalizedBurley(L, V, N) + glam_BaseColor * ambient_luminance;
 
 
   // Dithering

@@ -19,13 +19,26 @@ func main() {
 		return
 	}
 
-	mtx.Print(1, 1, "hello, world\n")
+	glam.Loop(loop{})
 
-	err = glam.Loop()
+	err = glam.Run()
 	if err != nil {
 		glam.ShowError("running", err)
 		return
 	}
+}
+
+//------------------------------------------------------------------------------
+
+type loop struct {
+	glam.DefaultHandlers
+}
+
+func (loop) Update() {
+	mtx.Print(1, 1, "hello, world\n")
+}
+
+func (loop) Draw(_, _ float64) {
 }
 
 //------------------------------------------------------------------------------

@@ -9,7 +9,6 @@ import (
 	"math/rand"
 
 	"github.com/drakmaniso/glam"
-	"github.com/drakmaniso/glam/basic"
 	"github.com/drakmaniso/glam/color"
 	"github.com/drakmaniso/glam/gfx"
 	"github.com/drakmaniso/glam/math32"
@@ -17,7 +16,6 @@ import (
 	"github.com/drakmaniso/glam/mtx"
 	"github.com/drakmaniso/glam/pixel"
 	"github.com/drakmaniso/glam/plane"
-	"github.com/drakmaniso/glam/window"
 )
 
 //------------------------------------------------------------------------------
@@ -35,12 +33,9 @@ func main() {
 		return
 	}
 
-	glam.Update = update
-	glam.Draw = draw
-	window.Handle = handler{}
-	mouse.Handle = handler{}
+	glam.Loop(loop{})
 
-	err = glam.LoopStable(1.0 / 60.0)
+	err = glam.Run()
 	if err != nil {
 		glam.ShowError("running", err)
 		return
@@ -58,7 +53,7 @@ var (
 
 // Uniform buffer
 var perFrame struct {
-	Scale    plane.Coord
+	ratio    plane.Coord
 	Rotation float32
 }
 
@@ -93,7 +88,6 @@ func setup() error {
 
 	// Create the uniform buffer
 	perFrameUBO = gfx.NewUniformBuffer(&perFrame, gfx.DynamicStorage)
-	updateView()
 	perFrame.Rotation = 0.0
 
 	// Create and fill the vertex buffer
@@ -115,10 +109,11 @@ func setup() error {
 }
 
 //------------------------------------------------------------------------------
+type loop struct {
+	glam.DefaultHandlers
+}
 
-var updated bool
-
-func update(_, _ float64) {
+func (loop) Update() {
 	for i, pt := range points {
 		points[i].Position = plane.Coord{
 			pt.Position.X + speeds[i]*math32.Cos(angles[i]) + jitter*(rand.Float32()-0.5),
@@ -135,7 +130,9 @@ func update(_, _ float64) {
 	updated = true
 }
 
-func draw() {
+var updated bool
+
+func (loop) Draw(_, _ float64) {
 	if updated {
 		pipeline.Bind()
 
@@ -170,33 +167,23 @@ func setupPoints() {
 
 //------------------------------------------------------------------------------
 
-// Event handler
-type handler struct {
-	basic.WindowHandler
-	basic.MouseHandler
-}
-
-func (h handler) WindowResized(s pixel.Coord, _ uint32) {
+func (loop) WindowResized(sp pixel.Coord) {
 	gfx.ClearColorBuffer(bgColor)
+
 	setupPoints()
-	updateView()
-}
 
-func (h handler) MouseButtonDown(b mouse.Button, _ int, _ uint32) {
-	gfx.ClearColorBuffer(bgColor)
-	setupPoints()
-}
-
-//------------------------------------------------------------------------------
-
-func updateView() {
-	s := plane.CoordOf(window.Size())
+	// Compute ratio
+	s := plane.CoordOf(sp)
 	if s.X > s.Y {
-		perFrame.Scale = plane.Coord{s.Y / s.X, 1.0}
+		perFrame.ratio = plane.Coord{s.Y / s.X, 1.0}
 	} else {
-		perFrame.Scale = plane.Coord{1.0, s.X / s.Y}
+		perFrame.ratio = plane.Coord{1.0, s.X / s.Y}
 	}
-	pipeline.Bind()
+}
+
+func (loop) MouseButtonDown(b mouse.Button, _ int) {
+	gfx.ClearColorBuffer(bgColor)
+	setupPoints()
 }
 
 //------------------------------------------------------------------------------

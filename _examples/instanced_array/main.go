@@ -9,13 +9,11 @@ import (
 	"math/rand"
 
 	"github.com/drakmaniso/glam"
-	"github.com/drakmaniso/glam/basic"
 	"github.com/drakmaniso/glam/color"
 	"github.com/drakmaniso/glam/gfx"
 	"github.com/drakmaniso/glam/mouse"
 	"github.com/drakmaniso/glam/pixel"
 	"github.com/drakmaniso/glam/plane"
-	"github.com/drakmaniso/glam/window"
 )
 
 //------------------------------------------------------------------------------
@@ -33,12 +31,9 @@ func main() {
 		return
 	}
 
-	glam.Update = update
-	glam.Draw = draw
-	window.Handle = handler{}
-	mouse.Handle = handler{}
+	glam.Loop(loop{})
 
-	err = glam.Loop()
+	err = glam.Run()
 	if err != nil {
 		glam.ShowError("running", err)
 		return
@@ -100,11 +95,15 @@ func setup() error {
 
 //------------------------------------------------------------------------------
 
-func update(dt, _ float64) {
-	perFrame.time += float32(dt)
+type loop struct {
+	glam.DefaultHandlers
 }
 
-func draw() {
+func (loop) Update() {
+	perFrame.time += float32(glam.TimeStep())
+}
+
+func (loop) Draw(_, _ float64) {
 	pipeline.Bind()
 	gfx.ClearDepthBuffer(1.0)
 	gfx.ClearColorBuffer(color.RGBA{0.9, 0.85, 0.80, 1.0})
@@ -137,6 +136,18 @@ func randomizeRosesData() {
 
 //------------------------------------------------------------------------------
 
+func (loop) WindowResized(is pixel.Coord) {
+	s := plane.CoordOf(is)
+	perFrame.ratio = s.Y / s.X
+}
+
+func (loop) MouseButtonDown(b mouse.Button, _ int) {
+	randomizeRosesData()
+	rosesINBO.SubData(roses[:], 0)
+}
+
+//------------------------------------------------------------------------------
+
 // func rose(nbPoints int, num int, den int, offset float32) []perVertex {
 // 	// var m = []perVertex{{plane.Coord{0.0, 0.0}, color.RGB{0.9, 0.9, 0.9}}}
 // 	var m = []perVertex{}
@@ -149,22 +160,5 @@ func randomizeRosesData() {
 // 	}
 // 	return m
 // }
-
-//------------------------------------------------------------------------------
-
-type handler struct {
-	basic.WindowHandler
-	basic.MouseHandler
-}
-
-func (h handler) WindowResized(is pixel.Coord, _ uint32) {
-	s := plane.CoordOf(is)
-	perFrame.ratio = s.Y / s.X
-}
-
-func (h handler) MouseButtonDown(b mouse.Button, _ int, _ uint32) {
-	randomizeRosesData()
-	rosesINBO.SubData(roses[:], 0)
-}
 
 //------------------------------------------------------------------------------

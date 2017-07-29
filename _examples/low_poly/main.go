@@ -9,7 +9,6 @@ import (
 	"github.com/drakmaniso/glam"
 	"github.com/drakmaniso/glam/color"
 	"github.com/drakmaniso/glam/gfx"
-	"github.com/drakmaniso/glam/key"
 	"github.com/drakmaniso/glam/mouse"
 	"github.com/drakmaniso/glam/mtx"
 	"github.com/drakmaniso/glam/pbr"
@@ -34,13 +33,10 @@ func main() {
 		return
 	}
 
-	glam.Update = update
-	glam.Draw = draw
-	window.Handle = handler{}
-	mouse.Handle = handler{}
-	key.Handle = handler{}
+	glam.Loop(loop{})
+	glam.SetTimeStep(1 / 2.0)
 
-	err = glam.LoopStable(1 / 60.0)
+	err = glam.Run()
 	if err != nil {
 		glam.ShowError("running", err)
 		return
@@ -54,25 +50,31 @@ var pipeline *gfx.Pipeline
 // Uniform buffer
 var miscUBO gfx.UniformBuffer
 var misc struct {
-	Model          space.Matrix
+	worldFromObject          space.Matrix
 	SunIlluminance color.RGB
 	_              byte
 }
 
-// Camera
+// PlanarCamera
 
-var camera *pbr.Camera
+var camera *pbr.PlanarCamera
+
+// State
+
 var forward, lateral, vertical, rolling float32
+var dragStart space.Matrix
 
-// Model
+var current struct {
+	dragDelta plane.Coord
+}
+
+var previous struct {
+	dragDelta plane.Coord
+}
+
+// worldFromObject
 
 var meshes poly.Meshes
-
-var object struct {
-	position         space.Coord
-	yaw, pitch, roll float32
-	scale            float32
-}
 
 //------------------------------------------------------------------------------
 
@@ -90,21 +92,21 @@ func setup() error {
 
 	//
 	meshes = poly.Meshes{}
+	// meshes.AddObj(glam.Path() + "../shared/cube.obj")
+	// meshes.AddObj(glam.Path() + "../shared/teapot.obj")
 	meshes.AddObj(glam.Path() + "../shared/suzanne.obj")
-	// meshes.AddObj("E:/objtestfiles/elephant_quads.obj")
+	// meshes.AddObj("E:/objtestfiles/triceratops.obj")
 	poly.SetupMeshBuffers(meshes)
 
 	// Setup camera
 
-	camera = pbr.NewCamera()
+	camera = pbr.NewPlanarCamera()
 	camera.SetExposure(16.0, 1.0/125.0, 100.0)
-	camera.SetPosition(space.Coord{0, 0, 0})
+	camera.SetFocus(space.Coord{0, 0, 0})
+	camera.SetDistance(4)
 
 	// Setup model
-
-	object.position = space.Coord{0, 0, -4}
-	object.scale = 1.0
-	updateModel()
+	misc.worldFromObject = space.Identity()
 
 	// Setup light
 	misc.SunIlluminance = pbr.DirectionalLightSpectralIlluminance(116400.0, 5400.0)
@@ -114,40 +116,33 @@ func setup() error {
 	mtx.Opaque(false)
 	mtx.ShowFrameTime(true, -1, 0, false)
 
-	// Bind the vertex buffer to the pipeline
-	// pipeline.Bind()
-
-	// pipeline.Bind()
-	// vbo.Bind(0, 0)
-	// pipeline.Unbind()
-
 	return glam.Error("gfx", gfx.Err())
 }
 
 //------------------------------------------------------------------------------
 
-func update(dt64, _ float64) {
-	dt := float32(dt64)
-
-	camera.NextState()
-
-	camera.Move(forward*dt, lateral*dt, vertical*dt)
-
-	if firstPerson {
-		m := mouse.SmoothDelta()
-		s := plane.CoordOf(window.Size())
-		camera.Rotate(2*m.X/s.X, 2*m.Y/s.Y, rolling*dt)
-	}
-
-	p := camera.Position()
-	y, pt, r := camera.Orientation()
-	mtx.Print(1, 0, "cam: %6.2f,%6.2f,%6.2f", p.X, p.Y, p.Z)
-	mtx.Print(1, 1, "     %6.2f,%6.2f,%6.2f", y, pt, r)
+type loop struct {
+	glam.DefaultHandlers
 }
 
 //------------------------------------------------------------------------------
 
-func draw() {
+func (loop) Update() {
+	// prepare(glam.TimeStep())
+
+	p := camera.Focus()
+	d := camera.Distance()
+	y, pt, r := camera.Orientation()
+	mtx.Print(1, 0, "cam: %6.2f,%6.2f,%6.2f", p.X, p.Y, p.Z)
+	mtx.Print(1, 1, "     %6.2f", d)
+	mtx.Print(1, 2, "     %6.2f,%6.2f,%6.2f", y, pt, r)
+}
+
+//------------------------------------------------------------------------------
+
+func (loop) Draw(dt64, _ float64) {
+	prepare(dt64)
+
 	pipeline.Bind()
 	gfx.ClearDepthBuffer(1.0)
 	gfx.ClearColorBuffer(color.RGBA{0.4, 0.45, 0.5, 1.0})
@@ -158,18 +153,32 @@ func draw() {
 
 	poly.BindMeshBuffers()
 
-	// poly.Draw()
 	gfx.Draw(0, int32(len(meshes.Faces)*6))
 
 	pipeline.Unbind()
 }
 
-func updateModel() {
-	misc.Model = space.Translation(object.position)
-	misc.Model = misc.Model.Times(space.EulerXZY(object.pitch, object.yaw, object.roll))
-	misc.Model = misc.Model.Times(space.Scaling(space.Coord{object.scale, object.scale, object.scale}))
-	mtx.Print(1, 3, "obj: %6.2f,%6.2f,%6.2f", object.position.X, object.position.Y, object.position.Z)
-	mtx.Print(1, 4, "     %6.2f,%6.2f", object.yaw, object.pitch)
+//------------------------------------------------------------------------------
+
+func prepare(dt64 float64) {
+	dt := float32(dt64)
+
+	mtx.Print(1, 4, "%6.2f", glam.Now())
+
+	camera.Move(forward*dt, lateral*dt, vertical*dt)
+
+	m := mouse.SmoothDelta()
+	s := plane.CoordOf(window.Size())
+	switch {
+	case mouse.IsPressed(mouse.Right):
+		camera.Rotate(2*m.X/s.X, 2*m.Y/s.Y, rolling*dt)
+	case mouse.IsPressed(mouse.Left):
+		current.dragDelta = current.dragDelta.Plus(plane.Coord{2 * m.Y / s.Y, 2 * m.X / s.X})
+		r := space.EulerXYZ(current.dragDelta.X, current.dragDelta.Y, 0)
+		vr := camera.View().WithoutTranslation()
+		r = vr.Transpose().Times(r.Times(vr))
+		misc.worldFromObject = r.Times(dragStart)
+	}
 }
 
 //------------------------------------------------------------------------------

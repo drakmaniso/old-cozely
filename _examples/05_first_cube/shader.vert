@@ -4,7 +4,7 @@ layout(location = 0) in vec3 Position;
 layout(location = 1) in vec3 Color;
 
 layout(std140, binding = 0) uniform PerObject {
-	mat4 Transform;
+	mat4 ScreenFromObject;
 } obj;
 
 out gl_PerVertex {
@@ -16,6 +16,6 @@ out PerVertex {
 } vert;
 
 void main(void) {
-	gl_Position = obj.Transform * vec4(Position, 1);
+	gl_Position = obj.ScreenFromObject * vec4(Position, 1);
 	vert.Color = Color;
 }

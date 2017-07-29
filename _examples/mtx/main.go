@@ -12,10 +12,11 @@ import (
 	"github.com/drakmaniso/glam"
 	"github.com/drakmaniso/glam/color"
 	"github.com/drakmaniso/glam/gfx"
-	"github.com/drakmaniso/glam/mouse"
+	"github.com/drakmaniso/glam/math32"
 	"github.com/drakmaniso/glam/mtx"
+	"github.com/drakmaniso/glam/pixel"
+	"github.com/drakmaniso/glam/plane"
 	"github.com/drakmaniso/glam/space"
-	"github.com/drakmaniso/glam/window"
 )
 
 //------------------------------------------------------------------------------
@@ -33,12 +34,9 @@ func main() {
 		return
 	}
 
-	glam.Update = update
-	glam.Draw = draw
-	window.Handle = handler{}
-	mouse.Handle = handler{}
+	glam.Loop(loop{})
 
-	err = glam.Loop()
+	err = glam.Run()
 	if err != nil {
 		glam.ShowError("running", err)
 		return
@@ -55,7 +53,7 @@ var (
 
 // Uniform buffer
 var perFrame struct {
-	viewProjection space.Matrix
+	screenFromWorld space.Matrix
 	time           float32
 }
 
@@ -67,8 +65,8 @@ type mesh []struct {
 
 // Matrices
 var (
-	view       space.Matrix
-	projection space.Matrix
+	screenFromView space.Matrix
+	viewFromWorld       space.Matrix
 )
 
 // State
@@ -97,7 +95,7 @@ func setup() error {
 	// Create and fill the vertex buffer
 	vbo := gfx.NewVertexBuffer(cube(), 0)
 
-	// Initialize model and view matrices
+	// Initialize model and viewFromWorld matrices
 	updateView()
 
 	// MTX
@@ -122,10 +120,14 @@ func setup() error {
 
 //------------------------------------------------------------------------------
 
-func update(dt, _ float64) {
-	perFrame.time += float32(dt)
+type loop struct {
+	glam.DefaultHandlers
+}
 
-	timer += dt
+func (loop) Update() {
+	perFrame.time += float32(glam.TimeStep())
+
+	timer += glam.TimeStep()
 	if timer < 0.1 {
 		return
 	}
@@ -160,12 +162,12 @@ var clip2 = mtx.Clip{
 var timer float64
 var incr int
 
-func draw() {
+func (loop) Draw(_, _ float64) {
 	pipeline.Bind()
 	gfx.ClearDepthBuffer(1.0)
 	gfx.ClearColorBuffer(color.RGBA{0.05, 0.10, 0.11, 1.0})
 
-	perFrame.viewProjection = projection.Times(view)
+	perFrame.screenFromWorld = screenFromView.Times(viewFromWorld)
 	perFrameUBO.SubData(&perFrame, 0)
 	perFrameUBO.Bind(0)
 
@@ -177,10 +179,26 @@ func draw() {
 //------------------------------------------------------------------------------
 
 func updateView() {
-	view = space.LookAt(
+	viewFromWorld = space.LookAt(
 		space.Coord{0, 0, 10},
-		space.Coord{0, 0, 0}, space.Coord{0, 1, 0},
+		space.Coord{0, 0, 0},
+		space.Coord{0, 1, 0},
 	)
+}
+
+//------------------------------------------------------------------------------
+
+func (loop) WindowResized(is pixel.Coord) {
+	s := plane.CoordOf(is)
+	r := s.X / s.Y
+	screenFromView = space.Perspective(math32.Pi/4, r, 0.001, 1000.0)
+
+	// MTX
+	for y := 0; y < 16; y++ {
+		for x := 0; x < 16; x++ {
+			mtx.Poke(-16+x, -16+y, byte(x+16*y))
+		}
+	}
 }
 
 //------------------------------------------------------------------------------

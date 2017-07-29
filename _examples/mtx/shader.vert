@@ -4,8 +4,8 @@ layout(location = 0) in vec3 Position;
 layout(location = 1) in vec3 Color;
 
 layout(std140, binding = 0) uniform PerFrame {
-	mat4 ViewProjection;
-  float time;
+	mat4 ScreenFromWorld;
+  float Time;
 } frame;
 
 out gl_PerVertex {
@@ -31,12 +31,12 @@ void main(void) {
   float iid = float(gl_InstanceID % 28) + 1.0;
   float ix = float(gl_InstanceID % 28 % 7);
   float iy = float(gl_InstanceID % 28 / 7);
-  mat4 r1 = rotation(frame.time / (29.0-ix-iy), vec3(1,0,0));
-  mat4 r2 = rotation(frame.time/(3.0+ix), vec3(0,1,0));
-  mat4 r3 = rotation(frame.time/(5.0+iy), vec3(0,0,1));
+  mat4 r1 = rotation(frame.Time / (29.0-ix-iy), vec3(1,0,0));
+  mat4 r2 = rotation(frame.Time/(3.0+ix), vec3(0,1,0));
+  mat4 r3 = rotation(frame.Time/(5.0+iy), vec3(0,0,1));
 	gl_Position = r1 * r2 * r3 * vec4(Position, 1);
   gl_Position.x += -6.0 + 2.0 * ix;
   gl_Position.y += -3.0 + 2.0 * iy;
-	gl_Position = frame.ViewProjection * gl_Position;
+	gl_Position = frame.ScreenFromWorld * gl_Position;
 	vert.Color = Color;
 }

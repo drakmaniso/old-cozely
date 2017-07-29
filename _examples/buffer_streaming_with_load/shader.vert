@@ -7,12 +7,12 @@ out gl_PerVertex {
 };
 
 layout(std140, binding = 0) uniform PerFrame {
-  vec2  Scale;
+  vec2  Ratio;
   float Angle;
 } frame;
 
 void main(void) {
   float x = Position.x * cos(frame.Angle) - Position.y * sin(frame.Angle);
   float y = Position.x * sin(frame.Angle) + Position.y * cos(frame.Angle);
-  gl_Position = vec4(frame.Scale.x * x, frame.Scale.y * y, 0.5, 1.0);
+  gl_Position = vec4(frame.Ratio.x * x, frame.Ratio.y * y, 0.5, 1.0);
 }

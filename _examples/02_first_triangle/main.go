@@ -26,9 +26,9 @@ func main() {
 		return
 	}
 
-	glam.Draw = draw
+	glam.Loop(loop{})
 
-	err = glam.Loop()
+	err = glam.Run()
 	if err != nil {
 		glam.ShowError("running", err)
 		return
@@ -57,7 +57,14 @@ func setup() error {
 
 //------------------------------------------------------------------------------
 
-func draw() {
+type loop struct {
+	glam.DefaultHandlers
+}
+
+func (loop) Update() {
+}
+
+func (loop) Draw(_, _ float64) {
 	gfx.ClearColorBuffer(color.RGBA{0.9, 0.9, 0.9, 1.0})
 	pipeline.Bind()
 	gfx.Draw(0, 3)

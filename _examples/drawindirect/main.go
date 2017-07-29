@@ -9,10 +9,8 @@ import (
 	"github.com/drakmaniso/glam"
 	"github.com/drakmaniso/glam/color"
 	"github.com/drakmaniso/glam/gfx"
-	"github.com/drakmaniso/glam/mouse"
 	"github.com/drakmaniso/glam/mtx"
 	"github.com/drakmaniso/glam/space"
-	"github.com/drakmaniso/glam/window"
 )
 
 //------------------------------------------------------------------------------
@@ -30,11 +28,9 @@ func main() {
 		return
 	}
 
-	glam.Draw = draw
-	window.Handle = handler{}
-	mouse.Handle = handler{}
+	glam.Loop(loop{})
 
-	err = glam.Loop()
+	err = glam.Run()
 	if err != nil {
 		glam.ShowError("running", err)
 		return
@@ -51,7 +47,7 @@ var (
 
 // Uniform buffer
 var perFrame struct {
-	transform space.Matrix
+	screenFromObject space.Matrix
 }
 
 // Indirect Command Buffer
@@ -112,16 +108,15 @@ type mesh []struct {
 	position space.Coord `layout:"0"`
 }
 
-// Matrices
+// Tranformation matrices
 var (
-	model      space.Matrix
-	view       space.Matrix
-	projection space.Matrix
+	screenFromView  space.Matrix // projection matrix
+	viewFromWorld   space.Matrix // view matrix
+	worldFromObject space.Matrix // model matirx
 )
 
 // Cube state
 var (
-	distance   float32
 	position   space.Coord
 	yaw, pitch float32
 )
@@ -151,13 +146,12 @@ func setup() error {
 	// Create and fill the vertex buffer
 	vbo := gfx.NewVertexBuffer(cube(), 0)
 
-	// Initialize model and view matrices
+	// Initialize worldFromObject and viewFromWorld matrices
 	position = space.Coord{0, 0, 0}
 	yaw = -0.6
 	pitch = 0.3
-	updateModel()
-	distance = 3
-	updateView()
+	computeWorldFromObject()
+	computeViewFromWorld()
 
 	// MTX
 	mtx.Color(color.RGB{0.0, 0.05, 0.1}, color.RGB{0.7, 0.6, 0.45})
@@ -175,13 +169,20 @@ func setup() error {
 
 //------------------------------------------------------------------------------
 
-func draw() {
+type loop struct {
+	glam.DefaultHandlers
+}
+
+func (loop) Update() {
+}
+
+func (loop) Draw(_, _ float64) {
 	pipeline.Bind()
 	gfx.ClearDepthBuffer(1.0)
 	gfx.ClearColorBuffer(color.RGBA{0.9, 0.9, 0.9, 1.0})
 
-	perFrame.transform = projection.Times(view)
-	perFrame.transform = perFrame.transform.Times(model)
+	perFrame.screenFromObject = screenFromView.Times(viewFromWorld)
+	perFrame.screenFromObject = perFrame.screenFromObject.Times(worldFromObject)
 	perFrameUBO.SubData(&perFrame, 0)
 	perFrameUBO.Bind(0)
 
@@ -192,16 +193,13 @@ func draw() {
 
 //------------------------------------------------------------------------------
 
-func updateModel() {
-	model = space.Translation(position)
-	model = model.Times(space.EulerZXY(pitch, yaw, 0))
+func computeWorldFromObject() {
+	worldFromObject = space.Translation(position)
+	worldFromObject = worldFromObject.Times(space.EulerZXY(pitch, yaw, 0))
 }
 
-func updateView() {
-	if distance < 1 {
-		distance = 1
-	}
-	view = space.LookAt(space.Coord{0, 0, distance}, space.Coord{0, 0, 0}, space.Coord{0, 1, 0})
+func computeViewFromWorld() {
+	viewFromWorld = space.LookAt(space.Coord{0, 0, 3}, space.Coord{0, 0, 0}, space.Coord{0, 1, 0})
 }
 
 //------------------------------------------------------------------------------

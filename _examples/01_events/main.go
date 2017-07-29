@@ -11,7 +11,6 @@ import (
 	"github.com/drakmaniso/glam/mouse"
 	"github.com/drakmaniso/glam/mtx"
 	"github.com/drakmaniso/glam/pixel"
-	"github.com/drakmaniso/glam/window"
 )
 
 //------------------------------------------------------------------------------
@@ -23,13 +22,9 @@ func main() {
 		return
 	}
 
-	glam.Update = update
-	glam.Draw = draw
-	window.Handle = handler{}
-	mouse.Handle = handler{}
-	key.Handle = handler{}
+	glam.Loop(loop{})
 
-	err = glam.LoopStable(1 / 60.0)
+	err = glam.Run()
 	if err != nil {
 		glam.ShowError("running", err)
 		return
@@ -38,24 +33,30 @@ func main() {
 
 //------------------------------------------------------------------------------
 
-type handler struct{}
+type loop struct {
+	glam.DefaultHandlers
+}
 
-func (h handler) KeyDown(l key.Label, p key.Position, ts uint32) {
+//------------------------------------------------------------------------------
+
+func (loop) KeyDown(l key.Label, p key.Position) {
 	if l == key.LabelEscape {
 		glam.Stop()
 	}
-	scroller.Print("%v: Key Down: %v %v\n", ts, l, p)
+	scroller.Print("%v: Key Down: %v %v\n", glam.Now(), l, p)
 }
 
-func (h handler) KeyUp(l key.Label, p key.Position, ts uint32) {
-	scroller.Print("%v: Key Up: %v %v\n", ts, l, p)
+func (loop) KeyUp(l key.Label, p key.Position) {
+	scroller.Print("%v: Key Up: %v %v\n", glam.Now(), l, p)
 }
 
-func (h handler) MouseMotion(rel pixel.Coord, pos pixel.Coord, ts uint32) {
-	scroller.Print("%v: mouse motion  %+d,%+d  %d,%d\n", ts, rel.X, rel.Y, pos.X, pos.Y)
+//------------------------------------------------------------------------------
+
+func (loop) MouseMotion(rel pixel.Coord, pos pixel.Coord) {
+	scroller.Print("%v: mouse motion  %+d,%+d  %d,%d\n", glam.Now(), rel.X, rel.Y, pos.X, pos.Y)
 }
 
-func (h handler) MouseButtonDown(b mouse.Button, clicks int, ts uint32) {
+func (loop) MouseButtonDown(b mouse.Button, clicks int) {
 	var n string
 	switch b {
 	case mouse.Left:
@@ -71,10 +72,10 @@ func (h handler) MouseButtonDown(b mouse.Button, clicks int, ts uint32) {
 	default:
 		n = "UNKOWN!"
 	}
-	scroller.Print("%v: mouse button down  %s (%v), clicks=%v\n", ts, n, b, clicks)
+	scroller.Print("%v: mouse button down  %s (%v), clicks=%v\n", glam.Now(), n, b, clicks)
 }
 
-func (h handler) MouseButtonUp(b mouse.Button, clicks int, ts uint32) {
+func (loop) MouseButtonUp(b mouse.Button, clicks int) {
 	var n string
 	switch b {
 	case mouse.Left:
@@ -90,55 +91,57 @@ func (h handler) MouseButtonUp(b mouse.Button, clicks int, ts uint32) {
 	default:
 		n = "UNKOWN!"
 	}
-	scroller.Print("%v: mouse button up: %s (%v), clicks=%v\n", ts, n, b, clicks)
+	scroller.Print("%v: mouse button up: %s (%v), clicks=%v\n", glam.Now(), n, b, clicks)
 }
 
-func (h handler) MouseWheel(w pixel.Coord, ts uint32) {
-	scroller.Print("%v: mouse wheel: %+d,%+d\n", ts, w.X, w.Y)
+func (loop) MouseWheel(w pixel.Coord) {
+	scroller.Print("%v: mouse wheel: %+d,%+d\n", glam.Now(), w.X, w.Y)
 }
 
-func (h handler) WindowShown(ts uint32) {
-	scroller.Print("%v: window shown\n", ts)
+//------------------------------------------------------------------------------
+
+func (loop) WindowShown() {
+	scroller.Print("%v: window shown\n", glam.Now())
 }
 
-func (h handler) WindowHidden(ts uint32) {
-	scroller.Print("%v: window hidden\n", ts)
+func (loop) WindowHidden() {
+	scroller.Print("%v: window hidden\n", glam.Now())
 }
 
-func (h handler) WindowResized(s pixel.Coord, ts uint32) {
-	scroller.Print("%v: window resized %v\n", ts, s)
+func (loop) WindowResized(s pixel.Coord) {
+	scroller.Print("%v: window resized %v\n", glam.Now(), s)
 }
 
-func (h handler) WindowMinimized(ts uint32) {
-	scroller.Print("%v: window minimized\n", ts)
+func (loop) WindowMinimized() {
+	scroller.Print("%v: window minimized\n", glam.Now())
 }
 
-func (h handler) WindowMaximized(ts uint32) {
-	scroller.Print("%v: window maximized\n", ts)
+func (loop) WindowMaximized() {
+	scroller.Print("%v: window maximized\n", glam.Now())
 }
 
-func (h handler) WindowRestored(ts uint32) {
-	scroller.Print("%v: window restored\n", ts)
+func (loop) WindowRestored() {
+	scroller.Print("%v: window restored\n", glam.Now())
 }
 
-func (h handler) WindowMouseEnter(ts uint32) {
-	scroller.Print("%v: window mouse enter\n", ts)
+func (loop) WindowMouseEnter() {
+	scroller.Print("%v: window mouse enter\n", glam.Now())
 }
 
-func (h handler) WindowMouseLeave(ts uint32) {
-	scroller.Print("%v: window mouse leave\n", ts)
+func (loop) WindowMouseLeave() {
+	scroller.Print("%v: window mouse leave\n", glam.Now())
 }
 
-func (h handler) WindowFocusGained(ts uint32) {
-	scroller.Print("%v: window focus gained\n", ts)
+func (loop) WindowFocusGained() {
+	scroller.Print("%v: window focus gained\n", glam.Now())
 }
 
-func (h handler) WindowFocusLost(ts uint32) {
-	scroller.Print("%v: window focus lost\n", ts)
+func (loop) WindowFocusLost() {
+	scroller.Print("%v: window focus lost\n", glam.Now())
 }
 
-func (h handler) WindowQuit(ts uint32) {
-	scroller.Print("%v: window quit\n", ts)
+func (loop) WindowQuit() {
+	scroller.Print("%v: window quit\n", glam.Now())
 	glam.Stop()
 }
 
@@ -150,7 +153,8 @@ var scroller = mtx.Clip{
 }
 
 //------------------------------------------------------------------------------
-func update(_, _ float64) {
+
+func (loop) Update() {
 	topbar.Clear()
 
 	d := mouse.Delta()
@@ -191,7 +195,7 @@ var topbar = mtx.Clip{
 	Right: -2, Bottom: 2,
 }
 
-func draw() {
+func (loop) Draw(_, _ float64) {
 }
 
 //------------------------------------------------------------------------------

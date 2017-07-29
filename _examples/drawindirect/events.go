@@ -6,7 +6,6 @@ package main
 //------------------------------------------------------------------------------
 
 import (
-	"github.com/drakmaniso/glam/basic"
 	"github.com/drakmaniso/glam/math32"
 	"github.com/drakmaniso/glam/mouse"
 	"github.com/drakmaniso/glam/pixel"
@@ -17,46 +16,28 @@ import (
 
 //------------------------------------------------------------------------------
 
-type handler struct {
-	basic.WindowHandler
-	basic.MouseHandler
-}
-
-//------------------------------------------------------------------------------
-
-func (h handler) WindowResized(is pixel.Coord, _ uint32) {
+func (loop) WindowResized(is pixel.Coord) {
 	w := plane.CoordOf(is)
 	r := w.X / w.Y
-	projection = space.Perspective(math32.Pi/4, r, 0.001, 1000.0)
+	screenFromView = space.Perspective(math32.Pi/4, r, 0.001, 1000.0)
 }
 
 //------------------------------------------------------------------------------
 
-func (h handler) MouseWheel(motion pixel.Coord, _ uint32) {
-	distance -= float32(motion.Y) / 4
-	updateView()
-}
-
-func (h handler) MouseButtonDown(b mouse.Button, _ int, _ uint32) {
+func (loop) MouseButtonDown(b mouse.Button, _ int) {
 	mouse.SetRelativeMode(true)
 }
 
-func (h handler) MouseButtonUp(b mouse.Button, _ int, _ uint32) {
+func (loop) MouseButtonUp(b mouse.Button, _ int) {
 	mouse.SetRelativeMode(false)
 }
 
-func (h handler) MouseMotion(motion pixel.Coord, _ pixel.Coord, _ uint32) {
+func (loop) MouseMotion(motion pixel.Coord, _ pixel.Coord) {
 	m := plane.CoordOf(motion)
 	s := plane.CoordOf(window.Size())
 
 	switch {
 	case mouse.IsPressed(mouse.Left):
-		d := m.Times(2).SlashCW(s)
-		position.X += d.X
-		position.Y -= d.Y
-		updateModel()
-
-	case mouse.IsPressed(mouse.Right):
 		yaw += 4 * m.X / s.X
 		pitch += 4 * m.Y / s.Y
 		switch {
@@ -65,7 +46,19 @@ func (h handler) MouseMotion(motion pixel.Coord, _ pixel.Coord, _ uint32) {
 		case pitch > +math32.Pi/2:
 			pitch = +math32.Pi / 2
 		}
-		updateModel()
+		computeWorldFromObject()
+
+	case mouse.IsPressed(mouse.Middle):
+		d := m.Times(2).SlashCW(s)
+		position.X += d.X
+		position.Z += d.Y
+		computeWorldFromObject()
+
+	case mouse.IsPressed(mouse.Right):
+		d := m.Times(2).SlashCW(s)
+		position.X += d.X
+		position.Y -= d.Y
+		computeWorldFromObject()
 	}
 }
 
