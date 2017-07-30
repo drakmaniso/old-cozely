@@ -118,10 +118,9 @@ func (cl *Clip) Clear() {
 // and clipped.
 //
 // Special characters:
-// - '~' blank space (i.e. fully transparent)
 // - '\a' toggle highlight
 // - '\b' move cursor one character left
-// - '\f' escaped ~
+// - '\f' blank space (i.e. fully transparent)
 // - '\n' newline
 // - '\r' move cursor to beginning of line
 // - '\t' tabulation
@@ -145,7 +144,7 @@ func (cl *Clip) Write(p []byte) (n int, err error) {
 
 	for _, c := range p {
 		switch {
-		case ' ' <= c && c <= '}':
+		case ' ' <= c && c <= '~':
 			c |= colour
 
 		case c == '\r':
@@ -153,8 +152,6 @@ func (cl *Clip) Write(p []byte) (n int, err error) {
 			continue
 
 		case c == '\f':
-			c = '~'
-		case c == '~':
 			c = '\x00'
 
 		case c == '\n':
