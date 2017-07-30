@@ -45,26 +45,26 @@ func main() {
 //------------------------------------------------------------------------------
 
 func setup() error {
-	hud = overlay.Create(pixel.Coord{100, 100}, 16, 16)
+	hud = overlay.Create(pixel.Coord{100, 100}, 16, 16, true)
 	for y := 0; y < 16; y++ {
 		for x := 0; x < 16; x++ {
 			hud.Poke(x, y, byte(x+16*y))
 		}
 	}
 
-	hud2 = overlay.Create(pixel.Coord{150, 150}, 16, 16)
+	hud2 = overlay.Create(pixel.Coord{150, 150}, 16, 16, false)
 	for y := 0; y < 16; y++ {
 		for x := 0; x < 16; x++ {
 			hud2.Poke(x, y, byte(x+16*y))
 		}
 	}
 
-	debug = overlay.Create(pixel.Coord{0, 0}, 100, 1)
+	debug = overlay.Create(pixel.Coord{0, 0}, 100, 1, false)
 	for x := 0; x < 10; x++ {
 		debug.Poke(x, 0, 'a'+byte(x))
 	}
 
-	txt := overlay.Create(pixel.Coord{400, 100}, 60, 20)
+	txt := overlay.Create(pixel.Coord{400, 100}, 60, 20, true)
 	txt.Clear()
 	// txt.Locate(1, 1)
 	// txt.Print("0\n1\n2\n3\n4\n5\n6\n7\n8\n9\nABCDEF")

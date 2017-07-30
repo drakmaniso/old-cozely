@@ -18,19 +18,21 @@ type Overlay struct {
 	ovr *overl.Overlay
 
 	//
-	solid bool
+	transparent bool
 
 	// Cursor position
-	x, y int
+	x, y      int
+	highlight bool
 }
 
 //------------------------------------------------------------------------------
 
-func Create(position pixel.Coord, columns, rows int) *Overlay {
+func Create(position pixel.Coord, columns, rows int, transparent bool) *Overlay {
 	var o Overlay
 
 	o.ovr = overl.Create(position, columns, rows)
-	o.solid = false
+	o.transparent = transparent
+	o.Clear()
 
 	return &o
 }
@@ -90,9 +92,9 @@ func (o *Overlay) Clear() {
 	sx, sy := o.ovr.Size()
 	o.x, o.y = 0, 0
 
-	clr := byte('\x00')
-	if o.solid {
-		clr = ' '
+	clr := byte(' ')
+	if o.transparent {
+		clr = '\x00'
 	}
 
 	for y := 0; y < sy; y++ {
@@ -118,9 +120,9 @@ func (o *Overlay) Locate(x, y int) {
 func (o *Overlay) Scroll(dx, dy int) {
 	sx, sy := o.ovr.Size()
 
-	clr := byte('\x00')
-	if o.solid {
-		clr = ' '
+	clr := byte(' ')
+	if o.transparent {
+		clr = '\x00'
 	}
 
 	var x1, x2, x3, incX, y1, y2, y3, incY int
@@ -198,14 +200,14 @@ func (o *Overlay) Write(p []byte) (n int, err error) {
 	sx, sy := o.ovr.Size()
 
 	colour := byte(0x00)
-	// Prepare reverse video mask
-	// if cl.Highlighted {
-	// 	colour = byte(0x80)
-	// }
+	// Prepare highlight mask
+	if o.highlight {
+		colour = byte(0x80)
+	}
 
-	clr := byte('\x00')
-	if o.solid {
-		clr = ' '
+	clr := byte(' ')
+	if o.transparent {
+		clr = '\x00'
 	}
 
 	x, y := o.Clamp(o.x, o.y)
@@ -230,7 +232,7 @@ func (o *Overlay) Write(p []byte) (n int, err error) {
 					i = 0
 				}
 				for ; i <= sx-1; i++ {
-					o.ovr.Poke((0)+i, (0)+y, clr)
+					o.ovr.Poke(i, y, clr)
 				}
 			}
 			// Go to next line
@@ -249,7 +251,7 @@ func (o *Overlay) Write(p []byte) (n int, err error) {
 					i = 0
 				}
 				for ; i <= sx-1; i++ {
-					o.ovr.Poke((0)+i, (0)+y, clr)
+					o.ovr.Poke(i, y, clr)
 				}
 			}
 			continue
@@ -258,7 +260,7 @@ func (o *Overlay) Write(p []byte) (n int, err error) {
 			if 0 <= y && y <= sy-1 {
 				n := ((x/8)+1)*8 - x
 				for i := 0; i < n && x+i <= sy-1; i++ {
-					o.ovr.Poke((0)+x+i, (0)+y, ' ')
+					o.ovr.Poke(x+i, y, ' ')
 				}
 				x += n
 			}
@@ -285,22 +287,22 @@ func (o *Overlay) Write(p []byte) (n int, err error) {
 
 		if x < 0 {
 			c = '~' + 1
-			xx = (0)
+			xx = 0
 		} else if x > sx-1 {
 			c = '~' + 1
-			xx = (sx - 1)
+			xx = sx - 1
 		} else {
-			xx = (0) + x
+			xx = x
 		}
 
 		if y < 0 {
 			c = '~' + 1
-			yy = (0)
+			yy = 0
 		} else if y > sy-1 {
 			c = '~' + 1
-			yy = (sy - 1)
+			yy = sy - 1
 		} else {
-			yy = (0) + y
+			yy = y
 		}
 
 		o.ovr.Poke(xx, yy, c)
