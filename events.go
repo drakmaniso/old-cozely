@@ -29,7 +29,8 @@ import (
 
 	"github.com/drakmaniso/glam/gfx"
 	"github.com/drakmaniso/glam/internal"
-	"github.com/drakmaniso/glam/internal/microtext"
+	"github.com/drakmaniso/glam/internal/microtext" //TODO: remove
+	"github.com/drakmaniso/glam/internal/overl"
 	"github.com/drakmaniso/glam/key"
 	"github.com/drakmaniso/glam/mouse"
 	"github.com/drakmaniso/glam/pixel"
@@ -76,6 +77,7 @@ func dispatch(e unsafe.Pointer) {
 			s := pixel.Coord{X: int32(e.data1), Y: int32(e.data2)}
 			gfx.Viewport(pixel.Coord{X: 0, Y: 0}, s)
 			microtext.WindowResized(s)
+			overl.WindowResized(s)
 			loop.WindowResized(s)
 		case C.SDL_WINDOWEVENT_SIZE_CHANGED:
 			//TODO

@@ -10,7 +10,8 @@ import (
 
 	"github.com/drakmaniso/glam/gfx"
 	"github.com/drakmaniso/glam/internal"
-	"github.com/drakmaniso/glam/internal/microtext"
+	"github.com/drakmaniso/glam/internal/microtext" //TODO: remove
+	"github.com/drakmaniso/glam/internal/overl"
 	"github.com/drakmaniso/glam/key"
 	"github.com/drakmaniso/glam/mouse"
 	"github.com/drakmaniso/glam/pixel"
@@ -31,6 +32,7 @@ func Setup() error {
 	}
 
 	microtext.Setup()
+	overl.Setup()
 
 	isSetUp = true
 	return nil
@@ -132,7 +134,7 @@ func Run() error {
 
 		remain += delta
 		// Cap remain to avoid "spiral of death"
-		for remain > 2*timeStep {
+		for remain > 8*timeStep {
 			remain -= timeStep
 			stepNow += timeStep
 		}
@@ -148,6 +150,7 @@ func Run() error {
 		visibleNow = now
 		loop.Draw(delta, remain/timeStep)
 		microtext.Draw()
+		overl.Draw()
 		internal.SwapWindow()
 
 		then = now
