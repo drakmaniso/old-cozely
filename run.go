@@ -112,6 +112,7 @@ func Run() error {
 	// First, send a fake resize window event
 	{
 		s := pixel.Coord{internal.Window.Width, internal.Window.Height}
+		overl.WindowResized(s)
 		loop.WindowResized(s)
 	}
 

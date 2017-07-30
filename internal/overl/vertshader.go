@@ -5,10 +5,6 @@ const vertexShader = `
 
 layout(location = 0) in vec3 Position;
 
-out gl_PerVertex {
-	vec4 gl_Position;
-};
-
 layout(std430, binding = 1) buffer Overlay {
   float Left;
   float Top;
@@ -20,13 +16,26 @@ layout(std430, binding = 1) buffer Overlay {
   int Columns;
 	int Rows;
 	//
-	int PixelSize;
+	uint PixelSize;
 	uint Flags;
 	int unused1;
 	int unused2;
   //
 	uint Chars[];
 } overlay;
+
+out gl_PerVertex {
+	vec4 gl_Position;
+};
+
+out Header {
+  layout(location = 0) flat int X;
+	layout(location = 1) flat int Y;
+  layout(location = 2) flat int Columns;
+	layout(location = 3) flat int Rows;
+	layout(location = 4) flat uint PixelSize;
+	layout(location = 5) flat uint Flags;
+};
 
 const
 
@@ -38,5 +47,13 @@ void main(void) {
 		vec2(overlay.Right, overlay.Bottom)
 	);
 	gl_Position = vec4(positions[gl_VertexID], 0.5, 1.0);
+
+	// Avoid SSBO reads in fragment shader
+	X = overlay.X;
+	Y = overlay.Y;
+	Columns = overlay.Columns;
+	Rows = overlay.Rows;
+	PixelSize = overlay.PixelSize;
+	Flags = overlay.Flags;
 }
 `

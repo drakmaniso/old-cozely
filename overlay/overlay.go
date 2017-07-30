@@ -14,6 +14,12 @@ import (
 
 //------------------------------------------------------------------------------
 
+func FontSize() pixel.Coord {
+	return overl.FontSize()
+}
+
+//------------------------------------------------------------------------------
+
 type Overlay struct {
 	ovr *overl.Overlay
 
@@ -27,6 +33,10 @@ type Overlay struct {
 
 //------------------------------------------------------------------------------
 
+// Create returns a new overlay.
+//
+// Note that the function does not call OpenGL: it's safe to use anytime, even
+// before setup is complete.
 func Create(position pixel.Coord, columns, rows int, transparent bool) *Overlay {
 	var o Overlay
 

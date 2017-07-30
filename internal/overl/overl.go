@@ -29,14 +29,15 @@ var header struct {
 	x, y          int32
 	columns, rows int32
 	//
-	pixelSize int32
+	pixelSize uint32
 	flags     int32
 	_         int32
 	_         int32
 }
 
-const charWidth = 7
-const charHeight = 11
+const FontWidth = 7
+const FontHeight = 11
+const pixelSize = 1
 
 //------------------------------------------------------------------------------
 
@@ -87,7 +88,7 @@ type Overlay struct {
 		x, y          int32
 		columns, rows int32
 		//
-		pixelSize int32
+		pixelSize uint32
 		flags     int32
 		_         int32
 		_         int32
@@ -103,32 +104,31 @@ type Overlay struct {
 
 //------------------------------------------------------------------------------
 
+func FontSize() pixel.Coord {
+	ps := int32(1 << pixelSize) //TODO
+	return pixel.Coord{FontWidth, FontHeight}.Times(ps)
+}
+
+//------------------------------------------------------------------------------
+
 func Create(position pixel.Coord, columns, rows int) *Overlay {
 	o := Overlay{}
 	o.header.x = position.X
 	o.header.y = position.Y
 	o.header.columns = int32(columns)
 	o.header.rows = int32(rows)
-	o.header.pixelSize = 2
+	o.header.pixelSize = pixelSize
 
-	o.header.top = 0.9
-	o.header.left = -0.7
-	o.header.bottom = -0.5
-	o.header.right = 0.8
+	o.header.top = 0.0
+	o.header.left = 0.0
+	o.header.bottom = 0.0
+	o.header.right = 0.0
 	// o.header.flags = 1
 
 	o.text = make([]byte, o.header.columns*o.header.rows)
 
-	o.ssbo = gfx.NewStorageBuffer(
-		unsafe.Sizeof(o.header)+uintptr(o.header.columns*o.header.rows),
-		gfx.DynamicStorage,
-	)
-
 	o.headerUpdated = true
 	o.textUpdated = true
-
-	s := pixel.Coord{internal.Window.Width, internal.Window.Height}
-	o.WindowResized(s)
 
 	overlays = append(overlays, &o)
 	return &o
@@ -137,13 +137,36 @@ func Create(position pixel.Coord, columns, rows int) *Overlay {
 //------------------------------------------------------------------------------
 
 func (o *Overlay) WindowResized(s pixel.Coord) {
+	r := o.header.left == 0 &&
+		o.header.right == 0 &&
+		o.header.top == 0 &&
+		o.header.bottom == 0
+	_ = r
+
+	ps := int32(1 << o.header.pixelSize)
 	//TODO: handle negative positions
 	o.header.left = 2*float32(o.header.x)/float32(s.X) - 1
 	o.header.top = 1 - 2*float32(o.header.y)/float32(s.Y)
-	o.header.right = o.header.left + 2*float32(o.header.columns*charWidth*o.header.pixelSize)/float32(s.X)
-	o.header.bottom = o.header.top - 2*float32(o.header.rows*charHeight*o.header.pixelSize)/float32(s.Y)
+	o.header.right = o.header.left + 2*float32(o.header.columns*FontWidth*ps)/float32(s.X)
+	o.header.bottom = o.header.top - 2*float32(o.header.rows*FontHeight*ps)/float32(s.Y)
+
+	if r {
+		o.ssbo.Delete()
+		o.ssbo = gfx.NewStorageBuffer(
+			unsafe.Sizeof(o.header)+uintptr(o.header.columns*o.header.rows),
+			gfx.DynamicStorage,
+		)
+	}
 
 	o.headerUpdated = true
+}
+
+//------------------------------------------------------------------------------
+
+func (o *Overlay) Bounds() (topLeft, bottomRight pixel.Coord) {
+	tl := pixel.Coord{o.header.x, o.header.y}
+	br := tl.Plus(pixel.Coord{FontWidth * o.header.columns, FontHeight * o.header.rows})
+	return tl, br
 }
 
 //------------------------------------------------------------------------------

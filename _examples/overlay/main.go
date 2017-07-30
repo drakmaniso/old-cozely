@@ -16,10 +16,6 @@ import (
 
 //------------------------------------------------------------------------------
 
-var hud, hud2, debug, txt *overlay.Overlay
-
-//------------------------------------------------------------------------------
-
 func main() {
 	err := glam.Setup()
 	if err != nil {
@@ -44,22 +40,18 @@ func main() {
 
 //------------------------------------------------------------------------------
 
+var tbl = overlay.Create(overlay.FontSize(), 16, 16, false)
+
 func setup() error {
-	hud = overlay.Create(pixel.Coord{100, 100}, 16, 16, true)
+	// Character table
+	// tbl := overlay.Create(overlay.FontSize(), 16, 16, false)
 	for y := 0; y < 16; y++ {
 		for x := 0; x < 16; x++ {
-			hud.Poke(x, y, byte(x+16*y))
+			tbl.Poke(x, y, byte(x+16*y))
 		}
 	}
 
-	hud2 = overlay.Create(pixel.Coord{150, 150}, 16, 16, false)
-	for y := 0; y < 16; y++ {
-		for x := 0; x < 16; x++ {
-			hud2.Poke(x, y, byte(x+16*y))
-		}
-	}
-
-	debug = overlay.Create(pixel.Coord{0, 0}, 100, 1, false)
+	debug := overlay.Create(pixel.Coord{0, 0}, 100, 1, false)
 	for x := 0; x < 10; x++ {
 		debug.Poke(x, 0, 'a'+byte(x))
 	}
@@ -102,15 +94,6 @@ func (loop) Draw(_, _ float64) {
 func (loop) KeyDown(l key.Label, p key.Position) {
 	switch p {
 	case key.PositionSpace:
-		hud.Clear()
-	case key.PositionUp:
-		hud2.Scroll(0, -1)
-	case key.PositionDown:
-		hud2.Scroll(0, 1)
-	case key.PositionLeft:
-		hud2.Scroll(-1, 0)
-	case key.PositionRight:
-		hud2.Scroll(1, 0)
 	default:
 		glam.DefaultHandlers{}.KeyDown(l, p)
 	}
