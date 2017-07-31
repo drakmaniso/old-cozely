@@ -129,6 +129,7 @@ func (o *Overlay) Locate(x, y int) {
 // that move out of bounds is discarded, and the liberated space is cleared.
 func (o *Overlay) Scroll(dx, dy int) {
 	sx, sy := o.ovr.Size()
+	l, t, r, b := 0, 0, sx-1, sy-1
 
 	clr := byte(' ')
 	if o.transparent {
@@ -138,40 +139,40 @@ func (o *Overlay) Scroll(dx, dy int) {
 	var x1, x2, x3, incX, y1, y2, y3, incY int
 	var cmpX, cmpY func(int, int) bool
 	if dx >= 0 {
-		x1 = sx - 1
-		if dx > sx {
-			dx = sx
+		x1 = r
+		if dx > r-l {
+			dx = r - l + 1
 		}
-		x2 = dx
-		x3 = 0
+		x2 = l + dx
+		x3 = l
 		incX = -1
 		cmpX = func(a, b int) bool { return a >= b }
 	} else {
-		x1 = 0
-		if dx < -sx {
-			dx = -sx
+		x1 = l
+		if dx < l-r {
+			dx = l - r - 1
 		}
-		x2 = sx - 1 + dx
-		x3 = sx - 1
+		x2 = r + dx
+		x3 = r
 		incX = +1
 		cmpX = func(a, b int) bool { return a <= b }
 	}
 	if dy >= 0 {
-		y1 = sy - 1
-		if dy > sy {
-			dy = sy
+		y1 = b
+		if dy > b-t {
+			dy = b - t + 1
 		}
-		y2 = dy
-		y3 = 0
+		y2 = t + dy
+		y3 = t
 		incY = -1
 		cmpY = func(a, b int) bool { return a >= b }
 	} else {
-		y1 = 0
-		if dy < -sy {
-			dy = -sy
+		y1 = t
+		if dy < t-b {
+			dy = t - b - 1
 		}
-		y2 = sy - 1 + dy
-		y3 = sy - 1
+		y2 = b + dy
+		y3 = b
 		incY = +1
 		cmpY = func(a, b int) bool { return a <= b }
 	}
@@ -185,7 +186,7 @@ func (o *Overlay) Scroll(dx, dy int) {
 		}
 	}
 	for y := y2 + incY; cmpY(y, y3); y += incY {
-		for x := (0); x <= (sx - 1); x++ {
+		for x := l; x <= r; x++ {
 			o.ovr.Poke(x, y, clr)
 		}
 	}
@@ -208,6 +209,7 @@ func (o *Overlay) Scroll(dx, dy int) {
 // - '\v' clear until end of line
 func (o *Overlay) Write(p []byte) (n int, err error) {
 	sx, sy := o.ovr.Size()
+	l, t, r, b := 0, 0, sx, sy
 
 	colour := byte(0x00)
 	// Prepare highlight mask
@@ -236,13 +238,13 @@ func (o *Overlay) Write(p []byte) (n int, err error) {
 
 		case c == '\n':
 			// First, clear to end of line
-			if 0 <= y && y <= sy-1 {
+			if 0 <= y && y < sy {
 				i := x
 				if i < 0 {
 					i = 0
 				}
-				for ; i <= sx-1; i++ {
-					o.ovr.Poke(i, y, clr)
+				for ; i < sx; i++ {
+					o.ovr.Poke(l+i, t+y, clr)
 				}
 			}
 			// Go to next line
@@ -255,22 +257,22 @@ func (o *Overlay) Write(p []byte) (n int, err error) {
 			continue
 		case c == '\v':
 			// Clear to end of line
-			if 0 <= y && y <= sy-1 {
+			if 0 <= y && y < sy {
 				i := x
 				if i < 0 {
 					i = 0
 				}
-				for ; i <= sx-1; i++ {
-					o.ovr.Poke(i, y, clr)
+				for ; i < sx; i++ {
+					o.ovr.Poke(l+i, t+y, clr)
 				}
 			}
 			continue
 
 		case c == '\t':
-			if 0 <= y && y <= sy-1 {
+			if 0 <= y && y < sy {
 				n := ((x/8)+1)*8 - x
-				for i := 0; i < n && x+i <= sy-1; i++ {
-					o.ovr.Poke(x+i, y, ' ')
+				for i := 0; i < n && x+i < sy; i++ {
+					o.ovr.Poke(l+x+i, t+y, ' ')
 				}
 				x += n
 			}
@@ -297,22 +299,22 @@ func (o *Overlay) Write(p []byte) (n int, err error) {
 
 		if x < 0 {
 			c = '~' + 1
-			xx = 0
-		} else if x > sx-1 {
+			xx = l
+		} else if x >= sx {
 			c = '~' + 1
-			xx = sx - 1
+			xx = r
 		} else {
-			xx = x
+			xx = l + x
 		}
 
 		if y < 0 {
 			c = '~' + 1
-			yy = 0
-		} else if y > sy-1 {
+			yy = t
+		} else if y >= sy {
 			c = '~' + 1
-			yy = sy - 1
+			yy = b
 		} else {
-			yy = y
+			yy = t + y
 		}
 
 		o.ovr.Poke(xx, yy, c)

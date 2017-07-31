@@ -56,8 +56,14 @@ func setup() error {
 		debug.Poke(x, 0, 'a'+byte(x))
 	}
 
-	txt := overlay.Create(pixel.Coord{400, 100}, 60, 20, true)
+	txt := overlay.Create(pixel.Coord{400, 100}, 60, 20, false)
 	txt.Clear()
+	// sx, sy := txt.Size()
+	// for y := 0; y < sy; y++ {
+	// 	for x := 0; x < sx; x++ {
+	// 		txt.Poke(x, y, '#')
+	// 	}
+	// }
 	// txt.Locate(1, 1)
 	// txt.Print("0\n1\n2\n3\n4\n5\n6\n7\n8\n9\nABCDEF")
 	txt.Print("Package overlay implements a \"text mode\" overlay, useful for development and debugging.\n")
@@ -70,8 +76,8 @@ func setup() error {
 	txt.Print("\t- '\\t': tabulation\n")
 	txt.Print("\t- '\\v': clear until end of line\n")
 	txt.Print("INVISIBLE\r\v")
-	txt.Locate(0, 0)
-	txt.Print("PLOP\nPLIP\nPLUP\n")
+	// txt.Locate(0, 0)
+	// txt.Print("PLOP\nPLIP\nPLUP\n")
 
 	return nil
 }
@@ -94,6 +100,14 @@ func (loop) Draw(_, _ float64) {
 func (loop) KeyDown(l key.Label, p key.Position) {
 	switch p {
 	case key.PositionSpace:
+	case key.PositionUp:
+		tbl.Scroll(0, -1)
+	case key.PositionDown:
+		tbl.Scroll(0, 1)
+	case key.PositionLeft:
+		tbl.Scroll(-1, 0)
+	case key.PositionRight:
+		tbl.Scroll(1, 0)
 	default:
 		glam.DefaultHandlers{}.KeyDown(l, p)
 	}
