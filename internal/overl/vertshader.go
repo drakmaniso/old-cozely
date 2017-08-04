@@ -34,7 +34,8 @@ out Header {
   layout(location = 2) flat int Columns;
 	layout(location = 3) flat int Rows;
 	layout(location = 4) flat uint PixelSize;
-	layout(location = 5) flat uint Flags;
+	layout(location = 5) flat vec4 Foreground;
+	layout(location = 6) flat vec4 Background;
 };
 
 const
@@ -54,6 +55,12 @@ void main(void) {
 	Columns = overlay.Columns;
 	Rows = overlay.Rows;
 	PixelSize = overlay.PixelSize;
-	Flags = overlay.Flags;
+	if (overlay.Flags != 0) {
+		Foreground = vec4(1.0, 1.0, 1.0, 1.0);
+		Background = vec4(0.0, 0.0, 0.0, 0.66);
+	} else {
+		Foreground = vec4(0.0, 0.0, 0.0, 1.0);
+		Background = vec4(1.0, 1.0, 1.0, 0.33);
+	}
 }
 `

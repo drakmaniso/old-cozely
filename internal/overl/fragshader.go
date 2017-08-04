@@ -37,7 +37,8 @@ in Header {
   layout(location = 2) flat int Columns;
 	layout(location = 3) flat int Rows;
 	layout(location = 4) flat uint PixelSize;
-	layout(location = 5) flat uint Flags;
+	layout(location = 5) flat vec4 Foreground;
+	layout(location = 6) flat vec4 Background;
 };
 
 out vec4 Color;
@@ -82,16 +83,7 @@ void main(void) {
 
 	// Calculate the color
 
-	vec4 fg = vec4(1.0, 1.0, 1.0, 1.0);
-	vec4 bg = vec4(0.0, 0.0, 0.0, 0.66);
-	if (Flags != 0) {
-		fg = vec4(0.0, 0.0, 0.0, 1.0);
-		bg = vec4(1.0, 1.0, 1.0, 0.33);
-	}
-	if (chr == 0) {
-		bg.a = 0.0;
-	}
-	Color = fnt * fg + (1 - fnt) * bg;
+	Color = fnt * Foreground + (1 - fnt) * Background;
 
 	// if (Color.a == 0.0) {
 	// 	Color = vec4(1, 0.5, 0.5, 1.0);//discard;
