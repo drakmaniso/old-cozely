@@ -7,7 +7,7 @@ import (
 	"strings"
 	"unsafe"
 
-	"github.com/drakmaniso/carol/gfx"
+	"github.com/drakmaniso/carol/gpu"
 	"github.com/drakmaniso/carol/internal"
 	"github.com/drakmaniso/carol/pixel"
 )
@@ -15,8 +15,8 @@ import (
 //------------------------------------------------------------------------------
 
 var (
-	pipeline *gfx.Pipeline
-	fontSSBO gfx.StorageBuffer
+	pipeline *gpu.Pipeline
+	fontSSBO gpu.StorageBuffer
 )
 
 var overlays []*Overlay
@@ -43,17 +43,17 @@ const pixelSize = 1
 
 // Setup is called during carol setup.
 func Setup() {
-	pipeline = gfx.NewPipeline(
-		gfx.VertexShader(strings.NewReader(vertexShader)),
-		gfx.FragmentShader(strings.NewReader(fragmentShader)),
-		gfx.CullFace(false, false),
-		gfx.DepthTest(false),
-		gfx.Topology(gfx.TriangleStrip),
+	pipeline = gpu.NewPipeline(
+		gpu.VertexShader(strings.NewReader(vertexShader)),
+		gpu.FragmentShader(strings.NewReader(fragmentShader)),
+		gpu.CullFace(false, false),
+		gpu.DepthTest(false),
+		gpu.Topology(gpu.TriangleStrip),
 	)
 
-	fontSSBO = gfx.NewStorageBuffer(&Font, gfx.StaticStorage)
+	fontSSBO = gpu.NewStorageBuffer(&Font, gpu.StaticStorage)
 
-	if err := gfx.Err(); err != nil {
+	if err := gpu.Err(); err != nil {
 		internal.Log(err.Error()) //TODO
 	}
 }
@@ -77,7 +77,7 @@ func WindowResized(s pixel.Coord) {
 //------------------------------------------------------------------------------
 
 type Overlay struct {
-	ssbo gfx.StorageBuffer
+	ssbo gpu.StorageBuffer
 
 	orig pixel.Coord
 
@@ -168,9 +168,9 @@ func (o *Overlay) WindowResized(w pixel.Coord) {
 	// Allocate the SSBO if necessary
 	if u {
 		o.ssbo.Delete()
-		o.ssbo = gfx.NewStorageBuffer(
+		o.ssbo = gpu.NewStorageBuffer(
 			unsafe.Sizeof(o.header)+uintptr(o.header.columns*o.header.rows),
-			gfx.DynamicStorage,
+			gpu.DynamicStorage,
 		)
 	}
 
@@ -216,8 +216,8 @@ func (o *Overlay) Poke(x, y int, c byte) {
 // Draw is
 func (o *Overlay) Draw() {
 	pipeline.Bind()
-	gfx.Blending(gfx.SrcAlpha, gfx.OneMinusSrcAlpha)
-	gfx.Enable(gfx.Blend)
+	gpu.Blending(gpu.SrcAlpha, gpu.OneMinusSrcAlpha)
+	gpu.Enable(gpu.Blend)
 	if o.headerUpdated {
 		header = o.header
 		o.ssbo.SubData(&header, 0)
@@ -229,7 +229,7 @@ func (o *Overlay) Draw() {
 	}
 	fontSSBO.Bind(0)
 	o.ssbo.Bind(1)
-	gfx.Draw(0, 4)
+	gpu.Draw(0, 4)
 	pipeline.Unbind()
 }
 

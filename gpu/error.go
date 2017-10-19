@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2016 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
-package gfx
+package gpu
 
 //------------------------------------------------------------------------------
 
@@ -24,7 +24,7 @@ func setErr(context string, err error) {
 		stickyErr = internal.Error(context, err)
 	} else {
 		if internal.Config.Debug {
-			internal.Log("gfx unchecked error:\n%s", internal.Error(context, err))
+			internal.Log("gpu unchecked error:\n%s", internal.Error(context, err))
 		}
 	}
 }

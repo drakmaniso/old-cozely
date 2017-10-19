@@ -7,7 +7,7 @@ import (
 	"strings"
 	"unsafe"
 
-	"github.com/drakmaniso/carol/gfx"
+	"github.com/drakmaniso/carol/gpu"
 	"github.com/drakmaniso/carol/internal"
 	"github.com/drakmaniso/carol/pixel"
 )
@@ -15,9 +15,9 @@ import (
 //------------------------------------------------------------------------------
 
 var (
-	pipeline   *gfx.Pipeline
-	fontSSBO   gfx.StorageBuffer
-	screenSSBO gfx.StorageBuffer
+	pipeline   *gpu.Pipeline
+	fontSSBO   gpu.StorageBuffer
+	screenSSBO gpu.StorageBuffer
 )
 
 //------------------------------------------------------------------------------
@@ -33,15 +33,15 @@ func init() {
 
 // Setup is called during carol setup.
 func Setup() {
-	pipeline = gfx.NewPipeline(
-		gfx.VertexShader(strings.NewReader(vertexShader)),
-		gfx.FragmentShader(strings.NewReader(fragmentShader)),
-		gfx.CullFace(false, false),
-		gfx.DepthTest(false),
-		gfx.Topology(gfx.TriangleStrip),
+	pipeline = gpu.NewPipeline(
+		gpu.VertexShader(strings.NewReader(vertexShader)),
+		gpu.FragmentShader(strings.NewReader(fragmentShader)),
+		gpu.CullFace(false, false),
+		gpu.DepthTest(false),
+		gpu.Topology(gpu.TriangleStrip),
 	)
 
-	fontSSBO = gfx.NewStorageBuffer(&Font, gfx.StaticStorage)
+	fontSSBO = gpu.NewStorageBuffer(&Font, gpu.StaticStorage)
 
 	s := pixel.Coord{internal.Window.Width, internal.Window.Height}
 	WindowResized(s)
@@ -63,9 +63,9 @@ func WindowResized(s pixel.Coord) {
 	// Reallocate the SSBO
 	text = make([]byte, screen.nbCols*screen.nbRows)
 	screenSSBO.Delete()
-	screenSSBO = gfx.NewStorageBuffer(
+	screenSSBO = gpu.NewStorageBuffer(
 		unsafe.Sizeof(screen)+uintptr(screen.nbCols*screen.nbRows),
-		gfx.DynamicStorage,
+		gpu.DynamicStorage,
 	)
 
 	textUpdated = true
@@ -98,8 +98,8 @@ func WindowResized(s pixel.Coord) {
 // Draw is called during the main loop, after the user's Draw.
 func Draw() {
 	pipeline.Bind()
-	gfx.Blending(gfx.SrcAlpha, gfx.OneMinusSrcAlpha)
-	gfx.Enable(gfx.Blend)
+	gpu.Blending(gpu.SrcAlpha, gpu.OneMinusSrcAlpha)
+	gpu.Enable(gpu.Blend)
 	if screenUpdated {
 		screenSSBO.SubData(&screen, 0)
 		screenUpdated = false
@@ -110,7 +110,7 @@ func Draw() {
 	}
 	fontSSBO.Bind(0)
 	screenSSBO.Bind(1)
-	gfx.Draw(0, 4)
+	gpu.Draw(0, 4)
 	pipeline.Unbind()
 }
 

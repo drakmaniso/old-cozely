@@ -8,7 +8,7 @@ package carol
 import (
 	"errors"
 
-	"github.com/drakmaniso/carol/gfx"
+	"github.com/drakmaniso/carol/gpu"
 	"github.com/drakmaniso/carol/internal"
 	"github.com/drakmaniso/carol/internal/microtext" //TODO: remove
 	"github.com/drakmaniso/carol/internal/overl"
@@ -26,9 +26,9 @@ func Setup() error {
 		return internal.Error("setting up internal", err)
 	}
 
-	gfx.Setup()
+	gpu.Setup()
 	if err != nil {
-		return internal.Error("setting up gfx", err)
+		return internal.Error("setting up gpu", err)
 	}
 
 	microtext.Setup()

@@ -27,7 +27,7 @@ import "C"
 import (
 	"unsafe"
 
-	"github.com/drakmaniso/carol/gfx"
+	"github.com/drakmaniso/carol/gpu"
 	"github.com/drakmaniso/carol/internal"
 	"github.com/drakmaniso/carol/internal/microtext" //TODO: remove
 	"github.com/drakmaniso/carol/internal/overl"
@@ -75,7 +75,7 @@ func dispatch(e unsafe.Pointer) {
 			internal.Window.Width = int32(e.data1)
 			internal.Window.Height = int32(e.data2)
 			s := pixel.Coord{X: int32(e.data1), Y: int32(e.data2)}
-			gfx.Viewport(pixel.Coord{X: 0, Y: 0}, s)
+			gpu.Viewport(pixel.Coord{X: 0, Y: 0}, s)
 			microtext.WindowResized(s)
 			overl.WindowResized(s)
 			loop.WindowResized(s)

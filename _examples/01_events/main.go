@@ -8,7 +8,7 @@ package main
 import (
 	"github.com/drakmaniso/carol"
 	"github.com/drakmaniso/carol/color"
-	"github.com/drakmaniso/carol/gfx"
+	"github.com/drakmaniso/carol/gpu"
 	"github.com/drakmaniso/carol/key"
 	"github.com/drakmaniso/carol/mouse"
 	"github.com/drakmaniso/carol/mtx"
@@ -196,7 +196,7 @@ var topbar = mtx.Clip{
 }
 
 func (loop) Draw(_, _ float64) {
-	gfx.ClearColorBuffer(color.RGBA{})
+	gpu.ClearColorBuffer(color.RGBA{})
 }
 
 //------------------------------------------------------------------------------
