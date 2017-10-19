@@ -54,7 +54,7 @@ func Setup() {
 	fontSSBO = gfx.NewStorageBuffer(&Font, gfx.StaticStorage)
 
 	if err := gfx.Err(); err != nil {
-		internal.Log(err.Error())
+		internal.Log(err.Error()) //TODO
 	}
 }
 
@@ -78,6 +78,8 @@ func WindowResized(s pixel.Coord) {
 
 type Overlay struct {
 	ssbo gfx.StorageBuffer
+
+	orig pixel.Coord
 
 	// Data for the SSBO
 
@@ -112,7 +114,7 @@ func FontSize() pixel.Coord {
 //------------------------------------------------------------------------------
 
 func Create(position pixel.Coord, columns, rows int) *Overlay {
-	o := Overlay{}
+	o := Overlay{orig: position}
 	o.header.x = position.X
 	o.header.y = position.Y
 	o.header.columns = int32(columns)
@@ -136,21 +138,35 @@ func Create(position pixel.Coord, columns, rows int) *Overlay {
 
 //------------------------------------------------------------------------------
 
-func (o *Overlay) WindowResized(s pixel.Coord) {
-	r := o.header.left == 0 &&
+func (o *Overlay) WindowResized(w pixel.Coord) {
+	// Is o uninitialized?
+	u := o.header.left == 0 &&
 		o.header.right == 0 &&
 		o.header.top == 0 &&
 		o.header.bottom == 0
-	_ = r
 
+	// Compute origin and size
 	ps := int32(1 << o.header.pixelSize)
-	//TODO: handle negative positions
-	o.header.left = 2*float32(o.header.x)/float32(s.X) - 1
-	o.header.top = 1 - 2*float32(o.header.y)/float32(s.Y)
-	o.header.right = o.header.left + 2*float32(o.header.columns*FontWidth*ps)/float32(s.X)
-	o.header.bottom = o.header.top - 2*float32(o.header.rows*FontHeight*ps)/float32(s.Y)
+	x, y := o.orig.X, o.orig.Y
+	sx, sy := o.header.columns*FontWidth*ps,
+		o.header.rows*FontHeight*ps
+	// Handle negative coordinates for origin
+	if x < 0 {
+		x = x + 1 + w.X - sx
+	}
+	if y < 0 {
+		y = y + 1 + w.Y - sy
+	}
+	o.header.x = x
+	o.header.y = y
+	// Compute screen-space bound coordinates for the vertex shader
+	o.header.left = 2*float32(x)/float32(w.X) - 1
+	o.header.top = 1 - 2*float32(y)/float32(w.Y)
+	o.header.right = o.header.left + 2*float32(sx)/float32(w.X)
+	o.header.bottom = o.header.top - 2*float32(sy)/float32(w.Y)
 
-	if r {
+	// Allocate the SSBO if necessary
+	if u {
 		o.ssbo.Delete()
 		o.ssbo = gfx.NewStorageBuffer(
 			unsafe.Sizeof(o.header)+uintptr(o.header.columns*o.header.rows),

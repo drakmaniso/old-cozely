@@ -51,12 +51,12 @@ func setup() error {
 		}
 	}
 
-	debug := overlay.Create(pixel.Coord{0, 0}, 100, 1, false)
-	for x := 0; x < 10; x++ {
+	debug := overlay.Create(pixel.Coord{-1, 0}, 6, 1, false)
+	for x := 0; x < 6; x++ {
 		debug.Poke(x, 0, 'a'+byte(x))
 	}
 
-	txt := overlay.Create(pixel.Coord{400, 100}, 60, 20, false)
+	txt := overlay.Create(pixel.Coord{-1, -1}, 60, 20, false)
 	txt.Clear()
 	// sx, sy := txt.Size()
 	// for y := 0; y < sy; y++ {
