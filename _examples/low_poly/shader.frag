@@ -59,6 +59,8 @@ float glam_Smoothness = 0.5;
 float glam_Metallic  = 0.0;
 float glam_Reflectance = 0.5;
 
+float glam_Subsurface = 0.0;
+
 float glam_Roughness;
 vec3 glam_F0;
 
@@ -239,6 +241,30 @@ vec3 pbr_lightingBurley(vec3 L, vec3 V, vec3 N)
   // (division by PI omitted, it's factored in light intensity)
 }
 
+vec3 pbr_lightingBurleySubsurface(vec3 L, vec3 V, vec3 N)
+{
+  float NdotV = abs(dot(N , V)) + 0.000000001; //TODO: factorize out of function
+
+  vec3 H = normalize(V + L);
+  float LdotH = max(0.0, dot(L, H));
+  float NdotH = max(0.0, dot(N, H));
+  float NdotL = max(0.0, dot(N, L));
+
+  vec3 specF;
+  vec3 specular = specularBRDF(NdotV, NdotL, NdotH, LdotH, specF);
+
+  vec3 diffuse = diffuseBurleyBRDF(NdotV, NdotL, LdotH);
+
+	float Fss90 = LdotH*LdotH*glam_Roughness;
+	float FL = fresnel(1, Fss90, NdotL);
+	float FV = fresnel(1, Fss90, NdotV);
+	float Fss = FL*FV;
+	float ss = 1.25 * (Fss * (1 / (NdotL + NdotV) - .5) + .5);
+
+  return NdotL * (specular + mix(diffuse, ss*glam_BaseColor, glam_Subsurface));
+  // (division by PI omitted, it's factored in light intensity)
+}
+
 vec3 pbr_lightingNormalizedBurley(vec3 L, vec3 V, vec3 N)
 {
   float NdotV = abs(dot(N , V)) + 0.000000001; //TODO: factorize out of function
@@ -309,7 +335,8 @@ void main(void) {
   // vec3 luminance = glam_SunIlluminance * normalized_blinn_phong_lighting (L, V, N, glam_BaseColor, glam_F0, 1000.0 * glam_Smoothness * glam_Smoothness * glam_Smoothness * glam_Smoothness) + glam_BaseColor * ambient_luminance;
   // vec3 luminance = glam_SunIlluminance * minimalist_cook_torrance_lighting (L, V, N, glam_BaseColor, glam_F0, 500.0 * glam_Smoothness * glam_Smoothness * glam_Smoothness * glam_Smoothness) + glam_BaseColor * ambient_luminance;
   // vec3 luminance = glam_SunIlluminance * pbr_lightingSimple(L, V, N) + glam_BaseColor * ambient_luminance;
-  vec3 luminance = glam_SunIlluminance * pbr_lightingBurley(L, V, N) + glam_BaseColor * ambient_luminance;
+  // vec3 luminance = glam_SunIlluminance * pbr_lightingBurley(L, V, N) + glam_BaseColor * ambient_luminance;
+  vec3 luminance = glam_SunIlluminance * pbr_lightingBurleySubsurface(L, V, N) + glam_BaseColor * ambient_luminance;
   // vec3 luminance = glam_SunIlluminance * pbr_lightingNormalizedBurley(L, V, N) + glam_BaseColor * ambient_luminance;
 
 
