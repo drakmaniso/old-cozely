@@ -6,8 +6,8 @@ package main
 //------------------------------------------------------------------------------
 
 import (
-	"github.com/drakmaniso/glam/color"
-	"github.com/drakmaniso/glam/space"
+	"github.com/drakmaniso/carol/color"
+	"github.com/drakmaniso/carol/space"
 )
 
 //------------------------------------------------------------------------------

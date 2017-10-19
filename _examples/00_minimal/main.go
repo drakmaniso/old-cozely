@@ -6,24 +6,24 @@ package main
 //------------------------------------------------------------------------------
 
 import (
-	"github.com/drakmaniso/glam"
-	"github.com/drakmaniso/glam/mtx"
+	"github.com/drakmaniso/carol"
+	"github.com/drakmaniso/carol/mtx"
 )
 
 //------------------------------------------------------------------------------
 
 func main() {
-	err := glam.Setup()
+	err := carol.Setup()
 	if err != nil {
-		glam.ShowError("setting up glam", err)
+		carol.ShowError("setting up carol", err)
 		return
 	}
 
-	glam.Loop(loop{})
+	carol.Loop(loop{})
 
-	err = glam.Run()
+	err = carol.Run()
 	if err != nil {
-		glam.ShowError("running", err)
+		carol.ShowError("running", err)
 		return
 	}
 }
@@ -31,7 +31,7 @@ func main() {
 //------------------------------------------------------------------------------
 
 type loop struct {
-	glam.DefaultHandlers
+	carol.DefaultHandlers
 }
 
 func (loop) Update() {

@@ -1,16 +1,16 @@
 // Copyright (c) 2013-2016 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
-package glam
+package carol
 
 //------------------------------------------------------------------------------
 
 import (
-	"github.com/drakmaniso/glam/internal"
-	"github.com/drakmaniso/glam/internal/microtext"
-	"github.com/drakmaniso/glam/key"
-	"github.com/drakmaniso/glam/mouse"
-	"github.com/drakmaniso/glam/pixel"
+	"github.com/drakmaniso/carol/internal"
+	"github.com/drakmaniso/carol/internal/microtext"
+	"github.com/drakmaniso/carol/key"
+	"github.com/drakmaniso/carol/mouse"
+	"github.com/drakmaniso/carol/pixel"
 )
 
 //------------------------------------------------------------------------------

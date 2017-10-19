@@ -5,7 +5,7 @@ package internal
 
 //------------------------------------------------------------------------------
 
-import "github.com/drakmaniso/glam/pixel"
+import "github.com/drakmaniso/carol/pixel"
 
 //------------------------------------------------------------------------------
 

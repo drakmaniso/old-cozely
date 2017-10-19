@@ -6,29 +6,29 @@ package main
 //------------------------------------------------------------------------------
 
 import (
-	"github.com/drakmaniso/glam"
-	"github.com/drakmaniso/glam/color"
-	"github.com/drakmaniso/glam/gfx"
-	"github.com/drakmaniso/glam/key"
-	"github.com/drakmaniso/glam/mouse"
-	"github.com/drakmaniso/glam/mtx"
-	"github.com/drakmaniso/glam/pixel"
+	"github.com/drakmaniso/carol"
+	"github.com/drakmaniso/carol/color"
+	"github.com/drakmaniso/carol/gfx"
+	"github.com/drakmaniso/carol/key"
+	"github.com/drakmaniso/carol/mouse"
+	"github.com/drakmaniso/carol/mtx"
+	"github.com/drakmaniso/carol/pixel"
 )
 
 //------------------------------------------------------------------------------
 
 func main() {
-	err := glam.Setup()
+	err := carol.Setup()
 	if err != nil {
-		glam.ShowError("setting up glam", err)
+		carol.ShowError("setting up carol", err)
 		return
 	}
 
-	glam.Loop(loop{})
+	carol.Loop(loop{})
 
-	err = glam.Run()
+	err = carol.Run()
 	if err != nil {
-		glam.ShowError("running", err)
+		carol.ShowError("running", err)
 		return
 	}
 }
@@ -36,26 +36,26 @@ func main() {
 //------------------------------------------------------------------------------
 
 type loop struct {
-	glam.DefaultHandlers
+	carol.DefaultHandlers
 }
 
 //------------------------------------------------------------------------------
 
 func (loop) KeyDown(l key.Label, p key.Position) {
 	if l == key.LabelEscape {
-		glam.Stop()
+		carol.Stop()
 	}
-	scroller.Print("%v: Key Down: %v %v\n", glam.Now(), l, p)
+	scroller.Print("%v: Key Down: %v %v\n", carol.Now(), l, p)
 }
 
 func (loop) KeyUp(l key.Label, p key.Position) {
-	scroller.Print("%v: Key Up: %v %v\n", glam.Now(), l, p)
+	scroller.Print("%v: Key Up: %v %v\n", carol.Now(), l, p)
 }
 
 //------------------------------------------------------------------------------
 
 func (loop) MouseMotion(rel pixel.Coord, pos pixel.Coord) {
-	scroller.Print("%v: mouse motion  %+d,%+d  %d,%d\n", glam.Now(), rel.X, rel.Y, pos.X, pos.Y)
+	scroller.Print("%v: mouse motion  %+d,%+d  %d,%d\n", carol.Now(), rel.X, rel.Y, pos.X, pos.Y)
 }
 
 func (loop) MouseButtonDown(b mouse.Button, clicks int) {
@@ -74,7 +74,7 @@ func (loop) MouseButtonDown(b mouse.Button, clicks int) {
 	default:
 		n = "UNKOWN!"
 	}
-	scroller.Print("%v: mouse button down  %s (%v), clicks=%v\n", glam.Now(), n, b, clicks)
+	scroller.Print("%v: mouse button down  %s (%v), clicks=%v\n", carol.Now(), n, b, clicks)
 }
 
 func (loop) MouseButtonUp(b mouse.Button, clicks int) {
@@ -93,58 +93,58 @@ func (loop) MouseButtonUp(b mouse.Button, clicks int) {
 	default:
 		n = "UNKOWN!"
 	}
-	scroller.Print("%v: mouse button up: %s (%v), clicks=%v\n", glam.Now(), n, b, clicks)
+	scroller.Print("%v: mouse button up: %s (%v), clicks=%v\n", carol.Now(), n, b, clicks)
 }
 
 func (loop) MouseWheel(w pixel.Coord) {
-	scroller.Print("%v: mouse wheel: %+d,%+d\n", glam.Now(), w.X, w.Y)
+	scroller.Print("%v: mouse wheel: %+d,%+d\n", carol.Now(), w.X, w.Y)
 }
 
 //------------------------------------------------------------------------------
 
 func (loop) WindowShown() {
-	scroller.Print("%v: window shown\n", glam.Now())
+	scroller.Print("%v: window shown\n", carol.Now())
 }
 
 func (loop) WindowHidden() {
-	scroller.Print("%v: window hidden\n", glam.Now())
+	scroller.Print("%v: window hidden\n", carol.Now())
 }
 
 func (loop) WindowResized(s pixel.Coord) {
-	scroller.Print("%v: window resized %v\n", glam.Now(), s)
+	scroller.Print("%v: window resized %v\n", carol.Now(), s)
 }
 
 func (loop) WindowMinimized() {
-	scroller.Print("%v: window minimized\n", glam.Now())
+	scroller.Print("%v: window minimized\n", carol.Now())
 }
 
 func (loop) WindowMaximized() {
-	scroller.Print("%v: window maximized\n", glam.Now())
+	scroller.Print("%v: window maximized\n", carol.Now())
 }
 
 func (loop) WindowRestored() {
-	scroller.Print("%v: window restored\n", glam.Now())
+	scroller.Print("%v: window restored\n", carol.Now())
 }
 
 func (loop) WindowMouseEnter() {
-	scroller.Print("%v: window mouse enter\n", glam.Now())
+	scroller.Print("%v: window mouse enter\n", carol.Now())
 }
 
 func (loop) WindowMouseLeave() {
-	scroller.Print("%v: window mouse leave\n", glam.Now())
+	scroller.Print("%v: window mouse leave\n", carol.Now())
 }
 
 func (loop) WindowFocusGained() {
-	scroller.Print("%v: window focus gained\n", glam.Now())
+	scroller.Print("%v: window focus gained\n", carol.Now())
 }
 
 func (loop) WindowFocusLost() {
-	scroller.Print("%v: window focus lost\n", glam.Now())
+	scroller.Print("%v: window focus lost\n", carol.Now())
 }
 
 func (loop) WindowQuit() {
-	scroller.Print("%v: window quit\n", glam.Now())
-	glam.Stop()
+	scroller.Print("%v: window quit\n", carol.Now())
+	carol.Stop()
 }
 
 var scroller = mtx.Clip{

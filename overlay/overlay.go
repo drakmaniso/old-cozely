@@ -8,8 +8,8 @@ package overlay
 import (
 	"fmt"
 
-	"github.com/drakmaniso/glam/internal/overl"
-	"github.com/drakmaniso/glam/pixel"
+	"github.com/drakmaniso/carol/internal/overl"
+	"github.com/drakmaniso/carol/pixel"
 )
 
 //------------------------------------------------------------------------------

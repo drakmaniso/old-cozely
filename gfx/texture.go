@@ -9,7 +9,7 @@ import (
 	"image"
 	"unsafe"
 
-	"github.com/drakmaniso/glam/pixel"
+	"github.com/drakmaniso/carol/pixel"
 )
 
 /*

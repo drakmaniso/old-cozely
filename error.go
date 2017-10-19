@@ -1,12 +1,12 @@
 // Copyright (c) 2013-2017 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
-package glam
+package carol
 
 //------------------------------------------------------------------------------
 
 import (
-	"github.com/drakmaniso/glam/internal"
+	"github.com/drakmaniso/carol/internal"
 )
 
 //------------------------------------------------------------------------------

@@ -9,7 +9,7 @@ import (
 	"errors"
 	"unsafe"
 
-	"github.com/drakmaniso/glam/color"
+	"github.com/drakmaniso/carol/color"
 )
 
 /*

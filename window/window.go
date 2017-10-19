@@ -7,8 +7,8 @@ package window
 //------------------------------------------------------------------------------
 
 import (
-	"github.com/drakmaniso/glam/internal"
-	"github.com/drakmaniso/glam/pixel"
+	"github.com/drakmaniso/carol/internal"
+	"github.com/drakmaniso/carol/pixel"
 )
 
 //------------------------------------------------------------------------------

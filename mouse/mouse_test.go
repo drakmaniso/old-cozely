@@ -10,22 +10,22 @@ import (
 	"os"
 	"testing"
 
-	"github.com/drakmaniso/glam"
-	"github.com/drakmaniso/glam/mouse"
-	"github.com/drakmaniso/glam/mtx"
-	"github.com/drakmaniso/glam/pixel"
+	"github.com/drakmaniso/carol"
+	"github.com/drakmaniso/carol/mouse"
+	"github.com/drakmaniso/carol/mtx"
+	"github.com/drakmaniso/carol/pixel"
 )
 
 //------------------------------------------------------------------------------
 
 func TestMain(m *testing.M) {
-	glam.Setup()
+	carol.Setup()
 
 	mouse.Handle = handler{}
 
 	// Run the main loop
-	glam.Loop = looper{}
-	err := glam.Loop()
+	carol.Loop = looper{}
+	err := carol.Loop()
 	if err != nil {
 		fmt.Printf("Glam: Error: %v\n", err)
 		os.Exit(-1)
@@ -102,7 +102,7 @@ type looper struct{}
 func (l looper) Draw(_ float64) {}
 
 func (l looper) Update(_, _ float64) {
-	// timer += glam.TimeStep
+	// timer += carol.TimeStep
 	// if timer > time.Second/10 {
 	// 	timer = 0
 

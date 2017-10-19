@@ -11,7 +11,7 @@ package gfx
 import "C"
 
 import (
-	"github.com/drakmaniso/glam/internal"
+	"github.com/drakmaniso/carol/internal"
 )
 
 //------------------------------------------------------------------------------

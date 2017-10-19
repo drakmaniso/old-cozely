@@ -9,37 +9,37 @@ import (
 	"bufio"
 	"os"
 
-	"github.com/drakmaniso/glam"
-	"github.com/drakmaniso/glam/color"
-	"github.com/drakmaniso/glam/gfx"
-	"github.com/drakmaniso/glam/key"
-	"github.com/drakmaniso/glam/math32"
-	"github.com/drakmaniso/glam/mtx"
-	"github.com/drakmaniso/glam/pixel"
-	"github.com/drakmaniso/glam/plane"
-	"github.com/drakmaniso/glam/space"
+	"github.com/drakmaniso/carol"
+	"github.com/drakmaniso/carol/color"
+	"github.com/drakmaniso/carol/gfx"
+	"github.com/drakmaniso/carol/key"
+	"github.com/drakmaniso/carol/math32"
+	"github.com/drakmaniso/carol/mtx"
+	"github.com/drakmaniso/carol/pixel"
+	"github.com/drakmaniso/carol/plane"
+	"github.com/drakmaniso/carol/space"
 )
 
 //------------------------------------------------------------------------------
 
 func main() {
-	err := glam.Setup()
+	err := carol.Setup()
 	if err != nil {
-		glam.ShowError("setting up glam", err)
+		carol.ShowError("setting up carol", err)
 		return
 	}
 
 	err = setup()
 	if err != nil {
-		glam.ShowError("setting up the game", err)
+		carol.ShowError("setting up the game", err)
 		return
 	}
 
-	glam.Loop(loop{})
+	carol.Loop(loop{})
 
-	err = glam.Run()
+	err = carol.Run()
 	if err != nil {
-		glam.ShowError("running", err)
+		carol.ShowError("running", err)
 		return
 	}
 }
@@ -81,8 +81,8 @@ var (
 func setup() error {
 	// Create and configure the pipeline
 	pipeline = gfx.NewPipeline(
-		gfx.Shader(glam.Path()+"shader.vert"),
-		gfx.Shader(glam.Path()+"shader.frag"),
+		gfx.Shader(carol.Path()+"shader.vert"),
+		gfx.Shader(carol.Path()+"shader.frag"),
 		gfx.VertexFormat(0, mesh{}),
 		gfx.Topology(gfx.Triangles),
 		gfx.CullFace(false, true),
@@ -103,9 +103,9 @@ func setup() error {
 	mtx.ShowFrameTime(true, -1, 0)
 
 	// File
-	file, err := os.Open(glam.Path() + "main.go")
+	file, err := os.Open(carol.Path() + "main.go")
 	if err != nil {
-		return glam.Error("opening text file", err)
+		return carol.Error("opening text file", err)
 	}
 	scanner = bufio.NewScanner(file)
 
@@ -114,23 +114,23 @@ func setup() error {
 	vbo.Bind(0, 0)
 	pipeline.Unbind()
 
-	return glam.Error("gfx", gfx.Err())
+	return carol.Error("gfx", gfx.Err())
 }
 
 //------------------------------------------------------------------------------
 
 type loop struct {
-	glam.DefaultHandlers
+	carol.DefaultHandlers
 }
 
 func (loop) Update() {
-	perFrame.time += float32(glam.TimeStep())
+	perFrame.time += float32(carol.TimeStep())
 
 	if paused {
 		return
 	}
 
-	timer += glam.TimeStep()
+	timer += carol.TimeStep()
 	if timer < 0.25 {
 		return
 	}
@@ -139,7 +139,7 @@ func (loop) Update() {
 
 	if !scanner.Scan() {
 		file.Close()
-		file, err := os.Open(glam.Path() + "main.go")
+		file, err := os.Open(carol.Path() + "main.go")
 		if err == nil {
 			scanner = bufio.NewScanner(file)
 		}

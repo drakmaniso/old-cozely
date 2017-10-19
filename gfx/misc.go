@@ -19,7 +19,7 @@ static void DepthRange(GLdouble n, GLdouble f) {
 import "C"
 
 import (
-	"github.com/drakmaniso/glam/pixel"
+	"github.com/drakmaniso/carol/pixel"
 )
 
 //------------------------------------------------------------------------------

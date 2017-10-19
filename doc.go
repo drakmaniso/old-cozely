@@ -2,6 +2,6 @@
 // Licensed under a simplified BSD license (see LICENSE file).
 
 /*
-Package glam provides a minimalist framework for making games in Go.
+Package carol provides a minimalist framework for making games in Go.
 */
-package glam
+package carol

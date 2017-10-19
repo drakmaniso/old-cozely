@@ -5,11 +5,11 @@ package gfx
 
 //------------------------------------------------------------------------------
 
-import "github.com/drakmaniso/glam/internal"
+import "github.com/drakmaniso/carol/internal"
 
 //------------------------------------------------------------------------------
 
-// Err returns the first glam error since the previous call to Err().
+// Err returns the first carol error since the previous call to Err().
 func Err() error {
 	err := stickyErr
 	stickyErr = nil

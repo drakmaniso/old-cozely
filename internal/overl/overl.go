@@ -7,9 +7,9 @@ import (
 	"strings"
 	"unsafe"
 
-	"github.com/drakmaniso/glam/gfx"
-	"github.com/drakmaniso/glam/internal"
-	"github.com/drakmaniso/glam/pixel"
+	"github.com/drakmaniso/carol/gfx"
+	"github.com/drakmaniso/carol/internal"
+	"github.com/drakmaniso/carol/pixel"
 )
 
 //------------------------------------------------------------------------------
@@ -41,7 +41,7 @@ const pixelSize = 1
 
 //------------------------------------------------------------------------------
 
-// Setup is called during glam setup.
+// Setup is called during carol setup.
 func Setup() {
 	pipeline = gfx.NewPipeline(
 		gfx.VertexShader(strings.NewReader(vertexShader)),

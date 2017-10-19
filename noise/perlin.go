@@ -6,8 +6,8 @@ package noise
 //------------------------------------------------------------------------------
 
 import (
-	"github.com/drakmaniso/glam/math32"
-	"github.com/drakmaniso/glam/space"
+	"github.com/drakmaniso/carol/math32"
+	"github.com/drakmaniso/carol/space"
 )
 
 //------------------------------------------------------------------------------

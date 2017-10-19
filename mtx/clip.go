@@ -8,7 +8,7 @@ package mtx
 import (
 	"fmt"
 
-	micro "github.com/drakmaniso/glam/internal/microtext"
+	micro "github.com/drakmaniso/carol/internal/microtext"
 )
 
 //------------------------------------------------------------------------------

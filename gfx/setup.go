@@ -36,13 +36,13 @@ import "C"
 import (
 	"errors"
 
-	"github.com/drakmaniso/glam/internal"
-	"github.com/drakmaniso/glam/pixel"
+	"github.com/drakmaniso/carol/internal"
+	"github.com/drakmaniso/carol/pixel"
 )
 
 //------------------------------------------------------------------------------
 
-// Setup is called by glam.Setup, and should not be called manually.
+// Setup is called by carol.Setup, and should not be called manually.
 func Setup() error {
 	var d C.int
 	if internal.Config.Debug {

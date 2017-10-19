@@ -6,34 +6,34 @@ package main
 //------------------------------------------------------------------------------
 
 import (
-	"github.com/drakmaniso/glam"
-	"github.com/drakmaniso/glam/color"
-	"github.com/drakmaniso/glam/gfx"
-	"github.com/drakmaniso/glam/key"
-	"github.com/drakmaniso/glam/overlay"
-	"github.com/drakmaniso/glam/pixel"
+	"github.com/drakmaniso/carol"
+	"github.com/drakmaniso/carol/color"
+	"github.com/drakmaniso/carol/gfx"
+	"github.com/drakmaniso/carol/key"
+	"github.com/drakmaniso/carol/overlay"
+	"github.com/drakmaniso/carol/pixel"
 )
 
 //------------------------------------------------------------------------------
 
 func main() {
-	err := glam.Setup()
+	err := carol.Setup()
 	if err != nil {
-		glam.ShowError("setting up glam", err)
+		carol.ShowError("setting up carol", err)
 		return
 	}
 
 	err = setup()
 	if err != nil {
-		glam.ShowError("running", err)
+		carol.ShowError("running", err)
 		return
 	}
 
-	glam.Loop(loop{})
+	carol.Loop(loop{})
 
-	err = glam.Run()
+	err = carol.Run()
 	if err != nil {
-		glam.ShowError("running", err)
+		carol.ShowError("running", err)
 		return
 	}
 }
@@ -85,7 +85,7 @@ func setup() error {
 //------------------------------------------------------------------------------
 
 type loop struct {
-	glam.DefaultHandlers
+	carol.DefaultHandlers
 }
 
 func (loop) Update() {
@@ -109,7 +109,7 @@ func (loop) KeyDown(l key.Label, p key.Position) {
 	case key.PositionRight:
 		tbl.Scroll(1, 0)
 	default:
-		glam.DefaultHandlers{}.KeyDown(l, p)
+		carol.DefaultHandlers{}.KeyDown(l, p)
 	}
 }
 

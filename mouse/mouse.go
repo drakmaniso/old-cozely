@@ -11,9 +11,9 @@ package mouse
 import "C"
 
 import (
-	"github.com/drakmaniso/glam/internal"
-	"github.com/drakmaniso/glam/pixel"
-	"github.com/drakmaniso/glam/plane"
+	"github.com/drakmaniso/carol/internal"
+	"github.com/drakmaniso/carol/pixel"
+	"github.com/drakmaniso/carol/plane"
 )
 
 //------------------------------------------------------------------------------
@@ -61,7 +61,7 @@ func SetSmoothing(s float32) {
 
 // SmoothDelta returns relative to the last call of SmoothDelta (or Delta), but
 // smoothed to avoid jitter. The is best used with a fixed timestep (see
-// glam.LoopStable).
+// carol.LoopStable).
 func SmoothDelta() plane.Coord {
 	d := plane.CoordOf(Delta())
 	smoothed = smoothed.Plus(d.Minus(smoothed).Times(smoothing))
