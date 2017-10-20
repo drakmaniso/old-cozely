@@ -8,10 +8,7 @@ package carol
 import (
 	"errors"
 
-	"github.com/drakmaniso/carol/gpu"
-	"github.com/drakmaniso/carol/internal"
-	"github.com/drakmaniso/carol/internal/microtext" //TODO: remove
-	"github.com/drakmaniso/carol/internal/overl"
+	"github.com/drakmaniso/carol/internal" //TODO: remove
 	"github.com/drakmaniso/carol/key"
 	"github.com/drakmaniso/carol/mouse"
 	"github.com/drakmaniso/carol/pixel"
@@ -26,13 +23,10 @@ func Setup() error {
 		return internal.Error("setting up internal", err)
 	}
 
-	gpu.Setup()
+	//TODO: gpu.Setup()
 	if err != nil {
 		return internal.Error("setting up gpu", err)
 	}
-
-	microtext.Setup()
-	overl.Setup()
 
 	isSetUp = true
 	return nil
@@ -112,7 +106,6 @@ func Run() error {
 	// First, send a fake resize window event
 	{
 		s := pixel.Coord{internal.Window.Width, internal.Window.Height}
-		overl.WindowResized(s)
 		loop.WindowResized(s)
 	}
 
@@ -150,8 +143,6 @@ func Run() error {
 
 		visibleNow = now
 		loop.Draw(delta, remain/timeStep)
-		microtext.Draw()
-		overl.Draw()
 		internal.SwapWindow()
 
 		then = now
@@ -191,7 +182,7 @@ func countFrames() {
 	if frSum >= frInterval {
 		frAverage = frSum / float64(frCount)
 		xrunPrevious = xrunCount
-		microtext.PrintFrameTime(frAverage, xrunCount)
+		//TODO: microtext.PrintFrameTime(frAverage, xrunCount)
 		frSum = 0
 		frCount = 0
 		xrunCount = 0

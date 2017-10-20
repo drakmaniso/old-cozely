@@ -7,7 +7,6 @@ package main
 
 import (
 	"github.com/drakmaniso/carol"
-	"github.com/drakmaniso/carol/mtx"
 )
 
 //------------------------------------------------------------------------------
@@ -35,8 +34,6 @@ type loop struct {
 }
 
 func (loop) Update() {
-	mtx.Locate(1, 1)
-	mtx.Print("hello, world\n")
 }
 
 func (loop) Draw(_, _ float64) {

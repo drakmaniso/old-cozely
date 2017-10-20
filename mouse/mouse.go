@@ -13,7 +13,6 @@ import "C"
 import (
 	"github.com/drakmaniso/carol/internal"
 	"github.com/drakmaniso/carol/pixel"
-	"github.com/drakmaniso/carol/plane"
 )
 
 //------------------------------------------------------------------------------
@@ -51,24 +50,5 @@ func SetRelativeMode(enabled bool) error {
 func GetRelativeMode() bool {
 	return C.SDL_GetRelativeMouseMode() == C.SDL_TRUE
 }
-
-//------------------------------------------------------------------------------
-
-// SetSmoothing sets the smoothing factor for SmoothDelta.
-func SetSmoothing(s float32) {
-	smoothing = s
-}
-
-// SmoothDelta returns relative to the last call of SmoothDelta (or Delta), but
-// smoothed to avoid jitter. The is best used with a fixed timestep (see
-// carol.LoopStable).
-func SmoothDelta() plane.Coord {
-	d := plane.CoordOf(Delta())
-	smoothed = smoothed.Plus(d.Minus(smoothed).Times(smoothing))
-	return smoothed
-}
-
-var smoothed plane.Coord
-var smoothing = float32(0.4)
 
 //------------------------------------------------------------------------------

@@ -7,7 +7,6 @@ package carol
 
 import (
 	"github.com/drakmaniso/carol/internal"
-	"github.com/drakmaniso/carol/internal/microtext"
 	"github.com/drakmaniso/carol/key"
 	"github.com/drakmaniso/carol/mouse"
 	"github.com/drakmaniso/carol/pixel"
@@ -78,8 +77,6 @@ func (dh DefaultHandlers) KeyDown(l key.Label, p key.Position) {
 		internal.QuitRequested = true
 	case key.LabelF11:
 		internal.ToggleFullscreen()
-	case key.LabelF12:
-		microtext.ToggleReverseVideo()
 	}
 }
 
