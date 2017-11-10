@@ -30,7 +30,7 @@ func main() {
 //------------------------------------------------------------------------------
 
 type loop struct {
-	carol.DefaultHandlers
+	carol.Handlers
 }
 
 func (loop) Update() {

@@ -14,64 +14,66 @@ import (
 
 //------------------------------------------------------------------------------
 
-// DefaultHandlers implements default behavior for all events.
-type DefaultHandlers struct{}
+// Handlers implements default behavior for all events.
+//
+// It's an empty struct intended to be embedded in the user defined handler.
+type Handlers struct{}
 
 //------------------------------------------------------------------------------
 
 // WindowShown does nothing.
-func (dh DefaultHandlers) WindowShown() {}
+func (h Handlers) WindowShown() {}
 
 // WindowHidden does nothing.
-func (dh DefaultHandlers) WindowHidden() {}
+func (h Handlers) WindowHidden() {}
 
 // WindowResized does nothing.
-func (dh DefaultHandlers) WindowResized(s pixel.Coord) {}
+func (h Handlers) WindowResized(s pixel.Coord) {}
 
 // WindowMinimized does nothing.
-func (dh DefaultHandlers) WindowMinimized() {}
+func (h Handlers) WindowMinimized() {}
 
 // WindowMaximized does nothing.
-func (dh DefaultHandlers) WindowMaximized() {}
+func (h Handlers) WindowMaximized() {}
 
 // WindowRestored does nothing.
-func (dh DefaultHandlers) WindowRestored() {}
+func (h Handlers) WindowRestored() {}
 
 // WindowMouseEnter does nothing.
-func (dh DefaultHandlers) WindowMouseEnter() {}
+func (h Handlers) WindowMouseEnter() {}
 
 // WindowMouseLeave does nothing.
-func (dh DefaultHandlers) WindowMouseLeave() {}
+func (h Handlers) WindowMouseLeave() {}
 
 // WindowFocusGained does nothing.
-func (dh DefaultHandlers) WindowFocusGained() {}
+func (h Handlers) WindowFocusGained() {}
 
 // WindowFocusLost does nothing.
-func (dh DefaultHandlers) WindowFocusLost() {}
+func (h Handlers) WindowFocusLost() {}
 
 // WindowQuit requests the game loop to stop.
-func (dh DefaultHandlers) WindowQuit() {
+func (h Handlers) WindowQuit() {
 	internal.QuitRequested = true
 }
 
 //------------------------------------------------------------------------------
 
 // MouseMotion does nothing.
-func (dh DefaultHandlers) MouseMotion(rel pixel.Coord, pos pixel.Coord) {}
+func (h Handlers) MouseMotion(rel pixel.Coord, pos pixel.Coord) {}
 
 // MouseButtonDown does nothing.
-func (dh DefaultHandlers) MouseButtonDown(b mouse.Button, clicks int) {}
+func (h Handlers) MouseButtonDown(b mouse.Button, clicks int) {}
 
 // MouseButtonUp does nothing.
-func (dh DefaultHandlers) MouseButtonUp(b mouse.Button, clicks int) {}
+func (h Handlers) MouseButtonUp(b mouse.Button, clicks int) {}
 
 // MouseWheel does nothing.
-func (dh DefaultHandlers) MouseWheel(w pixel.Coord) {}
+func (h Handlers) MouseWheel(w pixel.Coord) {}
 
 //------------------------------------------------------------------------------
 
 // KeyDown requests the game loop to stop if Escape is pressed.
-func (dh DefaultHandlers) KeyDown(l key.Label, p key.Position) {
+func (h Handlers) KeyDown(l key.Label, p key.Position) {
 	switch l {
 	case key.LabelEscape:
 		internal.QuitRequested = true
@@ -81,7 +83,7 @@ func (dh DefaultHandlers) KeyDown(l key.Label, p key.Position) {
 }
 
 // KeyUp does nothing.
-func (dh DefaultHandlers) KeyUp(l key.Label, p key.Position) {
+func (h Handlers) KeyUp(l key.Label, p key.Position) {
 }
 
 //------------------------------------------------------------------------------
