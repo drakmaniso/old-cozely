@@ -5,11 +5,6 @@ package key
 
 //------------------------------------------------------------------------------
 
-// #cgo windows LDFLAGS: -lSDL2
-// #cgo linux freebsd darwin pkg-config: sdl2
-// #include "../sdl.h"
-import "C"
-
 import (
 	"github.com/drakmaniso/carol/internal"
 )
@@ -25,13 +20,13 @@ func IsPressed(pos Position) bool {
 // LabelOf returns the key label at the specified position in the current
 // layout.
 func LabelOf(pos Position) Label {
-	return Label(C.SDL_GetKeyFromScancode(C.SDL_Scancode(pos)))
+	return internal.KeyLabelOf(pos)
 }
 
 // SearchPositionOf searches the current position of label in the current
 // layout.
 func SearchPositionOf(l Label) Position {
-	return Position(C.SDL_GetScancodeFromKey(C.SDL_Keycode(l)))
+	return internal.KeySearchPositionOf(l)
 }
 
 //------------------------------------------------------------------------------

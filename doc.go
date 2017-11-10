@@ -2,6 +2,6 @@
 // Licensed under a simplified BSD license (see LICENSE file).
 
 /*
-Package carol provides a minimalist framework for making games in Go.
+Package carol provides a framework for making pixel-art games in Go.
 */
 package carol

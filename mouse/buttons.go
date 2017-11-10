@@ -5,9 +5,6 @@ package mouse
 
 //------------------------------------------------------------------------------
 
-// #include "../sdl.h"
-import "C"
-
 import (
 	"github.com/drakmaniso/carol/internal"
 )
@@ -15,15 +12,15 @@ import (
 //------------------------------------------------------------------------------
 
 // A Button on the mouse
-type Button uint8
+type Button = internal.MouseButton
 
 // Button constants
 const (
-	Left   Button = C.SDL_BUTTON_LEFT
-	Middle Button = C.SDL_BUTTON_MIDDLE
-	Right  Button = C.SDL_BUTTON_RIGHT
-	Extra1 Button = C.SDL_BUTTON_X1
-	Extra2 Button = C.SDL_BUTTON_X2
+	Left   Button = 1
+	Middle Button = 2
+	Right  Button = 3
+	Extra1 Button = 6
+	Extra2 Button = 7
 )
 
 // IsPressed returns true if a specific button is held down.

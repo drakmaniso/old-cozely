@@ -8,9 +8,8 @@ package carol
 import (
 	"errors"
 
-	"github.com/drakmaniso/carol/internal" //TODO: remove
-	"github.com/drakmaniso/carol/key"
-	"github.com/drakmaniso/carol/mouse"
+	"github.com/drakmaniso/carol/internal"
+	"github.com/drakmaniso/carol/internal/gpu"
 	"github.com/drakmaniso/carol/pixel"
 )
 
@@ -23,7 +22,8 @@ func Setup() error {
 		return internal.Error("setting up internal", err)
 	}
 
-	//TODO: gpu.Setup()
+	gpu.Setup(internal.Config.Debug, pixel.Coord{internal.Window.Width, internal.Window.Height})
+
 	if err != nil {
 		return internal.Error("setting up gpu", err)
 	}
@@ -36,40 +36,11 @@ var isSetUp bool
 
 //------------------------------------------------------------------------------
 
-type Looper interface {
-	// Window events
-	WindowShown()
-	WindowHidden()
-	WindowResized(newSize pixel.Coord)
-	WindowMinimized()
-	WindowMaximized()
-	WindowRestored()
-	WindowMouseEnter()
-	WindowMouseLeave()
-	WindowFocusGained()
-	WindowFocusLost()
-	WindowQuit()
-
-	// Keyboard events
-	KeyDown(l key.Label, p key.Position)
-	KeyUp(l key.Label, p key.Position)
-
-	// Mouse events
-	MouseMotion(motion pixel.Coord, position pixel.Coord)
-	MouseButtonDown(b mouse.Button, clicks int)
-	MouseButtonUp(b mouse.Button, clicks int)
-	MouseWheel(motion pixel.Coord)
-
-	// Update and Draw
-	Update()
-	Draw(dt, interpolation float64)
-}
+type Looper = internal.Looper
 
 func Loop(l Looper) {
-	loop = l
+	internal.Loop = l
 }
-
-var loop Looper
 
 //------------------------------------------------------------------------------
 
@@ -106,7 +77,7 @@ func Run() error {
 	// First, send a fake resize window event
 	{
 		s := pixel.Coord{internal.Window.Width, internal.Window.Height}
-		loop.WindowResized(s)
+		internal.Loop.WindowResized(s)
 	}
 
 	// Main Loop
@@ -122,7 +93,7 @@ func Run() error {
 		//TODO: clamp delta ?
 		countFrames()
 
-		processEvents()
+		internal.ProcessEvents()
 
 		// Update with fixed time step
 
@@ -133,16 +104,17 @@ func Run() error {
 			stepNow += timeStep
 		}
 		for remain >= timeStep {
-			visibleNow = stepNow
-			loop.Update()
+			internal.VisibleNow = stepNow
+			internal.Loop.Update()
 			remain -= timeStep
 			stepNow += timeStep
 		}
 
 		// Draw
 
-		visibleNow = now
-		loop.Draw(delta, remain/timeStep)
+		internal.VisibleNow = now
+		internal.Loop.Draw(delta, remain/timeStep)
+		gpu.BlitFramebuffer(pixel.Coord{internal.Window.Width, internal.Window.Height})
 		internal.SwapWindow()
 
 		then = now
@@ -166,10 +138,8 @@ var delta float64
 //
 // It shouldn't be used outside of these three contexts.
 func Now() float64 {
-	return visibleNow
+	return internal.VisibleNow
 }
-
-var visibleNow float64
 
 //------------------------------------------------------------------------------
 

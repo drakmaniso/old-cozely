@@ -9,7 +9,7 @@ package internal
 #cgo windows LDFLAGS: -lSDL2
 #cgo linux freebsd darwin pkg-config: sdl2
 
-#include "../sdl.h"
+#include "sdl.h"
 */
 import "C"
 
@@ -28,14 +28,16 @@ var Path string
 var Config = struct {
 	Title          string
 	Resolution     [2]int32
+	PixelSize      int
 	Display        int
 	Fullscreen     bool
 	FullscreenMode string
 	VSync          bool
 	Debug          bool
 }{
-	Title:          "Glam",
+	Title:          "Carol",
 	Resolution:     [2]int32{1280, 720},
+	PixelSize:      4,
 	Display:        0,
 	Fullscreen:     false,
 	FullscreenMode: "Desktop",

@@ -5,11 +5,6 @@ package mouse
 
 //------------------------------------------------------------------------------
 
-// #cgo windows LDFLAGS: -lSDL2
-// #cgo linux freebsd darwin pkg-config: sdl2
-// #include "../sdl.h"
-import "C"
-
 import (
 	"github.com/drakmaniso/carol/internal"
 	"github.com/drakmaniso/carol/pixel"
@@ -33,22 +28,12 @@ func Delta() pixel.Coord {
 // SetRelativeMode enables or disables the relative mode, where the mouse is
 // hidden and mouse motions are continuously reported.
 func SetRelativeMode(enabled bool) error {
-	var m C.SDL_bool
-	if enabled {
-		m = 1
-		C.SDL_ShowCursor(C.SDL_DISABLE)
-	}
-	if C.SDL_SetRelativeMouseMode(m) != 0 {
-		C.SDL_ShowCursor(C.SDL_ENABLE)
-		return internal.Error("setting relative mouse mode", internal.GetSDLError())
-	}
-	C.SDL_ShowCursor(C.SDL_ENABLE)
-	return nil
+	return internal.MouseSetRelativeMode(enabled)
 }
 
 // GetRelativeMode returns true if the relative mode is enabled.
 func GetRelativeMode() bool {
-	return C.SDL_GetRelativeMouseMode() == C.SDL_TRUE
+	return internal.MouseGetRelativeMode()
 }
 
 //------------------------------------------------------------------------------

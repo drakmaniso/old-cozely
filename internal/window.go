@@ -12,9 +12,11 @@ import (
 
 /*
 #include <stdlib.h>
-#include "../sdl.h"
+#include "sdl.h"
 
-static inline void SwapWindow(SDL_Window* w) {SDL_GL_SwapWindow(w);}
+static inline void SwapWindow(SDL_Window* w) {
+	SDL_GL_SwapWindow(w);
+}
 */
 import "C"
 

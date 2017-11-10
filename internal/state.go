@@ -9,6 +9,51 @@ import "github.com/drakmaniso/carol/pixel"
 
 //------------------------------------------------------------------------------
 
+type Looper interface {
+	// Window events
+	WindowShown()
+	WindowHidden()
+	WindowResized(newSize pixel.Coord)
+	WindowMinimized()
+	WindowMaximized()
+	WindowRestored()
+	WindowMouseEnter()
+	WindowMouseLeave()
+	WindowFocusGained()
+	WindowFocusLost()
+	WindowQuit()
+
+	// Keyboard events
+	KeyDown(l KeyLabel, p KeyPosition)
+	KeyUp(l KeyLabel, p KeyPosition)
+
+	// Mouse events
+	MouseMotion(motion pixel.Coord, position pixel.Coord)
+	MouseButtonDown(b MouseButton, clicks int)
+	MouseButtonUp(b MouseButton, clicks int)
+	MouseWheel(motion pixel.Coord)
+
+	// Update and Draw
+	Update()
+	Draw(dt, interpolation float64)
+}
+
+var Loop Looper
+
+//------------------------------------------------------------------------------
+
+// VisibleNow is the current time (elapsed since program start).
+//
+// If called during the update callback, it corresponds to the current time
+// step. If called during the draw callback, it corresponds to the current
+// frame. And if called during an event callback, it corresponds to the event
+// time stamp.
+//
+// It shouldn't be used outside of these three contexts.
+var VisibleNow float64
+
+//------------------------------------------------------------------------------
+
 // QuitRequested makes the game loop stop if true.
 var QuitRequested = false
 
