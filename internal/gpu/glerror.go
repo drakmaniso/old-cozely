@@ -9,7 +9,10 @@ package gpu
 #include "glad.h"
 */
 import "C"
-import "github.com/drakmaniso/carol/internal"
+import (
+	"log"
+	"os"
+)
 
 //------------------------------------------------------------------------------
 
@@ -71,7 +74,9 @@ func logGLError(
 		ty = ""
 	}
 
-	internal.DebugLog("%s %s%s: %s\n", sou, sev, ty, C.GoString(m))
+	logger.Printf("%s %s%s: %s\n", sou, sev, ty, C.GoString(m))
 }
+
+var logger = log.New(os.Stderr, "*** ", log.Ltime)
 
 //------------------------------------------------------------------------------
