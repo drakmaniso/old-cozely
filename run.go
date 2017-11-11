@@ -36,8 +36,18 @@ var isSetUp bool
 
 //------------------------------------------------------------------------------
 
+// A Looper implements the game loop's Update and Draw, as well as callbacks for
+// all events.
+//
+// Methods to implement:
+//
+// 	   Update()
+//	   Draw(dt, interpolation float64)
+//
+// Plus all the event handlers: see Handlers.
 type Looper = internal.Looper
 
+// Loop sets the active looper.
 func Loop(l Looper) {
 	internal.Loop = l
 }
@@ -93,7 +103,7 @@ func Run() error {
 		//TODO: clamp delta ?
 		countFrames()
 
-		internal.ProcessEvents()
+		internal.ProcessEvents() //TODO: Should it be in the physisc loop?
 
 		// Update with fixed time step
 

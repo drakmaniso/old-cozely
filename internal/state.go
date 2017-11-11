@@ -9,6 +9,8 @@ import "github.com/drakmaniso/carol/pixel"
 
 //------------------------------------------------------------------------------
 
+// A Looper implements the game loop's Update and Draw, as well as callbacks for
+// all events.
 type Looper interface {
 	// Window events
 	WindowShown()
@@ -38,6 +40,9 @@ type Looper interface {
 	Draw(dt, interpolation float64)
 }
 
+// Loop holds the active looper.
+//
+// Note: The variable is set with carol.Loop.
 var Loop Looper
 
 //------------------------------------------------------------------------------

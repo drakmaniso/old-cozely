@@ -56,9 +56,7 @@ import "C"
 
 //------------------------------------------------------------------------------
 
-// ResizeWindow sets the size in pixels of the GL viewport.
-//
-// This function is automatically called each time the window is resized.
+// CreateFramebuffer prepares the framebuffer.
 func CreateFramebuffer(size pixel.Coord) {
 	framebuffer = C.CreateFramebuffer(C.GLsizei(size.X), C.GLsizei(size.Y))
 }
@@ -67,7 +65,7 @@ var framebuffer C.GLuint
 
 //------------------------------------------------------------------------------
 
-// BlitFramebuffer swaps the double-buffer.
+// BlitFramebuffer blits the framebuffer onto the window backbuffer.
 func BlitFramebuffer(size pixel.Coord) {
 	C.BlitFramebuffer(C.GLint(size.X), C.GLint(size.Y))
 }
