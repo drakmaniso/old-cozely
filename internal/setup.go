@@ -27,7 +27,8 @@ var Path string
 
 var Config = struct {
 	Title          string
-	Resolution     [2]int32
+	WindowSize     [2]int32
+	ScreenSize     [2]int32
 	PixelSize      int
 	Display        int
 	Fullscreen     bool
@@ -36,8 +37,9 @@ var Config = struct {
 	Debug          bool
 }{
 	Title:          "Carol",
-	Resolution:     [2]int32{1280, 720},
-	PixelSize:      4,
+	WindowSize:     [2]int32{1280, 720},
+	ScreenSize:     [2]int32{64, 64},
+	PixelSize:      8,
 	Display:        0,
 	Fullscreen:     false,
 	FullscreenMode: "Desktop",
@@ -88,7 +90,7 @@ func Setup() error {
 
 	err = OpenWindow(
 		Config.Title,
-		Config.Resolution,
+		Config.WindowSize,
 		Config.Display,
 		Config.Fullscreen,
 		Config.FullscreenMode,

@@ -22,7 +22,12 @@ func Setup() error {
 		return internal.Error("setting up internal", err)
 	}
 
-	gpu.Setup(internal.Config.Debug, pixel.Coord{internal.Window.Width, internal.Window.Height})
+	gpu.Setup(
+		internal.Config.Debug,
+		// pixel.Coord{internal.Window.Width, internal.Window.Height},
+		pixel.Coord{internal.Config.ScreenSize[0], internal.Config.ScreenSize[1]},
+		internal.Config.PixelSize,
+	)
 
 	if err != nil {
 		return internal.Error("setting up gpu", err)

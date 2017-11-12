@@ -41,7 +41,7 @@ import (
 
 //------------------------------------------------------------------------------
 
-func Setup(debug bool, size pixel.Coord) error {
+func Setup(debug bool, screenSize pixel.Coord, pixelSize int) error {
 
 	// Initialize OpenGL
 
@@ -53,7 +53,7 @@ func Setup(debug bool, size pixel.Coord) error {
 		return errors.New("impossible to initialize OpenGL")
 	}
 
-	CreateFramebuffer(size)
+	CreateFramebuffer(screenSize, pixelSize)
 
 	//
 
