@@ -124,6 +124,8 @@ func Run() error {
 
 		internal.VisibleNow = now
 		internal.Loop.Draw(delta, remain/timeStep)
+
+		gpu.BindQuadPipeline()
 		gpu.BlitFramebuffer(pixel.Coord{internal.Window.Width, internal.Window.Height})
 		internal.SwapWindow()
 

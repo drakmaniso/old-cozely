@@ -57,7 +57,7 @@ func Setup(debug bool, size pixel.Coord) error {
 
 	//
 
-	//SetupQuadPipeline()
+	SetupQuadPipeline() //TODO: elsewhere?
 
 	return nil
 }
