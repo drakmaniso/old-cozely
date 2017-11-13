@@ -4,7 +4,7 @@
 		1280,
 		720
 	],
-	"ScreenSize": [
+	"FramebufferSize": [
 		128,
 		128
 	],

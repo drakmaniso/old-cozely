@@ -25,7 +25,7 @@ func Setup() error {
 	gpu.Setup(
 		internal.Config.Debug,
 		// pixel.Coord{internal.Window.Width, internal.Window.Height},
-		pixel.Coord{internal.Config.ScreenSize[0], internal.Config.ScreenSize[1]},
+		pixel.Coord{internal.Config.FramebufferSize[0], internal.Config.FramebufferSize[1]},
 		internal.Config.PixelSize,
 	)
 

@@ -14,6 +14,34 @@ import "github.com/drakmaniso/carol/pixel"
 
 //------------------------------------------------------------------------------
 
+// Path of the executable (uses slash separators, and ends with one).
+var Path string
+
+// Config holds the initial configuration of the game.
+var Config = struct {
+	Title           string
+	WindowSize      [2]int32
+	FramebufferSize [2]int32
+	PixelSize       int
+	Display         int
+	Fullscreen      bool
+	FullscreenMode  string
+	VSync           bool
+	Debug           bool
+}{
+	Title:           "Carol",
+	WindowSize:      [2]int32{1280, 720},
+	FramebufferSize: [2]int32{64, 64},
+	PixelSize:       8,
+	Display:         0,
+	Fullscreen:      false,
+	FullscreenMode:  "Desktop",
+	VSync:           true,
+	Debug:           false,
+}
+
+//------------------------------------------------------------------------------
+
 // Window is the game window.
 var Window struct {
 	window  *C.SDL_Window
