@@ -1,9 +1,14 @@
 {
 	"Title": "Basic Example",
-	"Resolution": [
+	"WindowSize": [
 		1280,
 		720
 	],
+	"ScreenSize": [
+		128,
+		128
+	],
+	"PixelSize": 4,
 	"Display": 0,
 	"Fullscreen": false,
 	"FullscreenMode": "Desktop",

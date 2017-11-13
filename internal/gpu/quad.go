@@ -116,9 +116,9 @@ float rand(vec2 c){
 void main(void)
 {
 	color = vec4(
-		rand(vec2(0.3, rand(gl_FragCoord.xy))),
-		rand(vec2(0.1, rand(gl_FragCoord.xy))),
-		rand(vec2(0.6, rand(gl_FragCoord.xy))),
+		0.5 + 0.25*rand(vec2(0.3, rand(gl_FragCoord.xy))),
+		0.5 + 0.25*rand(vec2(0.1, rand(gl_FragCoord.xy))),
+		0.5 + 0.25*rand(vec2(0.6, rand(gl_FragCoord.xy))),
 		1.0
 	);
 }
