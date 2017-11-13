@@ -126,7 +126,7 @@ func Run() error {
 		internal.VisibleNow = now
 		internal.Loop.Draw(delta, remain/timeStep)
 
-		gpu.BindQuadPipeline()
+		gpu.BindImagePipeline()
 		gpu.BlitFramebuffer(internal.Window.Size)
 		internal.SwapWindow()
 

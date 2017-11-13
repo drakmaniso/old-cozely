@@ -8,7 +8,7 @@ package gpu
 /*
 #include "glad.h"
 
-static inline void SetupQuadPipeline(GLuint *program, GLuint*vao, const GLchar* vs, const GLchar* fs) {
+static inline void SetupImagePipeline(GLuint *program, GLuint*vao, const GLchar* vs, const GLchar* fs) {
 	*program = glCreateProgram();
 	glCreateVertexArrays(1, vao);
 
@@ -30,7 +30,7 @@ static inline void SetupQuadPipeline(GLuint *program, GLuint*vao, const GLchar* 
 	//TODO: error handling
 }
 
-static inline void BindQuadPipeline(GLuint program, GLuint vao) {
+static inline void BindImagePipeline(GLuint program, GLuint vao) {
 	glUseProgram(program);
 	glBindVertexArray(vao);
 	glDrawArrays(GL_TRIANGLES, 0, 3);
@@ -44,41 +44,44 @@ import "unsafe"
 
 //------------------------------------------------------------------------------
 
-// A Quad is...
+// An Image is...
 //
 //TODO
-type Quad struct {
-	// First word
+type Image struct {
+	//  word
 	X1, Y1 int16
 
-	// Second word
+	//  word
 	X2, Y2 int16
 
-	// Third word
+	//  word
 	Xtex, Ytex int16
 
-	// Fourth word
-	TexIndex   uint16
-	Palette    uint8
-	ZoomOrient byte
+	//  word
+	TexArray, TexIndex uint16
+
+	// word
+	ID      uint16
+	Zoom    uint8
+	Palette uint8
 }
 
 //------------------------------------------------------------------------------
 
-var QuadPipeline struct {
+var ImagePipeline struct {
 	program C.GLuint
 	vao     C.GLuint
 }
 
-func SetupQuadPipeline() {
+func SetupImagePipeline() {
 	vs := C.CString(string(vertexShader))
 	defer C.free(unsafe.Pointer(vs))
 	fs := C.CString(string(fragmentShader))
 	defer C.free(unsafe.Pointer(fs))
 
-	C.SetupQuadPipeline(
-		&QuadPipeline.program,
-		&QuadPipeline.vao,
+	C.SetupImagePipeline(
+		&ImagePipeline.program,
+		&ImagePipeline.vao,
 		(*C.GLchar)(vs),
 		(*C.GLchar)(fs),
 	)
@@ -86,13 +89,13 @@ func SetupQuadPipeline() {
 
 //------------------------------------------------------------------------------
 
-func BindQuadPipeline() {
-	C.BindQuadPipeline(QuadPipeline.program, QuadPipeline.vao)
+func BindImagePipeline() {
+	C.BindImagePipeline(ImagePipeline.program, ImagePipeline.vao)
 }
 
 //------------------------------------------------------------------------------
 
-var vertexShader = `#version 450 core
+const vertexShader = `#version 450 core
 
 out gl_PerVertex {
 	vec4 gl_Position;
@@ -111,7 +114,7 @@ void main(void)
 
 //------------------------------------------------------------------------------
 
-var fragmentShader = `#version 450 core
+const fragmentShader = `#version 450 core
 
 // in vec4 gl_FragCoord;
 
