@@ -5,10 +5,6 @@ package gpu
 
 //------------------------------------------------------------------------------
 
-import (
-	"github.com/drakmaniso/carol/pixel"
-)
-
 /*
 #include <stdlib.h>
 #include "glad.h"
@@ -42,13 +38,13 @@ static inline GLuint CreateFramebuffer(GLsizei width, GLsizei height) {
 	return fbo;
 }
 
-static inline void BlitFramebuffer(GLint winWidth, GLint winHeight, GLint scrWidth, GLint scrHeight, GLint pixel, GLuint fbo) {
+static inline void BlitFramebuffer(GLint winWidth, GLint winHeight, GLint scrWidth, GLint scrHeight, GLint PixelSize, GLuint fbo) {
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 	glClearColor(0.2,0.2,0.2,1);
 	glClear(GL_COLOR_BUFFER_BIT);
-	GLint w = scrWidth*pixel;
-	GLint h = scrHeight*pixel;
+	GLint w = scrWidth*PixelSize;
+	GLint h = scrHeight*PixelSize;
 	GLint ox = (winWidth - w) / 2;
 	GLint oy = (winHeight - h) / 2;
 	glBlitFramebuffer(
@@ -63,20 +59,15 @@ static inline void BlitFramebuffer(GLint winWidth, GLint winHeight, GLint scrWid
 }
 */
 import "C"
+import "github.com/drakmaniso/carol/pixel"
 
 //------------------------------------------------------------------------------
 
 // CreateFramebuffer prepares the framebuffer.
-func CreateFramebuffer(screenSize pixel.Coord, pixelSize int) {
-	Framebuffer.fbo = C.CreateFramebuffer(C.GLsizei(screenSize.X), C.GLsizei(screenSize.Y))
-	Framebuffer.size = screenSize
-	Framebuffer.pixel = pixelSize
-}
-
-var Framebuffer struct {
-	fbo   C.GLuint
-	size  pixel.Coord
-	pixel int
+func CreateFramebuffer(framebufferSize pixel.Coord, pixelSize int) {
+	Framebuffer.fbo = C.CreateFramebuffer(C.GLsizei(framebufferSize.X), C.GLsizei(framebufferSize.Y))
+	Framebuffer.Size = framebufferSize
+	Framebuffer.PixelSize = pixelSize
 }
 
 //------------------------------------------------------------------------------
@@ -85,8 +76,8 @@ var Framebuffer struct {
 func BlitFramebuffer(windowSize pixel.Coord) {
 	C.BlitFramebuffer(
 		C.GLint(windowSize.X), C.GLint(windowSize.Y),
-		C.GLint(Framebuffer.size.X), C.GLint(Framebuffer.size.Y),
-		C.GLint(Framebuffer.pixel),
+		C.GLint(Framebuffer.Size.X), C.GLint(Framebuffer.Size.Y),
+		C.GLint(Framebuffer.PixelSize),
 		C.GLuint(Framebuffer.fbo),
 	)
 }

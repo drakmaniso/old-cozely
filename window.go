@@ -1,13 +1,13 @@
 // Copyright (c) 2013-2017 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
-// Package window provides support for window events
-package window
+package carol
 
 //------------------------------------------------------------------------------
 
 import (
 	"github.com/drakmaniso/carol/internal"
+	"github.com/drakmaniso/carol/internal/gpu"
 	"github.com/drakmaniso/carol/pixel"
 )
 
@@ -23,9 +23,14 @@ func HasMouseFocus() bool {
 	return internal.HasMouseFocus
 }
 
-// Size returns the size of the window in pixels.
-func Size() pixel.Coord {
-	return pixel.Coord{X: internal.Window.Width, Y: internal.Window.Height}
+// WindowSize returns the size of the window in pixels.
+func WindowSize() pixel.Coord {
+	return internal.Window.Size
+}
+
+// FramebufferSize returns the size of the framebuffer in pixels.
+func FramebufferSize() pixel.Coord {
+	return gpu.Framebuffer.Size
 }
 
 //------------------------------------------------------------------------------
