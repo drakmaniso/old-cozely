@@ -22,22 +22,6 @@ import "C"
 
 //------------------------------------------------------------------------------
 
-// Window is the game window.
-var Window struct {
-	window  *C.SDL_Window
-	context C.SDL_GLContext
-	Width   int32
-	Height  int32
-}
-
-// Focus state
-var (
-	HasFocus      bool
-	HasMouseFocus bool
-)
-
-//------------------------------------------------------------------------------
-
 // OpenWindow creates the game window and its associated OpenGL context.
 func OpenWindow(
 	title string,

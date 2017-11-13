@@ -5,40 +5,30 @@ package internal
 
 //------------------------------------------------------------------------------
 
+/*
+#include "sdl.h"
+*/
+import "C"
+
 import "github.com/drakmaniso/carol/pixel"
 
 //------------------------------------------------------------------------------
 
-// A Looper implements the game loop's Update and Draw, as well as callbacks for
-// all events.
-type Looper interface {
-	// Window events
-	WindowShown()
-	WindowHidden()
-	WindowResized(newSize pixel.Coord)
-	WindowMinimized()
-	WindowMaximized()
-	WindowRestored()
-	WindowMouseEnter()
-	WindowMouseLeave()
-	WindowFocusGained()
-	WindowFocusLost()
-	WindowQuit()
-
-	// Keyboard events
-	KeyDown(l KeyLabel, p KeyPosition)
-	KeyUp(l KeyLabel, p KeyPosition)
-
-	// Mouse events
-	MouseMotion(motion pixel.Coord, position pixel.Coord)
-	MouseButtonDown(b MouseButton, clicks int)
-	MouseButtonUp(b MouseButton, clicks int)
-	MouseWheel(motion pixel.Coord)
-
-	// Update and Draw
-	Update()
-	Draw(dt, interpolation float64)
+// Window is the game window.
+var Window struct {
+	window  *C.SDL_Window
+	context C.SDL_GLContext
+	Width   int32
+	Height  int32
 }
+
+// Focus state
+var (
+	HasFocus      bool
+	HasMouseFocus bool
+)
+
+//------------------------------------------------------------------------------
 
 // Loop holds the active looper.
 //

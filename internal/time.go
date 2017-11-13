@@ -10,17 +10,6 @@ package internal
 */
 import "C"
 
-import (
-	"errors"
-)
-
-//------------------------------------------------------------------------------
-
-// SDLQuit is called when the game loop stops.
-func SDLQuit() {
-	C.SDL_Quit()
-}
-
 //------------------------------------------------------------------------------
 
 // GetMilliseconds returns the number of milliseconds elapsed since program
@@ -46,15 +35,5 @@ func init() {
 }
 
 var perfUnit, perfOffset float64
-
-//------------------------------------------------------------------------------
-
-// GetSDLError returns nil or the current SDL Error wrapped in a Go error.
-func GetSDLError() error {
-	if s := C.SDL_GetError(); s != nil {
-		return errors.New(C.GoString(s))
-	}
-	return nil
-}
 
 //------------------------------------------------------------------------------

@@ -29,6 +29,39 @@ import (
 
 //------------------------------------------------------------------------------
 
+// A Looper implements the game loop's Update and Draw, as well as callbacks for
+// all events.
+type Looper interface {
+	// Window events
+	WindowShown()
+	WindowHidden()
+	WindowResized(newSize pixel.Coord)
+	WindowMinimized()
+	WindowMaximized()
+	WindowRestored()
+	WindowMouseEnter()
+	WindowMouseLeave()
+	WindowFocusGained()
+	WindowFocusLost()
+	WindowQuit()
+
+	// Keyboard events
+	KeyDown(l KeyLabel, p KeyPosition)
+	KeyUp(l KeyLabel, p KeyPosition)
+
+	// Mouse events
+	MouseMotion(motion pixel.Coord, position pixel.Coord)
+	MouseButtonDown(b MouseButton, clicks int)
+	MouseButtonUp(b MouseButton, clicks int)
+	MouseWheel(motion pixel.Coord)
+
+	// Update and Draw
+	Update()
+	Draw(dt, interpolation float64)
+}
+
+//------------------------------------------------------------------------------
+
 // ProcessEvents processes and dispatches all events.
 func ProcessEvents() {
 	more := true
@@ -174,6 +207,13 @@ func peepEvents() int {
 // EventAt returns a pointer to an event in the event buffer.
 func eventAt(i int) unsafe.Pointer {
 	return unsafe.Pointer(&C.Events[i])
+}
+
+//------------------------------------------------------------------------------
+
+// SDLQuit is called when the game loop stops.
+func SDLQuit() {
+	C.SDL_Quit()
 }
 
 //------------------------------------------------------------------------------
