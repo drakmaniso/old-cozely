@@ -22,7 +22,7 @@ import (
 var Framebuffer struct {
 	fbo       C.GLuint
 	Size      pixel.Coord
-	PixelSize int
+	PixelSize pixel.Coord
 }
 
 //------------------------------------------------------------------------------

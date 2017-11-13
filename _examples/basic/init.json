@@ -8,7 +8,10 @@
 		"X": 128,
 		"Y": 128
 	},
-	"PixelSize": 4,
+	"PixelSize": {
+		"X": 4,
+		"Y": 4
+	},
 	"Display": 0,
 	"Fullscreen": false,
 	"FullscreenMode": "Desktop",

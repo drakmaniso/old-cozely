@@ -23,14 +23,19 @@ func HasMouseFocus() bool {
 	return internal.HasMouseFocus
 }
 
-// WindowSize returns the size of the window in pixels.
+// WindowSize returns the size of the window in (screen) pixels.
 func WindowSize() pixel.Coord {
 	return internal.Window.Size
 }
 
-// FramebufferSize returns the size of the framebuffer in pixels.
+// FramebufferSize returns the size of the framebuffer in (framebuffer) pixels.
 func FramebufferSize() pixel.Coord {
 	return gpu.Framebuffer.Size
+}
+
+// PixelSize returns the size of framebuffer pixels, in screen pixels.
+func PixelSize() pixel.Coord {
+	return gpu.Framebuffer.PixelSize
 }
 
 //------------------------------------------------------------------------------

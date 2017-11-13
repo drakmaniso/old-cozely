@@ -38,13 +38,13 @@ static inline GLuint CreateFramebuffer(GLsizei width, GLsizei height) {
 	return fbo;
 }
 
-static inline void BlitFramebuffer(GLint winWidth, GLint winHeight, GLint scrWidth, GLint scrHeight, GLint PixelSize, GLuint fbo) {
+static inline void BlitFramebuffer(GLint winWidth, GLint winHeight, GLint scrWidth, GLint scrHeight, GLint pixWidth, GLint pixHeight, GLuint fbo) {
 	glBindFramebuffer(GL_READ_FRAMEBUFFER, fbo);
 	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
 	glClearColor(0.2,0.2,0.2,1);
 	glClear(GL_COLOR_BUFFER_BIT);
-	GLint w = scrWidth*PixelSize;
-	GLint h = scrHeight*PixelSize;
+	GLint w = scrWidth*pixWidth;
+	GLint h = scrHeight*pixHeight;
 	GLint ox = (winWidth - w) / 2;
 	GLint oy = (winHeight - h) / 2;
 	glBlitFramebuffer(
@@ -64,7 +64,7 @@ import "github.com/drakmaniso/carol/pixel"
 //------------------------------------------------------------------------------
 
 // CreateFramebuffer prepares the framebuffer.
-func CreateFramebuffer(framebufferSize pixel.Coord, pixelSize int) {
+func CreateFramebuffer(framebufferSize pixel.Coord, pixelSize pixel.Coord) {
 	Framebuffer.fbo = C.CreateFramebuffer(C.GLsizei(framebufferSize.X), C.GLsizei(framebufferSize.Y))
 	Framebuffer.Size = framebufferSize
 	Framebuffer.PixelSize = pixelSize
@@ -77,7 +77,7 @@ func BlitFramebuffer(windowSize pixel.Coord) {
 	C.BlitFramebuffer(
 		C.GLint(windowSize.X), C.GLint(windowSize.Y),
 		C.GLint(Framebuffer.Size.X), C.GLint(Framebuffer.Size.Y),
-		C.GLint(Framebuffer.PixelSize),
+		C.GLint(Framebuffer.PixelSize.X), C.GLint(Framebuffer.PixelSize.Y),
 		C.GLuint(Framebuffer.fbo),
 	)
 }

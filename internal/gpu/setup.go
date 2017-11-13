@@ -43,7 +43,7 @@ import (
 
 //------------------------------------------------------------------------------
 
-func Setup(debug bool, screenSize pixel.Coord, pixelSize int) error {
+func Setup(debug bool, screenSize pixel.Coord, pixelSize pixel.Coord) error {
 
 	// Initialize OpenGL
 

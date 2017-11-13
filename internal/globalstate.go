@@ -26,7 +26,7 @@ var Config = struct {
 	Title           string
 	WindowSize      pixel.Coord
 	FramebufferSize pixel.Coord
-	PixelSize       int
+	PixelSize       pixel.Coord
 	Display         int
 	Fullscreen      bool
 	FullscreenMode  string
@@ -34,9 +34,9 @@ var Config = struct {
 	Debug           bool
 }{
 	Title:           "Carol",
-	WindowSize:      pixel.Coord{1280, 720},
-	FramebufferSize: pixel.Coord{64, 64},
-	PixelSize:       8,
+	WindowSize:      pixel.Coord{X: 1280, Y: 720},
+	FramebufferSize: pixel.Coord{X: 64, Y: 64},
+	PixelSize:       pixel.Coord{X: 8, Y: 8},
 	Display:         0,
 	Fullscreen:      false,
 	FullscreenMode:  "Desktop",
