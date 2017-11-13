@@ -10,7 +10,6 @@ import (
 
 	"github.com/drakmaniso/carol/internal"
 	"github.com/drakmaniso/carol/internal/gpu"
-	"github.com/drakmaniso/carol/pixel"
 )
 
 //------------------------------------------------------------------------------
@@ -24,8 +23,8 @@ func Setup() error {
 
 	gpu.Setup(
 		internal.Config.Debug,
-		// pixel.Coord{internal.Window.Width, internal.Window.Height},
-		pixel.Coord{internal.Config.FramebufferSize[0], internal.Config.FramebufferSize[1]},
+		// internal.Window.Size,
+		internal.Config.FramebufferSize,
 		internal.Config.PixelSize,
 	)
 
@@ -90,10 +89,7 @@ func Run() error {
 	// Setup fallback handlers
 
 	// First, send a fake resize window event
-	{
-		s := pixel.Coord{internal.Window.Width, internal.Window.Height}
-		internal.Loop.WindowResized(s)
-	}
+	internal.Loop.WindowResized(internal.Window.Size)
 
 	// Main Loop
 
@@ -131,7 +127,7 @@ func Run() error {
 		internal.Loop.Draw(delta, remain/timeStep)
 
 		gpu.BindQuadPipeline()
-		gpu.BlitFramebuffer(pixel.Coord{internal.Window.Width, internal.Window.Height})
+		gpu.BlitFramebuffer(internal.Window.Size)
 		internal.SwapWindow()
 
 		then = now

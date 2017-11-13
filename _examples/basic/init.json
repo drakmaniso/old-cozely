@@ -1,13 +1,13 @@
 {
 	"Title": "Basic Example",
-	"WindowSize": [
-		1280,
-		720
-	],
-	"FramebufferSize": [
-		128,
-		128
-	],
+	"WindowSize": {
+		"X": 1280,
+		"Y": 720
+	},
+	"FramebufferSize": {
+		"X": 128,
+		"Y": 128
+	},
 	"PixelSize": 4,
 	"Display": 0,
 	"Fullscreen": false,

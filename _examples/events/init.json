@@ -1,9 +1,13 @@
 {
 	"Title": "Events Example",
-	"Resolution": [
-		1280,
-		720
-	],
+	"WindowSize": {
+		"X": 1280,
+		"Y": 720
+	},
+	"FramebufferSize": {
+		"X": 128,
+		"Y": 128
+	},
 	"Display": 0,
 	"Fullscreen": false,
 	"FullscreenMode": "Desktop",

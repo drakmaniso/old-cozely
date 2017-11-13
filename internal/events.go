@@ -96,10 +96,8 @@ func dispatch(e unsafe.Pointer) {
 		case C.SDL_WINDOWEVENT_MOVED:
 			// Ignore
 		case C.SDL_WINDOWEVENT_RESIZED:
-			Window.Width = int32(e.data1)
-			Window.Height = int32(e.data2)
-			s := pixel.Coord{X: int32(e.data1), Y: int32(e.data2)}
-			Loop.WindowResized(s)
+			Window.Size = pixel.Coord{int32(e.data1), int32(e.data2)}
+			Loop.WindowResized(Window.Size)
 		case C.SDL_WINDOWEVENT_SIZE_CHANGED:
 			//TODO
 		case C.SDL_WINDOWEVENT_MINIMIZED:

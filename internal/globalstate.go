@@ -20,8 +20,8 @@ var Path string
 // Config holds the initial configuration of the game.
 var Config = struct {
 	Title           string
-	WindowSize      [2]int32
-	FramebufferSize [2]int32
+	WindowSize      pixel.Coord
+	FramebufferSize pixel.Coord
 	PixelSize       int
 	Display         int
 	Fullscreen      bool
@@ -30,8 +30,8 @@ var Config = struct {
 	Debug           bool
 }{
 	Title:           "Carol",
-	WindowSize:      [2]int32{1280, 720},
-	FramebufferSize: [2]int32{64, 64},
+	WindowSize:      pixel.Coord{1280, 720},
+	FramebufferSize: pixel.Coord{64, 64},
 	PixelSize:       8,
 	Display:         0,
 	Fullscreen:      false,
@@ -46,8 +46,7 @@ var Config = struct {
 var Window struct {
 	window  *C.SDL_Window
 	context C.SDL_GLContext
-	Width   int32
-	Height  int32
+	Size    pixel.Coord
 }
 
 // Focus state

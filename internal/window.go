@@ -8,6 +8,8 @@ package internal
 import (
 	"fmt"
 	"unsafe"
+
+	"github.com/drakmaniso/carol/pixel"
 )
 
 /*
@@ -25,7 +27,7 @@ import "C"
 // OpenWindow creates the game window and its associated OpenGL context.
 func OpenWindow(
 	title string,
-	resolution [2]int32,
+	size pixel.Coord,
 	display int,
 	fullscreen bool,
 	fullscreenMode string,
@@ -46,7 +48,7 @@ func OpenWindow(
 	t := C.CString(title)
 	defer C.free(unsafe.Pointer(t))
 
-	Window.Width, Window.Height = resolution[0], resolution[1]
+	Window.Size = size
 
 	var fs uint32
 	if fullscreen {
@@ -62,8 +64,8 @@ func OpenWindow(
 		t,
 		C.int(C.SDL_WINDOWPOS_CENTERED_MASK|display),
 		C.int(C.SDL_WINDOWPOS_CENTERED_MASK|display),
-		C.int(Window.Width),
-		C.int(Window.Height),
+		C.int(Window.Size.X),
+		C.int(Window.Size.Y),
 		fl,
 	)
 	if Window.window == nil {
