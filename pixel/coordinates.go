@@ -7,16 +7,7 @@ package pixel
 
 // Coord represents a pair of pixel coordinates.
 type Coord struct {
-	X, Y int32
-}
-
-//------------------------------------------------------------------------------
-
-// XY returns the floating point conversion of the coordinates.
-//
-// This function implements the plane.Vector interface.
-func (p Coord) XY() (x, y float32) {
-	return float32(p.X), float32(p.Y)
+	X, Y int64
 }
 
 //------------------------------------------------------------------------------
@@ -37,7 +28,7 @@ func (p Coord) Opposite() Coord {
 }
 
 // Times returns the product with a scalar.
-func (p Coord) Times(s int32) Coord {
+func (p Coord) Times(s int64) Coord {
 	return Coord{p.X * s, p.Y * s}
 }
 
@@ -48,7 +39,7 @@ func (p Coord) TimesCW(o Coord) Coord {
 
 // Slash returns the integer quotient of the division by a scalar (which must be
 // non-zero).
-func (p Coord) Slash(s int32) Coord {
+func (p Coord) Slash(s int64) Coord {
 	return Coord{p.X / s, p.Y / s}
 }
 
@@ -60,7 +51,7 @@ func (p Coord) SlashCW(o Coord) Coord {
 
 // Mod returns the remainder (modulus) of the division by a scalar (which must
 // be non-zero).
-func (p Coord) Mod(s int32) Coord {
+func (p Coord) Mod(s int64) Coord {
 	return Coord{p.X % s, p.Y % s}
 }
 

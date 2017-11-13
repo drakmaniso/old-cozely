@@ -98,7 +98,7 @@ func dispatch(e unsafe.Pointer) {
 		case C.SDL_WINDOWEVENT_MOVED:
 			// Ignore
 		case C.SDL_WINDOWEVENT_RESIZED:
-			Window.Size = pixel.Coord{int32(e.data1), int32(e.data2)}
+			Window.Size = pixel.Coord{X: int64(e.data1), Y: int64(e.data2)}
 			Loop.WindowResized(Window.Size)
 		case C.SDL_WINDOWEVENT_SIZE_CHANGED:
 			//TODO
@@ -145,9 +145,9 @@ func dispatch(e unsafe.Pointer) {
 	// Mouse Events
 	case C.SDL_MOUSEMOTION:
 		e := (*C.SDL_MouseMotionEvent)(e)
-		rel := pixel.Coord{X: int32(e.xrel), Y: int32(e.yrel)}
+		rel := pixel.Coord{X: int64(e.xrel), Y: int64(e.yrel)}
 		MouseDelta = MouseDelta.Plus(rel)
-		MousePosition = pixel.Coord{X: int32(e.x), Y: int32(e.y)}
+		MousePosition = pixel.Coord{X: int64(e.x), Y: int64(e.y)}
 		MouseButtons = uint32(e.state)
 		Loop.MouseMotion(
 			rel,
@@ -169,12 +169,12 @@ func dispatch(e unsafe.Pointer) {
 		)
 	case C.SDL_MOUSEWHEEL:
 		e := (*C.SDL_MouseWheelEvent)(e)
-		var d int32 = 1
+		var d int64 = 1
 		if e.direction == C.SDL_MOUSEWHEEL_FLIPPED {
 			d = -1
 		}
 		Loop.MouseWheel(
-			pixel.Coord{X: int32(e.x) * d, Y: int32(e.y) * d},
+			pixel.Coord{X: int64(e.x) * d, Y: int64(e.y) * d},
 		)
 	//TODO: Joystick Events
 	case C.SDL_JOYAXISMOTION:
