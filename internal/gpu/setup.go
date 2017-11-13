@@ -1,4 +1,4 @@
-// Copyright (c) 2013-2016 Laurent Moussault. All rights reserved.
+// Copyright (c) 2013-2017 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
 package gpu
@@ -32,6 +32,8 @@ static inline int InitOpenGL(int debug){
 
 */
 import "C"
+
+//------------------------------------------------------------------------------
 
 import (
 	"errors"
