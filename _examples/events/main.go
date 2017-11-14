@@ -17,17 +17,9 @@ import (
 //------------------------------------------------------------------------------
 
 func main() {
-	err := carol.Setup()
+	err := carol.Run(loop{})
 	if err != nil {
-		carol.ShowError("setting up carol", err)
-		return
-	}
-
-	carol.Loop(loop{})
-
-	err = carol.Run()
-	if err != nil {
-		carol.ShowError("running", err)
+		carol.ShowError("in game loop", err)
 		return
 	}
 }
@@ -36,6 +28,12 @@ func main() {
 
 type loop struct {
 	carol.Handlers
+}
+
+//------------------------------------------------------------------------------
+
+func (loop) Setup() error {
+	return nil
 }
 
 //------------------------------------------------------------------------------
@@ -148,8 +146,8 @@ func (loop) WindowQuit() {
 
 //------------------------------------------------------------------------------
 
-func (loop) Update() {
-	return //TODO
+func (loop) Update() error {
+	return nil //TODO
 
 	d := mouse.Delta()
 	fmt.Printf("   mouse.Delta():%+6d,%+6d\v\n", d.X, d.Y)
@@ -182,9 +180,12 @@ func (loop) Update() {
 	} else {
 		fmt.Print("extra2\n")
 	}
+
+	return nil
 }
 
-func (loop) Draw(_, _ float64) {
+func (loop) Draw(_, _ float64) error {
+	return nil
 }
 
 //------------------------------------------------------------------------------

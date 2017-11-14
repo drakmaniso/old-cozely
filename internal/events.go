@@ -57,9 +57,10 @@ type Looper interface {
 	MouseButtonUp(b MouseButton, clicks int)
 	MouseWheel(motion pixel.Coord)
 
-	// Update and Draw
-	Update()
-	Draw(dt, interpolation float64)
+	// Setup, Update and Draw
+	Setup() error
+	Update() error
+	Draw(dt, interpolation float64) error
 }
 
 //------------------------------------------------------------------------------

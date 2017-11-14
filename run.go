@@ -6,16 +6,14 @@ package carol
 //------------------------------------------------------------------------------
 
 import (
-	"errors"
-
 	"github.com/drakmaniso/carol/internal"
 	"github.com/drakmaniso/carol/internal/gpu"
 )
 
 //------------------------------------------------------------------------------
 
-// Setup initializes all subsystems and open the game window.
-func Setup() error {
+// setup initializes all subsystems and open the game window.
+func setup() error {
 	err := internal.Setup()
 	if err != nil {
 		return internal.Error("setting up internal", err)
@@ -32,11 +30,8 @@ func Setup() error {
 		return internal.Error("setting up gpu", err)
 	}
 
-	isSetUp = true
 	return nil
 }
-
-var isSetUp bool
 
 //------------------------------------------------------------------------------
 
@@ -50,11 +45,6 @@ var isSetUp bool
 //
 // Plus all the event handlers: see Handlers.
 type Looper = internal.Looper
-
-// Loop sets the active looper.
-func Loop(l Looper) {
-	internal.Loop = l
-}
 
 //------------------------------------------------------------------------------
 
@@ -78,15 +68,21 @@ var timeStep float64 = 1.0 / 60
 //
 // Important: must be called from main.main, or at least from a function that is
 // known to run on the main OS thread.
-func Run() error {
+func Run(loop Looper) error {
 	defer internal.SDLQuit()
 	defer internal.DestroyWindow()
 
-	if !isSetUp {
-		return errors.New("carol.Setup must be called before carol.LoopStable")
+	internal.Loop = loop
+
+	err := setup()
+	if err != nil {
+		return internal.Error("setting up Carol", err)
 	}
 
-	// Setup fallback handlers
+	err = internal.Loop.Setup()
+	if err != nil {
+		return internal.Error("in Update callback", err)
+	}
 
 	// First, send a fake resize window event
 	internal.Loop.WindowResized(internal.Window.Size)
@@ -116,7 +112,10 @@ func Run() error {
 		}
 		for remain >= timeStep {
 			internal.VisibleNow = stepNow
-			internal.Loop.Update()
+			err = internal.Loop.Update()
+			if err != nil {
+				return internal.Error("in Update callback", err)
+			}
 			remain -= timeStep
 			stepNow += timeStep
 		}
@@ -124,7 +123,10 @@ func Run() error {
 		// Draw
 
 		internal.VisibleNow = now
-		internal.Loop.Draw(delta, remain/timeStep)
+		err = internal.Loop.Draw(delta, remain/timeStep)
+		if err != nil {
+			return internal.Error("in Draw callback", err)
+		}
 
 		gpu.BindImagePipeline()
 		gpu.BlitFramebuffer(internal.Window.Size)

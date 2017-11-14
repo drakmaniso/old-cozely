@@ -12,17 +12,9 @@ import (
 //------------------------------------------------------------------------------
 
 func main() {
-	err := carol.Setup()
+	err := carol.Run(loop{})
 	if err != nil {
-		carol.ShowError("setting up carol", err)
-		return
-	}
-
-	carol.Loop(loop{})
-
-	err = carol.Run()
-	if err != nil {
-		carol.ShowError("running", err)
+		carol.ShowError("in game loop", err)
 		return
 	}
 }
@@ -33,10 +25,16 @@ type loop struct {
 	carol.Handlers
 }
 
-func (loop) Update() {
+func (loop) Setup() error {
+	return nil
 }
 
-func (loop) Draw(_, _ float64) {
+func (loop) Update() error {
+	return nil
+}
+
+func (loop) Draw(_, _ float64) error {
+	return nil
 }
 
 //------------------------------------------------------------------------------
