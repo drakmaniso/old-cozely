@@ -12,29 +12,6 @@ import (
 
 //------------------------------------------------------------------------------
 
-// setup initializes all subsystems and open the game window.
-func setup() error {
-	err := internal.Setup()
-	if err != nil {
-		return internal.Error("setting up internal", err)
-	}
-
-	gpu.Setup(
-		internal.Config.Debug,
-		// internal.Window.Size,
-		internal.Config.FramebufferSize,
-		internal.Config.PixelSize,
-	)
-
-	if err != nil {
-		return internal.Error("setting up gpu", err)
-	}
-
-	return nil
-}
-
-//------------------------------------------------------------------------------
-
 // A Looper implements the game loop's Update and Draw, as well as callbacks for
 // all events.
 //
@@ -74,14 +51,26 @@ func Run(loop Looper) error {
 
 	internal.Loop = loop
 
-	err := setup()
+	// Setup
+
+	err := internal.Setup()
 	if err != nil {
-		return internal.Error("setting up Carol", err)
+		return internal.Error("in internal setup", err)
+	}
+
+	err = gpu.Setup(
+		internal.Config.Debug,
+		// internal.Window.Size,
+		internal.Config.FramebufferSize,
+		internal.Config.PixelSize,
+	)
+	if err != nil {
+		return internal.Error("in gpu setup", err)
 	}
 
 	err = internal.Loop.Setup()
 	if err != nil {
-		return internal.Error("in Update callback", err)
+		return internal.Error("in Setup callback", err)
 	}
 
 	// First, send a fake resize window event

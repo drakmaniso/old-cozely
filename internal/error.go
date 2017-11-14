@@ -50,10 +50,10 @@ type wrappedError struct {
 }
 
 func (e wrappedError) Error() string {
-	msg := "- " + e.context + ",\n"
+	msg := "- " + e.context + ":\n"
 	a := e.err
 	for b, ok := a.(wrappedError); ok; {
-		msg += "- " + b.context + ",\n"
+		msg += "- " + b.context + ":\n"
 		a = b.err
 		b, ok = a.(wrappedError)
 	}

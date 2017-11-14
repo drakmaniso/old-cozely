@@ -25,10 +25,10 @@ type wrappedError struct {
 }
 
 func (e wrappedError) Error() string {
-	msg := "- " + e.context + ",\n"
+	msg := "- " + e.context + ":\n"
 	a := e.err
 	for b, ok := a.(wrappedError); ok; {
-		msg += "- " + b.context + ",\n"
+		msg += "- " + b.context + ":\n"
 		a = b.err
 		b, ok = a.(wrappedError)
 	}
@@ -43,7 +43,7 @@ func ShowError(context string, err error) {
 	if !internal.Config.Debug {
 		err2 := internal.ErrorDialog("ERROR:\n%s", e)
 		if err2 != nil {
-			internal.Log("ERROR opwning dialog:\n%s", err2)
+			internal.Log("ERROR opening dialog:\n%s", err2)
 		}
 	}
 }

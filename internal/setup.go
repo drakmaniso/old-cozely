@@ -46,17 +46,17 @@ func Setup() error {
 
 	f, err := os.Open(Path + "init.json")
 	if err != nil {
-		return Error(`opening configuration file "init.json"`, err)
+		return Error(`in configuration file "init.json" opening`, err)
 	}
 	d := json.NewDecoder(f)
 	if err := d.Decode(&Config); err != nil {
-		return Error("decoding configuration file", err)
+		return Error(`in configuration file "init.json" parsing`, err)
 	}
 
 	// Initialize SDL
 
 	if errcode := C.SDL_Init(C.SDL_INIT_EVERYTHING); errcode != 0 {
-		return Error("initializing SDL", GetSDLError())
+		return Error("in SDL initalization", GetSDLError())
 	}
 
 	C.SDL_StopTextInput()
@@ -73,7 +73,7 @@ func Setup() error {
 		Config.Debug,
 	)
 	if err != nil {
-		return Error("opening window", err)
+		return Error("in window opening", err)
 	}
 
 	return nil
