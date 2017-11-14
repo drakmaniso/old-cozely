@@ -31,9 +31,14 @@ import (
 
 //------------------------------------------------------------------------------
 
-// A Looper implements the game loop's Update and Draw, as well as callbacks for
-// all events.
-type Looper interface {
+// GameLoop methods are called to setup the game, and during the main loop to
+// process events, Update the game state and Draw it.
+type GameLoop interface {
+	// Setup, Update and Draw
+	Setup() error
+	Update() error
+	Draw(delta float64, lerp float64) error
+
 	// Window events
 	WindowShown()
 	WindowHidden()
@@ -56,11 +61,6 @@ type Looper interface {
 	MouseButtonDown(b MouseButton, clicks int)
 	MouseButtonUp(b MouseButton, clicks int)
 	MouseWheel(motion pixel.Coord)
-
-	// Setup, Update and Draw
-	Setup() error
-	Update() error
-	Draw(dt, interpolation float64) error
 }
 
 //------------------------------------------------------------------------------

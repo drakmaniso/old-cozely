@@ -16,11 +16,7 @@ import (
 
 // Handlers implements default behavior for all events.
 //
-// It's an empty struct intended to be embedded in the user-defined Looper:
-//
-//   type loop struct {
-//     carol.Handlers
-//   }
+// It's an empty struct intended to be embedded in the user-defined GameLoop.
 type Handlers struct{}
 
 //------------------------------------------------------------------------------

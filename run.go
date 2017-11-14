@@ -12,16 +12,17 @@ import (
 
 //------------------------------------------------------------------------------
 
-// A Looper implements the game loop's Update and Draw, as well as callbacks for
-// all events.
+// GameLoop methods are called to setup the game, and during the main loop to
+// process events, Update the game state and Draw it.
 //
 // Methods to implement:
 //
-// 	   Update()
-//	   Draw(dt, interpolation float64)
+// 	 Setup() error
+// 	 Update() error
+//	 Draw(delta float64, lerp float64) error
 //
 // Plus all the event handlers: see Handlers.
-type Looper = internal.Looper
+type GameLoop = internal.GameLoop
 
 //------------------------------------------------------------------------------
 
@@ -45,7 +46,7 @@ var timeStep float64 = 1.0 / 60
 //
 // Important: must be called from main.main, or at least from a function that is
 // known to run on the main OS thread.
-func Run(loop Looper) error {
+func Run(loop GameLoop) error {
 	defer internal.SDLQuit()
 	defer internal.DestroyWindow()
 

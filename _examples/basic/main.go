@@ -6,8 +6,6 @@ package main
 //------------------------------------------------------------------------------
 
 import (
-	"errors"
-
 	"github.com/drakmaniso/carol"
 )
 
@@ -28,7 +26,7 @@ type loop struct {
 }
 
 func (loop) Setup() error {
-	return errors.New("plop")
+	return nil
 }
 
 func (loop) Update() error {

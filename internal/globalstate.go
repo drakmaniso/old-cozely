@@ -64,7 +64,7 @@ var (
 // Loop holds the active looper.
 //
 // Note: The variable is set with carol.Loop.
-var Loop Looper
+var Loop GameLoop
 
 //------------------------------------------------------------------------------
 
