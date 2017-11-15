@@ -6,7 +6,7 @@ package carol
 //------------------------------------------------------------------------------
 
 import (
-	"github.com/drakmaniso/carol/internal"
+	"github.com/drakmaniso/carol/internal/core"
 	"github.com/drakmaniso/carol/internal/gpu"
 	"github.com/drakmaniso/carol/pixel"
 )
@@ -15,17 +15,17 @@ import (
 
 // HasFocus returns true if the game windows has focus.
 func HasFocus() bool {
-	return internal.HasFocus
+	return core.HasFocus
 }
 
 // HasMouseFocus returns true if the mouse is currently inside the game window.
 func HasMouseFocus() bool {
-	return internal.HasMouseFocus
+	return core.HasMouseFocus
 }
 
 // WindowSize returns the size of the window in (screen) pixels.
 func WindowSize() pixel.Coord {
-	return internal.Window.Size
+	return core.Window.Size
 }
 
 // FramebufferSize returns the size of the framebuffer in (framebuffer) pixels.

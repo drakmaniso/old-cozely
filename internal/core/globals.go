@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2017 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
-package internal
+package core
 
 //------------------------------------------------------------------------------
 
@@ -46,6 +46,23 @@ var Config = struct {
 
 //------------------------------------------------------------------------------
 
+// VisibleNow is the current time (elapsed since program start).
+//
+// If called during the update callback, it corresponds to the current time
+// step. If called during the draw callback, it corresponds to the current
+// frame. And if called during an event callback, it corresponds to the event
+// time stamp.
+//
+// It shouldn't be used outside of these three contexts.
+var VisibleNow float64
+
+//------------------------------------------------------------------------------
+
+// QuitRequested makes the game loop stop if true.
+var QuitRequested = false
+
+//------------------------------------------------------------------------------
+
 // Window is the game window.
 var Window struct {
 	window  *C.SDL_Window
@@ -65,23 +82,6 @@ var (
 //
 // Note: The variable is set with carol.Loop.
 var Loop GameLoop
-
-//------------------------------------------------------------------------------
-
-// VisibleNow is the current time (elapsed since program start).
-//
-// If called during the update callback, it corresponds to the current time
-// step. If called during the draw callback, it corresponds to the current
-// frame. And if called during an event callback, it corresponds to the event
-// time stamp.
-//
-// It shouldn't be used outside of these three contexts.
-var VisibleNow float64
-
-//------------------------------------------------------------------------------
-
-// QuitRequested makes the game loop stop if true.
-var QuitRequested = false
 
 //------------------------------------------------------------------------------
 

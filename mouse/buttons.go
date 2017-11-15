@@ -6,13 +6,13 @@ package mouse
 //------------------------------------------------------------------------------
 
 import (
-	"github.com/drakmaniso/carol/internal"
+	"github.com/drakmaniso/carol/internal/core"
 )
 
 //------------------------------------------------------------------------------
 
 // A Button on the mouse
-type Button = internal.MouseButton
+type Button = core.MouseButton
 
 // Button constants
 const (
@@ -26,7 +26,7 @@ const (
 // IsPressed returns true if a specific button is held down.
 func IsPressed(b Button) bool {
 	var m uint32 = 1 << (b - 1)
-	return internal.MouseButtons&m != 0
+	return core.MouseButtons&m != 0
 }
 
 //------------------------------------------------------------------------------

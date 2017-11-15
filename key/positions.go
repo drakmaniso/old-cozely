@@ -3,17 +3,15 @@
 
 package key
 
-//------------------------------------------------------------------------------
+import "github.com/drakmaniso/carol/internal/core"
 
-import (
-	"github.com/drakmaniso/carol/internal"
-)
+//------------------------------------------------------------------------------
 
 //------------------------------------------------------------------------------
 
 // A Position designate a key by its physical position on the keyboard.
 // It is not affected by the layout or any other language settings.
-type Position = internal.KeyPosition
+type Position = core.KeyPosition
 
 // Position constants, following the USB HID usage table (page 0x07).
 // The name correspond to the key label in that position on a US QWERTY

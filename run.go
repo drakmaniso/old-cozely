@@ -6,7 +6,7 @@ package carol
 //------------------------------------------------------------------------------
 
 import (
-	"github.com/drakmaniso/carol/internal"
+	"github.com/drakmaniso/carol/internal/core"
 	"github.com/drakmaniso/carol/internal/gpu"
 )
 
@@ -22,7 +22,7 @@ import (
 //	 Draw(delta float64, lerp float64) error
 //
 // Plus all the event handlers: see Handlers.
-type GameLoop = internal.GameLoop
+type GameLoop = core.GameLoop
 
 //------------------------------------------------------------------------------
 
@@ -47,50 +47,50 @@ var timeStep float64 = 1.0 / 60
 // Important: must be called from main.main, or at least from a function that is
 // known to run on the main OS thread.
 func Run(loop GameLoop) error {
-	defer internal.SDLQuit()
-	defer internal.DestroyWindow()
+	defer core.SDLQuit()
+	defer core.DestroyWindow()
 
-	internal.Loop = loop
+	core.Loop = loop
 
 	// Setup
 
-	err := internal.Setup()
+	err := core.Setup()
 	if err != nil {
-		return internal.Error("in internal setup", err)
+		return core.Error("in internal setup", err)
 	}
 
 	err = gpu.Setup(
-		internal.Config.Debug,
-		// internal.Window.Size,
-		internal.Config.FramebufferSize,
-		internal.Config.PixelSize,
+		core.Config.Debug,
+		// core.Window.Size,
+		core.Config.FramebufferSize,
+		core.Config.PixelSize,
 	)
 	if err != nil {
-		return internal.Error("in gpu setup", err)
+		return core.Error("in gpu setup", err)
 	}
 
-	err = internal.Loop.Setup()
+	err = core.Loop.Setup()
 	if err != nil {
-		return internal.Error("in Setup callback", err)
+		return core.Error("in Setup callback", err)
 	}
 
 	// First, send a fake resize window event
-	internal.Loop.WindowResized(internal.Window.Size)
+	core.Loop.WindowResized(core.Window.Size)
 
 	// Main Loop
 
-	then := internal.GetSeconds()
+	then := core.GetSeconds()
 	now := then
 	stepNow := now
 	remain := 0.0
 
-	for !internal.QuitRequested {
-		now = internal.GetSeconds()
+	for !core.QuitRequested {
+		now = core.GetSeconds()
 		delta = now - then
 		//TODO: clamp delta ?
 		countFrames()
 
-		internal.ProcessEvents() //TODO: Should it be in the physisc loop?
+		core.ProcessEvents() //TODO: Should it be in the physisc loop?
 
 		// Update with fixed time step
 
@@ -101,10 +101,10 @@ func Run(loop GameLoop) error {
 			stepNow += timeStep
 		}
 		for remain >= timeStep {
-			internal.VisibleNow = stepNow
-			err = internal.Loop.Update()
+			core.VisibleNow = stepNow
+			err = core.Loop.Update()
 			if err != nil {
-				return internal.Error("in Update callback", err)
+				return core.Error("in Update callback", err)
 			}
 			remain -= timeStep
 			stepNow += timeStep
@@ -112,15 +112,15 @@ func Run(loop GameLoop) error {
 
 		// Draw
 
-		internal.VisibleNow = now
-		err = internal.Loop.Draw(delta, remain/timeStep)
+		core.VisibleNow = now
+		err = core.Loop.Draw(delta, remain/timeStep)
 		if err != nil {
-			return internal.Error("in Draw callback", err)
+			return core.Error("in Draw callback", err)
 		}
 
 		gpu.BindImagePipeline()
-		gpu.BlitFramebuffer(internal.Window.Size)
-		internal.SwapWindow()
+		gpu.BlitFramebuffer(core.Window.Size)
+		core.SwapWindow()
 
 		then = now
 	}
@@ -143,7 +143,7 @@ var delta float64
 //
 // It shouldn't be used outside of these three contexts.
 func Now() float64 {
-	return internal.VisibleNow
+	return core.VisibleNow
 }
 
 //------------------------------------------------------------------------------
@@ -190,7 +190,7 @@ var xrunCount, xrunPrevious int
 
 // Stop request the game loop to stop.
 func Stop() {
-	internal.QuitRequested = true
+	core.QuitRequested = true
 }
 
 //------------------------------------------------------------------------------
@@ -198,7 +198,7 @@ func Stop() {
 // Path returns the (slash-separated) path of the executable, with a trailing
 // slash.
 func Path() string {
-	return internal.Path
+	return core.Path
 }
 
 //------------------------------------------------------------------------------
