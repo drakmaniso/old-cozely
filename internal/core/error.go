@@ -26,6 +26,13 @@ func DebugLog(format string, v ...interface{}) {
 	}
 }
 
+// InfoLog logs a formated message if Info mode is enabled.
+func InfoLog(format string, v ...interface{}) {
+	if Config.Info {
+		logger.Printf(format, v...)
+	}
+}
+
 //------------------------------------------------------------------------------
 
 // Error returns nil if err is nil, or a wrapped error otherwise.

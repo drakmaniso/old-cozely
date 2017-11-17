@@ -32,6 +32,7 @@ var Config = struct {
 	FullscreenMode  string
 	VSync           bool
 	Debug           bool
+	Info            bool
 }{
 	Title:           "Carol",
 	WindowSize:      pixel.Coord{X: 1280, Y: 720},
@@ -42,6 +43,7 @@ var Config = struct {
 	FullscreenMode:  "Desktop",
 	VSync:           true,
 	Debug:           false,
+	Info:            false,
 }
 
 //------------------------------------------------------------------------------
