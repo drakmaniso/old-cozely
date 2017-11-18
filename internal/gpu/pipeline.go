@@ -40,14 +40,13 @@ import "C"
 
 //------------------------------------------------------------------------------
 
-import "unsafe"
+import (
+	"unsafe"
+)
 
 //------------------------------------------------------------------------------
 
-// An Image is...
-//
-//TODO
-type Image struct {
+type ImagePaint struct {
 	//  word
 	X1, Y1 int16
 
@@ -58,12 +57,11 @@ type Image struct {
 	Xtex, Ytex int16
 
 	//  word
-	TexArray, TexIndex uint16
+	format, index uint16
 
 	// word
-	ID      uint16
-	Zoom    uint8
-	Palette uint8
+	user           uint16
+	ZoomAndPalette uint16
 }
 
 //------------------------------------------------------------------------------

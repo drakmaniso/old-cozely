@@ -6,7 +6,10 @@ package main
 //------------------------------------------------------------------------------
 
 import (
+	"errors"
+
 	"github.com/drakmaniso/carol"
+	"github.com/drakmaniso/carol/picture"
 )
 
 //------------------------------------------------------------------------------
@@ -34,6 +37,12 @@ func (loop) Update() error {
 }
 
 func (loop) Draw(_, _ float64) error {
+	p, ok := picture.Named("logo")
+	if !ok {
+		return errors.New("picture not found")
+	}
+	// p.Paint(10, 10)
+	_ = p
 	return nil
 }
 

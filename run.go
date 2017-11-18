@@ -7,6 +7,7 @@ package carol
 
 import (
 	"github.com/drakmaniso/carol/internal/core"
+	"github.com/drakmaniso/carol/internal/gfx"
 	"github.com/drakmaniso/carol/internal/gpu"
 )
 
@@ -67,6 +68,11 @@ func Run(loop GameLoop) error {
 	)
 	if err != nil {
 		return core.Error("in gpu setup", err)
+	}
+
+	err = gfx.ScanPictures()
+	if err != nil {
+		return core.Error("while loading images", err)
 	}
 
 	err = core.Loop.Setup()
