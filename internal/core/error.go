@@ -12,24 +12,28 @@ import (
 
 //------------------------------------------------------------------------------
 
-var logger = log.New(os.Stderr, "*** ", log.Ltime)
+var logger = log.New(os.Stderr, "", log.Ltime|log.Lmicroseconds)
 
 // Log logs a formated message.
 func Log(format string, v ...interface{}) {
 	logger.Printf(format, v...)
 }
 
+var debuglogger = log.New(os.Stderr, "", log.Ltime|log.Lmicroseconds)
+
 // DebugLog logs a formated message if Debug mode is enabled.
 func DebugLog(format string, v ...interface{}) {
 	if Config.Debug {
-		logger.Printf(format, v...)
+		debuglogger.Printf(format, v...)
 	}
 }
+
+var infologger = log.New(os.Stderr, "", log.Ltime|log.Lmicroseconds)
 
 // InfoLog logs a formated message if Info mode is enabled.
 func InfoLog(format string, v ...interface{}) {
 	if Config.Info {
-		logger.Printf(format, v...)
+		infologger.Printf(format, v...)
 	}
 }
 
