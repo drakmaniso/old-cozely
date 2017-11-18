@@ -39,18 +39,18 @@ func (e wrappedError) Error() string {
 // prints to the standard error output, otherwise it also brings a dialog box.
 func ShowError(context string, err error) {
 	e := Error(context, err)
-	core.Log("ERROR:\n%s", e)
+	core.Log.Printf("ERROR:\n%s", e)
 	if !core.Config.Debug {
 		err2 := core.ErrorDialog("ERROR:\n%s", e)
 		if err2 != nil {
-			core.Log("ERROR opening dialog:\n%s", err2)
+			core.Log.Printf("ERROR opening dialog:\n%s", err2)
 		}
 	}
 }
 
 // Log logs a formated message.
 func Log(format string, v ...interface{}) {
-	core.Log(format, v...)
+	core.Log.Printf(format, v...)
 }
 
 //------------------------------------------------------------------------------

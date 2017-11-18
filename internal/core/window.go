@@ -88,7 +88,7 @@ func OpenWindow(
 	}
 	C.SDL_GL_SetSwapInterval(si)
 
-	// logOpenGLInfos()
+	logOpenGLInfos()
 
 	return nil
 }
@@ -128,7 +128,7 @@ func logOpenGLInfos() {
 			s += ", NO vsync"
 		}
 	}
-	Log(s)
+	Debug.Println(s)
 }
 
 func sdlGLAttribute(attr C.SDL_GLattr) (int, error) {

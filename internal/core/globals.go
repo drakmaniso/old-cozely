@@ -13,6 +13,9 @@ import "C"
 //------------------------------------------------------------------------------
 
 import (
+	"log"
+	"os"
+
 	"github.com/drakmaniso/carol/pixel"
 )
 
@@ -32,7 +35,6 @@ var Config = struct {
 	FullscreenMode  string
 	VSync           bool
 	Debug           bool
-	Info            bool
 }{
 	Title:           "Carol",
 	WindowSize:      pixel.Coord{X: 1280, Y: 720},
@@ -43,8 +45,14 @@ var Config = struct {
 	FullscreenMode:  "Desktop",
 	VSync:           true,
 	Debug:           false,
-	Info:            false,
 }
+
+//------------------------------------------------------------------------------
+
+var (
+	Log   logger = log.New(os.Stderr, "", log.Ltime|log.Lmicroseconds)
+	Debug logger = nolog{}
+)
 
 //------------------------------------------------------------------------------
 

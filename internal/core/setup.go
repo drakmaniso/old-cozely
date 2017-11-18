@@ -17,6 +17,7 @@ import "C"
 
 import (
 	"encoding/json"
+	"log"
 	"os"
 	"path/filepath"
 	"runtime"
@@ -51,6 +52,10 @@ func Setup() error {
 	d := json.NewDecoder(f)
 	if err := d.Decode(&Config); err != nil {
 		return Error(`in configuration file "init.json" parsing`, err)
+	}
+
+	if Config.Debug {
+		Debug = log.New(os.Stderr, "", log.Ltime|log.Lmicroseconds|log.Lshortfile)
 	}
 
 	// Initialize SDL

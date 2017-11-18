@@ -5,37 +5,17 @@ package core
 
 //------------------------------------------------------------------------------
 
-import (
-	"log"
-	"os"
-)
-
-//------------------------------------------------------------------------------
-
-var logger = log.New(os.Stderr, "", log.Ltime|log.Lmicroseconds)
-
-// Log logs a formated message.
-func Log(format string, v ...interface{}) {
-	logger.Printf(format, v...)
+type logger interface {
+	Print(v ...interface{})
+	Println(v ...interface{})
+	Printf(format string, v ...interface{})
 }
 
-var debuglogger = log.New(os.Stderr, "", log.Ltime|log.Lmicroseconds)
+type nolog struct{}
 
-// DebugLog logs a formated message if Debug mode is enabled.
-func DebugLog(format string, v ...interface{}) {
-	if Config.Debug {
-		debuglogger.Printf(format, v...)
-	}
-}
-
-var infologger = log.New(os.Stderr, "", log.Ltime|log.Lmicroseconds)
-
-// InfoLog logs a formated message if Info mode is enabled.
-func InfoLog(format string, v ...interface{}) {
-	if Config.Info {
-		infologger.Printf(format, v...)
-	}
-}
+func (nolog) Print(v ...interface{})                 {}
+func (nolog) Println(v ...interface{})               {}
+func (nolog) Printf(format string, v ...interface{}) {}
 
 //------------------------------------------------------------------------------
 
