@@ -7,6 +7,7 @@ package gfx
 
 import (
 	"errors"
+	"fmt"
 	"image"
 	"image/color"
 	_ "image/png" // Activate PNG support
@@ -15,6 +16,7 @@ import (
 	"strings"
 
 	"github.com/drakmaniso/carol/internal/core"
+	"github.com/drakmaniso/carol/internal/gpu"
 )
 
 //------------------------------------------------------------------------------
@@ -97,10 +99,12 @@ func LoadPictures() error {
 		return core.Error("while reading images directory", err)
 	}
 
+	data := make([]uint8, totalPictureSize, totalPictureSize)
+
 	addr := uint32(0)
 	for _, n := range dn {
 		if path.Ext(n) == ".png" {
-			s, err := loadPicture("data/images/", n, addr)
+			s, err := loadPicture("data/images/", n, data, addr)
 			if err != nil {
 				return err
 			}
@@ -108,24 +112,26 @@ func LoadPictures() error {
 		}
 	}
 
+	_ = gpu.CreatePictureBuffer(data)
+
 	core.Debug.Printf("Loaded %d pictures: %v", len(Pictures), Pictures)
 
 	return nil
 }
 
-func loadPicture(dir, filename string, address uint32) (uint32, error) {
+func loadPicture(dir, filename string, data []uint8, address uint32) (uint32, error) {
 	r, err := os.Open(dir + filename)
 	if err != nil {
 		return 0, core.Error(`opening picture file "`+filename+`"`, err)
 	}
 	defer r.Close()
 
-	conf, _, err := image.DecodeConfig(r)
+	img, _, err := image.Decode(r)
 	if err != nil {
 		return 0, core.Error("decoding picture file", err)
 	}
 
-	_, ok := conf.ColorModel.(color.Palette)
+	pimg, ok := img.(*image.Paletted)
 	if !ok {
 		return 0, errors.New(`picture file "` + filename + `" not in indexed color format.`)
 	}
@@ -134,11 +140,18 @@ func loadPicture(dir, filename string, address uint32) (uint32, error) {
 
 	p := Picture{
 		address: address,
-		width:   uint16(conf.Width),
-		height:  uint16(conf.Height),
+		width:   uint16(pimg.Rect.Max.X - pimg.Rect.Min.X),
+		height:  uint16(pimg.Rect.Max.Y - pimg.Rect.Min.Y),
 	}
 	n := strings.TrimSuffix(filename, ".png")
 	Pictures[n] = p
+
+	core.Debug.Printf("Add picture '%s': %d == %d", n, len(pimg.Pix), p.width*p.height)
+
+	s := copy(pimg.Pix, data[address:])
+	if s != len(pimg.Pix) {
+		return 0, fmt.Errorf(`unable to load full data for picture "%s"`, filename)
+	}
 
 	return uint32(p.width * p.height), nil
 }
