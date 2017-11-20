@@ -15,19 +15,14 @@ import (
 	"strings"
 
 	"github.com/drakmaniso/carol/internal/core"
-	"github.com/drakmaniso/carol/pixel"
 )
 
 //------------------------------------------------------------------------------
 
-type PictureFormat struct {
-	size   pixel.Coord
-	number int
-}
-
 type Picture struct {
-	format uint16 // index in PictureFormats
-	index  uint16 // index in the OpenGL texture array
+	address uint32
+	width   uint16
+	height  uint16
 }
 
 //------------------------------------------------------------------------------
@@ -46,71 +41,106 @@ func ScanPictures() error {
 		return core.Error("while reading images directory", err)
 	}
 
+	totalPictureSize = uint64(0)
+	nb := 0
 	for _, n := range dn {
 		if path.Ext(n) == ".png" {
-			err = registerPicture("data/images/", n)
+			s, err := getPictureSize("data/images/", n)
 			if err != nil {
 				return err
 			}
+			totalPictureSize += s
+			nb++
 		}
 	}
 
-	core.Debug.Printf("Registered %d formats: %v", len(PictureFormats), PictureFormats)
-	core.Debug.Printf("Registered %d pictures: %v", len(Pictures), Pictures)
+	core.Debug.Printf("Scanned %d pictures: %d bytes (%.1f Mb)", nb, totalPictureSize, float64(totalPictureSize)/(1024.0*1024.0))
 
 	return nil
 }
 
-//------------------------------------------------------------------------------
+var totalPictureSize uint64
 
-func registerPicture(dir, filename string) error {
+func getPictureSize(dir, filename string) (uint64, error) {
 	r, err := os.Open(dir + filename)
 	if err != nil {
-		return core.Error(`opening picture file "`+filename+`"`, err)
+		return 0, core.Error(`opening picture file "`+filename+`"`, err)
 	}
 	defer r.Close()
 
 	conf, _, err := image.DecodeConfig(r)
 	if err != nil {
-		return core.Error("decoding picture file", err)
+		return 0, core.Error("decoding picture file", err)
 	}
-
-	s := pixel.Coord{X: int64(conf.Width), Y: int64(conf.Height)}
 
 	_, ok := conf.ColorModel.(color.Palette)
 	if !ok {
-		return errors.New(`picture file "` + filename + `" not in indexed color format.`)
+		return 0, errors.New(`picture file "` + filename + `" not in indexed color format.`)
 	}
 
-	// Find or create the picture format
+	return uint64(conf.Width) * uint64(conf.Height), nil
+}
 
-	f := -1
-	for i := 0; i < len(PictureFormats); i++ {
-		if PictureFormats[i].size == s {
-			f = i
-			break
+//------------------------------------------------------------------------------
+
+func LoadPictures() error {
+	p := core.Path + "data/images/"
+
+	f, err := os.Open(p)
+	if err != nil {
+		return core.Error("while opening images directory", err)
+	}
+	defer f.Close()
+
+	dn, err := f.Readdirnames(0)
+	if err != nil {
+		return core.Error("while reading images directory", err)
+	}
+
+	addr := uint32(0)
+	for _, n := range dn {
+		if path.Ext(n) == ".png" {
+			s, err := loadPicture("data/images/", n, addr)
+			if err != nil {
+				return err
+			}
+			addr += s
 		}
 	}
-	if f == -1 {
-		pf := PictureFormat{
-			size:   s,
-			number: 0,
-		}
-		PictureFormats = append(PictureFormats, pf)
-		f = len(PictureFormats) - 1
+
+	core.Debug.Printf("Loaded %d pictures: %v", len(Pictures), Pictures)
+
+	return nil
+}
+
+func loadPicture(dir, filename string, address uint32) (uint32, error) {
+	r, err := os.Open(dir + filename)
+	if err != nil {
+		return 0, core.Error(`opening picture file "`+filename+`"`, err)
+	}
+	defer r.Close()
+
+	conf, _, err := image.DecodeConfig(r)
+	if err != nil {
+		return 0, core.Error("decoding picture file", err)
+	}
+
+	_, ok := conf.ColorModel.(color.Palette)
+	if !ok {
+		return 0, errors.New(`picture file "` + filename + `" not in indexed color format.`)
 	}
 
 	// Register the picture
 
 	p := Picture{
-		format: uint16(f),
-		index:  uint16(PictureFormats[f].number),
+		address: address,
+		width:   uint16(conf.Width),
+		height:  uint16(conf.Height),
 	}
-	PictureFormats[f].number++
 	n := strings.TrimSuffix(filename, ".png")
 	Pictures[n] = p
 
-	return nil
+	return uint32(p.width * p.height), nil
 }
 
 //------------------------------------------------------------------------------

@@ -48,19 +48,34 @@ import (
 
 type ImagePaint struct {
 	//  word
-	X1, Y1 int16
+	X, Y int16
 
 	//  word
-	X2, Y2 int16
+	W, H int16
 
 	//  word
-	Xtex, Ytex int16
+	U, V int16
 
 	//  word
 	format, index uint16
 
 	// word
 	user           uint16
+	ZoomAndPalette uint16
+}
+
+type ImagePaint2 struct {
+	//  word
+	Address uint32
+
+	//  word
+	W, H int16
+
+	//  word
+	X, Y int16
+
+	// word
+	OrientAndUser  uint16
 	ZoomAndPalette uint16
 }
 

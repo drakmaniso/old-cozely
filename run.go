@@ -72,6 +72,10 @@ func Run(loop GameLoop) error {
 
 	err = gfx.ScanPictures()
 	if err != nil {
+		return core.Error("while scanning images", err)
+	}
+	err = gfx.LoadPictures()
+	if err != nil {
 		return core.Error("while loading images", err)
 	}
 

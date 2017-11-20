@@ -5,12 +5,9 @@ package gfx
 
 //------------------------------------------------------------------------------
 
-var PictureFormats []PictureFormat
-
 var Pictures map[string]Picture
 
 func init() {
-	PictureFormats = make([]PictureFormat, 0, 8)
 	Pictures = make(map[string]Picture, 128)
 }
 
