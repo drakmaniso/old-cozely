@@ -77,6 +77,6 @@ func logGLError(
 	logger.Printf("%s %s%s: %s\n", sou, sev, ty, C.GoString(m))
 }
 
-var logger = log.New(os.Stderr, "*** ", log.Ltime)
+var logger = log.New(os.Stderr, "", log.Ltime|log.Lmicroseconds)
 
 //------------------------------------------------------------------------------
