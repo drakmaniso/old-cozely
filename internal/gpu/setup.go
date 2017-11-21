@@ -59,7 +59,10 @@ func Setup(debug bool, screenSize pixel.Coord, pixelSize pixel.Coord) error {
 
 	//
 
-	SetupImagePipeline() //TODO: elsewhere?
+	err := SetupStampPipeline()
+	if err != nil {
+		return err
+	}
 
 	return nil //TODO: error handling
 }

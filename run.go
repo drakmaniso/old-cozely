@@ -128,7 +128,7 @@ func Run(loop GameLoop) error {
 			return core.Error("in Draw callback", err)
 		}
 
-		gpu.BindImagePipeline()
+		gpu.BindStampPipeline()
 		gpu.BlitFramebuffer(core.Window.Size)
 		core.SwapWindow()
 

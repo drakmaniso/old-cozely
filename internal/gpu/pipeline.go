@@ -8,21 +8,18 @@ package gpu
 /*
 #include "glad.h"
 
-static inline void SetupImagePipeline(GLuint *program, GLuint*vao, const GLchar* vs, const GLchar* fs) {
+GLuint CompileShader(GLenum t, const GLchar* b) {
+	GLuint s = glCreateShader(t);
+	const GLchar*bb[] = {b};
+	glShaderSource(s, 1, bb, NULL);
+	glCompileShader(s);
+
+	return s;
+}
+
+static inline void SetupStampPipeline(GLuint *program, GLuint*vao, GLuint vso, GLuint fso) {
 	*program = glCreateProgram();
 	glCreateVertexArrays(1, vao);
-
-	GLuint vso = glCreateShader(GL_VERTEX_SHADER);
-	const GLchar*vsb[] = {vs};
-	glShaderSource(vso, 1, vsb, NULL);
-	glCompileShader(vso);
-	//TODO: error handling
-
-	GLuint fso = glCreateShader(GL_FRAGMENT_SHADER);
-	const GLchar*fsb[] = {fs};
-	glShaderSource(fso, 1, fsb, NULL);
-	glCompileShader(fso);
-	//TODO: error handling
 
 	glAttachShader(*program, vso);
 	glAttachShader(*program, fso);
@@ -30,7 +27,37 @@ static inline void SetupImagePipeline(GLuint *program, GLuint*vao, const GLchar*
 	//TODO: error handling
 }
 
-static inline void BindImagePipeline(GLuint program, GLuint vao) {
+char* ShaderCompileError(GLuint p) {
+    GLint ok = GL_TRUE;
+    glGetShaderiv (p, GL_COMPILE_STATUS, &ok);
+    if (ok != GL_TRUE)
+    {
+        GLint l = 0;
+        glGetShaderiv (p, GL_INFO_LOG_LENGTH, &l);
+        char *m = calloc(l + 1, sizeof(char));
+        glGetShaderInfoLog (p, l, &l, m);
+        return m;
+    }
+
+	return NULL;
+}
+
+char* PipelineLinkError(GLuint pr) {
+    GLint ok = GL_TRUE;
+    glGetProgramiv (pr, GL_LINK_STATUS, &ok);
+    if (ok != GL_TRUE)
+    {
+        GLint l = 0;
+        glGetProgramiv (pr, GL_INFO_LOG_LENGTH, &l);
+        char *m = calloc(l + 1, sizeof(char));
+        glGetProgramInfoLog (pr, l, &l, m);
+        return m;
+    }
+
+	return NULL;
+}
+
+static inline void BindStampPipeline(GLuint program, GLuint vao) {
 	glUseProgram(program);
 	glBindVertexArray(vao);
 	glDrawArrays(GL_TRIANGLES, 0, 3);
@@ -42,30 +69,15 @@ import "C"
 //------------------------------------------------------------------------------
 
 import (
+	"errors"
 	"unsafe"
+
+	"github.com/drakmaniso/carol/internal/core"
 )
 
 //------------------------------------------------------------------------------
 
-type ImagePaint struct {
-	//  word
-	X, Y int16
-
-	//  word
-	W, H int16
-
-	//  word
-	U, V int16
-
-	//  word
-	format, index uint16
-
-	// word
-	user           uint16
-	ZoomAndPalette uint16
-}
-
-type ImagePaint2 struct {
+type Stamp struct {
 	//  word
 	Address uint32
 
@@ -82,34 +94,61 @@ type ImagePaint2 struct {
 
 //------------------------------------------------------------------------------
 
-var ImagePipeline struct {
+var StampPipeline struct {
 	program C.GLuint
 	vao     C.GLuint
 }
 
-func SetupImagePipeline() {
+func SetupStampPipeline() error {
 	vs := C.CString(string(vertexShader))
 	defer C.free(unsafe.Pointer(vs))
+	vso := C.CompileShader(C.GL_VERTEX_SHADER, (*C.GLchar)(vs))
+	if errm := C.ShaderCompileError(vso); errm != nil {
+		defer C.free(unsafe.Pointer(errm))
+		return core.Error("while compiling vertex shader for stamp pipeline", errors.New(C.GoString(errm)))
+	}
+
 	fs := C.CString(string(fragmentShader))
 	defer C.free(unsafe.Pointer(fs))
+	fso := C.CompileShader(C.GL_FRAGMENT_SHADER, (*C.GLchar)(fs))
+	if errm := C.ShaderCompileError(fso); errm != nil {
+		defer C.free(unsafe.Pointer(errm))
+		return core.Error("while compiling fragment shader for stamp pipeline", errors.New(C.GoString(errm)))
+	}
 
-	C.SetupImagePipeline(
-		&ImagePipeline.program,
-		&ImagePipeline.vao,
-		(*C.GLchar)(vs),
-		(*C.GLchar)(fs),
+	C.SetupStampPipeline(
+		&StampPipeline.program,
+		&StampPipeline.vao,
+		vso,
+		fso,
 	)
+	if errm := C.PipelineLinkError(StampPipeline.program); errm != nil {
+		defer C.free(unsafe.Pointer(errm))
+		return core.Error("while linking shaders for stamp pipeline", errors.New(C.GoString(errm)))
+	}
+
+	return nil
 }
 
 //------------------------------------------------------------------------------
 
-func BindImagePipeline() {
-	C.BindImagePipeline(ImagePipeline.program, ImagePipeline.vao)
+func BindStampPipeline() {
+	C.BindStampPipeline(StampPipeline.program, StampPipeline.vao)
 }
 
 //------------------------------------------------------------------------------
 
 const vertexShader = `#version 450 core
+
+struct Stamp {
+	uint Address;
+	uint WH;
+	uint XY;
+	uint TransformPalette;
+};
+layout(std430, binding = 0) buffer StampBuffer {
+	Stamp []Stamps;
+};
 
 out gl_PerVertex {
 	vec4 gl_Position;
