@@ -20,6 +20,7 @@ GLuint CompileShader(GLenum t, const GLchar* b) {
 static inline void SetupStampPipeline(GLuint *program, GLuint*vao, GLuint vso, GLuint fso) {
 	*program = glCreateProgram();
 	glCreateVertexArrays(1, vao);
+	glBindVertexArray(*vao);
 
 	glAttachShader(*program, vso);
 	glAttachShader(*program, fso);
@@ -57,10 +58,11 @@ char* PipelineLinkError(GLuint pr) {
 	return NULL;
 }
 
-static inline void BindStampPipeline(GLuint program, GLuint vao) {
+static inline void BindStampPipeline(GLuint program, GLuint vao, GLuint pb) {
 	glUseProgram(program);
 	glBindVertexArray(vao);
-	glDrawArrays(GL_TRIANGLES, 0, 3);
+	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, pb);
+	glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 
 */
@@ -133,7 +135,7 @@ func SetupStampPipeline() error {
 //------------------------------------------------------------------------------
 
 func BindStampPipeline() {
-	C.BindStampPipeline(StampPipeline.program, StampPipeline.vao)
+	C.BindStampPipeline(StampPipeline.program, StampPipeline.vao, C.GLuint(pictureBuffer))
 }
 
 //------------------------------------------------------------------------------
@@ -154,14 +156,33 @@ out gl_PerVertex {
 	vec4 gl_Position;
 };
 
+out PerVertex {
+	layout(location=0) vec2 UV;
+};
+
 void main(void)
 {
-	const vec4 triangle[3] = vec4[3](
-		vec4(0, 0.4, 0.5, 1),
-		vec4(-0.8, -0.4, 0.5, 1),
-		vec4(0.8, -0.4, 0.5, 1)
+	// Calculate index in face buffer
+	uint faceID = gl_VertexID / 6;
+	// Determine which face vertex this is
+	const uint [6]triangulate = {0, 1, 2, 0, 2, 3};
+	uint currVert = triangulate[gl_VertexID - (6 * faceID)];
+
+	const vec2 corners[4] = vec2[4](
+		vec2(0, 1),
+		vec2(1, 1),
+		vec2(1, 0),
+		vec2(0, 0)
 	);
-	gl_Position = triangle[gl_VertexID];
+	gl_Position = vec4(corners[currVert], 0.5, 1);
+
+	const vec2 uvcorners[4] = vec2[4](
+		vec2(0, 0),
+		vec2(1, 0),
+		vec2(1, 1),
+		vec2(0, 1)
+	);
+	UV = uvcorners[currVert] * vec2(64, 32);
 }
 `
 
@@ -171,7 +192,26 @@ const fragmentShader = `#version 450 core
 
 // in vec4 gl_FragCoord;
 
+in PerVertex {
+	layout(location=0) vec2 UV;
+};
+
+layout(std430, binding = 1) buffer PictureBuffer {
+	uint []Pixels;
+};
+
 out vec4 color;
+
+uint getByte(uint addr) {
+	uint waddr = addr >> 2;
+	uint w = Pixels[waddr];
+	w = w >> (8 * (addr & 0x3));
+	return w & 0xFF;
+}
+
+uint getPixel(uint addr, uint stride, uint x, uint y) {
+	return getByte(addr + x + y*stride);
+}
 
 float rand(vec2 c){
 	return fract(sin(dot(c ,vec2(12.9898,78.233))) * 43758.5453);
@@ -179,12 +219,21 @@ float rand(vec2 c){
 
 void main(void)
 {
-	color = vec4(
-		0.5 + 0.25*rand(vec2(0.3, rand(gl_FragCoord.xy))),
-		0.5 + 0.25*rand(vec2(0.1, rand(gl_FragCoord.xy))),
-		0.5 + 0.25*rand(vec2(0.6, rand(gl_FragCoord.xy))),
-		1.0
+	// color = vec4(
+	// 	0.5 + 0.25*rand(vec2(0.3, rand(gl_FragCoord.xy))),
+	// 	0.5 + 0.25*rand(vec2(0.1, rand(gl_FragCoord.xy))),
+	// 	0.5 + 0.25*rand(vec2(0.6, rand(gl_FragCoord.xy))),
+	// 	1.0
+	// );
+	uint p = getPixel(0, 64, uint(UV.x), uint(UV.y));
+	const vec4 Palette[] = vec4[4](
+		vec4(0.1, 0.1, 0.1, 1.0),
+		vec4(1.0, 1.0, 0.0, 1.0),
+		vec4(1.0, 0.0, 1.0, 1.0),
+		vec4(0.0, 1.0, 1.0, 1.0)
 	);
+	// color = vec4(UV.x, UV.y, 0.5 + 0.5*rand(gl_FragCoord.xy), 1.0);
+	color = Palette[p];
 }
 `
 

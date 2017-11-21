@@ -6,7 +6,7 @@
 	},
 	"FramebufferSize": {
 		"X": 128,
-		"Y": 128
+		"Y": 64
 	},
 	"PixelSize": {
 		"X": 4,

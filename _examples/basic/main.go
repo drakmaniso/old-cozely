@@ -38,7 +38,7 @@ func (loop) Update() error {
 
 func (loop) Draw(_, _ float64) error {
 	p, ok := picture.Named("logo")
-	if !ok {
+	if !ok && false {
 		return errors.New("picture not found")
 	}
 	// p.Paint(10, 10)

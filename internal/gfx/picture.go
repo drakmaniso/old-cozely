@@ -148,7 +148,7 @@ func loadPicture(dir, filename string, data []uint8, address uint32) (uint32, er
 
 	core.Debug.Printf("Add picture '%s': %d == %d", n, len(pimg.Pix), p.width*p.height)
 
-	s := copy(pimg.Pix, data[address:])
+	s := copy(data[address:], pimg.Pix)
 	if s != len(pimg.Pix) {
 		return 0, fmt.Errorf(`unable to load full data for picture "%s"`, filename)
 	}
