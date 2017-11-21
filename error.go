@@ -16,23 +16,7 @@ func Error(context string, err error) error {
 	if err == nil {
 		return nil
 	}
-	return wrappedError{context, err}
-}
-
-type wrappedError struct {
-	context string
-	err     error
-}
-
-func (e wrappedError) Error() string {
-	msg := "- " + e.context + ":\n"
-	a := e.err
-	for b, ok := a.(wrappedError); ok; {
-		msg += "- " + b.context + ":\n"
-		a = b.err
-		b, ok = a.(wrappedError)
-	}
-	return msg + a.Error()
+	return core.WrappedError{context, err}
 }
 
 // ShowError shows an error and its context to the user. In debug mode, it only

@@ -24,21 +24,26 @@ func Error(context string, err error) error {
 	if err == nil {
 		return nil
 	}
-	return wrappedError{context, err}
+	return WrappedError{context, err}
 }
 
-type wrappedError struct {
-	context string
-	err     error
+type WrappedError struct {
+	Context string
+	Err     error
 }
 
-func (e wrappedError) Error() string {
-	msg := "- " + e.context + ":\n"
-	a := e.err
-	for b, ok := a.(wrappedError); ok; {
-		msg += "- " + b.context + ":\n"
-		a = b.err
-		b, ok = a.(wrappedError)
+func (e WrappedError) Error() string {
+	msg := "- " + e.Context + ":\n"
+	spc := 1
+	a := e.Err
+	for b, ok := a.(WrappedError); ok; {
+		for i := 0; i < spc; i++ {
+			msg += "  "
+		}
+		msg += "- " + b.Context + ":\n"
+		a = b.Err
+		b, ok = a.(WrappedError)
+		spc++
 	}
 	return msg + a.Error()
 }
