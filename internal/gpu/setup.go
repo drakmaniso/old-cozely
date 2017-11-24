@@ -55,14 +55,16 @@ func Setup(debug bool, screenSize pixel.Coord, pixelSize pixel.Coord) error {
 		return errors.New("impossible to initialize OpenGL")
 	}
 
-	CreateFramebuffer(screenSize, pixelSize)
+	createFramebuffer(screenSize, pixelSize)
 
 	//
 
-	err := SetupStampPipeline()
+	err := createStampPipeline()
 	if err != nil {
 		return err
 	}
+
+	createStampBuffer(1024)
 
 	return nil //TODO: error handling
 }

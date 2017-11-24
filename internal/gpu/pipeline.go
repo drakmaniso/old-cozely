@@ -17,7 +17,7 @@ GLuint CompileShader(GLenum t, const GLchar* b) {
 	return s;
 }
 
-static inline void SetupStampPipeline(GLuint *program, GLuint*vao, GLuint vso, GLuint fso) {
+static inline void CreateStampPipeline(GLuint *program, GLuint*vao, GLuint vso, GLuint fso) {
 	*program = glCreateProgram();
 	glCreateVertexArrays(1, vao);
 	glBindVertexArray(*vao);
@@ -58,10 +58,9 @@ char* PipelineLinkError(GLuint pr) {
 	return NULL;
 }
 
-static inline void BindStampPipeline(GLuint program, GLuint vao, GLuint pb) {
+static inline void BindStampPipeline(GLuint program, GLuint vao) {
 	glUseProgram(program);
 	glBindVertexArray(vao);
-	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, 1, pb);
 	glDrawArrays(GL_TRIANGLES, 0, 6);
 }
 
@@ -101,7 +100,7 @@ var StampPipeline struct {
 	vao     C.GLuint
 }
 
-func SetupStampPipeline() error {
+func createStampPipeline() error {
 	vs := C.CString(string(vertexShader))
 	defer C.free(unsafe.Pointer(vs))
 	vso := C.CompileShader(C.GL_VERTEX_SHADER, (*C.GLchar)(vs))
@@ -118,7 +117,7 @@ func SetupStampPipeline() error {
 		return core.Error("while compiling fragment shader for stamp pipeline", errors.New(C.GoString(errm)))
 	}
 
-	C.SetupStampPipeline(
+	C.CreateStampPipeline(
 		&StampPipeline.program,
 		&StampPipeline.vao,
 		vso,
@@ -135,12 +134,27 @@ func SetupStampPipeline() error {
 //------------------------------------------------------------------------------
 
 func BindStampPipeline() {
-	C.BindStampPipeline(StampPipeline.program, StampPipeline.vao, C.GLuint(pictureBuffer))
+	updateStampBuffer(stamps)
+	C.BindStampPipeline(StampPipeline.program, StampPipeline.vao)
+	stamps = stamps[:0]
+}
+
+//------------------------------------------------------------------------------
+
+var stamps = []Stamp{}
+
+func Paint(addr uint32, w, h int16, x, y int16) {
+	s := Stamp{Address: addr, W: w, H: h, X: x, Y: y}
+	stamps = append(stamps, s)
 }
 
 //------------------------------------------------------------------------------
 
 const vertexShader = `#version 450 core
+
+const vec2 PixelSize = vec2(1.0/320.0, 1.0/180.0);
+// const vec2 XY = vec2(20, 10);
+// const vec2 WH = vec2(64, 32);
 
 struct Stamp {
 	uint Address;
@@ -163,26 +177,25 @@ out PerVertex {
 void main(void)
 {
 	// Calculate index in face buffer
-	uint faceID = gl_VertexID / 6;
-	// Determine which face vertex this is
+	uint stampIndex = gl_VertexID / 6;
+
+	vec2 WH = vec2(Stamps[stampIndex].WH & 0xFFFF, Stamps[stampIndex].WH >> 16);
+	vec2 XY = vec2(Stamps[stampIndex].XY & 0xFFFF, Stamps[stampIndex].XY >> 16);
+
+	// Determine which corner of the stamp this is
 	const uint [6]triangulate = {0, 1, 2, 0, 2, 3};
-	uint currVert = triangulate[gl_VertexID - (6 * faceID)];
+	uint currVert = triangulate[gl_VertexID - (6 * stampIndex)];
 
 	const vec2 corners[4] = vec2[4](
-		vec2(0, 1),
-		vec2(1, 1),
-		vec2(1, 0),
-		vec2(0, 0)
-	);
-	gl_Position = vec4(corners[currVert], 0.5, 1);
-
-	const vec2 uvcorners[4] = vec2[4](
 		vec2(0, 0),
 		vec2(1, 0),
 		vec2(1, 1),
 		vec2(0, 1)
 	);
-	UV = uvcorners[currVert] * vec2(64, 32);
+	vec2 p = (XY + corners[currVert] * WH) * PixelSize;
+	gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), 0.5, 1);
+
+	UV = corners[currVert] * vec2(64, 32);
 }
 `
 

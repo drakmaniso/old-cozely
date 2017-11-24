@@ -19,6 +19,10 @@ static inline void BindBufferBase(GLuint target, GLuint binding, GLuint buffer) 
 	glBindBufferBase(target, binding, buffer);
 }
 
+static inline void BufferSubData(GLuint buffer, GLintptr offset, GLsizeiptr size, const void* data) {
+	glNamedBufferSubData(buffer, offset, size, data);
+}
+
 */
 import "C"
 
@@ -30,24 +34,24 @@ import (
 
 //------------------------------------------------------------------------------
 
-type (
-	PictureBuffer C.GLuint
-	StampBuffer   C.GLuint
-)
+func createStampBuffer(size int) {
+	b := C.NewBuffer(C.GLsizeiptr(size), unsafe.Pointer(nil), C.GL_DYNAMIC_STORAGE_BIT|C.GL_MAP_WRITE_BIT)
+	C.BindBufferBase(C.GL_SHADER_STORAGE_BUFFER, 0, b)
+	stampSSBO = b
+}
+
+var stampSSBO C.GLuint
+
+func updateStampBuffer(data []Stamp) {
+	l := len(data) * int(unsafe.Sizeof(Stamp{}))
+	C.BufferSubData(stampSSBO, 0, C.GLsizeiptr(l), unsafe.Pointer(&data[0]))
+}
 
 //------------------------------------------------------------------------------
 
-func CreatePictureBuffer(data []uint8) PictureBuffer {
+func CreatePictureBuffer(data []uint8) {
 	b := C.NewBuffer(C.GLsizeiptr(len(data)), unsafe.Pointer(&data[0]), 0)
-	pictureBuffer = PictureBuffer(b)
-	return PictureBuffer(b)
-}
-
-var pictureBuffer PictureBuffer
-
-func CreateStampBuffer(size int) StampBuffer {
-	b := C.NewBuffer(C.GLsizeiptr(size), unsafe.Pointer(nil), C.GL_MAP_WRITE_BIT)
-	return StampBuffer(b)
+	C.BindBufferBase(C.GL_SHADER_STORAGE_BUFFER, 1, b)
 }
 
 //------------------------------------------------------------------------------

@@ -36,12 +36,19 @@ func (loop) Update() error {
 	return nil
 }
 
+var x = int16(1)
+
 func (loop) Draw(_, _ float64) error {
+	x++
+	if x > 300 {
+		x = 1
+	}
+
 	p, ok := picture.Named("logo")
 	if !ok && false {
 		return errors.New("picture not found")
 	}
-	// p.Paint(10, 10)
+	p.Paint(x, 10)
 	_ = p
 	return nil
 }

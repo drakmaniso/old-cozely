@@ -63,8 +63,8 @@ import "github.com/drakmaniso/carol/pixel"
 
 //------------------------------------------------------------------------------
 
-// CreateFramebuffer prepares the framebuffer.
-func CreateFramebuffer(framebufferSize pixel.Coord, pixelSize pixel.Coord) {
+// createFramebuffer prepares the framebuffer.
+func createFramebuffer(framebufferSize pixel.Coord, pixelSize pixel.Coord) {
 	Framebuffer.fbo = C.CreateFramebuffer(C.GLsizei(framebufferSize.X), C.GLsizei(framebufferSize.Y))
 	Framebuffer.Size = framebufferSize
 	Framebuffer.PixelSize = pixelSize

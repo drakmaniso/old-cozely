@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2017 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
-package gfx
+package picture
 
 //------------------------------------------------------------------------------
 
@@ -21,15 +21,7 @@ import (
 
 //------------------------------------------------------------------------------
 
-type Picture struct {
-	address uint32
-	width   uint16
-	height  uint16
-}
-
-//------------------------------------------------------------------------------
-
-func ScanPictures() error {
+func scan() error {
 	p := core.Path + "data/images/"
 
 	f, err := os.Open(p)
@@ -43,27 +35,27 @@ func ScanPictures() error {
 		return core.Error("while reading images directory", err)
 	}
 
-	totalPictureSize = uint64(0)
+	totalSize = uint64(0)
 	nb := 0
 	for _, n := range dn {
 		if path.Ext(n) == ".png" {
-			s, err := getPictureSize("data/images/", n)
+			s, err := getSize("data/images/", n)
 			if err != nil {
 				return err
 			}
-			totalPictureSize += s
+			totalSize += s
 			nb++
 		}
 	}
 
-	core.Debug.Printf("Scanned %d pictures: %d bytes (%.1f Mb)", nb, totalPictureSize, float64(totalPictureSize)/(1024.0*1024.0))
+	core.Debug.Printf("Scanned %d pictures: %d bytes (%.1f Mb)", nb, totalSize, float64(totalSize)/(1024.0*1024.0))
 
 	return nil
 }
 
-var totalPictureSize uint64
+var totalSize uint64
 
-func getPictureSize(dir, filename string) (uint64, error) {
+func getSize(dir, filename string) (uint64, error) {
 	r, err := os.Open(dir + filename)
 	if err != nil {
 		return 0, core.Error(`opening picture file "`+filename+`"`, err)
@@ -85,7 +77,12 @@ func getPictureSize(dir, filename string) (uint64, error) {
 
 //------------------------------------------------------------------------------
 
-func LoadPictures() error {
+func LoadEverything() error {
+	err := scan()
+	if err != nil {
+		return core.Error("while scanning images", err)
+	}
+
 	p := core.Path + "data/images/"
 
 	f, err := os.Open(p)
@@ -99,12 +96,12 @@ func LoadPictures() error {
 		return core.Error("while reading images directory", err)
 	}
 
-	data := make([]uint8, totalPictureSize, totalPictureSize)
+	data := make([]uint8, totalSize, totalSize)
 
 	addr := uint32(0)
 	for _, n := range dn {
 		if path.Ext(n) == ".png" {
-			s, err := loadPicture("data/images/", n, data, addr)
+			s, err := load("data/images/", n, data, addr)
 			if err != nil {
 				return err
 			}
@@ -112,14 +109,14 @@ func LoadPictures() error {
 		}
 	}
 
-	_ = gpu.CreatePictureBuffer(data)
+	gpu.CreatePictureBuffer(data)
 
-	core.Debug.Printf("Loaded %d pictures: %v", len(Pictures), Pictures)
+	core.Debug.Printf("Loaded %d pictures: %v", len(pictures), pictures)
 
 	return nil
 }
 
-func loadPicture(dir, filename string, data []uint8, address uint32) (uint32, error) {
+func load(dir, filename string, data []uint8, address uint32) (uint32, error) {
 	r, err := os.Open(dir + filename)
 	if err != nil {
 		return 0, core.Error(`opening picture file "`+filename+`"`, err)
@@ -140,11 +137,11 @@ func loadPicture(dir, filename string, data []uint8, address uint32) (uint32, er
 
 	p := Picture{
 		address: address,
-		width:   uint16(pimg.Rect.Max.X - pimg.Rect.Min.X),
-		height:  uint16(pimg.Rect.Max.Y - pimg.Rect.Min.Y),
+		width:   int16(pimg.Rect.Max.X - pimg.Rect.Min.X),
+		height:  int16(pimg.Rect.Max.Y - pimg.Rect.Min.Y),
 	}
 	n := strings.TrimSuffix(filename, ".png")
-	Pictures[n] = p
+	pictures[n] = p
 
 	core.Debug.Printf("Add picture '%s': %d == %d", n, len(pimg.Pix), p.width*p.height)
 
