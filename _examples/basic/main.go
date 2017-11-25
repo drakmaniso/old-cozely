@@ -50,6 +50,13 @@ func (loop) Draw(_, _ float64) error {
 	}
 	p.Paint(x, 10)
 	_ = p
+
+	p2, ok := picture.Named("mire")
+	if !ok && false {
+		return errors.New("picture not found")
+	}
+	p2.Paint(10, 60)
+
 	return nil
 }
 

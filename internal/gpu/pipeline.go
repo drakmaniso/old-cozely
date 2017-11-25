@@ -61,7 +61,7 @@ char* PipelineLinkError(GLuint pr) {
 static inline void BindStampPipeline(GLuint program, GLuint vao) {
 	glUseProgram(program);
 	glBindVertexArray(vao);
-	glDrawArrays(GL_TRIANGLES, 0, 6);
+	glDrawArrays(GL_TRIANGLES, 0, 2*6);
 }
 
 */
@@ -89,8 +89,9 @@ type Stamp struct {
 	X, Y int16
 
 	// word
-	OrientAndUser  uint16
-	ZoomAndPalette uint16
+	Depth     int16
+	Palette   uint8
+	Transform byte
 }
 
 //------------------------------------------------------------------------------
@@ -153,8 +154,6 @@ func Paint(addr uint32, w, h int16, x, y int16) {
 const vertexShader = `#version 450 core
 
 const vec2 PixelSize = vec2(1.0/320.0, 1.0/180.0);
-// const vec2 XY = vec2(20, 10);
-// const vec2 WH = vec2(64, 32);
 
 struct Stamp {
 	uint Address;
@@ -172,6 +171,8 @@ out gl_PerVertex {
 
 out PerVertex {
 	layout(location=0) vec2 UV;
+	layout(location=1) flat uint Address;
+	layout(location=2) flat uint Stride;
 };
 
 void main(void)
@@ -195,7 +196,9 @@ void main(void)
 	vec2 p = (XY + corners[currVert] * WH) * PixelSize;
 	gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), 0.5, 1);
 
-	UV = corners[currVert] * vec2(64, 32);
+	UV = corners[currVert] * WH;
+	Address = Stamps[stampIndex].Address;
+	Stride = uint(WH.x);
 }
 `
 
@@ -203,10 +206,10 @@ void main(void)
 
 const fragmentShader = `#version 450 core
 
-// in vec4 gl_FragCoord;
-
 in PerVertex {
 	layout(location=0) vec2 UV;
+	layout(location=1) flat uint Address;
+	layout(location=2) flat uint Stride;
 };
 
 layout(std430, binding = 1) buffer PictureBuffer {
@@ -238,7 +241,7 @@ void main(void)
 	// 	0.5 + 0.25*rand(vec2(0.6, rand(gl_FragCoord.xy))),
 	// 	1.0
 	// );
-	uint p = getPixel(0, 64, uint(UV.x), uint(UV.y));
+	uint p = getPixel(Address, Stride, uint(UV.x), uint(UV.y));
 	const vec4 Palette[] = vec4[4](
 		vec4(0.1, 0.1, 0.1, 1.0),
 		vec4(1.0, 1.0, 0.0, 1.0),
