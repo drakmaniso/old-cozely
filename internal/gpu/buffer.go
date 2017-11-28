@@ -44,7 +44,9 @@ var stampSSBO C.GLuint
 
 func updateStampBuffer(data []Stamp) {
 	l := len(data) * int(unsafe.Sizeof(Stamp{}))
-	C.BufferSubData(stampSSBO, 0, C.GLsizeiptr(l), unsafe.Pointer(&data[0]))
+	if l > 0 {
+		C.BufferSubData(stampSSBO, 0, C.GLsizeiptr(l), unsafe.Pointer(&data[0]))
+	}
 }
 
 //------------------------------------------------------------------------------

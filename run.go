@@ -8,6 +8,7 @@ package carol
 import (
 	"github.com/drakmaniso/carol/internal/core"
 	"github.com/drakmaniso/carol/internal/gpu"
+	_ "github.com/drakmaniso/carol/picture" // To register setup callback
 )
 
 //------------------------------------------------------------------------------
