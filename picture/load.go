@@ -21,8 +21,57 @@ import (
 
 //------------------------------------------------------------------------------
 
+func init() {
+	c := core.SetupCallback{
+		Callback: loadEverything,
+		Context:  "in picture package setup",
+	}
+	core.PostSetupCallbacks = append(core.PostSetupCallbacks, c)
+}
+
+func loadEverything() error {
+	err := scan()
+	if err != nil {
+		return core.Error("while scanning images", err)
+	}
+
+	p := core.Path + picturesPath
+
+	f, err := os.Open(p)
+	if err != nil {
+		return core.Error("while opening images directory", err)
+	}
+	defer f.Close()
+
+	dn, err := f.Readdirnames(0)
+	if err != nil {
+		return core.Error("while reading images directory", err)
+	}
+
+	data := make([]uint8, totalSize, totalSize)
+
+	addr := uint32(0)
+	for _, n := range dn {
+		if path.Ext(n) == ".png" {
+			s, err := load(picturesPath, n, data, addr)
+			if err != nil {
+				return err
+			}
+			addr += s
+		}
+	}
+
+	gpu.CreatePictureBuffer(data)
+
+	core.Debug.Printf("Loaded %d pictures: %v", len(pictures), pictures)
+
+	return nil
+}
+
+//------------------------------------------------------------------------------
+
 func scan() error {
-	p := core.Path + "data/images/"
+	p := core.Path + picturesPath
 
 	f, err := os.Open(p)
 	if err != nil {
@@ -39,7 +88,7 @@ func scan() error {
 	nb := 0
 	for _, n := range dn {
 		if path.Ext(n) == ".png" {
-			s, err := getSize("data/images/", n)
+			s, err := getSize(picturesPath, n)
 			if err != nil {
 				return err
 			}
@@ -77,45 +126,6 @@ func getSize(dir, filename string) (uint64, error) {
 
 //------------------------------------------------------------------------------
 
-func LoadEverything() error {
-	err := scan()
-	if err != nil {
-		return core.Error("while scanning images", err)
-	}
-
-	p := core.Path + "data/images/"
-
-	f, err := os.Open(p)
-	if err != nil {
-		return core.Error("while opening images directory", err)
-	}
-	defer f.Close()
-
-	dn, err := f.Readdirnames(0)
-	if err != nil {
-		return core.Error("while reading images directory", err)
-	}
-
-	data := make([]uint8, totalSize, totalSize)
-
-	addr := uint32(0)
-	for _, n := range dn {
-		if path.Ext(n) == ".png" {
-			s, err := load("data/images/", n, data, addr)
-			if err != nil {
-				return err
-			}
-			addr += s
-		}
-	}
-
-	gpu.CreatePictureBuffer(data)
-
-	core.Debug.Printf("Loaded %d pictures: %v", len(pictures), pictures)
-
-	return nil
-}
-
 func load(dir, filename string, data []uint8, address uint32) (uint32, error) {
 	r, err := os.Open(dir + filename)
 	if err != nil {
@@ -152,5 +162,9 @@ func load(dir, filename string, data []uint8, address uint32) (uint32, error) {
 
 	return uint32(p.width * p.height), nil
 }
+
+//------------------------------------------------------------------------------
+
+const picturesPath = "graphics/pictures/"
 
 //------------------------------------------------------------------------------

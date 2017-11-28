@@ -8,7 +8,6 @@ package carol
 import (
 	"github.com/drakmaniso/carol/internal/core"
 	"github.com/drakmaniso/carol/internal/gpu"
-	"github.com/drakmaniso/carol/picture"
 )
 
 //------------------------------------------------------------------------------
@@ -70,14 +69,16 @@ func Run(loop GameLoop) error {
 		return core.Error("in gpu setup", err)
 	}
 
-	err = picture.LoadEverything()
-	if err != nil {
-		return core.Error("while loading images", err)
-	}
-
 	err = core.Loop.Setup()
 	if err != nil {
-		return core.Error("in Setup callback", err)
+		return core.Error("in game loop Setup", err)
+	}
+
+	for _, c := range core.PostSetupCallbacks {
+		err = c.Callback()
+		if err != nil {
+			return core.Error(c.Context, err)
+		}
 	}
 
 	// First, send a fake resize window event

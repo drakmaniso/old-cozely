@@ -58,10 +58,10 @@ char* PipelineLinkError(GLuint pr) {
 	return NULL;
 }
 
-static inline void BindStampPipeline(GLuint program, GLuint vao) {
+static inline void BindStampPipeline(GLuint program, GLuint vao, unsigned int nbStamps) {
 	glUseProgram(program);
 	glBindVertexArray(vao);
-	glDrawArrays(GL_TRIANGLES, 0, 2*6);
+	glDrawArrays(GL_TRIANGLES, 0, nbStamps*6);
 }
 
 */
@@ -136,7 +136,7 @@ func createStampPipeline() error {
 
 func BindStampPipeline() {
 	updateStampBuffer(stamps)
-	C.BindStampPipeline(StampPipeline.program, StampPipeline.vao)
+	C.BindStampPipeline(StampPipeline.program, StampPipeline.vao, C.uint(len(stamps)))
 	stamps = stamps[:0]
 }
 

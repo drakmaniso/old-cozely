@@ -57,6 +57,8 @@ func (loop) Draw(_, _ float64) error {
 	}
 	p2.Paint(10, 60)
 
+	p.Paint(40, 30)
+
 	return nil
 }
 

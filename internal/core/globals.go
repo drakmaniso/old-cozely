@@ -110,3 +110,12 @@ var MousePosition pixel.Coord
 var MouseButtons uint32
 
 //------------------------------------------------------------------------------
+
+type SetupCallback struct {
+	Callback func() error
+	Context  string
+}
+
+var PostSetupCallbacks = []SetupCallback{}
+
+//------------------------------------------------------------------------------
