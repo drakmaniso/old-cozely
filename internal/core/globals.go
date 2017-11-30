@@ -16,7 +16,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/drakmaniso/carol/pixel"
+	"github.com/drakmaniso/carol/screen"
 )
 
 //------------------------------------------------------------------------------
@@ -27,9 +27,9 @@ var Path string
 // Config holds the initial configuration of the game.
 var Config = struct {
 	Title           string
-	WindowSize      pixel.Coord
-	FramebufferSize pixel.Coord
-	PixelSize       pixel.Coord
+	WindowSize      screen.Coord
+	FramebufferSize screen.Coord
+	PixelSize       screen.Coord
 	Display         int
 	Fullscreen      bool
 	FullscreenMode  string
@@ -37,9 +37,9 @@ var Config = struct {
 	Debug           bool
 }{
 	Title:           "Carol",
-	WindowSize:      pixel.Coord{X: 1280, Y: 720},
-	FramebufferSize: pixel.Coord{X: 64, Y: 64},
-	PixelSize:       pixel.Coord{X: 8, Y: 8},
+	WindowSize:      screen.Coord{X: 1280, Y: 720},
+	FramebufferSize: screen.Coord{X: 64, Y: 64},
+	PixelSize:       screen.Coord{X: 8, Y: 8},
 	Display:         0,
 	Fullscreen:      false,
 	FullscreenMode:  "Desktop",
@@ -77,7 +77,7 @@ var QuitRequested = false
 var Window struct {
 	window  *C.SDL_Window
 	context C.SDL_GLContext
-	Size    pixel.Coord
+	Size    screen.Coord
 }
 
 // Focus state
@@ -101,10 +101,10 @@ var KeyState [512]bool
 //------------------------------------------------------------------------------
 
 // MouseDelta holds the delta from last mouse position.
-var MouseDelta pixel.Coord
+var MouseDelta screen.Coord
 
 // MousePosition holds the current mouse position.
-var MousePosition pixel.Coord
+var MousePosition screen.Coord
 
 // MouseButtons holds the state of the mouse buttons.
 var MouseButtons uint32

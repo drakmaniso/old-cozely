@@ -26,7 +26,7 @@ import "C"
 import (
 	"unsafe"
 
-	"github.com/drakmaniso/carol/pixel"
+	"github.com/drakmaniso/carol/screen"
 )
 
 //------------------------------------------------------------------------------
@@ -42,7 +42,7 @@ type GameLoop interface {
 	// Window events
 	WindowShown()
 	WindowHidden()
-	WindowResized(newSize pixel.Coord)
+	WindowResized(newSize screen.Coord)
 	WindowMinimized()
 	WindowMaximized()
 	WindowRestored()
@@ -57,10 +57,10 @@ type GameLoop interface {
 	KeyUp(l KeyLabel, p KeyPosition)
 
 	// Mouse events
-	MouseMotion(motion pixel.Coord, position pixel.Coord)
+	MouseMotion(motion screen.Coord, position screen.Coord)
 	MouseButtonDown(b MouseButton, clicks int)
 	MouseButtonUp(b MouseButton, clicks int)
-	MouseWheel(motion pixel.Coord)
+	MouseWheel(motion screen.Coord)
 }
 
 //------------------------------------------------------------------------------
@@ -99,7 +99,7 @@ func dispatch(e unsafe.Pointer) {
 		case C.SDL_WINDOWEVENT_MOVED:
 			// Ignore
 		case C.SDL_WINDOWEVENT_RESIZED:
-			Window.Size = pixel.Coord{X: int64(e.data1), Y: int64(e.data2)}
+			Window.Size = screen.Coord{X: int64(e.data1), Y: int64(e.data2)}
 			Loop.WindowResized(Window.Size)
 		case C.SDL_WINDOWEVENT_SIZE_CHANGED:
 			//TODO
@@ -146,9 +146,9 @@ func dispatch(e unsafe.Pointer) {
 	// Mouse Events
 	case C.SDL_MOUSEMOTION:
 		e := (*C.SDL_MouseMotionEvent)(e)
-		rel := pixel.Coord{X: int64(e.xrel), Y: int64(e.yrel)}
+		rel := screen.Coord{X: int64(e.xrel), Y: int64(e.yrel)}
 		MouseDelta = MouseDelta.Plus(rel)
-		MousePosition = pixel.Coord{X: int64(e.x), Y: int64(e.y)}
+		MousePosition = screen.Coord{X: int64(e.x), Y: int64(e.y)}
 		MouseButtons = uint32(e.state)
 		Loop.MouseMotion(
 			rel,
@@ -175,7 +175,7 @@ func dispatch(e unsafe.Pointer) {
 			d = -1
 		}
 		Loop.MouseWheel(
-			pixel.Coord{X: int64(e.x) * d, Y: int64(e.y) * d},
+			screen.Coord{X: int64(e.x) * d, Y: int64(e.y) * d},
 		)
 	//TODO: Joystick Events
 	case C.SDL_JOYAXISMOTION:

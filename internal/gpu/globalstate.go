@@ -13,7 +13,7 @@ import "C"
 //------------------------------------------------------------------------------
 
 import (
-	"github.com/drakmaniso/carol/pixel"
+	"github.com/drakmaniso/carol/screen"
 )
 
 //------------------------------------------------------------------------------
@@ -21,8 +21,8 @@ import (
 // Framebuffer contains the state of the framebuffer
 var Framebuffer struct {
 	fbo       C.GLuint
-	Size      pixel.Coord
-	PixelSize pixel.Coord
+	Size      screen.Coord
+	PixelSize screen.Coord
 }
 
 //------------------------------------------------------------------------------

@@ -38,12 +38,12 @@ import "C"
 import (
 	"errors"
 
-	"github.com/drakmaniso/carol/pixel"
+	"github.com/drakmaniso/carol/screen"
 )
 
 //------------------------------------------------------------------------------
 
-func Setup(debug bool, screenSize pixel.Coord, pixelSize pixel.Coord) error {
+func Setup(debug bool, screenSize screen.Coord, pixelSize screen.Coord) error {
 
 	// Initialize OpenGL
 

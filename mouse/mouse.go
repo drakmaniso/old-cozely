@@ -7,19 +7,19 @@ package mouse
 
 import (
 	"github.com/drakmaniso/carol/internal/core"
-	"github.com/drakmaniso/carol/pixel"
+	"github.com/drakmaniso/carol/screen"
 )
 
 //------------------------------------------------------------------------------
 
 // Position returns the current mouse position, relative to the game window.
 // Updated at the start of each game loop iteration.
-func Position() pixel.Coord {
+func Position() screen.Coord {
 	return core.MousePosition
 }
 
 // Delta returns the mouse position relative to the last call of Delta.
-func Delta() pixel.Coord {
+func Delta() screen.Coord {
 	result := core.MouseDelta
 	core.MouseDelta.X, core.MouseDelta.Y = 0, 0
 	return result

@@ -59,12 +59,12 @@ static inline void BlitFramebuffer(GLint winWidth, GLint winHeight, GLint scrWid
 }
 */
 import "C"
-import "github.com/drakmaniso/carol/pixel"
+import "github.com/drakmaniso/carol/screen"
 
 //------------------------------------------------------------------------------
 
 // createFramebuffer prepares the framebuffer.
-func createFramebuffer(framebufferSize pixel.Coord, pixelSize pixel.Coord) {
+func createFramebuffer(framebufferSize screen.Coord, pixelSize screen.Coord) {
 	Framebuffer.fbo = C.CreateFramebuffer(C.GLsizei(framebufferSize.X), C.GLsizei(framebufferSize.Y))
 	Framebuffer.Size = framebufferSize
 	Framebuffer.PixelSize = pixelSize
@@ -73,7 +73,7 @@ func createFramebuffer(framebufferSize pixel.Coord, pixelSize pixel.Coord) {
 //------------------------------------------------------------------------------
 
 // BlitFramebuffer blits the framebuffer onto the window backbuffer.
-func BlitFramebuffer(windowSize pixel.Coord) {
+func BlitFramebuffer(windowSize screen.Coord) {
 	C.BlitFramebuffer(
 		C.GLint(windowSize.X), C.GLint(windowSize.Y),
 		C.GLint(Framebuffer.Size.X), C.GLint(Framebuffer.Size.Y),
