@@ -5,45 +5,129 @@ package colour
 
 //------------------------------------------------------------------------------
 
-type Index uint8
+import (
+	"errors"
+)
 
+//------------------------------------------------------------------------------
+
+// An Colour identifies a colour inside a palette.
+type Colour uint8
+
+// A Palette identifies one of the 256 available palettes.
 type Palette uint8
 
-var palettes []paletteData
-
-type paletteData struct {
-	colours []RGBA
-}
-
 //------------------------------------------------------------------------------
 
-func PaletteCount() uint8 {
-	return uint8(len(palettes))
-}
-
-//------------------------------------------------------------------------------
-
-func NewPalette(c []RGBA) Palette {
-	cc := make([]RGBA, len(c), len(c))
-	copy(cc, c)
-	p := paletteData{colours: cc}
-	palettes = append(palettes, p)
-	//TODO: register for GPU
-	//TODO: error handling?
-	return Palette(len(palettes) - 1)
-}
-
-//------------------------------------------------------------------------------
-
-func (p Palette) GetRGBA(i Index) (col RGBA, ok bool) {
-	if int(p) < len(palettes) && int(i) < len(palettes[p].colours) {
-		return palettes[p].colours[i], true
+var (
+	palettes [256]struct {
+		colours [256]RGBA
+		count   int
+		names   map[string]Colour
 	}
-	return RGBA{}, false
+	palCount int
+	palNames map[string]Palette
+)
+
+func init() {
+	palNames = make(map[string]Palette, 256)
+	for p := range palettes {
+		palettes[p].names = make(map[string]Colour, 256)
+		for c := range palettes[p].colours {
+			palettes[p].colours[c] = RGBA{1, 0, 1, 1}
+		}
+	}
 }
 
-func FindIndex(colour RGBA) (i Index, ok bool) {
-	return Index(0), false
+//------------------------------------------------------------------------------
+
+// PaletteCount returns the number of palettes created.
+func PaletteCount() int {
+	return palCount
+}
+
+//------------------------------------------------------------------------------
+
+// NewPalette creates and name a new palette, and returns its identifier. It
+// returns the default palette and an error if the maximum number of palette is
+// reached, or if the name is already taken.
+func NewPalette(name string) (Palette, error) {
+	if palCount > 255 {
+		return Palette(0), errors.New("impossible to create palette \"" + name + "\": maximum palette count reached.")
+	}
+
+	if _, ok := palNames[name]; ok {
+		return Palette(0), errors.New(`impossible to create palette: name "` + name + `" already taken.`)
+	}
+
+	p := Palette(palCount)
+	palNames[name] = p
+	palCount++
+	//TODO: register for GPU
+
+	return p, nil
+}
+
+// GetPalette searches for a palette by name. It returns its identifier and true
+// if found, or the default palette and false otherwise.
+func GetPalette(name string) (Palette, bool) {
+	p, ok := palNames[name]
+	return p, ok
+}
+
+//------------------------------------------------------------------------------
+
+// NewColour adds a named colour to the palette, and returns its index. It
+// returns color 0 and an error if the maximum number of colours is reached, or
+// the name already taken.
+func (p Palette) NewColour(name string, v RGBA) (Colour, error) {
+	if palettes[p].count > 255 {
+		return Colour(0), errors.New("impossible to add colour \"" + name + "\": maximum colour count reached.")
+	}
+
+	if _, ok := palettes[p].names[name]; ok {
+		return Colour(0), errors.New(`impossible to add colour: name "` + name + `" already taken.`)
+	}
+
+	c := Colour(palettes[p].count)
+	palettes[p].names[name] = c
+	palettes[p].colours[c] = v
+	palettes[p].count++
+
+	return c, nil
+}
+
+//------------------------------------------------------------------------------
+
+// GetColour searches for a colour by name. It returns its index and true if
+// found, or colour 0 and false otherwise.
+func (p Palette) GetColour(name string) (Colour, bool) {
+	c, ok := palettes[p].names[name]
+	return c, ok
+}
+
+// Find searches for a colour by its RGBA values. It returns its index and true
+// if found, or colour 0 and false otherwise.
+func (p Palette) Find(v RGBA) (Colour, bool) {
+	for c, vv := range palettes[p].colours {
+		if vv == v {
+			return Colour(c), true
+		}
+	}
+
+	return Colour(0), false
+}
+
+//------------------------------------------------------------------------------
+
+// RGBA returns the RGBA values of a colour.
+func (p Palette) RGBA(i Colour) RGBA {
+	return palettes[p].colours[i]
+}
+
+// SetRGBA changes the RGBA values of a colour.
+func (p Palette) SetRGBA(c Colour, v RGBA) {
+	palettes[p].colours[c] = v
 }
 
 //------------------------------------------------------------------------------
