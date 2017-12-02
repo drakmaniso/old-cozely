@@ -2,6 +2,7 @@
 // Licensed under a simplified BSD license (see LICENSE file).
 
 /*
-Package palette provides types and functions to manipulate colors.
+Package palette provides types and functions to manipulate colors and color
+palettes.
 */
 package palette

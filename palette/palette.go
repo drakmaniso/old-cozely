@@ -11,8 +11,8 @@ import (
 
 //------------------------------------------------------------------------------
 
-// An Colour identifies a colour inside a palette.
-type Colour uint8
+// An Color identifies a color inside a palette.
+type Color uint8
 
 // A Palette identifies one of the 256 available palettes.
 type Palette uint8
@@ -23,7 +23,7 @@ var (
 	palettes [256]struct {
 		colours [256]RGBA
 		count   int
-		names   map[string]Colour
+		names   map[string]Color
 	}
 	palCount int
 	palNames map[string]Palette
@@ -32,7 +32,7 @@ var (
 func init() {
 	palNames = make(map[string]Palette, 256)
 	for p := range palettes {
-		palettes[p].names = make(map[string]Colour, 256)
+		palettes[p].names = make(map[string]Color, 256)
 		for c := range palettes[p].colours {
 			palettes[p].colours[c] = RGBA{1, 0, 1, 1}
 		}
@@ -77,19 +77,19 @@ func Get(name string) (Palette, bool) {
 
 //------------------------------------------------------------------------------
 
-// New adds a named colour to the palette, and returns its index. It returns
+// New adds a named color to the palette, and returns its index. It returns
 // color 0 and an error if the maximum number of colours is reached, or the name
 // already taken.
-func (p Palette) New(name string, v RGBA) (Colour, error) {
+func (p Palette) New(name string, v RGBA) (Color, error) {
 	if palettes[p].count > 255 {
-		return Colour(0), errors.New("impossible to add colour \"" + name + "\": maximum colour count reached.")
+		return Color(0), errors.New("impossible to add color \"" + name + "\": maximum color count reached.")
 	}
 
 	if _, ok := palettes[p].names[name]; ok {
-		return Colour(0), errors.New(`impossible to add colour: name "` + name + `" already taken.`)
+		return Color(0), errors.New(`impossible to add color: name "` + name + `" already taken.`)
 	}
 
-	c := Colour(palettes[p].count)
+	c := Color(palettes[p].count)
 	palettes[p].names[name] = c
 	palettes[p].colours[c] = v
 	palettes[p].count++
@@ -99,34 +99,34 @@ func (p Palette) New(name string, v RGBA) (Colour, error) {
 
 //------------------------------------------------------------------------------
 
-// Get searches for a colour by name. It returns its index and true if found, or
-// colour 0 and false otherwise.
-func (p Palette) Get(name string) (Colour, bool) {
+// Get searches for a color by name. It returns its index and true if found, or
+// color 0 and false otherwise.
+func (p Palette) Get(name string) (Color, bool) {
 	c, ok := palettes[p].names[name]
 	return c, ok
 }
 
-// Find searches for a colour by its RGBA values. It returns its index and true
-// if found, or colour 0 and false otherwise.
-func (p Palette) Find(v RGBA) (Colour, bool) {
+// Find searches for a color by its RGBA values. It returns its index and true
+// if found, or color 0 and false otherwise.
+func (p Palette) Find(v RGBA) (Color, bool) {
 	for c, vv := range palettes[p].colours {
 		if vv == v {
-			return Colour(c), true
+			return Color(c), true
 		}
 	}
 
-	return Colour(0), false
+	return Color(0), false
 }
 
 //------------------------------------------------------------------------------
 
-// RGBA returns the RGBA values of a colour.
-func (p Palette) RGBA(i Colour) RGBA {
+// RGBA returns the RGBA values of a color.
+func (p Palette) RGBA(i Color) RGBA {
 	return palettes[p].colours[i]
 }
 
-// SetRGBA changes the RGBA values of a colour.
-func (p Palette) SetRGBA(c Colour, v RGBA) {
+// SetRGBA changes the RGBA values of a color.
+func (p Palette) SetRGBA(c Color, v RGBA) {
 	palettes[p].colours[c] = v
 }
 
