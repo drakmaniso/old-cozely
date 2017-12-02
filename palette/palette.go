@@ -68,10 +68,10 @@ func New(name string) (Palette, error) {
 	return p, nil
 }
 
-// Get searches for a palette by name. It returns its identifier and true if
-// found, or the default palette and false otherwise.
-func Get(name string) (Palette, bool) {
-	p, ok := palNames[name]
+// Get returns the palette associated with a name. If there isn't any, the
+// default palette is returned, and ok is set to false.
+func Get(name string) (p Palette, ok bool) {
+	p, ok = palNames[name]
 	return p, ok
 }
 
@@ -99,10 +99,10 @@ func (p Palette) New(name string, v RGBA) (Color, error) {
 
 //------------------------------------------------------------------------------
 
-// Get searches for a color by name. It returns its index and true if found, or
-// color 0 and false otherwise.
-func (p Palette) Get(name string) (Color, bool) {
-	c, ok := palettes[p].names[name]
+// Get returns the color associated with a name. If there isn't any, the color 0
+// is returned, and ok is set to false.
+func (p Palette) Get(name string) (c Color, ok bool) {
+	c, ok = palettes[p].names[name]
 	return c, ok
 }
 

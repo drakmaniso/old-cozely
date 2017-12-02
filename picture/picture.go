@@ -27,10 +27,10 @@ func init() {
 
 //------------------------------------------------------------------------------
 
-// Named returns the picture with name n and true, or an invalid Picture and false
-// if no image correspond to n.
-func Named(n string) (p Picture, ok bool) {
-	p, ok = pictures[n]
+// Get returns the picture associated with a name. If there isn't any, an empty
+// picture is returned and ok is set to false.
+func Get(name string) (p Picture, ok bool) {
+	p, ok = pictures[name]
 	return p, ok
 }
 

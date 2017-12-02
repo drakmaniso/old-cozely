@@ -54,14 +54,14 @@ func (loop) Draw(_, _ float64) error {
 		x = 1
 	}
 
-	p, ok := picture.Named("logo")
+	p, ok := picture.Get("logo")
 	if !ok && false {
 		return errors.New("picture not found")
 	}
 	p.Paint(x, 10)
 	_ = p
 
-	p2, ok := picture.Named("mire")
+	p2, ok := picture.Get("mire")
 	if !ok && false {
 		return errors.New("picture not found")
 	}
