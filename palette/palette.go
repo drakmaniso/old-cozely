@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2017 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
-package colour
+package palette
 
 //------------------------------------------------------------------------------
 
@@ -41,17 +41,17 @@ func init() {
 
 //------------------------------------------------------------------------------
 
-// PaletteCount returns the number of palettes created.
-func PaletteCount() int {
+// Count returns the number of palettes created.
+func Count() int {
 	return palCount
 }
 
 //------------------------------------------------------------------------------
 
-// NewPalette creates and name a new palette, and returns its identifier. It
-// returns the default palette and an error if the maximum number of palette is
-// reached, or if the name is already taken.
-func NewPalette(name string) (Palette, error) {
+// New creates and name a new palette, and returns its identifier. It returns
+// the default palette and an error if the maximum number of palette is reached,
+// or if the name is already taken.
+func New(name string) (Palette, error) {
 	if palCount > 255 {
 		return Palette(0), errors.New("impossible to create palette \"" + name + "\": maximum palette count reached.")
 	}
@@ -68,19 +68,19 @@ func NewPalette(name string) (Palette, error) {
 	return p, nil
 }
 
-// GetPalette searches for a palette by name. It returns its identifier and true
-// if found, or the default palette and false otherwise.
-func GetPalette(name string) (Palette, bool) {
+// Get searches for a palette by name. It returns its identifier and true if
+// found, or the default palette and false otherwise.
+func Get(name string) (Palette, bool) {
 	p, ok := palNames[name]
 	return p, ok
 }
 
 //------------------------------------------------------------------------------
 
-// NewColour adds a named colour to the palette, and returns its index. It
-// returns color 0 and an error if the maximum number of colours is reached, or
-// the name already taken.
-func (p Palette) NewColour(name string, v RGBA) (Colour, error) {
+// New adds a named colour to the palette, and returns its index. It returns
+// color 0 and an error if the maximum number of colours is reached, or the name
+// already taken.
+func (p Palette) New(name string, v RGBA) (Colour, error) {
 	if palettes[p].count > 255 {
 		return Colour(0), errors.New("impossible to add colour \"" + name + "\": maximum colour count reached.")
 	}
@@ -99,9 +99,9 @@ func (p Palette) NewColour(name string, v RGBA) (Colour, error) {
 
 //------------------------------------------------------------------------------
 
-// GetColour searches for a colour by name. It returns its index and true if
-// found, or colour 0 and false otherwise.
-func (p Palette) GetColour(name string) (Colour, bool) {
+// Get searches for a colour by name. It returns its index and true if found, or
+// colour 0 and false otherwise.
+func (p Palette) Get(name string) (Colour, bool) {
 	c, ok := palettes[p].names[name]
 	return c, ok
 }

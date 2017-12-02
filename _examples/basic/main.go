@@ -9,7 +9,7 @@ import (
 	"errors"
 
 	"github.com/drakmaniso/carol"
-	"github.com/drakmaniso/carol/colour"
+	"github.com/drakmaniso/carol/palette"
 	"github.com/drakmaniso/carol/picture"
 )
 
@@ -30,14 +30,14 @@ type loop struct {
 }
 
 func (loop) Setup() error {
-	p, err := colour.NewPalette("Foo")
+	p, err := palette.New("Foo")
 	if err != nil {
 		return carol.Error("while creating palette", err)
 	}
-	p.NewColour("dark grey", colour.RGBA{0.1, 0.1, 0.1, 1.0})
-	p.NewColour("orange", colour.RGBA{1.0, 0.5, 0.0, 1.0})
-	p.NewColour("violet", colour.RGBA{1.0, 0.0, 0.5, 1.0})
-	p.NewColour("turquoise", colour.RGBA{0.0, 1.0, 0.5, 1.0})
+	p.New("dark grey", palette.RGBA{0.1, 0.1, 0.1, 1.0})
+	p.New("orange", palette.RGBA{1.0, 0.5, 0.0, 1.0})
+	p.New("violet", palette.RGBA{1.0, 0.0, 0.5, 1.0})
+	p.New("turquoise", palette.RGBA{0.0, 1.0, 0.5, 1.0})
 
 	return nil
 }
