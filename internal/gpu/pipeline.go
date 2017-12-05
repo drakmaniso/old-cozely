@@ -216,6 +216,10 @@ layout(std430, binding = 1) buffer PictureBuffer {
 	uint []Pixels;
 };
 
+layout(std430, binding = 2) buffer PaletteBuffer {
+	vec4 Colours[256][256];
+};
+
 out vec4 color;
 
 uint getByte(uint addr) {
@@ -249,7 +253,8 @@ void main(void)
 		vec4(0.0, 1.0, 1.0, 1.0)
 	);
 	// color = vec4(UV.x, UV.y, 0.5 + 0.5*rand(gl_FragCoord.xy), 1.0);
-	color = Palette[p];
+	// color = Palette[p];
+	color = Colours[0][p];
 }
 `
 

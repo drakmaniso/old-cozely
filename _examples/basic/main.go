@@ -48,7 +48,23 @@ func (loop) Update() error {
 
 var x = int16(1)
 
-func (loop) Draw(_, _ float64) error {
+var (
+	timer = 0.0
+	count = 0
+)
+
+func (loop) Draw(delta, _ float64) error {
+	timer += delta
+	if timer > 0.25 {
+		count++
+		timer = 0.0
+		if count%2 != 0 {
+			palette.Palette(0).SetRGBA(2, palette.RGBA{1, 1, 1, 1})
+		} else {
+			palette.Palette(0).SetRGBA(2, palette.RGBA{1, 0, 0.5, 1})
+		}
+	}
+
 	x++
 	if x > 300 {
 		x = 1

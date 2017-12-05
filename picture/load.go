@@ -22,11 +22,11 @@ import (
 //------------------------------------------------------------------------------
 
 func init() {
-	c := core.SetupCallback{
+	c := core.Hook{
 		Callback: loadEverything,
 		Context:  "in picture package setup",
 	}
-	core.PostSetupCallbacks = append(core.PostSetupCallbacks, c)
+	core.PostSetupHooks = append(core.PostSetupHooks, c)
 }
 
 func loadEverything() error {

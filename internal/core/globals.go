@@ -111,11 +111,12 @@ var MouseButtons uint32
 
 //------------------------------------------------------------------------------
 
-type SetupCallback struct {
+type Hook struct {
 	Callback func() error
 	Context  string
 }
 
-var PostSetupCallbacks = []SetupCallback{}
+var PostSetupHooks = []Hook{}
+var PostDrawHooks = []Hook{}
 
 //------------------------------------------------------------------------------

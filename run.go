@@ -75,7 +75,7 @@ func Run(loop GameLoop) error {
 		return core.Error("in game loop Setup", err)
 	}
 
-	for _, c := range core.PostSetupCallbacks {
+	for _, c := range core.PostSetupHooks {
 		err = c.Callback()
 		if err != nil {
 			return core.Error(c.Context, err)
@@ -124,6 +124,13 @@ func Run(loop GameLoop) error {
 		err = core.Loop.Draw(delta, remain/timeStep)
 		if err != nil {
 			return core.Error("in Draw callback", err)
+		}
+
+		for _, c := range core.PostDrawHooks {
+			err = c.Callback()
+			if err != nil {
+				return core.Error(c.Context, err)
+			}
 		}
 
 		gpu.BindStampPipeline()

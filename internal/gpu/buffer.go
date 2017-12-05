@@ -51,6 +51,26 @@ func updateStampBuffer(data []Stamp) {
 
 //------------------------------------------------------------------------------
 
+func createPaletteBuffer() {
+	b := C.NewBuffer(C.GLsizeiptr(256*256*4*4), unsafe.Pointer(nil), C.GL_DYNAMIC_STORAGE_BIT|C.GL_MAP_WRITE_BIT)
+	C.BindBufferBase(C.GL_SHADER_STORAGE_BUFFER, 2, b)
+	paletteSSBO = b
+}
+
+var paletteSSBO C.GLuint
+
+const sizeofColor = unsafe.Sizeof(struct{ R, G, B, A float32 }{})
+const sizeofPalette = unsafe.Sizeof([256]struct{ R, G, B, A float32 }{})
+
+func UpdatePaletteBuffer(palette uint8, data []struct{ R, G, B, A float32 }) {
+	l := uintptr(len(data)) * sizeofColor
+	if l > 0 {
+		C.BufferSubData(paletteSSBO, C.GLintptr(uintptr(palette)*sizeofPalette), C.GLsizeiptr(l), unsafe.Pointer(&data[0]))
+	}
+}
+
+//------------------------------------------------------------------------------
+
 func CreatePictureBuffer(data []uint8) {
 	b := C.NewBuffer(C.GLsizeiptr(len(data)), unsafe.Pointer(&data[0]), 0)
 	C.BindBufferBase(C.GL_SHADER_STORAGE_BUFFER, 1, b)

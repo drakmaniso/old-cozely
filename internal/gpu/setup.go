@@ -65,6 +65,7 @@ func Setup(debug bool, screenSize screen.Coord, pixelSize screen.Coord) error {
 	}
 
 	createStampBuffer(1024)
+	createPaletteBuffer()
 
 	return nil //TODO: error handling
 }

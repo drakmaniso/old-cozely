@@ -7,6 +7,9 @@ package palette
 
 import (
 	"errors"
+
+	"github.com/drakmaniso/carol/internal/core"
+	"github.com/drakmaniso/carol/internal/gpu"
 )
 
 //------------------------------------------------------------------------------
@@ -21,9 +24,10 @@ type Palette uint8
 
 var (
 	palettes [256]struct {
-		colours [256]RGBA
-		count   int
-		names   map[string]Color
+		colours    [256]struct{ R, G, B, A float32 }
+		count      int
+		names      map[string]Color
+		hasChanged bool
 	}
 	palCount int
 	palNames map[string]Palette
@@ -37,6 +41,16 @@ func init() {
 			palettes[p].colours[c] = RGBA{1, 0, 1, 1}
 		}
 	}
+}
+
+//------------------------------------------------------------------------------
+
+func init() {
+	c := core.Hook{
+		Callback: postDrawHook,
+		Context:  "in palette package post-Draw hook",
+	}
+	core.PostDrawHooks = append(core.PostDrawHooks, c)
 }
 
 //------------------------------------------------------------------------------
@@ -93,6 +107,7 @@ func (p Palette) New(name string, v RGBA) (Color, error) {
 	palettes[p].names[name] = c
 	palettes[p].colours[c] = v
 	palettes[p].count++
+	palettes[p].hasChanged = true
 
 	return c, nil
 }
@@ -128,6 +143,19 @@ func (p Palette) RGBA(i Color) RGBA {
 // SetRGBA changes the RGBA values of a color.
 func (p Palette) SetRGBA(c Color, v RGBA) {
 	palettes[p].colours[c] = v
+	palettes[p].hasChanged = true
+}
+
+//------------------------------------------------------------------------------
+
+func postDrawHook() error {
+	for p := range palettes {
+		if palettes[p].hasChanged {
+			gpu.UpdatePaletteBuffer(uint8(p), palettes[p].colours[:])
+			palettes[p].hasChanged = false
+		}
+	}
+	return nil
 }
 
 //------------------------------------------------------------------------------
