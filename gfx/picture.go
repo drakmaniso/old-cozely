@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2017 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
-package picture
+package gfx
 
 import (
 	"github.com/drakmaniso/carol/internal/gpu"
@@ -27,9 +27,9 @@ func init() {
 
 //------------------------------------------------------------------------------
 
-// Get returns the picture associated with a name. If there isn't any, an empty
+// GetPicture returns the picture associated with a name. If there isn't any, an empty
 // picture is returned and ok is set to false.
-func Get(name string) (p Picture, ok bool) {
+func GetPicture(name string) (p Picture, ok bool) {
 	p, ok = pictures[name]
 	return p, ok
 }

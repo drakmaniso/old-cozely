@@ -6,9 +6,9 @@ package carol
 //------------------------------------------------------------------------------
 
 import (
+	_ "github.com/drakmaniso/carol/gfx" // To register hooks
 	"github.com/drakmaniso/carol/internal/core"
 	"github.com/drakmaniso/carol/internal/gpu"
-	_ "github.com/drakmaniso/carol/picture" // To register setup callback
 )
 
 //------------------------------------------------------------------------------

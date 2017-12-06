@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2017 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
-package picture
+package gfx
 
 //------------------------------------------------------------------------------
 
@@ -23,13 +23,13 @@ import (
 
 func init() {
 	c := core.Hook{
-		Callback: loadEverything,
+		Callback: postSetupHook,
 		Context:  "in picture package setup",
 	}
 	core.PostSetupHooks = append(core.PostSetupHooks, c)
 }
 
-func loadEverything() error {
+func postSetupHook() error {
 	err := scan()
 	if err != nil {
 		return core.Error("while scanning images", err)

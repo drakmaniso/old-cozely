@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2017 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
-package palette
+package gfx
 
 //------------------------------------------------------------------------------
 
@@ -45,27 +45,17 @@ func init() {
 
 //------------------------------------------------------------------------------
 
-func init() {
-	c := core.Hook{
-		Callback: postDrawHook,
-		Context:  "in palette package post-Draw hook",
-	}
-	core.PostDrawHooks = append(core.PostDrawHooks, c)
-}
-
-//------------------------------------------------------------------------------
-
-// Count returns the number of palettes created.
-func Count() int {
+// PaletteCount returns the number of palettes created.
+func PaletteCount() int {
 	return palCount
 }
 
 //------------------------------------------------------------------------------
 
-// New creates and name a new palette, and returns its identifier. It returns
+// NewPalette creates and name a new palette, and returns its identifier. It returns
 // the default palette and an error if the maximum number of palette is reached,
 // or if the name is already taken.
-func New(name string) (Palette, error) {
+func NewPalette(name string) (Palette, error) {
 	if palCount > 255 {
 		return Palette(0), errors.New("impossible to create palette \"" + name + "\": maximum palette count reached.")
 	}
@@ -82,9 +72,9 @@ func New(name string) (Palette, error) {
 	return p, nil
 }
 
-// Get returns the palette associated with a name. If there isn't any, the
+// GetPalette returns the palette associated with a name. If there isn't any, the
 // default palette is returned, and ok is set to false.
-func Get(name string) (p Palette, ok bool) {
+func GetPalette(name string) (p Palette, ok bool) {
 	p, ok = palNames[name]
 	return p, ok
 }
@@ -147,6 +137,14 @@ func (p Palette) SetRGBA(c Color, v RGBA) {
 }
 
 //------------------------------------------------------------------------------
+
+func init() {
+	c := core.Hook{
+		Callback: postDrawHook,
+		Context:  "in screen package post-Draw hook",
+	}
+	core.PostDrawHooks = append(core.PostDrawHooks, c)
+}
 
 func postDrawHook() error {
 	for p := range palettes {

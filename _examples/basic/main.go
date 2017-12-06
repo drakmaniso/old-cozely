@@ -10,8 +10,7 @@ import (
 	"strconv"
 
 	"github.com/drakmaniso/carol"
-	"github.com/drakmaniso/carol/palette"
-	"github.com/drakmaniso/carol/picture"
+	"github.com/drakmaniso/carol/gfx"
 )
 
 //------------------------------------------------------------------------------
@@ -31,18 +30,12 @@ type loop struct {
 }
 
 func (loop) Setup() error {
-	p, err := palette.New("Foo")
+	p, err := gfx.NewPalette("MSX2 Palette")
 	if err != nil {
 		return carol.Error("while creating palette", err)
 	}
-	// p.New("dark grey", palette.RGBA{0.1, 0.1, 0.1, 1.0})
-	// p.New("orange", palette.RGBA{1.0, 0.5, 0.0, 1.0})
-	// p.New("violet", palette.RGBA{1.0, 0.0, 0.5, 1.0})
-	// p.New("turquoise", palette.RGBA{0.0, 1.0, 0.5, 1.0})
-
-	// The MSX2 palette
 	for i := 0; i < 256; i++ {
-		p.New(strconv.Itoa(i), palette.RGBA{
+		p.New(strconv.Itoa(i), gfx.RGBA{
 			float32(i>>5) / 7.0,
 			float32((i&0x1C)>>2) / 7.0,
 			float32(i&0x3) / 3.0,
@@ -70,9 +63,9 @@ func (loop) Draw(delta, _ float64) error {
 		count++
 		timer = 0.0
 		if count%2 != 0 {
-			palette.Palette(0).SetRGBA(2, palette.RGBA{1, 1, 1, 1})
+			gfx.Palette(0).SetRGBA(2, gfx.RGBA{1, 1, 1, 1})
 		} else {
-			palette.Palette(0).SetRGBA(2, palette.RGBA{1, 0, 0.5, 1})
+			gfx.Palette(0).SetRGBA(2, gfx.RGBA{1, 0, 0.5, 1})
 		}
 	}
 
@@ -81,22 +74,22 @@ func (loop) Draw(delta, _ float64) error {
 		x = 1
 	}
 
-	p, ok := picture.Get("logo")
+	p, ok := gfx.GetPicture("logo")
 	if !ok && false {
 		return errors.New("picture not found")
 	}
 	p.Paint(x, 10)
 	_ = p
 
-	p2, ok := picture.Get("mire")
-	if !ok && false {
+	p2, ok := gfx.GetPicture("mire2")
+	if !ok {
 		return errors.New("picture not found")
 	}
 	p2.Paint(10, 40)
 
 	p.Paint(40, 30)
 
-	p3, _ := picture.Get("msx2")
+	p3, _ := gfx.GetPicture("msx2")
 	p3.Paint(8, 64)
 
 	return nil
