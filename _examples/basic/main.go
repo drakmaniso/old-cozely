@@ -6,8 +6,6 @@ package main
 //------------------------------------------------------------------------------
 
 import (
-	"errors"
-
 	"github.com/drakmaniso/carol"
 	"github.com/drakmaniso/carol/gfx"
 )
@@ -73,28 +71,18 @@ func (loop) Draw(delta, _ float64) error {
 		x = 1
 	}
 
-	p, ok := gfx.GetPicture("logo")
-	if !ok && false {
-		return errors.New("picture not found")
-	}
+	p := gfx.GetPicture("logo")
 	p.Paint(x, 10)
 	_ = p
 
-	p2, ok := gfx.GetPicture("mire")
-	if !ok {
-		return errors.New("picture not found")
-	}
+	p2 := gfx.GetPicture("mire")
 	p2.Paint(10, 40)
 
 	p.Paint(40, 30)
 
-	p3, ok := gfx.GetPicture("msx2")
-	if !ok {
-		return errors.New("picture not found")
-	}
-	p3.Paint(8, 64)
+	gfx.GetPicture("msx2").Paint(8, 64)
 
-	return nil
+	return gfx.Err()
 }
 
 //------------------------------------------------------------------------------

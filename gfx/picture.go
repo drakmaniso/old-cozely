@@ -4,6 +4,8 @@
 package gfx
 
 import (
+	"errors"
+
 	"github.com/drakmaniso/carol/internal/gpu"
 )
 
@@ -27,11 +29,14 @@ func init() {
 
 //------------------------------------------------------------------------------
 
-// GetPicture returns the picture associated with a name. If there isn't any, an empty
-// picture is returned and ok is set to false.
-func GetPicture(name string) (p Picture, ok bool) {
-	p, ok = pictures[name]
-	return p, ok
+// GetPicture returns the picture associated with a name. If there isn't any, an
+// empty picture is returned, and a sticky error is set.
+func GetPicture(name string) Picture {
+	p, ok := pictures[name]
+	if !ok {
+		setErr("in GetPicture", errors.New("picture \""+name+"\" not found"))
+	}
+	return p
 }
 
 //------------------------------------------------------------------------------

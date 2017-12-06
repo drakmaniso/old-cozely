@@ -75,10 +75,13 @@ func NewPalette(name string) (Palette, error) {
 }
 
 // GetPalette returns the palette associated with a name. If there isn't any, the
-// default palette is returned, and ok is set to false.
-func GetPalette(name string) (p Palette, ok bool) {
-	p, ok = palNames[name]
-	return p, ok
+// default palette is returned, and a sticky error is set.
+func GetPalette(name string) Palette {
+	p, ok := palNames[name]
+	if !ok {
+		setErr("in GetPalette", errors.New("palette \"" + name + "\" not found"))
+	}
+	return p
 }
 
 //------------------------------------------------------------------------------
@@ -110,10 +113,13 @@ func (p Palette) New(name string, v RGBA) (Color, error) {
 //------------------------------------------------------------------------------
 
 // Get returns the color associated with a name. If there isn't any, the first
-// color is returned, and ok is set to false.
-func (p Palette) Get(name string) (c Color, ok bool) {
-	c, ok = palettes[p].names[name]
-	return c, ok
+// color is returned, and a sticky error is set.
+func (p Palette) Get(name string) Color {
+	c, ok := palettes[p].names[name]
+	if !ok {
+		setErr("in palette Get", errors.New("color \"" + name + "\" not found"))
+	}
+	return c
 }
 
 // Find searches for a color by its RGBA values. If this exact color isn't in
