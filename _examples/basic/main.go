@@ -17,7 +17,7 @@ import (
 func main() {
 	err := carol.Run(loop{})
 	if err != nil {
-		carol.ShowError("in game loop", err)
+		carol.ShowError(err)
 		return
 	}
 }
@@ -88,7 +88,10 @@ func (loop) Draw(delta, _ float64) error {
 
 	p.Paint(40, 30)
 
-	p3, _ := gfx.GetPicture("msx2")
+	p3, ok := gfx.GetPicture("msx2")
+	if !ok {
+		return errors.New("picture not found")
+	}
 	p3.Paint(8, 64)
 
 	return nil

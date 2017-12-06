@@ -19,10 +19,9 @@ func Error(context string, err error) error {
 	return core.WrappedError{context, err}
 }
 
-// ShowError shows an error and its context to the user. In debug mode, it only
-// prints to the standard error output, otherwise it also brings a dialog box.
-func ShowError(context string, err error) {
-	e := Error(context, err)
+// ShowError shows an error to the user. In debug mode, it only prints to the
+// standard error output, otherwise it also brings a dialog box.
+func ShowError(e error) {
 	core.Log.Printf("ERROR: %s", e)
 	if !core.Config.Debug {
 		err2 := core.ErrorDialog("ERROR: %s", e)

@@ -32,25 +32,6 @@ type WrappedError struct {
 	Err     error
 }
 
-// func (e WrappedError) Error() string {
-// 	msg := "- " + e.Context + ":\n"
-// 	spc := 1
-// 	a := e.Err
-// 	for b, ok := a.(WrappedError); ok; {
-// 		for i := 0; i < spc; i++ {
-// 			msg += "  "
-// 		}
-// 		msg += "- " + b.Context + ":\n"
-// 		a = b.Err
-// 		b, ok = a.(WrappedError)
-// 		spc++
-// 	}
-// 	for i := 0; i < spc; i++ {
-// 		msg += "  "
-// 	}
-// 	return msg + a.Error()
-// }
-
 func (e WrappedError) Error() string {
 	return e.Context + ": " + e.Err.Error()
 }

@@ -19,7 +19,7 @@ import (
 func main() {
 	err := carol.Run(loop{})
 	if err != nil {
-		carol.ShowError("in game loop", err)
+		carol.ShowError(err)
 		return
 	}
 }
