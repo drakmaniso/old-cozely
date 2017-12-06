@@ -21,15 +21,32 @@ func Err() error {
 	return err
 }
 
-func setErr(context string, err error) {
-	// TODO: use two different functions and a *func variable
+var setErr = func(context string, err error) {
 	if stickyErr == nil {
 		stickyErr = core.Error(context, err)
-	} else {
-		if core.Config.Debug {
-			core.Log.Printf("gfx unchecked error: %s", core.Error(context, err))
+	}
+}
+
+func init() {
+	h := core.Hook{
+		Callback: hookStickyErr,
+		Context:  "while setting up gfx sticky error",
+	}
+	core.PreSetupHooks = append(core.PreSetupHooks, h)
+}
+
+func hookStickyErr() error {
+	if core.Config.Debug {
+		setErr = func(context string, err error) {
+			// TODO: use two different functions and a *func variable
+			if stickyErr == nil {
+				stickyErr = core.Error(context, err)
+			}
+			core.Log.Printf("gfx error: %s", core.Error(context, err))
 		}
 	}
+
+	return nil
 }
 
 //------------------------------------------------------------------------------
