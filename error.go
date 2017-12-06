@@ -23,9 +23,9 @@ func Error(context string, err error) error {
 // prints to the standard error output, otherwise it also brings a dialog box.
 func ShowError(context string, err error) {
 	e := Error(context, err)
-	core.Log.Printf("ERROR:\n%s", e)
+	core.Log.Printf("ERROR: %s", e)
 	if !core.Config.Debug {
-		err2 := core.ErrorDialog("ERROR:\n%s", e)
+		err2 := core.ErrorDialog("ERROR: %s", e)
 		if err2 != nil {
 			core.Log.Printf("ERROR opening dialog:\n%s", err2)
 		}
