@@ -7,6 +7,7 @@ package main
 
 import (
 	"errors"
+	"strconv"
 
 	"github.com/drakmaniso/carol"
 	"github.com/drakmaniso/carol/palette"
@@ -34,10 +35,20 @@ func (loop) Setup() error {
 	if err != nil {
 		return carol.Error("while creating palette", err)
 	}
-	p.New("dark grey", palette.RGBA{0.1, 0.1, 0.1, 1.0})
-	p.New("orange", palette.RGBA{1.0, 0.5, 0.0, 1.0})
-	p.New("violet", palette.RGBA{1.0, 0.0, 0.5, 1.0})
-	p.New("turquoise", palette.RGBA{0.0, 1.0, 0.5, 1.0})
+	// p.New("dark grey", palette.RGBA{0.1, 0.1, 0.1, 1.0})
+	// p.New("orange", palette.RGBA{1.0, 0.5, 0.0, 1.0})
+	// p.New("violet", palette.RGBA{1.0, 0.0, 0.5, 1.0})
+	// p.New("turquoise", palette.RGBA{0.0, 1.0, 0.5, 1.0})
+
+	// The MSX2 palette
+	for i := 0; i < 256; i++ {
+		p.New(strconv.Itoa(i), palette.RGBA{
+			float32(i>>5) / 7.0,
+			float32((i&0x1C)>>2) / 7.0,
+			float32(i&0x3) / 3.0,
+			1.0,
+		})
+	}
 
 	return nil
 }
@@ -81,9 +92,12 @@ func (loop) Draw(delta, _ float64) error {
 	if !ok && false {
 		return errors.New("picture not found")
 	}
-	p2.Paint(10, 60)
+	p2.Paint(10, 40)
 
 	p.Paint(40, 30)
+
+	p3, _ := picture.Get("msx2")
+	p3.Paint(8, 64)
 
 	return nil
 }
