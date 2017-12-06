@@ -26,6 +26,8 @@ type loop struct {
 	carol.Handlers
 }
 
+var logo, mire gfx.Picture
+
 func (loop) Setup() error {
 	p, err := gfx.NewPalette("MSX2 Palette")
 	if err != nil {
@@ -40,7 +42,10 @@ func (loop) Setup() error {
 		})
 	}
 
-	return nil
+	logo = gfx.GetPicture("logo")
+	mire = gfx.GetPicture("mire")
+
+	return gfx.Err()
 }
 
 func (loop) Update() error {
@@ -70,17 +75,12 @@ func (loop) Draw(delta, _ float64) error {
 	if x > 300 {
 		x = 1
 	}
+	logo.Paint(x, 10)
 
-	p := gfx.GetPicture("logo")
-	p.Paint(x, 10)
-	_ = p
-
-	p2 := gfx.GetPicture("mire")
-	p2.Paint(10, 40)
-
-	p.Paint(40, 30)
-
-	gfx.GetPicture("msx2").Paint(8, 64)
+	mire.Paint(10, 40)
+	logo.Paint(40, 30)
+	p := gfx.GetPicture("msx2")
+	p.Paint(8, 64)
 
 	return gfx.Err()
 }

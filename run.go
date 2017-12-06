@@ -70,6 +70,13 @@ func Run(loop GameLoop) error {
 		return core.Error("in gpu setup", err)
 	}
 
+	for _, c := range core.PreSetupHooks {
+		err = c.Callback()
+		if err != nil {
+			return core.Error(c.Context, err)
+		}
+	}
+
 	err = core.Loop.Setup()
 	if err != nil {
 		return core.Error("in game loop Setup", err)

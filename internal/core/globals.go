@@ -116,6 +116,7 @@ type Hook struct {
 	Context  string
 }
 
+var PreSetupHooks = []Hook{}
 var PostSetupHooks = []Hook{}
 var PostDrawHooks = []Hook{}
 

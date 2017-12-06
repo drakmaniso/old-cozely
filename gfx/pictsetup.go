@@ -23,13 +23,13 @@ import (
 
 func init() {
 	c := core.Hook{
-		Callback: postSetupHook,
+		Callback: preSetupHook,
 		Context:  "in picture package setup",
 	}
-	core.PostSetupHooks = append(core.PostSetupHooks, c)
+	core.PreSetupHooks = append(core.PreSetupHooks, c)
 }
 
-func postSetupHook() error {
+func preSetupHook() error {
 	err := scan()
 	if err != nil {
 		return core.Error("while scanning images", err)
