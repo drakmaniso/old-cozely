@@ -7,7 +7,6 @@ package main
 
 import (
 	"errors"
-	"strconv"
 
 	"github.com/drakmaniso/carol"
 	"github.com/drakmaniso/carol/gfx"
@@ -35,7 +34,7 @@ func (loop) Setup() error {
 		return carol.Error("while creating palette", err)
 	}
 	for i := 0; i < 256; i++ {
-		p.New(strconv.Itoa(i), gfx.RGBA{
+		p.New("", gfx.RGBA{
 			float32(i>>5) / 7.0,
 			float32((i&0x1C)>>2) / 7.0,
 			float32(i&0x3) / 3.0,
@@ -81,7 +80,7 @@ func (loop) Draw(delta, _ float64) error {
 	p.Paint(x, 10)
 	_ = p
 
-	p2, ok := gfx.GetPicture("mire2")
+	p2, ok := gfx.GetPicture("mire")
 	if !ok {
 		return errors.New("picture not found")
 	}

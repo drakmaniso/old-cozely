@@ -52,22 +52,24 @@ func PaletteCount() int {
 
 //------------------------------------------------------------------------------
 
-// NewPalette creates and name a new palette, and returns its identifier. It returns
-// the default palette and an error if the maximum number of palette is reached,
-// or if the name is already taken.
+// NewPalette creates a new palette and returns its identifier. The name must be
+// either unique or empty.
+//
+// Note: there is a maximum of 256 palettes.
 func NewPalette(name string) (Palette, error) {
 	if palCount > 255 {
 		return Palette(0), errors.New("impossible to create palette \"" + name + "\": maximum palette count reached.")
 	}
 
-	if _, ok := palNames[name]; ok {
-		return Palette(0), errors.New(`impossible to create palette: name "` + name + `" already taken.`)
-	}
-
 	p := Palette(palCount)
-	palNames[name] = p
 	palCount++
-	//TODO: register for GPU
+
+	if name != "" {
+		if _, ok := palNames[name]; ok {
+			return Palette(0), errors.New(`impossible to create palette: name "` + name + `" already taken.`)
+		}
+		palNames[name] = p
+	}
 
 	return p, nil
 }
@@ -81,39 +83,42 @@ func GetPalette(name string) (p Palette, ok bool) {
 
 //------------------------------------------------------------------------------
 
-// New adds a named color to the palette, and returns its index. It returns
-// color 0 and an error if the maximum number of colours is reached, or the name
-// already taken.
+// New adds a color to the palette and returns its index. The name must be
+// either unique or empty.
+//
+// Note: A palette contains a maximum of 256 colors.
 func (p Palette) New(name string, v RGBA) (Color, error) {
 	if palettes[p].count > 255 {
 		return Color(0), errors.New("impossible to add color \"" + name + "\": maximum color count reached.")
 	}
 
-	if _, ok := palettes[p].names[name]; ok {
-		return Color(0), errors.New(`impossible to add color: name "` + name + `" already taken.`)
-	}
-
 	c := Color(palettes[p].count)
-	palettes[p].names[name] = c
-	palettes[p].colours[c] = v
 	palettes[p].count++
+	palettes[p].colours[c] = v
 	palettes[p].hasChanged = true
+
+	if name != "" {
+		if _, ok := palettes[p].names[name]; ok {
+			return Color(0), errors.New(`impossible to add color: name "` + name + `" already taken.`)
+		}
+		palettes[p].names[name] = c
+	}
 
 	return c, nil
 }
 
 //------------------------------------------------------------------------------
 
-// Get returns the color associated with a name. If there isn't any, the color 0
-// is returned, and ok is set to false.
+// Get returns the color associated with a name. If there isn't any, the first
+// color is returned, and ok is set to false.
 func (p Palette) Get(name string) (c Color, ok bool) {
 	c, ok = palettes[p].names[name]
 	return c, ok
 }
 
-// Find searches for a color by its RGBA values. It returns its index and true
-// if found, or color 0 and false otherwise.
-func (p Palette) Find(v RGBA) (Color, bool) {
+// Find searches for a color by its RGBA values. If this exact color isn't in
+// the palette, the first color is returned, and ok is set to false.
+func (p Palette) Find(v RGBA) (c Color, ok bool) {
 	for c, vv := range palettes[p].colours {
 		if vv == v {
 			return Color(c), true
