@@ -1,0 +1,126 @@
+// Copyright (c) 2013-2017 Laurent Moussault. All rights reserved.
+// Licensed under a simplified BSD license (see LICENSE file).
+
+package gfx
+
+import "image/color"
+
+//------------------------------------------------------------------------------
+
+func NewPaletteMSX2() Palette {
+	p, err := NewPalette("MSX2")
+	if err != nil {
+		setErr("while creating MSX2 palette", err)
+		return Palette(0)
+	}
+	for i := 0; i < 256; i++ {
+		p.New("", RGBA{
+			float32(i>>5) / 7.0,
+			float32((i&0x1C)>>2) / 7.0,
+			float32(i&0x3) / 3.0,
+			1.0,
+		})
+	}
+
+	return p
+}
+
+//------------------------------------------------------------------------------
+
+func NewPaletteMSX() Palette {
+	p, err := NewPalette("MSX")
+	if err != nil {
+		setErr("while creating MSX palette", err)
+		return Palette(0)
+	}
+
+	p.New("transparent", color.NRGBA{0x00, 0x00, 0x00, 0x00})
+	p.New("black", color.NRGBA{0x00, 0x00, 0x00, 0xFF})
+	p.New("medium green", color.NRGBA{0x3E, 0xB8, 0x49, 0xFF})
+	p.New("light green", color.NRGBA{0x74, 0xd0, 0x7d, 0xFF})
+	p.New("dark blue", color.NRGBA{0x59, 0x55, 0xe0, 0xFF})
+	p.New("light blue", color.NRGBA{0x80, 0x76, 0xf1, 0xFF})
+	p.New("dark red", color.NRGBA{0xb9, 0x5e, 0x51, 0xFF})
+	p.New("cyan", color.NRGBA{0x65, 0xdb, 0xef, 0xFF})
+	p.New("medium red", color.NRGBA{0xdb, 0x65, 0x59, 0xFF})
+	p.New("light red", color.NRGBA{0xff, 0x89, 0x7d, 0xFF})
+	p.New("dark yellow", color.NRGBA{0xcc, 0xc3, 0x5e, 0xFF})
+	p.New("light yellow", color.NRGBA{0xde, 0xd0, 0x87, 0xFF})
+	p.New("dark green", color.NRGBA{0x3a, 0xa2, 0x41, 0xFF})
+	p.New("magenta", color.NRGBA{0xb7, 0x66, 0xb5, 0xFF})
+	p.New("gray", color.NRGBA{0xcc, 0xcc, 0xcc, 0xFF})
+	p.New("white", color.NRGBA{0xff, 0xff, 0xff, 0xFF})
+
+	return p
+}
+
+//------------------------------------------------------------------------------
+
+func NewPaletteCPC() Palette {
+	p, err := NewPalette("CPC")
+	if err != nil {
+		setErr("while creating CPC palette", err)
+		return Palette(0)
+	}
+
+	p.New("black", color.NRGBA{0x00, 0x00, 0x00, 0xFF})
+	p.New("blue", color.NRGBA{0x00, 0x00, 0x80, 0xFF})
+	p.New("bright blue", color.NRGBA{0x00, 0x00, 0xff, 0xFF})
+	p.New("red", color.NRGBA{0x80, 0x00, 0x00, 0xFF})
+	p.New("magenta", color.NRGBA{0x80, 0x00, 0x80, 0xFF})
+	p.New("mauve", color.NRGBA{0x80, 0x00, 0xff, 0xFF})
+	p.New("bright red", color.NRGBA{0xff, 0x00, 0x00, 0xFF})
+	p.New("purple", color.NRGBA{0xff, 0x00, 0x80, 0xFF})
+	p.New("bright magenta", color.NRGBA{0xff, 0x00, 0xff, 0xFF})
+	p.New("green", color.NRGBA{0x00, 0x80, 0x00, 0xFF})
+	p.New("cyan", color.NRGBA{0x00, 0x80, 0x80, 0xFF})
+	p.New("sky blue", color.NRGBA{0x00, 0x80, 0xff, 0xFF})
+	p.New("yellow", color.NRGBA{0x80, 0x80, 0x00, 0xFF})
+	p.New("white", color.NRGBA{0x80, 0x80, 0x80, 0xFF})
+	p.New("pastel blue", color.NRGBA{0x80, 0x80, 0xff, 0xFF})
+	p.New("orange", color.NRGBA{0xff, 0x80, 0x00, 0xFF})
+	p.New("pink", color.NRGBA{0xff, 0x80, 0x80, 0xFF})
+	p.New("pastel magenta", color.NRGBA{0xff, 0x80, 0xff, 0xFF})
+	p.New("bright green", color.NRGBA{0x00, 0xff, 0x00, 0xFF})
+	p.New("sea green", color.NRGBA{0x00, 0xff, 0x80, 0xFF})
+	p.New("bright cyan", color.NRGBA{0x00, 0xff, 0xff, 0xFF})
+	p.New("lime", color.NRGBA{0x80, 0xff, 0x00, 0xFF})
+	p.New("pastel green", color.NRGBA{0x80, 0xff, 0x80, 0xFF})
+	p.New("pastel cyan", color.NRGBA{0x80, 0xff, 0xff, 0xFF})
+	p.New("bright yellow", color.NRGBA{0xff, 0xff, 0x00, 0xFF})
+	p.New("pastel yellow", color.NRGBA{0xff, 0xff, 0x80, 0xFF})
+	p.New("bright white", color.NRGBA{0xff, 0xff, 0xff, 0xFF})
+
+	return p
+}
+
+//------------------------------------------------------------------------------
+
+func NewPaletteC64() Palette {
+	p, err := NewPalette("C64")
+	if err != nil {
+		setErr("while creating C64 palette", err)
+		return Palette(0)
+	}
+
+	p.New("black", color.NRGBA{0x00, 0x00, 0x00, 0xFF})
+	p.New("white", color.NRGBA{0xff, 0xff, 0xff, 0xFF})
+	p.New("red", color.NRGBA{0x88, 0x00, 0x00, 0xFF})
+	p.New("cyan", color.NRGBA{0xaa, 0xff, 0xee, 0xFF})
+	p.New("violet", color.NRGBA{0xcc, 0x44, 0xcc, 0xFF})
+	p.New("green", color.NRGBA{0x00, 0xcc, 0x55, 0xFF})
+	p.New("blue", color.NRGBA{0x00, 0x00, 0xaa, 0xFF})
+	p.New("yellow", color.NRGBA{0xee, 0xee, 0x77, 0xFF})
+	p.New("orange", color.NRGBA{0xdd, 0x88, 0x55, 0xFF})
+	p.New("brown", color.NRGBA{0x66, 0x44, 0x00, 0xFF})
+	p.New("light red", color.NRGBA{0xff, 0x77, 0x77, 0xFF})
+	p.New("grey 1", color.NRGBA{0x33, 0x33, 0x33, 0xFF})
+	p.New("grey 2", color.NRGBA{0x77, 0x77, 0x77, 0xFF})
+	p.New("light green", color.NRGBA{0xaa, 0xff, 0x66, 0xFF})
+	p.New("light blue", color.NRGBA{0x00, 0x88, 0xff, 0xFF})
+	p.New("grey 3", color.NRGBA{0xbb, 0xbb, 0xbb, 0xFF})
+
+	return p
+}
+
+//------------------------------------------------------------------------------

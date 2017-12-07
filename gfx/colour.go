@@ -7,6 +7,7 @@ package gfx
 
 import (
 	"errors"
+	"image/color"
 
 	"github.com/drakmaniso/carol/internal/core"
 	"github.com/drakmaniso/carol/internal/gpu"
@@ -79,7 +80,7 @@ func NewPalette(name string) (Palette, error) {
 func GetPalette(name string) Palette {
 	p, ok := palNames[name]
 	if !ok {
-		setErr("in GetPalette", errors.New("palette \"" + name + "\" not found"))
+		setErr("in GetPalette", errors.New("palette \""+name+"\" not found"))
 	}
 	return p
 }
@@ -90,24 +91,30 @@ func GetPalette(name string) Palette {
 // either unique or empty.
 //
 // Note: A palette contains a maximum of 256 colors.
-func (p Palette) New(name string, v RGBA) (Color, error) {
+func (p Palette) New(name string, c color.Color) (Color, error) {
 	if palettes[p].count > 255 {
 		return Color(0), errors.New("impossible to add color \"" + name + "\": maximum color count reached.")
 	}
 
-	c := Color(palettes[p].count)
+	ci := Color(palettes[p].count)
 	palettes[p].count++
-	palettes[p].colours[c] = v
+
+	v, ok := c.(RGBA)
+	if !ok {
+		v = MakeRGBA(c)
+	}
+	palettes[p].colours[ci] = v
+
 	palettes[p].hasChanged = true
 
 	if name != "" {
 		if _, ok := palettes[p].names[name]; ok {
 			return Color(0), errors.New(`impossible to add color: name "` + name + `" already taken.`)
 		}
-		palettes[p].names[name] = c
+		palettes[p].names[name] = ci
 	}
 
-	return c, nil
+	return ci, nil
 }
 
 //------------------------------------------------------------------------------
@@ -117,7 +124,7 @@ func (p Palette) New(name string, v RGBA) (Color, error) {
 func (p Palette) Get(name string) Color {
 	c, ok := palettes[p].names[name]
 	if !ok {
-		setErr("in palette Get", errors.New("color \"" + name + "\" not found"))
+		setErr("in palette Get", errors.New("color \""+name+"\" not found"))
 	}
 	return c
 }

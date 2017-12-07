@@ -5,12 +5,31 @@ package gfx
 
 //------------------------------------------------------------------------------
 
+import (
+	"image/color"
+)
+
+//------------------------------------------------------------------------------
+
 // RGBA is a color defined by its red, green and blue components, with alpha.
 type RGBA struct {
 	R float32
 	G float32
 	B float32
 	A float32
+}
+
+//------------------------------------------------------------------------------
+
+func MakeRGBA(c color.Color) RGBA {
+	r, g, b, a := c.RGBA()
+	println(r, g, b, a)
+	return RGBA{
+		R: float32(r) / float32(0xFFFF),
+		G: float32(g) / float32(0xFFFF),
+		B: float32(b) / float32(0xFFFF),
+		A: float32(a) / float32(0xFFFF),
+	}
 }
 
 //------------------------------------------------------------------------------

@@ -29,18 +29,7 @@ type loop struct {
 var logo, mire gfx.Picture
 
 func (loop) Setup() error {
-	p, err := gfx.NewPalette("MSX2 Palette")
-	if err != nil {
-		return carol.Error("while creating palette", err)
-	}
-	for i := 0; i < 256; i++ {
-		p.New("", gfx.RGBA{
-			float32(i>>5) / 7.0,
-			float32((i&0x1C)>>2) / 7.0,
-			float32(i&0x3) / 3.0,
-			1.0,
-		})
-	}
+	gfx.NewPaletteMSX2()
 
 	logo = gfx.GetPicture("logo")
 	mire = gfx.GetPicture("mire")
@@ -64,11 +53,11 @@ func (loop) Draw(delta, _ float64) error {
 	if timer > 0.25 {
 		count++
 		timer = 0.0
-		if count%2 != 0 {
-			gfx.Palette(0).SetRGBA(2, gfx.RGBA{1, 1, 1, 1})
-		} else {
-			gfx.Palette(0).SetRGBA(2, gfx.RGBA{1, 0, 0.5, 1})
-		}
+		// if count%2 != 0 {
+		// 	gfx.Palette(0).SetRGBA(2, gfx.RGBA{1, 1, 1, 1})
+		// } else {
+		// 	gfx.Palette(0).SetRGBA(2, gfx.RGBA{1, 0, 0.5, 1})
+		// }
 	}
 
 	x++
