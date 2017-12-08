@@ -15,124 +15,93 @@ import (
 
 //------------------------------------------------------------------------------
 
-// An Color identifies a color inside a palette.
+// A Color identifies a color inside the palette.
 type Color uint8
-
-// A Palette identifies one of the 256 available palettes.
-type Palette uint8
 
 //------------------------------------------------------------------------------
 
 var (
-	palettes [256]struct {
-		colours    [256]struct{ R, G, B, A float32 }
-		count      int
-		names      map[string]Color
-		hasChanged bool
-	}
-	palCount int
-	palNames map[string]Palette
+	colours    [256]struct{ R, G, B, A float32 }
+	colCount   int
+	colNames   map[string]Color
+	colChanged bool
 )
 
 func init() {
-	palNames = make(map[string]Palette, 256)
-	for p := range palettes {
-		palettes[p].names = make(map[string]Color, 256)
-		for c := range palettes[p].colours {
-			palettes[p].colours[c] = RGBA{1, 0, 1, 1}
-		}
+	colNames = make(map[string]Color, 256)
+	ClearPalette()
+}
+
+//------------------------------------------------------------------------------
+
+func ClearPalette() {
+	for n := range colNames {
+		delete(colNames, n)
 	}
+	for c := range colours {
+		colours[c] = RGBA{1, 0, 1, 1}
+	}
+	colCount = 0
+	NewColor("transparent", RGBA{0, 0, 0, 0})
 }
 
 //------------------------------------------------------------------------------
 
-// PaletteCount returns the number of palettes created.
-func PaletteCount() int {
-	return palCount
+// ColorCount returns the number of colors in the palette.
+func ColorCount() int {
+	return colCount
 }
 
 //------------------------------------------------------------------------------
 
-// NewPalette creates a new palette and returns its identifier. The name must be
+// NewColor adds a color to the  palette and returns its index. The name must be
 // either unique or empty.
 //
-// Note: there is a maximum of 256 palettes.
-func NewPalette(name string) (Palette, error) {
-	if palCount > 255 {
-		return Palette(0), errors.New("impossible to create palette \"" + name + "\": maximum palette count reached.")
+// Note: The palette contains a maximum of 256 colors.
+func NewColor(name string, cc color.Color) Color {
+	if colCount > 255 {
+		setErr("in NewColor", errors.New("impossible to add color \""+name+"\": maximum color count reached."))
+		return Color(0)
 	}
 
-	p := Palette(palCount)
-	palCount++
+	c := Color(colCount)
+	colCount++
+
+	v, ok := cc.(RGBA)
+	if !ok {
+		v = MakeRGBA(cc)
+	}
+	colours[c] = v
+
+	colChanged = true
 
 	if name != "" {
-		if _, ok := palNames[name]; ok {
-			return Palette(0), errors.New(`impossible to create palette: name "` + name + `" already taken.`)
+		if _, ok := colNames[name]; ok {
+			setErr("in NewColor", errors.New(`impossible to add color: name "`+name+`" already taken.`))
+			return Color(0)
 		}
-		palNames[name] = p
+		colNames[name] = c
 	}
 
-	return p, nil
-}
-
-// GetPalette returns the palette associated with a name. If there isn't any, the
-// default palette is returned, and a sticky error is set.
-func GetPalette(name string) Palette {
-	p, ok := palNames[name]
-	if !ok {
-		setErr("in GetPalette", errors.New("palette \""+name+"\" not found"))
-	}
-	return p
+	return c
 }
 
 //------------------------------------------------------------------------------
 
-// New adds a color to the palette and returns its index. The name must be
-// either unique or empty.
-//
-// Note: A palette contains a maximum of 256 colors.
-func (p Palette) New(name string, c color.Color) (Color, error) {
-	if palettes[p].count > 255 {
-		return Color(0), errors.New("impossible to add color \"" + name + "\": maximum color count reached.")
-	}
-
-	ci := Color(palettes[p].count)
-	palettes[p].count++
-
-	v, ok := c.(RGBA)
-	if !ok {
-		v = MakeRGBA(c)
-	}
-	palettes[p].colours[ci] = v
-
-	palettes[p].hasChanged = true
-
-	if name != "" {
-		if _, ok := palettes[p].names[name]; ok {
-			return Color(0), errors.New(`impossible to add color: name "` + name + `" already taken.`)
-		}
-		palettes[p].names[name] = ci
-	}
-
-	return ci, nil
-}
-
-//------------------------------------------------------------------------------
-
-// Get returns the color associated with a name. If there isn't any, the first
+// GetColor returns the color associated with a name. If there isn't any, the first
 // color is returned, and a sticky error is set.
-func (p Palette) Get(name string) Color {
-	c, ok := palettes[p].names[name]
+func GetColor(name string) Color {
+	c, ok := colNames[name]
 	if !ok {
-		setErr("in palette Get", errors.New("color \""+name+"\" not found"))
+		setErr("in GetColor", errors.New("color \""+name+"\" not found"))
 	}
 	return c
 }
 
-// Find searches for a color by its RGBA values. If this exact color isn't in
+// FindColor searches for a color by its RGBA values. If this exact color isn't in
 // the palette, the first color is returned, and ok is set to false.
-func (p Palette) Find(v RGBA) (c Color, ok bool) {
-	for c, vv := range palettes[p].colours {
+func FindColor(v RGBA) (c Color, ok bool) {
+	for c, vv := range colours {
 		if vv == v {
 			return Color(c), true
 		}
@@ -144,14 +113,18 @@ func (p Palette) Find(v RGBA) (c Color, ok bool) {
 //------------------------------------------------------------------------------
 
 // RGBA returns the RGBA values of a color.
-func (p Palette) RGBA(i Color) RGBA {
-	return palettes[p].colours[i]
+func (c Color) RGBA() RGBA {
+	return colours[c]
 }
 
 // SetRGBA changes the RGBA values of a color.
-func (p Palette) SetRGBA(c Color, v RGBA) {
-	palettes[p].colours[c] = v
-	palettes[p].hasChanged = true
+func (c Color) SetRGBA(cc color.Color) {
+	v, ok := cc.(RGBA)
+	if !ok {
+		v = MakeRGBA(cc)
+	}
+	colours[c] = v
+	colChanged = true
 }
 
 //------------------------------------------------------------------------------
@@ -165,11 +138,9 @@ func init() {
 }
 
 func postDrawHook() error {
-	for p := range palettes {
-		if palettes[p].hasChanged {
-			gpu.UpdatePaletteBuffer(uint8(p), palettes[p].colours[:])
-			palettes[p].hasChanged = false
-		}
+	if colChanged {
+		gpu.UpdatePaletteBuffer(uint8(0), colours[:])
+		colChanged = false
 	}
 	return nil
 }

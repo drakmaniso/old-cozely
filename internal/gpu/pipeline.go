@@ -59,6 +59,9 @@ char* PipelineLinkError(GLuint pr) {
 }
 
 static inline void BindStampPipeline(GLuint program, GLuint vao, unsigned int nbStamps) {
+	glEnable(GL_BLEND);
+	glBlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
+	glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
 	glUseProgram(program);
 	glBindVertexArray(vao);
 	glDrawArrays(GL_TRIANGLES, 0, nbStamps*6);
@@ -90,7 +93,7 @@ type Stamp struct {
 
 	// word
 	Depth     int16
-	Palette   uint8
+	Tint      uint8
 	Transform byte
 }
 
@@ -145,7 +148,7 @@ func BindStampPipeline() {
 var stamps = []Stamp{}
 
 func Paint(addr uint32, w, h int16, x, y int16) {
-	s := Stamp{Address: addr, W: w, H: h, X: x, Y: y}
+	s := Stamp{Address: addr, W: w, H: h, X: x, Y: y, Tint: 0}
 	stamps = append(stamps, s)
 }
 
@@ -159,7 +162,7 @@ struct Stamp {
 	uint Address;
 	uint WH;
 	uint XY;
-	uint TransformPalette;
+	uint DepthTintTrans;
 };
 layout(std430, binding = 0) buffer StampBuffer {
 	Stamp []Stamps;
@@ -173,6 +176,8 @@ out PerVertex {
 	layout(location=0) vec2 UV;
 	layout(location=1) flat uint Address;
 	layout(location=2) flat uint Stride;
+	layout(location=3) flat uint Depth;
+	layout(location=4) flat uint Tint;
 };
 
 void main(void)
@@ -199,6 +204,8 @@ void main(void)
 	UV = corners[currVert] * WH;
 	Address = Stamps[stampIndex].Address;
 	Stride = uint(WH.x);
+	Depth = Stamps[stampIndex].DepthTintTrans & 0xFFFF;
+	Tint = (Stamps[stampIndex].DepthTintTrans >> 16) & 0xFF;
 }
 `
 
@@ -210,6 +217,8 @@ in PerVertex {
 	layout(location=0) vec2 UV;
 	layout(location=1) flat uint Address;
 	layout(location=2) flat uint Stride;
+	layout(location=3) flat uint Depth;
+	layout(location=4) flat uint Tint;
 };
 
 layout(std430, binding = 1) buffer PictureBuffer {
@@ -217,7 +226,7 @@ layout(std430, binding = 1) buffer PictureBuffer {
 };
 
 layout(std430, binding = 2) buffer PaletteBuffer {
-	vec4 Colours[256][256];
+	vec4 Colours[256];
 };
 
 out vec4 color;
@@ -239,22 +248,19 @@ float rand(vec2 c){
 
 void main(void)
 {
-	// color = vec4(
-	// 	0.5 + 0.25*rand(vec2(0.3, rand(gl_FragCoord.xy))),
-	// 	0.5 + 0.25*rand(vec2(0.1, rand(gl_FragCoord.xy))),
-	// 	0.5 + 0.25*rand(vec2(0.6, rand(gl_FragCoord.xy))),
-	// 	1.0
-	// );
 	uint p = getPixel(Address, Stride, uint(UV.x), uint(UV.y));
-	const vec4 Palette[] = vec4[4](
-		vec4(0.1, 0.1, 0.1, 1.0),
-		vec4(1.0, 1.0, 0.0, 1.0),
-		vec4(1.0, 0.0, 1.0, 1.0),
-		vec4(0.0, 1.0, 1.0, 1.0)
-	);
-	// color = vec4(UV.x, UV.y, 0.5 + 0.5*rand(gl_FragCoord.xy), 1.0);
-	// color = Palette[p];
-	color = Colours[0][p];
+
+	uint c;
+	if (p == 0) {
+		c = 0;
+	} else {
+		c = p + Tint;
+		if (c > 255) {
+			c -= 255;
+		}
+	}
+
+	color = Colours[c];
 }
 `
 
