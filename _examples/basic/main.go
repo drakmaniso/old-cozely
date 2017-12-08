@@ -29,7 +29,7 @@ type loop struct {
 var logo, mire gfx.Picture
 
 func (loop) Setup() error {
-	gfx.NewPaletteMSX2()
+	gfx.NewPaletteC64()
 
 	logo = gfx.GetPicture("logo")
 	mire = gfx.GetPicture("mire")
@@ -70,6 +70,8 @@ func (loop) Draw(delta, _ float64) error {
 	logo.Paint(40, 30)
 	p := gfx.GetPicture("msx2")
 	p.Paint(8, 64)
+
+	gfx.GetPicture("4x4").Paint(128, 64)
 
 	return gfx.Err()
 }
