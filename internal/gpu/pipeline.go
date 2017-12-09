@@ -185,8 +185,19 @@ void main(void)
 	// Calculate index in face buffer
 	uint stampIndex = gl_VertexID / 6;
 
-	vec2 WH = vec2(Stamps[stampIndex].WH & 0xFFFF, Stamps[stampIndex].WH >> 16);
-	vec2 XY = vec2(Stamps[stampIndex].XY & 0xFFFF, Stamps[stampIndex].XY >> 16);
+	int w = int(Stamps[stampIndex].WH & 0xFFFF);
+	int h = int(Stamps[stampIndex].WH >> 16);
+	//TODO: is it useful to extend sign on width and height?
+	vec2 WH = vec2(
+		w | (((w & 0x8000) >> 15) * 0xFFFF0000),
+		h | (((h & 0x8000) >> 15) * 0xFFFF0000)
+	);
+	int x = int(Stamps[stampIndex].XY & 0xFFFF);
+	int y = int(Stamps[stampIndex].XY >> 16);
+	vec2 XY = vec2(
+		x | (((x & 0x8000) >> 15) * 0xFFFF0000),
+		y | (((y & 0x8000) >> 15) * 0xFFFF0000)
+	);
 
 	// Determine which corner of the stamp this is
 	const uint [6]triangulate = {0, 1, 2, 0, 2, 3};
