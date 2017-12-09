@@ -38,10 +38,14 @@ func (loop) Setup() error {
 }
 
 func (loop) Update() error {
+	x++
+	if x >= 320 {
+		x = -64
+	}
 	return nil
 }
 
-var x = int16(1)
+var x = int16(0)
 
 var (
 	timer = 0.0
@@ -59,19 +63,14 @@ func (loop) Draw(delta, _ float64) error {
 	// 		gfx.Color(1).SetRGBA(gfx.RGBA{1, 0, 0.5, 1})
 	// 	}
 	// }
-
-	x++
-	if x > 300 {
-		x = 1
-	}
 	logo.Paint(x, 10)
 
-	mire.Paint(10, 30)
-	logo.Paint(40, 20)
-	p := gfx.GetPicture("msx2")
-	p.Paint(8, 64)
+	mire.Paint(0, 0)
+	mire.Paint(320-32, 0)
+	mire.Paint(0, 180-32)
+	mire.Paint(320-32, 180-32)
 
-	gfx.GetPicture("4x4").Paint(128, 64)
+	logo.Paint(320/2-32, 20)
 
 	return gfx.Err()
 }

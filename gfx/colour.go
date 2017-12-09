@@ -43,6 +43,7 @@ func ClearPalette() {
 	}
 	colCount = 0
 	NewColor("transparent", RGBA{0, 0, 0, 0})
+	colours[255] = RGBA{1, 1, 1, 1}
 }
 
 //------------------------------------------------------------------------------
