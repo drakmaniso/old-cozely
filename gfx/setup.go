@@ -65,9 +65,9 @@ func preSetupHook() error {
 //------------------------------------------------------------------------------
 
 func postDrawHook() error {
-	if colChanged {
+	if palette.changed {
 		paletteBuffer.SubData(colours[:], 0)
-		colChanged = false
+		palette.changed = false
 	}
 
 	stampPipeline.Bind()
