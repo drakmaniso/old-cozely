@@ -7,7 +7,6 @@ package carol
 
 import (
 	"github.com/drakmaniso/carol/core/gl"
-	_ "github.com/drakmaniso/carol/gfx" // To register hooks
 	"github.com/drakmaniso/carol/internal"
 )
 

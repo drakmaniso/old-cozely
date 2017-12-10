@@ -1,0 +1,12 @@
+{
+	"Title": "Example 02: First Vertex Buffer",
+	"WindowSize": {
+		"X": 512,
+		"Y": 512
+	},
+	"Display": 0,
+	"Fullscreen": false,
+	"FullscreenMode": "Desktop",
+	"VSync": true,
+	"Debug": true
+}

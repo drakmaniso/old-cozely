@@ -11,6 +11,13 @@ type Coord struct {
 	X, Y int16
 }
 
+// XY returns the cartesian coordinates of the vector.
+//
+// This function implements the plane.Vector interface.
+func (p Coord) XY() (x, y float32) {
+	return float32(p.X), float32(p.Y)
+}
+
 //------------------------------------------------------------------------------
 
 // Plus returns the sum with another pair of coordinates.

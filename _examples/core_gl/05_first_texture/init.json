@@ -1,0 +1,12 @@
+{
+	"Title": "Example 05: First Texture",
+	"WindowSize": {
+		"X": 1280,
+		"Y": 720
+	},
+	"Display": 0,
+	"Fullscreen": false,
+	"FullscreenMode": "Desktop",
+	"VSync": false,
+	"Debug": true
+}
