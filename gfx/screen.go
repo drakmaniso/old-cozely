@@ -7,7 +7,7 @@ package gfx
 
 import (
 	"github.com/drakmaniso/carol/core/gl"
-	pixel "github.com/drakmaniso/carol/screen"
+	pixel "github.com/drakmaniso/carol/pixel"
 )
 
 //------------------------------------------------------------------------------

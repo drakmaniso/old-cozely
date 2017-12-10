@@ -7,7 +7,7 @@ package carol
 
 import (
 	"github.com/drakmaniso/carol/internal"
-	"github.com/drakmaniso/carol/screen"
+	"github.com/drakmaniso/carol/pixel"
 )
 
 //------------------------------------------------------------------------------
@@ -23,19 +23,19 @@ func HasMouseFocus() bool {
 }
 
 // WindowSize returns the size of the window in (screen) pixels.
-func WindowSize() screen.Coord {
+func WindowSize() pixel.Coord {
 	return internal.Window.Size
 }
 
 //TODO
 // FramebufferSize returns the size of the framebuffer in (framebuffer) pixels.
-// func FramebufferSize() screen.Coord {
+// func FramebufferSize() pixel.Coord {
 // 	return gpu.Framebuffer.Size
 // }
 
 //TODO
 // PixelSize returns the size of framebuffer pixels, in screen pixels.
-// func PixelSize() screen.Coord {
+// func PixelSize() pixel.Coord {
 // 	return gpu.Framebuffer.PixelSize
 // }
 

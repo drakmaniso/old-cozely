@@ -11,7 +11,7 @@ import (
 	"github.com/drakmaniso/carol"
 	"github.com/drakmaniso/carol/key"
 	"github.com/drakmaniso/carol/mouse"
-	"github.com/drakmaniso/carol/screen"
+	"github.com/drakmaniso/carol/pixel"
 )
 
 //------------------------------------------------------------------------------
@@ -51,7 +51,7 @@ func (loop) KeyUp(l key.Label, p key.Position) {
 
 //------------------------------------------------------------------------------
 
-func (loop) MouseMotion(rel screen.Coord, pos screen.Coord) {
+func (loop) MouseMotion(rel pixel.Coord, pos pixel.Coord) {
 	fmt.Printf("%v: mouse motion  %+d,%+d  %d,%d\n", carol.Now(), rel.X, rel.Y, pos.X, pos.Y)
 }
 
@@ -93,7 +93,7 @@ func (loop) MouseButtonUp(b mouse.Button, clicks int) {
 	fmt.Printf("%v: mouse button up: %s (%v), clicks=%v\n", carol.Now(), n, b, clicks)
 }
 
-func (loop) MouseWheel(w screen.Coord) {
+func (loop) MouseWheel(w pixel.Coord) {
 	fmt.Printf("%v: mouse wheel: %+d,%+d\n", carol.Now(), w.X, w.Y)
 }
 
@@ -107,7 +107,7 @@ func (loop) WindowHidden() {
 	fmt.Printf("%v: window hidden\n", carol.Now())
 }
 
-func (loop) WindowResized(s screen.Coord) {
+func (loop) WindowResized(s pixel.Coord) {
 	fmt.Printf("%v: window resized %v\n", carol.Now(), s)
 }
 

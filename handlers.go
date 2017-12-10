@@ -9,7 +9,7 @@ import (
 	"github.com/drakmaniso/carol/internal"
 	"github.com/drakmaniso/carol/key"
 	"github.com/drakmaniso/carol/mouse"
-	"github.com/drakmaniso/carol/screen"
+	"github.com/drakmaniso/carol/pixel"
 )
 
 //------------------------------------------------------------------------------
@@ -28,7 +28,7 @@ func (h Handlers) WindowShown() {}
 func (h Handlers) WindowHidden() {}
 
 // WindowResized does nothing.
-func (h Handlers) WindowResized(s screen.Coord) {}
+func (h Handlers) WindowResized(s pixel.Coord) {}
 
 // WindowMinimized does nothing.
 func (h Handlers) WindowMinimized() {}
@@ -59,7 +59,7 @@ func (h Handlers) WindowQuit() {
 //------------------------------------------------------------------------------
 
 // MouseMotion does nothing.
-func (h Handlers) MouseMotion(rel screen.Coord, pos screen.Coord) {}
+func (h Handlers) MouseMotion(rel pixel.Coord, pos pixel.Coord) {}
 
 // MouseButtonDown does nothing.
 func (h Handlers) MouseButtonDown(b mouse.Button, clicks int) {}
@@ -68,7 +68,7 @@ func (h Handlers) MouseButtonDown(b mouse.Button, clicks int) {}
 func (h Handlers) MouseButtonUp(b mouse.Button, clicks int) {}
 
 // MouseWheel does nothing.
-func (h Handlers) MouseWheel(w screen.Coord) {}
+func (h Handlers) MouseWheel(w pixel.Coord) {}
 
 //------------------------------------------------------------------------------
 

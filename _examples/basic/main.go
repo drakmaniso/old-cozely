@@ -58,9 +58,9 @@ func (loop) Draw(delta, _ float64) error {
 	// 	count++
 	// 	timer = 0.0
 	// 	if count%2 != 0 {
-	// 		gfx.Color(1).SetRGBA(gfx.RGBA{1, 1, 1, 1})
+	// 		gfx.Color(2).SetRGBA(gfx.RGBA{1, 1, 1, 1})
 	// 	} else {
-	// 		gfx.Color(1).SetRGBA(gfx.RGBA{1, 0, 0.5, 1})
+	// 		gfx.Color(2).SetRGBA(gfx.RGBA{1, 0, 0.5, 1})
 	// 	}
 	// }
 

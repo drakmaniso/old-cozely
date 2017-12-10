@@ -21,7 +21,7 @@ import (
 	"fmt"
 	"unsafe"
 
-	"github.com/drakmaniso/carol/screen"
+	"github.com/drakmaniso/carol/pixel"
 )
 
 //------------------------------------------------------------------------------
@@ -29,7 +29,7 @@ import (
 // OpenWindow creates the game window and its associated OpenGL context.
 func OpenWindow(
 	title string,
-	size screen.Coord,
+	size pixel.Coord,
 	display int,
 	fullscreen bool,
 	fullscreenMode string,
