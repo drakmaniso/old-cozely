@@ -9,25 +9,25 @@ import (
 	"strings"
 
 	"github.com/drakmaniso/carol/core/gl"
-	"github.com/drakmaniso/carol/internal/core"
+	"github.com/drakmaniso/carol/internal"
 )
 
 //------------------------------------------------------------------------------
 
 func init() {
-	var c core.Hook
+	var c internal.Hook
 
-	c = core.Hook{
+	c = internal.Hook{
 		Callback: preSetupHook,
 		Context:  "in gfx pre-Setup hook",
 	}
-	core.PreSetupHooks = append(core.PreSetupHooks, c)
+	internal.PreSetupHooks = append(internal.PreSetupHooks, c)
 
-	c = core.Hook{
+	c = internal.Hook{
 		Callback: postDrawHook,
 		Context:  "in gfx post-Draw hook",
 	}
-	core.PostDrawHooks = append(core.PostDrawHooks, c)
+	internal.PostDrawHooks = append(internal.PostDrawHooks, c)
 }
 
 //------------------------------------------------------------------------------
@@ -35,7 +35,7 @@ func init() {
 func preSetupHook() error {
 	var err error
 
-	createScreen(core.Config.FramebufferSize, core.Config.PixelSize)
+	createScreen(internal.Config.FramebufferSize, internal.Config.PixelSize)
 
 	stampPipeline = gl.NewPipeline(
 		gl.VertexShader(strings.NewReader(vertexShader)),
@@ -82,7 +82,7 @@ func postDrawHook() error {
 		}
 	}
 
-	blitScreen(core.Window.Size)
+	blitScreen(internal.Window.Size)
 	return nil
 }
 

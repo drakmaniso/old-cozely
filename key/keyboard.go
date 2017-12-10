@@ -6,7 +6,7 @@ package key
 //------------------------------------------------------------------------------
 
 import (
-	"github.com/drakmaniso/carol/internal/core"
+	"github.com/drakmaniso/carol/internal"
 )
 
 //------------------------------------------------------------------------------
@@ -14,19 +14,19 @@ import (
 // IsPressed returns true if the corresponding key position is currently
 // held down.
 func IsPressed(pos Position) bool {
-	return core.KeyState[pos]
+	return internal.KeyState[pos]
 }
 
 // LabelOf returns the key label at the specified position in the current
 // layout.
 func LabelOf(pos Position) Label {
-	return core.KeyLabelOf(pos)
+	return internal.KeyLabelOf(pos)
 }
 
 // SearchPositionOf searches the current position of label in the current
 // layout.
 func SearchPositionOf(l Label) Position {
-	return core.KeySearchPositionOf(l)
+	return internal.KeySearchPositionOf(l)
 }
 
 //------------------------------------------------------------------------------

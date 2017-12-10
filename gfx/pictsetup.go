@@ -16,7 +16,7 @@ import (
 	"strings"
 
 	"github.com/drakmaniso/carol/core/gl"
-	"github.com/drakmaniso/carol/internal/core"
+	"github.com/drakmaniso/carol/internal"
 )
 
 //------------------------------------------------------------------------------
@@ -28,20 +28,20 @@ var pictureBuffer gl.StorageBuffer
 func loadAllPictures() error {
 	err := scan()
 	if err != nil {
-		return core.Error("while scanning images", err)
+		return internal.Error("while scanning images", err)
 	}
 
-	p := core.Path + picturesPath
+	p := internal.Path + picturesPath
 
 	f, err := os.Open(p)
 	if err != nil {
-		return core.Error("while opening images directory", err)
+		return internal.Error("while opening images directory", err)
 	}
 	defer f.Close()
 
 	dn, err := f.Readdirnames(0)
 	if err != nil {
-		return core.Error("while reading images directory", err)
+		return internal.Error("while reading images directory", err)
 	}
 
 	data := make([]uint8, totalSize, totalSize)
@@ -60,7 +60,7 @@ func loadAllPictures() error {
 	pictureBuffer = gl.NewStorageBuffer(data, 0)
 	pictureBuffer.Bind(1) //TODO: move elsewhere
 
-	core.Debug.Printf("Loaded %d pictures: %v", len(pictures), pictures)
+	internal.Debug.Printf("Loaded %d pictures: %v", len(pictures), pictures)
 
 	return nil
 }
@@ -68,17 +68,17 @@ func loadAllPictures() error {
 //------------------------------------------------------------------------------
 
 func scan() error {
-	p := core.Path + picturesPath
+	p := internal.Path + picturesPath
 
 	f, err := os.Open(p)
 	if err != nil {
-		return core.Error("while opening images directory", err)
+		return internal.Error("while opening images directory", err)
 	}
 	defer f.Close()
 
 	dn, err := f.Readdirnames(0)
 	if err != nil {
-		return core.Error("while reading images directory", err)
+		return internal.Error("while reading images directory", err)
 	}
 
 	totalSize = uint64(0)
@@ -94,7 +94,7 @@ func scan() error {
 		}
 	}
 
-	core.Debug.Printf("Scanned %d pictures: %d bytes (%.1f Mb)", nb, totalSize, float64(totalSize)/(1024.0*1024.0))
+	internal.Debug.Printf("Scanned %d pictures: %d bytes (%.1f Mb)", nb, totalSize, float64(totalSize)/(1024.0*1024.0))
 
 	return nil
 }
@@ -104,13 +104,13 @@ var totalSize uint64
 func getSize(dir, filename string) (uint64, error) {
 	r, err := os.Open(dir + filename)
 	if err != nil {
-		return 0, core.Error(`opening picture file "`+filename+`"`, err)
+		return 0, internal.Error(`opening picture file "`+filename+`"`, err)
 	}
 	defer r.Close()
 
 	conf, _, err := image.DecodeConfig(r)
 	if err != nil {
-		return 0, core.Error("decoding picture file", err)
+		return 0, internal.Error("decoding picture file", err)
 	}
 
 	_, ok := conf.ColorModel.(color.Palette)
@@ -126,13 +126,13 @@ func getSize(dir, filename string) (uint64, error) {
 func load(dir, filename string, data []uint8, address uint32) (uint32, error) {
 	r, err := os.Open(dir + filename)
 	if err != nil {
-		return 0, core.Error(`opening picture file "`+filename+`"`, err)
+		return 0, internal.Error(`opening picture file "`+filename+`"`, err)
 	}
 	defer r.Close()
 
 	img, _, err := image.Decode(r)
 	if err != nil {
-		return 0, core.Error("decoding picture file", err)
+		return 0, internal.Error("decoding picture file", err)
 	}
 
 	pimg, ok := img.(*image.Paletted)
@@ -150,7 +150,7 @@ func load(dir, filename string, data []uint8, address uint32) (uint32, error) {
 	n := strings.TrimSuffix(filename, ".png")
 	pictures[n] = p
 
-	core.Debug.Printf("Add picture '%s': %d == %d", n, len(pimg.Pix), p.width*p.height)
+	internal.Debug.Printf("Add picture '%s': %d == %d", n, len(pimg.Pix), p.width*p.height)
 
 	s := copy(data[address:], pimg.Pix)
 	if s != len(pimg.Pix) {

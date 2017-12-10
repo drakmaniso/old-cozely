@@ -6,7 +6,7 @@ package carol
 //------------------------------------------------------------------------------
 
 import (
-	"github.com/drakmaniso/carol/internal/core"
+	"github.com/drakmaniso/carol/internal"
 )
 
 //------------------------------------------------------------------------------
@@ -16,24 +16,24 @@ func Error(context string, err error) error {
 	if err == nil {
 		return nil
 	}
-	return core.WrappedError{context, err}
+	return internal.WrappedError{context, err}
 }
 
 // ShowError shows an error to the user. In debug mode, it only prints to the
 // standard error output, otherwise it also brings a dialog box.
 func ShowError(e error) {
-	core.Log.Printf("ERROR: %s", e)
-	if !core.Config.Debug {
-		err2 := core.ErrorDialog("ERROR: %s", e)
+	internal.Log.Printf("ERROR: %s", e)
+	if !internal.Config.Debug {
+		err2 := internal.ErrorDialog("ERROR: %s", e)
 		if err2 != nil {
-			core.Log.Printf("ERROR opening dialog:\n%s", err2)
+			internal.Log.Printf("ERROR opening dialog:\n%s", err2)
 		}
 	}
 }
 
 // Log logs a formated message.
 func Log(format string, v ...interface{}) {
-	core.Log.Printf(format, v...)
+	internal.Log.Printf(format, v...)
 }
 
 //------------------------------------------------------------------------------

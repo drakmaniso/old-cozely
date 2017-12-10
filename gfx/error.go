@@ -6,7 +6,7 @@ package gfx
 //------------------------------------------------------------------------------
 
 import (
-	"github.com/drakmaniso/carol/internal/core"
+	"github.com/drakmaniso/carol/internal"
 )
 
 //------------------------------------------------------------------------------
@@ -23,27 +23,27 @@ func Err() error {
 
 var setErr = func(context string, err error) {
 	if stickyErr == nil {
-		stickyErr = core.Error(context, err)
+		stickyErr = internal.Error(context, err)
 	}
 	//TODO: simplify, as in core/gl package
 }
 
 func init() {
-	h := core.Hook{
+	h := internal.Hook{
 		Callback: hookStickyErr,
 		Context:  "while setting up gfx sticky error",
 	}
-	core.PreSetupHooks = append(core.PreSetupHooks, h)
+	internal.PreSetupHooks = append(internal.PreSetupHooks, h)
 }
 
 func hookStickyErr() error {
-	if core.Config.Debug {
+	if internal.Config.Debug {
 		setErr = func(context string, err error) {
 			// TODO: use two different functions and a *func variable
 			if stickyErr == nil {
-				stickyErr = core.Error(context, err)
+				stickyErr = internal.Error(context, err)
 			}
-			core.Log.Printf("gfx error: %s", core.Error(context, err))
+			internal.Log.Printf("gfx error: %s", internal.Error(context, err))
 		}
 	}
 

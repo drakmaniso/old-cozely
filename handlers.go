@@ -6,7 +6,7 @@ package carol
 //------------------------------------------------------------------------------
 
 import (
-	"github.com/drakmaniso/carol/internal/core"
+	"github.com/drakmaniso/carol/internal"
 	"github.com/drakmaniso/carol/key"
 	"github.com/drakmaniso/carol/mouse"
 	"github.com/drakmaniso/carol/screen"
@@ -53,7 +53,7 @@ func (h Handlers) WindowFocusLost() {}
 
 // WindowQuit requests the game loop to stop.
 func (h Handlers) WindowQuit() {
-	core.QuitRequested = true
+	internal.QuitRequested = true
 }
 
 //------------------------------------------------------------------------------
@@ -76,9 +76,9 @@ func (h Handlers) MouseWheel(w screen.Coord) {}
 func (h Handlers) KeyDown(l key.Label, p key.Position) {
 	switch l {
 	case key.LabelEscape:
-		core.QuitRequested = true
+		internal.QuitRequested = true
 	case key.LabelF11:
-		core.ToggleFullscreen()
+		internal.ToggleFullscreen()
 	}
 }
 

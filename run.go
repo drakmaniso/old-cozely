@@ -8,7 +8,7 @@ package carol
 import (
 	"github.com/drakmaniso/carol/core/gl"
 	_ "github.com/drakmaniso/carol/gfx" // To register hooks
-	"github.com/drakmaniso/carol/internal/core"
+	"github.com/drakmaniso/carol/internal"
 )
 
 //------------------------------------------------------------------------------
@@ -23,7 +23,7 @@ import (
 //	 Draw(delta float64, lerp float64) error
 //
 // Plus all the event handlers: see Handlers.
-type GameLoop = core.GameLoop
+type GameLoop = internal.GameLoop
 
 //------------------------------------------------------------------------------
 
@@ -48,59 +48,59 @@ var timeStep float64 = 1.0 / 60
 // Important: must be called from main.main, or at least from a function that is
 // known to run on the main OS thread.
 func Run(loop GameLoop) error {
-	defer core.SDLQuit()
-	defer core.DestroyWindow()
+	defer internal.SDLQuit()
+	defer internal.DestroyWindow()
 
-	core.Loop = loop
+	internal.Loop = loop
 
 	// Setup
 
-	err := core.Setup()
+	err := internal.Setup()
 	if err != nil {
-		return core.Error("in internal setup", err)
+		return internal.Error("in internal setup", err)
 	}
 
-	err = gl.Setup(core.Config.Debug)
+	err = gl.Setup(internal.Config.Debug)
 	if err != nil {
-		return core.Error("in OpenGL setup", err)
+		return internal.Error("in OpenGL setup", err)
 	}
 
-	for _, c := range core.PreSetupHooks {
+	for _, c := range internal.PreSetupHooks {
 		err = c.Callback()
 		if err != nil {
-			return core.Error(c.Context, err)
+			return internal.Error(c.Context, err)
 		}
 	}
 
-	err = core.Loop.Setup()
+	err = internal.Loop.Setup()
 	if err != nil {
-		return core.Error("in game loop Setup", err)
+		return internal.Error("in game loop Setup", err)
 	}
 
-	for _, c := range core.PostSetupHooks {
+	for _, c := range internal.PostSetupHooks {
 		err = c.Callback()
 		if err != nil {
-			return core.Error(c.Context, err)
+			return internal.Error(c.Context, err)
 		}
 	}
 
 	// First, send a fake resize window event
-	core.Loop.WindowResized(core.Window.Size)
+	internal.Loop.WindowResized(internal.Window.Size)
 
 	// Main Loop
 
-	then := core.GetSeconds()
+	then := internal.GetSeconds()
 	now := then
 	stepNow := now
 	remain := 0.0
 
-	for !core.QuitRequested {
-		now = core.GetSeconds()
+	for !internal.QuitRequested {
+		now = internal.GetSeconds()
 		delta = now - then
 		//TODO: clamp delta ?
 		countFrames()
 
-		core.ProcessEvents() //TODO: Should it be in the physisc loop?
+		internal.ProcessEvents() //TODO: Should it be in the physisc loop?
 
 		// Update with fixed time step
 
@@ -111,10 +111,10 @@ func Run(loop GameLoop) error {
 			stepNow += timeStep
 		}
 		for remain >= timeStep {
-			core.VisibleNow = stepNow
-			err = core.Loop.Update()
+			internal.VisibleNow = stepNow
+			err = internal.Loop.Update()
 			if err != nil {
-				return core.Error("in Update callback", err)
+				return internal.Error("in Update callback", err)
 			}
 			remain -= timeStep
 			stepNow += timeStep
@@ -122,20 +122,20 @@ func Run(loop GameLoop) error {
 
 		// Draw
 
-		core.VisibleNow = now
-		err = core.Loop.Draw(delta, remain/timeStep)
+		internal.VisibleNow = now
+		err = internal.Loop.Draw(delta, remain/timeStep)
 		if err != nil {
-			return core.Error("in Draw callback", err)
+			return internal.Error("in Draw callback", err)
 		}
 
-		for _, c := range core.PostDrawHooks {
+		for _, c := range internal.PostDrawHooks {
 			err = c.Callback()
 			if err != nil {
-				return core.Error(c.Context, err)
+				return internal.Error(c.Context, err)
 			}
 		}
 
-		core.SwapWindow()
+		internal.SwapWindow()
 
 		then = now
 	}
@@ -158,7 +158,7 @@ var delta float64
 //
 // It shouldn't be used outside of these three contexts.
 func Now() float64 {
-	return core.VisibleNow
+	return internal.VisibleNow
 }
 
 //------------------------------------------------------------------------------
@@ -205,7 +205,7 @@ var xrunCount, xrunPrevious int
 
 // Stop request the game loop to stop.
 func Stop() {
-	core.QuitRequested = true
+	internal.QuitRequested = true
 }
 
 //------------------------------------------------------------------------------
@@ -213,7 +213,7 @@ func Stop() {
 // Path returns the (slash-separated) path of the executable, with a trailing
 // slash.
 func Path() string {
-	return core.Path
+	return internal.Path
 }
 
 //------------------------------------------------------------------------------
