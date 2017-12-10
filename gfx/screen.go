@@ -39,7 +39,7 @@ func createScreen(size pixel.Coord, pixel pixel.Coord) {
 //------------------------------------------------------------------------------
 
 func blitScreen(winSize pixel.Coord) {
-	screen.framebuffer.Bind(gl.ReadFramebuffer)
+	// screen.framebuffer.Bind(gl.ReadFramebuffer)
 	gl.DefaultFramebuffer.Bind(gl.DrawFramebuffer)
 	gl.ClearColorBuffer(RGBA{0.2, 0.2, 0.2, 1})
 

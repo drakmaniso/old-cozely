@@ -41,6 +41,8 @@ func GetPicture(name string) Picture {
 
 func (p Picture) Paint(x, y int16) {
 	// gpu.Paint(p.address, p.width, p.height, x, y)
+	s := stamp{address: p.address, w: p.width, h: p.height, x: x, y: y, tint: 0}
+	stamps = append(stamps, s)
 }
 
 //------------------------------------------------------------------------------

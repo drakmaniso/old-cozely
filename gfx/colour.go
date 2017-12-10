@@ -8,6 +8,8 @@ package gfx
 import (
 	"errors"
 	"image/color"
+
+	"github.com/drakmaniso/carol/core/gl"
 )
 
 //------------------------------------------------------------------------------
@@ -28,6 +30,10 @@ func init() {
 	colNames = make(map[string]Color, 256)
 	ClearPalette()
 }
+
+//------------------------------------------------------------------------------
+
+var paletteBuffer gl.StorageBuffer
 
 //------------------------------------------------------------------------------
 

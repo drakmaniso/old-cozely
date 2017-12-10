@@ -15,8 +15,13 @@ import (
 	"path"
 	"strings"
 
+	"github.com/drakmaniso/carol/core/gl"
 	"github.com/drakmaniso/carol/internal/core"
 )
+
+//------------------------------------------------------------------------------
+
+var pictureBuffer gl.StorageBuffer
 
 //------------------------------------------------------------------------------
 
@@ -53,6 +58,8 @@ func loadAllPictures() error {
 	}
 
 	// gpu.CreatePictureBuffer(data)
+	pictureBuffer = gl.NewStorageBuffer(data, 0)
+	pictureBuffer.Bind(1) //TODO: move elsewhere
 
 	core.Debug.Printf("Loaded %d pictures: %v", len(pictures), pictures)
 
