@@ -148,7 +148,7 @@ func (loop) MouseButtonDown(b mouse.Button, _ int) {
 // 	var m = []perVertex{}
 // 	for i := den * nbPoints; i >= 0; i-- {
 // 		var k = float32(num) / float32(den)
-// 		var theta = float32(i) * 2 * math.Pi / float32(nbPoints)
+// 		var theta = float32(i) * 2 * math32.Pi / float32(nbPoints)
 // 		var r = (math.Cos(k*theta) + offset) / (1.0 + offset)
 // 		var p = plane.Polar{r, theta}
 // 		m = append(m, perVertex{p.Coord()})

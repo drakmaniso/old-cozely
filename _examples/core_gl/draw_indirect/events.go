@@ -7,7 +7,7 @@ package main
 
 import (
 	"github.com/drakmaniso/carol"
-	"github.com/drakmaniso/carol/math32"
+	"github.com/drakmaniso/carol/core/math32"
 	"github.com/drakmaniso/carol/mouse"
 	"github.com/drakmaniso/carol/pixel"
 	"github.com/drakmaniso/carol/plane"

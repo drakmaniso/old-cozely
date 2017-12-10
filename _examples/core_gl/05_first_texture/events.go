@@ -6,9 +6,8 @@ package main
 //------------------------------------------------------------------------------
 
 import (
-	"math"
-
 	"github.com/drakmaniso/carol"
+	"github.com/drakmaniso/carol/core/math32"
 	"github.com/drakmaniso/carol/mouse"
 	"github.com/drakmaniso/carol/pixel"
 	"github.com/drakmaniso/carol/plane"
@@ -17,14 +16,10 @@ import (
 
 //------------------------------------------------------------------------------
 
-const pi = float32(math.Pi)
-
-//------------------------------------------------------------------------------
-
 func (loop) WindowResized(is pixel.Coord) {
 	w := plane.CoordOf(is)
 	r := w.X / w.Y
-	screenFromView = space.Perspective(pi/4, r, 0.001, 1000.0)
+	screenFromView = space.Perspective(math32.Pi/4, r, 0.001, 1000.0)
 }
 
 //------------------------------------------------------------------------------
@@ -46,10 +41,10 @@ func (loop) MouseMotion(motion pixel.Coord, _ pixel.Coord) {
 		yaw += 4 * m.X / s.X
 		pitch += 4 * m.Y / s.Y
 		switch {
-		case pitch < -pi/2:
-			pitch = -pi / 2
-		case pitch > +pi/2:
-			pitch = +pi / 2
+		case pitch < -math32.Pi/2:
+			pitch = -math32.Pi / 2
+		case pitch > +math32.Pi/2:
+			pitch = +math32.Pi / 2
 		}
 		computeWorldFromObject()
 

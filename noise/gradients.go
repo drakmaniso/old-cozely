@@ -6,7 +6,7 @@ package noise
 //------------------------------------------------------------------------------
 
 import (
-	"github.com/drakmaniso/carol/math32"
+	"github.com/drakmaniso/carol/core/math32"
 	"github.com/drakmaniso/carol/plane"
 	"github.com/drakmaniso/carol/space"
 )

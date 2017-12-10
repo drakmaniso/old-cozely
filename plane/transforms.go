@@ -5,7 +5,7 @@ package plane
 
 //------------------------------------------------------------------------------
 
-import "github.com/drakmaniso/glam/math32"
+import "github.com/drakmaniso/carol/core/math32"
 
 //------------------------------------------------------------------------------
 

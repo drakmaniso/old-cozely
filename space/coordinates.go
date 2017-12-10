@@ -8,7 +8,7 @@ package space
 import (
 	"math"
 
-	"github.com/drakmaniso/glam/math32"
+	"github.com/drakmaniso/carol/core/math32"
 )
 
 //------------------------------------------------------------------------------

@@ -24,7 +24,7 @@ func (e wrappedError) Error() string {
 
 //------------------------------------------------------------------------------
 
-// Err returns the first glam error since the previous call to Err().
+// Err returns the first OpenGL error since the previous call to Err().
 func Err() error {
 	err := stickyErr
 	stickyErr = nil
