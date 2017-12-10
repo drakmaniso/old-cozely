@@ -2,6 +2,6 @@
 // Licensed under a simplified BSD license (see LICENSE file).
 
 /*
-Package mouse provides mouse support.
+Package pixel provides an integer coordinates type.
 */
-package mouse
+package pixel
