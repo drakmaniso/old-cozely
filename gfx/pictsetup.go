@@ -57,7 +57,6 @@ func loadAllPictures() error {
 		}
 	}
 
-	// gpu.CreatePictureBuffer(data)
 	pictureBuffer = gl.NewStorageBuffer(data, 0)
 	pictureBuffer.Bind(1) //TODO: move elsewhere
 

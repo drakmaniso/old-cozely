@@ -65,16 +65,6 @@ func Run(loop GameLoop) error {
 		return core.Error("in OpenGL setup", err)
 	}
 
-	// err = gpu.Setup(
-	// 	core.Config.Debug,
-	// 	// core.Window.Size,
-	// 	core.Config.FramebufferSize,
-	// 	core.Config.PixelSize,
-	// )
-	// if err != nil {
-	// 	return core.Error("in gpu setup", err)
-	// }
-
 	for _, c := range core.PreSetupHooks {
 		err = c.Callback()
 		if err != nil {
@@ -145,8 +135,6 @@ func Run(loop GameLoop) error {
 			}
 		}
 
-		// gpu.BindStampPipeline()
-		// gpu.BlitFramebuffer(core.Window.Size)
 		core.SwapWindow()
 
 		then = now
