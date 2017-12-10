@@ -8,9 +8,6 @@ package gfx
 import (
 	"errors"
 	"image/color"
-
-	"github.com/drakmaniso/carol/internal/core"
-	"github.com/drakmaniso/carol/internal/gpu"
 )
 
 //------------------------------------------------------------------------------
@@ -126,24 +123,6 @@ func (c Color) SetRGBA(cc color.Color) {
 	}
 	colours[c] = v
 	colChanged = true
-}
-
-//------------------------------------------------------------------------------
-
-func init() {
-	c := core.Hook{
-		Callback: postDrawHook,
-		Context:  "in screen package post-Draw hook",
-	}
-	core.PostDrawHooks = append(core.PostDrawHooks, c)
-}
-
-func postDrawHook() error {
-	if colChanged {
-		gpu.UpdatePaletteBuffer(uint8(0), colours[:])
-		colChanged = false
-	}
-	return nil
 }
 
 //------------------------------------------------------------------------------

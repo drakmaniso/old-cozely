@@ -6,9 +6,9 @@ package carol
 //------------------------------------------------------------------------------
 
 import (
+	"github.com/drakmaniso/carol/core/gl"
 	_ "github.com/drakmaniso/carol/gfx" // To register hooks
 	"github.com/drakmaniso/carol/internal/core"
-	"github.com/drakmaniso/carol/internal/gpu"
 )
 
 //------------------------------------------------------------------------------
@@ -60,15 +60,20 @@ func Run(loop GameLoop) error {
 		return core.Error("in internal setup", err)
 	}
 
-	err = gpu.Setup(
-		core.Config.Debug,
-		// core.Window.Size,
-		core.Config.FramebufferSize,
-		core.Config.PixelSize,
-	)
+	err = gl.Setup(core.Config.Debug)
 	if err != nil {
-		return core.Error("in gpu setup", err)
+		return core.Error("in OpenGL setup", err)
 	}
+
+	// err = gpu.Setup(
+	// 	core.Config.Debug,
+	// 	// core.Window.Size,
+	// 	core.Config.FramebufferSize,
+	// 	core.Config.PixelSize,
+	// )
+	// if err != nil {
+	// 	return core.Error("in gpu setup", err)
+	// }
 
 	for _, c := range core.PreSetupHooks {
 		err = c.Callback()
@@ -140,8 +145,8 @@ func Run(loop GameLoop) error {
 			}
 		}
 
-		gpu.BindStampPipeline()
-		gpu.BlitFramebuffer(core.Window.Size)
+		// gpu.BindStampPipeline()
+		// gpu.BlitFramebuffer(core.Window.Size)
 		core.SwapWindow()
 
 		then = now

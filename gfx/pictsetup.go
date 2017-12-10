@@ -16,20 +16,11 @@ import (
 	"strings"
 
 	"github.com/drakmaniso/carol/internal/core"
-	"github.com/drakmaniso/carol/internal/gpu"
 )
 
 //------------------------------------------------------------------------------
 
-func init() {
-	c := core.Hook{
-		Callback: preSetupHook,
-		Context:  "in picture package setup",
-	}
-	core.PreSetupHooks = append(core.PreSetupHooks, c)
-}
-
-func preSetupHook() error {
+func loadAllPictures() error {
 	err := scan()
 	if err != nil {
 		return core.Error("while scanning images", err)
@@ -61,7 +52,7 @@ func preSetupHook() error {
 		}
 	}
 
-	gpu.CreatePictureBuffer(data)
+	// gpu.CreatePictureBuffer(data)
 
 	core.Debug.Printf("Loaded %d pictures: %v", len(pictures), pictures)
 

@@ -7,7 +7,6 @@ package carol
 
 import (
 	"github.com/drakmaniso/carol/internal/core"
-	"github.com/drakmaniso/carol/internal/gpu"
 	"github.com/drakmaniso/carol/screen"
 )
 
@@ -29,13 +28,13 @@ func WindowSize() screen.Coord {
 }
 
 // FramebufferSize returns the size of the framebuffer in (framebuffer) pixels.
-func FramebufferSize() screen.Coord {
-	return gpu.Framebuffer.Size
-}
+// func FramebufferSize() screen.Coord {
+// 	return gpu.Framebuffer.Size
+// }
 
 // PixelSize returns the size of framebuffer pixels, in screen pixels.
-func PixelSize() screen.Coord {
-	return gpu.Framebuffer.PixelSize
-}
+// func PixelSize() screen.Coord {
+// 	return gpu.Framebuffer.PixelSize
+// }
 
 //------------------------------------------------------------------------------

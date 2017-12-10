@@ -25,6 +25,7 @@ var setErr = func(context string, err error) {
 	if stickyErr == nil {
 		stickyErr = core.Error(context, err)
 	}
+	//TODO: simplify, as in core/gl package
 }
 
 func init() {

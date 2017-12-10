@@ -63,6 +63,7 @@ func (loop) Draw(delta, _ float64) error {
 	// 		gfx.Color(1).SetRGBA(gfx.RGBA{1, 0, 0.5, 1})
 	// 	}
 	// }
+
 	logo.Paint(x, 10)
 
 	mire.Paint(0, 0)
