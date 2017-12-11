@@ -85,6 +85,7 @@ func Run(loop GameLoop) error {
 
 	// First, send a fake resize window event
 	internal.Loop.WindowResized(internal.Window.Size)
+	internal.ResizeScreen()
 
 	// Main Loop
 

@@ -4,6 +4,8 @@
 		"X": 720,
 		"Y": 720
 	},
+	"ScreenMode": "direct",
+	"Multisample": 8,
 	"Display": 0,
 	"Fullscreen": false,
 	"FullscreenMode": "Desktop",

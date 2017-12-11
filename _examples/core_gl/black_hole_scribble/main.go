@@ -32,8 +32,6 @@ func main() {
 // OpenGL objects
 var (
 	pipeline    *gl.Pipeline
-	framebuffer gl.Framebuffer
-	fbTexture   gl.Texture2D
 	perFrameUBO gl.UniformBuffer
 	pointsVBO   gl.VertexBuffer
 )
@@ -77,17 +75,6 @@ func (loop) Setup() error {
 	gl.Enable(gl.FramebufferSRGB)
 	gl.Enable(gl.Blend)
 	gl.Blending(gl.SrcAlpha, gl.OneMinusSrcAlpha)
-	gl.ClearColorBuffer(bgColor)
-
-	// Create the framebuffer
-	framebuffer = gl.NewFramebuffer()
-	w := int32(carol.WindowSize().X)
-	h := int32(carol.WindowSize().Y)
-	fbTexture = gl.NewTexture2D(1, w, h, gl.RGB8)
-	framebuffer.Texture(gl.ColorAttachment0, fbTexture, 0)
-	framebuffer.DrawBuffer(gl.ColorAttachment0)
-	framebuffer.Bind(gl.DrawReadFramebuffer)
-	gl.Viewport(0, 0, w, h)
 
 	// Create the uniform buffer
 	perFrameUBO = gl.NewUniformBuffer(&perFrame, gl.DynamicStorage)
@@ -133,9 +120,14 @@ var updated bool
 
 //------------------------------------------------------------------------------
 
+var cleared bool
+
 func (loop) Draw(_, _ float64) error {
+	if !cleared {
+		gl.ClearColorBuffer(bgColor)
+		cleared = true
+	}
 	if updated {
-		framebuffer.DrawBuffer(gl.ColorAttachment0)
 		pipeline.Bind()
 
 		perFrameUBO.Bind(0)
@@ -146,16 +138,6 @@ func (loop) Draw(_, _ float64) error {
 		pipeline.Unbind()
 		updated = false
 	}
-
-	w := int32(carol.WindowSize().X)
-	h := int32(carol.WindowSize().Y)
-	framebuffer.Blit(
-		gl.DefaultFramebuffer,
-		0, 0, w, h,
-		0, 0, w, h,
-		gl.ColorBufferBit,
-		gl.Nearest,
-	)
 
 	return nil
 }
@@ -173,24 +155,13 @@ func setupPoints() {
 		speeds[i] = 0.004 * rand.Float32()
 	}
 	rotSpeed = 0.01 * (rand.Float32() - 0.5)
-	jitter = 0.006*rand.Float32() - 0.001
-	if jitter < 0.0 {
-		jitter = 0.0
-	}
+	jitter = 0.014 * rand.Float32()
+	cleared = false
 }
 
 //------------------------------------------------------------------------------
 
 func (loop) WindowResized(sp pixel.Coord) {
-	//TODO: fbTexture.Delete()
-	w := int32(carol.WindowSize().X)
-	h := int32(carol.WindowSize().Y)
-	fbTexture = gl.NewTexture2D(1, w, h, gl.RGB8)
-	framebuffer.Texture(gl.ColorAttachment0, fbTexture, 0)
-	gl.Viewport(0, 0, w, h)
-
-	gl.ClearColorBuffer(bgColor)
-
 	setupPoints()
 
 	// Compute ratio
@@ -203,7 +174,6 @@ func (loop) WindowResized(sp pixel.Coord) {
 }
 
 func (loop) MouseButtonDown(b mouse.Button, _ int) {
-	gl.ClearColorBuffer(bgColor)
 	setupPoints()
 }
 

@@ -4,6 +4,12 @@
 		"X": 720,
 		"Y": 720
 	},
+	"PixelSize": {
+		"X": 2,
+		"Y": 2
+	},
+	"ScreenMode": "extend",
+	"Multisample": 8,
 	"Display": 0,
 	"Fullscreen": false,
 	"FullscreenMode": "Desktop",

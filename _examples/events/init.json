@@ -4,7 +4,7 @@
 		"X": 1280,
 		"Y": 720
 	},
-	"FramebufferSize": {
+	"ScreenSize": {
 		"X": 128,
 		"Y": 128
 	},

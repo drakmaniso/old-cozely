@@ -6,6 +6,7 @@ package carol
 //------------------------------------------------------------------------------
 
 import (
+	"github.com/drakmaniso/carol/core/gl"
 	"github.com/drakmaniso/carol/internal"
 	"github.com/drakmaniso/carol/key"
 	"github.com/drakmaniso/carol/mouse"
@@ -28,7 +29,9 @@ func (h Handlers) WindowShown() {}
 func (h Handlers) WindowHidden() {}
 
 // WindowResized does nothing.
-func (h Handlers) WindowResized(s pixel.Coord) {}
+func (h Handlers) WindowResized(s pixel.Coord) {
+	gl.Viewport(0, 0, int32(s.X), int32(s.Y))
+}
 
 // WindowMinimized does nothing.
 func (h Handlers) WindowMinimized() {}

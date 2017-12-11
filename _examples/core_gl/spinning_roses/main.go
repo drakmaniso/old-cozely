@@ -99,6 +99,9 @@ func (loop) Draw(_, _ float64) error {
 	pipeline.Bind()
 	gl.ClearDepthBuffer(1.0)
 	gl.ClearColorBuffer(colour.RGBA{0.9, 0.85, 0.80, 1.0})
+	gl.Enable(gl.LineSmooth)
+	gl.Enable(gl.Blend)
+	gl.Blending(gl.SrcAlpha, gl.OneMinusSrcAlpha)
 
 	perFrameUBO.Bind(0)
 	perFrameUBO.SubData(&perFrame, 0)
@@ -133,7 +136,6 @@ func randomizeRosesData() {
 func (loop) WindowResized(is pixel.Coord) {
 	s := plane.CoordOf(is)
 	perFrame.ratio = s.Y / s.X
-	gl.Viewport(0, 0, int32(is.X), int32(is.Y))
 }
 
 func (loop) MouseButtonDown(b mouse.Button, _ int) {

@@ -26,25 +26,29 @@ var Path string
 
 // Config holds the initial configuration of the game.
 var Config = struct {
-	Title           string
-	WindowSize      pixel.Coord
-	FramebufferSize pixel.Coord
-	PixelSize       pixel.Coord
-	Display         int
-	Fullscreen      bool
-	FullscreenMode  string
-	VSync           bool
-	Debug           bool
+	Title          string
+	WindowSize     pixel.Coord
+	ScreenSize     pixel.Coord
+	PixelSize      pixel.Coord
+	ScreenMode     string // "direct", "fixed", "extend" or "zoom"
+	Multisample    int
+	Display        int
+	Fullscreen     bool
+	FullscreenMode string
+	VSync          bool
+	Debug          bool
 }{
-	Title:           "Carol",
-	WindowSize:      pixel.Coord{X: 1280, Y: 720},
-	FramebufferSize: pixel.Coord{X: 64, Y: 64},
-	PixelSize:       pixel.Coord{X: 8, Y: 8},
-	Display:         0,
-	Fullscreen:      false,
-	FullscreenMode:  "Desktop",
-	VSync:           true,
-	Debug:           false,
+	Title:          "Carol",
+	WindowSize:     pixel.Coord{X: 1280, Y: 720},
+	ScreenSize:     pixel.Coord{X: 320, Y: 200},
+	PixelSize:      pixel.Coord{X: 4, Y: 4},
+	ScreenMode:     "extend",
+	Multisample:    0,
+	Display:        0,
+	Fullscreen:     false,
+	FullscreenMode: "Desktop",
+	VSync:          true,
+	Debug:          false,
 }
 
 //------------------------------------------------------------------------------
@@ -119,5 +123,7 @@ type Hook struct {
 var PreSetupHooks = []Hook{}
 var PostSetupHooks = []Hook{}
 var PostDrawHooks = []Hook{}
+
+var ResizeScreen = func() {}
 
 //------------------------------------------------------------------------------

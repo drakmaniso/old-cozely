@@ -8,6 +8,7 @@ package gfx
 import (
 	"strings"
 
+	"github.com/drakmaniso/carol/colour"
 	"github.com/drakmaniso/carol/core/gl"
 	"github.com/drakmaniso/carol/internal"
 )
@@ -35,13 +36,16 @@ func init() {
 func preSetupHook() error {
 	var err error
 
-	createScreen(internal.Config.FramebufferSize, internal.Config.PixelSize)
+	createScreen()
 
 	stampPipeline = gl.NewPipeline(
 		gl.VertexShader(strings.NewReader(vertexShader)),
 		gl.FragmentShader(strings.NewReader(fragmentShader)),
 		gl.Topology(gl.Triangles),
 	)
+
+	screenUBO = gl.NewUniformBuffer(&screenUniforms, gl.DynamicStorage|gl.MapWrite)
+	screenUBO.Bind(0)
 
 	paletteBuffer = gl.NewStorageBuffer(uintptr(256*4*4), gl.DynamicStorage|gl.MapWrite)
 	paletteBuffer.Bind(2)
@@ -70,7 +74,14 @@ func postDrawHook() error {
 		palette.changed = false
 	}
 
+	screenUniforms.PixelSize.X = 1.0 / float32(screen.size.X)
+	screenUniforms.PixelSize.Y = 1.0 / float32(screen.size.Y)
+	screenUBO.SubData(&screenUniforms, 0)
+
+	screen.buffer.Bind(gl.DrawReadFramebuffer)
+	gl.Viewport(0, 0, int32(screen.size.X), int32(screen.size.Y))
 	stampPipeline.Bind()
+	gl.ClearColorBuffer(colour.RGBA{0, 0, 0, 1}) //TODO
 	gl.Blending(gl.SrcAlpha, gl.OneMinusSrcAlpha)
 	gl.Enable(gl.Blend)
 
@@ -82,7 +93,8 @@ func postDrawHook() error {
 		}
 	}
 
-	blitScreen(internal.Window.Size)
+	blitScreen()
+
 	return nil
 }
 

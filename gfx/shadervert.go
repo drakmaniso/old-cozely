@@ -2,7 +2,11 @@ package gfx
 
 const vertexShader = "\n" + `#version 450 core
 
-const vec2 PixelSize = vec2(1.0/320.0, 1.0/180.0);
+// const vec2 PixelSize = vec2(1.0/320.0, 1.0/180.0);
+
+layout(std140, binding = 0) uniform ScreenUBO {
+	vec2 PixelSize;
+};
 
 struct Stamp {
 	uint Address;

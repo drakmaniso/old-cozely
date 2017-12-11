@@ -39,7 +39,7 @@ func (loop) Setup() error {
 
 func (loop) Update() error {
 	x++
-	if x >= 320 {
+	if x >= gfx.ScreenSize().X {
 		x = -64
 	}
 	return nil
@@ -66,12 +66,14 @@ func (loop) Draw(delta, _ float64) error {
 
 	logo.Paint(x, 10)
 
-	mire.Paint(0, 0)
-	mire.Paint(320-32, 0)
-	mire.Paint(0, 180-32)
-	mire.Paint(320-32, 180-32)
+	s := gfx.ScreenSize()
 
-	logo.Paint(320/2-32, 20)
+	mire.Paint(0, 0)
+	mire.Paint(s.X-32, 0)
+	mire.Paint(0, s.Y-32)
+	mire.Paint(s.X-32, s.Y-32)
+
+	logo.Paint(s.X/2-32, 20)
 
 	return gfx.Err()
 }

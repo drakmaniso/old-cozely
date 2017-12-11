@@ -86,10 +86,13 @@ type TextureFormat C.GLenum
 
 // Used in `NewTexture2D`.
 const (
-	RGB8    TextureFormat = C.GL_RGB8
-	RGBA8   TextureFormat = C.GL_RGBA8
-	SRGBA8  TextureFormat = C.GL_SRGB8_ALPHA8
-	Depth16 TextureFormat = C.GL_DEPTH_COMPONENT16
+	RGB8     TextureFormat = C.GL_RGB8
+	RGBA8    TextureFormat = C.GL_RGBA8
+	SRGBA8   TextureFormat = C.GL_SRGB8_ALPHA8
+	SRGB8    TextureFormat = C.GL_SRGB8
+	Depth16  TextureFormat = C.GL_DEPTH_COMPONENT16
+	Depth24  TextureFormat = C.GL_DEPTH_COMPONENT24
+	Depth32F TextureFormat = C.GL_DEPTH_COMPONENT32F
 )
 
 func pointerFormatAndTypeOf(img image.Image) (p unsafe.Pointer, pformat C.GLenum, ptype C.GLenum) {

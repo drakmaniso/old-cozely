@@ -1,18 +1,15 @@
 {
-	"Title": "Basic Example",
+	"Title": "Example 04: First Cube",
 	"WindowSize": {
 		"X": 1280,
 		"Y": 720
-	},
-	"ScreenSize": {
-		"X": 320,
-		"Y": 180
 	},
 	"PixelSize": {
 		"X": 4,
 		"Y": 4
 	},
-	"ScreenMode": "Extend",
+	"ScreenMode": "extend",
+	"Multisample": 0,
 	"Display": 0,
 	"Fullscreen": false,
 	"FullscreenMode": "Desktop",

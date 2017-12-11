@@ -7,7 +7,6 @@ package main
 
 import (
 	"github.com/drakmaniso/carol"
-	"github.com/drakmaniso/carol/core/gl"
 	"github.com/drakmaniso/carol/core/math32"
 	"github.com/drakmaniso/carol/mouse"
 	"github.com/drakmaniso/carol/pixel"
@@ -21,7 +20,6 @@ func (loop) WindowResized(is pixel.Coord) {
 	w := plane.CoordOf(is)
 	r := w.X / w.Y
 	screenFromView = space.Perspective(math32.Pi/4, r, 0.001, 1000.0)
-	gl.Viewport(0, 0, int32(is.X), int32(is.Y))
 }
 
 //------------------------------------------------------------------------------

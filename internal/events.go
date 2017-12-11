@@ -100,6 +100,7 @@ func dispatch(e unsafe.Pointer) {
 			// Ignore
 		case C.SDL_WINDOWEVENT_RESIZED:
 			Window.Size = pixel.Coord{X: int16(e.data1), Y: int16(e.data2)}
+			ResizeScreen()
 			Loop.WindowResized(Window.Size)
 		case C.SDL_WINDOWEVENT_SIZE_CHANGED:
 			//TODO

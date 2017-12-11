@@ -54,9 +54,18 @@ func Setup() error {
 		return Error(`in configuration file "init.json" parsing`, err)
 	}
 
+	// Setup logger
+
 	if Config.Debug {
 		Debug = log.New(os.Stderr, "", log.Ltime|log.Lmicroseconds|log.Lshortfile)
 	}
+
+	// Check config
+
+	// if Config.Multisample > 0 && Config.ScreenMode != "Direct" {
+	// 	Debug.Println(`WARNING: disabling multisample, as it is only available for "Direct" screen mode`)
+	// 	Config.Multisample = 0
+	// }
 
 	// Initialize SDL
 

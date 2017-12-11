@@ -28,8 +28,8 @@ func WindowSize() pixel.Coord {
 }
 
 //TODO
-// FramebufferSize returns the size of the framebuffer in (framebuffer) pixels.
-// func FramebufferSize() pixel.Coord {
+// ScreenSize returns the size of the framebuffer in (framebuffer) pixels.
+// func ScreenSize() pixel.Coord {
 // 	return gpu.Framebuffer.Size
 // }
 

@@ -35,4 +35,10 @@ var stampPipeline *gl.Pipeline
 
 var stampBuffer gl.StorageBuffer
 
+var screenUBO gl.UniformBuffer
+
+var screenUniforms struct {
+	PixelSize struct{ X, Y float32 }
+}
+
 //------------------------------------------------------------------------------
