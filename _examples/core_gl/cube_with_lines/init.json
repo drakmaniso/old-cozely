@@ -1,18 +1,7 @@
 {
-	"Title": "Example 04: First Cube",
-	"WindowSize": {
-		"X": 1280,
-		"Y": 720
-	},
-	"PixelSize": {
-		"X": 4,
-		"Y": 4
-	},
-	"ScreenMode": "extend",
-	"Multisample": 0,
-	"Display": 0,
+	"Title": "Example: Cube with lines",
+	"ScreenMode": "direct",
+	"Multisample": 8,
 	"Fullscreen": false,
-	"FullscreenMode": "Desktop",
-	"VSync": true,
 	"Debug": true
 }

@@ -5,6 +5,12 @@ package internal
 
 //------------------------------------------------------------------------------
 
+import (
+	"unsafe"
+)
+
+//------------------------------------------------------------------------------
+
 /*
 #include "sdl.h"
 
@@ -23,14 +29,6 @@ import "C"
 
 //------------------------------------------------------------------------------
 
-import (
-	"unsafe"
-
-	"github.com/drakmaniso/carol/pixel"
-)
-
-//------------------------------------------------------------------------------
-
 // GameLoop methods are called to setup the game, and during the main loop to
 // process events, Update the game state and Draw it.
 type GameLoop interface {
@@ -42,7 +40,7 @@ type GameLoop interface {
 	// Window events
 	WindowShown()
 	WindowHidden()
-	WindowResized(newSize pixel.Coord)
+	WindowResized(width, height int32)
 	WindowMinimized()
 	WindowMaximized()
 	WindowRestored()
@@ -57,10 +55,10 @@ type GameLoop interface {
 	KeyUp(l KeyLabel, p KeyPosition)
 
 	// Mouse events
-	MouseMotion(motion pixel.Coord, position pixel.Coord)
+	MouseMotion(deltaX, deltaY int32, posX, posY int32)
 	MouseButtonDown(b MouseButton, clicks int)
 	MouseButtonUp(b MouseButton, clicks int)
-	MouseWheel(motion pixel.Coord)
+	MouseWheel(deltaX, deltaY int32)
 }
 
 //------------------------------------------------------------------------------
@@ -99,9 +97,9 @@ func dispatch(e unsafe.Pointer) {
 		case C.SDL_WINDOWEVENT_MOVED:
 			// Ignore
 		case C.SDL_WINDOWEVENT_RESIZED:
-			Window.Size = pixel.Coord{X: int16(e.data1), Y: int16(e.data2)}
+			Window.Width, Window.Height = int32(e.data1), int32(e.data2)
 			ResizeScreen()
-			Loop.WindowResized(Window.Size)
+			Loop.WindowResized(Window.Width, Window.Height)
 		case C.SDL_WINDOWEVENT_SIZE_CHANGED:
 			//TODO
 		case C.SDL_WINDOWEVENT_MINIMIZED:
@@ -147,13 +145,14 @@ func dispatch(e unsafe.Pointer) {
 	// Mouse Events
 	case C.SDL_MOUSEMOTION:
 		e := (*C.SDL_MouseMotionEvent)(e)
-		rel := pixel.Coord{X: int16(e.xrel), Y: int16(e.yrel)}
-		MouseDelta = MouseDelta.Plus(rel)
-		MousePosition = pixel.Coord{X: int16(e.x), Y: int16(e.y)}
+		dx, dy := int32(e.xrel), int32(e.yrel)
+		MouseDeltaX += dx
+		MouseDeltaY += dy
+		MousePositionX, MousePositionY = int32(e.x), int32(e.y)
 		MouseButtons = uint32(e.state)
 		Loop.MouseMotion(
-			rel,
-			MousePosition,
+			dx, dy,
+			MousePositionX, MousePositionY,
 		)
 	case C.SDL_MOUSEBUTTONDOWN:
 		e := (*C.SDL_MouseButtonEvent)(e)
@@ -171,12 +170,12 @@ func dispatch(e unsafe.Pointer) {
 		)
 	case C.SDL_MOUSEWHEEL:
 		e := (*C.SDL_MouseWheelEvent)(e)
-		var d int16 = 1
+		var d int32 = 1
 		if e.direction == C.SDL_MOUSEWHEEL_FLIPPED {
 			d = -1
 		}
 		Loop.MouseWheel(
-			pixel.Coord{X: int16(e.x) * d, Y: int16(e.y) * d},
+			int32(e.x)*d, int32(e.y)*d,
 		)
 	//TODO: Joystick Events
 	case C.SDL_JOYAXISMOTION:

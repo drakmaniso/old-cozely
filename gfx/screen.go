@@ -15,11 +15,11 @@ import (
 //------------------------------------------------------------------------------
 
 var screen struct {
-	buffer  gl.Framebuffer
-	texture gl.Texture2D
-	depth   gl.Texture2D
-	size    pixel.Coord
-	pixel   pixel.Coord
+	buffer         gl.Framebuffer
+	texture        gl.Texture2D
+	depth          gl.Texture2D
+	size           pixel.Coord
+	pixelW, pixelH int32
 }
 
 //------------------------------------------------------------------------------
@@ -32,13 +32,17 @@ func ScreenSize() pixel.Coord {
 
 func createScreen() {
 	if internal.Config.ScreenMode == "direct" {
-		gl.Viewport(0, 0, int32(internal.Window.Size.X), int32(internal.Window.Size.Y))
+		gl.Viewport(0, 0, int32(internal.Window.Width), int32(internal.Window.Height))
 		return
 	}
 
 	screen.buffer = gl.NewFramebuffer()
-	screen.size = internal.Config.ScreenSize
-	screen.pixel = internal.Config.PixelSize
+	screen.size = pixel.Coord{
+		int16(internal.Config.ScreenSize[0]),
+		int16(internal.Config.ScreenSize[1]),
+	}
+	screen.pixelW = internal.Config.PixelSize[0]
+	screen.pixelH = internal.Config.PixelSize[1]
 
 	createScreenTexture()
 
@@ -64,30 +68,36 @@ func init() {
 	internal.ResizeScreen = func() {
 		switch internal.Config.ScreenMode {
 		case "Extend":
-			screen.size = internal.Window.Size.SlashCW(screen.pixel)
+			screen.size = pixel.Coord{
+				int16(internal.Window.Width / screen.pixelW),
+				int16(internal.Window.Height / screen.pixelH),
+			}
 			createScreenTexture()
 
 		case "Zoom":
-			r1 := float64(screen.pixel.X) / float64(screen.pixel.Y)
-			screen.pixel = internal.Window.Size.SlashCW(screen.size)
-			if screen.pixel.X < 1 {
-				screen.pixel.X = 1
+			r1 := float64(screen.pixelW) / float64(screen.pixelH)
+			screen.size = pixel.Coord{
+				int16(internal.Window.Width / screen.pixelW),
+				int16(internal.Window.Height / screen.pixelH),
 			}
-			if screen.pixel.Y < 1 {
-				screen.pixel.Y = 1
+			if screen.pixelW < 1 {
+				screen.pixelW = 1
 			}
-			r2 := float64(screen.pixel.X) / float64(screen.pixel.Y)
+			if screen.pixelH < 1 {
+				screen.pixelH = 1
+			}
+			r2 := float64(screen.pixelW) / float64(screen.pixelH)
 			if r1 < r2 {
-				screen.pixel.X = int16(float64(screen.pixel.Y) * r1)
-				if screen.pixel.X < 1 {
-					screen.pixel.X = 1
-					screen.pixel.Y = int16(float64(screen.pixel.X) / r1)
+				screen.pixelW = int32(float64(screen.pixelH) * r1)
+				if screen.pixelW < 1 {
+					screen.pixelW = 1
+					screen.pixelH = int32(float64(screen.pixelW) / r1)
 				}
 			} else if r1 > r2 {
-				screen.pixel.Y = int16(float64(screen.pixel.X) / r1)
-				if screen.pixel.Y < 1 {
-					screen.pixel.Y = 1
-					screen.pixel.X = int16(float64(screen.pixel.Y) * r1)
+				screen.pixelH = int32(float64(screen.pixelW) / r1)
+				if screen.pixelH < 1 {
+					screen.pixelH = 1
+					screen.pixelW = int32(float64(screen.pixelH) * r1)
 				}
 			}
 
@@ -106,14 +116,14 @@ func blitScreen() {
 	gl.DefaultFramebuffer.Bind(gl.DrawFramebuffer)
 	gl.ClearColorBuffer(colour.RGBA{0.2, 0.2, 0.2, 1})
 
-	w := screen.size.X * screen.pixel.X
-	h := screen.size.Y * screen.pixel.Y
-	ox := (internal.Window.Size.X - w) / 2
-	oy := (internal.Window.Size.Y - h) / 2
+	w := int32(screen.size.X) * screen.pixelW
+	h := int32(screen.size.Y) * screen.pixelH
+	ox := (internal.Window.Width - w) / 2
+	oy := (internal.Window.Height - h) / 2
 	screen.buffer.Blit(
 		gl.DefaultFramebuffer,
 		0, 0, int32(screen.size.X), int32(screen.size.Y),
-		int32(ox), int32(oy), int32(ox+w), int32(oy+h),
+		ox, oy, ox+w, oy+h,
 		gl.ColorBufferBit,
 		gl.Nearest,
 	)

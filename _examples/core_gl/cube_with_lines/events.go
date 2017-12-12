@@ -7,19 +7,19 @@ package main
 
 import (
 	"github.com/drakmaniso/carol"
+	"github.com/drakmaniso/carol/core/gl"
 	"github.com/drakmaniso/carol/core/math32"
 	"github.com/drakmaniso/carol/mouse"
-	"github.com/drakmaniso/carol/pixel"
 	"github.com/drakmaniso/carol/plane"
 	"github.com/drakmaniso/carol/space"
 )
 
 //------------------------------------------------------------------------------
 
-func (loop) WindowResized(is pixel.Coord) {
-	w := plane.CoordOf(is)
-	r := w.X / w.Y
+func (loop) WindowResized(w, h int32) {
+	r := float32(w) / float32(h)
 	screenFromView = space.Perspective(math32.Pi/4, r, 0.001, 1000.0)
+	gl.Viewport(0, 0, w, h)
 }
 
 //------------------------------------------------------------------------------
@@ -32,9 +32,10 @@ func (loop) MouseButtonUp(b mouse.Button, _ int) {
 	mouse.SetRelativeMode(false)
 }
 
-func (loop) MouseMotion(motion pixel.Coord, _ pixel.Coord) {
-	m := plane.CoordOf(motion)
-	s := plane.CoordOf(carol.WindowSize())
+func (loop) MouseMotion(dx, dy int32, _, _ int32) {
+	m := plane.Coord{float32(dx), float32(dy)}
+	w, h := carol.WindowSize()
+	s := plane.Coord{float32(w), float32(h)}
 
 	switch {
 	case mouse.IsPressed(mouse.Left):

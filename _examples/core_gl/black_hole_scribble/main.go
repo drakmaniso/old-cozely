@@ -13,7 +13,6 @@ import (
 	"github.com/drakmaniso/carol/core/gl"
 	"github.com/drakmaniso/carol/core/math32"
 	"github.com/drakmaniso/carol/mouse"
-	"github.com/drakmaniso/carol/pixel"
 	"github.com/drakmaniso/carol/plane"
 )
 
@@ -75,6 +74,7 @@ func (loop) Setup() error {
 	gl.Enable(gl.FramebufferSRGB)
 	gl.Enable(gl.Blend)
 	gl.Blending(gl.SrcAlpha, gl.OneMinusSrcAlpha)
+	gl.PointSize(3.0)
 
 	// Create the uniform buffer
 	perFrameUBO = gl.NewUniformBuffer(&perFrame, gl.DynamicStorage)
@@ -161,16 +161,16 @@ func setupPoints() {
 
 //------------------------------------------------------------------------------
 
-func (loop) WindowResized(sp pixel.Coord) {
+func (loop) WindowResized(w, h int32) {
 	setupPoints()
 
 	// Compute ratio
-	s := plane.CoordOf(sp)
-	if s.X > s.Y {
-		perFrame.ratio = plane.Coord{s.Y / s.X, 1.0}
+	if w > h {
+		perFrame.ratio = plane.Coord{float32(h) / float32(w), 1.0}
 	} else {
-		perFrame.ratio = plane.Coord{1.0, s.X / s.Y}
+		perFrame.ratio = plane.Coord{1.0, float32(w) / float32(h)}
 	}
+	gl.Viewport(0, 0, w, h)
 }
 
 func (loop) MouseButtonDown(b mouse.Button, _ int) {

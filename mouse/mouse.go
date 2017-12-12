@@ -7,22 +7,21 @@ package mouse
 
 import (
 	"github.com/drakmaniso/carol/internal"
-	"github.com/drakmaniso/carol/pixel"
 )
 
 //------------------------------------------------------------------------------
 
 // Position returns the current mouse position, relative to the game window.
 // Updated at the start of each game loop iteration.
-func Position() pixel.Coord {
-	return internal.MousePosition
+func Position() (x, y int32) {
+	return internal.MousePositionX, internal.MousePositionY
 }
 
 // Delta returns the mouse position relative to the last call of Delta.
-func Delta() pixel.Coord {
-	result := internal.MouseDelta
-	internal.MouseDelta.X, internal.MouseDelta.Y = 0, 0
-	return result
+func Delta() (dx, dy int32) {
+	dx, dy = internal.MouseDeltaX, internal.MouseDeltaY
+	internal.MouseDeltaX, internal.MouseDeltaY = 0, 0
+	return dx, dy
 }
 
 // SetRelativeMode enables or disables the relative mode, where the mouse is

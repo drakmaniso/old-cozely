@@ -11,7 +11,6 @@ import (
 	"github.com/drakmaniso/carol"
 	"github.com/drakmaniso/carol/key"
 	"github.com/drakmaniso/carol/mouse"
-	"github.com/drakmaniso/carol/pixel"
 )
 
 //------------------------------------------------------------------------------
@@ -51,8 +50,8 @@ func (loop) KeyUp(l key.Label, p key.Position) {
 
 //------------------------------------------------------------------------------
 
-func (loop) MouseMotion(rel pixel.Coord, pos pixel.Coord) {
-	fmt.Printf("%v: mouse motion  %+d,%+d  %d,%d\n", carol.Now(), rel.X, rel.Y, pos.X, pos.Y)
+func (loop) MouseMotion(dx, dy int32, x, y int32) {
+	fmt.Printf("%v: mouse motion  %+d,%+d  %d,%d\n", carol.Now(), dx, dy, x, y)
 }
 
 func (loop) MouseButtonDown(b mouse.Button, clicks int) {
@@ -93,8 +92,8 @@ func (loop) MouseButtonUp(b mouse.Button, clicks int) {
 	fmt.Printf("%v: mouse button up: %s (%v), clicks=%v\n", carol.Now(), n, b, clicks)
 }
 
-func (loop) MouseWheel(w pixel.Coord) {
-	fmt.Printf("%v: mouse wheel: %+d,%+d\n", carol.Now(), w.X, w.Y)
+func (loop) MouseWheel(dx, dy int32) {
+	fmt.Printf("%v: mouse wheel: %+d,%+d\n", carol.Now(), dx, dy)
 }
 
 //------------------------------------------------------------------------------
@@ -107,8 +106,8 @@ func (loop) WindowHidden() {
 	fmt.Printf("%v: window hidden\n", carol.Now())
 }
 
-func (loop) WindowResized(s pixel.Coord) {
-	fmt.Printf("%v: window resized %v\n", carol.Now(), s)
+func (loop) WindowResized(w, h int32) {
+	fmt.Printf("%v: window resized %dx%d\n", carol.Now(), w, h)
 }
 
 func (loop) WindowMinimized() {
@@ -149,10 +148,10 @@ func (loop) WindowQuit() {
 func (loop) Update() error {
 	return nil //TODO
 
-	d := mouse.Delta()
-	fmt.Printf("   mouse.Delta():%+6d,%+6d\v\n", d.X, d.Y)
-	p := mouse.Position()
-	fmt.Printf("mouse.Position():%6d,%6d\v\n", p.X, p.Y)
+	dx, dy := mouse.Delta()
+	fmt.Printf("   mouse.Delta():%+6d,%+6d\v\n", dx, dy)
+	px, py := mouse.Position()
+	fmt.Printf("mouse.Position():%6d,%6d\v\n", px, py)
 
 	fmt.Print("   mouse buttons: ")
 	if mouse.IsPressed(mouse.Left) {

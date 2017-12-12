@@ -5,16 +5,6 @@ package internal
 
 //------------------------------------------------------------------------------
 
-/*
-#cgo windows LDFLAGS: -lSDL2
-#cgo linux freebsd darwin pkg-config: sdl2
-
-#include "sdl.h"
-*/
-import "C"
-
-//------------------------------------------------------------------------------
-
 import (
 	"encoding/json"
 	"log"
@@ -22,6 +12,16 @@ import (
 	"path/filepath"
 	"runtime"
 )
+
+//------------------------------------------------------------------------------
+
+/*
+#cgo windows LDFLAGS: -lSDL2
+#cgo linux freebsd darwin pkg-config: sdl2
+
+#include "sdl.h"
+*/
+import "C"
 
 //------------------------------------------------------------------------------
 
@@ -79,7 +79,8 @@ func Setup() error {
 
 	err = OpenWindow(
 		Config.Title,
-		Config.WindowSize,
+		Config.WindowSize[0],
+		Config.WindowSize[1],
 		Config.Display,
 		Config.Fullscreen,
 		Config.FullscreenMode,

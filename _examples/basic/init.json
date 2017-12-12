@@ -1,17 +1,17 @@
 {
 	"Title": "Basic Example",
-	"WindowSize": {
-		"X": 1280,
-		"Y": 720
-	},
-	"ScreenSize": {
-		"X": 320,
-		"Y": 180
-	},
-	"PixelSize": {
-		"X": 4,
-		"Y": 4
-	},
+	"WindowSize": [
+		1280,
+		720
+	],
+	"ScreenSize": [
+		320,
+		180
+	],
+	"PixelSize": [
+		4,
+		4
+	],
 	"ScreenMode": "Extend",
 	"Display": 0,
 	"Fullscreen": false,

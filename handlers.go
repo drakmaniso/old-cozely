@@ -6,11 +6,9 @@ package carol
 //------------------------------------------------------------------------------
 
 import (
-	"github.com/drakmaniso/carol/core/gl"
 	"github.com/drakmaniso/carol/internal"
 	"github.com/drakmaniso/carol/key"
 	"github.com/drakmaniso/carol/mouse"
-	"github.com/drakmaniso/carol/pixel"
 )
 
 //------------------------------------------------------------------------------
@@ -29,9 +27,7 @@ func (h Handlers) WindowShown() {}
 func (h Handlers) WindowHidden() {}
 
 // WindowResized does nothing.
-func (h Handlers) WindowResized(s pixel.Coord) {
-	gl.Viewport(0, 0, int32(s.X), int32(s.Y))
-}
+func (h Handlers) WindowResized(width, height int32) {}
 
 // WindowMinimized does nothing.
 func (h Handlers) WindowMinimized() {}
@@ -62,7 +58,7 @@ func (h Handlers) WindowQuit() {
 //------------------------------------------------------------------------------
 
 // MouseMotion does nothing.
-func (h Handlers) MouseMotion(rel pixel.Coord, pos pixel.Coord) {}
+func (h Handlers) MouseMotion(dx, dy int32, x, y int32) {}
 
 // MouseButtonDown does nothing.
 func (h Handlers) MouseButtonDown(b mouse.Button, clicks int) {}
@@ -71,7 +67,7 @@ func (h Handlers) MouseButtonDown(b mouse.Button, clicks int) {}
 func (h Handlers) MouseButtonUp(b mouse.Button, clicks int) {}
 
 // MouseWheel does nothing.
-func (h Handlers) MouseWheel(w pixel.Coord) {}
+func (h Handlers) MouseWheel(dx, dy int32) {}
 
 //------------------------------------------------------------------------------
 

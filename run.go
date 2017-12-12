@@ -34,7 +34,7 @@ func TimeStep() float64 {
 	return timeStep
 }
 
-var timeStep float64 = 1.0 / 60
+var timeStep = float64(1.0 / 60)
 
 //------------------------------------------------------------------------------
 
@@ -84,7 +84,7 @@ func Run(loop GameLoop) error {
 	}
 
 	// First, send a fake resize window event
-	internal.Loop.WindowResized(internal.Window.Size)
+	internal.Loop.WindowResized(internal.Window.Width, internal.Window.Height)
 	internal.ResizeScreen()
 
 	// Main Loop

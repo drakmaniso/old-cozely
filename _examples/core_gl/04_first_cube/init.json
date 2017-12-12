@@ -1,12 +1,5 @@
 {
 	"Title": "Example 04: First Cube",
-	"WindowSize": {
-		"X": 1280,
-		"Y": 720
-	},
-	"Display": 0,
 	"Fullscreen": false,
-	"FullscreenMode": "Desktop",
-	"VSync": true,
 	"Debug": true
 }

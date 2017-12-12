@@ -1,12 +1,9 @@
 {
 	"Title": "Example 03: First Uniform Buffer",
-	"WindowSize": {
-		"X": 512,
-		"Y": 512
-	},
-	"Display": 0,
+	"WindowSize": [
+		512,
+		512
+	],
 	"Fullscreen": false,
-	"FullscreenMode": "Desktop",
-	"VSync": true,
 	"Debug": true
 }

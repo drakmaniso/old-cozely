@@ -1,8 +1,5 @@
 {
 	"Title": "Example 05: First Texture",
-	"Display": 0,
 	"Fullscreen": false,
-	"FullscreenMode": "Desktop",
-	"VSync": false,
 	"Debug": true
 }

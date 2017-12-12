@@ -138,7 +138,6 @@ func (loop) Draw(_, _ float64) error {
 	edgePipeline.Bind()
 	gl.Disable(gl.LineSmooth)
 	gl.Disable(gl.Blend)
-	gl.Blending(gl.SrcAlpha, gl.OneMinusSrcAlpha)
 	gl.Draw(0, 6*2*3)
 
 	// edgePipeline.Bind()

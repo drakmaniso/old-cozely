@@ -1,12 +1,9 @@
 {
 	"Title": "Example 01: First Triangle",
-	"WindowSize": {
-		"X": 512,
-		"Y": 512
-	},
-	"Display": 0,
+	"WindowSize": [
+		512,
+		512
+	],
 	"Fullscreen": false,
-	"FullscreenMode": "Desktop",
-	"VSync": true,
 	"Debug": true
 }

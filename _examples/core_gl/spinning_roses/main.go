@@ -12,7 +12,6 @@ import (
 	"github.com/drakmaniso/carol/colour"
 	"github.com/drakmaniso/carol/core/gl"
 	"github.com/drakmaniso/carol/mouse"
-	"github.com/drakmaniso/carol/pixel"
 	"github.com/drakmaniso/carol/plane"
 )
 
@@ -133,9 +132,9 @@ func randomizeRosesData() {
 
 //------------------------------------------------------------------------------
 
-func (loop) WindowResized(is pixel.Coord) {
-	s := plane.CoordOf(is)
-	perFrame.ratio = s.Y / s.X
+func (loop) WindowResized(w, h int32) {
+	perFrame.ratio = float32(h) / float32(w)
+	gl.Viewport(0, 0, w, h)
 }
 
 func (loop) MouseButtonDown(b mouse.Button, _ int) {

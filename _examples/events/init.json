@@ -1,16 +1,5 @@
 {
 	"Title": "Events Example",
-	"WindowSize": {
-		"X": 1280,
-		"Y": 720
-	},
-	"ScreenSize": {
-		"X": 128,
-		"Y": 128
-	},
-	"Display": 0,
 	"Fullscreen": false,
-	"FullscreenMode": "Desktop",
-	"VSync": true,
 	"Debug": true
 }

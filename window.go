@@ -7,7 +7,6 @@ package carol
 
 import (
 	"github.com/drakmaniso/carol/internal"
-	"github.com/drakmaniso/carol/pixel"
 )
 
 //------------------------------------------------------------------------------
@@ -23,8 +22,8 @@ func HasMouseFocus() bool {
 }
 
 // WindowSize returns the size of the window in (screen) pixels.
-func WindowSize() pixel.Coord {
-	return internal.Window.Size
+func WindowSize() (width, height int32) {
+	return internal.Window.Width, internal.Window.Height
 }
 
 //TODO
