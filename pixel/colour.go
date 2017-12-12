@@ -7,8 +7,8 @@ package pixel
 
 import (
 	"errors"
-	"image/color"
 
+	"github.com/drakmaniso/carol/colour"
 	"github.com/drakmaniso/carol/core/gl"
 )
 
@@ -45,11 +45,11 @@ func ClearPalette() {
 		delete(palette.names, n)
 	}
 	for c := range colours {
-		colours[c] = RGBA{1, 0, 1, 1}
+		colours[c] = colour.RGBA{1, 0, 1, 1}
 	}
 	palette.count = 0
-	NewColor("transparent", RGBA{0, 0, 0, 0})
-	colours[255] = RGBA{1, 1, 1, 1}
+	NewColor("transparent", colour.RGBA{0, 0, 0, 0})
+	colours[255] = colour.RGBA{1, 1, 1, 1}
 }
 
 //------------------------------------------------------------------------------
@@ -65,7 +65,7 @@ func ColorCount() int {
 // either unique or empty.
 //
 // Note: The palette contains a maximum of 256 colors.
-func NewColor(name string, cc color.Color) Color {
+func NewColor(name string, v colour.Colour) Color {
 	if palette.count > 255 {
 		setErr("in NewColor", errors.New("impossible to add color \""+name+"\": maximum color count reached."))
 		return Color(0)
@@ -74,11 +74,7 @@ func NewColor(name string, cc color.Color) Color {
 	c := Color(palette.count)
 	palette.count++
 
-	v, ok := cc.(RGBA)
-	if !ok {
-		v = MakeRGBA(cc)
-	}
-	colours[c] = v
+	colours[c] = colour.RGBAOf(v)
 
 	palette.changed = true
 
@@ -105,11 +101,12 @@ func GetColor(name string) Color {
 	return c
 }
 
-// FindColor searches for a color by its RGBA values. If this exact color isn't in
+// FindColor searches for a color by its colour.RGBA values. If this exact color isn't in
 // the palette, the first color is returned, and ok is set to false.
-func FindColor(v RGBA) (c Color, ok bool) {
+func FindColor(v colour.Colour) (c Color, ok bool) {
+	lv := colour.RGBAOf(v)
 	for c, vv := range colours {
-		if vv == v {
+		if vv == lv {
 			return Color(c), true
 		}
 	}
@@ -119,18 +116,14 @@ func FindColor(v RGBA) (c Color, ok bool) {
 
 //------------------------------------------------------------------------------
 
-// RGBA returns the RGBA values of a color.
-func (c Color) RGBA() RGBA {
+// RGBA returns the color corresponding to a palette index.
+func (c Color) RGBA() colour.RGBA {
 	return colours[c]
 }
 
-// SetRGBA changes the RGBA values of a color.
-func (c Color) SetRGBA(cc color.Color) {
-	v, ok := cc.(RGBA)
-	if !ok {
-		v = MakeRGBA(cc)
-	}
-	colours[c] = v
+// SetRGBA changes the colour.RGBA values of a color.
+func (c Color) SetRGBA(v colour.Colour) {
+	colours[c] = colour.RGBAOf(v)
 	palette.changed = true
 }
 

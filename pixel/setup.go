@@ -81,7 +81,7 @@ func postDrawHook() error {
 	screen.buffer.Bind(gl.DrawReadFramebuffer)
 	gl.Viewport(0, 0, int32(screen.size.X), int32(screen.size.Y))
 	stampPipeline.Bind()
-	gl.ClearColorBuffer(colour.RGBA{0, 0, 0, 1}) //TODO
+	gl.ClearColorBuffer(colour.RGBA{0, 0, 0, 0}) //TODO
 	gl.Blending(gl.SrcAlpha, gl.OneMinusSrcAlpha)
 	gl.Enable(gl.Blend)
 
