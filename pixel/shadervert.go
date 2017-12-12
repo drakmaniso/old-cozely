@@ -1,4 +1,4 @@
-package gfx
+package pixel
 
 const vertexShader = "\n" + `#version 450 core
 

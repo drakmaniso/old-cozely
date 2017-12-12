@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2017 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
-package gfx
+package pixel
 
 //------------------------------------------------------------------------------
 
@@ -9,7 +9,6 @@ import (
 	"github.com/drakmaniso/carol/colour"
 	"github.com/drakmaniso/carol/core/gl"
 	"github.com/drakmaniso/carol/internal"
-	"github.com/drakmaniso/carol/pixel"
 )
 
 //------------------------------------------------------------------------------
@@ -18,13 +17,13 @@ var screen struct {
 	buffer         gl.Framebuffer
 	texture        gl.Texture2D
 	depth          gl.Texture2D
-	size           pixel.Coord
+	size           Coord
 	pixelW, pixelH int32
 }
 
 //------------------------------------------------------------------------------
 
-func ScreenSize() pixel.Coord {
+func ScreenSize() Coord {
 	return screen.size
 }
 
@@ -37,7 +36,7 @@ func createScreen() {
 	}
 
 	screen.buffer = gl.NewFramebuffer()
-	screen.size = pixel.Coord{
+	screen.size = Coord{
 		int16(internal.Config.ScreenSize[0]),
 		int16(internal.Config.ScreenSize[1]),
 	}
@@ -68,7 +67,7 @@ func init() {
 	internal.ResizeScreen = func() {
 		switch internal.Config.ScreenMode {
 		case "Extend":
-			screen.size = pixel.Coord{
+			screen.size = Coord{
 				int16(internal.Window.Width / screen.pixelW),
 				int16(internal.Window.Height / screen.pixelH),
 			}
@@ -76,7 +75,7 @@ func init() {
 
 		case "Zoom":
 			r1 := float64(screen.pixelW) / float64(screen.pixelH)
-			screen.size = pixel.Coord{
+			screen.size = Coord{
 				int16(internal.Window.Width / screen.pixelW),
 				int16(internal.Window.Height / screen.pixelH),
 			}

@@ -7,7 +7,7 @@ package main
 
 import (
 	"github.com/drakmaniso/carol"
-	"github.com/drakmaniso/carol/gfx"
+	"github.com/drakmaniso/carol/pixel"
 )
 
 //------------------------------------------------------------------------------
@@ -26,20 +26,20 @@ type loop struct {
 	carol.Handlers
 }
 
-var logo, mire gfx.Picture
+var logo, mire pixel.Picture
 
 func (loop) Setup() error {
-	gfx.PaletteMSX2()
+	pixel.PaletteMSX2()
 
-	logo = gfx.GetPicture("logo")
-	mire = gfx.GetPicture("mire")
+	logo = pixel.GetPicture("logo")
+	mire = pixel.GetPicture("mire")
 
-	return gfx.Err()
+	return pixel.Err()
 }
 
 func (loop) Update() error {
 	x++
-	if x >= gfx.ScreenSize().X {
+	if x >= pixel.ScreenSize().X {
 		x = -64
 	}
 	return nil
@@ -58,15 +58,15 @@ func (loop) Draw(delta, _ float64) error {
 	// 	count++
 	// 	timer = 0.0
 	// 	if count%2 != 0 {
-	// 		gfx.Color(2).SetRGBA(gfx.RGBA{1, 1, 1, 1})
+	// 		pixel.Color(2).SetRGBA(pixel.RGBA{1, 1, 1, 1})
 	// 	} else {
-	// 		gfx.Color(2).SetRGBA(gfx.RGBA{1, 0, 0.5, 1})
+	// 		pixel.Color(2).SetRGBA(pixel.RGBA{1, 0, 0.5, 1})
 	// 	}
 	// }
 
 	logo.Paint(x, 10)
 
-	s := gfx.ScreenSize()
+	s := pixel.ScreenSize()
 
 	mire.Paint(0, 0)
 	mire.Paint(s.X-32, 0)
@@ -75,7 +75,7 @@ func (loop) Draw(delta, _ float64) error {
 
 	logo.Paint(s.X/2-32, 20)
 
-	return gfx.Err()
+	return pixel.Err()
 }
 
 //------------------------------------------------------------------------------
