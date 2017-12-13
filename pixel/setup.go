@@ -47,11 +47,11 @@ func preSetupHook() error {
 	screenUBO = gl.NewUniformBuffer(&screenUniforms, gl.DynamicStorage|gl.MapWrite)
 	screenUBO.Bind(0)
 
-	paletteBuffer = gl.NewStorageBuffer(uintptr(256*4*4), gl.DynamicStorage|gl.MapWrite)
-	paletteBuffer.Bind(2)
+	paletteSSBO = gl.NewStorageBuffer(uintptr(256*4*4), gl.DynamicStorage|gl.MapWrite)
+	paletteSSBO.Bind(2)
 
-	stampBuffer = gl.NewStorageBuffer(uintptr(1024), gl.DynamicStorage|gl.MapWrite)
-	stampBuffer.Bind(0)
+	stampSSBO = gl.NewStorageBuffer(uintptr(1024), gl.DynamicStorage|gl.MapWrite)
+	stampSSBO.Bind(0)
 
 	err = gl.Err()
 	if err != nil {
@@ -70,7 +70,7 @@ func preSetupHook() error {
 
 func postDrawHook() error {
 	if palette.changed {
-		paletteBuffer.SubData(colours[:], 0)
+		paletteSSBO.SubData(colours[:], 0)
 		palette.changed = false
 	}
 
@@ -87,7 +87,7 @@ func postDrawHook() error {
 
 	if true {
 		if len(stamps) > 0 {
-			stampBuffer.SubData(stamps, 0)
+			stampSSBO.SubData(stamps, 0)
 			gl.Draw(0, int32(len(stamps)*6))
 			stamps = stamps[:0]
 		}

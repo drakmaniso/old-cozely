@@ -21,7 +21,7 @@ import (
 
 //------------------------------------------------------------------------------
 
-var pictureTexture gl.BufferTexture
+var pictureTBO gl.BufferTexture
 
 var pictureTotalPixels uint64
 
@@ -59,8 +59,8 @@ func loadAllPictures() error {
 		}
 	}
 
-	pictureTexture = gl.NewBufferTexture(data, gl.R8UI, 0)
-	pictureTexture.Bind(1) //TODO: move elsewhere
+	pictureTBO = gl.NewBufferTexture(data, gl.R8UI, 0)
+	pictureTBO.Bind(1) //TODO: move elsewhere
 
 	internal.Debug.Printf("Loaded %d pictures: %v", len(pictures), pictures)
 

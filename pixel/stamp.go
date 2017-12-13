@@ -33,7 +33,7 @@ var stamps []stamp
 
 var stampPipeline *gl.Pipeline
 
-var stampBuffer gl.StorageBuffer
+var stampSSBO gl.StorageBuffer
 
 var screenUBO gl.UniformBuffer
 
