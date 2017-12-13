@@ -21,7 +21,9 @@ import (
 
 //------------------------------------------------------------------------------
 
-var pictureBuffer gl.StorageBuffer
+var pictureTexture gl.BufferTexture
+
+var pictureTotalPixels uint64
 
 //------------------------------------------------------------------------------
 
@@ -44,7 +46,7 @@ func loadAllPictures() error {
 		return internal.Error("while reading images directory", err)
 	}
 
-	data := make([]uint8, totalSize, totalSize)
+	data := make([]uint8, pictureTotalPixels, pictureTotalPixels)
 
 	addr := uint32(0)
 	for _, n := range dn {
@@ -57,8 +59,8 @@ func loadAllPictures() error {
 		}
 	}
 
-	pictureBuffer = gl.NewStorageBuffer(data, 0)
-	pictureBuffer.Bind(1) //TODO: move elsewhere
+	pictureTexture = gl.NewBufferTexture(data, gl.R8UI, 0)
+	pictureTexture.Bind(1) //TODO: move elsewhere
 
 	internal.Debug.Printf("Loaded %d pictures: %v", len(pictures), pictures)
 
@@ -81,7 +83,7 @@ func scan() error {
 		return internal.Error("while reading images directory", err)
 	}
 
-	totalSize = uint64(0)
+	pictureTotalPixels = uint64(0)
 	nb := 0
 	for _, n := range dn {
 		if path.Ext(n) == ".png" {
@@ -89,17 +91,15 @@ func scan() error {
 			if err != nil {
 				return err
 			}
-			totalSize += s
+			pictureTotalPixels += s
 			nb++
 		}
 	}
 
-	internal.Debug.Printf("Scanned %d pictures: %d bytes (%.1f Mb)", nb, totalSize, float64(totalSize)/(1024.0*1024.0))
+	internal.Debug.Printf("Scanned %d pictures: %d bytes (%.1f Mb)", nb, pictureTotalPixels, float64(pictureTotalPixels)/(1024.0*1024.0))
 
 	return nil
 }
-
-var totalSize uint64
 
 func getSize(dir, filename string) (uint64, error) {
 	r, err := os.Open(dir + filename)

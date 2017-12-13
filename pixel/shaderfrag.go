@@ -10,9 +10,8 @@ in PerVertex {
 	layout(location=4) flat uint Tint;
 };
 
-layout(std430, binding = 1) buffer PictureBuffer {
-	uint []Pixels;
-};
+
+layout(binding = 1) uniform usamplerBuffer PictureSampler;
 
 layout(std430, binding = 2) buffer PaletteBuffer {
 	vec4 Colours[256];
@@ -20,15 +19,8 @@ layout(std430, binding = 2) buffer PaletteBuffer {
 
 out vec4 color;
 
-uint getByte(uint addr) {
-	uint waddr = addr >> 2;
-	uint w = Pixels[waddr];
-	w = w >> (8 * (addr & 0x3));
-	return w & 0xFF;
-}
-
 uint getPixel(uint addr, uint stride, uint x, uint y) {
-	return getByte(addr + x + y*stride);
+	return texelFetch(PictureSampler, int(addr + x + y*stride)).x;
 }
 
 float rand(vec2 c){
