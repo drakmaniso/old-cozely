@@ -16,11 +16,18 @@ import (
 /*
 #include "glad.h"
 
-GLuint NewBuffer(GLsizeiptr size, void* data, GLbitfield flags) {
+static inline GLuint NewBuffer(GLsizeiptr size, void* data, GLbitfield flags) {
 	GLuint b;
 	glCreateBuffers(1, &b);
 	glNamedBufferStorage(b, size, data, flags);
 	return b;
+}
+
+static inline GLuint NewBufferTexture(GLuint buffer, GLenum format) {
+	GLuint t;
+	glCreateTextures(GL_TEXTURE_BUFFER, 1, &t);
+	glTextureBuffer(t, format, buffer);
+	return t;
 }
 
 void DeleteBuffer(GLuint b) {
@@ -50,6 +57,11 @@ static inline void BindElement(GLuint buffer) {
 static inline void BindIndirect(GLuint buffer) {
 	glBindBuffer(GL_DRAW_INDIRECT_BUFFER, buffer);
 }
+
+static inline void BindTextureUnit(GLuint unit, GLuint texture) {
+	glBindTextureUnit(unit, texture);
+}
+
 */
 import "C"
 
@@ -353,6 +365,37 @@ func (ib *IndirectBuffer) Bind() {
 // Delete frees the buffer.
 func (ib *IndirectBuffer) Delete() {
 	C.DeleteBuffer(C.GLuint(ib.object))
+}
+
+//------------------------------------------------------------------------------
+
+type BufferTexture struct {
+	object  C.GLuint
+	texture C.GLuint
+}
+
+func NewBufferTexture(data interface{}, fmt TextureFormat, f BufferFlags) BufferTexture {
+	p, s, err := pointerAndSizeOf(data)
+	if err != nil {
+		setErr("creating storage buffer", err)
+		return BufferTexture{}
+	}
+	var bt BufferTexture
+	bt.object = C.NewBuffer(C.GLsizeiptr(s), p, C.GLbitfield(f))
+	bt.texture = C.NewBufferTexture(bt.object, C.GLenum(fmt))
+	//TODO: error handling
+	return bt
+}
+
+// Bind the buffer texture.
+func (bt BufferTexture) Bind(index uint32) {
+	C.BindTextureUnit(C.GLuint(index), bt.texture)
+}
+
+// Delete frees the buffer.
+func (tb *BufferTexture) Delete() {
+	C.DeleteBuffer(C.GLuint(tb.object))
+	//TODO: delete texture
 }
 
 //------------------------------------------------------------------------------
