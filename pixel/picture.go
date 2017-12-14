@@ -15,6 +15,7 @@ type Picture struct {
 	address uint32
 	width   int16
 	height  int16
+	mode    uint8
 }
 
 //------------------------------------------------------------------------------
@@ -40,7 +41,8 @@ func GetPicture(name string) Picture {
 //------------------------------------------------------------------------------
 
 func (p Picture) Paint(x, y int16) {
-	s := stamp{address: p.address, w: p.width, h: p.height, x: x, y: y, tint: 0}
+	s := stamp{address: p.address, w: p.width, h: p.height, x: x, y: y, tint: 0, mode: uint32(p.mode)}
+	// println(p.width, p.height)
 	stamps = append(stamps, s)
 }
 

@@ -41,7 +41,7 @@ func preSetupHook() error {
 	stampPipeline = gl.NewPipeline(
 		gl.VertexShader(strings.NewReader(vertexShader)),
 		gl.FragmentShader(strings.NewReader(fragmentShader)),
-		gl.Topology(gl.Triangles),
+		gl.Topology(gl.TriangleStrip),
 	)
 
 	screenUBO = gl.NewUniformBuffer(&screenUniforms, gl.DynamicStorage|gl.MapWrite)
@@ -88,7 +88,7 @@ func postDrawHook() error {
 	if true {
 		if len(stamps) > 0 {
 			stampSSBO.SubData(stamps, 0)
-			gl.Draw(0, int32(len(stamps)*6))
+			gl.DrawInstanced(0, 4, int32(len(stamps)))
 			stamps = stamps[:0]
 		}
 	}

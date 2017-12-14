@@ -25,6 +25,9 @@ type stamp struct {
 	depth     int16
 	tint      uint8
 	transform byte
+
+	//word
+	mode uint32
 }
 
 var stamps []stamp

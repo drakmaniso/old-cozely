@@ -7,13 +7,15 @@ package pixel
 
 import (
 	"errors"
-	"fmt"
 	"image"
 	"image/color"
 	_ "image/png" // Activate PNG support
 	"os"
 	"path"
+	"path/filepath"
 	"strings"
+
+	"github.com/drakmaniso/carol/colour"
 
 	"github.com/drakmaniso/carol/core/gl"
 	"github.com/drakmaniso/carol/internal"
@@ -21,9 +23,19 @@ import (
 
 //------------------------------------------------------------------------------
 
-var pictureTBO gl.BufferTexture
+var (
+	rgbaPixels uint64
+	rgbaData   []colour.SRGBA8
+	rgbaTBO    gl.BufferTexture
 
-var pictureTotalPixels uint64
+	indexedPixels uint64
+	indexedData   []uint8
+	indexedTBO    gl.BufferTexture
+)
+
+//------------------------------------------------------------------------------
+
+const picturesPath = "graphics/pictures/"
 
 //------------------------------------------------------------------------------
 
@@ -46,21 +58,22 @@ func loadAllPictures() error {
 		return internal.Error("while reading images directory", err)
 	}
 
-	data := make([]uint8, pictureTotalPixels, pictureTotalPixels)
+	rgbaData = make([]colour.SRGBA8, 0, rgbaPixels)
+	indexedData = make([]uint8, 0, indexedPixels)
 
-	addr := uint32(0)
 	for _, n := range dn {
 		if path.Ext(n) == ".png" {
-			s, err := load(picturesPath, n, data, addr)
+			err := load(picturesPath + n)
 			if err != nil {
 				return err
 			}
-			addr += s
 		}
 	}
 
-	pictureTBO = gl.NewBufferTexture(data, gl.R8UI, 0)
-	pictureTBO.Bind(1) //TODO: move elsewhere
+	indexedTBO = gl.NewBufferTexture(indexedData, gl.R8UI, 0)
+	indexedTBO.Bind(0) //TODO: move elsewhere
+	rgbaTBO = gl.NewBufferTexture(rgbaData, gl.RGBA8, 0)
+	rgbaTBO.Bind(1) //TODO: move elsewhere
 
 	internal.Debug.Printf("Loaded %d pictures: %v", len(pictures), pictures)
 
@@ -83,85 +96,145 @@ func scan() error {
 		return internal.Error("while reading images directory", err)
 	}
 
-	pictureTotalPixels = uint64(0)
+	rgbaPixels = uint64(0)
+	indexedPixels = uint64(0)
 	nb := 0
 	for _, n := range dn {
 		if path.Ext(n) == ".png" {
-			s, err := getSize(picturesPath, n)
+			err := countSize(picturesPath + n)
 			if err != nil {
 				return err
 			}
-			pictureTotalPixels += s
 			nb++
 		}
 	}
 
-	internal.Debug.Printf("Scanned %d pictures: %d bytes (%.1f Mb)", nb, pictureTotalPixels, float64(pictureTotalPixels)/(1024.0*1024.0))
+	internal.Debug.Printf("Scanned %d pictures: %d bytes (%.1f Mb)", nb, rgbaPixels, float64(rgbaPixels)/(1024.0*1024.0))
 
 	return nil
 }
 
-func getSize(dir, filename string) (uint64, error) {
-	r, err := os.Open(dir + filename)
+func countSize(filename string) error {
+	r, err := os.Open(filename)
 	if err != nil {
-		return 0, internal.Error(`opening picture file "`+filename+`"`, err)
+		return internal.Error(`opening picture file "`+filename+`"`, err)
 	}
 	defer r.Close()
 
 	conf, _, err := image.DecodeConfig(r)
 	if err != nil {
-		return 0, internal.Error("decoding picture file", err)
+		return internal.Error("decoding picture file", err)
 	}
 
-	_, ok := conf.ColorModel.(color.Palette)
-	if !ok {
-		return 0, errors.New(`picture file "` + filename + `" not in indexed color format.`)
+	s := uint64(conf.Width) * uint64(conf.Height)
+
+	switch conf.ColorModel {
+
+	case color.RGBAModel,
+		color.NRGBAModel,
+		color.GrayModel,
+		color.Gray16Model,
+		color.RGBA64Model,
+		color.NRGBA64Model:
+
+		rgbaPixels += s
+
+	case color.AlphaModel, color.Alpha16Model:
+		return errors.New(`picture file "` + filename + `" color model (16-bit alpha) not yet supported.`)
+
+	default:
+		_, ok := conf.ColorModel.(color.Palette)
+		if ok {
+			indexedPixels += s
+
+		} else {
+			return errors.New(`picture file "` + filename + `" color model not recognized.`)
+		}
 	}
 
-	return uint64(conf.Width) * uint64(conf.Height), nil
+	return nil
 }
 
 //------------------------------------------------------------------------------
 
-func load(dir, filename string, data []uint8, address uint32) (uint32, error) {
-	r, err := os.Open(dir + filename)
+func load(filename string) error {
+	r, err := os.Open(filename)
 	if err != nil {
-		return 0, internal.Error(`opening picture file "`+filename+`"`, err)
+		return internal.Error(`opening picture file "`+filename+`"`, err)
 	}
 	defer r.Close()
 
 	img, _, err := image.Decode(r)
 	if err != nil {
-		return 0, internal.Error("decoding picture file", err)
+		return internal.Error("decoding picture file", err)
 	}
 
-	pimg, ok := img.(*image.Paletted)
-	if !ok {
-		return 0, errors.New(`picture file "` + filename + `" not in indexed color format.`)
+	w := img.Bounds().Max.X - img.Bounds().Min.X
+	h := img.Bounds().Max.Y - img.Bounds().Min.Y
+
+	switch img.ColorModel() {
+
+	case color.RGBAModel,
+		color.NRGBAModel,
+		color.GrayModel,
+		color.Gray16Model,
+		color.RGBA64Model,
+		color.NRGBA64Model:
+
+		// Copy picture data
+		addr := len(rgbaData)
+		for y := img.Bounds().Min.Y; y < img.Bounds().Max.Y; y++ {
+			for x := img.Bounds().Min.X; x < img.Bounds().Max.X; x++ {
+				r, g, b, a := img.At(x, y).RGBA()
+				rgbaData = append(
+					rgbaData,
+					colour.SRGBA8{
+						uint8(r >> 8),
+						uint8(g >> 8),
+						uint8(b >> 8),
+						uint8(a >> 8),
+					},
+				)
+			}
+		}
+		// Register the picture
+		p := Picture{
+			address: uint32(addr),
+			width:   int16(w),
+			height:  int16(h),
+			mode:    2,
+		}
+		n := strings.TrimSuffix(filepath.Base(filename), ".png")
+		pictures[n] = p
+		internal.Debug.Printf("Added picture '%s': %d x %d = %d -> %v", n, p.width, p.height, len(rgbaData)-addr, p)
+
+	case color.AlphaModel, color.Alpha16Model:
+		return errors.New(`picture file "` + filename + `" color model (8-bit or 16-bit alpha) not yet supported.`)
+
+	default:
+		pimg, ok := img.(*image.Paletted)
+		if ok {
+			// return errors.New(`picture file "` + filename + `" color model (indexed) not yet supported.`)
+			addr := len(indexedData)
+			// Register the picture
+			p := Picture{
+				address: uint32(addr),
+				width:   int16(pimg.Rect.Max.X - pimg.Rect.Min.X),
+				height:  int16(pimg.Rect.Max.Y - pimg.Rect.Min.Y),
+				mode:    1,
+			}
+			n := strings.TrimSuffix(filepath.Base(filename), ".png")
+			pictures[n] = p
+			// Copy picture data
+			indexedData = append(indexedData, pimg.Pix...)
+			internal.Debug.Printf("Added picture '%s': %d x %d = %d -> %v", n, p.width, p.height, len(indexedData)-addr, p)
+
+		} else {
+			return errors.New(`picture file "` + filename + `" color model not recognized.`)
+		}
 	}
 
-	// Register the picture
-
-	p := Picture{
-		address: address,
-		width:   int16(pimg.Rect.Max.X - pimg.Rect.Min.X),
-		height:  int16(pimg.Rect.Max.Y - pimg.Rect.Min.Y),
-	}
-	n := strings.TrimSuffix(filename, ".png")
-	pictures[n] = p
-
-	internal.Debug.Printf("Add picture '%s': %d == %d", n, len(pimg.Pix), p.width*p.height)
-
-	s := copy(data[address:], pimg.Pix)
-	if s != len(pimg.Pix) {
-		return 0, fmt.Errorf(`unable to load full data for picture "%s"`, filename)
-	}
-
-	return uint32(p.width * p.height), nil
+	return nil
 }
-
-//------------------------------------------------------------------------------
-
-const picturesPath = "graphics/pictures/"
 
 //------------------------------------------------------------------------------

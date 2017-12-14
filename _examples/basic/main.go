@@ -7,8 +7,13 @@ package main
 
 import (
 	"github.com/drakmaniso/carol"
+	"github.com/drakmaniso/carol/colour"
 	"github.com/drakmaniso/carol/pixel"
 )
+
+//------------------------------------------------------------------------------
+
+var logo, mire, midgray, midrgb pixel.Picture
 
 //------------------------------------------------------------------------------
 
@@ -26,13 +31,13 @@ type loop struct {
 	carol.Handlers
 }
 
-var logo, mire pixel.Picture
-
 func (loop) Setup() error {
 	pixel.PaletteMSX2()
 
 	logo = pixel.GetPicture("logo")
 	mire = pixel.GetPicture("mire")
+	midgray = pixel.GetPicture("midgray")
+	midrgb = pixel.GetPicture("midrgb")
 
 	return pixel.Err()
 }
@@ -54,15 +59,15 @@ var (
 
 func (loop) Draw(delta, _ float64) error {
 	timer += delta
-	// if timer > 0.25 {
-	// 	count++
-	// 	timer = 0.0
-	// 	if count%2 != 0 {
-	// 		pixel.Color(2).SetRGBA(pixel.RGBA{1, 1, 1, 1})
-	// 	} else {
-	// 		pixel.Color(2).SetRGBA(pixel.RGBA{1, 0, 0.5, 1})
-	// 	}
-	// }
+	if timer > 0.25 {
+		count++
+		timer = 0.0
+		if count%2 != 0 {
+			pixel.Color(2).SetRGBA(colour.RGBA{1, 1, 1, 1})
+		} else {
+			pixel.Color(2).SetRGBA(colour.RGBA{1, 0, 0.5, 1})
+		}
+	}
 
 	logo.Paint(x, 10)
 
@@ -74,6 +79,9 @@ func (loop) Draw(delta, _ float64) error {
 	mire.Paint(s.X-32, s.Y-32)
 
 	logo.Paint(s.X/2-32, 20)
+
+	midrgb.Paint(s.X/2-48, s.Y/2-20)
+	midgray.Paint(s.X/2-16, s.Y/2+20+8)
 
 	return pixel.Err()
 }

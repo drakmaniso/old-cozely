@@ -13,6 +13,7 @@ struct Stamp {
 	uint WH;
 	uint XY;
 	uint DepthTintTrans;
+	uint Mode;
 };
 layout(std430, binding = 0) buffer StampBuffer {
 	Stamp []Stamps;
@@ -23,17 +24,21 @@ out gl_PerVertex {
 };
 
 out PerVertex {
-	layout(location=0) vec2 UV;
-	layout(location=1) flat uint Address;
-	layout(location=2) flat uint Stride;
-	layout(location=3) flat uint Depth;
-	layout(location=4) flat uint Tint;
+	layout(location=0) flat uint Mode;
+	layout(location=1) vec2 UV;
+	layout(location=2) flat uint Address;
+	layout(location=3) flat uint Stride;
+	layout(location=4) flat uint Depth;
+	layout(location=5) flat uint Tint;
 };
+
+const uint modeIndexed = 1;
+const uint modeRGBA = 2;
 
 void main(void)
 {
 	// Calculate index in face buffer
-	uint stampIndex = gl_VertexID / 6;
+	uint stampIndex = gl_InstanceID;
 
 	int w = int(Stamps[stampIndex].WH & 0xFFFF);
 	int h = int(Stamps[stampIndex].WH >> 16);
@@ -50,14 +55,14 @@ void main(void)
 	);
 
 	// Determine which corner of the stamp this is
-	const uint [6]triangulate = {0, 1, 2, 0, 2, 3};
-	uint currVert = triangulate[gl_VertexID - (6 * stampIndex)];
+	const uint [4]triangulate = {0, 1, 2, 3};
+	uint currVert = gl_VertexID;
 
 	const vec2 corners[4] = vec2[4](
 		vec2(0, 0),
 		vec2(1, 0),
-		vec2(1, 1),
-		vec2(0, 1)
+		vec2(0, 1),
+		vec2(1, 1)
 	);
 	vec2 p = (XY + corners[currVert] * WH) * PixelSize;
 	gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), 0.5, 1);
@@ -67,6 +72,7 @@ void main(void)
 	Stride = uint(WH.x);
 	Depth = Stamps[stampIndex].DepthTintTrans & 0xFFFF;
 	Tint = (Stamps[stampIndex].DepthTintTrans >> 16) & 0xFF;
+	Mode = Stamps[stampIndex].Mode;
 }
 `
 
