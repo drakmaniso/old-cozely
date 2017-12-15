@@ -55,8 +55,6 @@ void main(void)
 	);
 
 	// Determine which corner of the stamp this is
-	const uint [4]triangulate = {0, 1, 2, 3};
-	uint currVert = gl_VertexID;
 
 	const vec2 corners[4] = vec2[4](
 		vec2(0, 0),
@@ -64,10 +62,10 @@ void main(void)
 		vec2(0, 1),
 		vec2(1, 1)
 	);
-	vec2 p = (XY + corners[currVert] * WH) * PixelSize;
+	vec2 p = (XY + corners[gl_VertexID] * WH) * PixelSize;
 	gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), 0.5, 1);
 
-	UV = corners[currVert] * WH;
+	UV = corners[gl_VertexID] * WH;
 	Address = Stamps[stampIndex].Address;
 	Stride = uint(WH.x);
 	Depth = Stamps[stampIndex].DepthTintTrans & 0xFFFF;

@@ -8,10 +8,7 @@
 		320,
 		180
 	],
-	"PixelSize": [
-		4,
-		4
-	],
+	"PixelSize": 4,
 	"ScreenMode": "Extend",
 	"Display": 0,
 	"Fullscreen": false,
