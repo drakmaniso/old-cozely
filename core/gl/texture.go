@@ -71,6 +71,8 @@ const (
 	Depth32F TextureFormat = C.GL_DEPTH_COMPONENT32F
 )
 
+//------------------------------------------------------------------------------
+
 func pointerFormatAndTypeOf(img image.Image) (p unsafe.Pointer, pformat C.GLenum, ptype C.GLenum) {
 	switch img := img.(type) {
 	//TODO: other formats

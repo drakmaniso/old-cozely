@@ -55,7 +55,7 @@ type Texture2D struct {
 }
 
 // NewTexture2D returns a new two-dimensional texture.
-func NewTexture2D(levels int32, width int32, height int32, f TextureFormat) Texture2D {
+func NewTexture2D(levels int32, f TextureFormat, width int32, height int32) Texture2D {
 	var t Texture2D
 	t.format = f
 	t.object = C.NewTexture2D(C.GLsizei(levels), C.GLenum(f), C.GLsizei(width), C.GLsizei(height))
@@ -63,8 +63,8 @@ func NewTexture2D(levels int32, width int32, height int32, f TextureFormat) Text
 	return t
 }
 
-// Load loads an image into a texture at a specific position offset and level.
-func (t *Texture2D) Load(img image.Image, ox int32, oy int32, level int32) {
+// SubImage loads an image into a texture at a specific position offset and level.
+func (t *Texture2D) SubImage(level int32, ox int32, oy int32, img image.Image) {
 	p, pf, pt := pointerFormatAndTypeOf(img)
 	C.TextureSubImage2D(t.object, C.GLint(level), C.GLint(ox), C.GLint(oy), C.GLsizei(img.Bounds().Dx()), C.GLsizei(img.Bounds().Dy()), pf, pt, p)
 }

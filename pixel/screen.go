@@ -51,10 +51,10 @@ func createScreen() {
 
 func createScreenTexture() {
 	//TODO: delete previous texture
-	screen.texture = gl.NewTexture2D(1, int32(screen.size.X), int32(screen.size.Y), gl.RGB8)
+	screen.texture = gl.NewTexture2D(1, gl.RGB8, int32(screen.size.X), int32(screen.size.Y))
 	screen.buffer.Texture(gl.ColorAttachment0, screen.texture, 0)
 
-	screen.depth = gl.NewTexture2D(1, int32(screen.size.X), int32(screen.size.Y), gl.Depth24)
+	screen.depth = gl.NewTexture2D(1, gl.Depth24, int32(screen.size.X), int32(screen.size.Y))
 	screen.buffer.Texture(gl.DepthAttachment, screen.depth, 0)
 
 	screen.buffer.DrawBuffer(gl.ColorAttachment0)

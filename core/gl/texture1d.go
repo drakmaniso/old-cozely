@@ -53,7 +53,7 @@ type Texture1D struct {
 }
 
 // NewTexture1D returns a new one-dimensional texture.
-func NewTexture1D(levels int32, width int32, f TextureFormat) Texture1D {
+func NewTexture1D(levels int32, f TextureFormat, width int32) Texture1D {
 	var t Texture1D
 	t.format = f
 	t.object = C.NewTexture1D(C.GLsizei(levels), C.GLenum(f), C.GLsizei(width))
@@ -61,8 +61,8 @@ func NewTexture1D(levels int32, width int32, f TextureFormat) Texture1D {
 	return t
 }
 
-// Load loads an image into a texture at a specific position offset and level.
-func (t *Texture1D) Load(img image.Image, ox int32, level int32) {
+// SubImage loads an image into a texture at a specific position offset and level.
+func (t *Texture1D) SubImage(level int32, ox int32, img image.Image) {
 	p, pf, pt := pointerFormatAndTypeOf(img)
 	C.TextureSubImage1D(t.object, C.GLint(level), C.GLint(ox), C.GLsizei(img.Bounds().Dx()), pf, pt, p)
 }

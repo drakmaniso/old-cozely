@@ -93,7 +93,7 @@ func (loop) Setup() error {
 	)
 
 	// Create and load the textures
-	diffuse = gl.NewTexture2D(8, 512, 512, gl.SRGBA8)
+	diffuse = gl.NewTexture2D(8, gl.SRGBA8, 512, 512)
 	r, err := os.Open(carol.Path() + "../shared/testpattern.png")
 	if err != nil {
 		return carol.Error("opening texture", err)
@@ -103,7 +103,7 @@ func (loop) Setup() error {
 	if err != nil {
 		return carol.Error("decoding texture", err)
 	}
-	diffuse.Load(img, 0, 0, 0)
+	diffuse.SubImage(0, 0, 0, img)
 	diffuse.GenerateMipmap()
 
 	// Initialize worldFromObject and viewFromWorld matrices
