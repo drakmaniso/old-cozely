@@ -16,8 +16,8 @@ type Image interface {
 
 //------------------------------------------------------------------------------
 
-type node struct {
-	first, second *node
+type region struct {
+	first, second *region
 	x, y          int16
 	w, h          int16
 	img           Image
@@ -25,7 +25,7 @@ type node struct {
 
 //------------------------------------------------------------------------------
 
-func (n *node) String() string {
+func (n *region) String() string {
 	if n.first == nil {
 		if n.img != nil {
 			return fmt.Sprintf("%dx%d", n.img.Width(), n.img.Height())
@@ -38,7 +38,7 @@ func (n *node) String() string {
 
 //------------------------------------------------------------------------------
 
-func (n *node) insert(p Image, bin int16) *node {
+func (n *region) insert(p Image, bin int16) *region {
 	// If already split, recurse
 
 	if n.first != nil {
@@ -71,8 +71,8 @@ func (n *node) insert(p Image, bin int16) *node {
 
 	// Split the leaf
 
-	n.first = new(node)
-	n.second = new(node)
+	n.first = new(region)
+	n.second = new(region)
 
 	if n.w-p.Width() > n.h-p.Height() {
 		n.first.x, n.first.y = n.x, n.y
@@ -95,7 +95,7 @@ func (n *node) insert(p Image, bin int16) *node {
 
 //------------------------------------------------------------------------------
 
-func (n *node) paint(bin int16, dest interface{}) error {
+func (n *region) paint(bin int16, dest interface{}) error {
 	if n.img != nil {
 		return n.img.Paint(dest)
 	}

@@ -24,7 +24,7 @@ TODO:
 // array of bigger textures (called bins).
 type Atlas struct {
 	width, height int16
-	bins          []node
+	bins          []region
 	ideal         int
 }
 
@@ -36,7 +36,7 @@ func New(width, height int16) *Atlas {
 	return &Atlas{
 		width:  width,
 		height: height,
-		bins:   []node{},
+		bins:   []region{},
 	}
 }
 
@@ -79,7 +79,7 @@ func (a *Atlas) Pack(sources []Image) {
 		if !done {
 			a.bins = append(
 				a.bins,
-				node{w: a.width, h: a.height},
+				region{w: a.width, h: a.height},
 			)
 			n := a.bins[len(a.bins)-1].insert(sources[i], int16(len(a.bins)-1))
 			if n != nil {
