@@ -14,25 +14,27 @@ import (
 /*
 #include "glad.h"
 
-static inline GLuint NewTexture2D(GLsizei levels, GLenum format, GLsizei width, GLsizei height) {
+static inline GLuint NewTexture3D(GLsizei levels, GLenum format, GLsizei width, GLsizei height, GLsizei depth) {
 	GLuint t;
-	glCreateTextures(GL_TEXTURE_2D, 1, &t);
-	glTextureStorage2D(t, levels, format, width, height);
+	glCreateTextures(GL_TEXTURE_3D, 1, &t);
+	glTextureStorage3D(t, levels, format, width, height, depth);
 	return t;
 }
 
-static inline void Texture2DSubImage(
+static inline void Texture3DSubImage(
 	GLuint texture,
   	GLint level,
   	GLint xoffset,
   	GLint yoffset,
+  	GLint zoffset,
   	GLsizei width,
   	GLsizei height,
+  	GLsizei depth,
   	GLenum format,
   	GLenum type,
   	const void *pixels
 ) {
-	glTextureSubImage2D(texture, level, xoffset, yoffset, width, height, format, type, pixels);
+	glTextureSubImage3D(texture, level, xoffset, yoffset, zoffset, width, height, depth, format, type, pixels);
 }
 
 static inline void TextureGenerateMipmap(GLuint texture) {
@@ -48,35 +50,41 @@ import "C"
 
 //------------------------------------------------------------------------------
 
-// A Texture2D is a two-dimensional texture.
-type Texture2D struct {
+// A Texture3D is a three-dimensional texture.
+type Texture3D struct {
 	object C.GLuint
 	format TextureFormat
 }
 
-// NewTexture2D returns a new two-dimensional texture.
-func NewTexture2D(levels int32, f TextureFormat, width, height int32) Texture2D {
-	var t Texture2D
+// NewTexture3D returns a new three-dimensional texture.
+func NewTexture3D(levels int32, f TextureFormat, width, height, depth int32) Texture3D {
+	var t Texture3D
 	t.format = f
-	t.object = C.NewTexture2D(C.GLsizei(levels), C.GLenum(f), C.GLsizei(width), C.GLsizei(height))
+	t.object = C.NewTexture3D(C.GLsizei(levels), C.GLenum(f), C.GLsizei(width), C.GLsizei(height), C.GLsizei(depth))
 	//TODO: error handling?
 	return t
 }
 
 // SubImage loads an image into a texture at a specific position offset and
 // mipmap level.
-func (t *Texture2D) SubImage(level int32, ox, oy int32, img image.Image) {
+func (t *Texture3D) SubImage(level int32, ox, oy, oz int32, img image.Image) {
 	p, pf, pt := pointerFormatAndTypeOf(img)
-	C.Texture2DSubImage(t.object, C.GLint(level), C.GLint(ox), C.GLint(oy), C.GLsizei(img.Bounds().Dx()), C.GLsizei(img.Bounds().Dy()), pf, pt, p)
+	C.Texture3DSubImage(
+		t.object,
+		C.GLint(level),
+		C.GLint(ox), C.GLint(oy), C.GLint(oz),
+		C.GLsizei(img.Bounds().Dx()), C.GLsizei(img.Bounds().Dy()), C.GLsizei(1),
+		pf, pt, p,
+	)
 }
 
 // GenerateMipmap generates mipmaps for the texture.
-func (t *Texture2D) GenerateMipmap() {
+func (t *Texture3D) GenerateMipmap() {
 	C.TextureGenerateMipmap(t.object)
 }
 
 // Bind to a texture unit.
-func (t *Texture2D) Bind(index uint32) {
+func (t *Texture3D) Bind(index uint32) {
 	C.BindTextureUnit(C.GLuint(index), t.object)
 }
 

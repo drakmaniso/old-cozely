@@ -21,7 +21,7 @@ static inline GLuint NewTexture1D(GLsizei levels, GLenum format, GLsizei width) 
 	return t;
 }
 
-static inline void TextureSubImage1D(
+static inline void Texture1DSubImage(
 	GLuint texture,
   	GLint level,
   	GLint xoffset,
@@ -61,10 +61,11 @@ func NewTexture1D(levels int32, f TextureFormat, width int32) Texture1D {
 	return t
 }
 
-// SubImage loads an image into a texture at a specific position offset and level.
+// SubImage loads an image into a texture at a specific position offset and
+// mipmap level.
 func (t *Texture1D) SubImage(level int32, ox int32, img image.Image) {
 	p, pf, pt := pointerFormatAndTypeOf(img)
-	C.TextureSubImage1D(t.object, C.GLint(level), C.GLint(ox), C.GLsizei(img.Bounds().Dx()), pf, pt, p)
+	C.Texture1DSubImage(t.object, C.GLint(level), C.GLint(ox), C.GLsizei(img.Bounds().Dx()), pf, pt, p)
 }
 
 // GenerateMipmap generates mipmaps for the texture.
