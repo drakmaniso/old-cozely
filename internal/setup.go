@@ -32,7 +32,8 @@ func init() {
 	if err != nil {
 		FilePath = filepath.Dir(os.Args[0])
 	}
-	FilePath, _ = filepath.EvalSymlinks(Path)
+	FilePath = filepath.Dir(FilePath)
+	FilePath, _ = filepath.EvalSymlinks(FilePath)
 	Path = filepath.ToSlash(FilePath) + "/"
 }
 
