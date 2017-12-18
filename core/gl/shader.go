@@ -11,6 +11,7 @@ import (
 	"io"
 	"io/ioutil"
 	"os"
+	"path/filepath"
 	"strings"
 	"unsafe"
 )
@@ -61,8 +62,8 @@ type shader struct {
 
 //------------------------------------------------------------------------------
 
-// Shader compiles a shader. The filename extension determine the type of
-// shader:
+// Shader compiles a shader. The path is slash-separated, and the file extension
+// determine the type of shader:
 //
 // - ".vert" for a vertex shader
 // - ".frag" for a fragment shader
@@ -70,24 +71,24 @@ type shader struct {
 // - ".geom" for a geometry shader
 // - ".tesc" for a tesselation control shader
 // - ".tese" for a tesselation evaluation shader
-func Shader(filename string) PipelineConfig {
-	f, err := os.Open(filename)
+func Shader(path string) PipelineConfig {
+	f, err := os.Open(filepath.FromSlash(path))
 	if err != nil {
 		setErr("opening shader file", err)
 	}
 	defer f.Close()
 	switch {
-	case strings.HasSuffix(filename, ".vert"):
+	case strings.HasSuffix(path, ".vert"):
 		return VertexShader(f)
-	case strings.HasSuffix(filename, ".frag"):
+	case strings.HasSuffix(path, ".frag"):
 		return FragmentShader(f)
-	case strings.HasSuffix(filename, ".tesc"):
+	case strings.HasSuffix(path, ".tesc"):
 		return TessControlShader(f)
-	case strings.HasSuffix(filename, ".tese"):
+	case strings.HasSuffix(path, ".tese"):
 		return TessEvaluationShader(f)
-	case strings.HasSuffix(filename, ".geom"):
+	case strings.HasSuffix(path, ".geom"):
 		return GeometryShader(f)
-	case strings.HasSuffix(filename, ".comp"):
+	case strings.HasSuffix(path, ".comp"):
 		return ComputeShader(f)
 	}
 	setErr("opening shader file", errors.New("unkown shader file extension"))

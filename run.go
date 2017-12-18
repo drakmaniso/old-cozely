@@ -3,11 +3,10 @@
 
 package carol
 
-//------------------------------------------------------------------------------
-
 import (
 	"github.com/drakmaniso/carol/core/gl"
 	"github.com/drakmaniso/carol/internal"
+	"path/filepath"
 )
 
 //------------------------------------------------------------------------------

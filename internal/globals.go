@@ -19,8 +19,13 @@ import (
 
 //------------------------------------------------------------------------------
 
+// Path of the executable (uses os-dependant separator).
+var FilePath string
+
 // Path of the executable (uses slash separators, and ends with one).
 var Path string
+
+//------------------------------------------------------------------------------
 
 // Config holds the initial configuration of the game.
 var Config = struct {
