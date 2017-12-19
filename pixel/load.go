@@ -39,66 +39,14 @@ func init() {
 
 //------------------------------------------------------------------------------
 
-type imgfile string
-
-func (mf imgfile) Size() (width, height int16) {
-	p := pictures[string(mf)]
-	return p.width, p.height
-}
-
-func (mf imgfile) Put(bin int16, x, y int16) {
-	p := pictures[string(mf)]
-	p.bin = bin
-	p.x, p.y = x, y
-}
-
-func (mf imgfile) Paint(dest interface{}) error {
-	p := pictures[string(mf)]
-
-	f, err := os.Open(filepath.Join(internal.FilePath, picturesPath, string(mf)) + ".png")
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-	pm, _, err := image.Decode(f)
-	if err != nil {
-		return err
-	}
-
-	switch m := dest.(type) {
-
-	case *image.NRGBA:
-		for y := 0; y < int(p.height); y++ {
-			for x := 0; x < int(p.width); x++ {
-				c := pm.At(x, y)
-				m.Set(int(p.x)+x, int(p.y)+y, c)
-			}
-		}
-
-	case *image.Paletted:
-		pmp := pm.(*image.Paletted)
-		for y := 0; y < int(p.height); y++ {
-			for x := 0; x < int(p.width); x++ {
-				w := m.Bounds().Dx()
-				m.Pix[int(p.x)+x+w*(int(p.y)+y)] = pmp.Pix[x+int(p.width)*y]
-			}
-		}
-
-	default:
-		return errors.New("unexpected argument to imgfile paint method")
-	}
-
-	return nil
-}
-
-//------------------------------------------------------------------------------
-
 func loadAllPictures() error {
+	// Scan all pictures
 	err := filepath.Walk(picturesPath, scan)
 	if err != nil {
 		return internal.Error("while scanning images", err)
 	}
 
+	// Pack them into atlases
 	indexedAtlas = atlas.New(1024, 1024)
 	rgbaAtlas = atlas.New(1024, 1024)
 
@@ -111,7 +59,7 @@ func loadAllPictures() error {
 			"Packed %d indexed images in %d bins: %d unused pixels (%d kb, %d Mb)\n",
 			len(indexedFiles),
 			indexedAtlas.BinCount(),
-			iu, 4*iu/1024, 4*iu/(1024*1024),
+			iu, iu/1024, iu/(1024*1024),
 		)
 		ru := rgbaAtlas.Unused()
 		internal.Debug.Printf(
@@ -157,20 +105,6 @@ func loadAllPictures() error {
 		}
 
 		rgbaTexture.SubImage(0, 0, 0, int32(i), m)
-
-		// n := internal.FilePath + fmt.Sprintf("packed/%d.png", i)
-		// f, err := os.Create(n)
-		// if err != nil {
-		// 	panic("cannot open output " + n)
-		// }
-		// err = png.Encode(f, m)
-		// if err != nil {
-		// 	panic(err)
-		// }
-		// err = f.Close()
-		// if err != nil {
-		// 	panic(err)
-		// }
 	}
 	rgbaTexture.Bind(1)
 
@@ -219,7 +153,7 @@ func scan(path string, info os.FileInfo, err error) error {
 		color.Gray16Model, color.RGBA64Model, color.NRGBA64Model:
 		p.mode = 2
 		pictures[n] = &p
-		rgbaFiles = append(rgbaFiles, imgfile(n))
+		rgbaFiles = append(rgbaFiles, imgfile{name: n, path: path})
 
 	case color.AlphaModel, color.Alpha16Model:
 		return errors.New(`image "` + path + `" color model (16-bit alpha) not yet supported.`)
@@ -229,11 +163,68 @@ func scan(path string, info os.FileInfo, err error) error {
 		if ok {
 			p.mode = 1
 			pictures[n] = &p
-			indexedFiles = append(indexedFiles, imgfile(n))
+			indexedFiles = append(indexedFiles, imgfile{name: n, path: path})
 
 		} else {
 			return errors.New(`image "` + path + `" color model not recognized.`)
 		}
+	}
+
+	return nil
+}
+
+//------------------------------------------------------------------------------
+
+type imgfile struct {
+	name string
+	path string
+}
+
+func (im imgfile) Size() (width, height int16) {
+	p := pictures[im.name]
+	return p.width, p.height
+}
+
+func (im imgfile) Put(bin int16, x, y int16) {
+	p := pictures[im.name]
+	p.bin = bin
+	p.x, p.y = x, y
+}
+
+func (im imgfile) Paint(dest interface{}) error {
+	p := pictures[im.name]
+
+	pf, err := os.Open(im.path)
+	if err != nil {
+		return err
+	}
+	defer pf.Close()
+	pm, _, err := image.Decode(pf)
+	if err != nil {
+		return err
+	}
+
+	switch dm := dest.(type) {
+
+	case *image.NRGBA:
+		for y := 0; y < int(p.height); y++ {
+			for x := 0; x < int(p.width); x++ {
+				c := pm.At(x, y)
+				dm.Set(int(p.x)+x, int(p.y)+y, c)
+			}
+		}
+
+	case *image.Paletted:
+		pmp := pm.(*image.Paletted)
+		for y := 0; y < int(p.height); y++ {
+			for x := 0; x < int(p.width); x++ {
+				w := dm.Bounds().Dx()
+				dm.Pix[int(p.x)+x+w*(int(p.y)+y)] = pmp.Pix[x+int(p.width)*y]
+			}
+		}
+
+	default:
+		return errors.New("unexpected argument to imgfile paint method")
 	}
 
 	return nil
