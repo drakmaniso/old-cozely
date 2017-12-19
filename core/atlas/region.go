@@ -8,8 +8,7 @@ import (
 
 // An Image represents a rectangle of pixels that will be packed into an atlas.
 type Image interface {
-	Width() int16
-	Height() int16
+	Size() (width, height int16)
 	Put(bin int16, x, y int16)
 	Paint(dest interface{}) error
 }
@@ -28,7 +27,8 @@ type region struct {
 func (n *region) String() string {
 	if n.first == nil {
 		if n.img != nil {
-			return fmt.Sprintf("%dx%d", n.img.Width(), n.img.Height())
+			w, h := n.img.Size()
+			return fmt.Sprintf("%dx%d", w, h)
 		}
 		return "nil"
 	}
@@ -57,12 +57,14 @@ func (n *region) insert(p Image, bin int16) *region {
 		return nil
 	}
 
-	if n.w < p.Width() || n.h < p.Height() {
+	w, h := p.Size()
+
+	if n.w < w || n.h < h {
 		// Too small
 		return nil
 	}
 
-	if n.w == p.Width() && n.h == p.Height() {
+	if n.w == w && n.h == h {
 		// It's a match!
 		n.img = p
 		p.Put(bin, n.x, n.y)
@@ -74,19 +76,19 @@ func (n *region) insert(p Image, bin int16) *region {
 	n.first = new(region)
 	n.second = new(region)
 
-	if n.w-p.Width() > n.h-p.Height() {
+	if n.w-w > n.h-h {
 		n.first.x, n.first.y = n.x, n.y
-		n.first.w, n.first.h = p.Width(), n.h
+		n.first.w, n.first.h = w, n.h
 
-		n.second.x, n.second.y = n.x+p.Width(), n.y
-		n.second.w, n.second.h = n.w-p.Width(), n.h
+		n.second.x, n.second.y = n.x+w, n.y
+		n.second.w, n.second.h = n.w-w, n.h
 
 	} else {
 		n.first.x, n.first.y = n.x, n.y
-		n.first.w, n.first.h = n.w, p.Height()
+		n.first.w, n.first.h = n.w, h
 
-		n.second.x, n.second.y = n.x, n.y+p.Height()
-		n.second.w, n.second.h = n.w, n.h-p.Height()
+		n.second.x, n.second.y = n.x, n.y+h
+		n.second.w, n.second.h = n.w, n.h-h
 
 	}
 

@@ -13,7 +13,7 @@ import (
 
 //------------------------------------------------------------------------------
 
-var logo, mire, midgray, midrgb pixel.Picture
+var logo, mire, midgray, midrgb *pixel.Picture
 
 //------------------------------------------------------------------------------
 
@@ -34,10 +34,10 @@ type loop struct {
 func (loop) Setup() error {
 	pixel.PaletteMSX2()
 
-	logo = pixel.GetPicture("logo")
-	mire = pixel.GetPicture("mire")
-	midgray = pixel.GetPicture("midgray")
-	midrgb = pixel.GetPicture("midrgb")
+	logo = pixel.GetPicture("pictures/logo")
+	mire = pixel.GetPicture("pictures/mire")
+	midgray = pixel.GetPicture("pictures/midgray")
+	midrgb = pixel.GetPicture("pictures/midrgb")
 
 	return pixel.Err()
 }

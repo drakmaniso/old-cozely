@@ -13,21 +13,16 @@ import (
 
 type stamp struct {
 	//  word
-	address uint32
+	mode, bin int16
+
+	//  word
+	x, y int16
 
 	//  word
 	w, h int16
 
 	//  word
-	x, y int16
-
-	// word
-	depth     int16
-	tint      uint8
-	transform byte
-
-	//word
-	mode uint32
+	u, v int16
 }
 
 var stamps []stamp

@@ -67,7 +67,8 @@ func (a *Atlas) Pack(sources []Image) {
 	sort.Sort(byPerimeter(sources))
 
 	for i := range sources {
-		a.ideal += int(sources[i].Width()) * int(sources[i].Height())
+		w, h := sources[i].Size()
+		a.ideal += int(w) * int(h)
 		done := false
 		for j := range a.bins {
 			n := a.bins[j].insert(sources[i], int16(j))
@@ -104,7 +105,9 @@ func (bp byPerimeter) Swap(i, j int) {
 }
 
 func (bp byPerimeter) Less(i, j int) bool {
-	return bp[i].Width()*2+bp[i].Height()*2 > bp[j].Width()*2+bp[j].Height()*2
+	wi, hi := bp[i].Size()
+	wj, hj := bp[j].Size()
+	return wi*2+hi*2 > wj*2+hj*2
 }
 
 //------------------------------------------------------------------------------
