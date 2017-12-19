@@ -84,6 +84,10 @@ func pointerFormatAndTypeOf(img image.Image) (p unsafe.Pointer, pformat C.GLenum
 		p = unsafe.Pointer(&img.Pix[0])
 		pformat = C.GL_RGBA
 		ptype = C.GL_UNSIGNED_BYTE
+	case *image.Paletted:
+		p = unsafe.Pointer(&img.Pix[0])
+		pformat = C.GL_RED_INTEGER
+		ptype = C.GL_UNSIGNED_BYTE
 	}
 	return p, pformat, ptype
 }
