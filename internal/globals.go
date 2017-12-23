@@ -118,14 +118,8 @@ var MouseButtons uint32
 
 //------------------------------------------------------------------------------
 
-type Hook struct {
-	Callback func() error
-	Context  string
-}
-
-var PreSetupHooks = []Hook{}
-var PostSetupHooks = []Hook{}
-var PostDrawHooks = []Hook{}
+var PixelSetup = func() error { return nil }
+var PixelDraw = func() error { return nil }
 
 var ResizeScreen = func() {}
 

@@ -21,33 +21,11 @@ func Err() error {
 	return err
 }
 
-var setErr = func(context string, err error) {
+func setErr(context string, err error) {
 	if stickyErr == nil {
 		stickyErr = internal.Error(context, err)
 	}
-	//TODO: simplify, as in core/gl package
-}
-
-func init() {
-	h := internal.Hook{
-		Callback: hookStickyErr,
-		Context:  "while setting up gfx sticky error",
-	}
-	internal.PreSetupHooks = append(internal.PreSetupHooks, h)
-}
-
-func hookStickyErr() error {
-	if internal.Config.Debug {
-		setErr = func(context string, err error) {
-			// TODO: use two different functions and a *func variable
-			if stickyErr == nil {
-				stickyErr = internal.Error(context, err)
-			}
-			internal.Log.Printf("gfx error: %s", internal.Error(context, err))
-		}
-	}
-
-	return nil
+	internal.Debug.Printf("pixel error: %s", internal.Error(context, err))
 }
 
 //------------------------------------------------------------------------------

@@ -62,23 +62,14 @@ func Run(loop GameLoop) error {
 		return internal.Error("in OpenGL setup", err)
 	}
 
-	for _, c := range internal.PreSetupHooks {
-		err = c.Callback()
-		if err != nil {
-			return internal.Error(c.Context, err)
-		}
+	err = internal.PixelSetup()
+	if err != nil {
+		return internal.Error("in pixel Setup", err)
 	}
 
 	err = internal.Loop.Setup()
 	if err != nil {
 		return internal.Error("in game loop Setup", err)
-	}
-
-	for _, c := range internal.PostSetupHooks {
-		err = c.Callback()
-		if err != nil {
-			return internal.Error(c.Context, err)
-		}
 	}
 
 	// First, send a fake resize window event
@@ -126,11 +117,9 @@ func Run(loop GameLoop) error {
 			return internal.Error("in Draw callback", err)
 		}
 
-		for _, c := range internal.PostDrawHooks {
-			err = c.Callback()
-			if err != nil {
-				return internal.Error(c.Context, err)
-			}
+		err = internal.PixelDraw()
+		if err != nil {
+			return internal.Error("in pixel Draw", err)
 		}
 
 		internal.SwapWindow()
