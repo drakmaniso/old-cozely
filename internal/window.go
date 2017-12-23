@@ -35,7 +35,7 @@ func OpenWindow(
 	debug bool,
 ) error {
 	C.SDL_GL_SetAttribute(C.SDL_GL_CONTEXT_MAJOR_VERSION, 4)
-	C.SDL_GL_SetAttribute(C.SDL_GL_CONTEXT_MINOR_VERSION, 5)
+	C.SDL_GL_SetAttribute(C.SDL_GL_CONTEXT_MINOR_VERSION, 6)
 	C.SDL_GL_SetAttribute(C.SDL_GL_CONTEXT_PROFILE_MASK, C.SDL_GL_CONTEXT_PROFILE_CORE)
 	C.SDL_GL_SetAttribute(C.SDL_GL_DOUBLEBUFFER, 1)
 	if Config.Multisample > 0 {
