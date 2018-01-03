@@ -14,17 +14,24 @@ import (
 //------------------------------------------------------------------------------
 
 var screen struct {
-	buffer  gl.Framebuffer
-	texture gl.Texture2D
-	depth   gl.Texture2D
-	size    Coord
-	pixel   int32
+	buffer     gl.Framebuffer
+	texture    gl.Texture2D
+	depth      gl.Texture2D
+	size       Coord
+	pixel      int32
+	background colour.RGBA
 }
 
 //------------------------------------------------------------------------------
 
 func ScreenSize() Coord {
 	return screen.size
+}
+
+//------------------------------------------------------------------------------
+
+func SetBackground(c colour.Colour) {
+	screen.background = colour.RGBAOf(c)
 }
 
 //------------------------------------------------------------------------------
@@ -51,11 +58,8 @@ func createScreen() {
 
 func createScreenTexture() {
 	//TODO: delete previous texture
-	screen.texture = gl.NewTexture2D(1, gl.RGB8, int32(screen.size.X), int32(screen.size.Y))
+	screen.texture = gl.NewTexture2D(1, gl.SRGB8, int32(screen.size.X), int32(screen.size.Y))
 	screen.buffer.Texture(gl.ColorAttachment0, screen.texture, 0)
-
-	screen.depth = gl.NewTexture2D(1, gl.Depth24, int32(screen.size.X), int32(screen.size.Y))
-	screen.buffer.Texture(gl.DepthAttachment, screen.depth, 0)
 
 	screen.buffer.DrawBuffer(gl.ColorAttachment0)
 }

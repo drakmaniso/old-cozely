@@ -4,7 +4,6 @@
 package pixel
 
 import (
-	"github.com/drakmaniso/carol/colour"
 	"github.com/drakmaniso/carol/core/gl"
 	"github.com/drakmaniso/carol/internal"
 )
@@ -28,7 +27,7 @@ func drawHook() error {
 	screen.buffer.Bind(gl.DrawReadFramebuffer)
 	gl.Viewport(0, 0, int32(screen.size.X), int32(screen.size.Y))
 	stampPipeline.Bind()
-	gl.ClearColorBuffer(colour.RGBA{0, 0, 0, 0}) //TODO
+	gl.ClearColorBuffer(screen.background)
 	gl.Blending(gl.SrcAlpha, gl.OneMinusSrcAlpha)
 	gl.Enable(gl.Blend)
 

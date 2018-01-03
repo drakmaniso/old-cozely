@@ -42,7 +42,10 @@ func init() {
 func loadAllPictures() error {
 	// Scan all pictures
 	err := filepath.Walk(picturesPath, scan)
-	if err != nil {
+	switch {
+	case os.IsNotExist(err):
+		return nil
+	case err != nil:
 		return internal.Error("while scanning images", err)
 	}
 
@@ -92,7 +95,7 @@ func loadAllPictures() error {
 
 	// Create the RGBA texture atlas
 	w, h = rgbaAtlas.BinSize()
-	rgbaTexture = gl.NewTextureArray2D(1, gl.RGBA8, int32(w), int32(h), int32(rgbaAtlas.BinCount()))
+	rgbaTexture = gl.NewTextureArray2D(1, gl.SRGBA8, int32(w), int32(h), int32(rgbaAtlas.BinCount()))
 	for i := int16(0); i < rgbaAtlas.BinCount(); i++ {
 		m := image.NewNRGBA(image.Rectangle{
 			Min: image.Point{0, 0},

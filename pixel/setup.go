@@ -26,6 +26,7 @@ func setupHook() error {
 		gl.FragmentShader(strings.NewReader(fragmentShader)),
 		gl.Topology(gl.TriangleStrip),
 	)
+	gl.Enable(gl.FramebufferSRGB)
 
 	screenUBO = gl.NewUniformBuffer(&screenUniforms, gl.DynamicStorage|gl.MapWrite)
 	screenUBO.Bind(0)
