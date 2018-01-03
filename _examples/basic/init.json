@@ -1,4 +1,5 @@
 {
+	"Debug": true,
 	"Title": "Basic Example",
 	"WindowSize": [
 		1280,
@@ -14,5 +15,5 @@
 	"Fullscreen": false,
 	"FullscreenMode": "Desktop",
 	"VSync": true,
-	"Debug": true
+	"PaletteAuto": false
 }

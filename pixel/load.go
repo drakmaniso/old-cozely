@@ -5,6 +5,7 @@ package pixel
 
 import (
 	"errors"
+	"github.com/drakmaniso/carol/colour"
 	"image"
 	"image/color"
 	_ "image/png" // Activate PNG support
@@ -219,10 +220,26 @@ func (im imgfile) Paint(dest interface{}) error {
 
 	case *image.Paletted:
 		pmp := pm.(*image.Paletted)
+		pal, ok := pmp.ColorModel().(color.Palette)
+		if !ok {
+			return errors.New("unable to access color palette for image")
+		}
 		for y := 0; y < int(p.height); y++ {
 			for x := 0; x < int(p.width); x++ {
 				w := dm.Bounds().Dx()
-				dm.Pix[int(p.x)+x+w*(int(p.y)+y)] = pmp.Pix[x+int(p.width)*y]
+				ci := pmp.Pix[x+int(p.width)*y]
+				if internal.Config.PaletteAuto {
+					// Convert image color index to index into current palette
+					r, g, b, a := pal[ci].RGBA()
+					cc := colour.SRGBA{
+						float32(r) / float32(0xFFFF),
+						float32(g) / float32(0xFFFF),
+						float32(b) / float32(0xFFFF),
+						float32(a) / float32(0xFFFF),
+					}
+					ci = uint8(requestColor(cc))
+				}
+				dm.Pix[int(p.x)+x+w*(int(p.y)+y)] = uint8(ci)
 			}
 		}
 

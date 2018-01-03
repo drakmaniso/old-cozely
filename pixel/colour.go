@@ -91,6 +91,36 @@ func NewColor(name string, v colour.Colour) Color {
 
 //------------------------------------------------------------------------------
 
+func requestColor(v colour.Colour) Color {
+	if palette.count > 255 {
+		setErr("in requestColor", errors.New("impossible to automatically add color: maximum color count reached."))
+		return Color(0)
+	}
+
+	rgba := colour.RGBAOf(v)
+
+	// Search the color in the existing palette
+
+	for i := Color(0); i < Color(palette.count); i++ {
+		if colours[i] == rgba {
+			return i
+		}
+	}
+
+	// Color not found, create a new entry
+
+	c := Color(palette.count)
+	palette.count++
+
+	colours[c] = rgba
+
+	palette.changed = true
+
+	return c
+}
+
+//------------------------------------------------------------------------------
+
 // GetColor returns the color associated with a name. If there isn't any, the first
 // color is returned, and a sticky error is set.
 func GetColor(name string) Color {

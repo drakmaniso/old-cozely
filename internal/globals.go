@@ -29,6 +29,7 @@ var Path string
 
 // Config holds the initial configuration of the game.
 var Config = struct {
+	Debug          bool
 	Title          string
 	WindowSize     [2]int32
 	ScreenSize     [2]int16
@@ -39,8 +40,9 @@ var Config = struct {
 	Fullscreen     bool
 	FullscreenMode string
 	VSync          bool
-	Debug          bool
+	PaletteAuto    bool
 }{
+	Debug:          false,
 	Title:          "Carol",
 	WindowSize:     [2]int32{1280, 720},
 	ScreenSize:     [2]int16{320, 200},
@@ -51,7 +53,7 @@ var Config = struct {
 	Fullscreen:     false,
 	FullscreenMode: "Desktop",
 	VSync:          true,
-	Debug:          false,
+	PaletteAuto:    true,
 }
 
 //------------------------------------------------------------------------------
