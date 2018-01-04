@@ -6,21 +6,57 @@ package carol
 import (
 	"github.com/drakmaniso/carol/core/gl"
 	"github.com/drakmaniso/carol/internal"
+	"github.com/drakmaniso/carol/key"
+	"github.com/drakmaniso/carol/mouse"
 )
 
 //------------------------------------------------------------------------------
 
 // GameLoop methods are called to setup the game, and during the main loop to
 // process events, Update the game state and Draw it.
+type GameLoop interface {
+	// Loop setup
+	Setup() error
+
+	// The loop
+	Update() error
+	Draw(delta float64, lerp float64) error
+
+	// Window events
+	WindowShown()
+	WindowHidden()
+	WindowResized(width, height int32)
+	WindowMinimized()
+	WindowMaximized()
+	WindowRestored()
+	WindowMouseEnter()
+	WindowMouseLeave()
+	WindowFocusGained()
+	WindowFocusLost()
+	WindowQuit()
+
+	// Keyboard events
+	KeyDown(l key.Label, p key.Position)
+	KeyUp(l key.Label, p key.Position)
+
+	// Mouse events
+	MouseMotion(deltaX, deltaY int32, posX, posY int32)
+	MouseButtonDown(b mouse.Button, clicks int)
+	MouseButtonUp(b mouse.Button, clicks int)
+	MouseWheel(deltaX, deltaY int32)
+}
+
+// Handlers implements default handlers for all events.
 //
-// Methods to implement:
+// It's an empty struct intended to be embedded in the user-defined GameLoop:
 //
-// 	 Setup() error
-// 	 Update() error
-//	 Draw(delta float64, lerp float64) error
+//  type loop struct {
+//    carol.Handlers
+//  }
 //
-// Plus all the event handlers: see Handlers.
-type GameLoop = internal.GameLoop
+// This way it's possible to implement the GameLoop interface without writing a
+// method for each event.
+type Handlers = internal.Handlers
 
 //------------------------------------------------------------------------------
 
@@ -171,10 +207,10 @@ func FrameTime() float64 {
 	return delta
 }
 
-// AverageFrameTime returns the average durations of frames; it is updated 4
+// FrameTimeAverage returns the average durations of frames; it is updated 4
 // times per second. It also returns the number of overruns (i.e. frame time
 // longer than the threshold) during the last measurment interval.
-func AverageFrameTime() (t float64, overruns int) {
+func FrameTimeAverage() (t float64, overruns int) {
 	return frAverage, xrunPrevious
 }
 

@@ -1,19 +1,11 @@
 // Copyright (c) 2013-2017 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
-package carol
+package internal
 
 //------------------------------------------------------------------------------
 
-import (
-	"github.com/drakmaniso/carol/internal"
-	"github.com/drakmaniso/carol/key"
-	"github.com/drakmaniso/carol/mouse"
-)
-
-//------------------------------------------------------------------------------
-
-// Handlers implements default behavior for all events.
+// Handlers implements default handlers for all events.
 //
 // It's an empty struct intended to be embedded in the user-defined GameLoop.
 type Handlers struct{}
@@ -52,7 +44,7 @@ func (h Handlers) WindowFocusLost() {}
 
 // WindowQuit requests the game loop to stop.
 func (h Handlers) WindowQuit() {
-	internal.QuitRequested = true
+	QuitRequested = true
 }
 
 //------------------------------------------------------------------------------
@@ -61,10 +53,10 @@ func (h Handlers) WindowQuit() {
 func (h Handlers) MouseMotion(dx, dy int32, x, y int32) {}
 
 // MouseButtonDown does nothing.
-func (h Handlers) MouseButtonDown(b mouse.Button, clicks int) {}
+func (h Handlers) MouseButtonDown(b MouseButton, clicks int) {}
 
 // MouseButtonUp does nothing.
-func (h Handlers) MouseButtonUp(b mouse.Button, clicks int) {}
+func (h Handlers) MouseButtonUp(b MouseButton, clicks int) {}
 
 // MouseWheel does nothing.
 func (h Handlers) MouseWheel(dx, dy int32) {}
@@ -72,17 +64,17 @@ func (h Handlers) MouseWheel(dx, dy int32) {}
 //------------------------------------------------------------------------------
 
 // KeyDown requests the game loop to stop if Escape is pressed.
-func (h Handlers) KeyDown(l key.Label, p key.Position) {
+func (h Handlers) KeyDown(l KeyLabel, p KeyPosition) {
 	switch l {
-	case key.LabelEscape:
-		internal.QuitRequested = true
-	case key.LabelF11:
-		internal.ToggleFullscreen()
+	case '\033': // key.LabelEscape
+		QuitRequested = true
+	case (1 << 30) | 68: // key.LabelF11
+		ToggleFullscreen()
 	}
 }
 
 // KeyUp does nothing.
-func (h Handlers) KeyUp(l key.Label, p key.Position) {
+func (h Handlers) KeyUp(l KeyLabel, p KeyPosition) {
 }
 
 //------------------------------------------------------------------------------

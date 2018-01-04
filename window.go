@@ -26,16 +26,4 @@ func WindowSize() (width, height int32) {
 	return internal.Window.Width, internal.Window.Height
 }
 
-//TODO
-// ScreenSize returns the size of the framebuffer in (framebuffer) pixels.
-// func ScreenSize() pixel.Coord {
-// 	return gpu.Framebuffer.Size
-// }
-
-//TODO
-// PixelSize returns the size of framebuffer pixels, in screen pixels.
-// func PixelSize() pixel.Coord {
-// 	return gpu.Framebuffer.PixelSize
-// }
-
 //------------------------------------------------------------------------------

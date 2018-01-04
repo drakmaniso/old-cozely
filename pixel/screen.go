@@ -28,6 +28,10 @@ func ScreenSize() Coord {
 	return screen.size
 }
 
+func PixelSize() int32 {
+	return screen.pixel
+}
+
 //------------------------------------------------------------------------------
 
 func SetBackground(c colour.Colour) {
