@@ -78,3 +78,7 @@ func (h Handlers) KeyUp(l KeyLabel, p KeyPosition) {
 }
 
 //------------------------------------------------------------------------------
+
+func (h Handlers) ScreenResized(width, height int16, pixel int32) {}
+
+//------------------------------------------------------------------------------

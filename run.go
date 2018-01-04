@@ -44,6 +44,9 @@ type GameLoop interface {
 	MouseButtonDown(b mouse.Button, clicks int)
 	MouseButtonUp(b mouse.Button, clicks int)
 	MouseWheel(deltaX, deltaY int32)
+
+	// Pixel events
+	ScreenResized(width, height int16, pixel int32)
 }
 
 // Handlers implements default handlers for all events.

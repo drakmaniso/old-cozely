@@ -9,6 +9,7 @@ import (
 	"github.com/drakmaniso/carol/colour"
 	"github.com/drakmaniso/carol/core/gl"
 	"github.com/drakmaniso/carol/internal"
+	"github.com/drakmaniso/carol/mouse"
 )
 
 //------------------------------------------------------------------------------
@@ -19,6 +20,7 @@ var screen struct {
 	depth      gl.Texture2D
 	size       Coord
 	pixel      int32
+	ox, oy     int32 // Offset when there is a border around the screen
 	background colour.RGBA
 }
 
@@ -94,6 +96,14 @@ func init() {
 
 		default:
 		}
+
+		// Compute offset
+		w := int32(screen.size.X) * screen.pixel
+		h := int32(screen.size.Y) * screen.pixel
+		screen.ox = (internal.Window.Width - w) / 2
+		screen.oy = (internal.Window.Height - h) / 2
+
+		internal.Loop.ScreenResized(screen.size.X, screen.size.Y, screen.pixel)
 	}
 }
 
@@ -109,16 +119,25 @@ func blitScreen() {
 
 	w := int32(screen.size.X) * screen.pixel
 	h := int32(screen.size.Y) * screen.pixel
-	ox := (internal.Window.Width - w) / 2
-	oy := (internal.Window.Height - h) / 2
 	screen.buffer.Blit(
 		gl.DefaultFramebuffer,
 		0, 0, int32(screen.size.X), int32(screen.size.Y),
-		ox, oy, ox+w, oy+h,
+		screen.ox, screen.oy, screen.ox+w, screen.oy+h,
 		gl.ColorBufferBit,
 		gl.Nearest,
 	)
 
+}
+
+//------------------------------------------------------------------------------
+
+// Mouse returns the mouse position on the virtual screen.
+func Mouse() Coord {
+	mx, my := mouse.Position()
+	return Coord{
+		X: int16((mx - screen.ox) / screen.pixel),
+		Y: int16((my - screen.oy) / screen.pixel),
+	}
 }
 
 //------------------------------------------------------------------------------

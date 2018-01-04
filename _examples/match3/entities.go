@@ -4,7 +4,6 @@
 package main
 
 import (
-	"github.com/drakmaniso/carol/pixel"
 	"math/rand"
 	"time"
 )
@@ -60,9 +59,6 @@ func fillGrid() {
 //------------------------------------------------------------------------------
 
 func sysDraw() {
-	ox := (pixel.ScreenSize().X - (8 * tileSize)) / 2
-	oy := (pixel.ScreenSize().Y - (8 * tileSize)) / 2
-
 	var gx, gy int8 // grid coords
 	var x, y int16  // screen coords
 
@@ -71,7 +67,7 @@ func sysDraw() {
 		switch {
 		case m&hasGridPos != 0:
 			gx, gy = entities.gridPos[e].x, entities.gridPos[e].y
-			x, y = ox+int16(gx)*tileSize, oy+int16(gy)*tileSize
+			x, y = gridOrigin.X+int16(gx)*tileSize, gridOrigin.Y+int16(gy)*tileSize
 		}
 		// Draw
 		switch {

@@ -59,6 +59,9 @@ type GameLoop interface {
 	MouseButtonDown(b MouseButton, clicks int)
 	MouseButtonUp(b MouseButton, clicks int)
 	MouseWheel(deltaX, deltaY int32)
+
+	// Pixel events
+	ScreenResized(width, height int16, pixel int32)
 }
 
 //------------------------------------------------------------------------------
