@@ -6,13 +6,15 @@ package main
 import (
 	"math/rand"
 	"time"
+
+	"github.com/drakmaniso/carol/_examples/match3/grid"
 )
 
 //------------------------------------------------------------------------------
 
 var entities struct {
 	mask    []componentMask
-	gridPos []gridPos
+	gridPos []grid.Position
 	color   []color
 }
 
@@ -22,10 +24,6 @@ const (
 	hasGridPos componentMask = 1 << iota
 	hasColor
 )
-
-type gridPos struct {
-	x, y int8
-}
 
 type color int8
 
@@ -45,8 +43,10 @@ func init() {
 func fillGrid() {
 	for y := int8(0); y < gridHeight; y++ {
 		for x := int8(0); x < gridWidth; x++ {
+			e := int32(len(entities.mask))
 			entities.mask = append(entities.mask, hasGridPos|hasColor)
-			entities.gridPos = append(entities.gridPos, gridPos{x, y})
+			p := grid.Put(e, x, y)
+			entities.gridPos = append(entities.gridPos, p)
 			c := color(rand.Int31n(7))
 			if rand.Int31n(16) == 0 {
 				c = 7
@@ -59,22 +59,20 @@ func fillGrid() {
 //------------------------------------------------------------------------------
 
 func sysDraw() {
-	var gx, gy int8 // grid coords
-	var x, y int16  // screen coords
+	var x, y int16 // screen coords
 
 	for e, m := range entities.mask {
 		// Compute screen coords
 		switch {
 		case m&hasGridPos != 0:
-			gx, gy = entities.gridPos[e].x, entities.gridPos[e].y
-			x, y = gridOrigin.X+int16(gx)*tileSize, gridOrigin.Y+int16(gy)*tileSize
+			x, y = entities.gridPos[e].ScreenXY()
 		}
 		// Draw
 		switch {
 		case m&hasColor != 0:
 			c := entities.color[e]
 			p := tilesPict[c].normal
-			if gx == currentX && gy == currentY {
+			if entities.gridPos[e] == current {
 				p = tilesPict[c].big
 			}
 			p.Paint(x, y)

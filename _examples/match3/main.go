@@ -8,6 +8,8 @@ import (
 	"github.com/drakmaniso/carol/colour"
 	"github.com/drakmaniso/carol/mouse"
 	"github.com/drakmaniso/carol/pixel"
+
+	"github.com/drakmaniso/carol/_examples/match3/grid"
 )
 
 //------------------------------------------------------------------------------
@@ -16,11 +18,7 @@ var tilesPict [8]struct {
 	normal, big *pixel.Picture
 }
 
-var currentX, currentY int8
-
-const tileSize = int16(20)
-
-var gridOrigin pixel.Coord
+var current grid.Position
 
 //------------------------------------------------------------------------------
 
@@ -56,8 +54,9 @@ func (loop) Setup() error {
 		tilesPict[i].big = pixel.GetPicture(n + "_big")
 	}
 
-	currentX, currentY = -1, -1
+	current = grid.Nowhere()
 
+	grid.Setup(8, 8)
 	fillGrid()
 
 	return nil
@@ -80,22 +79,17 @@ func (loop) Draw(_, _ float64) error {
 
 func (loop) MouseButtonDown(_ mouse.Button, _ int) {
 	m := pixel.Mouse()
-	x := (int16(m.X) - gridOrigin.X) / tileSize
-	y := (int16(m.Y) - gridOrigin.Y) / tileSize
-	if 0 <= x && x < 8 && 0 <= y && y < 8 {
-		currentX, currentY = int8(x), int8(y)
-	}
+	current = grid.PositionAt(m)
 }
 
 func (loop) MouseButtonUp(_ mouse.Button, _ int) {
-	currentX, currentY = -1, -1
+	current = grid.Nowhere()
 }
 
 //------------------------------------------------------------------------------
 
 func (loop) ScreenResized(width, height int16, _ int32) {
-	gridOrigin.X = (width - (8 * tileSize)) / 2
-	gridOrigin.Y = (height - (8 * tileSize)) / 2
+	grid.ScreenResized(width, height)
 }
 
 //------------------------------------------------------------------------------
