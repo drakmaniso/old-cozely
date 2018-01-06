@@ -4,9 +4,6 @@
 package main
 
 import (
-	"math/rand"
-	"time"
-
 	"github.com/drakmaniso/carol/_examples/match3/grid"
 )
 
@@ -18,7 +15,7 @@ var entities struct {
 	color   []color
 }
 
-type componentMask int32
+type componentMask uint32
 
 const (
 	hasGridPos componentMask = 1 << iota
@@ -26,35 +23,6 @@ const (
 )
 
 type color int8
-
-//------------------------------------------------------------------------------
-
-const (
-	gridWidth  = 8
-	gridHeight = 8
-)
-
-//------------------------------------------------------------------------------
-
-func init() {
-	rand.Seed(int64(time.Now().Unix()))
-}
-
-func fillGrid() {
-	for y := int8(0); y < gridHeight; y++ {
-		for x := int8(0); x < gridWidth; x++ {
-			e := int32(len(entities.mask))
-			entities.mask = append(entities.mask, hasGridPos|hasColor)
-			p := grid.Put(e, x, y)
-			entities.gridPos = append(entities.gridPos, p)
-			c := color(rand.Int31n(7))
-			if rand.Int31n(16) == 0 {
-				c = 7
-			}
-			entities.color = append(entities.color, c)
-		}
-	}
-}
 
 //------------------------------------------------------------------------------
 
@@ -78,6 +46,33 @@ func sysDraw() {
 			p.Paint(x, y)
 		}
 	}
+}
+
+//------------------------------------------------------------------------------
+
+func sysTestAndMark() {
+	for e, m := range entities.mask {
+		// Compute screen coords
+		switch {
+		case m&hasGridPos != 0 && m&hasColor != 0:
+			entities.gridPos[e].TestAndMark(testMatch, markMatch)
+		}
+	}
+}
+
+func testMatch(e1, e2 uint32) bool {
+	m1 := entities.mask[e1]
+	m2 := entities.mask[e2]
+	if (m1&hasColor == 0) || (m2&hasColor == 0) {
+		return false
+	}
+	c1 := entities.color[e1]
+	c2 := entities.color[e2]
+	return c1 == c2
+}
+
+func markMatch(e uint32) {
+	println(entities.gridPos[e].String())
 }
 
 //------------------------------------------------------------------------------

@@ -8,6 +8,8 @@ import (
 	"github.com/drakmaniso/carol/colour"
 	"github.com/drakmaniso/carol/mouse"
 	"github.com/drakmaniso/carol/pixel"
+	"math/rand"
+	"time"
 
 	"github.com/drakmaniso/carol/_examples/match3/grid"
 )
@@ -57,9 +59,28 @@ func (loop) Setup() error {
 	current = grid.Nowhere()
 
 	grid.Setup(8, 8)
-	fillGrid()
+	grid.Fill(newTile)
 
 	return nil
+}
+
+//------------------------------------------------------------------------------
+
+func newTile(p grid.Position) uint32 {
+	e := uint32(len(entities.mask))
+	entities.mask = append(entities.mask, hasGridPos|hasColor)
+	entities.gridPos = append(entities.gridPos, p)
+	c := color(rand.Int31n(7))
+	if rand.Int31n(16) == 0 {
+		c = 7
+	}
+	entities.color = append(entities.color, c)
+
+	return e
+}
+
+func init() {
+	rand.Seed(int64(time.Now().Unix()))
 }
 
 //------------------------------------------------------------------------------
@@ -80,6 +101,11 @@ func (loop) Draw(_, _ float64) error {
 func (loop) MouseButtonDown(_ mouse.Button, _ int) {
 	m := pixel.Mouse()
 	current = grid.PositionAt(m)
+	if current != grid.Nowhere() {
+		e := grid.At(current)
+		entities.gridPos[e].TestAndMark(testMatch, markMatch)
+	}
+	// sysTestAndMark()
 }
 
 func (loop) MouseButtonUp(_ mouse.Button, _ int) {
