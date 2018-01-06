@@ -94,7 +94,27 @@ func init() {
 				screen.pixel = 1
 			}
 
-		default:
+		case "Fixed":
+			// Nothing to do
+
+		default: // "Fit"
+			// Find best fit for pixel size
+			p1 := internal.Window.Width / int32(internal.Config.ScreenSize[0])
+			p2 := internal.Window.Height / int32(internal.Config.ScreenSize[1])
+			if p1 < p2 {
+				screen.pixel = p1
+			} else {
+				screen.pixel = p2
+			}
+			if screen.pixel < 1 {
+				screen.pixel = 1
+			}
+			// Then extend the screen to cover the window
+			screen.size = Coord{
+				int16(internal.Window.Width / screen.pixel),
+				int16(internal.Window.Height / screen.pixel),
+			}
+			createScreenTexture()
 		}
 
 		// Compute offset

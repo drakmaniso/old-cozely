@@ -10,7 +10,7 @@
 		180
 	],
 	"PixelSize": 4,
-	"ScreenMode": "Extend",
+	"ScreenMode": "Fit",
 	"Display": 0,
 	"Fullscreen": false,
 	"FullscreenMode": "Desktop",

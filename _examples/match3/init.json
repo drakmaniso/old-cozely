@@ -9,7 +9,7 @@
 		180
 	],
 	"PixelSize": 3,
-	"ScreenMode": "Zoom",
+	"ScreenMode": "Fit",
 	"Display": 0,
 	"Fullscreen": false,
 	"FullscreenMode": "Desktop",
