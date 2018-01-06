@@ -5,6 +5,8 @@ package grid
 
 import (
 	"fmt"
+
+	"github.com/drakmaniso/carol/_examples/match3/ecs"
 )
 
 //------------------------------------------------------------------------------
@@ -14,7 +16,8 @@ type Position struct {
 	x, y int8
 }
 
-var grid []uint32
+var grid []ecs.Entity
+var positions [ecs.Size]Position
 
 var width, height int8
 
@@ -23,17 +26,17 @@ var width, height int8
 // Setup prepare a new grid of width w and height h.
 func Setup(w, h int8) {
 	width, height = w, h
-	grid = make([]uint32, w*h, w*h)
+	grid = make([]ecs.Entity, w*h, w*h)
 }
 
 //------------------------------------------------------------------------------
 
-func Fill(newTile func(p Position) uint32) {
+// Fill the grid with new tiles.
+func Fill(newTile func() ecs.Entity) {
 	for y := int8(0); y < height; y++ {
 		for x := int8(0); x < width; x++ {
-			p := Position{x: x, y: y}
-			e := newTile(p)
-			put(e, p.x, p.y)
+			e := newTile()
+			put(e, x, y)
 		}
 	}
 }
@@ -41,27 +44,39 @@ func Fill(newTile func(p Position) uint32) {
 //------------------------------------------------------------------------------
 
 // put entity e at grid coordinates x, y.
-func put(e uint32, x, y int8) Position {
+func put(e ecs.Entity, x, y int8) {
 	grid[x+y*width] = e
-	return Position{x: int8(x), y: int8(y)}
+	positions[e] = Position{x: x, y: y}
+	e.Add(ecs.GridPosition)
 }
 
 // get returns the entity at grid coordinates x, y.
-func get(x, y int8) uint32 {
+func get(x, y int8) ecs.Entity {
 	return grid[x+y*width]
 }
 
 //------------------------------------------------------------------------------
 
+// PositionOf returns the grid position of entity e.
+func PositionOf(e ecs.Entity) Position {
+	if !e.Has(ecs.GridPosition) {
+		return Nowhere()
+	}
+	return positions[e]
+}
+
+//------------------------------------------------------------------------------
+
 // At returns the entity currently at the grid position.
-func At(p Position) uint32 {
+func At(p Position) ecs.Entity {
 	return grid[p.x+p.y*width]
 }
 
 //------------------------------------------------------------------------------
 
+// String returns a string representation of p.
 func (p Position) String() string {
-	return fmt.Sprintf("[%d,%d]", p.x, p.y)
+	return fmt.Sprintf("(%d,%d)", p.x, p.y)
 }
 
 //------------------------------------------------------------------------------

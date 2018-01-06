@@ -4,13 +4,15 @@
 package main
 
 import (
+	"math/rand"
+	"time"
+
 	"github.com/drakmaniso/carol"
 	"github.com/drakmaniso/carol/colour"
 	"github.com/drakmaniso/carol/mouse"
 	"github.com/drakmaniso/carol/pixel"
-	"math/rand"
-	"time"
 
+	"github.com/drakmaniso/carol/_examples/match3/ecs"
 	"github.com/drakmaniso/carol/_examples/match3/grid"
 )
 
@@ -66,15 +68,13 @@ func (loop) Setup() error {
 
 //------------------------------------------------------------------------------
 
-func newTile(p grid.Position) uint32 {
-	e := uint32(len(entities.mask))
-	entities.mask = append(entities.mask, hasGridPos|hasColor)
-	entities.gridPos = append(entities.gridPos, p)
+func newTile() ecs.Entity {
+	e := ecs.New(ecs.Color)
 	c := color(rand.Int31n(7))
 	if rand.Int31n(16) == 0 {
 		c = 7
 	}
-	entities.color = append(entities.color, c)
+	colors[e] = c
 
 	return e
 }
@@ -91,21 +91,28 @@ func (loop) Update() error {
 
 //------------------------------------------------------------------------------
 
-func (loop) Draw(_, _ float64) error {
-	sysDraw()
-	return nil
-}
-
-//------------------------------------------------------------------------------
-
 func (loop) MouseButtonDown(_ mouse.Button, _ int) {
 	m := pixel.Mouse()
 	current = grid.PositionAt(m)
 	if current != grid.Nowhere() {
 		e := grid.At(current)
-		entities.gridPos[e].TestAndMark(testMatch, markMatch)
+		n := 0
+		f := func(e ecs.Entity) {
+			print(grid.PositionOf(e).String(), " ")
+			n++
+		}
+		grid.PositionOf(e).TestAndMark(testMatch, f)
+		println("-> ", n)
 	}
-	// sysTestAndMark()
+}
+
+func testMatch(e1, e2 ecs.Entity) bool {
+	if !e1.Has(ecs.Color) || !e2.Has(ecs.Color) {
+		return false
+	}
+	c1 := colors[e1]
+	c2 := colors[e2]
+	return c1 == c2
 }
 
 func (loop) MouseButtonUp(_ mouse.Button, _ int) {
