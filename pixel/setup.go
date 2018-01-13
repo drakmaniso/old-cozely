@@ -34,7 +34,7 @@ func setupHook() error {
 	paletteSSBO = gl.NewStorageBuffer(uintptr(256*4*4), gl.DynamicStorage|gl.MapWrite)
 	paletteSSBO.Bind(2)
 
-	stampSSBO = gl.NewStorageBuffer(uintptr(1024), gl.DynamicStorage|gl.MapWrite)
+	stampSSBO = gl.NewStorageBuffer(uintptr(256*1024), gl.DynamicStorage|gl.MapWrite)
 	stampSSBO.Bind(0)
 
 	err = gl.Err()

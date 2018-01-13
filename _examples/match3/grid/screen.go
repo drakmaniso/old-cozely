@@ -19,8 +19,8 @@ const cellSize = 20
 
 // ScreenResized repositions the grid on the screen
 func ScreenResized(w, h int16) {
-	origin.X = (w - (8 * cellSize)) / 2
-	origin.Y = (h - (8 * cellSize)) / 2
+	origin.X = (w - (int16(width) * cellSize)) / 2
+	origin.Y = (h - (int16(height) * cellSize)) / 2
 }
 
 //------------------------------------------------------------------------------

@@ -4,6 +4,7 @@
 package main
 
 import (
+	"github.com/drakmaniso/carol/key"
 	"math/rand"
 	"time"
 
@@ -71,9 +72,9 @@ func (loop) Setup() error {
 func newTile() ecs.Entity {
 	e := ecs.New(ecs.Color)
 	c := color(rand.Int31n(7))
-	if rand.Int31n(16) == 0 {
-		c = 7
-	}
+	// if rand.Int31n(16) == 0 {
+	// 	c = 7
+	// }
 	colors[e] = c
 
 	return e
@@ -117,6 +118,22 @@ func testMatch(e1, e2 ecs.Entity) bool {
 
 func (loop) MouseButtonUp(_ mouse.Button, _ int) {
 	current = grid.Nowhere()
+}
+
+//------------------------------------------------------------------------------
+
+func (loop) KeyDown(l key.Label, _ key.Position) {
+	switch l {
+	case key.LabelSpace:
+		f := func(e ecs.Entity) {
+			if !e.Has(ecs.MatchFlag) {
+				print(grid.PositionOf(e).String(), " ")
+				e.Add(ecs.MatchFlag)
+			}
+		}
+		grid.TestAndMark(testMatch, f)
+		println()
+	}
 }
 
 //------------------------------------------------------------------------------

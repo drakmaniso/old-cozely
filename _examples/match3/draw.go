@@ -6,6 +6,7 @@ package main
 import (
 	"github.com/drakmaniso/carol/_examples/match3/ecs"
 	"github.com/drakmaniso/carol/_examples/match3/grid"
+	"github.com/drakmaniso/carol/core/gl"
 )
 
 //------------------------------------------------------------------------------
@@ -30,14 +31,14 @@ func (loop) Draw(_, _ float64) error {
 		case e.Has(ecs.Color):
 			c := colors[e]
 			p := tilesPict[c].normal
-			if grid.PositionOf(e) == current {
+			if grid.PositionOf(e) == current || e.Has(ecs.MatchFlag) {
 				p = tilesPict[c].big
 			}
 			p.Paint(x, y)
 		}
 	}
 
-	return nil
+	return gl.Err()
 }
 
 //------------------------------------------------------------------------------

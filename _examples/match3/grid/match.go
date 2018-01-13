@@ -58,3 +58,14 @@ func (p Position) TestAndMark(test func(e1, e2 ecs.Entity) bool, mark func(e ecs
 }
 
 //------------------------------------------------------------------------------
+
+func TestAndMark(test func(e1, e2 ecs.Entity) bool, mark func(e ecs.Entity)) {
+	for y := int8(0); y < height; y++ {
+		for x := int8(0); x < width; x++ {
+			p := Position{x: x, y: y}
+			p.TestAndMark(test, mark)
+		}
+	}
+}
+
+//------------------------------------------------------------------------------

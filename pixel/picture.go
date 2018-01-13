@@ -48,7 +48,7 @@ func (p *Picture) Paint(x, y int16) {
 		x: x, y: y,
 		u: p.x, v: p.y,
 	}
-	// println("STAMP: ", p.mode, p.width, p.height)
+	// println("STAMP: ", p.mode, x, y, p.width, p.height, p.x, p.y)
 	stamps = append(stamps, s)
 }
 

@@ -10,6 +10,7 @@ type Mask uint32
 const (
 	GridPosition Mask = 1 << iota
 	Color
+	MatchFlag
 )
 
 //------------------------------------------------------------------------------
