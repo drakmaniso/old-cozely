@@ -6,7 +6,7 @@ package grid
 import (
 	"fmt"
 
-	"github.com/drakmaniso/carol/_examples/match3/ecs"
+	"github.com/drakmaniso/glam/_examples/match3/ecs"
 )
 
 //------------------------------------------------------------------------------

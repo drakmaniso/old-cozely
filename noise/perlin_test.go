@@ -9,7 +9,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/drakmaniso/carol/space"
+	"github.com/drakmaniso/glam/space"
 )
 
 //------------------------------------------------------------------------------

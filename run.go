@@ -1,13 +1,13 @@
 // Copyright (c) 2013-2017 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
-package carol
+package glam
 
 import (
-	"github.com/drakmaniso/carol/x/gl"
-	"github.com/drakmaniso/carol/internal"
-	"github.com/drakmaniso/carol/key"
-	"github.com/drakmaniso/carol/mouse"
+	"github.com/drakmaniso/glam/x/gl"
+	"github.com/drakmaniso/glam/internal"
+	"github.com/drakmaniso/glam/key"
+	"github.com/drakmaniso/glam/mouse"
 )
 
 //------------------------------------------------------------------------------
@@ -54,7 +54,7 @@ type GameLoop interface {
 // It's an empty struct intended to be embedded in the user-defined GameLoop:
 //
 //  type loop struct {
-//    carol.Handlers
+//    glam.Handlers
 //  }
 //
 // This way it's possible to implement the GameLoop interface without writing a

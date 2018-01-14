@@ -43,7 +43,7 @@ var Config = struct {
 	PaletteAuto    bool
 }{
 	Debug:          false,
-	Title:          "Carol",
+	Title:          "Glam",
 	WindowSize:     [2]int32{1280, 720},
 	ScreenSize:     [2]int16{320, 200},
 	PixelSize:      4,
@@ -99,7 +99,7 @@ var (
 
 // Loop holds the active looper.
 //
-// Note: The variable is set with carol.Loop.
+// Note: The variable is set with glam.Loop.
 var Loop GameLoop
 
 //------------------------------------------------------------------------------

@@ -2,6 +2,6 @@
 // Licensed under a simplified BSD license (see LICENSE file).
 
 /*
-Package carol provides a framework for making pixel-art games in Go.
+Package glam provides a framework for making pixel-art games in Go.
 */
-package carol
+package glam

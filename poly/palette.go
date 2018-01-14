@@ -6,8 +6,8 @@ package poly
 //------------------------------------------------------------------------------
 
 import (
-	"github.com/drakmaniso/carol/colour"
-	"github.com/drakmaniso/carol/x/gl"
+	"github.com/drakmaniso/glam/colour"
+	"github.com/drakmaniso/glam/x/gl"
 )
 
 //------------------------------------------------------------------------------

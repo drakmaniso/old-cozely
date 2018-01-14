@@ -4,7 +4,7 @@
 package poly
 
 import (
-	"github.com/drakmaniso/carol/colour"
+	"github.com/drakmaniso/glam/colour"
 )
 
 //------------------------------------------------------------------------------

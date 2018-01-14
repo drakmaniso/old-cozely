@@ -10,19 +10,19 @@ import (
 	_ "image/png"
 	"os"
 
-	"github.com/drakmaniso/carol"
-	"github.com/drakmaniso/carol/colour"
-	"github.com/drakmaniso/carol/plane"
-	"github.com/drakmaniso/carol/space"
-	"github.com/drakmaniso/carol/x/gl"
+	"github.com/drakmaniso/glam"
+	"github.com/drakmaniso/glam/colour"
+	"github.com/drakmaniso/glam/plane"
+	"github.com/drakmaniso/glam/space"
+	"github.com/drakmaniso/glam/x/gl"
 )
 
 //------------------------------------------------------------------------------
 
 func main() {
-	err := carol.Run(loop{})
+	err := glam.Run(loop{})
 	if err != nil {
-		carol.ShowError(err)
+		glam.ShowError(err)
 		return
 	}
 }
@@ -64,7 +64,7 @@ var (
 //------------------------------------------------------------------------------
 
 type loop struct {
-	carol.Handlers
+	glam.Handlers
 }
 
 //------------------------------------------------------------------------------
@@ -72,8 +72,8 @@ type loop struct {
 func (loop) Setup() error {
 	// Create and configure the pipeline
 	pipeline = gl.NewPipeline(
-		gl.Shader(carol.Path()+"shader.vert"),
-		gl.Shader(carol.Path()+"shader.frag"),
+		gl.Shader(glam.Path()+"shader.vert"),
+		gl.Shader(glam.Path()+"shader.frag"),
 		gl.VertexFormat(0, mesh{}),
 		gl.Topology(gl.Triangles),
 		gl.CullFace(false, true),
@@ -94,14 +94,14 @@ func (loop) Setup() error {
 
 	// Create and load the textures
 	diffuse = gl.NewTexture2D(8, gl.SRGBA8, 512, 512)
-	r, err := os.Open(carol.Path() + "../../shared/testpattern.png")
+	r, err := os.Open(glam.Path() + "../../shared/testpattern.png")
 	if err != nil {
-		return carol.Error("opening texture", err)
+		return glam.Error("opening texture", err)
 	}
 	defer r.Close()
 	img, _, err := image.Decode(r)
 	if err != nil {
-		return carol.Error("decoding texture", err)
+		return glam.Error("decoding texture", err)
 	}
 	diffuse.SubImage(0, 0, 0, img)
 	diffuse.GenerateMipmap()
@@ -118,7 +118,7 @@ func (loop) Setup() error {
 	vbo.Bind(0, 0)
 	pipeline.Unbind()
 
-	return carol.Error("gl", gl.Err())
+	return glam.Error("gl", gl.Err())
 }
 
 //------------------------------------------------------------------------------

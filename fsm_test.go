@@ -6,26 +6,26 @@ package carol_test
 import (
 	"fmt"
 
-	"github.com/drakmaniso/carol"
+	"github.com/drakmaniso/glam"
 )
 
 func ExampleState() {
 	counter := 0
 
 	// Define the State Machine
-	var s1, s2, s3 carol.State
+	var s1, s2, s3 glam.State
 
-	s1 = func() carol.State {
+	s1 = func() glam.State {
 		fmt.Println("State 1")
 		return s2
 	}
 
-	s2 = func() carol.State {
+	s2 = func() glam.State {
 		fmt.Println("State 2")
 		return s3
 	}
 
-	s3 = func() carol.State {
+	s3 = func() glam.State {
 		fmt.Println("State 3")
 		if counter > 6 {
 			return nil

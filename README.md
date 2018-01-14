@@ -1,9 +1,9 @@
-# Carol
+# Glam
 
-[![GoDoc](https://godoc.org/github.com/drakmaniso/carol?status.svg)](https://godoc.org/github.com/drakmaniso/carol)
-[![Go Report Card](https://goreportcard.com/badge/github.com/drakmaniso/carol)](https://goreportcard.com/report/github.com/drakmaniso/carol)
+[![GoDoc](https://godoc.org/github.com/drakmaniso/glam?status.svg)](https://godoc.org/github.com/drakmaniso/glam)
+[![Go Report Card](https://goreportcard.com/badge/github.com/drakmaniso/glam)](https://goreportcard.com/report/github.com/drakmaniso/glam)
 
-Carol will be a minimalist framework for making games in Go, using 2D pixel art
+Glam will be a minimalist framework for making games in Go, using 2D pixel art
 or 3D polygonal art (aka low-poly).
 
 ## Work in Progress

@@ -4,9 +4,9 @@
 package main
 
 import (
-	"github.com/drakmaniso/carol/_examples/match3/ecs"
-	"github.com/drakmaniso/carol/_examples/match3/grid"
-	"github.com/drakmaniso/carol/x/gl"
+	"github.com/drakmaniso/glam/_examples/match3/ecs"
+	"github.com/drakmaniso/glam/_examples/match3/grid"
+	"github.com/drakmaniso/glam/x/gl"
 )
 
 //------------------------------------------------------------------------------

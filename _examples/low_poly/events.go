@@ -6,10 +6,10 @@ package main
 //------------------------------------------------------------------------------
 
 import (
-	"github.com/drakmaniso/carol/key"
-	"github.com/drakmaniso/carol/mouse"
-	"github.com/drakmaniso/carol/plane"
-	"github.com/drakmaniso/carol/space"
+	"github.com/drakmaniso/glam/key"
+	"github.com/drakmaniso/glam/mouse"
+	"github.com/drakmaniso/glam/plane"
+	"github.com/drakmaniso/glam/space"
 )
 
 //------------------------------------------------------------------------------

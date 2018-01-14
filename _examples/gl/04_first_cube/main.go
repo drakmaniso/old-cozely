@@ -6,18 +6,18 @@ package main
 //------------------------------------------------------------------------------
 
 import (
-	"github.com/drakmaniso/carol"
-	"github.com/drakmaniso/carol/colour"
-	"github.com/drakmaniso/carol/x/gl"
-	"github.com/drakmaniso/carol/space"
+	"github.com/drakmaniso/glam"
+	"github.com/drakmaniso/glam/colour"
+	"github.com/drakmaniso/glam/x/gl"
+	"github.com/drakmaniso/glam/space"
 )
 
 //------------------------------------------------------------------------------
 
 func main() {
-	err := carol.Run(loop{})
+	err := glam.Run(loop{})
 	if err != nil {
-		carol.ShowError(err)
+		glam.ShowError(err)
 		return
 	}
 }
@@ -57,7 +57,7 @@ var (
 //------------------------------------------------------------------------------
 
 type loop struct {
-	carol.Handlers
+	glam.Handlers
 }
 
 //------------------------------------------------------------------------------
@@ -65,8 +65,8 @@ type loop struct {
 func (loop) Setup() error {
 	// Create and configure the pipeline
 	pipeline = gl.NewPipeline(
-		gl.Shader(carol.Path()+"shader.vert"),
-		gl.Shader(carol.Path()+"shader.frag"),
+		gl.Shader(glam.Path()+"shader.vert"),
+		gl.Shader(glam.Path()+"shader.frag"),
 		gl.VertexFormat(0, mesh{}),
 		gl.Topology(gl.Triangles),
 		gl.CullFace(false, true),
@@ -92,7 +92,7 @@ func (loop) Setup() error {
 	vbo.Bind(0, 0)
 	pipeline.Unbind()
 
-	return carol.Error("gl", gl.Err())
+	return glam.Error("gl", gl.Err())
 }
 
 //------------------------------------------------------------------------------

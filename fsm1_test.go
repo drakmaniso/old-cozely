@@ -6,22 +6,22 @@ package carol_test
 import (
 	"fmt"
 
-	"github.com/drakmaniso/carol"
+	"github.com/drakmaniso/glam"
 )
 
 var counter int
 
-func state1() carol.State {
+func state1() glam.State {
 	fmt.Println("State 1")
 	return state2
 }
 
-func state2() carol.State {
+func state2() glam.State {
 	fmt.Println("State 2")
 	return state3
 }
 
-func state3() carol.State {
+func state3() glam.State {
 	fmt.Println("State 3")
 	if counter > 6 {
 		return nil
@@ -30,7 +30,7 @@ func state3() carol.State {
 }
 
 func ExampleState_noAllocations() {
-	m := carol.State(state1)
+	m := glam.State(state1)
 
 	for m != nil {
 		counter++

@@ -59,7 +59,7 @@ var debug logger = nolog{}
 
 //------------------------------------------------------------------------------
 
-// Setup is called by carol.Run, and should not be called manually.
+// Setup is called by glam.Run, and should not be called manually.
 func Setup(dbg bool) error {
 	var d C.int
 	if dbg {

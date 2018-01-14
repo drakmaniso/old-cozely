@@ -4,17 +4,17 @@
 package main
 
 import (
-	"github.com/drakmaniso/carol"
-	"github.com/drakmaniso/carol/colour"
-	"github.com/drakmaniso/carol/x/gl"
+	"github.com/drakmaniso/glam"
+	"github.com/drakmaniso/glam/colour"
+	"github.com/drakmaniso/glam/x/gl"
 )
 
 //------------------------------------------------------------------------------
 
 func main() {
-	err := carol.Run(loop{})
+	err := glam.Run(loop{})
 	if err != nil {
-		carol.ShowError(err)
+		glam.ShowError(err)
 		return
 	}
 }
@@ -29,7 +29,7 @@ var (
 //------------------------------------------------------------------------------
 
 type loop struct {
-	carol.Handlers
+	glam.Handlers
 }
 
 //------------------------------------------------------------------------------
@@ -37,12 +37,12 @@ type loop struct {
 func (loop) Setup() error {
 	// Create and configure the pipeline
 	pipeline = gl.NewPipeline(
-		gl.Shader(carol.Path()+"shader.vert"),
-		gl.Shader(carol.Path()+"shader.frag"),
+		gl.Shader(glam.Path()+"shader.vert"),
+		gl.Shader(glam.Path()+"shader.frag"),
 		gl.Topology(gl.Triangles),
 	)
 
-	return carol.Error("gfx", gl.Err())
+	return glam.Error("gfx", gl.Err())
 }
 
 //------------------------------------------------------------------------------

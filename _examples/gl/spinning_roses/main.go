@@ -8,19 +8,19 @@ package main
 import (
 	"math/rand"
 
-	"github.com/drakmaniso/carol"
-	"github.com/drakmaniso/carol/colour"
-	"github.com/drakmaniso/carol/x/gl"
-	"github.com/drakmaniso/carol/mouse"
-	"github.com/drakmaniso/carol/plane"
+	"github.com/drakmaniso/glam"
+	"github.com/drakmaniso/glam/colour"
+	"github.com/drakmaniso/glam/x/gl"
+	"github.com/drakmaniso/glam/mouse"
+	"github.com/drakmaniso/glam/plane"
 )
 
 //------------------------------------------------------------------------------
 
 func main() {
-	err := carol.Run(loop{})
+	err := glam.Run(loop{})
 	if err != nil {
-		carol.ShowError(err)
+		glam.ShowError(err)
 		return
 	}
 }
@@ -54,7 +54,7 @@ var roses [64]struct {
 //------------------------------------------------------------------------------
 
 type loop struct {
-	carol.Handlers
+	glam.Handlers
 }
 
 //------------------------------------------------------------------------------
@@ -62,8 +62,8 @@ type loop struct {
 func (loop) Setup() error {
 	// Setup the pipeline
 	pipeline = gl.NewPipeline(
-		gl.Shader(carol.Path()+"shader.vert"),
-		gl.Shader(carol.Path()+"shader.frag"),
+		gl.Shader(glam.Path()+"shader.vert"),
+		gl.Shader(glam.Path()+"shader.frag"),
 		gl.VertexFormat(1, roses[:]),
 		gl.Topology(gl.LineStrip),
 	)
@@ -81,13 +81,13 @@ func (loop) Setup() error {
 	rosesINBO.Bind(1, 0)
 	pipeline.Unbind()
 
-	return carol.Error("gl", gl.Err())
+	return glam.Error("gl", gl.Err())
 }
 
 //------------------------------------------------------------------------------
 
 func (loop) Update() error {
-	perFrame.time += float32(carol.TimeStep())
+	perFrame.time += float32(glam.TimeStep())
 
 	return nil
 }

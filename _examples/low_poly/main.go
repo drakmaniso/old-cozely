@@ -6,23 +6,23 @@ package main
 //------------------------------------------------------------------------------
 
 import (
-	"github.com/drakmaniso/carol"
-	"github.com/drakmaniso/carol/colour"
-	"github.com/drakmaniso/carol/x/gl"
-	"github.com/drakmaniso/carol/mouse"
-	"github.com/drakmaniso/carol/plane"
-	"github.com/drakmaniso/carol/poly"
-	"github.com/drakmaniso/carol/space"
+	"github.com/drakmaniso/glam"
+	"github.com/drakmaniso/glam/colour"
+	"github.com/drakmaniso/glam/x/gl"
+	"github.com/drakmaniso/glam/mouse"
+	"github.com/drakmaniso/glam/plane"
+	"github.com/drakmaniso/glam/poly"
+	"github.com/drakmaniso/glam/space"
 )
 
 //------------------------------------------------------------------------------
 
 func main() {
-	carol.SetTimeStep(1 / 2.0)
+	glam.SetTimeStep(1 / 2.0)
 
-	err := carol.Run(loop{})
+	err := glam.Run(loop{})
 	if err != nil {
-		carol.ShowError(err)
+		glam.ShowError(err)
 		return
 	}
 }
@@ -63,7 +63,7 @@ var meshes poly.Meshes
 //------------------------------------------------------------------------------
 
 type loop struct {
-	carol.Handlers
+	glam.Handlers
 }
 
 //------------------------------------------------------------------------------
@@ -72,8 +72,8 @@ func (loop) Setup() error {
 	pipeline = gl.NewPipeline(
 		poly.PipelineSetup(),
 		poly.ToneMapACES(),
-		gl.Shader(carol.Path()+"shader.vert"),
-		gl.Shader(carol.Path()+"shader.frag"),
+		gl.Shader(glam.Path()+"shader.vert"),
+		gl.Shader(glam.Path()+"shader.frag"),
 	)
 	gl.Enable(gl.FramebufferSRGB)
 
@@ -82,9 +82,9 @@ func (loop) Setup() error {
 
 	//
 	meshes = poly.Meshes{}
-	// meshes.AddObj(carol.Path() + "../shared/cube.obj")
-	// meshes.AddObj(carol.Path() + "../shared/teapot.obj")
-	meshes.AddObj(carol.Path() + "../shared/suzanne.obj")
+	// meshes.AddObj(glam.Path() + "../shared/cube.obj")
+	// meshes.AddObj(glam.Path() + "../shared/teapot.obj")
+	meshes.AddObj(glam.Path() + "../shared/suzanne.obj")
 	// meshes.AddObj("E:/objtestfiles/pony.obj")
 	poly.SetupMeshBuffers(meshes)
 
@@ -101,13 +101,13 @@ func (loop) Setup() error {
 	// Setup light
 	misc.SunIlluminance = poly.DirectionalLightSpectralIlluminance(116400.0, 5400.0)
 
-	return carol.Error("gl", gl.Err())
+	return glam.Error("gl", gl.Err())
 }
 
 //------------------------------------------------------------------------------
 
 func (loop) Update() error {
-	// prepare(carol.TimeStep())
+	// prepare(glam.TimeStep())
 
 	// p := camera.Focus()
 	// d := camera.Distance()
@@ -151,7 +151,7 @@ func prepare(dt64 float64) {
 	mx, my := mouse.Delta()
 	m := plane.Coord{float32(mx), float32(my)}
 
-	w, h := carol.WindowSize()
+	w, h := glam.WindowSize()
 	s := plane.Coord{float32(w), float32(h)}
 	switch {
 	case mouse.IsPressed(mouse.Right):

@@ -6,7 +6,7 @@ package mouse
 //------------------------------------------------------------------------------
 
 import (
-	"github.com/drakmaniso/carol/internal"
+	"github.com/drakmaniso/glam/internal"
 	"github.com/drakmaniso/glam/plane"
 )
 

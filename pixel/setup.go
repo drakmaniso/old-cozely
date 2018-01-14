@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/drakmaniso/carol/x/gl"
-	"github.com/drakmaniso/carol/internal"
+	"github.com/drakmaniso/glam/x/gl"
+	"github.com/drakmaniso/glam/internal"
 )
 
 //------------------------------------------------------------------------------

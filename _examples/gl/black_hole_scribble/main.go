@@ -8,20 +8,20 @@ package main
 import (
 	"math/rand"
 
-	"github.com/drakmaniso/carol"
-	"github.com/drakmaniso/carol/colour"
-	"github.com/drakmaniso/carol/x/gl"
-	"github.com/drakmaniso/carol/x/math32"
-	"github.com/drakmaniso/carol/mouse"
-	"github.com/drakmaniso/carol/plane"
+	"github.com/drakmaniso/glam"
+	"github.com/drakmaniso/glam/colour"
+	"github.com/drakmaniso/glam/x/gl"
+	"github.com/drakmaniso/glam/x/math32"
+	"github.com/drakmaniso/glam/mouse"
+	"github.com/drakmaniso/glam/plane"
 )
 
 //------------------------------------------------------------------------------
 
 func main() {
-	err := carol.Run(loop{})
+	err := glam.Run(loop{})
 	if err != nil {
-		carol.ShowError(err)
+		glam.ShowError(err)
 		return
 	}
 }
@@ -58,7 +58,7 @@ var (
 //------------------------------------------------------------------------------
 
 type loop struct {
-	carol.Handlers
+	glam.Handlers
 }
 
 //------------------------------------------------------------------------------
@@ -66,8 +66,8 @@ type loop struct {
 func (loop) Setup() error {
 	// Create and configure the pipeline
 	pipeline = gl.NewPipeline(
-		gl.Shader(carol.Path()+"shader.vert"),
-		gl.Shader(carol.Path()+"shader.frag"),
+		gl.Shader(glam.Path()+"shader.vert"),
+		gl.Shader(glam.Path()+"shader.frag"),
 		gl.Topology(gl.Points),
 		gl.VertexFormat(0, points[:]),
 	)
@@ -92,7 +92,7 @@ func (loop) Setup() error {
 	pointsVBO.Bind(0, 0)
 	pipeline.Unbind()
 
-	return carol.Error("gl", gl.Err())
+	return glam.Error("gl", gl.Err())
 }
 
 //------------------------------------------------------------------------------

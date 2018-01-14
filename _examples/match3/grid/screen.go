@@ -4,7 +4,7 @@
 package grid
 
 import (
-	"github.com/drakmaniso/carol/pixel"
+	"github.com/drakmaniso/glam/pixel"
 )
 
 //------------------------------------------------------------------------------

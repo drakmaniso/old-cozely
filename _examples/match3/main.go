@@ -4,17 +4,17 @@
 package main
 
 import (
-	"github.com/drakmaniso/carol/key"
+	"github.com/drakmaniso/glam/key"
 	"math/rand"
 	"time"
 
-	"github.com/drakmaniso/carol"
-	"github.com/drakmaniso/carol/colour"
-	"github.com/drakmaniso/carol/mouse"
-	"github.com/drakmaniso/carol/pixel"
+	"github.com/drakmaniso/glam"
+	"github.com/drakmaniso/glam/colour"
+	"github.com/drakmaniso/glam/mouse"
+	"github.com/drakmaniso/glam/pixel"
 
-	"github.com/drakmaniso/carol/_examples/match3/ecs"
-	"github.com/drakmaniso/carol/_examples/match3/grid"
+	"github.com/drakmaniso/glam/_examples/match3/ecs"
+	"github.com/drakmaniso/glam/_examples/match3/grid"
 )
 
 //------------------------------------------------------------------------------
@@ -28,16 +28,16 @@ var current grid.Position
 //------------------------------------------------------------------------------
 
 func main() {
-	err := carol.Run(loop{})
+	err := glam.Run(loop{})
 	if err != nil {
-		carol.ShowError(err)
+		glam.ShowError(err)
 	}
 }
 
 //------------------------------------------------------------------------------
 
 type loop struct {
-	carol.Handlers
+	glam.Handlers
 }
 
 //------------------------------------------------------------------------------

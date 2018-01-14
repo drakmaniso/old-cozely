@@ -3,7 +3,7 @@
 
 package key
 
-import "github.com/drakmaniso/carol/internal"
+import "github.com/drakmaniso/glam/internal"
 
 //------------------------------------------------------------------------------
 

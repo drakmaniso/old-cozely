@@ -10,7 +10,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/drakmaniso/carol/formats/obj"
+	"github.com/drakmaniso/glam/formats/obj"
 )
 
 //------------------------------------------------------------------------------

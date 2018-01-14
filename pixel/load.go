@@ -12,11 +12,11 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/drakmaniso/carol/colour"
+	"github.com/drakmaniso/glam/colour"
 
-	"github.com/drakmaniso/carol/x/atlas"
-	"github.com/drakmaniso/carol/x/gl"
-	"github.com/drakmaniso/carol/internal"
+	"github.com/drakmaniso/glam/x/atlas"
+	"github.com/drakmaniso/glam/x/gl"
+	"github.com/drakmaniso/glam/internal"
 )
 
 //------------------------------------------------------------------------------
