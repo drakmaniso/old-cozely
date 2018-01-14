@@ -12,9 +12,9 @@ import (
 
 	"github.com/drakmaniso/carol"
 	"github.com/drakmaniso/carol/colour"
-	"github.com/drakmaniso/carol/x/gl"
 	"github.com/drakmaniso/carol/plane"
 	"github.com/drakmaniso/carol/space"
+	"github.com/drakmaniso/carol/x/gl"
 )
 
 //------------------------------------------------------------------------------
@@ -94,7 +94,7 @@ func (loop) Setup() error {
 
 	// Create and load the textures
 	diffuse = gl.NewTexture2D(8, gl.SRGBA8, 512, 512)
-	r, err := os.Open(carol.Path() + "../shared/testpattern.png")
+	r, err := os.Open(carol.Path() + "../../shared/testpattern.png")
 	if err != nil {
 		return carol.Error("opening texture", err)
 	}
