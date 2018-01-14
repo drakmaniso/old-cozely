@@ -7,6 +7,7 @@ package mouse
 
 import (
 	"github.com/drakmaniso/carol/internal"
+	"github.com/drakmaniso/glam/plane"
 )
 
 //------------------------------------------------------------------------------
@@ -34,5 +35,25 @@ func SetRelativeMode(enabled bool) error {
 func GetRelativeMode() bool {
 	return internal.MouseGetRelativeMode()
 }
+
+//------------------------------------------------------------------------------
+
+// SetSmoothing sets the smoothing factor for SmoothDelta.
+func SetSmoothing(s float32) {
+	smoothing = s
+}
+
+// SmoothDelta returns relative to the last call of SmoothDelta (or Delta), but
+// smoothed to avoid jitter. The is best used with a fixed timestep (see
+// glam.LoopStable).
+func SmoothDelta() plane.Coord {
+	dx, dy := Delta()
+	d := plane.Coord{float32(dx), float32(dy)}
+	smoothed = smoothed.Plus(d.Minus(smoothed).Times(smoothing))
+	return smoothed
+}
+
+var smoothed plane.Coord
+var smoothing = float32(0.4)
 
 //------------------------------------------------------------------------------

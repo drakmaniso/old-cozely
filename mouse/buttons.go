@@ -19,8 +19,8 @@ const (
 	Left   Button = 1
 	Middle Button = 2
 	Right  Button = 3
-	Extra1 Button = 6
-	Extra2 Button = 7
+	Extra1 Button = 4
+	Extra2 Button = 5
 )
 
 // IsPressed returns true if a specific button is held down.
