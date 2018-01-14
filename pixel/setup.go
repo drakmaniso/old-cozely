@@ -4,11 +4,22 @@
 package pixel
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/drakmaniso/carol/core/gl"
 	"github.com/drakmaniso/carol/internal"
 )
+
+//------------------------------------------------------------------------------
+
+var screenUBO gl.UniformBuffer
+
+var screenUniforms struct {
+	PixelSize struct{ X, Y float32 }
+}
+
+var mappingsTBO gl.BufferTexture
 
 //------------------------------------------------------------------------------
 
@@ -32,10 +43,10 @@ func setupHook() error {
 	screenUBO.Bind(0)
 
 	paletteSSBO = gl.NewStorageBuffer(uintptr(256*4*4), gl.DynamicStorage|gl.MapWrite)
-	paletteSSBO.Bind(2)
+	paletteSSBO.Bind(0)
 
 	stampSSBO = gl.NewStorageBuffer(uintptr(256*1024), gl.DynamicStorage|gl.MapWrite)
-	stampSSBO.Bind(0)
+	stampSSBO.Bind(2)
 
 	err = gl.Err()
 	if err != nil {
@@ -47,7 +58,11 @@ func setupHook() error {
 		return err
 	}
 
-	return nil
+	fmt.Printf("\n\n%v\n\n", mappings)
+	mappingsTBO = gl.NewBufferTexture(mappings, gl.R16I, gl.StaticStorage)
+	mappingsTBO.Bind(5)
+
+	return gl.Err()
 }
 
 //------------------------------------------------------------------------------

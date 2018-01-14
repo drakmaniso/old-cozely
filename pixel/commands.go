@@ -7,44 +7,25 @@ package pixel
 
 /*
 type paramIndexedPicture struct {
-	binflip int16
-	tx      int16
-	ty      int16
-	tw      int16
-	th      int16
-	x       int16
-	y       int16
+	x int16
+	y int16
 }
 
 type paramFullIndexedPicture struct {
-	binflip          int16
-	tx               int16
-	ty               int16
-	tw               int16
-	th               int16
-	x                int16
-	y                int16
-	w                int16
-	h                int16
-	transform, shift uint8
+	x                 int16
+	y                 int16
+	w                 int16
+	h                 int16
+	transform, shift  uint8
+	alpha, brightness uint8
 }
 
 type paramRGBAPicture struct {
-	binfip int16
-	tx     int16
-	ty     int16
-	tw     int16
-	th     int16
-	x      int16
-	y      int16
+	x int16
+	y int16
 }
 
 type paramFulRGBAPicturel struct {
-	binflip          int16
-	tx               int16
-	ty               int16
-	tw               int16
-	th               int16
 	x                int16
 	y                int16
 	w                int16

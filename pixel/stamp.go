@@ -13,16 +13,9 @@ import (
 
 type stamp struct {
 	//  word
-	mode, bin int16
-
+	mode, mapping int16
 	//  word
 	x, y int16
-
-	//  word
-	w, h int16
-
-	//  word
-	u, v int16
 }
 
 var stamps []stamp
@@ -32,11 +25,5 @@ var stamps []stamp
 var stampPipeline *gl.Pipeline
 
 var stampSSBO gl.StorageBuffer
-
-var screenUBO gl.UniformBuffer
-
-var screenUniforms struct {
-	PixelSize struct{ X, Y float32 }
-}
 
 //------------------------------------------------------------------------------

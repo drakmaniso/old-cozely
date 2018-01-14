@@ -5,13 +5,14 @@ package pixel
 
 import (
 	"errors"
-	"github.com/drakmaniso/carol/colour"
 	"image"
 	"image/color"
 	_ "image/png" // Activate PNG support
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/drakmaniso/carol/colour"
 
 	"github.com/drakmaniso/carol/core/atlas"
 	"github.com/drakmaniso/carol/core/gl"
@@ -92,7 +93,7 @@ func loadAllPictures() error {
 
 		indexedTexture.SubImage(0, 0, 0, int32(i), m)
 	}
-	indexedTexture.Bind(0)
+	indexedTexture.Bind(1)
 
 	// Create the RGBA texture atlas
 	w, h = rgbaAtlas.BinSize()
@@ -110,7 +111,7 @@ func loadAllPictures() error {
 
 		rgbaTexture.SubImage(0, 0, 0, int32(i), m)
 	}
-	rgbaTexture.Bind(1)
+	rgbaTexture.Bind(2)
 
 	internal.Debug.Printf("Loaded %d pictures.", len(pictures))
 
@@ -145,18 +146,14 @@ func scan(path string, info os.FileInfo, err error) error {
 	}
 	n := strings.TrimSuffix(fp, filepath.Ext(fp))
 	n = filepath.ToSlash(n)
-	p := Picture{
-		//TODO: check for overflow
-		width:  int16(conf.Width),
-		height: int16(conf.Height),
-	}
+	//TODO: check for width and height overflow
+	w, h := int16(conf.Width), int16(conf.Height)
 
 	switch conf.ColorModel {
 
 	case color.RGBAModel, color.NRGBAModel, color.GrayModel,
 		color.Gray16Model, color.RGBA64Model, color.NRGBA64Model:
-		p.mode = 2
-		pictures[n] = &p
+		newPicture(n, FullColor, w, h)
 		rgbaFiles = append(rgbaFiles, imgfile{name: n, path: path})
 
 	case color.AlphaModel, color.Alpha16Model:
@@ -165,8 +162,7 @@ func scan(path string, info os.FileInfo, err error) error {
 	default:
 		_, ok := conf.ColorModel.(color.Palette)
 		if ok {
-			p.mode = 1
-			pictures[n] = &p
+			newPicture(n, Indexed, w, h)
 			indexedFiles = append(indexedFiles, imgfile{name: n, path: path})
 
 		} else {
@@ -185,18 +181,17 @@ type imgfile struct {
 }
 
 func (im imgfile) Size() (width, height int16) {
-	p := pictures[im.name]
-	return p.width, p.height
+	s := pictures[im.name].Size()
+	return s.X, s.Y
 }
 
 func (im imgfile) Put(bin int16, x, y int16) {
-	p := pictures[im.name]
-	p.bin = bin
-	p.x, p.y = x, y
+	pictures[im.name].mapTo(bin, x, y)
 }
 
 func (im imgfile) Paint(dest interface{}) error {
 	p := pictures[im.name]
+	_, px, py, pw, ph := p.getMap()
 
 	pf, err := os.Open(im.path)
 	if err != nil {
@@ -211,10 +206,10 @@ func (im imgfile) Paint(dest interface{}) error {
 	switch dm := dest.(type) {
 
 	case *image.NRGBA:
-		for y := 0; y < int(p.height); y++ {
-			for x := 0; x < int(p.width); x++ {
+		for y := 0; y < int(ph); y++ {
+			for x := 0; x < int(pw); x++ {
 				c := pm.At(x, y)
-				dm.Set(int(p.x)+x, int(p.y)+y, c)
+				dm.Set(int(px)+x, int(py)+y, c)
 			}
 		}
 
@@ -224,10 +219,10 @@ func (im imgfile) Paint(dest interface{}) error {
 		if !ok {
 			return errors.New("unable to access color palette for image")
 		}
-		for y := 0; y < int(p.height); y++ {
-			for x := 0; x < int(p.width); x++ {
+		for y := 0; y < int(ph); y++ {
+			for x := 0; x < int(pw); x++ {
 				w := dm.Bounds().Dx()
-				ci := pmp.Pix[x+int(p.width)*y]
+				ci := pmp.Pix[x+int(pw)*y]
 				if internal.Config.PaletteAuto {
 					// Convert image color index to index into current palette
 					r, g, b, a := pal[ci].RGBA()
@@ -239,7 +234,7 @@ func (im imgfile) Paint(dest interface{}) error {
 					}
 					ci = uint8(requestColor(cc))
 				}
-				dm.Pix[int(p.x)+x+w*(int(p.y)+y)] = uint8(ci)
+				dm.Pix[int(px)+x+w*(int(py)+y)] = uint8(ci)
 			}
 		}
 

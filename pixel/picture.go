@@ -12,19 +12,68 @@ import (
 //------------------------------------------------------------------------------
 
 type Picture struct {
-	bin    int16
-	x, y   int16
-	width  int16
-	height int16
-	mode   uint8
+	mode    Mode
+	mapping uint16
 }
-
-//------------------------------------------------------------------------------
 
 var pictures map[string]*Picture
 
 func init() {
 	pictures = make(map[string]*Picture, 128)
+}
+
+//------------------------------------------------------------------------------
+
+type mapping struct {
+	binFlip int16
+	x, y    int16
+	w, h    int16
+}
+
+var mappings []mapping
+
+//------------------------------------------------------------------------------
+
+// Mode describes the way a picture is stored in memory.
+type Mode uint8
+
+// The three modes supported for pictures.
+const (
+	Indexed   Mode = 1
+	FullColor Mode = 2
+	GrayScale Mode = 3
+)
+
+//------------------------------------------------------------------------------
+
+func newPicture(name string, mode Mode, w, h int16) *Picture {
+	var p Picture
+	p.mode = mode
+	mappings = append(mappings, mapping{w: w, h: h})
+	p.mapping = uint16(len(mappings) - 1)
+	pictures[name] = &p
+	return &p
+}
+
+//------------------------------------------------------------------------------
+
+// Size returns the width and height of the picture.
+func (p *Picture) Size() Coord {
+	m := p.mapping
+	return Coord{mappings[m].w, mappings[m].h}
+}
+
+//------------------------------------------------------------------------------
+
+func (p *Picture) mapTo(binFlip int16, x, y int16) {
+	m := p.mapping
+	mappings[m].binFlip = binFlip
+	mappings[m].x, mappings[m].y = x, y
+}
+
+func (p *Picture) getMap() (binFlip int16, x, y, w, h int16) {
+	m := p.mapping
+	return mappings[m].binFlip, mappings[m].x, mappings[m].y, mappings[m].w, mappings[m].h
 }
 
 //------------------------------------------------------------------------------
@@ -43,12 +92,11 @@ func GetPicture(name string) *Picture {
 
 func (p *Picture) Paint(x, y int16) {
 	s := stamp{
-		mode: int16(p.mode), bin: int16(p.bin),
-		w: p.width, h: p.height,
-		x: x, y: y,
-		u: p.x, v: p.y,
+		mode:    int16(p.mode),
+		mapping: int16(p.mapping),
+		x:       x, y: y,
 	}
-	// println("STAMP: ", p.mode, x, y, p.width, p.height, p.x, p.y)
+	// println("STAMP: ", p.mode, p.mapping, x, y, mappings[m].x, mappings[m].y, mappings[m].w, mappings[m].h)
 	stamps = append(stamps, s)
 }
 
