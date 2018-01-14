@@ -10,7 +10,6 @@ import (
 	"github.com/drakmaniso/carol/colour"
 	"github.com/drakmaniso/carol/core/gl"
 	"github.com/drakmaniso/carol/mouse"
-	"github.com/drakmaniso/carol/pbr"
 	"github.com/drakmaniso/carol/plane"
 	"github.com/drakmaniso/carol/poly"
 	"github.com/drakmaniso/carol/space"
@@ -42,7 +41,7 @@ var misc struct {
 
 // PlanarCamera
 
-var camera *pbr.PlanarCamera
+var camera *poly.PlanarCamera
 
 // State
 
@@ -72,7 +71,7 @@ type loop struct {
 func (loop) Setup() error {
 	pipeline = gl.NewPipeline(
 		poly.PipelineSetup(),
-		pbr.ToneMapACES(),
+		poly.ToneMapACES(),
 		gl.Shader(carol.Path()+"shader.vert"),
 		gl.Shader(carol.Path()+"shader.frag"),
 	)
@@ -91,7 +90,7 @@ func (loop) Setup() error {
 
 	// Setup camera
 
-	camera = pbr.NewPlanarCamera()
+	camera = poly.NewPlanarCamera()
 	camera.SetExposure(16.0, 1.0/125.0, 100.0)
 	camera.SetFocus(space.Coord{0, 0, 0})
 	camera.SetDistance(4)
@@ -100,7 +99,7 @@ func (loop) Setup() error {
 	misc.worldFromObject = space.Identity()
 
 	// Setup light
-	misc.SunIlluminance = pbr.DirectionalLightSpectralIlluminance(116400.0, 5400.0)
+	misc.SunIlluminance = poly.DirectionalLightSpectralIlluminance(116400.0, 5400.0)
 
 	return carol.Error("gl", gl.Err())
 }
