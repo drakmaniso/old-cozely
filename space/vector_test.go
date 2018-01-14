@@ -9,7 +9,7 @@ import (
 	"testing"
 	"unsafe"
 
-	"github.com/drakmaniso/carol/core/space"
+	"github.com/drakmaniso/carol/x/space"
 )
 
 //-----------------------------------------------------------------------------

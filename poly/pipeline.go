@@ -8,7 +8,7 @@ package poly
 import (
 	"strings"
 
-	"github.com/drakmaniso/carol/core/gl"
+	"github.com/drakmaniso/carol/x/gl"
 )
 
 //------------------------------------------------------------------------------

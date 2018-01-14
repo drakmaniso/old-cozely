@@ -8,7 +8,7 @@ package main
 import (
 	"github.com/drakmaniso/carol"
 	"github.com/drakmaniso/carol/colour"
-	"github.com/drakmaniso/carol/core/gl"
+	"github.com/drakmaniso/carol/x/gl"
 	"github.com/drakmaniso/carol/plane"
 )
 

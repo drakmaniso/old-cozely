@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/drakmaniso/carol/core/gl"
+	"github.com/drakmaniso/carol/x/gl"
 	"github.com/drakmaniso/carol/internal"
 )
 

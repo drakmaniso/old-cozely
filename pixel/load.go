@@ -14,8 +14,8 @@ import (
 
 	"github.com/drakmaniso/carol/colour"
 
-	"github.com/drakmaniso/carol/core/atlas"
-	"github.com/drakmaniso/carol/core/gl"
+	"github.com/drakmaniso/carol/x/atlas"
+	"github.com/drakmaniso/carol/x/gl"
 	"github.com/drakmaniso/carol/internal"
 )
 

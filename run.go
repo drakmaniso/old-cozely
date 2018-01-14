@@ -4,7 +4,7 @@
 package carol
 
 import (
-	"github.com/drakmaniso/carol/core/gl"
+	"github.com/drakmaniso/carol/x/gl"
 	"github.com/drakmaniso/carol/internal"
 	"github.com/drakmaniso/carol/key"
 	"github.com/drakmaniso/carol/mouse"

@@ -10,7 +10,7 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/drakmaniso/carol/core/gl"
+	"github.com/drakmaniso/carol/x/gl"
 	"github.com/drakmaniso/carol/formats/obj"
 	"github.com/drakmaniso/carol/space"
 )

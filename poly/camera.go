@@ -8,8 +8,8 @@ package poly
 import (
 	"math"
 
-	"github.com/drakmaniso/carol/core/gl"
-	"github.com/drakmaniso/carol/core/math32"
+	"github.com/drakmaniso/carol/x/gl"
+	"github.com/drakmaniso/carol/x/math32"
 	"github.com/drakmaniso/carol/internal"
 	"github.com/drakmaniso/carol/plane"
 	"github.com/drakmaniso/carol/space"

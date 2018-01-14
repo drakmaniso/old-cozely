@@ -9,7 +9,7 @@ import (
 	"errors"
 
 	"github.com/drakmaniso/carol/colour"
-	"github.com/drakmaniso/carol/core/gl"
+	"github.com/drakmaniso/carol/x/gl"
 )
 
 //------------------------------------------------------------------------------

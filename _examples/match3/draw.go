@@ -6,7 +6,7 @@ package main
 import (
 	"github.com/drakmaniso/carol/_examples/match3/ecs"
 	"github.com/drakmaniso/carol/_examples/match3/grid"
-	"github.com/drakmaniso/carol/core/gl"
+	"github.com/drakmaniso/carol/x/gl"
 )
 
 //------------------------------------------------------------------------------

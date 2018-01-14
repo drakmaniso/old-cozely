@@ -10,8 +10,8 @@ import (
 
 	"github.com/drakmaniso/carol"
 	"github.com/drakmaniso/carol/colour"
-	"github.com/drakmaniso/carol/core/gl"
-	"github.com/drakmaniso/carol/core/math32"
+	"github.com/drakmaniso/carol/x/gl"
+	"github.com/drakmaniso/carol/x/math32"
 	"github.com/drakmaniso/carol/mouse"
 	"github.com/drakmaniso/carol/plane"
 )
