@@ -10,15 +10,15 @@ import (
 
 	"github.com/drakmaniso/glam"
 	"github.com/drakmaniso/glam/colour"
-	"github.com/drakmaniso/glam/x/gl"
 	"github.com/drakmaniso/glam/mouse"
 	"github.com/drakmaniso/glam/plane"
+	"github.com/drakmaniso/glam/x/gl"
 )
 
 //------------------------------------------------------------------------------
 
 func main() {
-	err := glam.Run(loop{})
+	err := glam.Run(setup, loop{})
 	if err != nil {
 		glam.ShowError(err)
 		return
@@ -53,13 +53,7 @@ var roses [64]struct {
 
 //------------------------------------------------------------------------------
 
-type loop struct {
-	glam.Handlers
-}
-
-//------------------------------------------------------------------------------
-
-func (loop) Setup() error {
+func setup() error {
 	// Setup the pipeline
 	pipeline = gl.NewPipeline(
 		gl.Shader(glam.Path()+"shader.vert"),
@@ -86,6 +80,12 @@ func (loop) Setup() error {
 
 //------------------------------------------------------------------------------
 
+type loop struct {
+	glam.Handlers
+}
+
+//------------------------------------------------------------------------------
+
 func (loop) Update() error {
 	perFrame.time += float32(glam.TimeStep())
 
@@ -94,7 +94,7 @@ func (loop) Update() error {
 
 //------------------------------------------------------------------------------
 
-func (loop) Draw(_, _ float64) error {
+func (loop) Draw() error {
 	pipeline.Bind()
 	gl.ClearDepthBuffer(1.0)
 	gl.ClearColorBuffer(colour.RGBA{0.9, 0.85, 0.80, 1.0})

@@ -20,7 +20,7 @@ import (
 //------------------------------------------------------------------------------
 
 func main() {
-	err := glam.Run(loop{})
+	err := glam.Run(setup, loop{})
 	if err != nil {
 		glam.ShowError(err)
 		return
@@ -63,13 +63,7 @@ var (
 
 //------------------------------------------------------------------------------
 
-type loop struct {
-	glam.Handlers
-}
-
-//------------------------------------------------------------------------------
-
-func (loop) Setup() error {
+func setup() error {
 	// Create and configure the pipeline
 	pipeline = gl.NewPipeline(
 		gl.Shader(glam.Path()+"shader.vert"),
@@ -123,6 +117,12 @@ func (loop) Setup() error {
 
 //------------------------------------------------------------------------------
 
+type loop struct {
+	glam.Handlers
+}
+
+//------------------------------------------------------------------------------
+
 func computeWorldFromObject() {
 	r := space.EulerZXY(pitch, yaw, 0)
 	worldFromObject = space.Translation(position).Times(r)
@@ -144,7 +144,7 @@ func (loop) Update() error {
 
 //------------------------------------------------------------------------------
 
-func (loop) Draw(_, _ float64) error {
+func (loop) Draw() error {
 	pipeline.Bind()
 	gl.ClearDepthBuffer(1.0)
 	gl.ClearColorBuffer(colour.RGBA{0.9, 0.9, 0.9, 1.0})

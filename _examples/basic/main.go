@@ -19,7 +19,9 @@ var logo, mire, midgray, midrgb *pixel.Picture
 //------------------------------------------------------------------------------
 
 func main() {
-	err := glam.Run(loop{})
+	glam.SetTimeStep(1.0 / 60)
+
+	err := glam.Run(setup, loop{})
 	if err != nil {
 		glam.ShowError(err)
 		return
@@ -32,7 +34,7 @@ type loop struct {
 	glam.Handlers
 }
 
-func (loop) Setup() error {
+func setup() error {
 	palette.Change("MSX2")
 
 	logo = pixel.GetPicture("pictures/logo")
@@ -48,6 +50,7 @@ func (loop) Update() error {
 	if x >= pixel.ScreenSize().X {
 		x = -64
 	}
+
 	return nil
 }
 
@@ -58,8 +61,8 @@ var (
 	count = 0
 )
 
-func (loop) Draw(delta, _ float64) error {
-	timer += delta
+func (loop) Draw() error {
+	timer += glam.FrameTime()
 	if timer > 0.25 {
 		count++
 		timer = 0.0

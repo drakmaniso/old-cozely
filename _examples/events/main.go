@@ -16,7 +16,7 @@ import (
 //------------------------------------------------------------------------------
 
 func main() {
-	err := glam.Run(loop{})
+	err := glam.Run(nil, loop{})
 	if err != nil {
 		glam.ShowError(err)
 		return
@@ -31,27 +31,21 @@ type loop struct {
 
 //------------------------------------------------------------------------------
 
-func (loop) Setup() error {
-	return nil
-}
-
-//------------------------------------------------------------------------------
-
 func (loop) KeyDown(l key.Label, p key.Position) {
 	if l == key.LabelEscape {
 		glam.Stop()
 	}
-	fmt.Printf("%v: Key Down: %v %v\n", glam.Now(), l, p)
+	fmt.Printf("%v: Key Down: %v %v\n", glam.GameTime(), l, p)
 }
 
 func (loop) KeyUp(l key.Label, p key.Position) {
-	fmt.Printf("%v: Key Up: %v %v\n", glam.Now(), l, p)
+	fmt.Printf("%v: Key Up: %v %v\n", glam.GameTime(), l, p)
 }
 
 //------------------------------------------------------------------------------
 
 func (loop) MouseMotion(dx, dy int32, x, y int32) {
-	fmt.Printf("%v: mouse motion  %+d,%+d  %d,%d\n", glam.Now(), dx, dy, x, y)
+	fmt.Printf("%v: mouse motion  %+d,%+d  %d,%d\n", glam.GameTime(), dx, dy, x, y)
 }
 
 func (loop) MouseButtonDown(b mouse.Button, clicks int) {
@@ -70,7 +64,7 @@ func (loop) MouseButtonDown(b mouse.Button, clicks int) {
 	default:
 		n = "UNKOWN!"
 	}
-	fmt.Printf("%v: mouse button down  %s (%v), clicks=%v\n", glam.Now(), n, b, clicks)
+	fmt.Printf("%v: mouse button down  %s (%v), clicks=%v\n", glam.GameTime(), n, b, clicks)
 }
 
 func (loop) MouseButtonUp(b mouse.Button, clicks int) {
@@ -89,57 +83,57 @@ func (loop) MouseButtonUp(b mouse.Button, clicks int) {
 	default:
 		n = "UNKOWN!"
 	}
-	fmt.Printf("%v: mouse button up: %s (%v), clicks=%v\n", glam.Now(), n, b, clicks)
+	fmt.Printf("%v: mouse button up: %s (%v), clicks=%v\n", glam.GameTime(), n, b, clicks)
 }
 
 func (loop) MouseWheel(dx, dy int32) {
-	fmt.Printf("%v: mouse wheel: %+d,%+d\n", glam.Now(), dx, dy)
+	fmt.Printf("%v: mouse wheel: %+d,%+d\n", glam.GameTime(), dx, dy)
 }
 
 //------------------------------------------------------------------------------
 
 func (loop) WindowShown() {
-	fmt.Printf("%v: window shown\n", glam.Now())
+	fmt.Printf("%v: window shown\n", glam.GameTime())
 }
 
 func (loop) WindowHidden() {
-	fmt.Printf("%v: window hidden\n", glam.Now())
+	fmt.Printf("%v: window hidden\n", glam.GameTime())
 }
 
 func (loop) WindowResized(w, h int32) {
-	fmt.Printf("%v: window resized %dx%d\n", glam.Now(), w, h)
+	fmt.Printf("%v: window resized %dx%d\n", glam.GameTime(), w, h)
 }
 
 func (loop) WindowMinimized() {
-	fmt.Printf("%v: window minimized\n", glam.Now())
+	fmt.Printf("%v: window minimized\n", glam.GameTime())
 }
 
 func (loop) WindowMaximized() {
-	fmt.Printf("%v: window maximized\n", glam.Now())
+	fmt.Printf("%v: window maximized\n", glam.GameTime())
 }
 
 func (loop) WindowRestored() {
-	fmt.Printf("%v: window restored\n", glam.Now())
+	fmt.Printf("%v: window restored\n", glam.GameTime())
 }
 
 func (loop) WindowMouseEnter() {
-	fmt.Printf("%v: window mouse enter\n", glam.Now())
+	fmt.Printf("%v: window mouse enter\n", glam.GameTime())
 }
 
 func (loop) WindowMouseLeave() {
-	fmt.Printf("%v: window mouse leave\n", glam.Now())
+	fmt.Printf("%v: window mouse leave\n", glam.GameTime())
 }
 
 func (loop) WindowFocusGained() {
-	fmt.Printf("%v: window focus gained\n", glam.Now())
+	fmt.Printf("%v: window focus gained\n", glam.GameTime())
 }
 
 func (loop) WindowFocusLost() {
-	fmt.Printf("%v: window focus lost\n", glam.Now())
+	fmt.Printf("%v: window focus lost\n", glam.GameTime())
 }
 
 func (loop) WindowQuit() {
-	fmt.Printf("%v: window quit\n", glam.Now())
+	fmt.Printf("%v: window quit\n", glam.GameTime())
 	glam.Stop()
 }
 
@@ -183,7 +177,7 @@ func (loop) Update() error {
 	return nil
 }
 
-func (loop) Draw(_, _ float64) error {
+func (loop) Draw() error {
 	return nil
 }
 

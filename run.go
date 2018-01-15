@@ -12,15 +12,12 @@ import (
 
 //------------------------------------------------------------------------------
 
-// GameLoop methods are called to setup the game, and during the main loop to
-// process events, Update the game state and Draw it.
+// GameLoop methods are called during the main loop to process events, Update
+// the game state and render it.
 type GameLoop interface {
-	// Loop setup
-	Setup() error
-
 	// The loop
 	Update() error
-	Draw(delta float64, lerp float64) error
+	Draw() error
 
 	// Window events
 	WindowShown()
@@ -64,26 +61,24 @@ type Handlers = internal.Handlers
 //------------------------------------------------------------------------------
 
 func SetTimeStep(t float64) {
-	timeStep = t
+	internal.TimeStep = t
 }
 
 func TimeStep() float64 {
-	return timeStep
+	return internal.TimeStep
 }
-
-var timeStep = float64(1.0 / 60)
 
 //------------------------------------------------------------------------------
 
-// Run starts the game loop.
+// Run initializes the framework, calls setup and then starts the game loop.
 //
-// The update callback is called with a fixed time step, while event handlers
-// and the draw callback are called once for each frame displayed. The loop runs
-// until Stop() is called.
+// The Update callback is called with a fixed time step, while the Draw callback
+// is tied to the framerate. Event callbacks are called before each Update, but
+// at least once for every frame. The loop runs until Stop() is called.
 //
 // Important: must be called from main.main, or at least from a function that is
 // known to run on the main OS thread.
-func Run(loop GameLoop) error {
+func Run(setup func() error, loop GameLoop) error {
 	defer internal.SDLQuit()
 	defer internal.DestroyWindow()
 
@@ -111,9 +106,11 @@ func Run(loop GameLoop) error {
 		return internal.Error("in pixel Setup", err)
 	}
 
-	err = internal.Loop.Setup()
-	if err != nil {
-		return internal.Error("in game loop Setup", err)
+	if setup != nil {
+		err = setup()
+		if err != nil {
+			return internal.Error("in game loop Setup", err)
+		}
 	}
 
 	// First, send a fake resize window event
@@ -122,41 +119,46 @@ func Run(loop GameLoop) error {
 
 	// Main Loop
 
+	internal.FrameTime = 0.0
+	internal.UpdateLag = 0.0
+
 	then := internal.GetSeconds()
 	now := then
-	stepNow := now
-	remain := 0.0
+	gametime := 0.0
 
 	for !internal.QuitRequested {
-		now = internal.GetSeconds()
-		delta = now - then
-		//TODO: clamp delta ?
+		internal.FrameTime = now - then
 		countFrames()
-
-		internal.ProcessEvents() //TODO: Should it be in the physisc loop?
-
-		// Update with fixed time step
-
-		remain += delta
-		// Cap remain to avoid "spiral of death"
-		for remain > 8*timeStep {
-			remain -= timeStep
-			stepNow += timeStep
+		if internal.FrameTime > 4*internal.TimeStep {
+			// Prevent "spiral of death" when Draw can't keep up with Update
+			internal.FrameTime = 4 * internal.TimeStep
 		}
-		for remain >= timeStep {
-			internal.VisibleNow = stepNow
+
+		// Update and Events
+
+		internal.UpdateLag += internal.FrameTime
+		if internal.UpdateLag < internal.TimeStep {
+			// Process events even if there is no Update this frame
+			internal.ProcessEvents()
+		}
+		for internal.UpdateLag >= internal.TimeStep {
+			// Do the Time Step
+			internal.UpdateLag -= internal.TimeStep
+			gametime += internal.TimeStep
+			internal.GameTime = gametime
+			// Events
+			internal.ProcessEvents()
+			// Update
 			err = internal.Loop.Update()
 			if err != nil {
 				return internal.Error("in Update callback", err)
 			}
-			remain -= timeStep
-			stepNow += timeStep
 		}
 
 		// Draw
 
-		internal.VisibleNow = now
-		err = internal.Loop.Draw(delta, remain/timeStep)
+		internal.GameTime = gametime + internal.UpdateLag
+		err = internal.Loop.Draw()
 		if err != nil {
 			return internal.Error("in Draw callback", err)
 		}
@@ -169,35 +171,41 @@ func Run(loop GameLoop) error {
 		internal.SwapWindow()
 
 		then = now
+		now = internal.GetSeconds()
 	}
 	return nil
 }
 
 //------------------------------------------------------------------------------
 
-// delta is the time elapsed between current and previous frames
-var delta float64
+// GameTime returns the time elapsed in the game. It is updated before each call
+// to Update and before each call to Draw.
+func GameTime() float64 {
+	return internal.GameTime
+}
 
-//------------------------------------------------------------------------------
+// FrameTime returns the time elapsed between the previous frame and the one
+// being drawn. See also UpdateLag.
+func FrameTime() float64 {
+	return internal.FrameTime
+}
 
-// Now returns the current time (elapsed since program start).
+// UpdateLag returns the time elapsed between the last update and the frame
+// being drawn. It should be used during Draw to extrapolate (or interpolate)
+// the game state.
 //
-// If called during the update callback, it corresponds to the current time
-// step. If called during the draw callback, it corresponds to the current
-// frame. And if called during an event callback, it corresponds to the event
-// time stamp.
-//
-// It shouldn't be used outside of these three contexts.
-func Now() float64 {
-	return internal.VisibleNow
+// Note: if called during Update (or an event callback), it returns the time
+// between the current update and the next Draw call.
+func UpdateLag() float64 {
+	return internal.UpdateLag
 }
 
 //------------------------------------------------------------------------------
 
 func countFrames() {
 	frCount++
-	frSum += delta
-	if delta > xrunThreshold {
+	frSum += internal.FrameTime
+	if internal.FrameTime > xrunThreshold {
 		xrunCount++
 	}
 	if frSum >= frInterval {
@@ -210,15 +218,10 @@ func countFrames() {
 	}
 }
 
-// FrameTime returns the duration of the last frame
-func FrameTime() float64 {
-	return delta
-}
-
-// FrameTimeAverage returns the average durations of frames; it is updated 4
+// FrameStats returns the average durations of frames; it is updated 4
 // times per second. It also returns the number of overruns (i.e. frame time
 // longer than the threshold) during the last measurment interval.
-func FrameTimeAverage() (t float64, overruns int) {
+func FrameStats() (t float64, overruns int) {
 	return frAverage, xrunPrevious
 }
 

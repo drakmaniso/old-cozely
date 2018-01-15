@@ -17,7 +17,7 @@ var colors [ecs.Size]color
 
 //------------------------------------------------------------------------------
 
-func (loop) Draw(_, _ float64) error {
+func (loop) Draw() error {
 	var x, y int16 // screen coords
 
 	for e := ecs.First; e < ecs.Last(); e++ {

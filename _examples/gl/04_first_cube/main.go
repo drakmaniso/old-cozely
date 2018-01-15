@@ -8,14 +8,14 @@ package main
 import (
 	"github.com/drakmaniso/glam"
 	"github.com/drakmaniso/glam/colour"
-	"github.com/drakmaniso/glam/x/gl"
 	"github.com/drakmaniso/glam/space"
+	"github.com/drakmaniso/glam/x/gl"
 )
 
 //------------------------------------------------------------------------------
 
 func main() {
-	err := glam.Run(loop{})
+	err := glam.Run(setup, loop{})
 	if err != nil {
 		glam.ShowError(err)
 		return
@@ -56,13 +56,7 @@ var (
 
 //------------------------------------------------------------------------------
 
-type loop struct {
-	glam.Handlers
-}
-
-//------------------------------------------------------------------------------
-
-func (loop) Setup() error {
+func setup() error {
 	// Create and configure the pipeline
 	pipeline = gl.NewPipeline(
 		gl.Shader(glam.Path()+"shader.vert"),
@@ -97,13 +91,19 @@ func (loop) Setup() error {
 
 //------------------------------------------------------------------------------
 
+type loop struct {
+	glam.Handlers
+}
+
+//------------------------------------------------------------------------------
+
 func (loop) Update() error {
 	return nil
 }
 
 //------------------------------------------------------------------------------
 
-func (loop) Draw(_, _ float64) error {
+func (loop) Draw() error {
 	pipeline.Bind()
 	gl.ClearDepthBuffer(1.0)
 	gl.ClearColorBuffer(colour.RGBA{0.9, 0.9, 0.9, 1.0})

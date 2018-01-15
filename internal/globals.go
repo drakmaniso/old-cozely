@@ -65,15 +65,19 @@ var (
 
 //------------------------------------------------------------------------------
 
-// VisibleNow is the current time (elapsed since program start).
-//
-// If called during the update callback, it corresponds to the current time
-// step. If called during the draw callback, it corresponds to the current
-// frame. And if called during an event callback, it corresponds to the event
-// time stamp.
-//
-// It shouldn't be used outside of these three contexts.
-var VisibleNow float64
+// GameTime is the current time.
+var GameTime float64
+
+// TimeStep is the fixed time between calls to Update
+var TimeStep = float64(1.0 / 50)
+
+var (
+	// FrameTime is the time elapsed between current and previous frames.
+	FrameTime float64
+	// UpdateLag is the time accumulator used to decorrelate render frames from
+	// updates.
+	UpdateLag float64
+)
 
 //------------------------------------------------------------------------------
 

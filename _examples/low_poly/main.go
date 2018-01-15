@@ -6,21 +6,23 @@ package main
 //------------------------------------------------------------------------------
 
 import (
+	"fmt"
+
 	"github.com/drakmaniso/glam"
 	"github.com/drakmaniso/glam/colour"
-	"github.com/drakmaniso/glam/x/gl"
 	"github.com/drakmaniso/glam/mouse"
 	"github.com/drakmaniso/glam/plane"
 	"github.com/drakmaniso/glam/poly"
 	"github.com/drakmaniso/glam/space"
+	"github.com/drakmaniso/glam/x/gl"
 )
 
 //------------------------------------------------------------------------------
 
 func main() {
-	glam.SetTimeStep(1 / 2.0)
+	glam.SetTimeStep(1 / 50.0)
 
-	err := glam.Run(loop{})
+	err := glam.Run(setup, loop{})
 	if err != nil {
 		glam.ShowError(err)
 		return
@@ -62,13 +64,7 @@ var meshes poly.Meshes
 
 //------------------------------------------------------------------------------
 
-type loop struct {
-	glam.Handlers
-}
-
-//------------------------------------------------------------------------------
-
-func (loop) Setup() error {
+func setup() error {
 	pipeline = gl.NewPipeline(
 		poly.PipelineSetup(),
 		poly.ToneMapACES(),
@@ -106,8 +102,28 @@ func (loop) Setup() error {
 
 //------------------------------------------------------------------------------
 
+type loop struct {
+	glam.Handlers
+}
+
+//------------------------------------------------------------------------------
+var gametime float64
+
+func (l loop) MouseMotion(_, _ int32, _, _ int32) {
+	if glam.GameTime() < gametime {
+		fmt.Printf("***************ERROR************\n")
+	}
+	// fmt.Printf("  (%.4f: %.4f, %.4f)\n", glam.GameTime(), glam.FrameTime(), glam.UpdateLag())
+	gametime = glam.GameTime()
+}
 func (loop) Update() error {
-	// prepare(glam.TimeStep())
+	if glam.GameTime() < gametime {
+		fmt.Printf("***************ERROR************\n")
+	}
+	// fmt.Printf(" - %.4f: %.4f, %.4f\n", glam.GameTime(), glam.FrameTime(), glam.UpdateLag())
+	gametime = glam.GameTime()
+
+	// prepare()
 
 	// p := camera.Focus()
 	// d := camera.Distance()
@@ -118,8 +134,14 @@ func (loop) Update() error {
 
 //------------------------------------------------------------------------------
 
-func (loop) Draw(dt64, _ float64) error {
-	prepare(dt64)
+func (loop) Draw() error {
+	if glam.GameTime() < gametime {
+		fmt.Printf("***************ERROR************\n")
+	}
+	// fmt.Printf("## %.4f: %.4f, %.4f\n", glam.GameTime(), glam.FrameTime(), glam.UpdateLag())
+	gametime = glam.GameTime()
+
+	prepare()
 
 	pipeline.Bind()
 	gl.ClearDepthBuffer(1.0)
@@ -142,8 +164,8 @@ func (loop) Draw(dt64, _ float64) error {
 
 //------------------------------------------------------------------------------
 
-func prepare(dt64 float64) {
-	dt := float32(dt64)
+func prepare() {
+	dt := float32(glam.FrameTime())
 
 	camera.Move(forward*dt, lateral*dt, vertical*dt)
 

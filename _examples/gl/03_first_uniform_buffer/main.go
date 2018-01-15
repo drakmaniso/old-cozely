@@ -8,14 +8,14 @@ package main
 import (
 	"github.com/drakmaniso/glam"
 	"github.com/drakmaniso/glam/colour"
-	"github.com/drakmaniso/glam/x/gl"
 	"github.com/drakmaniso/glam/plane"
+	"github.com/drakmaniso/glam/x/gl"
 )
 
 //------------------------------------------------------------------------------
 
 func main() {
-	err := glam.Run(loop{})
+	err := glam.Run(setup, loop{})
 	if err != nil {
 		glam.ShowError(err)
 		return
@@ -48,13 +48,7 @@ var (
 
 //------------------------------------------------------------------------------
 
-type loop struct {
-	glam.Handlers
-}
-
-//------------------------------------------------------------------------------
-
-func (loop) Setup() error {
+func setup() error {
 	var triangle mesh
 
 	// Create and configure the pipeline
@@ -87,14 +81,20 @@ func (loop) Setup() error {
 
 //------------------------------------------------------------------------------
 
+type loop struct {
+	glam.Handlers
+}
+
+//------------------------------------------------------------------------------
+
 func (loop) Update() error {
 	return nil
 }
 
 //------------------------------------------------------------------------------
 
-func (loop) Draw(dt, _ float64) error {
-	angle -= 1.0 * dt
+func (loop) Draw() error {
+	angle -= 1.0 * glam.FrameTime()
 
 	pipeline.Bind()
 	gl.ClearColorBuffer(colour.RGBA{0.9, 0.9, 0.9, 1.0})

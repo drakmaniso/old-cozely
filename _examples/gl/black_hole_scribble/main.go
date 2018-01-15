@@ -10,16 +10,16 @@ import (
 
 	"github.com/drakmaniso/glam"
 	"github.com/drakmaniso/glam/colour"
-	"github.com/drakmaniso/glam/x/gl"
-	"github.com/drakmaniso/glam/x/math32"
 	"github.com/drakmaniso/glam/mouse"
 	"github.com/drakmaniso/glam/plane"
+	"github.com/drakmaniso/glam/x/gl"
+	"github.com/drakmaniso/glam/x/math32"
 )
 
 //------------------------------------------------------------------------------
 
 func main() {
-	err := glam.Run(loop{})
+	err := glam.Run(setup, loop{})
 	if err != nil {
 		glam.ShowError(err)
 		return
@@ -57,13 +57,7 @@ var (
 
 //------------------------------------------------------------------------------
 
-type loop struct {
-	glam.Handlers
-}
-
-//------------------------------------------------------------------------------
-
-func (loop) Setup() error {
+func setup() error {
 	// Create and configure the pipeline
 	pipeline = gl.NewPipeline(
 		gl.Shader(glam.Path()+"shader.vert"),
@@ -97,6 +91,12 @@ func (loop) Setup() error {
 
 //------------------------------------------------------------------------------
 
+type loop struct {
+	glam.Handlers
+}
+
+//------------------------------------------------------------------------------
+
 func (loop) Update() error {
 	for i, pt := range points {
 		points[i].Position = plane.Coord{
@@ -122,7 +122,7 @@ var updated bool
 
 var cleared bool
 
-func (loop) Draw(_, _ float64) error {
+func (loop) Draw() error {
 	if !cleared {
 		gl.ClearColorBuffer(bgColor)
 		cleared = true

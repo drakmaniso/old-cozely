@@ -4,9 +4,10 @@
 package main
 
 import (
-	"github.com/drakmaniso/glam/key"
 	"math/rand"
 	"time"
+
+	"github.com/drakmaniso/glam/key"
 
 	"github.com/drakmaniso/glam"
 	"github.com/drakmaniso/glam/colour"
@@ -28,7 +29,7 @@ var current grid.Position
 //------------------------------------------------------------------------------
 
 func main() {
-	err := glam.Run(loop{})
+	err := glam.Run(setup, loop{})
 	if err != nil {
 		glam.ShowError(err)
 	}
@@ -36,13 +37,7 @@ func main() {
 
 //------------------------------------------------------------------------------
 
-type loop struct {
-	glam.Handlers
-}
-
-//------------------------------------------------------------------------------
-
-func (loop) Setup() error {
+func setup() error {
 	pixel.SetBackground(colour.SRGB8{0x5C, 0x82, 0x86})
 
 	for i, n := range []string{
@@ -65,6 +60,12 @@ func (loop) Setup() error {
 	grid.Fill(newTile)
 
 	return nil
+}
+
+//------------------------------------------------------------------------------
+
+type loop struct {
+	glam.Handlers
 }
 
 //------------------------------------------------------------------------------

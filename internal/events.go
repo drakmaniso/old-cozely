@@ -32,10 +32,9 @@ import "C"
 // GameLoop methods are called to setup the game, and during the main loop to
 // process events, Update the game state and Draw it.
 type GameLoop interface {
-	// Setup, Update and Draw
-	Setup() error
+	// Update and Draw
 	Update() error
-	Draw(delta float64, lerp float64) error
+	Draw() error
 
 	// Window events
 	WindowShown()
@@ -80,8 +79,6 @@ func ProcessEvents() {
 }
 
 func dispatch(e unsafe.Pointer) {
-	ts := uint32(((*C.SDL_CommonEvent)(e)).timestamp)
-	VisibleNow = float64(ts) / 1000.0
 	switch ((*C.SDL_CommonEvent)(e))._type {
 	case C.SDL_QUIT:
 		Loop.WindowQuit()
