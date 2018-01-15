@@ -120,6 +120,9 @@ var MouseButtons uint32
 
 //------------------------------------------------------------------------------
 
+var PaletteSetup = func() error { return nil }
+var PaletteUpload = func() error { return nil }
+
 var PixelSetup = func() error { return nil }
 var PixelDraw = func() error { return nil }
 

@@ -4,10 +4,10 @@
 package glam
 
 import (
-	"github.com/drakmaniso/glam/x/gl"
 	"github.com/drakmaniso/glam/internal"
 	"github.com/drakmaniso/glam/key"
 	"github.com/drakmaniso/glam/mouse"
+	"github.com/drakmaniso/glam/x/gl"
 )
 
 //------------------------------------------------------------------------------
@@ -99,6 +99,11 @@ func Run(loop GameLoop) error {
 	err = gl.Setup(internal.Config.Debug)
 	if err != nil {
 		return internal.Error("in OpenGL setup", err)
+	}
+
+	err = internal.PaletteSetup()
+	if err != nil {
+		return internal.Error("in palette setup", err)
 	}
 
 	err = internal.PixelSetup()

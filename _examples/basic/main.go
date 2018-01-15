@@ -8,6 +8,7 @@ package main
 import (
 	"github.com/drakmaniso/glam"
 	"github.com/drakmaniso/glam/colour"
+	"github.com/drakmaniso/glam/palette"
 	"github.com/drakmaniso/glam/pixel"
 )
 
@@ -32,7 +33,7 @@ type loop struct {
 }
 
 func (loop) Setup() error {
-	pixel.PaletteMSX2()
+	palette.PaletteMSX2()
 
 	logo = pixel.GetPicture("pictures/logo")
 	mire = pixel.GetPicture("pictures/mire")
@@ -63,9 +64,9 @@ func (loop) Draw(delta, _ float64) error {
 		count++
 		timer = 0.0
 		if count%2 != 0 {
-			pixel.Color(2).SetRGBA(colour.RGBA{1, 1, 1, 1})
+			palette.Color(2).SetRGBA(colour.RGBA{1, 1, 1, 1})
 		} else {
-			pixel.Color(2).SetRGBA(colour.RGBA{1, 0, 0.5, 1})
+			palette.Color(2).SetRGBA(colour.RGBA{1, 0, 0.5, 1})
 		}
 	}
 

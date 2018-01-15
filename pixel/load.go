@@ -13,10 +13,11 @@ import (
 	"strings"
 
 	"github.com/drakmaniso/glam/colour"
+	"github.com/drakmaniso/glam/palette"
 
+	"github.com/drakmaniso/glam/internal"
 	"github.com/drakmaniso/glam/x/atlas"
 	"github.com/drakmaniso/glam/x/gl"
-	"github.com/drakmaniso/glam/internal"
 )
 
 //------------------------------------------------------------------------------
@@ -232,7 +233,7 @@ func (im imgfile) Paint(dest interface{}) error {
 						float32(b) / float32(0xFFFF),
 						float32(a) / float32(0xFFFF),
 					}
-					ci = uint8(requestColor(cc))
+					ci = uint8(palette.Request(cc))
 				}
 				dm.Pix[int(px)+x+w*(int(py)+y)] = uint8(ci)
 			}

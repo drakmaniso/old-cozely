@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/drakmaniso/glam/x/gl"
 	"github.com/drakmaniso/glam/internal"
+	"github.com/drakmaniso/glam/x/gl"
 )
 
 //------------------------------------------------------------------------------
@@ -41,9 +41,6 @@ func setupHook() error {
 
 	screenUBO = gl.NewUniformBuffer(&screenUniforms, gl.DynamicStorage|gl.MapWrite)
 	screenUBO.Bind(0)
-
-	paletteSSBO = gl.NewStorageBuffer(uintptr(256*4*4), gl.DynamicStorage|gl.MapWrite)
-	paletteSSBO.Bind(0)
 
 	stampSSBO = gl.NewStorageBuffer(uintptr(256*1024), gl.DynamicStorage|gl.MapWrite)
 	stampSSBO.Bind(2)

@@ -4,8 +4,8 @@
 package pixel
 
 import (
-	"github.com/drakmaniso/glam/x/gl"
 	"github.com/drakmaniso/glam/internal"
+	"github.com/drakmaniso/glam/x/gl"
 )
 
 //------------------------------------------------------------------------------
@@ -15,10 +15,7 @@ func init() {
 }
 
 func drawHook() error {
-	if palette.changed {
-		paletteSSBO.SubData(colours[:], 0)
-		palette.changed = false
-	}
+	internal.PaletteUpload()
 
 	screenUniforms.PixelSize.X = 1.0 / float32(screen.size.X)
 	screenUniforms.PixelSize.Y = 1.0 / float32(screen.size.Y)

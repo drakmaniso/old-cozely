@@ -1,15 +1,10 @@
 // Copyright (c) 2013-2017 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
-package pixel
-
-//------------------------------------------------------------------------------
+package palette
 
 import (
-	"errors"
-
 	"github.com/drakmaniso/glam/colour"
-	"github.com/drakmaniso/glam/x/gl"
 )
 
 //------------------------------------------------------------------------------
@@ -33,10 +28,6 @@ func init() {
 	palette.names = make(map[string]Color, 256)
 	ClearPalette()
 }
-
-//------------------------------------------------------------------------------
-
-var paletteSSBO gl.StorageBuffer
 
 //------------------------------------------------------------------------------
 
@@ -67,7 +58,7 @@ func ColorCount() int {
 // Note: The palette contains a maximum of 256 colors.
 func NewColor(name string, v colour.Colour) Color {
 	if palette.count > 255 {
-		setErr("in NewColor", errors.New("impossible to add color \""+name+"\": maximum color count reached."))
+		// setErr("in NewColor", errors.New("impossible to add color \""+name+"\": maximum color count reached."))
 		return Color(0)
 	}
 
@@ -80,7 +71,7 @@ func NewColor(name string, v colour.Colour) Color {
 
 	if name != "" {
 		if _, ok := palette.names[name]; ok {
-			setErr("in NewColor", errors.New(`impossible to add color: name "`+name+`" already taken.`))
+			// setErr("in NewColor", errors.New(`impossible to add color: name "`+name+`" already taken.`))
 			return Color(0)
 		}
 		palette.names[name] = c
@@ -91,9 +82,12 @@ func NewColor(name string, v colour.Colour) Color {
 
 //------------------------------------------------------------------------------
 
-func requestColor(v colour.Colour) Color {
+// Request tries to find an existing index for the specified colour, and returns
+// it. If it is not present in the palette, it is added and the new index
+// returned. If the palette is full, index 0 is returned.
+func Request(v colour.Colour) Color {
 	if palette.count > 255 {
-		setErr("in requestColor", errors.New("impossible to automatically add color: maximum color count reached."))
+		// setErr("in requestColor", errors.New("impossible to automatically add color: maximum color count reached."))
 		return Color(0)
 	}
 
@@ -126,7 +120,7 @@ func requestColor(v colour.Colour) Color {
 func GetColor(name string) Color {
 	c, ok := palette.names[name]
 	if !ok {
-		setErr("in GetColor", errors.New("color \""+name+"\" not found"))
+		// setErr("in GetColor", errors.New("color \""+name+"\" not found"))
 	}
 	return c
 }
