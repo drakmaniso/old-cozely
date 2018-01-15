@@ -10,7 +10,7 @@ import (
 
 //------------------------------------------------------------------------------
 
-var paletteSSBO gl.StorageBuffer
+var ssbo gl.StorageBuffer
 
 //------------------------------------------------------------------------------
 
@@ -20,8 +20,8 @@ func init() {
 
 func setupHook() error {
 
-	paletteSSBO = gl.NewStorageBuffer(uintptr(256*4*4), gl.DynamicStorage|gl.MapWrite)
-	paletteSSBO.Bind(0)
+	ssbo = gl.NewStorageBuffer(uintptr(256*4*4), gl.DynamicStorage|gl.MapWrite)
+	ssbo.Bind(0)
 
 	return gl.Err()
 }
@@ -33,9 +33,9 @@ func init() {
 }
 
 func uploadHook() error {
-	if palette.changed {
-		paletteSSBO.SubData(colours[:], 0)
-		palette.changed = false
+	if changed {
+		ssbo.SubData(colours[:], 0)
+		changed = false
 	}
 
 	return gl.Err()

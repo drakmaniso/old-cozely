@@ -33,7 +33,7 @@ type loop struct {
 }
 
 func (loop) Setup() error {
-	palette.PaletteMSX2()
+	palette.Change("MSX2")
 
 	logo = pixel.GetPicture("pictures/logo")
 	mire = pixel.GetPicture("pictures/mire")
@@ -64,9 +64,9 @@ func (loop) Draw(delta, _ float64) error {
 		count++
 		timer = 0.0
 		if count%2 != 0 {
-			palette.Color(2).SetRGBA(colour.RGBA{1, 1, 1, 1})
+			palette.Index(2).Set(colour.RGBA{1, 1, 1, 1})
 		} else {
-			palette.Color(2).SetRGBA(colour.RGBA{1, 0, 0.5, 1})
+			palette.Index(2).Set(colour.RGBA{1, 0, 0.5, 1})
 		}
 	}
 
