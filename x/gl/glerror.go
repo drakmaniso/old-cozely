@@ -31,6 +31,7 @@ func logGLError(
 		sev = "warning"
 	case C.GL_DEBUG_SEVERITY_NOTIFICATION:
 		sev = "info"
+		return
 	}
 	var sou string
 	switch source {
