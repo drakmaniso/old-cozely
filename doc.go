@@ -2,13 +2,8 @@
 // Licensed under a simplified BSD license (see LICENSE file).
 
 /*
-Package glam will provide a minimalist framework for making games in Go, using
-2D pixel art or 3D polygonal art (aka low-poly).
+Package glam is the starting point of the framework.
 
-Work in Progress
-
-**Not yet in a usable state**: the framework is *very* incomplete, and the API
-is subject to frequent changes.
-
+It provides, among other things, a game loop with fixed time step.
 */
 package glam

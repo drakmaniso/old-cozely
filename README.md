@@ -3,8 +3,8 @@
 [![GoDoc](https://godoc.org/github.com/drakmaniso/glam?status.svg)](https://godoc.org/github.com/drakmaniso/glam)
 [![Go Report Card](https://goreportcard.com/badge/github.com/drakmaniso/glam)](https://goreportcard.com/report/github.com/drakmaniso/glam)
 
-Glam will be a minimalist framework for making games in Go, using 2D pixel art
-or 3D polygonal art (aka low-poly).
+Glam aims to be a minimalist framework for making games in Go. It focuses on
+pixel art for 2D, and polygonal art (aka low-poly) for 3D.
 
 ## Work in Progress
 
