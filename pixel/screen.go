@@ -18,10 +18,17 @@ var screen struct {
 	buffer     gl.Framebuffer
 	texture    gl.Texture2D
 	depth      gl.Texture2D
+	target     Coord
+	autozoom   bool
 	size       Coord
 	pixel      int32
 	ox, oy     int32 // Offset when there is a border around the screen
 	background colour.RGBA
+}
+
+func init() {
+	screen.target = Coord{X: 640, Y: 360}
+	screen.pixel = 2
 }
 
 //------------------------------------------------------------------------------
@@ -44,14 +51,7 @@ func SetBackground(c colour.Colour) {
 
 func createScreen() {
 	screen.buffer = gl.NewFramebuffer()
-	screen.size = Coord{
-		int16(internal.Config.ScreenSize[0]),
-		int16(internal.Config.ScreenSize[1]),
-	}
-	screen.pixel = internal.Config.PixelSize
-
 	createScreenTexture()
-
 	screen.buffer.Bind(gl.DrawReadFramebuffer)
 }
 
@@ -69,10 +69,10 @@ func createScreenTexture() {
 
 func init() {
 	internal.ResizeScreen = func() {
-		if internal.Config.ScreenAutoZoom {
+		if screen.autozoom {
 			// Find best fit for pixel size
-			p1 := internal.Window.Width / int32(internal.Config.ScreenSize[0])
-			p2 := internal.Window.Height / int32(internal.Config.ScreenSize[1])
+			p1 := internal.Window.Width / int32(screen.target.X)
+			p2 := internal.Window.Height / int32(screen.target.Y)
 			if p1 < p2 {
 				screen.pixel = p1
 			} else {

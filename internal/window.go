@@ -38,9 +38,9 @@ func OpenWindow(
 	C.SDL_GL_SetAttribute(C.SDL_GL_CONTEXT_MINOR_VERSION, 6)
 	C.SDL_GL_SetAttribute(C.SDL_GL_CONTEXT_PROFILE_MASK, C.SDL_GL_CONTEXT_PROFILE_CORE)
 	C.SDL_GL_SetAttribute(C.SDL_GL_DOUBLEBUFFER, 1)
-	if Config.Multisample > 0 {
+	if Window.Multisample > 0 {
 		C.SDL_GL_SetAttribute(C.SDL_GL_MULTISAMPLEBUFFERS, 1)
-		C.SDL_GL_SetAttribute(C.SDL_GL_MULTISAMPLESAMPLES, C.int(Config.Multisample))
+		C.SDL_GL_SetAttribute(C.SDL_GL_MULTISAMPLESAMPLES, C.int(Window.Multisample))
 	}
 
 	if debug {
@@ -170,6 +170,14 @@ func GetFullscreen() bool {
 func ToggleFullscreen() {
 	fs := !GetFullscreen()
 	SetFullscreen(fs)
+}
+
+//------------------------------------------------------------------------------
+
+func SetWindowTitle(title string) {
+	t := C.CString(title)
+	defer C.free(unsafe.Pointer(t))
+	C.SDL_SetWindowTitle(Window.window, t)
 }
 
 //------------------------------------------------------------------------------

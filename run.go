@@ -60,16 +60,6 @@ type Handlers = internal.Handlers
 
 //------------------------------------------------------------------------------
 
-func SetTimeStep(t float64) {
-	internal.TimeStep = t
-}
-
-func TimeStep() float64 {
-	return internal.TimeStep
-}
-
-//------------------------------------------------------------------------------
-
 // Run initializes the framework, calls setup and then starts the game loop.
 //
 // The Update callback is called with a fixed time step, while the Draw callback
@@ -118,6 +108,8 @@ func Run(setup func() error, loop GameLoop) error {
 	internal.ResizeScreen()
 
 	// Main Loop
+
+	internal.Running = true
 
 	internal.FrameTime = 0.0
 	internal.UpdateLag = 0.0
@@ -173,6 +165,9 @@ func Run(setup func() error, loop GameLoop) error {
 		then = now
 		now = internal.GetSeconds()
 	}
+
+	internal.Running = false
+
 	return nil
 }
 
@@ -184,8 +179,18 @@ func GameTime() float64 {
 	return internal.GameTime
 }
 
+// UpdateTime returns the time between previous update and current one. It is a
+// fixed value, that only changes when configured with TimeStep.
+//
+// See also UpdateLag.
+func UpdateTime() float64 {
+	return internal.TimeStep
+}
+
 // FrameTime returns the time elapsed between the previous frame and the one
-// being drawn. See also UpdateLag.
+// being drawn.
+//
+// See also Updatetime and UpdateLag.
 func FrameTime() float64 {
 	return internal.FrameTime
 }
@@ -196,6 +201,8 @@ func FrameTime() float64 {
 //
 // Note: if called during Update (or an event callback), it returns the time
 // between the current update and the next Draw call.
+//
+// See also UpdateTime and FrameTime.
 func UpdateLag() float64 {
 	return internal.UpdateLag
 }

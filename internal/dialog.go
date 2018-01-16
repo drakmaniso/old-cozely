@@ -25,7 +25,7 @@ import (
 func ErrorDialog(format string, v ...interface{}) error {
 	msg := fmt.Sprintf(format, v...)
 
-	t := Config.Title + " - Error"
+	t := Title + " - Error"
 	ct := C.CString(t)
 	defer C.free(unsafe.Pointer(ct))
 

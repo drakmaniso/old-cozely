@@ -29,6 +29,10 @@ var current grid.Position
 //------------------------------------------------------------------------------
 
 func main() {
+	glam.Configure(
+		glam.Title("Match 3"),
+		pixel.TargetResolution(180, 180),
+	)
 	err := glam.Run(setup, loop{})
 	if err != nil {
 		glam.ShowError(err)

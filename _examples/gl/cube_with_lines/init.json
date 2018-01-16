@@ -1,7 +1,3 @@
 {
-	"Title": "Example: Cube with lines",
-	"ScreenMode": "direct",
-	"Multisample": 8,
-	"Fullscreen": false,
 	"Debug": true
 }

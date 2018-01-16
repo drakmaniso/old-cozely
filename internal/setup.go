@@ -42,6 +42,7 @@ func init() {
 func Setup() error {
 	// Load config file
 
+	//TODO: test if file present.
 	f, err := os.Open(Path + "init.json")
 	if err != nil {
 		return Error(`in configuration file "init.json" opening`, err)
@@ -57,13 +58,6 @@ func Setup() error {
 		Debug = log.New(os.Stderr, "", log.Ltime|log.Lmicroseconds|log.Lshortfile)
 	}
 
-	// Check config
-
-	// if Config.Multisample > 0 && Config.ScreenMode != "Direct" {
-	// 	Debug.Println(`WARNING: disabling multisample, as it is only available for "Direct" screen mode`)
-	// 	Config.Multisample = 0
-	// }
-
 	// Initialize SDL
 
 	if errcode := C.SDL_Init(C.SDL_INIT_EVERYTHING); errcode != 0 {
@@ -75,7 +69,7 @@ func Setup() error {
 	// Open the window
 
 	err = OpenWindow(
-		Config.Title,
+		Title,
 		Config.WindowSize[0],
 		Config.WindowSize[1],
 		Config.Display,

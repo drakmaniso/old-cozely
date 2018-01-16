@@ -20,7 +20,9 @@ import (
 //------------------------------------------------------------------------------
 
 func main() {
-	glam.SetTimeStep(1 / 50.0)
+	glam.Configure(
+		glam.TimeStep(1.0 / 50),
+	)
 
 	err := glam.Run(setup, loop{})
 	if err != nil {

@@ -3,8 +3,6 @@
 
 package main
 
-//------------------------------------------------------------------------------
-
 import (
 	"github.com/drakmaniso/glam"
 	"github.com/drakmaniso/glam/colour"
@@ -19,7 +17,10 @@ var logo, mire, midgray, midrgb *pixel.Picture
 //------------------------------------------------------------------------------
 
 func main() {
-	glam.SetTimeStep(1.0 / 60)
+	glam.Configure(
+		glam.TimeStep(1.0/60),
+		pixel.TargetResolution(320, 160),
+	)
 
 	err := glam.Run(setup, loop{})
 	if err != nil {

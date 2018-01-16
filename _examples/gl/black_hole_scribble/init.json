@@ -1,11 +1,7 @@
 {
-	"Title": "Example: Black Hole Scribble",
 	"WindowSize": [
 		720,
 		720
 	],
-	"ScreenMode": "direct",
-	"Multisample": 8,
-	"Fullscreen": false,
 	"Debug": true
 }

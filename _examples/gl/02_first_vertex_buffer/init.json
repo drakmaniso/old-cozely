@@ -1,9 +1,7 @@
 {
-	"Title": "Example 02: First Vertex Buffer",
 	"WindowSize": [
 		512,
 		512
 	],
-	"Fullscreen": false,
 	"Debug": true
 }

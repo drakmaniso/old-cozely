@@ -19,23 +19,21 @@ import (
 
 //------------------------------------------------------------------------------
 
-// Path of the executable (uses os-dependant separator).
+// FilePath of the executable (uses os-dependant separator).
 var FilePath string
 
 // Path of the executable (uses slash separators, and ends with one).
 var Path string
+
+// Title of the game
+var Title = "Glam"
 
 //------------------------------------------------------------------------------
 
 // Config holds the initial configuration of the game.
 var Config = struct {
 	Debug          bool
-	Title          string
 	WindowSize     [2]int32
-	ScreenSize     [2]int16
-	PixelSize      int32
-	ScreenAutoZoom bool
-	Multisample    int
 	Display        int
 	Fullscreen     bool
 	FullscreenMode string
@@ -43,12 +41,7 @@ var Config = struct {
 	PaletteAuto    bool
 }{
 	Debug:          false,
-	Title:          "Glam",
 	WindowSize:     [2]int32{1280, 720},
-	ScreenSize:     [2]int16{320, 200},
-	PixelSize:      4,
-	ScreenAutoZoom: false,
-	Multisample:    0,
 	Display:        0,
 	Fullscreen:     false,
 	FullscreenMode: "Desktop",
@@ -64,6 +57,9 @@ var (
 )
 
 //------------------------------------------------------------------------------
+
+// Running is true once the game loop is started.
+var Running = false
 
 // GameTime is the current time.
 var GameTime float64
@@ -91,6 +87,7 @@ var Window struct {
 	window        *C.SDL_Window
 	context       C.SDL_GLContext
 	Width, Height int32
+	Multisample   int32
 }
 
 // Focus state

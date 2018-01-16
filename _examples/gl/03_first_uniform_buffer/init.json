@@ -1,9 +1,7 @@
 {
-	"Title": "Example 03: First Uniform Buffer",
 	"WindowSize": [
 		512,
 		512
 	],
-	"Fullscreen": false,
 	"Debug": true
 }

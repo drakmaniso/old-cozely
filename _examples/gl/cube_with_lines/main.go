@@ -15,6 +15,10 @@ import (
 //------------------------------------------------------------------------------
 
 func main() {
+	glam.Configure(
+		glam.Multisample(8),
+	)
+
 	err := glam.Run(setup, loop{})
 	if err != nil {
 		glam.ShowError(err)

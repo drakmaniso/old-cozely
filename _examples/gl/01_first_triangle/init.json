@@ -1,9 +1,7 @@
 {
-	"Title": "Example 01: First Triangle",
 	"WindowSize": [
 		512,
 		512
 	],
-	"Fullscreen": false,
 	"Debug": true
 }

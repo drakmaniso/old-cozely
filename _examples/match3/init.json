@@ -1,18 +1,7 @@
 {
-	"Title": "Match 3",
 	"WindowSize": [
 		540,
 		540
 	],
-	"ScreenSize": [
-		180,
-		180
-	],
-	"PixelSize": 3,
-	"ScreenAutoZoom": true,
-	"Display": 0,
-	"Fullscreen": false,
-	"FullscreenMode": "Desktop",
-	"VSync": true,
 	"Debug": true
 }
