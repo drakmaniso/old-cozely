@@ -38,7 +38,6 @@ var Config = struct {
 	Fullscreen     bool
 	FullscreenMode string
 	VSync          bool
-	PaletteAuto    bool
 }{
 	Debug:          false,
 	WindowSize:     [2]int32{1280, 720},
@@ -46,7 +45,6 @@ var Config = struct {
 	Fullscreen:     false,
 	FullscreenMode: "Desktop",
 	VSync:          true,
-	PaletteAuto:    true,
 }
 
 //------------------------------------------------------------------------------
@@ -125,6 +123,7 @@ var PaletteSetup = func() error { return nil }
 var PaletteUpload = func() error { return nil }
 
 var PixelSetup = func() error { return nil }
+var PixelPostSetup = func() error { return nil }
 var PixelDraw = func() error { return nil }
 
 var ResizeScreen = func() {}

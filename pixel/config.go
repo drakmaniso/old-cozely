@@ -4,8 +4,9 @@
 package pixel
 
 import (
-	"github.com/drakmaniso/glam/internal"
 	"errors"
+
+	"github.com/drakmaniso/glam/internal"
 )
 
 //------------------------------------------------------------------------------
@@ -36,6 +37,18 @@ func Zoom(z int32) Config {
 		if internal.Running {
 			internal.ResizeScreen()
 		}
+		return nil
+	}
+}
+
+//------------------------------------------------------------------------------
+
+// AutoPalette enables or disable the automatic addition of unkown colors when
+// loading indexed images.
+func AutoPalette(auto bool) Config {
+	// TODO: automatically disable when using palette.Change or palette.New.
+	return func() error {
+		autoPalette = auto
 		return nil
 	}
 }

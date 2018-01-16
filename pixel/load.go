@@ -32,19 +32,20 @@ var (
 	indexedTexture gl.TextureArray2D
 )
 
-//------------------------------------------------------------------------------
-
-var picturesPath string
-
-func init() {
-	picturesPath = filepath.Join(internal.FilePath, "graphics")
-}
+var autoPalette = true
 
 //------------------------------------------------------------------------------
 
-func loadAllPictures() error {
+var fpath string
+
+func Load(path string) error {
+	if internal.Running {
+		return errors.New("loading graphics while running not implemented")
+	}
+
+	fpath = filepath.FromSlash(internal.Path + path)
 	// Scan all pictures
-	err := filepath.Walk(picturesPath, scan)
+	err := filepath.Walk(fpath, scan)
 	switch {
 	case os.IsNotExist(err):
 		return nil
@@ -53,8 +54,6 @@ func loadAllPictures() error {
 	}
 
 	// Pack them into atlases
-	indexedAtlas = atlas.New(1024, 1024)
-	rgbaAtlas = atlas.New(1024, 1024)
 
 	indexedAtlas.Pack(indexedFiles)
 	rgbaAtlas.Pack(rgbaFiles)
@@ -76,47 +75,7 @@ func loadAllPictures() error {
 		)
 	}
 
-	// Create the indexed texture atlas
-	w, h := indexedAtlas.BinSize()
-	indexedTexture = gl.NewTextureArray2D(1, gl.R8UI, int32(w), int32(h), int32(indexedAtlas.BinCount()))
-	for i := int16(0); i < indexedAtlas.BinCount(); i++ {
-		m := image.NewPaletted(image.Rectangle{
-			Min: image.Point{0, 0},
-			Max: image.Point{int(w), int(h)},
-		},
-			color.Palette{},
-		)
-
-		err := indexedAtlas.Paint(i, m)
-		if err != nil {
-			return err
-		}
-
-		indexedTexture.SubImage(0, 0, 0, int32(i), m)
-	}
-	indexedTexture.Bind(1)
-
-	// Create the RGBA texture atlas
-	w, h = rgbaAtlas.BinSize()
-	rgbaTexture = gl.NewTextureArray2D(1, gl.SRGBA8, int32(w), int32(h), int32(rgbaAtlas.BinCount()))
-	for i := int16(0); i < rgbaAtlas.BinCount(); i++ {
-		m := image.NewNRGBA(image.Rectangle{
-			Min: image.Point{0, 0},
-			Max: image.Point{int(w), int(h)},
-		})
-
-		err := rgbaAtlas.Paint(i, m)
-		if err != nil {
-			return err
-		}
-
-		rgbaTexture.SubImage(0, 0, 0, int32(i), m)
-	}
-	rgbaTexture.Bind(2)
-
-	internal.Debug.Printf("Loaded %d pictures.", len(pictures))
-
-	return nil
+	return gl.Err()
 }
 
 //------------------------------------------------------------------------------
@@ -141,7 +100,7 @@ func scan(path string, info os.FileInfo, err error) error {
 		return internal.Error("decoding picture file", err)
 	}
 
-	fp, err := filepath.Rel(picturesPath, path)
+	fp, err := filepath.Rel(fpath, path)
 	if err != nil {
 		return err
 	}
@@ -224,7 +183,7 @@ func (im imgfile) Paint(dest interface{}) error {
 			for x := 0; x < int(pw); x++ {
 				w := dm.Bounds().Dx()
 				ci := pmp.Pix[x+int(pw)*y]
-				if internal.Config.PaletteAuto {
+				if autoPalette {
 					// Convert image color index to index into current palette
 					r, g, b, a := pal[ci].RGBA()
 					cc := colour.SRGBA{

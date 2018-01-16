@@ -20,6 +20,7 @@ func main() {
 	glam.Configure(
 		glam.TimeStep(1.0/60),
 		pixel.TargetResolution(320, 160),
+		pixel.AutoPalette(false),
 	)
 
 	err := glam.Run(setup, loop{})
@@ -37,6 +38,8 @@ type loop struct {
 
 func setup() error {
 	palette.Change("MSX2")
+
+	pixel.Load("graphics")
 
 	logo = pixel.GetPicture("pictures/logo")
 	mire = pixel.GetPicture("pictures/mire")
@@ -68,9 +71,9 @@ func (loop) Draw() error {
 		count++
 		timer = 0.0
 		if count%2 != 0 {
-			palette.Index(2).Set(colour.RGBA{1, 1, 1, 1})
+			palette.Index(1).Set(colour.RGBA{1, 1, 1, 1})
 		} else {
-			palette.Index(2).Set(colour.RGBA{1, 0, 0.5, 1})
+			palette.Index(1).Set(colour.RGBA{1, 0, 0.5, 1})
 		}
 	}
 

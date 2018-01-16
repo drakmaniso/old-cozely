@@ -4,6 +4,7 @@
 package palette
 
 import (
+	"github.com/drakmaniso/glam/internal"
 	"github.com/drakmaniso/glam/colour"
 )
 
@@ -46,7 +47,6 @@ func Clear() {
 	}
 	count = 0
 	New("transparent", colour.RGBA{0, 0, 0, 0})
-	colours[255] = colour.RGBA{1, 1, 1, 1}
 }
 
 //------------------------------------------------------------------------------
@@ -88,21 +88,22 @@ func New(name string, v colour.Colour) Index {
 // it. If it is not present in the palette, it is added and the new index
 // returned. If the palette is full, index 0 is returned.
 func Request(v colour.Colour) Index {
-	if count > 255 {
-		return Index(0)
-	}
-
 	rgba := colour.RGBAOf(v)
 
 	// Search the color in the existing palette
 
-	for i := Index(0); i < Index(count); i++ {
+	for i := 0; i < count; i++ {
 		if colours[i] == rgba {
-			return i
+			return Index(i)
 		}
 	}
 
 	// Index not found, create a new entry
+
+	if count > 255 {
+		internal.Debug.Printf("Warning: request new color with palette full")
+		return Index(0)
+	}
 
 	c := Index(count)
 	count++

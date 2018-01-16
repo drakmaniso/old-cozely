@@ -103,6 +103,11 @@ func Run(setup func() error, loop GameLoop) error {
 		}
 	}
 
+	err = internal.PixelPostSetup()
+	if err != nil {
+		return internal.Error("in pixel Setup", err)
+	}
+
 	// First, send a fake resize window event
 	internal.Loop.WindowResized(internal.Window.Width, internal.Window.Height)
 	internal.ResizeScreen()

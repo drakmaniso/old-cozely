@@ -51,7 +51,8 @@ func SetBackground(c colour.Colour) {
 
 func createScreen() {
 	screen.buffer = gl.NewFramebuffer()
-	createScreenTexture()
+	internal.ResizeScreen()
+	// createScreenTexture()
 	screen.buffer.Bind(gl.DrawReadFramebuffer)
 }
 
