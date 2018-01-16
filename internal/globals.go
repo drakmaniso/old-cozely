@@ -34,7 +34,7 @@ var Config = struct {
 	WindowSize     [2]int32
 	ScreenSize     [2]int16
 	PixelSize      int32
-	ScreenMode     string // "Fit", "Extend", "Zoom" or "Fixed"
+	ScreenAutoZoom bool
 	Multisample    int
 	Display        int
 	Fullscreen     bool
@@ -47,7 +47,7 @@ var Config = struct {
 	WindowSize:     [2]int32{1280, 720},
 	ScreenSize:     [2]int16{320, 200},
 	PixelSize:      4,
-	ScreenMode:     "Fit",
+	ScreenAutoZoom: false,
 	Multisample:    0,
 	Display:        0,
 	Fullscreen:     false,

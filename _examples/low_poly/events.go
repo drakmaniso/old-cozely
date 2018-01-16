@@ -10,11 +10,13 @@ import (
 	"github.com/drakmaniso/glam/mouse"
 	"github.com/drakmaniso/glam/plane"
 	"github.com/drakmaniso/glam/space"
+	"github.com/drakmaniso/glam/x/gl"
 )
 
 //------------------------------------------------------------------------------
 
-func (l loop) WindowResized(_, _ int32) {
+func (l loop) WindowResized(w, h int32) {
+	gl.Viewport(0, 0, w, h)
 	camera.WindowResized()
 }
 

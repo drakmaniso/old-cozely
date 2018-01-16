@@ -7,15 +7,17 @@ package main
 
 import (
 	"github.com/drakmaniso/glam"
-	"github.com/drakmaniso/glam/x/math32"
 	"github.com/drakmaniso/glam/mouse"
 	"github.com/drakmaniso/glam/plane"
 	"github.com/drakmaniso/glam/space"
+	"github.com/drakmaniso/glam/x/gl"
+	"github.com/drakmaniso/glam/x/math32"
 )
 
 //------------------------------------------------------------------------------
 
 func (loop) WindowResized(w, h int32) {
+	gl.Viewport(0, 0, w, h)
 	r := float32(w) / float32(h)
 	screenFromView = space.Perspective(math32.Pi/4, r, 0.001, 1000.0)
 }

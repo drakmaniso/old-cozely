@@ -17,9 +17,9 @@ import (
 //------------------------------------------------------------------------------
 
 func (loop) WindowResized(w, h int32) {
+	gl.Viewport(0, 0, w, h)
 	r := float32(w) / float32(h)
 	screenFromView = space.Perspective(math32.Pi/4, r, 0.001, 1000.0)
-	gl.Viewport(0, 0, w, h)
 }
 
 //------------------------------------------------------------------------------

@@ -10,7 +10,7 @@
 		180
 	],
 	"PixelSize": 4,
-	"ScreenMode": "Fit",
+	"ScreenAutoZoom": true,
 	"Display": 0,
 	"Fullscreen": false,
 	"FullscreenMode": "Desktop",

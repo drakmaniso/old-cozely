@@ -7,9 +7,9 @@ package pixel
 
 import (
 	"github.com/drakmaniso/glam/colour"
-	"github.com/drakmaniso/glam/x/gl"
 	"github.com/drakmaniso/glam/internal"
 	"github.com/drakmaniso/glam/mouse"
+	"github.com/drakmaniso/glam/x/gl"
 )
 
 //------------------------------------------------------------------------------
@@ -43,11 +43,6 @@ func SetBackground(c colour.Colour) {
 //------------------------------------------------------------------------------
 
 func createScreen() {
-	if internal.Config.ScreenMode == "direct" {
-		gl.Viewport(0, 0, int32(internal.Window.Width), int32(internal.Window.Height))
-		return
-	}
-
 	screen.buffer = gl.NewFramebuffer()
 	screen.size = Coord{
 		int16(internal.Config.ScreenSize[0]),
@@ -74,30 +69,7 @@ func createScreenTexture() {
 
 func init() {
 	internal.ResizeScreen = func() {
-		switch internal.Config.ScreenMode {
-		case "Extend":
-			screen.size = Coord{
-				int16(internal.Window.Width / screen.pixel),
-				int16(internal.Window.Height / screen.pixel),
-			}
-			createScreenTexture()
-
-		case "Zoom":
-			p1 := internal.Window.Width / int32(screen.size.X)
-			p2 := internal.Window.Height / int32(screen.size.Y)
-			if p1 < p2 {
-				screen.pixel = p1
-			} else {
-				screen.pixel = p2
-			}
-			if screen.pixel < 1 {
-				screen.pixel = 1
-			}
-
-		case "Fixed":
-			// Nothing to do
-
-		default: // "Fit"
+		if internal.Config.ScreenAutoZoom {
 			// Find best fit for pixel size
 			p1 := internal.Window.Width / int32(internal.Config.ScreenSize[0])
 			p2 := internal.Window.Height / int32(internal.Config.ScreenSize[1])
@@ -109,13 +81,14 @@ func init() {
 			if screen.pixel < 1 {
 				screen.pixel = 1
 			}
-			// Then extend the screen to cover the window
-			screen.size = Coord{
-				int16(internal.Window.Width / screen.pixel),
-				int16(internal.Window.Height / screen.pixel),
-			}
-			createScreenTexture()
 		}
+
+		// Extend the screen to cover the window
+		screen.size = Coord{
+			int16(internal.Window.Width / screen.pixel),
+			int16(internal.Window.Height / screen.pixel),
+		}
+		createScreenTexture()
 
 		// Compute offset
 		w := int32(screen.size.X) * screen.pixel
@@ -130,10 +103,6 @@ func init() {
 //------------------------------------------------------------------------------
 
 func blitScreen() {
-	if internal.Config.ScreenMode == "direct" {
-		return
-	}
-
 	gl.DefaultFramebuffer.Bind(gl.DrawFramebuffer)
 	gl.ClearColorBuffer(colour.RGBA{0.2, 0.2, 0.2, 1})
 
