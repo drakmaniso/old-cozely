@@ -44,6 +44,11 @@ func main() {
 func setup() error {
 	pixel.SetBackground(colour.SRGB8{0x5C, 0x82, 0x86})
 
+	err := pixel.Load("graphics")
+	if err != nil {
+		return err
+	}
+
 	for i, n := range []string{
 		"red",
 		"yellow",
@@ -54,8 +59,8 @@ func setup() error {
 		"dark",
 		"multi",
 	} {
-		tilesPict[i].normal = pixel.GetPicture(n)
-		tilesPict[i].big = pixel.GetPicture(n + "_big")
+		tilesPict[i].normal = pixel.GetPicture("graphics/" + n)
+		tilesPict[i].big = pixel.GetPicture("graphics/" + n + "_big")
 	}
 
 	current = grid.Nowhere()

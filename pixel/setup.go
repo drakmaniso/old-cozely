@@ -4,7 +4,6 @@
 package pixel
 
 import (
-	"fmt"
 	"image"
 	"image/color"
 	"strings"
@@ -110,7 +109,6 @@ func postSetupHook() error {
 
 	internal.Debug.Printf("Loaded %d pictures.", len(pictures))
 
-	fmt.Printf("\n\n%v\n\n", mappings)
 	mappingsTBO = gl.NewBufferTexture(mappings, gl.R16I, gl.StaticStorage)
 	mappingsTBO.Bind(5)
 

@@ -36,16 +36,30 @@ var autoPalette = true
 
 //------------------------------------------------------------------------------
 
-var fpath string
-
+// Load creates a picture for each image file found in the provided path (which
+// must be a directory).
 func Load(path string) error {
 	if internal.Running {
 		return errors.New("loading graphics while running not implemented")
 	}
 
-	fpath = filepath.FromSlash(internal.Path + path)
+	path = filepath.FromSlash(internal.Path + path)
+	path, err := filepath.EvalSymlinks(path)
+	if err != nil {
+		return internal.Error("in path while loading graphics", err)
+	}
+
+	fi, err := os.Stat(path)
+	if err != nil {
+		return internal.Error("in path info while loading graphics", err)
+	}
+	if !fi.IsDir() {
+		return errors.New("path for loading graphics is not a directory")
+	}
+
 	// Scan all pictures
-	err := filepath.Walk(fpath, scan)
+
+	err = filepath.Walk(path, scan)
 	switch {
 	case os.IsNotExist(err):
 		return nil
@@ -100,7 +114,7 @@ func scan(path string, info os.FileInfo, err error) error {
 		return internal.Error("decoding picture file", err)
 	}
 
-	fp, err := filepath.Rel(fpath, path)
+	fp, err := filepath.Rel(internal.FilePath, path)
 	if err != nil {
 		return err
 	}

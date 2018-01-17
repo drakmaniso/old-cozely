@@ -28,12 +28,14 @@ import "C"
 func init() {
 	runtime.LockOSThread()
 
-	FilePath, err := os.Executable()
+	var err error
+	FilePath, err = os.Executable()
 	if err != nil {
 		FilePath = filepath.Dir(os.Args[0])
 	}
 	FilePath = filepath.Dir(FilePath)
 	FilePath, _ = filepath.EvalSymlinks(FilePath)
+	FilePath = filepath.Clean(FilePath)
 	Path = filepath.ToSlash(FilePath) + "/"
 }
 

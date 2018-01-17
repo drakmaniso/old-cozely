@@ -32,21 +32,26 @@ func main() {
 
 //------------------------------------------------------------------------------
 
-type loop struct {
-	glam.Handlers
-}
-
 func setup() error {
 	palette.Change("MSX2")
 
-	pixel.Load("graphics")
+	err := pixel.Load("bar")
+	if err != nil {
+		return err
+	}
 
-	logo = pixel.GetPicture("pictures/logo")
-	mire = pixel.GetPicture("pictures/mire")
-	midgray = pixel.GetPicture("pictures/midgray")
-	midrgb = pixel.GetPicture("pictures/midrgb")
+	logo = pixel.GetPicture("graphics/logo")
+	mire = pixel.GetPicture("graphics/mire")
+	midgray = pixel.GetPicture("graphics/midgray")
+	midrgb = pixel.GetPicture("graphics/midrgb")
 
 	return pixel.Err()
+}
+
+//------------------------------------------------------------------------------
+
+type loop struct {
+	glam.Handlers
 }
 
 func (loop) Update() error {
