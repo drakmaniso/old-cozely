@@ -114,11 +114,11 @@ func scan(path string, info os.FileInfo, err error) error {
 		return internal.Error("decoding picture file", err)
 	}
 
-	fp, err := filepath.Rel(internal.FilePath, path)
+	n := filepath.Base(path)
 	if err != nil {
 		return err
 	}
-	n := strings.TrimSuffix(fp, filepath.Ext(fp))
+	n = strings.TrimSuffix(n, filepath.Ext(n))
 	n = filepath.ToSlash(n)
 	//TODO: check for width and height overflow
 	w, h := int16(conf.Width), int16(conf.Height)

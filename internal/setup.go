@@ -57,7 +57,7 @@ func Setup() error {
 	// Setup logger
 
 	if Config.Debug {
-		Debug = log.New(os.Stderr, "", log.Ltime|log.Lmicroseconds|log.Lshortfile)
+		Debug = log.New(os.Stdout, "", log.Ltime|log.Lmicroseconds|log.Lshortfile)
 	}
 
 	// Initialize SDL

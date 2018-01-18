@@ -35,15 +35,15 @@ func main() {
 func setup() error {
 	palette.Change("MSX2")
 
-	err := pixel.Load("bar")
+	err := pixel.Load("graphics")
 	if err != nil {
 		return err
 	}
 
-	logo = pixel.GetPicture("graphics/logo")
-	mire = pixel.GetPicture("graphics/mire")
-	midgray = pixel.GetPicture("graphics/midgray")
-	midrgb = pixel.GetPicture("graphics/midrgb")
+	logo = pixel.GetPicture("logo")
+	mire = pixel.GetPicture("mire")
+	midgray = pixel.GetPicture("midgray")
+	midrgb = pixel.GetPicture("midrgb")
 
 	return pixel.Err()
 }

@@ -59,8 +59,8 @@ func setup() error {
 		"dark",
 		"multi",
 	} {
-		tilesPict[i].normal = pixel.GetPicture("graphics/" + n)
-		tilesPict[i].big = pixel.GetPicture("graphics/" + n + "_big")
+		tilesPict[i].normal = pixel.GetPicture(n)
+		tilesPict[i].big = pixel.GetPicture(n + "_big")
 	}
 
 	current = grid.Nowhere()

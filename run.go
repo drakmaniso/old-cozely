@@ -71,8 +71,6 @@ type Handlers = internal.Handlers
 func Run(setup func() error, loop GameLoop) error {
 	defer internal.SDLQuit()
 	defer internal.DestroyWindow()
-	println("internal.FilePath: ", internal.FilePath)
-	println("internal.Path: ", internal.Path)
 
 	internal.Loop = loop
 
