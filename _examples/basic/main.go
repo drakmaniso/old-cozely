@@ -96,6 +96,11 @@ func (loop) Draw() error {
 	midrgb.Paint(s.X/2-48, s.Y/2-20)
 	midgray.Paint(s.X/2-16, s.Y/2+20+8)
 
+	pixel.Point(s.X/2, 60, colour.RGB{1, 0.5, 0})
+	pixel.Point(x, 100, colour.RGB{0, 0.5, 1})
+	m := pixel.Mouse()
+	pixel.Point(m.X, m.Y, colour.RGB{1,0,0})
+
 	return pixel.Err()
 }
 

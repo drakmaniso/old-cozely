@@ -3,7 +3,10 @@
 
 package pixel
 
-import "github.com/drakmaniso/glam/x/gl"
+import (
+	"github.com/drakmaniso/glam/colour"
+	"github.com/drakmaniso/glam/x/gl"
+)
 
 //------------------------------------------------------------------------------
 
@@ -36,6 +39,21 @@ func commandFullColor(m uint16, x, y int16) {
 		BaseInstance:  uint32(len(parameters)),
 	})
 	parameters = append(parameters, int16(m), x, y)
+}
+
+//------------------------------------------------------------------------------
+
+func commandPoint(x, y int16, c colour.Colour) {
+	commands = append(commands, gl.DrawIndirectCommand{
+		VertexCount:   3,
+		InstanceCount: 1,
+		FirstVertex:   uint32(cmdPoint << 2),
+		BaseInstance:  uint32(len(parameters)),
+	})
+	c8 := colour.SRGBA8Of(c)
+	rg := uint16(c8.R) << 8 | uint16(c8.G)
+	ba := uint16(c8.B) << 8 | uint16(c8.A)
+	parameters = append(parameters, int16(rg), int16(ba), x, y)
 }
 
 //------------------------------------------------------------------------------

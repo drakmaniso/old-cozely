@@ -6,6 +6,7 @@ const fragmentShader = "\n" + `#version 460 core
 
 const uint cmdIndexed = 1;
 const uint cmdFullColor = 3;
+const uint cmdPoint = 5;
 
 //------------------------------------------------------------------------------
 
@@ -13,6 +14,7 @@ in PerVertex {
 	layout(location=0) flat uint Command;
 	layout(location=1) flat uint Bin;
 	layout(location=2) vec2 UV;
+	layout(location=3) vec4 Color;
 };
 
 //------------------------------------------------------------------------------
@@ -26,7 +28,7 @@ layout(std430, binding = 0) buffer Palette {
 
 //------------------------------------------------------------------------------
 
-out vec4 color;
+out vec4 out_color;
 
 //------------------------------------------------------------------------------
 
@@ -45,15 +47,19 @@ void main(void)
 				c -= 255;
 			}
 		}
-		color = Colours[c];
+		out_color = Colours[c];
 		break;
 
 	case cmdFullColor:
-		color = texelFetch(FullColorTextures, ivec3(UV.x, UV.y, 0), 0);
+		out_color = texelFetch(FullColorTextures, ivec3(UV.x, UV.y, 0), 0);
+		break;
+
+	case cmdPoint:
+		out_color = Color;
 		break;
 
 	default:
-		color = vec4(1,0,1,0.5);
+		out_color = vec4(1,0,1,0.5);
 	}
 }
 `
