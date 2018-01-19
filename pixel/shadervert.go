@@ -53,6 +53,7 @@ void main(void)
 	case cmdIndexed:
 	case cmdFullColor:
 		// Picture Paramters
+		param += 3*gl_InstanceID;
 		int m = texelFetch(parameters, param+0).r;
 		x = texelFetch(parameters, param+1).r;
 		y = texelFetch(parameters, param+2).r;
@@ -68,6 +69,7 @@ void main(void)
 		break;
 
 	case cmdPoint:
+		param += 4*gl_InstanceID;
 		// Point Parameters
 		uint rg = texelFetch(parameters, param+0).r;
 		uint ba = texelFetch(parameters, param+1).r;

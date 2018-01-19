@@ -21,50 +21,46 @@ const (
 
 //------------------------------------------------------------------------------
 
-func commandIndexed(m uint16, x, y int16) {
+func appendCommand(c uint32, v uint32) {
+	l := len(commands)
+	if l > 0 && (commands[l-1].FirstVertex>>2) == c {
+		commands[l-1].InstanceCount++
+		return
+	}
+
 	commands = append(commands, gl.DrawIndirectCommand{
-		VertexCount:   4,
+		VertexCount:   v,
 		InstanceCount: 1,
-		FirstVertex:   uint32(cmdIndexed << 2),
+		FirstVertex:   uint32(c << 2),
 		BaseInstance:  uint32(len(parameters)),
 	})
+}
+
+//------------------------------------------------------------------------------
+
+func commandIndexed(m uint16, x, y int16) {
+	appendCommand(cmdIndexed, 4)
 	parameters = append(parameters, int16(m), x, y)
 }
 
 func commandFullColor(m uint16, x, y int16) {
-	commands = append(commands, gl.DrawIndirectCommand{
-		VertexCount:   4,
-		InstanceCount: 1,
-		FirstVertex:   uint32(cmdFullColor << 2),
-		BaseInstance:  uint32(len(parameters)),
-	})
+	appendCommand(cmdFullColor, 4)
 	parameters = append(parameters, int16(m), x, y)
 }
 
 //------------------------------------------------------------------------------
 
 func commandPoint(x, y int16, c colour.Colour) {
-	commands = append(commands, gl.DrawIndirectCommand{
-		VertexCount:   3,
-		InstanceCount: 1,
-		FirstVertex:   uint32(cmdPoint << 2),
-		BaseInstance:  uint32(len(parameters)),
-	})
+	appendCommand(cmdPoint, 3)
 	c8 := colour.SRGBA8Of(c)
-	rg := uint16(c8.R) << 8 | uint16(c8.G)
-	ba := uint16(c8.B) << 8 | uint16(c8.A)
+	rg := uint16(c8.R)<<8 | uint16(c8.G)
+	ba := uint16(c8.B)<<8 | uint16(c8.A)
 	parameters = append(parameters, int16(rg), int16(ba), x, y)
 }
 
 //------------------------------------------------------------------------------
 
 /*
-type paramIndexedPicture struct {
-	mapping int16
-	x       int16
-	y       int16
-}
-
 type paramFullIndexedPicture struct {
 	mapping           int16
 	x                 int16
@@ -73,12 +69,6 @@ type paramFullIndexedPicture struct {
 	h                 int16
 	transform, shift  uint8
 	alpha, brightness uint8
-}
-
-type paramRGBAPicture struct {
-	mapping int16
-	x       int16
-	y       int16
 }
 
 type paramFulRGBAPicture struct {
@@ -91,13 +81,6 @@ type paramFulRGBAPicture struct {
 }
 
 //------------------------------------------------------------------------------
-
-type paramPoint struct {
-	rg uint16
-	ba uint16
-	x  int16
-	y  int16
-}
 
 type paramLine struct {
 	rg               uint16
@@ -124,11 +107,5 @@ type paramBezier struct {
 }
 
 */
-
-//------------------------------------------------------------------------------
-
-const (
-	cmdIndexedPoint uint32 = 1 << 2
-)
 
 //------------------------------------------------------------------------------
