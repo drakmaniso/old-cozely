@@ -7,6 +7,7 @@ import (
 	"image"
 	"image/color"
 	"strings"
+	"unsafe"
 
 	"github.com/drakmaniso/glam/internal"
 	"github.com/drakmaniso/glam/x/atlas"
@@ -34,18 +35,30 @@ func setupHook() error {
 
 	createScreen()
 
-	stampPipeline = gl.NewPipeline(
+	pipeline = gl.NewPipeline(
 		gl.VertexShader(strings.NewReader(vertexShader)),
 		gl.FragmentShader(strings.NewReader(fragmentShader)),
 		gl.Topology(gl.TriangleStrip),
 	)
 	gl.Enable(gl.FramebufferSRGB)
 
+	commands = make([]gl.DrawIndirectCommand, 0, maxCommandCount)
+	commandsICBO = gl.NewIndirectBuffer(
+		uintptr(maxCommandCount)*unsafe.Sizeof(gl.DrawIndirectCommand{}),
+		gl.DynamicStorage,
+	)
+	commandsICBO.Bind()
+
+	parameters = make([]int16, 0, maxCommandCount*maxParamCount)
+	parametersTBO = gl.NewBufferTexture(
+		uintptr(maxCommandCount*maxParamCount),
+		gl.R16I,
+		gl.DynamicStorage,
+	)
+	parametersTBO.Bind(6)
+
 	screenUBO = gl.NewUniformBuffer(&screenUniforms, gl.DynamicStorage|gl.MapWrite)
 	screenUBO.Bind(0)
-
-	stampSSBO = gl.NewStorageBuffer(uintptr(256*1024), gl.DynamicStorage|gl.MapWrite)
-	stampSSBO.Bind(2)
 
 	err = gl.Err()
 	if err != nil {

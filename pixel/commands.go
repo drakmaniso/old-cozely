@@ -7,11 +7,13 @@ package pixel
 
 /*
 type paramIndexedPicture struct {
-	x int16
-	y int16
+	mapping int16
+	x       int16
+	y       int16
 }
 
 type paramFullIndexedPicture struct {
+	mapping           int16
 	x                 int16
 	y                 int16
 	w                 int16
@@ -21,11 +23,13 @@ type paramFullIndexedPicture struct {
 }
 
 type paramRGBAPicture struct {
-	x int16
-	y int16
+	mapping int16
+	x       int16
+	y       int16
 }
 
-type paramFulRGBAPicturel struct {
+type paramFulRGBAPicture struct {
+	mapping          int16
 	x                int16
 	y                int16
 	w                int16
@@ -35,12 +39,6 @@ type paramFulRGBAPicturel struct {
 
 //------------------------------------------------------------------------------
 
-type paramIndexedPoint struct {
-	color, _ uint8
-	x        int16
-	y        int16
-}
-
 type paramPoint struct {
 	rg uint16
 	ba uint16
@@ -48,15 +46,7 @@ type paramPoint struct {
 	y  int16
 }
 
-type paramIndexedLine struct {
-	color, width uint8
-	x1           int16
-	y1           int16
-	x2           int16
-	y2           int16
-}
-
-type paramRGBALine struct {
+type paramLine struct {
 	rg               uint16
 	ba               uint16
 	x1               int16
@@ -66,7 +56,7 @@ type paramRGBALine struct {
 	width, antialias uint8
 }
 
-type paramRGBABezier struct {
+type paramBezier struct {
 	rg               uint16
 	ba               uint16
 	x1               int16

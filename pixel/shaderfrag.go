@@ -1,6 +1,6 @@
 package pixel
 
-const fragmentShader = "\n" + `#version 450 core
+const fragmentShader = "\n" + `#version 460 core
 
 in PerVertex {
 	layout(location=0) flat uint Mode;

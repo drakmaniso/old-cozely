@@ -7,6 +7,8 @@ package pixel
 
 import (
 	"errors"
+
+	"github.com/drakmaniso/glam/x/gl"
 )
 
 //------------------------------------------------------------------------------
@@ -91,13 +93,13 @@ func GetPicture(name string) *Picture {
 //------------------------------------------------------------------------------
 
 func (p *Picture) Paint(x, y int16) {
-	s := stamp{
-		mode:    int16(p.mode),
-		mapping: int16(p.mapping),
-		x:       x, y: y,
-	}
-	// println("STAMP: ", p.mode, p.mapping, x, y, mappings[m].x, mappings[m].y, mappings[m].w, mappings[m].h)
-	stamps = append(stamps, s)
+	commands = append(commands, gl.DrawIndirectCommand{
+		VertexCount:   4,
+		InstanceCount: 1,
+		FirstVertex:   uint32(4 * p.mode),
+		BaseInstance:  uint32(len(parameters)),
+	})
+	parameters = append(parameters, int16(p.mapping), x, y)
 }
 
 //------------------------------------------------------------------------------

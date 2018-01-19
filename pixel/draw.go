@@ -23,16 +23,18 @@ func drawHook() error {
 
 	screen.buffer.Bind(gl.DrawReadFramebuffer)
 	gl.Viewport(0, 0, int32(screen.size.X), int32(screen.size.Y))
-	stampPipeline.Bind()
+	pipeline.Bind()
 	gl.ClearColorBuffer(screen.background)
 	gl.Blending(gl.SrcAlpha, gl.OneMinusSrcAlpha)
 	gl.Enable(gl.Blend)
 
 	if true {
-		if len(stamps) > 0 {
-			stampSSBO.SubData(stamps, 0)
-			gl.DrawInstanced(0, 4, int32(len(stamps)))
-			stamps = stamps[:0]
+		if len(commands) > 0 {
+			commandsICBO.SubData(commands, 0)
+			parametersTBO.SubData(parameters, 0)
+			gl.DrawIndirect(0, int32(len(commands)))
+			commands = commands[:0]
+			parameters = parameters[:0]
 		}
 	}
 

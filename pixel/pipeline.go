@@ -11,19 +11,20 @@ import (
 
 //------------------------------------------------------------------------------
 
-type stamp struct {
-	//  word
-	mode, mapping int16
-	//  word
-	x, y int16
-}
+var (
+	commands   []gl.DrawIndirectCommand
+	parameters []int16
+)
 
-var stamps []stamp
+var (
+	pipeline      *gl.Pipeline
+	commandsICBO  gl.IndirectBuffer
+	parametersTBO gl.BufferTexture
+)
 
-//------------------------------------------------------------------------------
-
-var stampPipeline *gl.Pipeline
-
-var stampSSBO gl.StorageBuffer
+const (
+	maxCommandCount = 1024
+	maxParamCount   = 8
+)
 
 //------------------------------------------------------------------------------
