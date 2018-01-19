@@ -25,11 +25,9 @@ import (
 var (
 	rgbaFiles   []atlas.Image
 	rgbaAtlas   *atlas.Atlas
-	rgbaTexture gl.TextureArray2D
 
-	indexedFiles   []atlas.Image
-	indexedAtlas   *atlas.Atlas
-	indexedTexture gl.TextureArray2D
+	indexedFiles    []atlas.Image
+	indexedAtlas    *atlas.Atlas
 )
 
 var autoPalette = true

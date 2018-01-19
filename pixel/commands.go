@@ -3,6 +3,41 @@
 
 package pixel
 
+import "github.com/drakmaniso/glam/x/gl"
+
+//------------------------------------------------------------------------------
+
+const (
+	cmdIndexed      = 1
+	cmdIndexedExt   = 2
+	cmdFullColor    = 3
+	cmdFullColorExt = 4
+	cmdPoint        = 5
+	cmdLine         = 6
+)
+
+//------------------------------------------------------------------------------
+
+func commandIndexed(m uint16, x, y int16) {
+	commands = append(commands, gl.DrawIndirectCommand{
+		VertexCount:   4,
+		InstanceCount: 1,
+		FirstVertex:   uint32(cmdIndexed << 2),
+		BaseInstance:  uint32(len(parameters)),
+	})
+	parameters = append(parameters, int16(m), x, y)
+}
+
+func commandFullColor(m uint16, x, y int16) {
+	commands = append(commands, gl.DrawIndirectCommand{
+		VertexCount:   4,
+		InstanceCount: 1,
+		FirstVertex:   uint32(cmdFullColor << 2),
+		BaseInstance:  uint32(len(parameters)),
+	})
+	parameters = append(parameters, int16(m), x, y)
+}
+
 //------------------------------------------------------------------------------
 
 /*

@@ -16,23 +16,11 @@ import (
 
 //------------------------------------------------------------------------------
 
-var screenUBO gl.UniformBuffer
-
-var screenUniforms struct {
-	PixelSize struct{ X, Y float32 }
-}
-
-var mappingsTBO gl.BufferTexture
-
-//------------------------------------------------------------------------------
-
 func init() {
 	internal.PixelSetup = setupHook
 }
 
 func setupHook() error {
-	var err error
-
 	createScreen()
 
 	pipeline = gl.NewPipeline(
@@ -40,14 +28,14 @@ func setupHook() error {
 		gl.FragmentShader(strings.NewReader(fragmentShader)),
 		gl.Topology(gl.TriangleStrip),
 	)
-	gl.Enable(gl.FramebufferSRGB)
+
+	screenUBO = gl.NewUniformBuffer(&screenUniforms, gl.DynamicStorage|gl.MapWrite)
 
 	commands = make([]gl.DrawIndirectCommand, 0, maxCommandCount)
 	commandsICBO = gl.NewIndirectBuffer(
 		uintptr(maxCommandCount)*unsafe.Sizeof(gl.DrawIndirectCommand{}),
 		gl.DynamicStorage,
 	)
-	commandsICBO.Bind()
 
 	parameters = make([]int16, 0, maxCommandCount*maxParamCount)
 	parametersTBO = gl.NewBufferTexture(
@@ -55,15 +43,6 @@ func setupHook() error {
 		gl.R16I,
 		gl.DynamicStorage,
 	)
-	parametersTBO.Bind(6)
-
-	screenUBO = gl.NewUniformBuffer(&screenUniforms, gl.DynamicStorage|gl.MapWrite)
-	screenUBO.Bind(0)
-
-	err = gl.Err()
-	if err != nil {
-		return err
-	}
 
 	// Prepare picture loading
 
@@ -82,9 +61,12 @@ func init() {
 func postSetupHook() error {
 	//TODO: handle the case when there is no pictures
 
+	// Mappings Buffer
+	mappingsTBO = gl.NewBufferTexture(mappings, gl.R16I, gl.StaticStorage)
+
 	// Create the indexed texture atlas
 	w, h := indexedAtlas.BinSize()
-	indexedTexture = gl.NewTextureArray2D(1, gl.R8UI, int32(w), int32(h), int32(indexedAtlas.BinCount()))
+	indexedTextures = gl.NewTextureArray2D(1, gl.R8UI, int32(w), int32(h), int32(indexedAtlas.BinCount()))
 	for i := int16(0); i < indexedAtlas.BinCount(); i++ {
 		m := image.NewPaletted(image.Rectangle{
 			Min: image.Point{0, 0},
@@ -98,13 +80,12 @@ func postSetupHook() error {
 			return err
 		}
 
-		indexedTexture.SubImage(0, 0, 0, int32(i), m)
+		indexedTextures.SubImage(0, 0, 0, int32(i), m)
 	}
-	indexedTexture.Bind(1)
 
 	// Create the RGBA texture atlas
 	w, h = rgbaAtlas.BinSize()
-	rgbaTexture = gl.NewTextureArray2D(1, gl.SRGBA8, int32(w), int32(h), int32(rgbaAtlas.BinCount()))
+	fullColorTextures = gl.NewTextureArray2D(1, gl.SRGBA8, int32(w), int32(h), int32(rgbaAtlas.BinCount()))
 	for i := int16(0); i < rgbaAtlas.BinCount(); i++ {
 		m := image.NewNRGBA(image.Rectangle{
 			Min: image.Point{0, 0},
@@ -116,14 +97,8 @@ func postSetupHook() error {
 			return err
 		}
 
-		rgbaTexture.SubImage(0, 0, 0, int32(i), m)
+		fullColorTextures.SubImage(0, 0, 0, int32(i), m)
 	}
-	rgbaTexture.Bind(2)
-
-	internal.Debug.Printf("Loaded %d pictures.", len(pictures))
-
-	mappingsTBO = gl.NewBufferTexture(mappings, gl.R16I, gl.StaticStorage)
-	mappingsTBO.Bind(5)
 
 	return gl.Err()
 }

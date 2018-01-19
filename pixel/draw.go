@@ -27,6 +27,14 @@ func drawHook() error {
 	gl.ClearColorBuffer(screen.background)
 	gl.Blending(gl.SrcAlpha, gl.OneMinusSrcAlpha)
 	gl.Enable(gl.Blend)
+	gl.Enable(gl.FramebufferSRGB)
+
+	screenUBO.Bind(layoutScreen)
+	commandsICBO.Bind()
+	parametersTBO.Bind(layoutParameters)
+	mappingsTBO.Bind(layoutMappings)
+	indexedTextures.Bind(layoutIndexedTextures)
+	fullColorTextures.Bind(layoutFullColorTextures)
 
 	if true {
 		if len(commands) > 0 {

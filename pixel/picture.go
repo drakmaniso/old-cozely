@@ -7,8 +7,6 @@ package pixel
 
 import (
 	"errors"
-
-	"github.com/drakmaniso/glam/x/gl"
 )
 
 //------------------------------------------------------------------------------
@@ -93,13 +91,12 @@ func GetPicture(name string) *Picture {
 //------------------------------------------------------------------------------
 
 func (p *Picture) Paint(x, y int16) {
-	commands = append(commands, gl.DrawIndirectCommand{
-		VertexCount:   4,
-		InstanceCount: 1,
-		FirstVertex:   uint32(4 * p.mode),
-		BaseInstance:  uint32(len(parameters)),
-	})
-	parameters = append(parameters, int16(p.mapping), x, y)
+	switch p.mode {
+	case Indexed:
+		commandIndexed(p.mapping, x, y)
+	case FullColor:
+		commandFullColor(p.mapping, x, y)
+	}
 }
 
 //------------------------------------------------------------------------------
