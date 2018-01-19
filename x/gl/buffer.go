@@ -392,6 +392,19 @@ func (bt BufferTexture) Bind(index uint32) {
 	C.BindTextureUnit(C.GLuint(index), bt.texture)
 }
 
+// SubData updates the buffer with data, starting at a specified offset.
+//
+// It is your responsability to ensure that the size of data plus the offset
+// does not exceed the buffer size.
+func (bt *BufferTexture) SubData(data interface{}, atOffset uintptr) {
+	p, s, err := pointerAndSizeOf(data)
+	if err != nil {
+		setErr("updating buffer texture", err)
+		return
+	}
+	C.BufferSubData(bt.object, C.GLintptr(atOffset), C.GLsizei(s), p)
+}
+
 // Delete frees the buffer.
 func (tb *BufferTexture) Delete() {
 	C.DeleteBuffer(C.GLuint(tb.object))
