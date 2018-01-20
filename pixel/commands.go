@@ -4,7 +4,6 @@
 package pixel
 
 import (
-	"github.com/drakmaniso/glam/colour"
 	"github.com/drakmaniso/glam/x/gl"
 )
 
@@ -34,28 +33,6 @@ func appendCommand(c uint32, v uint32) {
 		FirstVertex:   uint32(c << 2),
 		BaseInstance:  uint32(len(parameters)),
 	})
-}
-
-//------------------------------------------------------------------------------
-
-func commandIndexed(m uint16, x, y int16) {
-	appendCommand(cmdIndexed, 4)
-	parameters = append(parameters, int16(m), x, y)
-}
-
-func commandFullColor(m uint16, x, y int16) {
-	appendCommand(cmdFullColor, 4)
-	parameters = append(parameters, int16(m), x, y)
-}
-
-//------------------------------------------------------------------------------
-
-func commandPoint(x, y int16, c colour.Colour) {
-	appendCommand(cmdPoint, 3)
-	c8 := colour.SRGBA8Of(c)
-	rg := uint16(c8.R)<<8 | uint16(c8.G)
-	ba := uint16(c8.B)<<8 | uint16(c8.A)
-	parameters = append(parameters, int16(rg), int16(ba), x, y)
 }
 
 //------------------------------------------------------------------------------

@@ -9,8 +9,12 @@ import (
 
 //------------------------------------------------------------------------------
 
-func Point(x, y int16, c colour.Colour) {
-	commandPoint(x, y, c)
+func Point(c colour.Colour, x, y int16) {
+	appendCommand(cmdPoint, 3)
+	c8 := colour.SRGBA8Of(c)
+	rg := uint16(c8.R)<<8 | uint16(c8.G)
+	ba := uint16(c8.B)<<8 | uint16(c8.A)
+	parameters = append(parameters, int16(rg), int16(ba), x, y)
 }
 
 //------------------------------------------------------------------------------
