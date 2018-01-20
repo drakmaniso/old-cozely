@@ -25,9 +25,9 @@ type SRGBnA struct {
 // SRGBnAOf converts any color to sRGB non alpha-premultiplied sRGB color space.
 func SRGBnAOf(c Colour) SRGBnA {
 	r, g, b, a := c.Linear()
-	r = linearToSrgb(r) / a
-	g = linearToSrgb(g) / a
-	b = linearToSrgb(b) / a
+	r = standardOf(r / a)
+	g = standardOf(g / a)
+	b = standardOf(b / a)
 	return SRGBnA{r, g, b, a}
 }
 
@@ -36,11 +36,18 @@ func SRGBnAOf(c Colour) SRGBnA {
 // Linear implements the Colour interface: it returns the color converted to
 // alpha-premultipled linear color space.
 func (c SRGBnA) Linear() (r, g, b, a float32) {
-	a = c.A
-	r = srgbToLinear(a * c.R)
-	g = srgbToLinear(a * c.G)
-	b = srgbToLinear(a * c.B)
+	r = c.A * linearOf(c.R)
+	g = c.A * linearOf(c.G)
+	b = c.A * linearOf(c.B)
 	return r, g, b, a
+}
+
+// Standard implements the Colour interface.
+func (c SRGBnA) Standard() (r, g, b, a float32) {
+	r = standardOf(linearOf(c.R) * c.A)
+	g = standardOf(linearOf(c.R) * c.A)
+	b = standardOf(linearOf(c.R) * c.A)
+	return r, g, b, c.A
 }
 
 //------------------------------------------------------------------------------

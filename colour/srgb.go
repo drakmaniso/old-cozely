@@ -17,10 +17,7 @@ type SRGB struct {
 
 // SRGBOf converts any color to sRGB color space with no alpha.
 func SRGBOf(c Colour) SRGB {
-	r, g, b, _ := c.Linear()
-	r = linearToSrgb(r)
-	g = linearToSrgb(g)
-	b = linearToSrgb(b)
+	r, g, b, _ := c.Standard()
 	return SRGB{r, g, b}
 }
 
@@ -28,10 +25,15 @@ func SRGBOf(c Colour) SRGB {
 
 // Linear implements the Colour interface.
 func (c SRGB) Linear() (r, g, b, a float32) {
-	r = srgbToLinear(c.R)
-	g = srgbToLinear(c.G)
-	b = srgbToLinear(c.B)
+	r = linearOf(c.R)
+	g = linearOf(c.G)
+	b = linearOf(c.B)
 	return r, g, b, 1
+}
+
+// Standard implements the Colour interface.
+func (c SRGB) Standard() (r, g, b, a float32) {
+	return c.R, c.G, c.B, 1
 }
 
 //------------------------------------------------------------------------------

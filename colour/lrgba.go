@@ -35,6 +35,14 @@ func (c LRGBA) Linear() (r, g, b, a float32) {
 	return c.R, c.G, c.B, c.A
 }
 
+// Standard implements the Colour interface.
+func (c LRGBA) Standard() (r, g, b, a float32) {
+	r = standardOf(c.R)
+	g = standardOf(c.G)
+	b = standardOf(c.B)
+	return r, g, b, c.A
+}
+
 //------------------------------------------------------------------------------
 
 // RGBA implements the image.Color interface: it returns the four components

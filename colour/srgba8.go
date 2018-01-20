@@ -24,10 +24,15 @@ type SRGBA8 struct {
 
 // SRGBA8Of converts any color to alpha-premultiplied sRGB color space.
 func SRGBA8Of(c Colour) SRGBA8 {
-	r, g, b, a := c.Linear()
-	r = linearToSrgb(r)
-	g = linearToSrgb(g)
-	b = linearToSrgb(b)
+	cc, ok := c.(SRGBA8)
+	if ok {
+		return cc
+	}
+	ccc, ok := c.(SRGB8)
+	if ok {
+		return SRGBA8{ccc.R, ccc.G, ccc.B, 1}
+	}
+	r, g, b, a := c.Standard()
 	return SRGBA8{uint8(r * 0xFF), uint8(g * 0xFF), uint8(b * 0xFF), uint8(a * 0xFF)}
 }
 
@@ -35,10 +40,19 @@ func SRGBA8Of(c Colour) SRGBA8 {
 
 // Linear implements the Colour interface.
 func (c SRGBA8) Linear() (r, g, b, a float32) {
-	r = srgbToLinear(float32(c.R) / float32(0xFF))
-	g = srgbToLinear(float32(c.G) / float32(0xFF))
-	b = srgbToLinear(float32(c.B) / float32(0xFF))
-	a = srgbToLinear(float32(c.A) / float32(0xFF))
+	r = linearOf(float32(c.R) / float32(0xFF))
+	g = linearOf(float32(c.G) / float32(0xFF))
+	b = linearOf(float32(c.B) / float32(0xFF))
+	a = float32(c.A) / float32(0xFF)
+	return r, g, b, a
+}
+
+// Standard implements the Colour interface.
+func (c SRGBA8) Standard() (r, g, b, a float32) {
+	r = float32(c.R) / float32(0xFF)
+	g = float32(c.R) / float32(0xFF)
+	b = float32(c.R) / float32(0xFF)
+	a = float32(c.A) / float32(0xFF)
 	return r, g, b, a
 }
 

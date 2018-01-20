@@ -19,9 +19,9 @@ type LRGBnA struct {
 
 //------------------------------------------------------------------------------
 
-// RGBnAOf converts any color to non alpha-premultiplied linear color
+// LRGBnAOf converts any color to non alpha-premultiplied linear color
 // space.
-func RGBnAOf(c Colour) LRGBnA {
+func LRGBnAOf(c Colour) LRGBnA {
 	r, g, b, a := c.Linear()
 	return LRGBnA{r / a, g / a, b / a, a}
 }
@@ -31,6 +31,14 @@ func RGBnAOf(c Colour) LRGBnA {
 // Linear implements the Colour interface.
 func (c LRGBnA) Linear() (r, g, b, a float32) {
 	return c.A * c.R, c.A * c.G, c.A * c.B, c.A
+}
+
+// Standard implements the Colour interface.
+func (c LRGBnA) Standard() (r, g, b, a float32) {
+	r = standardOf(c.A * c.R)
+	g = standardOf(c.A * c.G)
+	b = standardOf(c.A * c.B)
+	return r, g, b, c.A
 }
 
 //------------------------------------------------------------------------------

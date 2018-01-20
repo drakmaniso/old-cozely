@@ -3,26 +3,6 @@
 
 package colour
 
-import (
-	"math"
-)
-
-//------------------------------------------------------------------------------
-
-func srgbToLinear(c float32) float32 {
-	if c <= 0.04045 {
-		return c / 12.92
-	}
-	return float32(math.Pow(float64(c+0.055)/(1+0.055), 2.4))
-}
-
-func linearToSrgb(c float32) float32 {
-	if c <= 0.0031308 {
-		return 12.92 * c
-	}
-	return (1+0.055)*float32(math.Pow(float64(c), 1/2.4)) - 0.055
-}
-
 //------------------------------------------------------------------------------
 
 // SRGBA represents a color in alpha-premultiplied sRGB color space. Each value
@@ -44,10 +24,7 @@ type SRGBA struct {
 
 // SRGBAOf converts any color to sRGB alpha-premultiplied color space.
 func SRGBAOf(c Colour) SRGBA {
-	r, g, b, a := c.Linear()
-	r = linearToSrgb(r)
-	g = linearToSrgb(g)
-	b = linearToSrgb(b)
+	r, g, b, a := c.Standard()
 	return SRGBA{r, g, b, a}
 }
 
@@ -56,11 +33,15 @@ func SRGBAOf(c Colour) SRGBA {
 // Linear implements the Colour interface: it returns the color converted to
 // linear color space.
 func (c SRGBA) Linear() (r, g, b, a float32) {
-	a = c.A
-	r = srgbToLinear(c.R)
-	g = srgbToLinear(c.G)
-	b = srgbToLinear(c.B)
-	return r, g, b, a
+	r = linearOf(c.R)
+	g = linearOf(c.G)
+	b = linearOf(c.B)
+	return r, g, b, c.A
+}
+
+// Standard implements the Colour interface.
+func (c SRGBA) Standard() (r, g, b, a float32) {
+	return c.R, c.G, c.B, c.A
 }
 
 //------------------------------------------------------------------------------
