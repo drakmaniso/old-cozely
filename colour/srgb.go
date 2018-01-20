@@ -26,8 +26,8 @@ func SRGBOf(c Colour) SRGB {
 
 //------------------------------------------------------------------------------
 
-// RGBA implements the Colour interface.
-func (c SRGB) RGBA() (r, g, b, a float32) {
+// Linear implements the Colour interface.
+func (c SRGB) Linear() (r, g, b, a float32) {
 	r = srgbToLinear(c.R)
 	g = srgbToLinear(c.G)
 	b = srgbToLinear(c.B)
@@ -36,9 +36,9 @@ func (c SRGB) RGBA() (r, g, b, a float32) {
 
 //------------------------------------------------------------------------------
 
-// Linear implements the image.Color interface: it returns the four components
+// RGBA implements the image.Color interface: it returns the four components
 // scaled by 0xFFFF.
-func (c SRGB) Linear() (r, g, b, a uint32) {
+func (c SRGB) RGBA() (r, g, b, a uint32) {
 	return uint32(c.R * 0xFFFF), uint32(c.G * 0xFFFF), uint32(c.B * 0xFFFF), uint32(0xFFFF)
 }
 
