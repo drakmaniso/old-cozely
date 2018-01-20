@@ -4,6 +4,8 @@
 package main
 
 import (
+	"math/rand"
+
 	"github.com/drakmaniso/glam"
 	"github.com/drakmaniso/glam/colour"
 	"github.com/drakmaniso/glam/palette"
@@ -14,12 +16,14 @@ import (
 
 var logo, mire, midgray, midrgb *pixel.Picture
 
+var pts [1024]pixel.Coord
+
 //------------------------------------------------------------------------------
 
 func main() {
 	glam.Configure(
 		glam.TimeStep(1.0/60),
-		pixel.TargetResolution(320, 160),
+		pixel.TargetResolution(320, 180),
 		pixel.AutoPalette(false),
 	)
 
@@ -44,6 +48,11 @@ func setup() error {
 	mire = pixel.GetPicture("mire")
 	midgray = pixel.GetPicture("midgray")
 	midrgb = pixel.GetPicture("midrgb")
+
+	for i := range pts {
+		pts[i].X = int16(rand.Intn(320))
+		pts[i].Y = int16(rand.Intn(180))
+	}
 
 	return pixel.Err()
 }
@@ -75,11 +84,15 @@ func (loop) Draw() error {
 	if timer > 0.25 {
 		count++
 		timer = 0.0
-		if count%2 != 0 {
+		if count%4 != 0 {
 			palette.Index(1).Set(colour.RGBA{1, 1, 1, 1})
 		} else {
 			palette.Index(1).Set(colour.RGBA{1, 0, 0.5, 1})
 		}
+	}
+
+	if count%3 != 0 {
+		pixel.PointList(colour.SRGB{0.25, 0.25, 0.25}, pts[:]...)
 	}
 
 	logo.Paint(x, 10)
@@ -99,7 +112,7 @@ func (loop) Draw() error {
 	pixel.Point(colour.RGB{1, 0.5, 0}, s.X/2, 60)
 	pixel.Point(colour.RGB{0, 0.5, 1}, x, 100)
 	m := pixel.Mouse()
-	pixel.Point(colour.RGB{1,0,0}, m.X, m.Y)
+	pixel.Point(colour.RGB{1, 0, 0}, m.X, m.Y)
 
 	return pixel.Err()
 }

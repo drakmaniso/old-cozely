@@ -15,21 +15,24 @@ const (
 	cmdFullColor    = 3
 	cmdFullColorExt = 4
 	cmdPoint        = 5
-	cmdLine         = 6
+	cmdPointList    = 6
+	cmdLine         = 7
 )
 
 //------------------------------------------------------------------------------
 
-func appendCommand(c uint32, v uint32) {
+func appendCommand(c uint32, v uint32, n uint32) {
 	l := len(commands)
-	if l > 0 && (commands[l-1].FirstVertex>>2) == c {
-		commands[l-1].InstanceCount++
+	if l > 0 &&
+		c != cmdPointList &&
+		(commands[l-1].FirstVertex>>2) == c {
+		commands[l-1].InstanceCount += n
 		return
 	}
 
 	commands = append(commands, gl.DrawIndirectCommand{
 		VertexCount:   v,
-		InstanceCount: 1,
+		InstanceCount: n,
 		FirstVertex:   uint32(c << 2),
 		BaseInstance:  uint32(len(parameters)),
 	})

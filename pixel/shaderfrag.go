@@ -7,6 +7,7 @@ const fragmentShader = "\n" + `#version 460 core
 const uint cmdIndexed = 1;
 const uint cmdFullColor = 3;
 const uint cmdPoint = 5;
+const uint cmdPointList = 6;
 
 //------------------------------------------------------------------------------
 
@@ -55,6 +56,7 @@ void main(void)
 		break;
 
 	case cmdPoint:
+	case cmdPointList:
 		out_color = Color;
 		break;
 

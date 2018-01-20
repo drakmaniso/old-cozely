@@ -93,10 +93,10 @@ func GetPicture(name string) *Picture {
 func (p *Picture) Paint(x, y int16) {
 	switch p.mode {
 	case Indexed:
-		appendCommand(cmdIndexed, 4)
+		appendCommand(cmdIndexed, 4, 1)
 		parameters = append(parameters, int16(p.mapping), x, y)
 	case FullColor:
-		appendCommand(cmdFullColor, 4)
+		appendCommand(cmdFullColor, 4, 1)
 		parameters = append(parameters, int16(p.mapping), x, y)
 	}
 }
