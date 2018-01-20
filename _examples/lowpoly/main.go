@@ -39,7 +39,7 @@ var pipeline *gl.Pipeline
 var miscUBO gl.UniformBuffer
 var misc struct {
 	worldFromObject space.Matrix
-	SunIlluminance  colour.RGB
+	SunIlluminance  colour.LRGB
 	_               byte
 }
 
@@ -147,8 +147,8 @@ func (loop) Draw() error {
 
 	pipeline.Bind()
 	gl.ClearDepthBuffer(1.0)
-	gl.ClearColorBuffer(colour.RGBA{0.0, 0.0, 0.0, 1.0})
-	// gl.ClearColorBuffer(colour.RGBA{0.4, 0.45, 0.5, 1.0})
+	gl.ClearColorBuffer(colour.LRGBA{0.0, 0.0, 0.0, 1.0})
+	// gl.ClearColorBuffer(colour.LRGBA{0.4, 0.45, 0.5, 1.0})
 	gl.Disable(gl.Blend)
 
 	camera.Bind()

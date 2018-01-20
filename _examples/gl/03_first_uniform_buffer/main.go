@@ -38,7 +38,7 @@ var perFrame struct {
 // Vertex buffer
 type mesh []struct {
 	position plane.Coord `layout:"0"`
-	color    colour.RGB  `layout:"1"`
+	color    colour.LRGB  `layout:"1"`
 }
 
 // Animation state
@@ -65,9 +65,9 @@ func setup() error {
 
 	// Fill and create the vertex buffer
 	triangle = mesh{
-		{plane.Coord{0, 0.75}, colour.RGB{R: 0.3, G: 0, B: 0.8}},
-		{plane.Coord{-0.65, -0.465}, colour.RGB{R: 0.8, G: 0.3, B: 0}},
-		{plane.Coord{0.65, -0.465}, colour.RGB{R: 0, G: 0.6, B: 0.2}},
+		{plane.Coord{0, 0.75}, colour.LRGB{R: 0.3, G: 0, B: 0.8}},
+		{plane.Coord{-0.65, -0.465}, colour.LRGB{R: 0.8, G: 0.3, B: 0}},
+		{plane.Coord{0.65, -0.465}, colour.LRGB{R: 0, G: 0.6, B: 0.2}},
 	}
 	vbo := gl.NewVertexBuffer(triangle, gl.StaticStorage)
 
@@ -103,7 +103,7 @@ func (loop) Draw() error {
 	angle -= 1.0 * glam.FrameTime()
 
 	pipeline.Bind()
-	gl.ClearColorBuffer(colour.RGBA{0.9, 0.9, 0.9, 1.0})
+	gl.ClearColorBuffer(colour.LRGBA{0.9, 0.9, 0.9, 1.0})
 
 	perFrame.transform = plane.Rotation(float32(angle)).GPU()
 	perFrameUBO.SubData(&perFrame, 0)

@@ -13,13 +13,13 @@ import (
 //------------------------------------------------------------------------------
 
 var (
-	purple = colour.RGB{R: 0.2, G: 0, B: 0.6}
-	orange = colour.RGB{R: 0.8, G: 0.3, B: 0}
-	// purple = colour.RGB{R: 0.8, G: 0.3, B: 0}
-	// green  = colour.RGB{R: 0.8, G: 0.3, B: 0}
-	green = colour.RGB{R: 0, G: 0.3, B: 0.1}
+	purple = colour.LRGB{R: 0.2, G: 0, B: 0.6}
+	orange = colour.LRGB{R: 0.8, G: 0.3, B: 0}
+	// purple = colour.LRGB{R: 0.8, G: 0.3, B: 0}
+	// green  = colour.LRGB{R: 0.8, G: 0.3, B: 0}
+	green = colour.LRGB{R: 0, G: 0.3, B: 0.1}
 
-	black = colour.RGB{R: 0, G: 0, B: 0}
+	black = colour.LRGB{R: 0, G: 0, B: 0}
 )
 
 //------------------------------------------------------------------------------

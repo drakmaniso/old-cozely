@@ -85,9 +85,9 @@ func (loop) Draw() error {
 		count++
 		timer = 0.0
 		if count%4 != 0 {
-			palette.Index(1).Set(colour.RGBA{1, 1, 1, 1})
+			palette.Index(1).Set(colour.LRGBA{1, 1, 1, 1})
 		} else {
-			palette.Index(1).Set(colour.RGBA{1, 0, 0.5, 1})
+			palette.Index(1).Set(colour.LRGBA{1, 0, 0.5, 1})
 		}
 	}
 
@@ -109,10 +109,10 @@ func (loop) Draw() error {
 	midrgb.Paint(s.X/2-48, s.Y/2-20)
 	midgray.Paint(s.X/2-16, s.Y/2+20+8)
 
-	pixel.Point(colour.RGB{1, 0.5, 0}, s.X/2, 60)
-	pixel.Point(colour.RGB{0, 0.5, 1}, x, 100)
+	pixel.Point(colour.LRGB{1, 0.5, 0}, s.X/2, 60)
+	pixel.Point(colour.LRGB{0, 0.5, 1}, x, 100)
 	m := pixel.Mouse()
-	pixel.Point(colour.RGB{1, 0, 0}, m.X, m.Y)
+	pixel.Point(colour.LRGB{1, 0, 0}, m.X, m.Y)
 
 	return pixel.Err()
 }

@@ -78,14 +78,14 @@ var commands = []gl.DrawIndirectCommand{
 // Instance Buffer
 
 var draws = []struct {
-	colour colour.RGB `layout:"1" divisor:"1"`
+	colour colour.LRGB `layout:"1" divisor:"1"`
 }{
-	{colour.RGB{R: 0.2, G: 0, B: 0.6}},
-	{colour.RGB{R: 0.2, G: 0, B: 0.6}},
-	{colour.RGB{R: 0, G: 0.3, B: 0.1}},
-	{colour.RGB{R: 0, G: 0.3, B: 0.1}},
-	{colour.RGB{R: 0.8, G: 0.3, B: 0}},
-	{colour.RGB{R: 0.8, G: 0.3, B: 0}},
+	{colour.LRGB{R: 0.2, G: 0, B: 0.6}},
+	{colour.LRGB{R: 0.2, G: 0, B: 0.6}},
+	{colour.LRGB{R: 0, G: 0.3, B: 0.1}},
+	{colour.LRGB{R: 0, G: 0.3, B: 0.1}},
+	{colour.LRGB{R: 0.8, G: 0.3, B: 0}},
+	{colour.LRGB{R: 0.8, G: 0.3, B: 0}},
 }
 
 // Vertex buffer
@@ -165,7 +165,7 @@ func (loop) Update() error {
 func (loop) Draw() error {
 	pipeline.Bind()
 	gl.ClearDepthBuffer(1.0)
-	gl.ClearColorBuffer(colour.RGBA{0.9, 0.9, 0.9, 1.0})
+	gl.ClearColorBuffer(colour.LRGBA{0.9, 0.9, 0.9, 1.0})
 
 	perFrame.screenFromObject = screenFromView.Times(viewFromWorld)
 	perFrame.screenFromObject = perFrame.screenFromObject.Times(worldFromObject)

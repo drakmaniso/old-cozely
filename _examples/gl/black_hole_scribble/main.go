@@ -52,7 +52,7 @@ var points [512]struct {
 
 // Application State
 var (
-	bgColor  = colour.RGBA{0.9, 0.87, 0.85, 1.0}
+	bgColor  = colour.LRGBA{0.9, 0.87, 0.85, 1.0}
 	rotSpeed = float32(0.003)
 	jitter   = float32(0.002)
 	angles   []float32

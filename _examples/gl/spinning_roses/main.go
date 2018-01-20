@@ -101,7 +101,7 @@ func (loop) Update() error {
 func (loop) Draw() error {
 	pipeline.Bind()
 	gl.ClearDepthBuffer(1.0)
-	gl.ClearColorBuffer(colour.RGBA{0.9, 0.85, 0.80, 1.0})
+	gl.ClearColorBuffer(colour.LRGBA{0.9, 0.85, 0.80, 1.0})
 	gl.Enable(gl.LineSmooth)
 	gl.Enable(gl.Blend)
 	gl.Blending(gl.SrcAlpha, gl.OneMinusSrcAlpha)
@@ -149,7 +149,7 @@ func (loop) MouseButtonDown(b mouse.Button, _ int) {
 //------------------------------------------------------------------------------
 
 // func rose(nbPoints int, num int, den int, offset float32) []perVertex {
-// 	// var m = []perVertex{{plane.Coord{0.0, 0.0}, colour.RGB{0.9, 0.9, 0.9}}}
+// 	// var m = []perVertex{{plane.Coord{0.0, 0.0}, colour.LRGB{0.9, 0.9, 0.9}}}
 // 	var m = []perVertex{}
 // 	for i := den * nbPoints; i >= 0; i-- {
 // 		var k = float32(num) / float32(den)

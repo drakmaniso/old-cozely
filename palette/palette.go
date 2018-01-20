@@ -124,7 +124,7 @@ func Get(name string) Index {
 	return c
 }
 
-// Find searches for a color by its colour.RGBA values. If this exact color
+// Find searches for a color by its colour.LRGBA values. If this exact color
 // isn't in the palette, index 0 is returned.
 func Find(v colour.Colour) Index {
 	lv := colour.LRGBAOf(v)
@@ -144,7 +144,7 @@ func (c Index) Colour() colour.LRGBA {
 	return colours[c]
 }
 
-// Set changes the colour.RGBA values of a color.
+// Set changes the colour.LRGBA values of a color.
 func (c Index) Set(v colour.Colour) {
 	colours[c] = colour.LRGBAOf(v)
 	changed = true

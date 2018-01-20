@@ -32,7 +32,7 @@ var (
 // Vertex buffer
 type mesh []struct {
 	position plane.Coord `layout:"0"`
-	color    colour.RGB  `layout:"1"`
+	color    colour.LRGB  `layout:"1"`
 }
 
 //------------------------------------------------------------------------------
@@ -51,9 +51,9 @@ func setup() error {
 
 	// Create and fill the vertex buffer
 	triangle = mesh{
-		{plane.Coord{0, 0.65}, colour.RGB{R: 0.3, G: 0, B: 0.8}},
-		{plane.Coord{-0.65, -0.475}, colour.RGB{R: 0.8, G: 0.3, B: 0}},
-		{plane.Coord{0.65, -0.475}, colour.RGB{R: 0, G: 0.6, B: 0.2}},
+		{plane.Coord{0, 0.65}, colour.LRGB{R: 0.3, G: 0, B: 0.8}},
+		{plane.Coord{-0.65, -0.475}, colour.LRGB{R: 0.8, G: 0.3, B: 0}},
+		{plane.Coord{0.65, -0.475}, colour.LRGB{R: 0, G: 0.6, B: 0.2}},
 	}
 	vbo := gl.NewVertexBuffer(triangle, gl.StaticStorage)
 
@@ -85,7 +85,7 @@ func (loop) Update() error {
 
 func (loop) Draw() error {
 	pipeline.Bind()
-	gl.ClearColorBuffer(colour.RGBA{0.9, 0.9, 0.9, 1.0})
+	gl.ClearColorBuffer(colour.LRGBA{0.9, 0.9, 0.9, 1.0})
 
 	gl.Draw(0, 3)
 	pipeline.Unbind()

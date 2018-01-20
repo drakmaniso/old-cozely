@@ -43,7 +43,7 @@ var perObject struct {
 // Vertex buffer
 type mesh []struct {
 	position space.Coord `layout:"0"`
-	color    colour.RGB  `layout:"1"`
+	color    colour.LRGB  `layout:"1"`
 }
 
 // Transformation matrices
@@ -125,7 +125,7 @@ func (loop) Update() error {
 //------------------------------------------------------------------------------
 
 func (loop) Draw() error {
-	gl.ClearColorBuffer(colour.RGBA{0.9, 0.9, 0.9, 1.0})
+	gl.ClearColorBuffer(colour.LRGBA{0.9, 0.9, 0.9, 1.0})
 	gl.ClearDepthBuffer(1.0)
 
 	perObject.screenFromObject =

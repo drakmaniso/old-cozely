@@ -147,7 +147,7 @@ func (loop) Update() error {
 func (loop) Draw() error {
 	pipeline.Bind()
 	gl.ClearDepthBuffer(1.0)
-	gl.ClearColorBuffer(colour.RGBA{0.9, 0.9, 0.9, 1.0})
+	gl.ClearColorBuffer(colour.LRGBA{0.9, 0.9, 0.9, 1.0})
 	gl.Enable(gl.FramebufferSRGB)
 
 	perObject.screenFromObject =

@@ -61,7 +61,7 @@ func (loop) Update() error {
 
 func (loop) Draw() error {
 	pipeline.Bind()
-	gl.ClearColorBuffer(colour.RGBA{0.9, 0.9, 0.9, 1.0})
+	gl.ClearColorBuffer(colour.LRGBA{0.9, 0.9, 0.9, 1.0})
 
 	gl.Draw(0, 3)
 	pipeline.Unbind()
