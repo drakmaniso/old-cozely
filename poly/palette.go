@@ -34,7 +34,7 @@ func DeleteMaterialBuffer() {
 var materialSSBO gl.StorageBuffer
 
 type Material struct {
-	diffuse colour.RGB
+	diffuse colour.LRGB
 }
 
 //------------------------------------------------------------------------------

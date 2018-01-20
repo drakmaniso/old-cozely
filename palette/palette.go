@@ -4,8 +4,8 @@
 package palette
 
 import (
-	"github.com/drakmaniso/glam/internal"
 	"github.com/drakmaniso/glam/colour"
+	"github.com/drakmaniso/glam/internal"
 )
 
 //------------------------------------------------------------------------------
@@ -43,10 +43,10 @@ func Clear() {
 		delete(names, n)
 	}
 	for c := range colours {
-		colours[c] = colour.RGBA{1, 0, 1, 1}
+		colours[c] = colour.LRGBA{1, 0, 1, 1}
 	}
 	count = 0
-	New("transparent", colour.RGBA{0, 0, 0, 0})
+	New("transparent", colour.LRGBA{0, 0, 0, 0})
 }
 
 //------------------------------------------------------------------------------
@@ -68,7 +68,7 @@ func New(name string, v colour.Colour) Index {
 	c := Index(count)
 	count++
 
-	colours[c] = colour.RGBAOf(v)
+	colours[c] = colour.LRGBAOf(v)
 
 	changed = true
 
@@ -88,7 +88,7 @@ func New(name string, v colour.Colour) Index {
 // it. If it is not present in the palette, it is added and the new index
 // returned. If the palette is full, index 0 is returned.
 func Request(v colour.Colour) Index {
-	rgba := colour.RGBAOf(v)
+	rgba := colour.LRGBAOf(v)
 
 	// Search the color in the existing palette
 
@@ -127,7 +127,7 @@ func Get(name string) Index {
 // Find searches for a color by its colour.RGBA values. If this exact color
 // isn't in the palette, index 0 is returned.
 func Find(v colour.Colour) Index {
-	lv := colour.RGBAOf(v)
+	lv := colour.LRGBAOf(v)
 	for c, vv := range colours {
 		if vv == lv {
 			return Index(c)
@@ -140,13 +140,13 @@ func Find(v colour.Colour) Index {
 //------------------------------------------------------------------------------
 
 // Colour returns the color corresponding to a palette index.
-func (c Index) Colour() colour.RGBA {
+func (c Index) Colour() colour.LRGBA {
 	return colours[c]
 }
 
 // Set changes the colour.RGBA values of a color.
 func (c Index) Set(v colour.Colour) {
-	colours[c] = colour.RGBAOf(v)
+	colours[c] = colour.LRGBAOf(v)
 	changed = true
 }
 

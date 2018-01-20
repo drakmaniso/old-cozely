@@ -23,7 +23,7 @@ var screen struct {
 	size       Coord
 	pixel      int32
 	ox, oy     int32 // Offset when there is a border around the screen
-	background colour.RGBA
+	background colour.LRGBA
 }
 
 func init() {
@@ -44,7 +44,7 @@ func PixelSize() int32 {
 //------------------------------------------------------------------------------
 
 func SetBackground(c colour.Colour) {
-	screen.background = colour.RGBAOf(c)
+	screen.background = colour.LRGBAOf(c)
 }
 
 //------------------------------------------------------------------------------
@@ -105,7 +105,7 @@ func init() {
 
 func blitScreen() {
 	gl.DefaultFramebuffer.Bind(gl.DrawFramebuffer)
-	gl.ClearColorBuffer(colour.RGBA{0.2, 0.2, 0.2, 1})
+	gl.ClearColorBuffer(colour.LRGBA{0.2, 0.2, 0.2, 1}) //TODO: ...
 
 	w := int32(screen.size.X) * screen.pixel
 	h := int32(screen.size.Y) * screen.pixel

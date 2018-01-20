@@ -23,7 +23,7 @@ func Change(name string) error {
 	case "MSX2":
 		Clear()
 		for i := 1; i < 256; i++ {
-			New("", colour.RGBA{
+			New("", colour.LRGBA{
 				float32(i>>5) / 7.0,
 				float32((i&0x1C)>>2) / 7.0,
 				float32(i&0x3) / 3.0,

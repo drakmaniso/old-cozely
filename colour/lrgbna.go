@@ -5,39 +5,40 @@ package colour
 
 //------------------------------------------------------------------------------
 
-// RGB represents a color in linear color space. Each value ranges within
-// [0, 1], and can be used directly by GPU shaders.
-type RGB struct {
+// LRGBnA represents a color in *non* alpha-premultiplied linear color
+// space. Each value ranges within [0, 1], and can be used directly by GPU
+// shaders.
+//
+// Note: prefer RGBA for use in shaders.
+type LRGBnA struct {
 	R float32
 	G float32
 	B float32
+	A float32
 }
 
 //------------------------------------------------------------------------------
 
-// RGBOf converts any color to linear color space with no alpha.
-func RGBOf(c Colour) RGB {
-	r, g, b, _ := c.Linear()
-	return RGB{r, g, b}
+// RGBnAOf converts any color to non alpha-premultiplied linear color
+// space.
+func RGBnAOf(c Colour) LRGBnA {
+	r, g, b, a := c.Linear()
+	return LRGBnA{r / a, g / a, b / a, a}
 }
 
 //------------------------------------------------------------------------------
 
 // Linear implements the Colour interface.
-func (c RGB) Linear() (r, g, b, a float32) {
-	return c.R, c.G, c.B, 1
+func (c LRGBnA) Linear() (r, g, b, a float32) {
+	return c.A * c.R, c.A * c.G, c.A * c.B, c.A
 }
 
 //------------------------------------------------------------------------------
 
 // RGBA implements the image.Color interface: it returns the four components
 // scaled by 0xFFFF.
-func (c RGB) RGBA() (r, g, b, a uint32) {
-	r = uint32(c.R * 0xFFFF)
-	g = uint32(c.G * 0xFFFF)
-	b = uint32(c.B * 0xFFFF)
-	a = uint32(0xFFFF)
-	return r, g, b, a
+func (c LRGBnA) RGBA() (r, g, b, a uint32) {
+	return uint32(c.A * c.R * 0xFFFF), uint32(c.A * c.G * 0xFFFF), uint32(c.A * c.B * 0xFFFF), uint32(c.A * 0xFFFF)
 }
 
 //------------------------------------------------------------------------------

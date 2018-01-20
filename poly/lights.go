@@ -14,7 +14,7 @@ import (
 
 //------------------------------------------------------------------------------
 
-func TemperatureColor(temperature float64) colour.RGB {
+func TemperatureColor(temperature float64) colour.LRGB {
 	// Ported by Renaud Bédard (@renaudbedard), from original code
 	// by Tanner Helland:
 	// http://www.tannerhelland.com/4435/convert-temperature-rgb-algorithm-code/
@@ -22,7 +22,7 @@ func TemperatureColor(temperature float64) colour.RGB {
 	// licensed and released under Creative Commons 3.0 Attribution
 	// https://creativecommons.org/licenses/by/3.0/
 
-	var h colour.RGB
+	var h colour.LRGB
 
 	temperature = clamp(temperature, 1000.0, 40000.0) / 100.0
 
@@ -53,7 +53,7 @@ func TemperatureColor(temperature float64) colour.RGB {
 
 //------------------------------------------------------------------------------
 
-func DirectionalLightSpectralIlluminance(illuminance, temperature float64) colour.RGB {
+func DirectionalLightSpectralIlluminance(illuminance, temperature float64) colour.LRGB {
 	h := TemperatureColor(temperature)
 	s := float32(illuminance) * (1.0 / math32.Pi)
 	h.R *= s
