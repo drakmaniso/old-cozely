@@ -32,3 +32,13 @@ func PointList(c colour.Colour, pts ...Coord) {
 }
 
 //------------------------------------------------------------------------------
+
+func Line(c colour.Colour, x1, y1, x2, y2 int16) {
+	appendCommand(cmdLine, 4, 1)
+	c8 := colour.SRGBA8Of(c)
+	rg := uint16(c8.R)<<8 | uint16(c8.G)
+	ba := uint16(c8.B)<<8 | uint16(c8.A)
+	parameters = append(parameters, int16(rg), int16(ba), x1, y1, x2, y2)
+}
+
+//------------------------------------------------------------------------------
