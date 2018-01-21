@@ -22,11 +22,8 @@ import (
 //------------------------------------------------------------------------------
 
 var (
-	rgbaFiles []atlas.Image
-	rgbaAtlas *atlas.Atlas
-
-	indexedFiles []atlas.Image
-	indexedAtlas *atlas.Atlas
+	pictFiles []atlas.Image
+	pictAtlas *atlas.Atlas
 )
 
 var autoPalette = true
@@ -66,25 +63,15 @@ func Load(path string) error {
 
 	// Pack them into atlases
 
-	indexedAtlas.Pack(indexedFiles)
-	rgbaAtlas.Pack(rgbaFiles)
+	pictAtlas.Pack(pictFiles)
 
-	{
-		iu := indexedAtlas.Unused()
-		internal.Debug.Printf(
-			"Packed %d indexed images in %d bins: %d unused pixels (%d kb, %d Mb)\n",
-			len(indexedFiles),
-			indexedAtlas.BinCount(),
-			iu, iu/1024, iu/(1024*1024),
-		)
-		ru := rgbaAtlas.Unused()
-		internal.Debug.Printf(
-			"Packed %d RGBA images in %d bins: %d unused pixels (%d kb, %d Mb)\n",
-			len(rgbaFiles),
-			rgbaAtlas.BinCount(),
-			ru, 4*ru/1024, 4*ru/(1024*1024),
-		)
-	}
+	iu := pictAtlas.Unused()
+	internal.Debug.Printf(
+		"Packed %d indexed images in %d bins: %d unused pixels (%d kb, %d Mb)\n",
+		len(pictFiles),
+		pictAtlas.BinCount(),
+		iu, iu/1024, iu/(1024*1024),
+	)
 
 	return gl.Err()
 }
@@ -120,25 +107,14 @@ func scan(path string, info os.FileInfo, err error) error {
 	//TODO: check for width and height overflow
 	w, h := int16(conf.Width), int16(conf.Height)
 
-	switch conf.ColorModel {
+	_, ok := conf.ColorModel.(color.Palette)
+	if ok {
+		newPicture(n, w, h)
+		pictFiles = append(pictFiles, imgfile{name: n, path: path})
 
-	case color.RGBAModel, color.NRGBAModel, color.GrayModel,
-		color.Gray16Model, color.RGBA64Model, color.NRGBA64Model:
-		newPicture(n, FullColor, w, h)
-		rgbaFiles = append(rgbaFiles, imgfile{name: n, path: path})
-
-	case color.AlphaModel, color.Alpha16Model:
-		return errors.New(`image "` + path + `" color model (16-bit alpha) not yet supported.`)
-
-	default:
-		_, ok := conf.ColorModel.(color.Palette)
-		if ok {
-			newPicture(n, Indexed, w, h)
-			indexedFiles = append(indexedFiles, imgfile{name: n, path: path})
-
-		} else {
-			return errors.New(`image "` + path + `" color model not recognized.`)
-		}
+	} else {
+		internal.Debug.Println(`ignoring image: "` + path + `" (color model not supported)`)
+		return nil
 	}
 
 	return nil
@@ -169,48 +145,40 @@ func (im imgfile) Paint(dest interface{}) error {
 		return err
 	}
 	defer pf.Close()
-	pm, _, err := image.Decode(pf)
+	src, _, err := image.Decode(pf)
 	if err != nil {
 		return err
 	}
 
-	switch dm := dest.(type) {
-
-	case *image.NRGBA:
-		for y := 0; y < int(ph); y++ {
-			for x := 0; x < int(pw); x++ {
-				c := pm.At(x, y)
-				dm.Set(int(px)+x, int(py)+y, c)
-			}
-		}
-
-	case *image.Paletted:
-		pmp := pm.(*image.Paletted)
-		pal, ok := pmp.ColorModel().(color.Palette)
-		if !ok {
-			return errors.New("unable to access color palette for image")
-		}
-		for y := 0; y < int(ph); y++ {
-			for x := 0; x < int(pw); x++ {
-				w := dm.Bounds().Dx()
-				ci := pmp.Pix[x+int(pw)*y]
-				if autoPalette {
-					// Convert image color index to index into current palette
-					r, g, b, a := pal[ci].RGBA()
-					cc := colour.SRGBA{
-						float32(r) / float32(0xFFFF),
-						float32(g) / float32(0xFFFF),
-						float32(b) / float32(0xFFFF),
-						float32(a) / float32(0xFFFF),
-					}
-					ci = uint8(palette.Request(cc))
+	sm, ok := src.(*image.Paletted)
+	if !ok {
+		return errors.New("unexpected src argument to imgfile paint method")
+	}
+	pal, ok := sm.ColorModel().(color.Palette)
+	if !ok {
+		return errors.New("unable to access src color palette in imgfile paint method")
+	}
+	dm, ok := dest.(*image.Paletted)
+	if !ok {
+		return errors.New("unexpected dest argument to imgfile paint method")
+	}
+	for y := 0; y < int(ph); y++ {
+		for x := 0; x < int(pw); x++ {
+			w := dm.Bounds().Dx()
+			ci := sm.Pix[x+int(pw)*y]
+			if autoPalette {
+				// Convert image color index to index into current palette
+				r, g, b, a := pal[ci].RGBA()
+				cc := colour.SRGBA{
+					float32(r) / float32(0xFFFF),
+					float32(g) / float32(0xFFFF),
+					float32(b) / float32(0xFFFF),
+					float32(a) / float32(0xFFFF),
 				}
-				dm.Pix[int(px)+x+w*(int(py)+y)] = uint8(ci)
+				ci = uint8(palette.Request(cc))
 			}
+			dm.Pix[int(px)+x+w*(int(py)+y)] = uint8(ci)
 		}
-
-	default:
-		return errors.New("unexpected argument to imgfile paint method")
 	}
 
 	return nil

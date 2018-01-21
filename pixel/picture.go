@@ -9,15 +9,12 @@ import (
 
 //------------------------------------------------------------------------------
 
-type Picture struct {
-	mode    Mode
-	mapping uint16
-}
+type Picture uint16
 
-var pictures map[string]*Picture
+var pictures map[string]Picture
 
 func init() {
-	pictures = make(map[string]*Picture, 128)
+	pictures = make(map[string]Picture, 128)
 }
 
 //------------------------------------------------------------------------------
@@ -44,41 +41,36 @@ const (
 
 //------------------------------------------------------------------------------
 
-func newPicture(name string, mode Mode, w, h int16) *Picture {
-	var p Picture
-	p.mode = mode
+func newPicture(name string, w, h int16) Picture {
 	mappings = append(mappings, mapping{w: w, h: h})
-	p.mapping = uint16(len(mappings) - 1)
-	pictures[name] = &p
-	return &p
+	p := Picture(len(mappings) - 1)
+	pictures[name] = p
+	return p
 }
 
 //------------------------------------------------------------------------------
 
 // Size returns the width and height of the picture.
-func (p *Picture) Size() Coord {
-	m := p.mapping
-	return Coord{mappings[m].w, mappings[m].h}
+func (p Picture) Size() Coord {
+	return Coord{mappings[p].w, mappings[p].h}
 }
 
 //------------------------------------------------------------------------------
 
-func (p *Picture) mapTo(binFlip int16, x, y int16) {
-	m := p.mapping
-	mappings[m].binFlip = binFlip
-	mappings[m].x, mappings[m].y = x, y
+func (p Picture) mapTo(binFlip int16, x, y int16) {
+	mappings[p].binFlip = binFlip
+	mappings[p].x, mappings[p].y = x, y
 }
 
-func (p *Picture) getMap() (binFlip int16, x, y, w, h int16) {
-	m := p.mapping
-	return mappings[m].binFlip, mappings[m].x, mappings[m].y, mappings[m].w, mappings[m].h
+func (p Picture) getMap() (binFlip int16, x, y, w, h int16) {
+	return mappings[p].binFlip, mappings[p].x, mappings[p].y, mappings[p].w, mappings[p].h
 }
 
 //------------------------------------------------------------------------------
 
 // GetPicture returns the picture associated with a name. If there isn't any, an
 // empty picture is returned, and a sticky error is set.
-func GetPicture(name string) *Picture {
+func GetPicture(name string) Picture {
 	p, ok := pictures[name]
 	if !ok {
 		setErr("in GetPicture", errors.New("picture \""+name+"\" not found"))
@@ -88,15 +80,9 @@ func GetPicture(name string) *Picture {
 
 //------------------------------------------------------------------------------
 
-func (p *Picture) Paint(x, y int16) {
-	switch p.mode {
-	case Indexed:
-		appendCommand(cmdIndexed, 4, 1)
-		parameters = append(parameters, int16(p.mapping), x, y)
-	case FullColor:
-		appendCommand(cmdFullColor, 4, 1)
-		parameters = append(parameters, int16(p.mapping), x, y)
-	}
+func (p Picture) Paint(x, y int16) {
+	appendCommand(cmdPicture, 4, 1)
+	parameters = append(parameters, int16(p), x, y)
 }
 
 //------------------------------------------------------------------------------

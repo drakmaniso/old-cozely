@@ -10,14 +10,11 @@ import (
 //------------------------------------------------------------------------------
 
 const (
-	cmdIndexed      = 1
-	cmdIndexedExt   = 2
-	cmdFullColor    = 3
-	cmdFullColorExt = 4
-	cmdPoint        = 5
-	cmdPointList    = 6
-	cmdLine         = 7
-	cmdLineAA       = 8
+	cmdPicture    = 1
+	cmdPictureExt = 2
+	cmdPoint      = 3
+	cmdPointList  = 4
+	cmdLine       = 5
 )
 
 //------------------------------------------------------------------------------

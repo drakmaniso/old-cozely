@@ -4,12 +4,11 @@ const fragmentShader = "\n" + `#version 460 core
 
 //------------------------------------------------------------------------------
 
-const uint cmdIndexed = 1;
-const uint cmdFullColor = 3;
-const uint cmdPoint = 5;
-const uint cmdPointList = 6;
-const uint cmdLine = 7;
-const uint cmdLineAA = 8;
+const uint cmdPicture = 1;
+const uint cmdPictureExt = 2;
+const uint cmdPoint = 3;
+const uint cmdPointList = 4;
+const uint cmdLine = 5;
 
 //------------------------------------------------------------------------------
 
@@ -17,7 +16,7 @@ in PerVertex {
 	layout(location=0) flat uint Command;
 	layout(location=1) flat uint Bin;
 	layout(location=2) vec2 UV;
-	layout(location=3) flat vec4 Color;
+	layout(location=3) flat uint ColorIndex;
 	layout(location=4) flat vec2 Orig;
 	layout(location=5) flat float Slope;
 	layout(location=6) flat bool Steep;
@@ -43,10 +42,10 @@ out vec4 out_color;
 void main(void)
 {
 	float x, y;
+	uint c = 0;
 	switch (Command) {
-	case cmdIndexed:
+	case cmdPicture:
 		uint p = texelFetch(IndexedTextures, ivec3(UV.x, UV.y, 0), 0).x;
-		uint c;
 		if (p == 0) {
 			c = 0;
 		} else {
@@ -55,16 +54,11 @@ void main(void)
 				c -= 255;
 			}
 		}
-		out_color = Colours[c];
-		break;
-
-	case cmdFullColor:
-		out_color = texelFetch(FullColorTextures, ivec3(UV.x, UV.y, 0), 0);
 		break;
 
 	case cmdPoint:
 	case cmdPointList:
-		out_color = Color;
+		c = ColorIndex;
 		break;
 
 	case cmdLine:
@@ -74,28 +68,12 @@ void main(void)
 			(!Steep && y == round(Slope*x)) ||
 			(Steep && x == round(Slope*y))
 		) {
-			out_color = Color;
-		} else {
-			out_color = vec4(0,0,0,0);
+			c = ColorIndex;
 		}
 		break;
-
-	case cmdLineAA:
-		x = gl_FragCoord.x - Orig.x;
-		y = gl_FragCoord.y - Orig.y;
-		float a;
-		if (Steep) {
-			a = 1 - abs(x - Slope*y);
-		} else {
-			a = 1 - abs(y - Slope*x);
-		}
-		// a = round(a*8)/8.0;
-		out_color = Color * vec4(1,1,1,a);
-		break;
-
-	default:
-		out_color = vec4(1,0,1,0.5);
 	}
+
+	out_color = Colours[c];
 }
 `
 

@@ -15,10 +15,9 @@ const ()
 
 // Textures and Buffer-Textures
 const (
-	layoutIndexedTextures   = 1
-	layoutFullColorTextures = 2
-	layoutMappings          = 5
-	layoutParameters        = 6
+	layoutPictures   = 1
+	layoutMappings   = 5
+	layoutParameters = 6
 )
 
 //------------------------------------------------------------------------------

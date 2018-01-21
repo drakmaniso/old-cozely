@@ -21,7 +21,7 @@ import (
 //------------------------------------------------------------------------------
 
 var tilesPict [8]struct {
-	normal, big *pixel.Picture
+	normal, big pixel.Picture
 }
 
 var current grid.Position

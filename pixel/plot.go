@@ -4,28 +4,22 @@
 package pixel
 
 import (
-	"github.com/drakmaniso/glam/colour"
+	"github.com/drakmaniso/glam/palette"
 )
 
 //------------------------------------------------------------------------------
 
-func Point(c colour.Colour, x, y int16) {
+func Point(c palette.Index, x, y int16) {
 	appendCommand(cmdPoint, 3, 1)
-	c8 := colour.SRGBA8Of(c)
-	rg := uint16(c8.R)<<8 | uint16(c8.G)
-	ba := uint16(c8.B)<<8 | uint16(c8.A)
-	parameters = append(parameters, int16(rg), int16(ba), x, y)
+	parameters = append(parameters, int16(c), x, y)
 }
 
-func PointList(c colour.Colour, pts ...Coord) {
+func PointList(c palette.Index, pts ...Coord) {
 	if len(pts) < 1 {
 		return
 	}
 	appendCommand(cmdPointList, 3, uint32(len(pts)))
-	c8 := colour.SRGBA8Of(c)
-	rg := uint16(c8.R)<<8 | uint16(c8.G)
-	ba := uint16(c8.B)<<8 | uint16(c8.A)
-	parameters = append(parameters, int16(rg), int16(ba))
+	parameters = append(parameters, int16(c))
 	for _, p := range pts {
 		parameters = append(parameters, p.X, p.Y)
 	}
@@ -33,12 +27,9 @@ func PointList(c colour.Colour, pts ...Coord) {
 
 //------------------------------------------------------------------------------
 
-func Line(c colour.Colour, x1, y1, x2, y2 int16) {
-	appendCommand(cmdLineAA, 4, 1)
-	c8 := colour.SRGBA8Of(c)
-	rg := uint16(c8.R)<<8 | uint16(c8.G)
-	ba := uint16(c8.B)<<8 | uint16(c8.A)
-	parameters = append(parameters, int16(rg), int16(ba), x1, y1, x2, y2)
+func Line(c palette.Index, x1, y1, x2, y2 int16) {
+	appendCommand(cmdLine, 4, 1)
+	parameters = append(parameters, int16(c), x1, y1, x2, y2)
 }
 
 //------------------------------------------------------------------------------

@@ -14,7 +14,7 @@ import (
 
 //------------------------------------------------------------------------------
 
-var logo, mire, midgray, midrgb *pixel.Picture
+var logo, mire, midgray, midrgb pixel.Picture
 
 var pts [1024]pixel.Coord
 
@@ -46,8 +46,8 @@ func setup() error {
 
 	logo = pixel.GetPicture("logo")
 	mire = pixel.GetPicture("mire")
-	midgray = pixel.GetPicture("midgray")
-	midrgb = pixel.GetPicture("midrgb")
+	midgray = pixel.GetPicture("logo")
+	midrgb = pixel.GetPicture("logo")
 
 	for i := range pts {
 		pts[i].X = int16(rand.Intn(320))
@@ -85,17 +85,15 @@ func (loop) Draw() error {
 		count++
 		timer = 0.0
 		if count%4 != 0 {
-			palette.Index(1).Set(colour.LRGBA{1, 1, 1, 1})
-		} else {
 			palette.Index(1).Set(colour.LRGBA{1, 0, 0.5, 1})
+		} else {
+			palette.Index(1).Set(colour.LRGBA{1, 1, 1, 1})
 		}
 	}
 
-	if count%3 != 0 {
-		// pixel.PointList(colour.SRGB{0.25, 0.25, 0.25}, pts[:]...)
-	}
+	pixel.PointList(0x05, pts[:]...)
 
-	// logo.Paint(x, 10)
+	logo.Paint(x, 10)
 
 	s := pixel.ScreenSize()
 
@@ -109,16 +107,18 @@ func (loop) Draw() error {
 	midrgb.Paint(s.X/2-48, s.Y/2-20)
 	midgray.Paint(s.X/2-16, s.Y/2+20+8)
 
-	pixel.Point(colour.LRGB{1, 0.5, 0}, s.X/2, 60)
-	pixel.Point(colour.LRGB{0, 0.5, 1}, x, 100)
+	pixel.Point(0x18, s.X/2, 60)
+	for xx := int16(4); xx < s.X; xx += 8 {
+		pixel.Point(0x18, xx, (x + xx)%s.Y)
+	}
 
 	m := pixel.Mouse()
 
-	pixel.Point(colour.LRGB{1, 0, 0}, s.X/2, s.Y/2)
-	pixel.Point(colour.LRGB{1, 0, 0}, m.X, m.Y)
-	pixel.Line(colour.LRGB{1, 0.25, 0}, s.X/2, s.Y/2, m.X, m.Y)
-	pixel.Point(colour.LRGBA{0.0, 1, 0.0, 0.5}, s.X/2, s.Y/2)
-	pixel.Point(colour.LRGBA{0.0, 1, 0.0, 0.5}, m.X, m.Y)
+	pixel.Point(0x18, s.X/2, s.Y/2)
+	pixel.Point(0x18, m.X, m.Y)
+	pixel.Line(0xE8, s.X/2, s.Y/2, m.X, m.Y)
+	pixel.Point(0xE0, s.X/2, s.Y/2)
+	pixel.Point(0xE0, m.X, m.Y)
 
 	return pixel.Err()
 }

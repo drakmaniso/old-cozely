@@ -46,8 +46,7 @@ func setupHook() error {
 
 	// Prepare picture loading
 
-	indexedAtlas = atlas.New(1024, 1024)
-	rgbaAtlas = atlas.New(1024, 1024)
+	pictAtlas = atlas.New(1024, 1024)
 
 	return gl.Err()
 }
@@ -64,10 +63,10 @@ func postSetupHook() error {
 	// Mappings Buffer
 	mappingsTBO = gl.NewBufferTexture(mappings, gl.R16I, gl.StaticStorage)
 
-	// Create the indexed texture atlas
-	w, h := indexedAtlas.BinSize()
-	indexedTextures = gl.NewTextureArray2D(1, gl.R8UI, int32(w), int32(h), int32(indexedAtlas.BinCount()))
-	for i := int16(0); i < indexedAtlas.BinCount(); i++ {
+	// Create the texture atlas
+	w, h := pictAtlas.BinSize()
+	picturesTA = gl.NewTextureArray2D(1, gl.R8UI, int32(w), int32(h), int32(pictAtlas.BinCount()))
+	for i := int16(0); i < pictAtlas.BinCount(); i++ {
 		m := image.NewPaletted(image.Rectangle{
 			Min: image.Point{0, 0},
 			Max: image.Point{int(w), int(h)},
@@ -75,29 +74,12 @@ func postSetupHook() error {
 			color.Palette{},
 		)
 
-		err := indexedAtlas.Paint(i, m)
+		err := pictAtlas.Paint(i, m)
 		if err != nil {
 			return err
 		}
 
-		indexedTextures.SubImage(0, 0, 0, int32(i), m)
-	}
-
-	// Create the RGBA texture atlas
-	w, h = rgbaAtlas.BinSize()
-	fullColorTextures = gl.NewTextureArray2D(1, gl.SRGBA8, int32(w), int32(h), int32(rgbaAtlas.BinCount()))
-	for i := int16(0); i < rgbaAtlas.BinCount(); i++ {
-		m := image.NewNRGBA(image.Rectangle{
-			Min: image.Point{0, 0},
-			Max: image.Point{int(w), int(h)},
-		})
-
-		err := rgbaAtlas.Paint(i, m)
-		if err != nil {
-			return err
-		}
-
-		fullColorTextures.SubImage(0, 0, 0, int32(i), m)
+		picturesTA.SubImage(0, 0, 0, int32(i), m)
 	}
 
 	return gl.Err()

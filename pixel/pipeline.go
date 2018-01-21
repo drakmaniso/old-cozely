@@ -28,13 +28,12 @@ var screenUniforms struct {
 //------------------------------------------------------------------------------
 
 var (
-	pipeline          *gl.Pipeline
-	screenUBO         gl.UniformBuffer
-	commandsICBO      gl.IndirectBuffer
-	parametersTBO     gl.BufferTexture
-	mappingsTBO       gl.BufferTexture
-	indexedTextures   gl.TextureArray2D
-	fullColorTextures gl.TextureArray2D
+	pipeline      *gl.Pipeline
+	screenUBO     gl.UniformBuffer
+	commandsICBO  gl.IndirectBuffer
+	parametersTBO gl.BufferTexture
+	mappingsTBO   gl.BufferTexture
+	picturesTA    gl.TextureArray2D
 )
 
 //------------------------------------------------------------------------------
