@@ -116,7 +116,7 @@ func (loop) Draw() error {
 
 	pixel.Point(colour.LRGB{1, 0, 0}, s.X/2, s.Y/2)
 	pixel.Point(colour.LRGB{1, 0, 0}, m.X, m.Y)
-	pixel.Line(colour.LRGB{1, 1, 1}, s.X/2, s.Y/2, m.X, m.Y)
+	pixel.Line(colour.LRGB{1, 0.25, 0}, s.X/2, s.Y/2, m.X, m.Y)
 	pixel.Point(colour.LRGBA{0.0, 1, 0.0, 0.5}, s.X/2, s.Y/2)
 	pixel.Point(colour.LRGBA{0.0, 1, 0.0, 0.5}, m.X, m.Y)
 

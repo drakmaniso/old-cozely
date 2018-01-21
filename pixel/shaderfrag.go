@@ -9,6 +9,7 @@ const uint cmdFullColor = 3;
 const uint cmdPoint = 5;
 const uint cmdPointList = 6;
 const uint cmdLine = 7;
+const uint cmdLineAA = 8;
 
 //------------------------------------------------------------------------------
 
@@ -41,7 +42,7 @@ out vec4 out_color;
 
 void main(void)
 {
-
+	float x, y;
 	switch (Command) {
 	case cmdIndexed:
 		uint p = texelFetch(IndexedTextures, ivec3(UV.x, UV.y, 0), 0).x;
@@ -67,8 +68,8 @@ void main(void)
 		break;
 
 	case cmdLine:
-		float x = gl_FragCoord.x - Orig.x;
-		float y = gl_FragCoord.y - Orig.y;
+		x = gl_FragCoord.x - Orig.x;
+		y = gl_FragCoord.y - Orig.y;
 		if (
 			(!Steep && y == round(Slope*x)) ||
 			(Steep && x == round(Slope*y))
@@ -77,6 +78,19 @@ void main(void)
 		} else {
 			out_color = vec4(0,0,0,0);
 		}
+		break;
+
+	case cmdLineAA:
+		x = gl_FragCoord.x - Orig.x;
+		y = gl_FragCoord.y - Orig.y;
+		float a;
+		if (Steep) {
+			a = 1 - abs(x - Slope*y);
+		} else {
+			a = 1 - abs(y - Slope*x);
+		}
+		// a = round(a*8)/8.0;
+		out_color = Color * vec4(1,1,1,a);
 		break;
 
 	default:

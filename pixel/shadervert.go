@@ -9,6 +9,7 @@ const uint cmdFullColor = 3;
 const uint cmdPoint = 5;
 const uint cmdPointList = 6;
 const uint cmdLine = 7;
+const uint cmdLineAA = 8;
 
 const vec2 corners[4] = vec2[4](
 	vec2(0, 0),
@@ -53,7 +54,7 @@ void main(void)
 	int vertex = gl_VertexID & 0x3;
 
 	int x, y, x1, y1, x2, y2, dx, dy;
-	vec2 p;
+	vec2 p, v, ov, pts[4];
 	uint rg, ba;
 	switch (Command) {
 	case cmdIndexed:
@@ -112,7 +113,6 @@ void main(void)
 		);
 		break;
 
-
 	case cmdLine:
 		param += 6*gl_InstanceID;
 		// Point Parameters
@@ -125,9 +125,47 @@ void main(void)
 		// Position
 		dx = x2-x1;
 		dy = y2-y1;
-		vec2 v = 0.5*normalize(vec2(x2-x1, y2-y1));
-		vec2 ov = 0.5*normalize(vec2(-y2+y1, x2-x1));
-		vec2 pts[4] = vec2[4](
+		v = 0.5*normalize(vec2(x2-x1, y2-y1));
+		ov = 0.5*normalize(vec2(-y2+y1, x2-x1));
+		pts = vec2[4](
+			vec2(x1, y1)-v-ov,
+			vec2(x2, y2)+v-ov,
+			vec2(x1, y1)-v+ov,
+			vec2(x2, y2)+v+ov
+		);
+		p = (vec2(0.5,0.5) + pts[vertex]) * PixelSize;
+		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), 0.5, 1);
+		Orig = vec2(x1, y1);
+		Steep = abs(dx) < abs(dy);
+		if (Steep) {
+			Slope = float(dx)/float(dy);
+		} else {
+			Slope = float(dy)/float(dx);
+		}
+		// Color
+		Color = vec4(
+			float(rg>>8)/float(0xFF),
+			float(rg&0xFF)/float(0xFF),
+			float(ba>>8)/float(0xFF),
+			float(ba&0xFF)/float(0xFF)
+		);
+		break;
+
+	case cmdLineAA:
+		param += 6*gl_InstanceID;
+		// Point Parameters
+		rg = texelFetch(parameters, param+0).r;
+		ba = texelFetch(parameters, param+1).r;
+		x1 = texelFetch(parameters, param+2).r;
+		y1 = texelFetch(parameters, param+3).r;
+		x2 = texelFetch(parameters, param+4).r;
+		y2 = texelFetch(parameters, param+5).r;
+		// Position
+		dx = x2-x1;
+		dy = y2-y1;
+		v = 0.5*normalize(vec2(x2-x1, y2-y1));
+		ov = 1.0*normalize(vec2(-y2+y1, x2-x1));
+		pts = vec2[4](
 			vec2(x1, y1)-v-ov,
 			vec2(x2, y2)+v-ov,
 			vec2(x1, y1)-v+ov,
