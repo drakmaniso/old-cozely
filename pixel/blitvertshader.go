@@ -15,7 +15,7 @@ const vec2 srcCorners[4] = vec2[4](
 	vec2(1, 1)
 );
 
-const vec2 corners[4] = vec2[4](
+const vec2 winCorners[4] = vec2[4](
 	vec2(-1, -1),
 	vec2(1, -1),
 	vec2(-1, 1),
@@ -36,7 +36,7 @@ out PerVertex {
 
 void main(void) {
 	ScreenPosition = srcCorners[gl_VertexID] * ScreenSize;
-	gl_Position = vec4(corners[gl_VertexID], 0.5, 1.0);
+	gl_Position = vec4(winCorners[gl_VertexID], 0.5, 1.0);
 }
 `
 

@@ -26,12 +26,7 @@ layout(origin_upper_left, pixel_center_integer) in vec4 gl_FragCoord;
 
 //------------------------------------------------------------------------------
 
-layout(binding = 1) uniform usampler2DArray IndexedTextures;
-layout(binding = 2) uniform sampler2DArray FullColorTextures;
-
-layout(std430, binding = 0) buffer Palette {
-	vec4 Colours[256];
-};
+layout(binding = 1) uniform usampler2DArray Pictures;
 
 //------------------------------------------------------------------------------
 
@@ -45,7 +40,7 @@ void main(void)
 	uint c = 0;
 	switch (Command) {
 	case cmdPicture:
-		uint p = texelFetch(IndexedTextures, ivec3(UV.x, UV.y, 0), 0).x;
+		uint p = texelFetch(Pictures, ivec3(UV.x, UV.y, 0), 0).x;
 		if (p == 0) {
 			c = 0;
 		} else {
@@ -64,11 +59,14 @@ void main(void)
 	case cmdLine:
 		x = gl_FragCoord.x - Orig.x;
 		y = gl_FragCoord.y - Orig.y;
-		if (
-			(!Steep && y == round(Slope*x)) ||
-			(Steep && x == round(Slope*y))
-		) {
-			c = ColorIndex;
+		if (Steep) {
+			if (x == round(Slope*y)) {
+				c = ColorIndex;
+			}
+		} else {
+			if (y == round(Slope*x)) {
+				c = ColorIndex;
+			}
 		}
 		break;
 	}

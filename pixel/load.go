@@ -67,7 +67,7 @@ func Load(path string) error {
 
 	iu := pictAtlas.Unused()
 	internal.Debug.Printf(
-		"Packed %d indexed images in %d bins: %d unused pixels (%d kb, %d Mb)\n",
+		"Packed %d pictures in %d bins: %d unused pixels (%d kb, %d Mb)\n",
 		len(pictFiles),
 		pictAtlas.BinCount(),
 		iu, iu/1024, iu/(1024*1024),

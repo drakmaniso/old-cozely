@@ -25,19 +25,9 @@ type mapping struct {
 	w, h    int16
 }
 
-var mappings []mapping
-
-//------------------------------------------------------------------------------
-
-// Mode describes the way a picture is stored in memory.
-type Mode uint8
-
-// The three modes supported for pictures.
-const (
-	Indexed   Mode = 1
-	FullColor Mode = 2
-	GrayScale Mode = 3
-)
+var mappings = []mapping {
+	mapping{},
+}
 
 //------------------------------------------------------------------------------
 
