@@ -96,6 +96,11 @@ func Run(setup func() error, loop GameLoop) error {
 		return internal.Error("in pixel Setup", err)
 	}
 
+	err = internal.VectorSetup()
+	if err != nil {
+		return internal.Error("in vector setup", err)
+	}
+
 	if setup != nil {
 		err = setup()
 		if err != nil {
@@ -163,6 +168,11 @@ func Run(setup func() error, loop GameLoop) error {
 		err = internal.PixelDraw()
 		if err != nil {
 			return internal.Error("in pixel Draw", err)
+		}
+
+		err = internal.VectorDraw()
+		if err != nil {
+			return internal.Error("in vector draw", err)
 		}
 
 		internal.SwapWindow()

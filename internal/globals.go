@@ -126,4 +126,7 @@ var PixelDraw = func() error { return nil }
 
 var ResizeScreen = func() {}
 
+var VectorSetup = func() error { return nil }
+var VectorDraw = func() error { return nil }
+
 //------------------------------------------------------------------------------

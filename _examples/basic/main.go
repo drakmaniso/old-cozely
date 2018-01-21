@@ -99,18 +99,18 @@ func (loop) Draw() error {
 
 	s := pixel.ScreenSize()
 
-	// mire.Paint(0, 0)
-	// mire.Paint(s.X-32, 0)
-	// mire.Paint(0, s.Y-32)
-	// mire.Paint(s.X-32, s.Y-32)
+	mire.Paint(0, 0)
+	mire.Paint(s.X-32, 0)
+	mire.Paint(0, s.Y-32)
+	mire.Paint(s.X-32, s.Y-32)
 
-	// logo.Paint(s.X/2-32, 20)
+	logo.Paint(s.X/2-32, 20)
 
-	// midrgb.Paint(s.X/2-48, s.Y/2-20)
-	// midgray.Paint(s.X/2-16, s.Y/2+20+8)
+	midrgb.Paint(s.X/2-48, s.Y/2-20)
+	midgray.Paint(s.X/2-16, s.Y/2+20+8)
 
-	// pixel.Point(colour.LRGB{1, 0.5, 0}, s.X/2, 60)
-	// pixel.Point(colour.LRGB{0, 0.5, 1}, x, 100)
+	pixel.Point(colour.LRGB{1, 0.5, 0}, s.X/2, 60)
+	pixel.Point(colour.LRGB{0, 0.5, 1}, x, 100)
 
 	m := pixel.Mouse()
 
