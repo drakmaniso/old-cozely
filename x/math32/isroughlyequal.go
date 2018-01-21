@@ -1,9 +1,7 @@
-// Copyright (c) 2013-2016 Laurent Moussault. All rights reserved.
+// Copyright (c) 2013-2018 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
 package math32
-
-//------------------------------------------------------------------------------
 
 // IsRoughlyEqual Returns true if the absolute error between a and b is less
 // than epsilon.
