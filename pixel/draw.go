@@ -24,10 +24,8 @@ func drawHook() error {
 	screen.buffer.Bind(gl.DrawReadFramebuffer)
 	gl.Viewport(0, 0, int32(screen.size.X), int32(screen.size.Y))
 	pipeline.Bind()
-	gl.ClearColorBuffer(screen.background)
-	gl.Blending(gl.SrcAlpha, gl.OneMinusSrcAlpha)
-	gl.Enable(gl.Blend)
-	gl.Enable(gl.FramebufferSRGB)
+	screen.buffer.ClearColorUint(uint32(screen.background), 0, 0, 0)
+	gl.Disable(gl.Blend)
 
 	screenUBO.Bind(layoutScreen)
 	commandsICBO.Bind()

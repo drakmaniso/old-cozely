@@ -10,7 +10,6 @@ import (
 	"github.com/drakmaniso/glam/key"
 
 	"github.com/drakmaniso/glam"
-	"github.com/drakmaniso/glam/colour"
 	"github.com/drakmaniso/glam/mouse"
 	"github.com/drakmaniso/glam/pixel"
 
@@ -42,7 +41,7 @@ func main() {
 //------------------------------------------------------------------------------
 
 func setup() error {
-	pixel.SetBackground(colour.SRGB8{0x5C, 0x82, 0x86})
+	pixel.SetBackground(1)
 
 	err := pixel.Load("graphics")
 	if err != nil {

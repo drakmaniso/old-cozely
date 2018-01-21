@@ -21,6 +21,7 @@ func init() {
 }
 
 func setupHook() error {
+	// Setup pipeline for rendering on virtual screen
 	createScreen()
 
 	pipeline = gl.NewPipeline(
@@ -43,6 +44,16 @@ func setupHook() error {
 		gl.R16I,
 		gl.DynamicStorage,
 	)
+
+	// Setup pipeline for blitting screen on window
+
+	blitPipeline = gl.NewPipeline(
+		gl.VertexShader(strings.NewReader(blitVertexShader)),
+		gl.FragmentShader(strings.NewReader(blitFragmentShader)),
+		gl.Topology(gl.TriangleStrip),
+	)
+
+	blitUBO = gl.NewUniformBuffer(&blitUniforms, gl.DynamicStorage|gl.MapWrite)
 
 	// Prepare picture loading
 

@@ -25,6 +25,10 @@ var screenUniforms struct {
 	PixelSize struct{ X, Y float32 }
 }
 
+var blitUniforms struct {
+	ScreenSize struct{ X, Y float32 }
+}
+
 //------------------------------------------------------------------------------
 
 var (
@@ -34,6 +38,12 @@ var (
 	parametersTBO gl.BufferTexture
 	mappingsTBO   gl.BufferTexture
 	picturesTA    gl.TextureArray2D
+)
+
+var (
+	blitPipeline *gl.Pipeline
+	blitUBO      gl.UniformBuffer
+	blitTexture  gl.Sampler
 )
 
 //------------------------------------------------------------------------------

@@ -26,12 +26,17 @@ static inline void FramebufferBind(GLuint fbo, GLenum t) {
 	glBindFramebuffer(t, fbo);
 }
 
+static inline void FramebufferClearColorUint(GLuint fbo, const GLuint *v) {
+	glClearNamedFramebufferuiv(fbo, GL_COLOR, GL_NONE, v);
+}
+
 static inline void FramebufferBlit(GLuint fbo, GLuint dstFbo, GLint srcX1, GLint srcY1, GLint srcX2, GLint srcY2, GLint dstX1, GLint dstY1, GLint dstX2, GLint dstY2, GLbitfield m, GLenum f) {
 	glBlitNamedFramebuffer(fbo, dstFbo, srcX1, srcY1, srcX2, srcY2, dstX1, dstY1, dstX2, dstY2, m, f);
 }
 
 */
 import "C"
+import "unsafe"
 
 //------------------------------------------------------------------------------
 
@@ -88,6 +93,17 @@ const (
 	ReadFramebuffer     FramebufferTarget = C.GL_READ_FRAMEBUFFER
 	DrawReadFramebuffer FramebufferTarget = C.GL_FRAMEBUFFER
 )
+
+//------------------------------------------------------------------------------
+
+func (fb Framebuffer) ClearColorUint(r, g, b, a uint32) {
+	var c struct {R, G, B, A uint32}
+	c.R = r
+	c.G = g
+	c.B = b
+	c.A = a
+	C.FramebufferClearColorUint(fb.object, (*C.GLuint)(unsafe.Pointer(&c)))
+}
 
 //------------------------------------------------------------------------------
 

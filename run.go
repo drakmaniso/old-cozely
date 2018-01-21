@@ -4,6 +4,7 @@
 package glam
 
 import (
+	"github.com/drakmaniso/glam/colour"
 	"github.com/drakmaniso/glam/internal"
 	"github.com/drakmaniso/glam/key"
 	"github.com/drakmaniso/glam/mouse"
@@ -158,6 +159,9 @@ func Run(setup func() error, loop GameLoop) error {
 		}
 
 		// Draw
+
+		gl.DefaultFramebuffer.Bind(gl.DrawFramebuffer)
+		gl.ClearColorBuffer(colour.LRGBA{0, 0, 0, 0}) //TODO: ...
 
 		internal.GameTime = gametime + internal.UpdateLag
 		err = internal.Loop.Draw()

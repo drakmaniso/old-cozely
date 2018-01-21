@@ -35,7 +35,7 @@ layout(std430, binding = 0) buffer Palette {
 
 //------------------------------------------------------------------------------
 
-out vec4 out_color;
+out uint out_color;
 
 //------------------------------------------------------------------------------
 
@@ -73,7 +73,11 @@ void main(void)
 		break;
 	}
 
-	out_color = Colours[c];
+	if (c == 0) {
+		discard;
+	}
+
+	out_color = c;
 }
 `
 

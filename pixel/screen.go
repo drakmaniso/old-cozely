@@ -4,9 +4,9 @@
 package pixel
 
 import (
-	"github.com/drakmaniso/glam/colour"
 	"github.com/drakmaniso/glam/internal"
 	"github.com/drakmaniso/glam/mouse"
+	"github.com/drakmaniso/glam/palette"
 	"github.com/drakmaniso/glam/x/gl"
 )
 
@@ -21,7 +21,7 @@ var screen struct {
 	size       Coord
 	pixel      int32
 	ox, oy     int32 // Offset when there is a border around the screen
-	background colour.LRGBA
+	background palette.Index
 }
 
 func init() {
@@ -41,8 +41,8 @@ func PixelSize() int32 {
 
 //------------------------------------------------------------------------------
 
-func SetBackground(c colour.Colour) {
-	screen.background = colour.LRGBAOf(c)
+func SetBackground(c palette.Index) {
+	screen.background = c
 }
 
 //------------------------------------------------------------------------------
@@ -58,7 +58,7 @@ func createScreen() {
 
 func createScreenTexture() {
 	//TODO: delete previous texture
-	screen.texture = gl.NewTexture2D(1, gl.SRGB8, int32(screen.size.X), int32(screen.size.Y))
+	screen.texture = gl.NewTexture2D(1, gl.R8UI, int32(screen.size.X), int32(screen.size.Y))
 	screen.buffer.Texture(gl.ColorAttachment0, screen.texture, 0)
 
 	screen.buffer.DrawBuffer(gl.ColorAttachment0)
@@ -102,19 +102,23 @@ func init() {
 //------------------------------------------------------------------------------
 
 func blitScreen() {
-	gl.DefaultFramebuffer.Bind(gl.DrawFramebuffer)
-	gl.ClearColorBuffer(colour.LRGBA{0.2, 0.2, 0.2, 1}) //TODO: ...
 
 	w := int32(screen.size.X) * screen.pixel
 	h := int32(screen.size.Y) * screen.pixel
-	screen.buffer.Blit(
-		gl.DefaultFramebuffer,
-		0, 0, int32(screen.size.X), int32(screen.size.Y),
-		screen.ox, screen.oy, screen.ox+w, screen.oy+h,
-		gl.ColorBufferBit,
-		gl.Nearest,
-	)
 
+	blitUniforms.ScreenSize.X = float32(screen.size.X)
+	blitUniforms.ScreenSize.Y = float32(screen.size.Y)
+	blitUBO.SubData(&blitUniforms, 0)
+
+	blitPipeline.Bind()
+	screen.buffer.Bind(gl.ReadFramebuffer) //TODO: Useless?
+	gl.DefaultFramebuffer.Bind(gl.DrawFramebuffer)
+	gl.Enable(gl.FramebufferSRGB)
+	gl.Disable(gl.Blend)
+	gl.Viewport(screen.ox, screen.oy, screen.ox+w, screen.ox+h)
+	blitUBO.Bind(0)
+	screen.texture.Bind(0)
+	gl.Draw(0, 4)
 }
 
 //------------------------------------------------------------------------------
