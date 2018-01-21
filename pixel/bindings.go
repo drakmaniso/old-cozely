@@ -11,9 +11,7 @@ const (
 )
 
 // Storage Buffers
-const (
-	layoutPalette = 0
-)
+const ()
 
 // Textures and Buffer-Textures
 const (

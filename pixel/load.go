@@ -13,9 +13,8 @@ import (
 	"strings"
 
 	"github.com/drakmaniso/glam/colour"
-	"github.com/drakmaniso/glam/palette"
-
 	"github.com/drakmaniso/glam/internal"
+	"github.com/drakmaniso/glam/palette"
 	"github.com/drakmaniso/glam/x/atlas"
 	"github.com/drakmaniso/glam/x/gl"
 )
@@ -23,11 +22,11 @@ import (
 //------------------------------------------------------------------------------
 
 var (
-	rgbaFiles   []atlas.Image
-	rgbaAtlas   *atlas.Atlas
+	rgbaFiles []atlas.Image
+	rgbaAtlas *atlas.Atlas
 
-	indexedFiles    []atlas.Image
-	indexedAtlas    *atlas.Atlas
+	indexedFiles []atlas.Image
+	indexedAtlas *atlas.Atlas
 )
 
 var autoPalette = true
