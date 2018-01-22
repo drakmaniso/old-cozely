@@ -16,7 +16,9 @@ const ()
 // Textures and Buffer-Textures
 const (
 	layoutPictures   = 1
+	layoutFonts   = 2
 	layoutMappings   = 5
+	layoutFontMap    = 7
 	layoutParameters = 6
 )
 

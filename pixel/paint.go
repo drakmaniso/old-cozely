@@ -27,7 +27,9 @@ func (s *ScreenCanvas) Blit() error {
 	commandsICBO.Bind()
 	parametersTBO.Bind(layoutParameters)
 	mappingsTBO.Bind(layoutMappings)
+	fontMapTBO.Bind(layoutFontMap)
 	picturesTA.Bind(layoutPictures)
+	fontsTA.Bind(layoutFonts)
 
 	if len(s.commands) > 0 {
 		commandsICBO.SubData(s.commands, 0)

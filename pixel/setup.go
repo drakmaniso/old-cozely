@@ -6,6 +6,8 @@ package pixel
 import (
 	"image"
 	"image/color"
+	"image/png"
+	"os"
 	"strings"
 	"unsafe"
 
@@ -56,6 +58,7 @@ func setupHook() error {
 	// Prepare picture loading
 
 	pictAtlas = atlas.New(1024, 1024)
+	fntAtlas = atlas.New(256, 256)
 
 	return gl.Err()
 }
@@ -71,8 +74,9 @@ func postSetupHook() error {
 
 	// Mappings Buffer
 	mappingsTBO = gl.NewBufferTexture(mappings, gl.R16I, gl.StaticStorage)
+	fontMapTBO = gl.NewBufferTexture(fontMap, gl.R16I, gl.StaticStorage)
 
-	// Create the texture atlas
+	// Create the pictures texture array
 	w, h := pictAtlas.BinSize()
 	picturesTA = gl.NewTextureArray2D(1, gl.R8UI, int32(w), int32(h), int32(pictAtlas.BinCount()))
 	for i := int16(0); i < pictAtlas.BinCount(); i++ {
@@ -89,6 +93,43 @@ func postSetupHook() error {
 		}
 
 		picturesTA.SubImage(0, 0, 0, int32(i), m)
+	}
+
+	// Create the font texture array
+	w, h = fntAtlas.BinSize()
+	fontsTA = gl.NewTextureArray2D(1, gl.R8UI, int32(w), int32(h), int32(fntAtlas.BinCount()))
+	for i := int16(0); i < fntAtlas.BinCount(); i++ {
+		m := image.NewPaletted(image.Rectangle{
+			Min: image.Point{0, 0},
+			Max: image.Point{int(w), int(h)},
+		},
+			color.Palette{},
+		)
+
+		err := fntAtlas.Paint(i, m)
+		if err != nil {
+			return err
+		}
+
+		fontsTA.SubImage(0, 0, 0, int32(i), m)
+
+		if i == 0 {
+			f, err := os.Create("FOO.png")
+			if err != nil {
+				panic(err)
+			}
+			defer f.Close()
+			m.Palette = []color.Color{
+				color.RGBA{0, 0, 0, 0xFF},
+				color.RGBA{0xFF, 0xFF, 0xFF, 0xFF},
+				color.RGBA{0, 0xFF, 0, 0xFF},
+				color.RGBA{0xFF, 0, 0, 0xFF},
+			}
+			err = png.Encode(f, m)
+			if err != nil {
+				panic(err)
+			}
+		}
 	}
 
 	return gl.Err()

@@ -16,6 +16,20 @@ func (s *ScreenCanvas) Picture(p Picture, x, y int16) {
 
 //------------------------------------------------------------------------------
 
+func (s *ScreenCanvas) Print(f Font, c palette.Index, x, y int16, txt string) {
+	t := []int16{}
+	for i, r := range txt {
+		rr := uint16(r) & 0x7F
+		rr |= uint16(i*8) << 7 //TODO:
+		t = append(t, int16(rr))
+	}
+	s.appendCommand(cmdPrint, 4, uint32(len(t)))
+	s.parameters = append(s.parameters, int16(f), int16(c), s.origin.X+x, s.origin.Y+y)
+	s.parameters = append(s.parameters, t...)
+}
+
+//------------------------------------------------------------------------------
+
 func (s *ScreenCanvas) Point(c palette.Index, x, y int16) {
 	s.appendCommand(cmdPoint, 3, 1)
 	s.parameters = append(s.parameters, int16(c), s.origin.X+x, s.origin.Y+y)

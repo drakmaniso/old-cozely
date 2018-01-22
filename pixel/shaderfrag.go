@@ -4,11 +4,12 @@ const fragmentShader = "\n" + `#version 460 core
 
 //------------------------------------------------------------------------------
 
-const uint cmdPicture = 1;
+const uint cmdPicture    = 1;
 const uint cmdPictureExt = 2;
-const uint cmdPoint = 3;
-const uint cmdPointList = 4;
-const uint cmdLine = 5;
+const uint cmdPrint      = 3;
+const uint cmdPoint      = 4;
+const uint cmdPointList  = 5;
+const uint cmdLine       = 6;
 
 //------------------------------------------------------------------------------
 
@@ -27,6 +28,7 @@ layout(origin_upper_left, pixel_center_integer) in vec4 gl_FragCoord;
 //------------------------------------------------------------------------------
 
 layout(binding = 1) uniform usampler2DArray Pictures;
+layout(binding = 2) uniform usampler2DArray Fonts;
 
 //------------------------------------------------------------------------------
 
@@ -45,6 +47,19 @@ void main(void)
 			c = 0;
 		} else {
 			c = p;// + Tint;
+			if (c > 255) {
+				c -= 255;
+			}
+		}
+		break;
+
+	case cmdPrint:
+		p = texelFetch(Fonts, ivec3(UV.x, UV.y, 0), 0).x;
+		if (p == 0) {
+			c = 0;
+		} else {
+			c = p;// + Tint;
+			// c = ColorIndex; //TODO
 			if (c > 255) {
 				c -= 255;
 			}

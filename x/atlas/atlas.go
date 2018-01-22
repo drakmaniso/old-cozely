@@ -89,7 +89,7 @@ func (a *Atlas) Pack(sources []Image) {
 			if n != nil {
 
 			} else {
-				print("!")
+				print("!") //TODO:
 			}
 		}
 	}

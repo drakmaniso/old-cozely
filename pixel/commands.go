@@ -12,9 +12,10 @@ import (
 const (
 	cmdPicture    = 1
 	cmdPictureExt = 2
-	cmdPoint      = 3
-	cmdPointList  = 4
-	cmdLine       = 5
+	cmdPrint      = 3
+	cmdPoint      = 4
+	cmdPointList  = 5
+	cmdLine       = 6
 )
 
 //------------------------------------------------------------------------------
