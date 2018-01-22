@@ -32,13 +32,11 @@ func setupHook() error {
 
 	screenUBO = gl.NewUniformBuffer(&screenUniforms, gl.DynamicStorage|gl.MapWrite)
 
-	commands = make([]gl.DrawIndirectCommand, 0, maxCommandCount)
 	commandsICBO = gl.NewIndirectBuffer(
 		uintptr(maxCommandCount)*unsafe.Sizeof(gl.DrawIndirectCommand{}),
 		gl.DynamicStorage,
 	)
 
-	parameters = make([]int16, 0, maxCommandCount*maxParamCount)
 	parametersTBO = gl.NewBufferTexture(
 		uintptr(maxCommandCount*maxParamCount),
 		gl.R16I,

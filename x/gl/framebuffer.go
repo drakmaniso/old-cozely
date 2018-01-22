@@ -97,6 +97,7 @@ const (
 //------------------------------------------------------------------------------
 
 func (fb Framebuffer) ClearColorUint(r, g, b, a uint32) {
+	//TODO: other variants
 	var c struct {R, G, B, A uint32}
 	c.R = r
 	c.G = g

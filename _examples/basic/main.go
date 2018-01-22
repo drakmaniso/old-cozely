@@ -65,7 +65,7 @@ type loop struct {
 
 func (loop) Update() error {
 	x++
-	if x >= pixel.ScreenSize().X {
+	if x >= pixel.Screen().Size().X {
 		x = -64
 	}
 
@@ -80,6 +80,9 @@ var (
 )
 
 func (loop) Draw() error {
+	s := pixel.Screen()
+	sz := s.Size()
+
 	timer += glam.FrameTime()
 	if timer > 0.25 {
 		count++
@@ -91,34 +94,34 @@ func (loop) Draw() error {
 		}
 	}
 
-	pixel.PointList(0x05, pts[:]...)
+	s.PointList(0x05, pts[:]...)
 
-	logo.Paint(x, 10)
+	s.Picture(logo, x, 10)
 
-	s := pixel.ScreenSize()
+	s.Picture(mire, 0, 0)
+	s.Picture(mire, sz.X-32, 0)
+	s.Picture(mire, 0, sz.Y-32)
+	s.Picture(mire, sz.X-32, sz.Y-32)
 
-	mire.Paint(0, 0)
-	mire.Paint(s.X-32, 0)
-	mire.Paint(0, s.Y-32)
-	mire.Paint(s.X-32, s.Y-32)
+	s.Picture(logo, sz.X/2-32, 20)
 
-	logo.Paint(s.X/2-32, 20)
+	s.Picture(midrgb, sz.X/2-48, sz.Y/2-20)
+	s.Picture(midgray, sz.X/2-16, sz.Y/2+20+8)
 
-	midrgb.Paint(s.X/2-48, s.Y/2-20)
-	midgray.Paint(s.X/2-16, s.Y/2+20+8)
-
-	pixel.Point(0x18, s.X/2, 60)
-	for xx := int16(4); xx < s.X; xx += 8 {
-		pixel.Point(0x18, xx, (x + xx)%s.Y)
+	s.Point(0x18, sz.X/2, 60)
+	for xx := int16(4); xx < sz.X; xx += 8 {
+		s.Point(0x18, xx, (x+xx)%sz.Y)
 	}
 
-	m := pixel.Mouse()
+	m := s.Mouse()
 
-	pixel.Point(0x18, s.X/2, s.Y/2)
-	pixel.Point(0x18, m.X, m.Y)
-	pixel.Line(0xE8, s.X/2, s.Y/2, m.X, m.Y)
-	pixel.Point(0xE0, s.X/2, s.Y/2)
-	pixel.Point(0xE0, m.X, m.Y)
+	s.Point(0x18, sz.X/2, sz.Y/2)
+	s.Point(0x18, m.X, m.Y)
+	s.Line(0xE8, sz.X/2, sz.Y/2, m.X, m.Y)
+	s.Point(0xE0, sz.X/2, sz.Y/2)
+	s.Point(0xE0, m.X, m.Y)
+
+	s.Blit()
 
 	return pixel.Err()
 }

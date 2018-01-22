@@ -102,7 +102,7 @@ func (loop) Update() error {
 //------------------------------------------------------------------------------
 
 func (loop) MouseButtonDown(_ mouse.Button, _ int) {
-	m := pixel.Mouse()
+	m := pixel.Screen().Mouse()
 	current = grid.PositionAt(m)
 	if current != grid.Nowhere() {
 		e := grid.At(current)

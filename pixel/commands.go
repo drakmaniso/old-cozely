@@ -19,20 +19,20 @@ const (
 
 //------------------------------------------------------------------------------
 
-func appendCommand(c uint32, v uint32, n uint32) {
-	l := len(commands)
+func (s *ScreenCanvas) appendCommand(c uint32, v uint32, n uint32) {
+	l := len(s.commands)
 	if l > 0 &&
 		c != cmdPointList &&
-		(commands[l-1].FirstVertex>>2) == c {
-		commands[l-1].InstanceCount += n
+		(s.commands[l-1].FirstVertex>>2) == c {
+		s.commands[l-1].InstanceCount += n
 		return
 	}
 
-	commands = append(commands, gl.DrawIndirectCommand{
+	s.commands = append(s.commands, gl.DrawIndirectCommand{
 		VertexCount:   v,
 		InstanceCount: n,
 		FirstVertex:   uint32(c << 2),
-		BaseInstance:  uint32(len(parameters)),
+		BaseInstance:  uint32(len(s.parameters)),
 	})
 }
 

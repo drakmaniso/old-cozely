@@ -69,10 +69,3 @@ func GetPicture(name string) Picture {
 }
 
 //------------------------------------------------------------------------------
-
-func (p Picture) Paint(x, y int16) {
-	appendCommand(cmdPicture, 4, 1)
-	parameters = append(parameters, int16(p), x, y)
-}
-
-//------------------------------------------------------------------------------

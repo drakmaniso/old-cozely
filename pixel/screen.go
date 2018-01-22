@@ -12,7 +12,7 @@ import (
 
 //------------------------------------------------------------------------------
 
-var screen struct {
+type ScreenCanvas struct {
 	buffer     gl.Framebuffer
 	texture    gl.Texture2D
 	depth      gl.Texture2D
@@ -22,7 +22,11 @@ var screen struct {
 	pixel      int32
 	ox, oy     int32 // Offset when there is a border around the screen
 	background palette.Index
+	commands   []gl.DrawIndirectCommand
+	parameters []int16
 }
+
+var screen ScreenCanvas
 
 func init() {
 	screen.target = Coord{X: 640, Y: 360}
@@ -31,12 +35,18 @@ func init() {
 
 //------------------------------------------------------------------------------
 
-func ScreenSize() Coord {
-	return screen.size
+func Screen() *ScreenCanvas {
+	return &screen
 }
 
-func PixelSize() int32 {
-	return screen.pixel
+//------------------------------------------------------------------------------
+
+func (s *ScreenCanvas) Size() Coord {
+	return s.size
+}
+
+func (s *ScreenCanvas)  Pixel() int32 {
+	return s.pixel
 }
 
 //------------------------------------------------------------------------------
@@ -48,6 +58,8 @@ func SetBackground(c palette.Index) {
 //------------------------------------------------------------------------------
 
 func createScreen() {
+	screen.commands = make([]gl.DrawIndirectCommand, 0, maxCommandCount)
+	screen.parameters = make([]int16, 0, maxCommandCount*maxParamCount)
 	screen.buffer = gl.NewFramebuffer()
 	internal.ResizeScreen()
 	// createScreenTexture()
@@ -124,11 +136,11 @@ func blitScreen() {
 //------------------------------------------------------------------------------
 
 // Mouse returns the mouse position on the virtual screen.
-func Mouse() Coord {
+func (s *ScreenCanvas) Mouse() Coord {
 	mx, my := mouse.Position()
 	return Coord{
-		X: int16((mx - screen.ox) / screen.pixel),
-		Y: int16((my - screen.oy) / screen.pixel),
+		X: int16((mx - s.ox) / s.pixel),
+		Y: int16((my - s.oy) / s.pixel),
 	}
 }
 

@@ -16,11 +16,6 @@ const (
 
 //------------------------------------------------------------------------------
 
-var (
-	commands   []gl.DrawIndirectCommand
-	parameters []int16
-)
-
 var screenUniforms struct {
 	PixelSize struct{ X, Y float32 }
 }

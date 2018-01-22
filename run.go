@@ -169,11 +169,6 @@ func Run(setup func() error, loop GameLoop) error {
 			return internal.Error("in Draw callback", err)
 		}
 
-		err = internal.PixelDraw()
-		if err != nil {
-			return internal.Error("in pixel Draw", err)
-		}
-
 		err = internal.VectorDraw()
 		if err != nil {
 			return internal.Error("in vector draw", err)

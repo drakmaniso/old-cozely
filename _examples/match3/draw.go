@@ -6,6 +6,7 @@ package main
 import (
 	"github.com/drakmaniso/glam/_examples/match3/ecs"
 	"github.com/drakmaniso/glam/_examples/match3/grid"
+	"github.com/drakmaniso/glam/pixel"
 	"github.com/drakmaniso/glam/x/gl"
 )
 
@@ -18,6 +19,7 @@ var colors [ecs.Size]color
 //------------------------------------------------------------------------------
 
 func (loop) Draw() error {
+	s := pixel.Screen()
 	var x, y int16 // screen coords
 
 	for e := ecs.First; e < ecs.Last(); e++ {
@@ -34,9 +36,11 @@ func (loop) Draw() error {
 			if grid.PositionOf(e) == current || e.Has(ecs.MatchFlag) {
 				p = tilesPict[c].big
 			}
-			p.Paint(x, y)
+			s.Picture(p, x, y)
 		}
 	}
+
+	s.Blit()
 
 	return gl.Err()
 }
