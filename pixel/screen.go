@@ -24,6 +24,7 @@ type ScreenCanvas struct {
 	background palette.Index
 	commands   []gl.DrawIndirectCommand
 	parameters []int16
+	origin     Coord
 }
 
 var screen ScreenCanvas
@@ -45,8 +46,15 @@ func (s *ScreenCanvas) Size() Coord {
 	return s.size
 }
 
-func (s *ScreenCanvas)  Pixel() int32 {
+func (s *ScreenCanvas) Pixel() int32 {
 	return s.pixel
+}
+
+//------------------------------------------------------------------------------
+
+func (s *ScreenCanvas) Origin(ox, oy int16) {
+	s.origin.X = ox
+	s.origin.Y = oy
 }
 
 //------------------------------------------------------------------------------
@@ -139,8 +147,8 @@ func blitScreen() {
 func (s *ScreenCanvas) Mouse() Coord {
 	mx, my := mouse.Position()
 	return Coord{
-		X: int16((mx - s.ox) / s.pixel),
-		Y: int16((my - s.oy) / s.pixel),
+		X: int16((mx-s.ox)/s.pixel) - s.origin.X,
+		Y: int16((my-s.oy)/s.pixel) - s.origin.Y,
 	}
 }
 

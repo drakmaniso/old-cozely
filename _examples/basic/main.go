@@ -80,8 +80,8 @@ var (
 )
 
 func (loop) Draw() error {
-	s := pixel.Screen()
-	sz := s.Size()
+	scr := pixel.Screen()
+	w, h := scr.Size().X, scr.Size().Y
 
 	timer += glam.FrameTime()
 	if timer > 0.25 {
@@ -94,34 +94,34 @@ func (loop) Draw() error {
 		}
 	}
 
-	s.PointList(0x05, pts[:]...)
+	scr.PointList(0x05, pts[:]...)
 
-	s.Picture(logo, x, 10)
+	scr.Picture(logo, x, 10)
 
-	s.Picture(mire, 0, 0)
-	s.Picture(mire, sz.X-32, 0)
-	s.Picture(mire, 0, sz.Y-32)
-	s.Picture(mire, sz.X-32, sz.Y-32)
+	scr.Picture(mire, 0, 0)
+	scr.Picture(mire, w-32, 0)
+	scr.Picture(mire, 0, h-32)
+	scr.Picture(mire, w-32, h-32)
 
-	s.Picture(logo, sz.X/2-32, 20)
+	scr.Picture(logo, w/2-32, 20)
 
-	s.Picture(midrgb, sz.X/2-48, sz.Y/2-20)
-	s.Picture(midgray, sz.X/2-16, sz.Y/2+20+8)
+	scr.Picture(midrgb, w/2-48, h/2-20)
+	scr.Picture(midgray, w/2-16, h/2+20+8)
 
-	s.Point(0x18, sz.X/2, 60)
-	for xx := int16(4); xx < sz.X; xx += 8 {
-		s.Point(0x18, xx, (x+xx)%sz.Y)
+	scr.Point(0x18, w/2, 60)
+	for xx := int16(4); xx < w; xx += 8 {
+		scr.Point(0x18, xx, (x+xx)%h)
 	}
 
-	m := s.Mouse()
+	m := scr.Mouse()
 
-	s.Point(0x18, sz.X/2, sz.Y/2)
-	s.Point(0x18, m.X, m.Y)
-	s.Line(0xE8, sz.X/2, sz.Y/2, m.X, m.Y)
-	s.Point(0xE0, sz.X/2, sz.Y/2)
-	s.Point(0xE0, m.X, m.Y)
+	scr.Point(0x18, w/2, h/2)
+	scr.Point(0x18, m.X, m.Y)
+	scr.Line(0xE8, w/2, h/2, m.X, m.Y)
+	scr.Point(0xE0, w/2, h/2)
+	scr.Point(0xE0, m.X, m.Y)
 
-	s.Blit()
+	scr.Blit()
 
 	return pixel.Err()
 }
