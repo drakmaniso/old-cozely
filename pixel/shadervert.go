@@ -59,35 +59,38 @@ void main(void)
 	vec2 p, wh, v, ov, pts[4];
 	switch (Command) {
 	case cmdPicture:
-		// Picture Paramters
+		// Parameters
 		param += 3*gl_InstanceID;
 		int m = texelFetch(parameters, param+0).r;
 		x = texelFetch(parameters, param+1).r;
 		y = texelFetch(parameters, param+2).r;
-		// Picture Mapping in Atlas
+		// Mapping of the picture
 		m *= 5;
 		Bin = texelFetch(mappings, m+0).r;
 		UV = vec2(texelFetch(mappings, m+1).r, texelFetch(mappings, m+2).r);
 		wh = vec2(texelFetch(mappings, m+3).r, texelFetch(mappings, m+4).r);
-		// Picture Position and Corner
+		// Picture quad
 		p = (vec2(x, y) + corners[vertex] * wh) * PixelSize;
 		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), 0.5, 1);
 		UV += corners[vertex] * wh;
 		break;
 
 	case cmdPrint:
+	  // Parameters of the whole Print command
 		uint f = texelFetch(parameters, param+0).r;
 		c = texelFetch(parameters, param+1).r;
 		x = texelFetch(parameters, param+2).r;
 		y = texelFetch(parameters, param+3).r;
-		param += 4 + gl_InstanceID;
-		uint r = texelFetch(parameters, param+0).r;
+		// Parameter for the current character
+		uint r = texelFetch(parameters, param+4 + gl_InstanceID).r;
 		int cr = int(r & 0x7F);
-		dx = int(r >> 7);
+		dx = int((r >> 7)&0x1FF);
+		// Mapping of the current character
 		int fm = int(f) * (2 + 128*4);
 		Bin = texelFetch(fontMap, fm+2+cr*4+0).r;
 		wh = vec2(texelFetch(fontMap, fm+2+cr*4+1).r, texelFetch(fontMap, fm+0).r);
 		UV = vec2(texelFetch(fontMap, fm+2+cr*4+2).r, texelFetch(fontMap, fm+2+cr*4+3).r);
+		// Character quad
 		p = (vec2(x+dx, y) + corners[vertex] * wh) * PixelSize;
 		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), 0.5, 1);
 		UV += corners[vertex] * wh;
@@ -96,7 +99,7 @@ void main(void)
 
 	case cmdPoint:
 		param += 3*gl_InstanceID;
-		// Point Parameters
+		// Parameters
 		c = texelFetch(parameters, param+0).r;
 		x = texelFetch(parameters, param+1).r;
 		y = texelFetch(parameters, param+2).r;
@@ -108,7 +111,7 @@ void main(void)
 		break;
 
 	case cmdPointList:
-		// Point Parameters
+		// Parameters
 		c = texelFetch(parameters, param+0).r;
 		param += 1 + 2*gl_InstanceID;
 		x = texelFetch(parameters, param+0).r;
@@ -122,7 +125,7 @@ void main(void)
 
 	case cmdLine:
 		param += 5*gl_InstanceID;
-		// Point Parameters
+		// Parameters
 		c = texelFetch(parameters, param+0).r;
 		x1 = texelFetch(parameters, param+1).r;
 		y1 = texelFetch(parameters, param+2).r;

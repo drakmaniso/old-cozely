@@ -53,6 +53,12 @@ func (f Font) getMap(c rune) (bin int16, x, y, w, h int16) {
 
 //------------------------------------------------------------------------------
 
+func (f Font) Height() int16 {
+	return fontMap[f].h
+}
+
+//------------------------------------------------------------------------------
+
 // GetFont returns the font associated with a name. If there isn't any, an
 // empty font is returned, and a sticky error is set.
 func GetFont(name string) Font {

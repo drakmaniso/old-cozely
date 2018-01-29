@@ -6,8 +6,6 @@ package pixel
 import (
 	"image"
 	"image/color"
-	"image/png"
-	"os"
 	"strings"
 	"unsafe"
 
@@ -74,7 +72,9 @@ func postSetupHook() error {
 
 	// Mappings Buffer
 	mappingsTBO = gl.NewBufferTexture(mappings, gl.R16I, gl.StaticStorage)
-	fontMapTBO = gl.NewBufferTexture(fontMap, gl.R16I, gl.StaticStorage)
+	if len(fontMap) > 0 {
+		fontMapTBO = gl.NewBufferTexture(fontMap, gl.R16I, gl.StaticStorage)
+	}
 
 	// Create the pictures texture array
 	w, h := pictAtlas.BinSize()
@@ -113,23 +113,23 @@ func postSetupHook() error {
 
 		fontsTA.SubImage(0, 0, 0, int32(i), m)
 
-		if i == 0 {
-			f, err := os.Create("FOO.png")
-			if err != nil {
-				panic(err)
-			}
-			defer f.Close()
-			m.Palette = []color.Color{
-				color.RGBA{0, 0, 0, 0xFF},
-				color.RGBA{0xFF, 0xFF, 0xFF, 0xFF},
-				color.RGBA{0, 0xFF, 0, 0xFF},
-				color.RGBA{0xFF, 0, 0, 0xFF},
-			}
-			err = png.Encode(f, m)
-			if err != nil {
-				panic(err)
-			}
-		}
+		// if i == 0 {
+		// 	f, err := os.Create("FOO.png")
+		// 	if err != nil {
+		// 		panic(err)
+		// 	}
+		// 	defer f.Close()
+		// 	m.Palette = []color.Color{
+		// 		color.RGBA{0, 0, 0, 0xFF},
+		// 		color.RGBA{0xFF, 0xFF, 0xFF, 0xFF},
+		// 		color.RGBA{0, 0xFF, 0, 0xFF},
+		// 		color.RGBA{0xFF, 0, 0, 0xFF},
+		// 	}
+		// 	err = png.Encode(f, m)
+		// 	if err != nil {
+		// 		panic(err)
+		// 	}
+		// }
 	}
 
 	return gl.Err()

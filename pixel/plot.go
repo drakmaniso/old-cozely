@@ -4,6 +4,8 @@
 package pixel
 
 import (
+	"unicode/utf8"
+
 	"github.com/drakmaniso/glam/palette"
 )
 
@@ -16,16 +18,38 @@ func (s *ScreenCanvas) Picture(p Picture, x, y int16) {
 
 //------------------------------------------------------------------------------
 
-func (s *ScreenCanvas) Print(f Font, c palette.Index, x, y int16, txt string) {
-	t := []int16{}
-	for i, r := range txt {
-		rr := uint16(r) & 0x7F
-		rr |= uint16(i*8) << 7 //TODO:
-		t = append(t, int16(rr))
+func (s *ScreenCanvas) Print(f Font, c palette.Index, x, y int16, txt string) int16 {
+	done := int(0)
+	xx, yy := s.origin.X+x, s.origin.Y+y
+	for done < utf8.RuneCountInString(txt) {
+		t := []int16{}
+		dx := uint16(0)
+		i := 0
+		for _, r := range txt {
+			i++
+			if i <= done {
+				continue
+			}
+			rr := uint16(0x7F)
+			if r <= 0x7F {
+				rr = uint16(r)
+			}
+			_, _, _, rw, _ := f.getMap(rune(rr))
+			rr |= dx << 7
+			t = append(t, int16(rr))
+			dx += uint16(rw) + 0
+			done++
+			if dx > 0x1FF {
+				break
+			}
+		}
+		s.appendCommand(cmdPrint, 4, uint32(len(t)))
+		s.parameters = append(s.parameters, int16(f), int16(c), xx, yy)
+		s.parameters = append(s.parameters, t...)
+		xx += int16(dx)
 	}
-	s.appendCommand(cmdPrint, 4, uint32(len(t)))
-	s.parameters = append(s.parameters, int16(f), int16(c), s.origin.X+x, s.origin.Y+y)
-	s.parameters = append(s.parameters, t...)
+
+	return xx + 7 - x
 }
 
 //------------------------------------------------------------------------------

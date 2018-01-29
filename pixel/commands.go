@@ -23,6 +23,7 @@ const (
 func (s *ScreenCanvas) appendCommand(c uint32, v uint32, n uint32) {
 	l := len(s.commands)
 	if l > 0 &&
+		c != cmdPrint &&
 		c != cmdPointList &&
 		(s.commands[l-1].FirstVertex>>2) == c {
 		s.commands[l-1].InstanceCount += n

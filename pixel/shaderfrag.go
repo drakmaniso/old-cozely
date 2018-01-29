@@ -58,8 +58,7 @@ void main(void)
 		if (p == 0) {
 			c = 0;
 		} else {
-			c = p;// + Tint;
-			// c = ColorIndex; //TODO
+			c = p + ColorIndex;
 			if (c > 255) {
 				c -= 255;
 			}

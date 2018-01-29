@@ -6,10 +6,10 @@ package pixel
 import (
 	"errors"
 	"image"
-	_ "image/png"
+	_ "image/png" // Activate PNG support
 	"os"
 	"path/filepath"
-	"strings" // Activate PNG support
+	"strings"
 
 	"github.com/drakmaniso/glam/internal"
 	"github.com/drakmaniso/glam/x/atlas"
@@ -56,28 +56,35 @@ func LoadFont(path string) error {
 		internal.Debug.Println(`ignoring image: "` + path + `" (color model not supported)`)
 		return nil
 	}
-	h := int16(p.Bounds().Dy() - 1)
+	gw, gh := p.Bounds().Dx()/16, p.Bounds().Dy()/8
 
-	fnt := newFont(n, h, 0)
+	h := gh - 1
+	fnt := newFont(n, int16(h), 0)
 
 	// Create images for each rune
 
-	for i := rune(0); i < 128; i++ {
-		m := p.SubImage(image.Rect(int(i)*7, 0, int(i)*7+7, 11))
-		mm, ok := m.(*image.Paletted)
-		if !ok {
-			return errors.New("unexpected subimage in Loadfont")
-		}
-		fontMap[fnt].chars[i].w = 7 //TODO:
-		fntFiles = append(
-			fntFiles,
-			fntrune{
-				font: fnt,
-				char: i,
-				img:  mm,
-			},
-		)
+	for gy := 0; gy < 8; gy++ {
+		for gx := 0; gx < 16; gx++ {
+			w := 0
+			for w < gw && p.Pix[gx*gw+w+(gy*gh+h)*p.Stride] != 0 {
+				w++
+			}
+			m := p.SubImage(image.Rect(gx*gw, gy*gh, gx*gw+w, gy*gh+h))
+			mm, ok := m.(*image.Paletted)
+			if !ok {
+				return errors.New("unexpected subimage in Loadfont")
+			}
+			fontMap[fnt].chars[gx+16*gy].w = int16(w)
+			fntFiles = append(
+				fntFiles,
+				fntrune{
+					font: fnt,
+					char: rune(gx + 16*gy),
+					img:  mm,
+				},
+			)
 
+		}
 	}
 
 	// Pack them into the atlas
