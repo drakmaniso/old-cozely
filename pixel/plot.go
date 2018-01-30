@@ -12,17 +12,16 @@ import (
 //------------------------------------------------------------------------------
 
 func (s *ScreenCanvas) Picture(p Picture, x, y int16) {
-	s.appendCommand(cmdPicture, 4, 1)
-	s.parameters = append(s.parameters, int16(p), s.origin.X+x, s.origin.Y+y)
+	s.appendCommand(cmdPicture, 4, 1, int16(p), s.origin.X+x, s.origin.Y+y)
 }
 
 //------------------------------------------------------------------------------
 
-func (s *ScreenCanvas) Print(f Font, c palette.Index, x, y int16, txt string) int16 {
+func (s *ScreenCanvas) Text(f Font, c palette.Index, x, y int16, txt string) int16 {
 	done := int(0)
 	xx, yy := s.origin.X+x, s.origin.Y+y
 	for done < utf8.RuneCountInString(txt) {
-		t := []int16{}
+		t := []int16{int16(f), int16(c), xx, yy} //TODO: remove allocation
 		dx := uint16(0)
 		i := 0
 		for _, r := range txt {
@@ -43,9 +42,7 @@ func (s *ScreenCanvas) Print(f Font, c palette.Index, x, y int16, txt string) in
 				break
 			}
 		}
-		s.appendCommand(cmdPrint, 4, uint32(len(t)))
-		s.parameters = append(s.parameters, int16(f), int16(c), xx, yy)
-		s.parameters = append(s.parameters, t...)
+		s.appendCommand(cmdPrint, 4, uint32(len(t)-4), t...)
 		xx += int16(dx)
 	}
 
@@ -55,26 +52,24 @@ func (s *ScreenCanvas) Print(f Font, c palette.Index, x, y int16, txt string) in
 //------------------------------------------------------------------------------
 
 func (s *ScreenCanvas) Point(c palette.Index, x, y int16) {
-	s.appendCommand(cmdPoint, 3, 1)
-	s.parameters = append(s.parameters, int16(c), s.origin.X+x, s.origin.Y+y)
+	s.appendCommand(cmdPoint, 3, 1, int16(c), s.origin.X+x, s.origin.Y+y)
 }
 
 func (s *ScreenCanvas) PointList(c palette.Index, pts ...Coord) {
 	if len(pts) < 1 {
 		return
 	}
-	s.appendCommand(cmdPointList, 3, uint32(len(pts)))
-	s.parameters = append(s.parameters, int16(c))
+	prm := []int16{int16(c)} //TODO: remove alloc
 	for _, p := range pts {
-		s.parameters = append(s.parameters, s.origin.X+p.X, s.origin.Y+p.Y)
+		prm = append(prm, s.origin.X+p.X, s.origin.Y+p.Y)
 	}
+	s.appendCommand(cmdPointList, 3, uint32(len(prm)/2-1), prm...)
 }
 
 //------------------------------------------------------------------------------
 
 func (s *ScreenCanvas) Line(c palette.Index, x1, y1, x2, y2 int16) {
-	s.appendCommand(cmdLine, 4, 1)
-	s.parameters = append(s.parameters, int16(c), s.origin.X+x1, s.origin.Y+y1, s.origin.X+x2, s.origin.Y+y2)
+	s.appendCommand(cmdLine, 4, 1, int16(c), s.origin.X+x1, s.origin.Y+y1, s.origin.X+x2, s.origin.Y+y2)
 }
 
 //------------------------------------------------------------------------------

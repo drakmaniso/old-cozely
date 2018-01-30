@@ -25,7 +25,11 @@ func main() {
 
 func setup() error {
 	palette.Change("MSX2")
-	err := pixel.LoadFont("fonts/pixop11.font.png")
+	err := pixel.LoadFont("fonts/pixop9.font.png")
+	if err != nil {
+		return err
+	}
+	err = pixel.LoadFont("fonts/pixop11.font.png")
 	if err != nil {
 		return err
 	}
@@ -48,19 +52,47 @@ func (loop) Update() error {
 
 func (loop) Draw() error {
 	s := pixel.Screen()
-	h := pixel.Font(0).Height() + 2
 
-	s.Print(0, 253, 20, 20+0*h, "A QUICK BROWN FOX \"JUMPS\" OVER THE (LAZY) DOG.")
-	s.Print(0, 253, 20, 20+1*h, "a quick brown fox \"jumps\" over the (lazy) dog.")
-	s.Print(0, 253, 20, 20+2*h, "0123456789!@#$%^&*()-+=_~[]{}|\\;:'\",.<>/?")
-	s.Print(0, 253, 20, 20+3*h, "12+34 56-78 90*13 24/35 -5 +2 3*(2+5) 4<5 6>2 2=1+1 *f := &x;")
+	c := s.NewCursor()
+	c.ColorShift(254)
+	c.Locate(20, 2)
 
-	s.Print(0, 253, 20, 100+0*h, "I am by birth a Genevese, and my family is one of the most distinguished of that republic. My ancestors had been for many years counsellors and syndics, and my")
-	s.Print(0, 253, 20, 100+1*h, "father had filled several public situations with honour and reputation. He was respected by all who knew him for his integrity and indefatigable attention to public")
-	s.Print(0, 253, 20, 100+2*h, "business. He passed his younger days perpetually occupied by the affairs of his country; a variety of circumstances had prevented his marrying early, nor was it until")
-	s.Print(0, 253, 20, 100+3*h, "the decline of life that he became a husband and the father of a family.")
+	c.Font(0)
+	c.Println("A QUICK BROWN FOX \"JUMPS\" OVER THE (LAZY) DOG.")
+	c.Println("a quick brown fox \"jumps\" over the (lazy) dog.")
+	c.Println("0123456789!@#$%^&*()-+=_~[]{}|\\;:'\",.<>/?")
+	c.Println("12+34 56-78 90*13 24/35 -5 +2 3*(2+5) 4<5 6>2 2=1+1 *f := &x;")
+	c.Println()
 
-	s.Print(0, 253, 20, 200+0*h, "Any question? Or answers! No matter what, if it's pertinent... Anyway; no more (important) punctuation. The flow often.")
+	c.Font(1)
+	c.Println("A QUICK BROWN FOX \"JUMPS\" OVER THE (LAZY) DOG.")
+	c.Println("a quick brown fox \"jumps\" over the (lazy) dog.")
+	c.Println("0123456789!@#$%^&*()-+=_~[]{}|\\;:'\",.<>/?")
+	c.Println("12+34 56-78 90*13 24/35 -5 +2 3*(2+5) 4<5 6>2 2=1+1 *f := &x;")
+	c.Println()
+
+
+	c.Font(0)
+	c.Println("I am by birth a Genevese, and my family is one of the most distinguished of that republic. My ancestors had been for many years counsellors and syndics, and my")
+	c.Println("father had filled several public situations with honour and reputation. He was respected by all who knew him for his integrity and indefatigable attention to public")
+	c.Println("business. He passed his younger days perpetually occupied by the affairs of his country; a variety of circumstances had prevented his marrying early, nor was it until")
+	c.Println("the decline of life that he became a husband and the father of a family.")
+	c.Println("Any question? Or answers! No matter what, if it's pertinent... Anyway; no more (important) punctuation. The flow often.")
+	c.Println()
+
+	c.Font(1)
+	c.Println("I am by birth a Genevese, and my family is one of the most distinguished of that republic. My ancestors had been for many years counsellors and syndics, and my")
+	c.Println("father had filled several public situations with honour and reputation. He was respected by all who knew him for his integrity and indefatigable attention to public")
+	c.Println("business. He passed his younger days perpetually occupied by the affairs of his country; a variety of circumstances had prevented his marrying early, nor was it until")
+	c.Println("the decline of life that he became a husband and the father of a family.")
+	c.Println("Any question? Or answers! No matter what, if it's pertinent... Anyway; no more (important) punctuation. The flow often.")
+	c.Println()
+
+
+	c.Locate(s.Size().X-200, 2)
+	c.Font(0)
+	c.Printf("Position x=%d, y=%d\n", s.Mouse().X, s.Mouse().Y)
+
 	s.Blit()
 	return nil
 }
