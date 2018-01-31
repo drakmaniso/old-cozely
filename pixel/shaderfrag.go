@@ -42,7 +42,7 @@ void main(void)
 	uint c = 0;
 	switch (Command) {
 	case cmdPicture:
-		uint p = texelFetch(Pictures, ivec3(UV.x, UV.y, 0), 0).x;
+		uint p = texelFetch(Pictures, ivec3(UV.x, UV.y, Bin), 0).x;
 		if (p == 0) {
 			c = 0;
 		} else {
@@ -54,7 +54,7 @@ void main(void)
 		break;
 
 	case cmdPrint:
-		p = texelFetch(Fonts, ivec3(UV.x, UV.y, 0), 0).x;
+		p = texelFetch(Fonts, ivec3(UV.x, UV.y, Bin), 0).x;
 		if (p == 0) {
 			c = 0;
 		} else {
