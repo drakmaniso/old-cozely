@@ -84,7 +84,7 @@ func (c *Cursor) Write(p []byte) (n int, err error) {
 func (c *Cursor) put(r rune) {
 	if r == '\n' {
 		c.x = c.ox
-		c.y += c.font.Height()
+		c.y += c.font.Height() + 4 //TODO:
 		c.dx = 0
 		c.newline = true
 		return
