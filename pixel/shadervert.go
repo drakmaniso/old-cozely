@@ -6,7 +6,7 @@ const vertexShader = "\n" + `#version 460 core
 
 const uint cmdPicture    = 1;
 const uint cmdPictureExt = 2;
-const uint cmdPrint      = 3;
+const uint cmdText      = 3;
 const uint cmdPoint      = 4;
 const uint cmdPointList  = 5;
 const uint cmdLine       = 6;
@@ -75,21 +75,22 @@ void main(void)
 		UV += corners[vertex] * wh;
 		break;
 
-	case cmdPrint:
+	case cmdText:
 	  // Parameters of the whole Print command
 		uint f = texelFetch(parameters, param+0).r;
 		c = texelFetch(parameters, param+1).r;
 		x = texelFetch(parameters, param+2).r;
 		y = texelFetch(parameters, param+3).r;
 		// Parameter for the current character
-		uint r = texelFetch(parameters, param+4 + gl_InstanceID).r;
-		int cr = int(r & 0x7F);
-		dx = int((r >> 7)&0x1FF);
+		int r = texelFetch(parameters, param+4 + 2*gl_InstanceID+0).r;
+		// int cr = int(r & 0x7F);
+		// dx = int((r >> 7)&0x1FF);
+		dx = texelFetch(parameters, param+4 + 2*gl_InstanceID+1).r;
 		// Mapping of the current character
-		int fm = int(f) * (2 + 128*4);
-		Bin = texelFetch(fontMap, fm+2+cr*4+0).r;
-		wh = vec2(texelFetch(fontMap, fm+2+cr*4+1).r, texelFetch(fontMap, fm+0).r);
-		UV = vec2(texelFetch(fontMap, fm+2+cr*4+2).r, texelFetch(fontMap, fm+2+cr*4+3).r);
+		r *= 5;
+		Bin = texelFetch(fontMap, r+0).r;
+		UV = vec2(texelFetch(fontMap, r+1).r, texelFetch(fontMap, r+2).r);
+		wh = vec2(texelFetch(fontMap, r+3).r, texelFetch(fontMap, r+4).r);
 		// Character quad
 		p = (vec2(x+dx, y) + corners[vertex] * wh) * PixelSize;
 		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), 0.5, 1);

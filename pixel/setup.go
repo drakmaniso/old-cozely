@@ -71,9 +71,9 @@ func postSetupHook() error {
 	//TODO: handle the case when there is no pictures
 
 	// Mappings Buffer
-	mappingsTBO = gl.NewBufferTexture(mappings, gl.R16I, gl.StaticStorage)
-	if len(fontMap) > 0 {
-		fontMapTBO = gl.NewBufferTexture(fontMap, gl.R16I, gl.StaticStorage)
+	picturesMapTBO = gl.NewBufferTexture(mappings, gl.R16I, gl.StaticStorage)
+	if len(glyphsMap) > 0 {
+		glyphsMapTBO = gl.NewBufferTexture(glyphsMap, gl.R16I, gl.StaticStorage)
 	}
 
 	// Create the pictures texture array
@@ -97,7 +97,7 @@ func postSetupHook() error {
 
 	// Create the font texture array
 	w, h = fntAtlas.BinSize()
-	fontsTA = gl.NewTextureArray2D(1, gl.R8UI, int32(w), int32(h), int32(fntAtlas.BinCount()))
+	glyphsTA = gl.NewTextureArray2D(1, gl.R8UI, int32(w), int32(h), int32(fntAtlas.BinCount()))
 	for i := int16(0); i < fntAtlas.BinCount(); i++ {
 		m := image.NewPaletted(image.Rectangle{
 			Min: image.Point{0, 0},
@@ -111,7 +111,7 @@ func postSetupHook() error {
 			return err
 		}
 
-		fontsTA.SubImage(0, 0, 0, int32(i), m)
+		glyphsTA.SubImage(0, 0, 0, int32(i), m)
 
 		// if i == 0 {
 		// 	f, err := os.Create("FOO.png")

@@ -6,7 +6,7 @@ const fragmentShader = "\n" + `#version 460 core
 
 const uint cmdPicture    = 1;
 const uint cmdPictureExt = 2;
-const uint cmdPrint      = 3;
+const uint cmdText       = 3;
 const uint cmdPoint      = 4;
 const uint cmdPointList  = 5;
 const uint cmdLine       = 6;
@@ -28,7 +28,7 @@ layout(origin_upper_left, pixel_center_integer) in vec4 gl_FragCoord;
 //------------------------------------------------------------------------------
 
 layout(binding = 1) uniform usampler2DArray Pictures;
-layout(binding = 2) uniform usampler2DArray Fonts;
+layout(binding = 2) uniform usampler2DArray Glyphs;
 
 //------------------------------------------------------------------------------
 
@@ -53,8 +53,8 @@ void main(void)
 		}
 		break;
 
-	case cmdPrint:
-		p = texelFetch(Fonts, ivec3(UV.x, UV.y, Bin), 0).x;
+	case cmdText:
+		p = texelFetch(Glyphs, ivec3(UV.x, UV.y, Bin), 0).x;
 		if (p == 0) {
 			c = 0;
 		} else {

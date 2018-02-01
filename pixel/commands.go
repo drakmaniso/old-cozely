@@ -12,7 +12,7 @@ import (
 const (
 	cmdPicture    = 1
 	cmdPictureExt = 2
-	cmdPrint      = 3
+	cmdText      = 3
 	cmdPoint      = 4
 	cmdPointList  = 5
 	cmdLine       = 6
@@ -23,7 +23,7 @@ const (
 func (s *ScreenCanvas) appendCommand(c uint32, v uint32, n uint32, params ...int16) {
 	l := len(s.commands)
 	if l > 0 &&
-		c != cmdPrint &&
+		c != cmdText &&
 		c != cmdPointList &&
 		(s.commands[l-1].FirstVertex>>2) == c {
 		// Collapse with previous draw

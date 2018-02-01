@@ -19,42 +19,49 @@ func init() {
 
 //------------------------------------------------------------------------------
 
-type fontMapping struct {
-	h        int16
+var glyphsMap []mapping
+
+type fontDesc struct {
+	height   int16
 	baseline int16
-	chars    [128]struct {
-		bin  int16
-		w    int16
-		x, y int16
-	}
+	ascii    int16 // Glyph index of ASCII 0x20 (space)
 }
 
-var fontMap []fontMapping
+var fontsDesc []fontDesc
 
 //------------------------------------------------------------------------------
 
 func newFont(name string, h int16, baseline int16) Font {
-	m := fontMapping{
-		h:        h,
+	d := fontDesc{
+		height:   h,
 		baseline: baseline,
+		ascii:    int16(len(glyphsMap)),
 	}
-	fontMap = append(fontMap, m)
-	f := Font(len(fontMap) - 1)
+	fontsDesc = append(fontsDesc, d)
+	f := Font(len(fontsDesc) - 1)
 	fonts[name] = f
 	return f
 }
 
 //------------------------------------------------------------------------------
 
+func (f Font) getGlyph(r rune) int16 {
+	if r < ' ' || r > 0x7F {
+		r = 0x7F
+	}
+	return fontsDesc[f].ascii + int16(r)
+}
+
 func (f Font) getMap(c rune) (bin int16, x, y, w, h int16) {
-	return fontMap[f].chars[c].bin, fontMap[f].chars[c].x, fontMap[f].chars[c].y,
-		fontMap[f].chars[c].w, fontMap[f].h
+	g := fontsDesc[f].ascii + int16(c) //TODO:
+	return glyphsMap[g].binFlip, glyphsMap[g].x, glyphsMap[g].y,
+		glyphsMap[g].w, glyphsMap[g].h
 }
 
 //------------------------------------------------------------------------------
 
 func (f Font) Height() int16 {
-	return fontMap[f].h
+	return fontsDesc[f].height
 }
 
 //------------------------------------------------------------------------------

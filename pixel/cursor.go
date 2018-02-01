@@ -18,8 +18,7 @@ type Cursor struct {
 	color    palette.Index
 	ox, oy   int16
 	x, y, dx int16
-	newline  bool
-	cmd      [][]int16
+	params   []int16
 }
 
 //------------------------------------------------------------------------------
@@ -55,15 +54,21 @@ func (c *Cursor) Position() Coord {
 //------------------------------------------------------------------------------
 
 func (c *Cursor) Print(a ...interface{}) (n int, err error) {
-	return fmt.Fprint(c, a...)
+	n, err = fmt.Fprint(c, a...)
+	c.Flush()
+	return n, err
 }
 
 func (c *Cursor) Println(a ...interface{}) (n int, err error) {
-	return fmt.Fprintln(c, a...)
+	n, err = fmt.Fprintln(c, a...)
+	c.Flush()
+	return n, err
 }
 
 func (c *Cursor) Printf(format string, a ...interface{}) (n int, err error) {
-	return fmt.Fprintf(c, format, a...)
+	n, err = fmt.Fprintf(c, format, a...)
+	c.Flush()
+	return n, err
 }
 
 //------------------------------------------------------------------------------
@@ -71,54 +76,42 @@ func (c *Cursor) Printf(format string, a ...interface{}) (n int, err error) {
 func (c *Cursor) Write(p []byte) (n int, err error) {
 	for len(p) > 0 {
 		r, s := utf8.DecodeRune(p)
-		c.put(r)
+		c.WriteRune(r)
 		p = p[s:]
 		n++
 	}
-	c.flush()
 	return n, nil
 }
 
 //------------------------------------------------------------------------------
 
-func (c *Cursor) put(r rune) {
+func (c *Cursor) WriteRune(r rune) {
 	if r == '\n' {
 		c.x = c.ox
-		c.y += c.font.Height() + 4 //TODO:
+		c.y += c.font.Height() + 2 //TODO:
 		c.dx = 0
-		c.newline = true
+		c.Flush()
 		return
 	}
 
-	n := len(c.cmd) - 1
-	if n < 0 || c.dx > 0x1FF || c.newline {
-		c.newline = false
+	if len(c.params) == 0 {
 		c.x = c.x + c.dx
 		c.dx = 0
-		c.cmd = append(c.cmd, make([]int16, 0, 32))
-		n = len(c.cmd) - 1
-		c.cmd[n] = append(c.cmd[n], int16(c.font), int16(c.color), c.x, c.y)
+		c.params = append(c.params, int16(c.font), int16(c.color), c.x, c.y)
 	}
 
-	rr := uint16(0x7F)
-	if r <= 0x7F {
-		rr = uint16(r)
-	}
-	_, _, _, rw, _ := c.font.getMap(rune(rr))
-	rr |= uint16(c.dx) << 7
-	c.cmd[n] = append(c.cmd[n], int16(rr))
-	c.dx += int16(rw) + 0 //TODO:
+	g := c.font.getGlyph(r)
+	c.params = append(c.params, g, c.dx)
+	c.dx += glyphsMap[g].w + 0 //TODO:
 }
 
 //------------------------------------------------------------------------------
 
-func (c *Cursor) flush() {
-	for n := range c.cmd {
-		c.canvas.appendCommand(cmdPrint, 4, uint32(len(c.cmd[n])-4), c.cmd[n]...)
-		c.cmd[n] = c.cmd[n][:0]
+func (c *Cursor) Flush() {
+	if len(c.params) > 0 {
+		c.canvas.appendCommand(cmdText, 4, uint32(len(c.params)-4)/2, c.params...)
+		c.params = c.params[:0]
 	}
-	c.cmd = c.cmd[:0]
-	c.newline = false
 }
 
 //------------------------------------------------------------------------------

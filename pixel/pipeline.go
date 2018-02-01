@@ -27,14 +27,14 @@ var blitUniforms struct {
 //------------------------------------------------------------------------------
 
 var (
-	pipeline      *gl.Pipeline
-	screenUBO     gl.UniformBuffer
-	commandsICBO  gl.IndirectBuffer
-	parametersTBO gl.BufferTexture
-	mappingsTBO   gl.BufferTexture //TODO: rename
-	fontMapTBO    gl.BufferTexture
-	picturesTA    gl.TextureArray2D
-	fontsTA       gl.TextureArray2D
+	pipeline       *gl.Pipeline
+	screenUBO      gl.UniformBuffer
+	commandsICBO   gl.IndirectBuffer
+	parametersTBO  gl.BufferTexture
+	picturesMapTBO gl.BufferTexture
+	glyphsMapTBO   gl.BufferTexture
+	picturesTA     gl.TextureArray2D
+	glyphsTA       gl.TextureArray2D
 )
 
 var (
