@@ -24,7 +24,7 @@ var glyphsMap []mapping
 type fontDesc struct {
 	height   int16
 	baseline int16
-	ascii    int16 // Glyph index of ASCII 0x20 (space)
+	ascii    int16 // Glyph index of ASCII 0x00
 }
 
 var fontsDesc []fontDesc
