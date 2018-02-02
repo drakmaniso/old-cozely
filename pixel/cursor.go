@@ -30,7 +30,9 @@ type Cursor struct {
 
 // NewCursor returns a new cursor that can be used to write text on the canvas.
 func (s *ScreenCanvas) NewCursor() *Cursor {
-	return &Cursor{canvas: s}
+	c := Cursor{canvas: s}
+	c.params = make([]int16, 0, 128)
+	return &c
 }
 
 //------------------------------------------------------------------------------
@@ -66,19 +68,36 @@ func (c *Cursor) ColorShift(s palette.Index) {
 // the starting point for new line of text: i.e. when writing a newline, the
 // cursor will be set to the coordinate (x, current y + interline).
 //
-// Note: Flush is automatically called before the relocation.
+// Note: Flush is automatically called before the relocation. See also Move and
+// Moveto.
 func (c *Cursor) Locate(x, y int16) {
 	c.Flush()
 	c.x, c.y = x, y
 	c.dx = 0
 }
 
-// Space moves the cursor horizontally.
+// Move moves the cursor relatively to its current position.
 //
-// Note: it does not change the starting point for new lines, and does not Flush
-// the cursor.
-func (c *Cursor) Space(dx int16) {
+// Note: it does not change the starting point for new lines, and only Flush the
+// cursor when dy is not null. See also MoveTo and Locate.
+func (c *Cursor) Move(dx, dy int16) {
+	if dy != 0 {
+		c.Flush()
+		c.y += dy
+	}
 	c.dx += dx
+}
+
+// MoveTo changes the cursor position.
+//
+// Note: it does not change the starting point for new lines, and only Flush the
+// cursor when dy is not null. See also Move and Locate.
+func (c *Cursor) MoveTo(x, y int16) {
+	if y != c.y {
+		c.Flush()
+		c.y = y
+	}
+	c.dx = (x - c.x)
 }
 
 // Position returns the current cursor position.
