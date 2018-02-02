@@ -27,8 +27,8 @@ layout(origin_upper_left, pixel_center_integer) in vec4 gl_FragCoord;
 
 //------------------------------------------------------------------------------
 
-layout(binding = 1) uniform usampler2DArray Pictures;
-layout(binding = 2) uniform usampler2DArray Glyphs;
+layout(binding = 4) uniform usampler2DArray Pictures;
+layout(binding = 6) uniform usampler2DArray Glyphs;
 
 //------------------------------------------------------------------------------
 

@@ -12,7 +12,7 @@ import (
 const (
 	cmdPicture    = 1
 	cmdPictureExt = 2
-	cmdText      = 3
+	cmdText       = 3
 	cmdPoint      = 4
 	cmdPointList  = 5
 	cmdLine       = 6

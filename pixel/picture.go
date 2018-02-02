@@ -11,30 +11,30 @@ import (
 
 type Picture uint16
 
-var pictures map[string]Picture
+var pictureNames map[string]Picture
 
 func init() {
-	pictures = make(map[string]Picture, 128)
+	pictureNames = make(map[string]Picture, 128)
 }
 
 //------------------------------------------------------------------------------
 
 type mapping struct {
-	binFlip int16
-	x, y    int16
-	w, h    int16
+	bin  int16
+	x, y int16
+	w, h int16
 }
 
-var mappings = []mapping {
+var pictureMap = []mapping{
 	mapping{},
 }
 
 //------------------------------------------------------------------------------
 
 func newPicture(name string, w, h int16) Picture {
-	mappings = append(mappings, mapping{w: w, h: h})
-	p := Picture(len(mappings) - 1)
-	pictures[name] = p
+	pictureMap = append(pictureMap, mapping{w: w, h: h})
+	p := Picture(len(pictureMap) - 1)
+	pictureNames[name] = p
 	return p
 }
 
@@ -42,18 +42,7 @@ func newPicture(name string, w, h int16) Picture {
 
 // Size returns the width and height of the picture.
 func (p Picture) Size() Coord {
-	return Coord{mappings[p].w, mappings[p].h}
-}
-
-//------------------------------------------------------------------------------
-
-func (p Picture) mapTo(binFlip int16, x, y int16) {
-	mappings[p].binFlip = binFlip
-	mappings[p].x, mappings[p].y = x, y
-}
-
-func (p Picture) getMap() (binFlip int16, x, y, w, h int16) {
-	return mappings[p].binFlip, mappings[p].x, mappings[p].y, mappings[p].w, mappings[p].h
+	return Coord{pictureMap[p].w, pictureMap[p].h}
 }
 
 //------------------------------------------------------------------------------
@@ -61,7 +50,7 @@ func (p Picture) getMap() (binFlip int16, x, y, w, h int16) {
 // GetPicture returns the picture associated with a name. If there isn't any, an
 // empty picture is returned, and a sticky error is set.
 func GetPicture(name string) Picture {
-	p, ok := pictures[name]
+	p, ok := pictureNames[name]
 	if !ok {
 		setErr("in GetPicture", errors.New("picture \""+name+"\" not found"))
 	}

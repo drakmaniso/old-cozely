@@ -6,7 +6,7 @@ const vertexShader = "\n" + `#version 460 core
 
 const uint cmdPicture    = 1;
 const uint cmdPictureExt = 2;
-const uint cmdText      = 3;
+const uint cmdText       = 3;
 const uint cmdPoint      = 4;
 const uint cmdPointList  = 5;
 const uint cmdLine       = 6;
@@ -26,9 +26,9 @@ layout(std140, binding = 0) uniform ScreenUBO {
 
 //------------------------------------------------------------------------------
 
-layout(binding = 5) uniform isamplerBuffer mappings;
-layout(binding = 7) uniform isamplerBuffer fontMap;
-layout(binding = 6) uniform isamplerBuffer parameters;
+layout(binding = 0) uniform isamplerBuffer parameters;
+layout(binding = 1) uniform isamplerBuffer pictureMap;
+layout(binding = 3) uniform isamplerBuffer glyphMap;
 
 //------------------------------------------------------------------------------
 
@@ -66,9 +66,9 @@ void main(void)
 		y = texelFetch(parameters, param+2).r;
 		// Mapping of the picture
 		m *= 5;
-		Bin = texelFetch(mappings, m+0).r;
-		UV = vec2(texelFetch(mappings, m+1).r, texelFetch(mappings, m+2).r);
-		wh = vec2(texelFetch(mappings, m+3).r, texelFetch(mappings, m+4).r);
+		Bin = texelFetch(pictureMap, m+0).r;
+		UV = vec2(texelFetch(pictureMap, m+1).r, texelFetch(pictureMap, m+2).r);
+		wh = vec2(texelFetch(pictureMap, m+3).r, texelFetch(pictureMap, m+4).r);
 		// Picture quad
 		p = (vec2(x, y) + corners[vertex] * wh) * PixelSize;
 		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), 0.5, 1);
@@ -88,9 +88,9 @@ void main(void)
 		dx = texelFetch(parameters, param+4 + 2*gl_InstanceID+1).r;
 		// Mapping of the current character
 		r *= 5;
-		Bin = texelFetch(fontMap, r+0).r;
-		UV = vec2(texelFetch(fontMap, r+1).r, texelFetch(fontMap, r+2).r);
-		wh = vec2(texelFetch(fontMap, r+3).r, texelFetch(fontMap, r+4).r);
+		Bin = texelFetch(glyphMap, r+0).r;
+		UV = vec2(texelFetch(glyphMap, r+1).r, texelFetch(glyphMap, r+2).r);
+		wh = vec2(texelFetch(glyphMap, r+3).r, texelFetch(glyphMap, r+4).r);
 		// Character quad
 		p = (vec2(x+dx, y) + corners[vertex] * wh) * PixelSize;
 		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), 0.5, 1);

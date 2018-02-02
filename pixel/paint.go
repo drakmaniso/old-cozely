@@ -30,10 +30,10 @@ func (s *ScreenCanvas) Blit() error {
 	screenUBO.Bind(layoutScreen)
 	commandsICBO.Bind()
 	parametersTBO.Bind(layoutParameters)
-	picturesMapTBO.Bind(layoutMappings)
-	glyphsMapTBO.Bind(layoutFontMap)
+	pictureMapTBO.Bind(layoutPictureMap)
+	glyphMapTBO.Bind(layoutGlyphMap)
 	picturesTA.Bind(layoutPictures)
-	glyphsTA.Bind(layoutFonts)
+	glyphsTA.Bind(layoutGlyphs)
 
 	if len(s.commands) > 0 {
 		commandsICBO.SubData(s.commands, 0)

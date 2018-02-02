@@ -15,11 +15,11 @@ const ()
 
 // Textures and Buffer-Textures
 const (
-	layoutPictures   = 1
-	layoutFonts   = 2
-	layoutMappings   = 5
-	layoutFontMap    = 7
-	layoutParameters = 6
+	layoutParameters = 0
+	layoutPictureMap = 1
+	layoutGlyphMap   = 3
+	layoutPictures   = 4
+	layoutGlyphs     = 6
 )
 
 //------------------------------------------------------------------------------

@@ -40,7 +40,7 @@ func setup() error {
 
 	pixel.SetBackground(palette.Index(255))
 
-	cursor = pixel.NewCursor(pixel.Screen())
+	cursor = pixel.NewCursor()
 	cursor.ColorShift(0x20-1)
 
 	return nil

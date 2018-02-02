@@ -71,9 +71,9 @@ func postSetupHook() error {
 	//TODO: handle the case when there is no pictures
 
 	// Mappings Buffer
-	picturesMapTBO = gl.NewBufferTexture(mappings, gl.R16I, gl.StaticStorage)
-	if len(glyphsMap) > 0 {
-		glyphsMapTBO = gl.NewBufferTexture(glyphsMap, gl.R16I, gl.StaticStorage)
+	pictureMapTBO = gl.NewBufferTexture(pictureMap, gl.R16I, gl.StaticStorage)
+	if len(glyphMap) > 0 {
+		glyphMapTBO = gl.NewBufferTexture(glyphMap, gl.R16I, gl.StaticStorage)
 	}
 
 	// Create the pictures texture array

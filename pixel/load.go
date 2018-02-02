@@ -128,17 +128,20 @@ type imgfile struct {
 }
 
 func (im imgfile) Size() (width, height int16) {
-	s := pictures[im.name].Size()
+	s := pictureNames[im.name].Size()
 	return s.X, s.Y
 }
 
 func (im imgfile) Put(bin int16, x, y int16) {
-	pictures[im.name].mapTo(bin, x, y)
+	p := pictureNames[im.name]
+	pictureMap[p].bin = bin
+	pictureMap[p].x, pictureMap[p].y = x, y
 }
 
 func (im imgfile) Paint(dest interface{}) error {
-	p := pictures[im.name]
-	_, px, py, pw, ph := p.getMap()
+	p := pictureNames[im.name]
+	px, py := pictureMap[p].x, pictureMap[p].y
+	pw, ph := pictureMap[p].w, pictureMap[p].h
 
 	pf, err := os.Open(im.path)
 	if err != nil {

@@ -4,6 +4,7 @@
 package pixel
 
 import (
+	"errors"
 	"fmt"
 	"unicode/utf8"
 
@@ -32,16 +33,27 @@ var cursors []cursor
 
 //------------------------------------------------------------------------------
 
-// NewCursor returns a new cursor that can be used to write text on the canvas.
-func NewCursor(s *ScreenCanvas) Cursor {
+// NewCursor returns a new cursor that can be used to write text. By default the
+// text will be displayed on screen (see Canvas to change it).
+func NewCursor() Cursor {
 	if len(cursors) >= 255 {
-		//TODO: set a sticky error
+		setErr("in NewCursor", errors.New("too many cursors"))
 		return Cursor(0)
 	}
-	cu := cursor{canvas: s}
+	cu := cursor{canvas: Screen()}
 	cu.params = make([]int16, 0, 128)
 	cursors = append(cursors, cu)
 	return Cursor(len(cursors) - 1)
+}
+
+//------------------------------------------------------------------------------
+
+// Canvas sets the cursor to display text on v.
+//
+// Note: Flush is automatically called before the change.
+func (c Cursor) Canvas(v *ScreenCanvas) {
+	c.Flush()
+	cursors[c].canvas = v
 }
 
 //------------------------------------------------------------------------------
@@ -190,9 +202,9 @@ func (c Cursor) WriteRune(r rune) {
 		cu.params = append(cu.params, int16(cu.font), int16(cu.color), cu.x, cu.y)
 	}
 
-	g := cu.font.getGlyph(r)
-	cu.params = append(cu.params, g, cu.dx)
-	cu.dx += glyphsMap[g].w + cu.tracking
+	g := cu.font.glyph(r)
+	cu.params = append(cu.params, int16(g), cu.dx)
+	cu.dx += glyphMap[g].w + cu.tracking
 }
 
 // Flush ensures that all text written by the cursor through Write and Writerune

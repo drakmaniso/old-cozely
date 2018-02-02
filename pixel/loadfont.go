@@ -61,7 +61,7 @@ func LoadFont(path string) error {
 
 	h := gh - 1
 	fnt := newFont(n, int16(h), 0)
-	gly := fontsDesc[fnt].ascii
+	gly := fonts[fnt].first
 
 	// Create images and reserve mapping for each rune
 
@@ -76,11 +76,11 @@ func LoadFont(path string) error {
 			if !ok {
 				return errors.New("unexpected subimage in Loadfont")
 			}
-			glyphsMap = append(glyphsMap, mapping{w: int16(w), h: int16(h)})
+			glyphMap = append(glyphMap, mapping{w: int16(w), h: int16(h)})
 			fntFiles = append(
 				fntFiles,
 				fntrune{
-					glyph: gly + int16(gx+16*gy),
+					glyph: gly + uint16(gx+16*gy),
 					img:   mm,
 				},
 			)
@@ -98,7 +98,7 @@ func LoadFont(path string) error {
 //------------------------------------------------------------------------------
 
 type fntrune struct {
-	glyph int16
+	glyph uint16
 	img   *image.Paletted
 }
 
@@ -108,14 +108,14 @@ func (fr fntrune) Size() (width, height int16) {
 }
 
 func (fr fntrune) Put(bin int16, x, y int16) {
-	glyphsMap[fr.glyph].binFlip = bin
-	glyphsMap[fr.glyph].x = x
-	glyphsMap[fr.glyph].y = y
+	glyphMap[fr.glyph].bin = bin
+	glyphMap[fr.glyph].x = x
+	glyphMap[fr.glyph].y = y
 }
 
 func (fr fntrune) Paint(dest interface{}) error {
-	fx, fy := glyphsMap[fr.glyph].x, glyphsMap[fr.glyph].y
-	fw, fh := glyphsMap[fr.glyph].w, glyphsMap[fr.glyph].h
+	fx, fy := glyphMap[fr.glyph].x, glyphMap[fr.glyph].y
+	fw, fh := glyphMap[fr.glyph].w, glyphMap[fr.glyph].h
 
 	dm, ok := dest.(*image.Paletted)
 	if !ok {

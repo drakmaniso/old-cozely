@@ -11,57 +11,50 @@ import (
 
 type Font uint16
 
-var fonts map[string]Font
+var fontNames map[string]Font
 
 func init() {
-	fonts = make(map[string]Font, 8)
+	fontNames = make(map[string]Font, 8)
 }
 
-//------------------------------------------------------------------------------
+var glyphMap []mapping
 
-var glyphsMap []mapping
-
-type fontDesc struct {
+type font struct {
 	height   int16
 	baseline int16
-	ascii    int16 // Glyph index of ASCII 0x00
+	first    uint16 // index of the first glyph
 }
 
-var fontsDesc []fontDesc
+var fonts []font
 
 //------------------------------------------------------------------------------
 
 func newFont(name string, h int16, baseline int16) Font {
-	d := fontDesc{
+	d := font{
 		height:   h,
 		baseline: baseline,
-		ascii:    int16(len(glyphsMap)),
+		first:    uint16(len(glyphMap)),
 	}
-	fontsDesc = append(fontsDesc, d)
-	f := Font(len(fontsDesc) - 1)
-	fonts[name] = f
+	fonts = append(fonts, d)
+	f := Font(len(fonts) - 1)
+	fontNames[name] = f
 	return f
 }
 
 //------------------------------------------------------------------------------
 
-func (f Font) getGlyph(r rune) int16 {
+func (f Font) glyph(r rune) uint16 {
+	//TODO: add support for non-ascii runes
 	if r < ' ' || r > 0x7F {
 		r = 0x7F
 	}
-	return fontsDesc[f].ascii + int16(r)
-}
-
-func (f Font) getMap(c rune) (bin int16, x, y, w, h int16) {
-	g := fontsDesc[f].ascii + int16(c) //TODO:
-	return glyphsMap[g].binFlip, glyphsMap[g].x, glyphsMap[g].y,
-		glyphsMap[g].w, glyphsMap[g].h
+	return fonts[f].first + uint16(r)
 }
 
 //------------------------------------------------------------------------------
 
 func (f Font) Height() int16 {
-	return fontsDesc[f].height
+	return fonts[f].height
 }
 
 //------------------------------------------------------------------------------
@@ -69,7 +62,7 @@ func (f Font) Height() int16 {
 // GetFont returns the font associated with a name. If there isn't any, an
 // empty font is returned, and a sticky error is set.
 func GetFont(name string) Font {
-	f, ok := fonts[name]
+	f, ok := fontNames[name]
 	if !ok {
 		setErr("in GetFont", errors.New("font \""+name+"\" not found"))
 	}
