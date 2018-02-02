@@ -13,6 +13,10 @@ import (
 func (s *ScreenCanvas) Blit() error {
 	internal.PaletteUpload()
 
+	for c := range cursors {
+		Cursor(c).Flush()
+	}
+
 	screenUniforms.PixelSize.X = 1.0 / float32(s.size.X)
 	screenUniforms.PixelSize.Y = 1.0 / float32(s.size.Y)
 	screenUBO.SubData(&screenUniforms, 0)

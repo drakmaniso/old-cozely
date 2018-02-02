@@ -11,7 +11,7 @@ import (
 
 //------------------------------------------------------------------------------
 
-var cursor *pixel.Cursor
+var cursor pixel.Cursor
 
 //------------------------------------------------------------------------------
 
@@ -40,7 +40,7 @@ func setup() error {
 
 	pixel.SetBackground(palette.Index(255))
 
-	cursor = pixel.Screen().NewCursor()
+	cursor = pixel.NewCursor(pixel.Screen())
 	cursor.ColorShift(0x20-1)
 
 	return nil
