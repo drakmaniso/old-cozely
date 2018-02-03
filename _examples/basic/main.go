@@ -14,7 +14,12 @@ import (
 
 //------------------------------------------------------------------------------
 
-var logo, mire, midgray, midrgb pixel.Picture
+var (
+	logo = pixel.NewPicture("graphics/logo")
+	mire = pixel.NewPicture("graphics/mire")
+	midgray = pixel.NewPicture("graphics/logo")
+	midrgb = pixel.NewPicture("graphics/logo")
+)
 
 var pts [1024]pixel.Coord
 
@@ -39,15 +44,10 @@ func main() {
 func setup() error {
 	palette.Change("MSX2")
 
-	err := pixel.Load("graphics")
+	err := pixel.LoadAssets()
 	if err != nil {
 		return err
 	}
-
-	logo = pixel.GetPicture("logo")
-	mire = pixel.GetPicture("mire")
-	midgray = pixel.GetPicture("logo")
-	midrgb = pixel.GetPicture("logo")
 
 	for i := range pts {
 		pts[i].X = int16(rand.Intn(320))

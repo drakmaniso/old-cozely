@@ -10,7 +10,6 @@ import (
 	_ "image/png" // Activate PNG support
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/drakmaniso/glam/colour"
 	"github.com/drakmaniso/glam/internal"
@@ -30,35 +29,19 @@ var autoPalette = true
 
 //------------------------------------------------------------------------------
 
-// Load creates a picture for each image file found in the provided path (which
-// must be a directory).
-func Load(path string) error {
+func LoadAssets() error {
 	if internal.Running {
 		return errors.New("loading graphics while running not implemented")
 	}
 
-	path = filepath.FromSlash(internal.Path + path)
-	path, err := filepath.EvalSymlinks(path)
-	if err != nil {
-		return internal.Error("in path while loading graphics", err)
-	}
-
-	fi, err := os.Stat(path)
-	if err != nil {
-		return internal.Error("in path info while loading graphics", err)
-	}
-	if !fi.IsDir() {
-		return errors.New("path for loading graphics is not a directory")
-	}
-
 	// Scan all pictures
 
-	err = filepath.Walk(path, scan)
-	switch {
-	case os.IsNotExist(err):
-		return nil
-	case err != nil:
-		return internal.Error("while scanning images", err)
+	for n, p := range pictureNames {
+		err := scan(n, p)
+		if err != nil {
+			//TODO: sticky error instead?
+			return err
+		}
 	}
 
 	// Pack them into atlases
@@ -78,9 +61,12 @@ func Load(path string) error {
 
 //------------------------------------------------------------------------------
 
-func scan(path string, info os.FileInfo, err error) error {
+func scan(n string, p Picture) error {
+	//TODO: support other image formats?
+	path := filepath.FromSlash(internal.Path + n + ".png")
+	path, err := filepath.EvalSymlinks(path)
 	if err != nil {
-		return err
+		return internal.Error("in path while scanning picture", err)
 	}
 
 	f, err := os.Open(path)
@@ -98,24 +84,16 @@ func scan(path string, info os.FileInfo, err error) error {
 		return internal.Error("decoding picture file", err)
 	}
 
-	n := filepath.Base(path)
-	if err != nil {
-		return err
-	}
-	n = strings.TrimSuffix(n, filepath.Ext(n))
-	n = filepath.ToSlash(n)
 	//TODO: check for width and height overflow
 	w, h := int16(conf.Width), int16(conf.Height)
 
 	_, ok := conf.ColorModel.(color.Palette)
-	if ok {
-		newPicture(n, w, h)
-		pictFiles = append(pictFiles, imgfile{name: n, path: path})
-
-	} else {
-		internal.Debug.Println(`ignoring image: "` + path + `" (color model not supported)`)
-		return nil
+	if !ok {
+		return errors.New("image format not supported")
 	}
+
+	pictureMap[p].w, pictureMap[p].h = w, h
+	pictFiles = append(pictFiles, imgfile{name: n, path: path})
 
 	return nil
 }
