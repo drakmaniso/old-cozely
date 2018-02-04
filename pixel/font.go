@@ -30,12 +30,18 @@ var fonts []font
 //------------------------------------------------------------------------------
 
 func NewFont(name string) Font {
+	f, ok := fontNames[name]
+	if ok {
+		return f
+	}
+
 	if len(fonts) >= 0xFF {
 		setErr("in NewFont", errors.New("too many fonts"))
 		return Font(0)
 	}
+
 	fonts = append(fonts, font{})
-	f := Font(len(fonts) - 1)
+	f = Font(len(fonts) - 1)
 	fontNames[name] = f
 	return f
 }

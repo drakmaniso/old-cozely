@@ -32,12 +32,18 @@ var pictureMap = []mapping{
 //------------------------------------------------------------------------------
 
 func NewPicture(name string) Picture {
+	p, ok := pictureNames[name]
+	if ok {
+		return p
+	}
+
 	if len(pictureMap) >= 0xFFFF {
 		setErr("in NewPitcture", errors.New("too many pictures"))
 		return Picture(0)
 	}
+	
 	pictureMap = append(pictureMap, mapping{})
-	p := Picture(len(pictureMap) - 1)
+	p = Picture(len(pictureMap) - 1)
 	pictureNames[name] = p
 	return p
 }
