@@ -9,7 +9,7 @@ import (
 
 //------------------------------------------------------------------------------
 
-type Font uint16
+type Font uint8
 
 var fontNames map[string]Font
 
@@ -29,13 +29,12 @@ var fonts []font
 
 //------------------------------------------------------------------------------
 
-func newFont(name string, h int16, baseline int16) Font {
-	d := font{
-		height:   h,
-		baseline: baseline,
-		first:    uint16(len(glyphMap)),
+func NewFont(name string) Font {
+	if len(fonts) >= 0xFF {
+		setErr("in NewFont", errors.New("too many fonts"))
+		return Font(0)
 	}
-	fonts = append(fonts, d)
+	fonts = append(fonts, font{})
 	f := Font(len(fonts) - 1)
 	fontNames[name] = f
 	return f

@@ -9,7 +9,6 @@ import (
 	_ "image/png" // Activate PNG support
 	"os"
 	"path/filepath"
-	"strings"
 
 	"github.com/drakmaniso/glam/internal"
 	"github.com/drakmaniso/glam/x/atlas"
@@ -24,18 +23,21 @@ var (
 
 //------------------------------------------------------------------------------
 
-func LoadFont(path string) error {
-	if internal.Running {
-		return errors.New("loading fonts while running not implemented")
+func loadFont(n string, f Font) error {
+	//TODO: support other image formats?
+	path := filepath.FromSlash(internal.Path + n + ".png")
+	path, err := filepath.EvalSymlinks(path)
+	if err != nil {
+		return internal.Error("in path while loading font", err)
 	}
 
-	f, err := os.Open(path)
+	fl, err := os.Open(path)
 	if err != nil {
 		return internal.Error(`while opening font file "`+path+`"`, err)
 	}
-	defer f.Close() //TODO: error handling
+	defer fl.Close() //TODO: error handling
 
-	img, _, err := image.Decode(f)
+	img, _, err := image.Decode(fl)
 	switch err {
 	case nil:
 	case image.ErrFormat:
@@ -43,14 +45,6 @@ func LoadFont(path string) error {
 	default:
 		return internal.Error("decoding font file", err)
 	}
-
-	n := filepath.Base(path)
-	if err != nil {
-		return err
-	}
-	n = strings.TrimSuffix(n, filepath.Ext(n))
-	n = strings.TrimSuffix(n, ".font")
-	n = filepath.ToSlash(n)
 
 	p, ok := img.(*image.Paletted)
 	if !ok {
@@ -60,8 +54,9 @@ func LoadFont(path string) error {
 	gw, gh := p.Bounds().Dx()/16, p.Bounds().Dy()/8
 
 	h := gh - 1
-	fnt := newFont(n, int16(h), 0)
-	gly := fonts[fnt].first
+	fonts[f].height = int16(h)
+	gly := uint16(len(glyphMap))
+	fonts[f].first = gly
 
 	// Create images and reserve mapping for each rune
 

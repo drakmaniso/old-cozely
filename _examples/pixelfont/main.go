@@ -13,6 +13,11 @@ import (
 
 var cursor pixel.Cursor
 
+var (
+	pixop9 = pixel.NewFont("fonts/pixop9")
+	pixop11 = pixel.NewFont("fonts/pixop11")
+)
+
 //------------------------------------------------------------------------------
 
 func main() {
@@ -29,19 +34,13 @@ func main() {
 
 func setup() error {
 	palette.Change("MSX2")
-	err := pixel.LoadFont("fonts/pixop9.font.png")
-	if err != nil {
-		return err
-	}
-	err = pixel.LoadFont("fonts/pixop11.font.png")
-	if err != nil {
-		return err
-	}
 
 	pixel.SetBackground(palette.Index(255))
 
 	cursor = pixel.NewCursor()
 	cursor.ColorShift(0x20-1)
+
+	pixel.LoadAssets()
 
 	return nil
 }
@@ -65,21 +64,21 @@ func (loop) Draw() error {
 
 	cursor.Locate(16, 8)
 
-	cursor.Font(0)
+	cursor.Font(pixop9)
 	cursor.Println("a quick brown fox \"jumps\" over the (lazy) dog.")
 	cursor.Println("A QUICK BROWN FOX \"JUMPS\" OVER THE (LAZY) DOG.")
 	cursor.Println("0123456789!@#$%^&*()-+=_~[]{}|\\;:'\",.<>/?")
 	cursor.Println("12+34 56-78 90*13 24/35 -5 +2 3*(2+5) 4<5 6>2 2=1+1 *f := &x;")
 	cursor.Println()
 
-	cursor.Font(1)
+	cursor.Font(pixop11)
 	cursor.Println("a quick brown fox \"jumps\" over the (lazy) dog.")
 	cursor.Println("A QUICK BROWN FOX \"JUMPS\" OVER THE (LAZY) DOG.")
 	cursor.Println("0123456789!@#$%^&*()-+=_~[]{}|\\;:'\",.<>/?")
 	cursor.Println("12+34 56-78 90*13 24/35 -5 +2 3*(2+5) 4<5 6>2 2=1+1 *f := &x;")
 	cursor.Println()
 
-	cursor.Font(0)
+	cursor.Font(pixop9)
 	cursor.Println("My affection for my guest increases every day. He excites at once my")
 	cursor.Println("admiration and my pity to an astonishing degree. How can I see so noble")
 	cursor.Println("a creature destroyed by misery, without feeling the most poignant grief?")
@@ -88,7 +87,7 @@ func (loop) Draw() error {
 	cursor.Println("flow with rapidity and unparalleled eloquence.")
 	cursor.Println()
 
-	cursor.Font(1)
+	cursor.Font(pixop11)
 	cursor.Println("My affection for my guest increases every day. He excites at once my")
 	cursor.Println("admiration and my pity to an astonishing degree. How can I see so noble")
 	cursor.Println("a creature destroyed by misery, without feeling the most poignant grief?")
@@ -97,7 +96,7 @@ func (loop) Draw() error {
 	cursor.Println("flow with rapidity and unparalleled eloquence.")
 	cursor.Println()
 
-	cursor.Font(0)
+	cursor.Font(pixop9)
 	cursor.Locate(500, 100)
 	cursor.Write([]byte("Foo"))
 	cursor.Move(1, 3)
@@ -113,7 +112,7 @@ func (loop) Draw() error {
 	cursor.Flush()
 
 	cursor.Locate(s.Size().X-200, 2)
-	cursor.Font(1)
+	cursor.Font(pixop11)
 	cursor.Printf("Position x=%d, y=%d\n", s.Mouse().X, s.Mouse().Y)
 
 	s.Blit()

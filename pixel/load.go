@@ -44,7 +44,7 @@ func LoadAssets() error {
 		}
 	}
 
-	// Pack them into atlases
+	// Pack them into a texture atlas
 
 	pictAtlas.Pack(pictFiles)
 
@@ -55,6 +55,16 @@ func LoadAssets() error {
 		pictAtlas.BinCount(),
 		iu, iu/1024, iu/(1024*1024),
 	)
+
+	// Load all fonts
+
+	for n, f := range fontNames {
+		err := loadFont(n, f)
+		if err != nil {
+			//TODO: sticky error instead?
+			return err
+		}
+	}
 
 	return gl.Err()
 }
