@@ -42,15 +42,3 @@ func Zoom(z int32) Config {
 }
 
 //------------------------------------------------------------------------------
-
-// AutoPalette enables or disable the automatic addition of unkown colors when
-// loading indexed images.
-func AutoPalette(auto bool) Config {
-	// TODO: automatically disable when using palette.Change or palette.New.
-	return func() error {
-		autoPalette = auto
-		return nil
-	}
-}
-
-//------------------------------------------------------------------------------

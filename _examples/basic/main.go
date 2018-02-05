@@ -15,10 +15,10 @@ import (
 //------------------------------------------------------------------------------
 
 var (
-	logo = pixel.NewPicture("graphics/logo")
-	mire = pixel.NewPicture("graphics/mire")
+	logo    = pixel.NewPicture("graphics/logo")
+	mire    = pixel.NewPicture("graphics/mire")
 	midgray = pixel.NewPicture("graphics/logo")
-	midrgb = pixel.NewPicture("graphics/logo")
+	midrgb  = pixel.NewPicture("graphics/logo")
 )
 
 var pts [1024]pixel.Coord
@@ -29,7 +29,6 @@ func main() {
 	glam.Configure(
 		glam.TimeStep(1.0/60),
 		pixel.TargetResolution(320, 180),
-		pixel.AutoPalette(false),
 	)
 
 	err := glam.Run(setup, loop{})
@@ -42,7 +41,7 @@ func main() {
 //------------------------------------------------------------------------------
 
 func setup() error {
-	palette.Change("MSX2")
+	palette.Load("MSX2")
 
 	err := pixel.LoadAssets()
 	if err != nil {

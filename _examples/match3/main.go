@@ -7,6 +7,8 @@ import (
 	"math/rand"
 	"time"
 
+	"github.com/drakmaniso/glam/palette"
+
 	"github.com/drakmaniso/glam/key"
 
 	"github.com/drakmaniso/glam"
@@ -41,6 +43,12 @@ func main() {
 //------------------------------------------------------------------------------
 
 func setup() error {
+	err := palette.Load("graphics/blue")
+	if err != nil {
+		return err
+	}
+
+	// palette.Change("MSX2")
 	pixel.SetBackground(1)
 
 	for i, n := range []string{
@@ -57,7 +65,7 @@ func setup() error {
 		tilesPict[i].big = pixel.NewPicture("graphics/" + n + "_big")
 	}
 
-	err := pixel.LoadAssets()
+	err = pixel.LoadAssets()
 	if err != nil {
 		return err
 	}

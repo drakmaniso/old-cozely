@@ -5,7 +5,6 @@ package palette
 
 import (
 	"github.com/drakmaniso/glam/colour"
-	"github.com/drakmaniso/glam/internal"
 )
 
 //------------------------------------------------------------------------------
@@ -18,10 +17,11 @@ const Transparent Index = 0
 
 //------------------------------------------------------------------------------
 
+type palette [256]struct{ R, G, B, A float32 }
+
 var (
 	// colours needs to be outside of palette, otherwise cgo will freak out
-	colours [256]struct{ R, G, B, A float32 }
-	count   int
+	colours palette
 	names   map[string]Index
 	changed bool
 )
@@ -45,72 +45,27 @@ func Clear() {
 	for c := range colours {
 		colours[c] = colour.LRGBA{1, 0, 1, 1}
 	}
-	count = 0
-	New("transparent", colour.LRGBA{0, 0, 0, 0})
+	Entry(0, "transparent", colour.LRGBA{0, 0, 0, 0})
 }
 
 //------------------------------------------------------------------------------
 
-// Count returns the number of colors in the palette.
-func Count() int {
-	return count
-}
-
-//------------------------------------------------------------------------------
-
-// New adds a color to the  palette and returns its index. The name must be
-// either unique or empty. If the palette is full, index 0 is returnd.
-func New(name string, v colour.Colour) Index {
-	if count > 255 {
-		return Index(0)
-	}
-
-	c := Index(count)
-	count++
+// Entry configures an entry in the palette and returns its index. The name
+// should be either unique or empty.
+func Entry(index uint8, name string, v colour.Colour) Index {
+	c := Index(index)
 
 	colours[c] = colour.LRGBAOf(v)
 
 	changed = true
 
 	if name != "" {
-		if _, ok := names[name]; ok {
-			return Index(0)
+		_, ok := names[name]
+		if ok {
+			//TODO: error?
 		}
 		names[name] = c
 	}
-
-	return c
-}
-
-//------------------------------------------------------------------------------
-
-// Request tries to find an existing index for the specified colour, and returns
-// it. If it is not present in the palette, it is added and the new index
-// returned. If the palette is full, index 0 is returned.
-func Request(v colour.Colour) Index {
-	rgba := colour.LRGBAOf(v)
-
-	// Search the color in the existing palette
-
-	for i := 0; i < count; i++ {
-		if colours[i] == rgba {
-			return Index(i)
-		}
-	}
-
-	// Index not found, create a new entry
-
-	if count > 255 {
-		internal.Debug.Printf("Warning: request new color with palette full")
-		return Index(0)
-	}
-
-	c := Index(count)
-	count++
-
-	colours[c] = rgba
-
-	changed = true
 
 	return c
 }
@@ -148,6 +103,27 @@ func (c Index) Colour() colour.LRGBA {
 func (c Index) Set(v colour.Colour) {
 	colours[c] = colour.LRGBAOf(v)
 	changed = true
+}
+
+// Name returns the current name of the index, or the empty string if it is
+// unnamed.
+func (c Index) Name() string {
+	for n, nc := range names {
+		if c == nc {
+			return n
+		}
+	}
+	return ""
+}
+
+// Rename changes the name of an index. If the empty string is used, the index
+// becomes unnamed.
+func (c Index) Rename(n string) {
+	if n != "" {
+		names[n] = c
+	} else {
+		delete(names, n)
+	}
 }
 
 //------------------------------------------------------------------------------

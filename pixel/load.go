@@ -11,9 +11,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/drakmaniso/glam/colour"
 	"github.com/drakmaniso/glam/internal"
-	"github.com/drakmaniso/glam/palette"
 	"github.com/drakmaniso/glam/x/atlas"
 	"github.com/drakmaniso/glam/x/gl"
 )
@@ -24,8 +22,6 @@ var (
 	pictFiles []atlas.Image
 	pictAtlas *atlas.Atlas
 )
-
-var autoPalette = true
 
 //------------------------------------------------------------------------------
 
@@ -145,10 +141,6 @@ func (im imgfile) Paint(dest interface{}) error {
 	if !ok {
 		return errors.New("unexpected src argument to imgfile paint method")
 	}
-	pal, ok := sm.ColorModel().(color.Palette)
-	if !ok {
-		return errors.New("unable to access src color palette in imgfile paint method")
-	}
 	dm, ok := dest.(*image.Paletted)
 	if !ok {
 		return errors.New("unexpected dest argument to imgfile paint method")
@@ -157,17 +149,6 @@ func (im imgfile) Paint(dest interface{}) error {
 		for x := 0; x < int(pw); x++ {
 			w := dm.Bounds().Dx()
 			ci := sm.Pix[x+int(pw)*y]
-			if autoPalette {
-				// Convert image color index to index into current palette
-				r, g, b, a := pal[ci].RGBA()
-				cc := colour.SRGBA{
-					float32(r) / float32(0xFFFF),
-					float32(g) / float32(0xFFFF),
-					float32(b) / float32(0xFFFF),
-					float32(a) / float32(0xFFFF),
-				}
-				ci = uint8(palette.Request(cc))
-			}
 			dm.Pix[int(px)+x+w*(int(py)+y)] = uint8(ci)
 		}
 	}
