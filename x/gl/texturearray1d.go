@@ -41,6 +41,10 @@ static inline void BindTextureUnit(GLuint unit, GLuint texture) {
 	glBindTextureUnit(unit, texture);
 }
 
+static inline void DeleteTexture(GLuint texture) {
+	glDeleteTextures(1, &texture);
+}
+
 */
 import "C"
 
@@ -76,6 +80,11 @@ func (t *TextureArray1D) GenerateMipmap() {
 // Bind to a texture unit.
 func (t *TextureArray1D) Bind(index uint32) {
 	C.BindTextureUnit(C.GLuint(index), t.object)
+}
+
+// Delete frees the texture
+func (t *TextureArray1D) Delete() {
+	C.DeleteTexture(t.object)
 }
 
 //------------------------------------------------------------------------------

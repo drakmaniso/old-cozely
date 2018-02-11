@@ -69,7 +69,7 @@ func createScreen() {
 //------------------------------------------------------------------------------
 
 func createScreenTexture() {
-	//TODO: delete previous texture
+	screen.texture.Delete()
 	screen.texture = gl.NewTexture2D(1, gl.R8UI, int32(screen.size.X), int32(screen.size.Y))
 	screen.buffer.Texture(gl.ColorAttachment0, screen.texture, 0)
 
