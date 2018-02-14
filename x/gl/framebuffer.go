@@ -18,6 +18,10 @@ static inline void FramebufferTexture(GLuint fbo, GLenum a, GLuint t, GLint l) {
 	glNamedFramebufferTexture(fbo, a, t, l);
 }
 
+static inline void FramebufferRenderBuffer(GLuint fbo, GLenum a, GLuint t) {
+	glNamedFramebufferRenderbuffer(fbo, a, GL_RENDERBUFFER, t);
+}
+
 static inline void FramebufferDrawBuffer(GLuint fbo, GLenum a) {
 	glNamedFramebufferDrawBuffer(fbo, a);
 }
@@ -62,6 +66,10 @@ func (fb Framebuffer) Texture(a FramebufferAttachment, t Texture2D, level int32)
 	C.FramebufferTexture(fb.object, C.GLenum(a), t.object, C.GLint(level))
 }
 
+func (fb Framebuffer) RenderBuffer(a FramebufferAttachment, r RenderBuffer) {
+	C.FramebufferRenderBuffer(fb.object, C.GLenum(a), r.object)
+}
+
 type FramebufferAttachment C.GLenum
 
 const (
@@ -98,7 +106,7 @@ const (
 
 func (fb Framebuffer) ClearColorUint(r, g, b, a uint32) {
 	//TODO: other variants
-	var c struct {R, G, B, A uint32}
+	var c struct{ R, G, B, A uint32 }
 	c.R = r
 	c.G = g
 	c.B = b
