@@ -3,6 +3,11 @@
 
 package gl
 
+import (
+	"strconv"
+	"unsafe"
+)
+
 //------------------------------------------------------------------------------
 
 /*
@@ -22,8 +27,16 @@ static inline void FramebufferRenderBuffer(GLuint fbo, GLenum a, GLuint t) {
 	glNamedFramebufferRenderbuffer(fbo, a, GL_RENDERBUFFER, t);
 }
 
+static inline void FramebufferReadBuffer(GLuint fbo, GLenum a) {
+	glNamedFramebufferReadBuffer(fbo, a);
+}
+
 static inline void FramebufferDrawBuffer(GLuint fbo, GLenum a) {
 	glNamedFramebufferDrawBuffer(fbo, a);
+}
+
+static inline GLenum FramebufferCheckStatus(GLuint fbo, GLenum t) {
+	return glCheckNamedFramebufferStatus(fbo, t);
 }
 
 static inline void FramebufferBind(GLuint fbo, GLenum t) {
@@ -31,7 +44,7 @@ static inline void FramebufferBind(GLuint fbo, GLenum t) {
 }
 
 static inline void FramebufferClearColorUint(GLuint fbo, const GLuint *v) {
-	glClearNamedFramebufferuiv(fbo, GL_COLOR, GL_NONE, v);
+	glClearNamedFramebufferuiv(fbo, GL_COLOR, 0, v);
 }
 
 static inline void FramebufferBlit(GLuint fbo, GLuint dstFbo, GLint srcX1, GLint srcY1, GLint srcX2, GLint srcY2, GLint dstX1, GLint dstY1, GLint dstX2, GLint dstY2, GLbitfield m, GLenum f) {
@@ -39,8 +52,9 @@ static inline void FramebufferBlit(GLuint fbo, GLuint dstFbo, GLint srcX1, GLint
 }
 
 */
-import "C"
-import "unsafe"
+import (
+	"C"
+)
 
 //------------------------------------------------------------------------------
 
@@ -80,9 +94,14 @@ const (
 	DepthAttachment        FramebufferAttachment = C.GL_DEPTH_ATTACHMENT
 	StencilAttachment      FramebufferAttachment = C.GL_STENCIL_ATTACHMENT
 	DepthStencilAttachment FramebufferAttachment = C.GL_DEPTH_STENCIL_ATTACHMENT
+	NoAttachment           FramebufferAttachment = C.GL_NONE
 )
 
 //------------------------------------------------------------------------------
+
+func (fb Framebuffer) ReadBuffer(a FramebufferAttachment) {
+	C.FramebufferReadBuffer(fb.object, C.GLenum(a))
+}
 
 func (fb Framebuffer) DrawBuffer(a FramebufferAttachment) {
 	C.FramebufferDrawBuffer(fb.object, C.GLenum(a))
@@ -101,6 +120,53 @@ const (
 	ReadFramebuffer     FramebufferTarget = C.GL_READ_FRAMEBUFFER
 	DrawReadFramebuffer FramebufferTarget = C.GL_FRAMEBUFFER
 )
+
+//------------------------------------------------------------------------------
+
+func (fb Framebuffer) CheckStatus(t FramebufferTarget) FramebufferStatus {
+	e := C.FramebufferCheckStatus(fb.object, C.GLenum(t))
+	return FramebufferStatus(e)
+}
+
+type FramebufferStatus C.GLenum
+
+const (
+	FramebufferComplete                    FramebufferStatus = C.GL_FRAMEBUFFER_COMPLETE
+	FramebufferUndefined                   FramebufferStatus = C.GL_FRAMEBUFFER_UNDEFINED
+	FramebufferIncompleteAttachment        FramebufferStatus = C.GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT
+	FramebufferIncompleteMissingAttachment FramebufferStatus = C.GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT
+	FramebufferIncompleteDrawBuffer        FramebufferStatus = C.GL_FRAMEBUFFER_INCOMPLETE_DRAW_BUFFER
+	FramebufferIncompleteReadBuffer        FramebufferStatus = C.GL_FRAMEBUFFER_INCOMPLETE_READ_BUFFER
+	FramebufferUnsupported                 FramebufferStatus = C.GL_FRAMEBUFFER_UNSUPPORTED
+	FramebufferIncompleteMultisample       FramebufferStatus = C.GL_FRAMEBUFFER_INCOMPLETE_MULTISAMPLE
+	FramebufferIncompleteLayerTargets      FramebufferStatus = C.GL_FRAMEBUFFER_INCOMPLETE_LAYER_TARGETS
+)
+
+func (fbs FramebufferStatus) String() string {
+	switch fbs {
+	case FramebufferStatus(0):
+		return "framebuffer check status error"
+	case FramebufferComplete:
+		return "framebuffer complete"
+	case FramebufferUndefined:
+		return "framebuffer undefined"
+	case FramebufferIncompleteAttachment:
+		return "framebuffer incomplete attachment"
+	case FramebufferIncompleteMissingAttachment:
+		return "framebuffer incomplete missing attachment"
+	case FramebufferIncompleteDrawBuffer:
+		return "framebuffer incomplete draw buffer"
+	case FramebufferIncompleteReadBuffer:
+		return "framebuffer incomplete read buffer"
+	case FramebufferUnsupported:
+		return "framebuffer unsupported"
+	case FramebufferIncompleteMultisample:
+		return "framebuffer incomplete multisample"
+	case FramebufferIncompleteLayerTargets:
+		return "framebuffer incomplete layer targets"
+	}
+	return "(unknown framebuffer status: " + strconv.Itoa(int(fbs)) + ")"
+}
 
 //------------------------------------------------------------------------------
 
