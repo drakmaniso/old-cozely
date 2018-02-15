@@ -21,11 +21,13 @@ func (s *ScreenCanvas) Blit() error {
 	screenUniforms.PixelSize.Y = 1.0 / float32(s.size.Y)
 	screenUBO.SubData(&screenUniforms, 0)
 
-	s.buffer.Bind(gl.DrawReadFramebuffer)
+	gl.DefaultFramebuffer.Bind(gl.ReadFramebuffer) //TODO: Useless?
+	s.buffer.Bind(gl.DrawFramebuffer)
 	gl.Viewport(0, 0, int32(s.size.X), int32(s.size.Y))
 	pipeline.Bind()
-	s.buffer.ClearColorUint(uint32(s.background), 0, 0, 0)
 	gl.Disable(gl.Blend)
+	gl.DepthMask(false)
+	s.buffer.ClearColorUint(uint32(s.background), 0, 0, 0)
 
 	screenUBO.Bind(layoutScreen)
 	commandsICBO.Bind()

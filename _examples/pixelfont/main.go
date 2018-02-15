@@ -33,7 +33,7 @@ func main() {
 //------------------------------------------------------------------------------
 
 func setup() error {
-	palette.Change("MSX2")
+	palette.Load("MSX2")
 
 	pixel.SetBackground(palette.Index(255))
 

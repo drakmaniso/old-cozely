@@ -4,6 +4,8 @@
 package pixel
 
 import (
+	"errors"
+
 	"github.com/drakmaniso/glam/internal"
 	"github.com/drakmaniso/glam/mouse"
 	"github.com/drakmaniso/glam/palette"
@@ -15,7 +17,7 @@ import (
 type ScreenCanvas struct {
 	buffer     gl.Framebuffer
 	texture    gl.Texture2D
-	depth      gl.Texture2D
+	depth      gl.RenderBuffer
 	target     Coord
 	autozoom   bool
 	size       Coord
@@ -62,7 +64,6 @@ func createScreen() {
 	screen.parameters = make([]int16, 0, maxCommandCount*maxParamCount)
 	screen.buffer = gl.NewFramebuffer()
 	internal.ResizeScreen()
-	// createScreenTexture()
 	screen.buffer.Bind(gl.DrawReadFramebuffer)
 }
 
@@ -73,7 +74,17 @@ func createScreenTexture() {
 	screen.texture = gl.NewTexture2D(1, gl.R8UI, int32(screen.size.X), int32(screen.size.Y))
 	screen.buffer.Texture(gl.ColorAttachment0, screen.texture, 0)
 
+	screen.depth.Delete()
+	screen.depth = gl.NewRenderBuffer(gl.Depth32F, int32(screen.size.X), int32(screen.size.Y))
+	screen.buffer.RenderBuffer(gl.DepthAttachment, screen.depth)
+
 	screen.buffer.DrawBuffer(gl.ColorAttachment0)
+	screen.buffer.ReadBuffer(gl.NoAttachment)
+
+	s := screen.buffer.CheckStatus(gl.DrawReadFramebuffer)
+	if s != gl.FramebufferComplete {
+		setErr("while creating screen textures", errors.New(s.String()))
+	}
 }
 
 //------------------------------------------------------------------------------
@@ -114,7 +125,6 @@ func init() {
 //------------------------------------------------------------------------------
 
 func blitScreen() {
-
 	w := int32(screen.size.X) * screen.pixel
 	h := int32(screen.size.Y) * screen.pixel
 
@@ -123,10 +133,12 @@ func blitScreen() {
 	blitUBO.SubData(&blitUniforms, 0)
 
 	blitPipeline.Bind()
-	screen.buffer.Bind(gl.ReadFramebuffer) //TODO: Useless?
+	// screen.buffer.Bind(gl.ReadFramebuffer) //TODO: Useless?
+	gl.DefaultFramebuffer.Bind(gl.ReadFramebuffer) //TODO: Useless?
 	gl.DefaultFramebuffer.Bind(gl.DrawFramebuffer)
 	gl.Enable(gl.FramebufferSRGB)
 	gl.Disable(gl.Blend)
+	gl.DepthMask(false)
 	gl.Viewport(screen.ox, screen.oy, screen.ox+w, screen.ox+h)
 	blitUBO.Bind(0)
 	screen.texture.Bind(0)

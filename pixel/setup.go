@@ -28,6 +28,7 @@ func setupHook() error {
 		gl.VertexShader(strings.NewReader(vertexShader)),
 		gl.FragmentShader(strings.NewReader(fragmentShader)),
 		gl.Topology(gl.TriangleStrip),
+		gl.DepthTest(false),
 	)
 
 	screenUBO = gl.NewUniformBuffer(&screenUniforms, gl.DynamicStorage|gl.MapWrite)
@@ -49,6 +50,7 @@ func setupHook() error {
 		gl.VertexShader(strings.NewReader(blitVertexShader)),
 		gl.FragmentShader(strings.NewReader(blitFragmentShader)),
 		gl.Topology(gl.TriangleStrip),
+		gl.DepthTest(false),
 	)
 
 	blitUBO = gl.NewUniformBuffer(&blitUniforms, gl.DynamicStorage|gl.MapWrite)
