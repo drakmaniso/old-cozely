@@ -23,7 +23,7 @@ static inline void FramebufferTexture(GLuint fbo, GLenum a, GLuint t, GLint l) {
 	glNamedFramebufferTexture(fbo, a, t, l);
 }
 
-static inline void FramebufferRenderBuffer(GLuint fbo, GLenum a, GLuint t) {
+static inline void FramebufferRenderbuffer(GLuint fbo, GLenum a, GLuint t) {
 	glNamedFramebufferRenderbuffer(fbo, a, GL_RENDERBUFFER, t);
 }
 
@@ -80,8 +80,8 @@ func (fb Framebuffer) Texture(a FramebufferAttachment, t Texture2D, level int32)
 	C.FramebufferTexture(fb.object, C.GLenum(a), t.object, C.GLint(level))
 }
 
-func (fb Framebuffer) RenderBuffer(a FramebufferAttachment, r RenderBuffer) {
-	C.FramebufferRenderBuffer(fb.object, C.GLenum(a), r.object)
+func (fb Framebuffer) Renderbuffer(a FramebufferAttachment, r Renderbuffer) {
+	C.FramebufferRenderbuffer(fb.object, C.GLenum(a), r.object)
 }
 
 type FramebufferAttachment C.GLenum

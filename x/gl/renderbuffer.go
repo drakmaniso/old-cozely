@@ -8,7 +8,7 @@ package gl
 /*
 #include "glad.h"
 
-static inline GLuint NewRenderBuffer(GLenum format, GLsizei width, GLsizei height) {
+static inline GLuint NewRenderbuffer(GLenum format, GLsizei width, GLsizei height) {
 	GLuint r;
 	glCreateRenderbuffers(1, &r);
 	glNamedRenderbufferStorage(r, format, width, height);
@@ -37,7 +37,7 @@ static inline void BindTextureUnit(GLuint unit, GLuint texture) {
 	glBindTextureUnit(unit, texture);
 }
 
-static inline void DeleteRenderBuffer(GLuint r) {
+static inline void DeleteRenderbuffer(GLuint r) {
 	glDeleteRenderbuffers(1, &r);
 }
 
@@ -46,25 +46,25 @@ import "C"
 
 //------------------------------------------------------------------------------
 
-// A RenderBuffer is a two-dimensional texture that can only be used for
+// A Renderbuffer is a two-dimensional texture that can only be used for
 // rendering (attached a Framebuffer)
-type RenderBuffer struct {
+type Renderbuffer struct {
 	object C.GLuint
 	format TextureFormat
 }
 
-// NewRenderBuffer returns a new render buffer.
-func NewRenderBuffer(f TextureFormat, width, height int32) RenderBuffer {
-	var r RenderBuffer
+// NewRenderbuffer returns a new render buffer.
+func NewRenderbuffer(f TextureFormat, width, height int32) Renderbuffer {
+	var r Renderbuffer
 	r.format = f
-	r.object = C.NewRenderBuffer(C.GLenum(f), C.GLsizei(width), C.GLsizei(height))
+	r.object = C.NewRenderbuffer(C.GLenum(f), C.GLsizei(width), C.GLsizei(height))
 	//TODO: error handling?
 	return r
 }
 
 // Delete frees the render buffer
-func (r *RenderBuffer) Delete() {
-	C.DeleteRenderBuffer(r.object)
+func (r *Renderbuffer) Delete() {
+	C.DeleteRenderbuffer(r.object)
 }
 
 //------------------------------------------------------------------------------

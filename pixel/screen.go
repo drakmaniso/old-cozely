@@ -17,7 +17,7 @@ import (
 type ScreenCanvas struct {
 	buffer     gl.Framebuffer
 	texture    gl.Texture2D
-	depth      gl.RenderBuffer
+	depth      gl.Renderbuffer
 	target     Coord
 	autozoom   bool
 	size       Coord
@@ -75,8 +75,8 @@ func createScreenTexture() {
 	screen.buffer.Texture(gl.ColorAttachment0, screen.texture, 0)
 
 	screen.depth.Delete()
-	screen.depth = gl.NewRenderBuffer(gl.Depth32F, int32(screen.size.X), int32(screen.size.Y))
-	screen.buffer.RenderBuffer(gl.DepthAttachment, screen.depth)
+	screen.depth = gl.NewRenderbuffer(gl.Depth32F, int32(screen.size.X), int32(screen.size.Y))
+	screen.buffer.Renderbuffer(gl.DepthAttachment, screen.depth)
 
 	screen.buffer.DrawBuffer(gl.ColorAttachment0)
 	screen.buffer.ReadBuffer(gl.NoAttachment)
