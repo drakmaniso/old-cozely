@@ -44,9 +44,6 @@ type GameLoop interface {
 	MouseButtonDown(b mouse.Button, clicks int)
 	MouseButtonUp(b mouse.Button, clicks int)
 	MouseWheel(deltaX, deltaY int32)
-
-	// Pixel events
-	ScreenResized(width, height int16, pixel int32)
 }
 
 // Handlers implements default handlers for all events.
@@ -63,7 +60,7 @@ type Handlers = internal.Handlers
 
 //------------------------------------------------------------------------------
 
-// Run initializes the framework, calls setup and then starts the game loop.
+// Run initializes the framework, load the assets and starts the game loop.
 //
 // The Update callback is called with a fixed time step, while the Draw callback
 // is tied to the framerate. Event callbacks are called before each Update, but
@@ -105,8 +102,8 @@ func Run(loop GameLoop) error {
 	}
 
 	// First, send a fake resize window event
+	internal.PixelResize()
 	internal.Loop.WindowResized(internal.Window.Width, internal.Window.Height)
-	internal.ResizeScreen()
 
 	// Main Loop
 

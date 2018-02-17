@@ -23,6 +23,8 @@ var (
 
 var pts [1024]pixel.Coord
 
+var screen = pixel.NewCanvas(pixel.TargetResolution(320, 180))
+
 //------------------------------------------------------------------------------
 
 func main() {
@@ -33,7 +35,6 @@ func main() {
 
 	glam.Configure(
 		glam.TimeStep(1.0/60),
-		pixel.TargetResolution(320, 180),
 	)
 
 	err := glam.Run(loop{})
@@ -60,7 +61,7 @@ func (loop) Enter() error {
 
 func (loop) Update() error {
 	x++
-	if x >= pixel.Screen.Size().X {
+	if x >= screen.Size().X {
 		x = -64
 	}
 
@@ -77,8 +78,7 @@ var (
 //------------------------------------------------------------------------------
 
 func (loop) Draw() error {
-	s := pixel.Screen
-	w, h := s.Size().X, s.Size().Y
+	w, h := screen.Size().X, screen.Size().Y
 
 	timer += glam.FrameTime()
 	if timer > 0.25 {
@@ -91,34 +91,34 @@ func (loop) Draw() error {
 		}
 	}
 
-	s.PointList(0x05, pts[:]...)
+	screen.PointList(0x05, pts[:]...)
 
-	s.Picture(logo, x, 10)
+	screen.Picture(logo, x, 10)
 
-	s.Picture(mire, 0, 0)
-	s.Picture(mire, w-32, 0)
-	s.Picture(mire, 0, h-32)
-	s.Picture(mire, w-32, h-32)
+	screen.Picture(mire, 0, 0)
+	screen.Picture(mire, w-32, 0)
+	screen.Picture(mire, 0, h-32)
+	screen.Picture(mire, w-32, h-32)
 
-	s.Picture(logo, w/2-32, 20)
+	screen.Picture(logo, w/2-32, 20)
 
-	s.Picture(midrgb, w/2-48, h/2-20)
-	s.Picture(midgray, w/2-16, h/2+20+8)
+	screen.Picture(midrgb, w/2-48, h/2-20)
+	screen.Picture(midgray, w/2-16, h/2+20+8)
 
-	s.Point(0x18, w/2, 60)
+	screen.Point(0x18, w/2, 60)
 	for xx := int16(4); xx < w; xx += 8 {
-		s.Point(0x18, xx, (x+xx)%h)
+		screen.Point(0x18, xx, (x+xx)%h)
 	}
 
-	m := s.Mouse()
+	m := screen.Mouse()
 
-	s.Point(0x18, w/2, h/2)
-	s.Point(0x18, m.X, m.Y)
-	s.Line(0xE8, w/2, h/2, m.X, m.Y)
-	s.Point(0xE0, w/2, h/2)
-	s.Point(0xE0, m.X, m.Y)
+	screen.Point(0x18, w/2, h/2)
+	screen.Point(0x18, m.X, m.Y)
+	screen.Line(0xE8, w/2, h/2, m.X, m.Y)
+	screen.Point(0xE0, w/2, h/2)
+	screen.Point(0xE0, m.X, m.Y)
 
-	s.Blit()
+	screen.Display()
 
 	return pixel.Err()
 }

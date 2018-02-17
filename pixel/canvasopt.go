@@ -11,16 +11,16 @@ import (
 
 //------------------------------------------------------------------------------
 
-// A Config represents a configuration option used to change some parameters of
-// the pixel package: see glam.Configure.
-type Config = func() error
+// A CanvasOption represents a configuration option used to change some
+// parameters of a canvas see NewCanvas.
+type CanvasOption = func(Canvas) error
 
 //------------------------------------------------------------------------------
 
 // TargetResolution defines a target resolution for the virtual screen.
-func TargetResolution(w, h int16) Config {
-	return func() error {
-		s := &canvases[Screen]
+func TargetResolution(w, h int16) CanvasOption {
+	return func(cv Canvas) error {
+		s := &canvases[cv]
 		s.target.X, s.target.Y = w, h
 		s.autozoom = true
 		return nil
@@ -28,16 +28,16 @@ func TargetResolution(w, h int16) Config {
 }
 
 // Zoom sets the size of the screen pixels (in window pixels).
-func Zoom(z int32) Config {
-	return func() error {
-		s := &canvases[Screen]
+func Zoom(z int32) CanvasOption {
+	return func(cv Canvas) error {
+		s := &canvases[cv]
 		if z < 1 {
 			return errors.New("pixel zoom null or negative")
 		}
 		s.pixel = z
 		s.autozoom = false
 		if internal.Running {
-			internal.ResizeScreen()
+			Canvas(0).autoresize()
 		}
 		return nil
 	}

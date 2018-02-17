@@ -21,8 +21,13 @@ func init() {
 }
 
 func setupHook() error {
-	// Setup pipeline for rendering on virtual screen
-	createScreen()
+	// Create the canvases
+
+	for i := range canvases {
+		Canvas(i).createBuffer()
+	}
+
+	// Create the paint pipeline
 
 	pipeline = gl.NewPipeline(
 		gl.VertexShader(strings.NewReader(vertexShader)),
@@ -44,7 +49,7 @@ func setupHook() error {
 		gl.DynamicStorage,
 	)
 
-	// Setup pipeline for blitting screen on window
+	// Create the display pipeline
 
 	blitPipeline = gl.NewPipeline(
 		gl.VertexShader(strings.NewReader(blitVertexShader)),
@@ -55,7 +60,7 @@ func setupHook() error {
 
 	blitUBO = gl.NewUniformBuffer(&blitUniforms, gl.DynamicStorage|gl.MapWrite)
 
-	// Create texture atlas for pictures and fonts
+	// Create texture atlases for pictures and fonts
 
 	pictAtlas = atlas.New(1024, 1024)
 	fntAtlas = atlas.New(256, 256)
@@ -129,6 +134,16 @@ func setupHook() error {
 	}
 
 	return gl.Err()
+}
+
+//------------------------------------------------------------------------------
+
+func init() {
+	internal.PixelResize = func() {
+		for i := range canvases {
+			Canvas(i).autoresize()
+		}
+	}
 }
 
 //------------------------------------------------------------------------------

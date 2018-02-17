@@ -27,6 +27,8 @@ var tilesPict [8]struct {
 
 var current grid.Position
 
+var screen = pixel.NewCanvas(pixel.TargetResolution(180, 180))
+
 //------------------------------------------------------------------------------
 
 func main() {
@@ -34,7 +36,6 @@ func main() {
 
 	glam.Configure(
 		glam.Title("Match 3"),
-		pixel.TargetResolution(180, 180),
 	)
 
 	err := glam.Run(loop{})
@@ -52,7 +53,7 @@ func setup() error {
 	}
 
 	// palette.Change("MSX2")
-	pixel.Screen.SetBackground(1)
+	screen.SetBackground(1)
 
 	for i, n := range []string{
 		"red",
@@ -108,7 +109,7 @@ func (loop) Update() error {
 //------------------------------------------------------------------------------
 
 func (loop) MouseButtonDown(_ mouse.Button, _ int) {
-	m := pixel.Screen.Mouse()
+	m := screen.Mouse()
 	current = grid.PositionAt(m)
 	if current != grid.Nowhere() {
 		e := grid.At(current)
@@ -156,8 +157,9 @@ func (lp loop) KeyDown(l key.Label, p key.Position) {
 
 //------------------------------------------------------------------------------
 
-func (loop) ScreenResized(width, height int16, _ int32) {
-	grid.ScreenResized(width, height)
+func (loop) WindowResized(_, _ int32) {
+	w, h := screen.Size().X, screen.Size().Y
+	grid.ScreenResized(w, h)
 }
 
 //------------------------------------------------------------------------------

@@ -5,25 +5,34 @@ package main
 
 import (
 	"github.com/drakmaniso/glam"
+	"github.com/drakmaniso/glam/colour"
 	"github.com/drakmaniso/glam/palette"
 	"github.com/drakmaniso/glam/pixel"
 )
 
 //------------------------------------------------------------------------------
 
-var cursor pixel.Cursor
+var screen = pixel.NewCanvas(pixel.Zoom(2))
+
+var cursor = pixel.NewCursor()
+
+func init() {
+	cursor.Canvas(screen)
+}
 
 var (
 	pixop9  = pixel.NewFont("fonts/pixop9")
 	pixop11 = pixel.NewFont("fonts/pixop11")
 )
 
+var (
+	foreground = palette.Entry(1, "foreground", colour.SRGB8{0x10, 0x10, 0x10})
+	background = palette.Entry(2, "background", colour.SRGB8{0xFF, 0xFE, 0xFD})
+)
+
 //------------------------------------------------------------------------------
 
 func main() {
-	glam.Configure(
-		pixel.Zoom(2),
-	)
 	err := glam.Run(loop{})
 	if err != nil {
 		glam.ShowError(err)
@@ -39,12 +48,7 @@ type loop struct {
 //------------------------------------------------------------------------------
 
 func (loop) Enter() error {
-	palette.Load("MSX2")
-
-	pixel.Screen.SetBackground(palette.Index(255))
-
-	cursor = pixel.NewCursor()
-	cursor.ColorShift(0x20 - 1)
+	screen.SetBackground(background)
 
 	return nil
 }
@@ -58,8 +62,6 @@ func (loop) Update() error {
 //------------------------------------------------------------------------------
 
 func (loop) Draw() error {
-	s := pixel.Screen
-
 	cursor.Locate(16, 8)
 
 	cursor.Font(pixop9)
@@ -109,11 +111,11 @@ func (loop) Draw() error {
 	cursor.Write([]byte("Choo"))
 	cursor.Flush()
 
-	cursor.Locate(s.Size().X-200, 2)
+	cursor.Locate(screen.Size().X-200, 2)
 	cursor.Font(pixop11)
-	cursor.Printf("Position x=%d, y=%d\n", s.Mouse().X, s.Mouse().Y)
+	cursor.Printf("Position x=%d, y=%d\n", screen.Mouse().X, screen.Mouse().Y)
 
-	s.Blit()
+	screen.Display()
 	return nil
 }
 

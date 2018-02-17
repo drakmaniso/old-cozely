@@ -58,9 +58,6 @@ type GameLoop interface {
 	MouseButtonDown(b MouseButton, clicks int)
 	MouseButtonUp(b MouseButton, clicks int)
 	MouseWheel(deltaX, deltaY int32)
-
-	// Pixel events
-	ScreenResized(width, height int16, pixel int32)
 }
 
 //------------------------------------------------------------------------------
@@ -98,7 +95,7 @@ func dispatch(e unsafe.Pointer) {
 			// Ignore
 		case C.SDL_WINDOWEVENT_RESIZED:
 			Window.Width, Window.Height = int32(e.data1), int32(e.data2)
-			ResizeScreen()
+			PixelResize()
 			Loop.WindowResized(Window.Width, Window.Height)
 		case C.SDL_WINDOWEVENT_SIZE_CHANGED:
 			//TODO

@@ -121,8 +121,7 @@ var PaletteSetup = func() error { return nil }
 var PaletteUpload = func() error { return nil }
 
 var PixelSetup = func() error { return nil }
-
-var ResizeScreen = func() {}
+var PixelResize = func() {}
 
 var VectorSetup = func() error { return nil }
 var VectorDraw = func() error { return nil }

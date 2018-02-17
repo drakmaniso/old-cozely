@@ -40,7 +40,7 @@ func NewCursor() Cursor {
 		setErr("in NewCursor", errors.New("too many cursors"))
 		return Cursor(0)
 	}
-	cu := cursor{canvas: Screen} //TODO: fix so that NewCursor can be called at init
+	cu := cursor{canvas: Canvas(0)}
 	cu.params = make([]int16, 0, 128)
 	cursors = append(cursors, cu)
 	return Cursor(len(cursors) - 1)
