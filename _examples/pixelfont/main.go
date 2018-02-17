@@ -14,7 +14,7 @@ import (
 var cursor pixel.Cursor
 
 var (
-	pixop9 = pixel.NewFont("fonts/pixop9")
+	pixop9  = pixel.NewFont("fonts/pixop9")
 	pixop11 = pixel.NewFont("fonts/pixop11")
 )
 
@@ -24,7 +24,7 @@ func main() {
 	glam.Configure(
 		pixel.Zoom(2),
 	)
-	err := glam.Run(setup, loop{})
+	err := glam.Run(loop{})
 	if err != nil {
 		glam.ShowError(err)
 	}
@@ -32,23 +32,21 @@ func main() {
 
 //------------------------------------------------------------------------------
 
-func setup() error {
-	palette.Load("MSX2")
-
-	pixel.SetBackground(palette.Index(255))
-
-	cursor = pixel.NewCursor()
-	cursor.ColorShift(0x20-1)
-
-	pixel.LoadAssets()
-
-	return nil
+type loop struct {
+	glam.Handlers
 }
 
 //------------------------------------------------------------------------------
 
-type loop struct {
-	glam.Handlers
+func (loop) Enter() error {
+	palette.Load("MSX2")
+
+	pixel.Screen.SetBackground(palette.Index(255))
+
+	cursor = pixel.NewCursor()
+	cursor.ColorShift(0x20 - 1)
+
+	return nil
 }
 
 //------------------------------------------------------------------------------
@@ -60,21 +58,21 @@ func (loop) Update() error {
 //------------------------------------------------------------------------------
 
 func (loop) Draw() error {
-	s := pixel.Screen()
+	s := pixel.Screen
 
 	cursor.Locate(16, 8)
 
 	cursor.Font(pixop9)
 	cursor.Println("a quick brown fox \"jumps\" over the (lazy) dog.")
 	cursor.Println("A QUICK BROWN FOX \"JUMPS\" OVER THE (LAZY) DOG.")
-	cursor.Println("0123456789!@#$%^&*()-+=_~[]{}|\\;:'\",.<>/?")
+	cursor.Println("0123456789!@#$^&*()-+=_~[]{}|\\;:'\",.<>/?%")
 	cursor.Println("12+34 56-78 90*13 24/35 -5 +2 3*(2+5) 4<5 6>2 2=1+1 *f := &x;")
 	cursor.Println()
 
 	cursor.Font(pixop11)
 	cursor.Println("a quick brown fox \"jumps\" over the (lazy) dog.")
 	cursor.Println("A QUICK BROWN FOX \"JUMPS\" OVER THE (LAZY) DOG.")
-	cursor.Println("0123456789!@#$%^&*()-+=_~[]{}|\\;:'\",.<>/?")
+	cursor.Println("0123456789!@#$^&*()-+=_~[]{}|\\;:'\",.<>/?%")
 	cursor.Println("12+34 56-78 90*13 24/35 -5 +2 3*(2+5) 4<5 6>2 2=1+1 *f := &x;")
 	cursor.Println()
 

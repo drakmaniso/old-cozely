@@ -19,7 +19,7 @@ var colors [ecs.Size]color
 //------------------------------------------------------------------------------
 
 func (loop) Draw() error {
-	s := pixel.Screen()
+	s := pixel.Screen
 	var x, y int16 // screen coords
 
 	for e := ecs.First; e < ecs.Last(); e++ {

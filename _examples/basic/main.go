@@ -26,12 +26,17 @@ var pts [1024]pixel.Coord
 //------------------------------------------------------------------------------
 
 func main() {
+	for i := range pts {
+		pts[i].X = int16(rand.Intn(320))
+		pts[i].Y = int16(rand.Intn(180))
+	}
+
 	glam.Configure(
 		glam.TimeStep(1.0/60),
 		pixel.TargetResolution(320, 180),
 	)
 
-	err := glam.Run(setup, loop{})
+	err := glam.Run(loop{})
 	if err != nil {
 		glam.ShowError(err)
 		return
@@ -40,31 +45,22 @@ func main() {
 
 //------------------------------------------------------------------------------
 
-func setup() error {
+type loop struct {
+	glam.Handlers
+}
+
+//------------------------------------------------------------------------------
+
+func (loop) Enter() error {
 	palette.Load("MSX2")
-
-	err := pixel.LoadAssets()
-	if err != nil {
-		return err
-	}
-
-	for i := range pts {
-		pts[i].X = int16(rand.Intn(320))
-		pts[i].Y = int16(rand.Intn(180))
-	}
-
 	return pixel.Err()
 }
 
 //------------------------------------------------------------------------------
 
-type loop struct {
-	glam.Handlers
-}
-
 func (loop) Update() error {
 	x++
-	if x >= pixel.Screen().Size().X {
+	if x >= pixel.Screen.Size().X {
 		x = -64
 	}
 
@@ -78,9 +74,11 @@ var (
 	count = 0
 )
 
+//------------------------------------------------------------------------------
+
 func (loop) Draw() error {
-	scr := pixel.Screen()
-	w, h := scr.Size().X, scr.Size().Y
+	s := pixel.Screen
+	w, h := s.Size().X, s.Size().Y
 
 	timer += glam.FrameTime()
 	if timer > 0.25 {
@@ -93,34 +91,34 @@ func (loop) Draw() error {
 		}
 	}
 
-	scr.PointList(0x05, pts[:]...)
+	s.PointList(0x05, pts[:]...)
 
-	scr.Picture(logo, x, 10)
+	s.Picture(logo, x, 10)
 
-	scr.Picture(mire, 0, 0)
-	scr.Picture(mire, w-32, 0)
-	scr.Picture(mire, 0, h-32)
-	scr.Picture(mire, w-32, h-32)
+	s.Picture(mire, 0, 0)
+	s.Picture(mire, w-32, 0)
+	s.Picture(mire, 0, h-32)
+	s.Picture(mire, w-32, h-32)
 
-	scr.Picture(logo, w/2-32, 20)
+	s.Picture(logo, w/2-32, 20)
 
-	scr.Picture(midrgb, w/2-48, h/2-20)
-	scr.Picture(midgray, w/2-16, h/2+20+8)
+	s.Picture(midrgb, w/2-48, h/2-20)
+	s.Picture(midgray, w/2-16, h/2+20+8)
 
-	scr.Point(0x18, w/2, 60)
+	s.Point(0x18, w/2, 60)
 	for xx := int16(4); xx < w; xx += 8 {
-		scr.Point(0x18, xx, (x+xx)%h)
+		s.Point(0x18, xx, (x+xx)%h)
 	}
 
-	m := scr.Mouse()
+	m := s.Mouse()
 
-	scr.Point(0x18, w/2, h/2)
-	scr.Point(0x18, m.X, m.Y)
-	scr.Line(0xE8, w/2, h/2, m.X, m.Y)
-	scr.Point(0xE0, w/2, h/2)
-	scr.Point(0xE0, m.X, m.Y)
+	s.Point(0x18, w/2, h/2)
+	s.Point(0x18, m.X, m.Y)
+	s.Line(0xE8, w/2, h/2, m.X, m.Y)
+	s.Point(0xE0, w/2, h/2)
+	s.Point(0xE0, m.X, m.Y)
 
-	scr.Blit()
+	s.Blit()
 
 	return pixel.Err()
 }

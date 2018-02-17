@@ -16,7 +16,7 @@ import (
 //------------------------------------------------------------------------------
 
 func main() {
-	err := glam.Run(nil, loop{})
+	err := glam.Run(loop{})
 	if err != nil {
 		glam.ShowError(err)
 		return

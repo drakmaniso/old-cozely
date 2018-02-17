@@ -17,8 +17,10 @@ import (
 // the game state and render it.
 type GameLoop interface {
 	// The loop
+	Enter() error
 	Update() error
 	Draw() error
+	Leave() error
 
 	// Window events
 	WindowShown()
@@ -69,7 +71,7 @@ type Handlers = internal.Handlers
 //
 // Important: must be called from main.main, or at least from a function that is
 // known to run on the main OS thread.
-func Run(setup func() error, loop GameLoop) error {
+func Run(loop GameLoop) error {
 	defer internal.SDLQuit()
 	defer internal.DestroyWindow()
 
@@ -102,18 +104,6 @@ func Run(setup func() error, loop GameLoop) error {
 		return internal.Error("in vector setup", err)
 	}
 
-	if setup != nil {
-		err = setup()
-		if err != nil {
-			return internal.Error("in game setup", err)
-		}
-	}
-
-	err = internal.PixelPostSetup()
-	if err != nil {
-		return internal.Error("in pixel Setup", err)
-	}
-
 	// First, send a fake resize window event
 	internal.Loop.WindowResized(internal.Window.Width, internal.Window.Height)
 	internal.ResizeScreen()
@@ -128,6 +118,9 @@ func Run(setup func() error, loop GameLoop) error {
 	then := internal.GetSeconds()
 	now := then
 	gametime := 0.0
+	internal.GameTime = gametime
+
+	internal.Loop.Enter()
 
 	for !internal.QuitRequested {
 		internal.FrameTime = now - then
@@ -179,6 +172,8 @@ func Run(setup func() error, loop GameLoop) error {
 		then = now
 		now = internal.GetSeconds()
 	}
+
+	internal.Loop.Leave()
 
 	internal.Running = false
 

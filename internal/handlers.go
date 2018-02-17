@@ -12,54 +12,68 @@ type Handlers struct{}
 
 //------------------------------------------------------------------------------
 
+// Enter does nothing
+func (Handlers) Enter() error {return nil}
+
+// Update does nothing
+func (Handlers) Update() error {return nil}
+
+// Draw does nothing
+func (Handlers) Draw() error {return nil}
+
+// Leave does nothing
+func (Handlers) Leave() error {return nil}
+
+//------------------------------------------------------------------------------
+
 // WindowShown does nothing.
-func (h Handlers) WindowShown() {}
+func (Handlers) WindowShown() {}
 
 // WindowHidden does nothing.
-func (h Handlers) WindowHidden() {}
+func (Handlers) WindowHidden() {}
 
 // WindowResized does nothing.
-func (h Handlers) WindowResized(width, height int32) {}
+func (Handlers) WindowResized(width, height int32) {}
 
 // WindowMinimized does nothing.
-func (h Handlers) WindowMinimized() {}
+func (Handlers) WindowMinimized() {}
 
 // WindowMaximized does nothing.
-func (h Handlers) WindowMaximized() {}
+func (Handlers) WindowMaximized() {}
 
 // WindowRestored does nothing.
-func (h Handlers) WindowRestored() {}
+func (Handlers) WindowRestored() {}
 
 // WindowMouseEnter does nothing.
-func (h Handlers) WindowMouseEnter() {}
+func (Handlers) WindowMouseEnter() {}
 
 // WindowMouseLeave does nothing.
-func (h Handlers) WindowMouseLeave() {}
+func (Handlers) WindowMouseLeave() {}
 
 // WindowFocusGained does nothing.
-func (h Handlers) WindowFocusGained() {}
+func (Handlers) WindowFocusGained() {}
 
 // WindowFocusLost does nothing.
-func (h Handlers) WindowFocusLost() {}
+func (Handlers) WindowFocusLost() {}
 
 // WindowQuit requests the game loop to stop.
-func (h Handlers) WindowQuit() {
+func (Handlers) WindowQuit() {
 	QuitRequested = true
 }
 
 //------------------------------------------------------------------------------
 
 // MouseMotion does nothing.
-func (h Handlers) MouseMotion(dx, dy int32, x, y int32) {}
+func (Handlers) MouseMotion(dx, dy int32, x, y int32) {}
 
 // MouseButtonDown does nothing.
-func (h Handlers) MouseButtonDown(b MouseButton, clicks int) {}
+func (Handlers) MouseButtonDown(b MouseButton, clicks int) {}
 
 // MouseButtonUp does nothing.
-func (h Handlers) MouseButtonUp(b MouseButton, clicks int) {}
+func (Handlers) MouseButtonUp(b MouseButton, clicks int) {}
 
 // MouseWheel does nothing.
-func (h Handlers) MouseWheel(dx, dy int32) {}
+func (Handlers) MouseWheel(dx, dy int32) {}
 
 //------------------------------------------------------------------------------
 
@@ -74,11 +88,11 @@ func (h Handlers) KeyDown(l KeyLabel, p KeyPosition) {
 }
 
 // KeyUp does nothing.
-func (h Handlers) KeyUp(l KeyLabel, p KeyPosition) {
-}
+func (Handlers) KeyUp(l KeyLabel, p KeyPosition) {}
 
 //------------------------------------------------------------------------------
 
-func (h Handlers) ScreenResized(width, height int16, pixel int32) {}
+// ScreenResized does nothing
+func (Handlers) ScreenResized(width, height int16, pixel int32) {}
 
 //------------------------------------------------------------------------------

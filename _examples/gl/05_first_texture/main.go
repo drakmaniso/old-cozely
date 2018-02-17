@@ -20,7 +20,7 @@ import (
 //------------------------------------------------------------------------------
 
 func main() {
-	err := glam.Run(setup, loop{})
+	err := glam.Run(loop{})
 	if err != nil {
 		glam.ShowError(err)
 		return
@@ -63,7 +63,13 @@ var (
 
 //------------------------------------------------------------------------------
 
-func setup() error {
+type loop struct {
+	glam.Handlers
+}
+
+//------------------------------------------------------------------------------
+
+func (loop) Enter() error {
 	// Create and configure the pipeline
 	pipeline = gl.NewPipeline(
 		gl.Shader(glam.Path()+"shader.vert"),
@@ -113,12 +119,6 @@ func setup() error {
 	pipeline.Unbind()
 
 	return glam.Error("gl", gl.Err())
-}
-
-//------------------------------------------------------------------------------
-
-type loop struct {
-	glam.Handlers
 }
 
 //------------------------------------------------------------------------------

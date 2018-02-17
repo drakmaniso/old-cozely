@@ -55,21 +55,15 @@ func setupHook() error {
 
 	blitUBO = gl.NewUniformBuffer(&blitUniforms, gl.DynamicStorage|gl.MapWrite)
 
-	// Prepare picture loading
+	// Create texture atlas for pictures and fonts
 
 	pictAtlas = atlas.New(1024, 1024)
 	fntAtlas = atlas.New(256, 256)
 
-	return gl.Err()
-}
-
-//------------------------------------------------------------------------------
-
-func init() {
-	internal.PixelPostSetup = postSetupHook
-}
-
-func postSetupHook() error {
+	err := loadAssets()
+	if err != nil {
+		return err
+	}
 	//TODO: handle the case when there is no pictures
 
 	// Mappings Buffer

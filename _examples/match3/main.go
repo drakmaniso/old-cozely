@@ -30,11 +30,14 @@ var current grid.Position
 //------------------------------------------------------------------------------
 
 func main() {
+	setup()
+
 	glam.Configure(
 		glam.Title("Match 3"),
 		pixel.TargetResolution(180, 180),
 	)
-	err := glam.Run(setup, loop{})
+
+	err := glam.Run(loop{})
 	if err != nil {
 		glam.ShowError(err)
 	}
@@ -49,7 +52,7 @@ func setup() error {
 	}
 
 	// palette.Change("MSX2")
-	pixel.SetBackground(1)
+	pixel.Screen.SetBackground(1)
 
 	for i, n := range []string{
 		"red",
@@ -63,11 +66,6 @@ func setup() error {
 	} {
 		tilesPict[i].normal = pixel.NewPicture("graphics/" + n)
 		tilesPict[i].big = pixel.NewPicture("graphics/" + n + "_big")
-	}
-
-	err = pixel.LoadAssets()
-	if err != nil {
-		return err
 	}
 
 	current = grid.Nowhere()
@@ -110,7 +108,7 @@ func (loop) Update() error {
 //------------------------------------------------------------------------------
 
 func (loop) MouseButtonDown(_ mouse.Button, _ int) {
-	m := pixel.Screen().Mouse()
+	m := pixel.Screen.Mouse()
 	current = grid.PositionAt(m)
 	if current != grid.Nowhere() {
 		e := grid.At(current)
@@ -139,7 +137,7 @@ func (loop) MouseButtonUp(_ mouse.Button, _ int) {
 
 //------------------------------------------------------------------------------
 
-func (loop) KeyDown(l key.Label, _ key.Position) {
+func (lp loop) KeyDown(l key.Label, p key.Position) {
 	switch l {
 	case key.LabelSpace:
 		f := func(e ecs.Entity) {
@@ -150,6 +148,9 @@ func (loop) KeyDown(l key.Label, _ key.Position) {
 		}
 		grid.TestAndMark(testMatch, f)
 		println()
+
+	default:
+		lp.Handlers.KeyDown(l, p)
 	}
 }
 

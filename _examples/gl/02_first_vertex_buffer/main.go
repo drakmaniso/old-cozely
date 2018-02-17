@@ -15,7 +15,7 @@ import (
 //------------------------------------------------------------------------------
 
 func main() {
-	err := glam.Run(setup, loop{})
+	err := glam.Run(loop{})
 	if err != nil {
 		glam.ShowError(err)
 		return
@@ -32,12 +32,18 @@ var (
 // Vertex buffer
 type mesh []struct {
 	position plane.Coord `layout:"0"`
-	color    colour.LRGB  `layout:"1"`
+	color    colour.LRGB `layout:"1"`
 }
 
 //------------------------------------------------------------------------------
 
-func setup() error {
+type loop struct {
+	glam.Handlers
+}
+
+//------------------------------------------------------------------------------
+
+func (loop) Enter() error {
 	var triangle mesh
 
 	// Create and configure the pipeline
@@ -63,12 +69,6 @@ func setup() error {
 	pipeline.Unbind()
 
 	return glam.Error("gl", gl.Err())
-}
-
-//------------------------------------------------------------------------------
-
-type loop struct {
-	glam.Handlers
 }
 
 //------------------------------------------------------------------------------

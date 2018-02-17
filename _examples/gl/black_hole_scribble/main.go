@@ -19,11 +19,14 @@ import (
 //------------------------------------------------------------------------------
 
 func main() {
+	angles = make([]float32, len(points))
+	speeds = make([]float32, len(points))
+
 	glam.Configure(
 		glam.Multisample(8),
 	)
 
-	err := glam.Run(setup, loop{})
+	err := glam.Run(loop{})
 	if err != nil {
 		glam.ShowError(err)
 		return
@@ -61,7 +64,13 @@ var (
 
 //------------------------------------------------------------------------------
 
-func setup() error {
+type loop struct {
+	glam.Handlers
+}
+
+//------------------------------------------------------------------------------
+
+func (loop) Enter() error {
 	// Create and configure the pipeline
 	pipeline = gl.NewPipeline(
 		gl.Shader(glam.Path()+"shader.vert"),
@@ -69,10 +78,6 @@ func setup() error {
 		gl.Topology(gl.Points),
 		gl.VertexFormat(0, points[:]),
 	)
-	gl.Enable(gl.FramebufferSRGB)
-	gl.Enable(gl.Blend)
-	gl.Blending(gl.SrcAlpha, gl.OneMinusSrcAlpha)
-	gl.PointSize(3.0)
 
 	// Create the uniform buffer
 	perFrameUBO = gl.NewUniformBuffer(&perFrame, gl.DynamicStorage)
@@ -80,8 +85,6 @@ func setup() error {
 
 	// Create and fill the vertex buffer
 	// points = make(mesh, len(points))
-	angles = make([]float32, len(points))
-	speeds = make([]float32, len(points))
 	setupPoints()
 	pointsVBO = gl.NewVertexBuffer(points[:], gl.DynamicStorage)
 
@@ -91,12 +94,6 @@ func setup() error {
 	pipeline.Unbind()
 
 	return glam.Error("gl", gl.Err())
-}
-
-//------------------------------------------------------------------------------
-
-type loop struct {
-	glam.Handlers
 }
 
 //------------------------------------------------------------------------------
@@ -133,6 +130,10 @@ func (loop) Draw() error {
 	}
 	if updated {
 		pipeline.Bind()
+		gl.Enable(gl.FramebufferSRGB)
+		gl.Enable(gl.Blend)
+		gl.Blending(gl.SrcAlpha, gl.OneMinusSrcAlpha)
+		gl.PointSize(3.0)
 
 		perFrameUBO.Bind(0)
 		perFrameUBO.SubData(&perFrame, 0)

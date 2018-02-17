@@ -25,7 +25,7 @@ var (
 
 //------------------------------------------------------------------------------
 
-func LoadAssets() error {
+func loadAssets() error {
 	if internal.Running {
 		return errors.New("loading graphics while running not implemented")
 	}
@@ -33,7 +33,7 @@ func LoadAssets() error {
 	// Scan all pictures
 
 	for n, p := range pictureNames {
-		err := scan(n, p)
+		err := scanPicture(n, p)
 		if err != nil {
 			//TODO: sticky error instead?
 			return err
@@ -67,7 +67,7 @@ func LoadAssets() error {
 
 //------------------------------------------------------------------------------
 
-func scan(n string, p Picture) error {
+func scanPicture(n string, p Picture) error {
 	//TODO: support other image formats?
 	path := filepath.FromSlash(internal.Path + n + ".png")
 	path, err := filepath.EvalSymlinks(path)

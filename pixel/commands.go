@@ -20,7 +20,8 @@ const (
 
 //------------------------------------------------------------------------------
 
-func (s *ScreenCanvas) appendCommand(c uint32, v uint32, n uint32, params ...int16) {
+func (cv Canvas) appendCommand(c uint32, v uint32, n uint32, params ...int16) {
+	s := &canvases[cv]
 	l := len(s.commands)
 	if l > 0 &&
 		c != cmdText &&

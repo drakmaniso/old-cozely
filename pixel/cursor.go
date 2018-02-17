@@ -20,7 +20,7 @@ import (
 type Cursor uint8
 
 type cursor struct {
-	canvas   *ScreenCanvas
+	canvas   Canvas
 	font     Font
 	color    palette.Index
 	tracking int16
@@ -40,7 +40,7 @@ func NewCursor() Cursor {
 		setErr("in NewCursor", errors.New("too many cursors"))
 		return Cursor(0)
 	}
-	cu := cursor{canvas: Screen()} //TODO: fix so that NewCursor can be called at init
+	cu := cursor{canvas: Screen} //TODO: fix so that NewCursor can be called at init
 	cu.params = make([]int16, 0, 128)
 	cursors = append(cursors, cu)
 	return Cursor(len(cursors) - 1)
@@ -51,9 +51,9 @@ func NewCursor() Cursor {
 // Canvas sets the cursor to display text on v.
 //
 // Note: Flush is automatically called before the change.
-func (c Cursor) Canvas(v *ScreenCanvas) {
+func (c Cursor) Canvas(cv Canvas) {
 	c.Flush()
-	cursors[c].canvas = v
+	cursors[c].canvas = cv
 }
 
 //------------------------------------------------------------------------------

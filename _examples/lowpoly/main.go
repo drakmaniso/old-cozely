@@ -24,7 +24,7 @@ func main() {
 		glam.TimeStep(1.0 / 50),
 	)
 
-	err := glam.Run(setup, loop{})
+	err := glam.Run(loop{})
 	if err != nil {
 		glam.ShowError(err)
 		return
@@ -66,7 +66,13 @@ var meshes poly.Meshes
 
 //------------------------------------------------------------------------------
 
-func setup() error {
+type loop struct {
+	glam.Handlers
+}
+
+//------------------------------------------------------------------------------
+
+func (loop) Enter() error {
 	pipeline = gl.NewPipeline(
 		poly.PipelineSetup(),
 		poly.ToneMapACES(),
@@ -100,12 +106,6 @@ func setup() error {
 	misc.SunIlluminance = poly.DirectionalLightSpectralIlluminance(116400.0, 5400.0)
 
 	return glam.Error("gl", gl.Err())
-}
-
-//------------------------------------------------------------------------------
-
-type loop struct {
-	glam.Handlers
 }
 
 //------------------------------------------------------------------------------

@@ -30,9 +30,11 @@ import "C"
 // GameLoop methods are called to setup the game, and during the main loop to
 // process events, Update the game state and Draw it.
 type GameLoop interface {
-	// Update and Draw
+	// The loop
+	Enter() error
 	Update() error
 	Draw() error
+	Leave() error
 
 	// Window events
 	WindowShown()

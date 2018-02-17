@@ -17,7 +17,9 @@ import (
 
 func (l loop) WindowResized(w, h int32) {
 	gl.Viewport(0, 0, w, h)
-	camera.WindowResized()
+	if camera != nil {
+		camera.WindowResized()
+	}
 }
 
 //------------------------------------------------------------------------------

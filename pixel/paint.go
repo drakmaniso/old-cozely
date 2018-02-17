@@ -10,7 +10,9 @@ import (
 
 //------------------------------------------------------------------------------
 
-func (s *ScreenCanvas) Blit() error {
+func (cv Canvas) Blit() error {
+	s := &canvases[cv]
+
 	internal.PaletteUpload()
 
 	for c := range cursors {

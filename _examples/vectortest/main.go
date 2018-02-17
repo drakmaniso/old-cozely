@@ -14,7 +14,7 @@ import (
 //------------------------------------------------------------------------------
 
 func main() {
-	err := glam.Run(setup, loop{})
+	err := glam.Run(loop{})
 	if err != nil {
 		glam.ShowError(err)
 	}
@@ -22,15 +22,15 @@ func main() {
 
 //------------------------------------------------------------------------------
 
-func setup() error {
-	palette.Change("MSX2")
-	return nil
+type loop struct {
+	glam.Handlers
 }
 
 //------------------------------------------------------------------------------
 
-type loop struct {
-	glam.Handlers
+func (loop) Enter() error {
+	palette.Load("MSX2")
+	return nil
 }
 
 //------------------------------------------------------------------------------

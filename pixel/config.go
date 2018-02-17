@@ -20,8 +20,9 @@ type Config = func() error
 // TargetResolution defines a target resolution for the virtual screen.
 func TargetResolution(w, h int16) Config {
 	return func() error {
-		screen.target.X, screen.target.Y = w, h
-		screen.autozoom = true
+		s := &canvases[Screen]
+		s.target.X, s.target.Y = w, h
+		s.autozoom = true
 		return nil
 	}
 }
@@ -29,11 +30,12 @@ func TargetResolution(w, h int16) Config {
 // Zoom sets the size of the screen pixels (in window pixels).
 func Zoom(z int32) Config {
 	return func() error {
+		s := &canvases[Screen]
 		if z < 1 {
 			return errors.New("pixel zoom null or negative")
 		}
-		screen.pixel = z
-		screen.autozoom = false
+		s.pixel = z
+		s.autozoom = false
 		if internal.Running {
 			internal.ResizeScreen()
 		}
