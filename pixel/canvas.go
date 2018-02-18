@@ -23,7 +23,6 @@ type canvas struct {
 	size       Coord
 	pixel      int32
 	ox, oy     int32 // Offset when there is a border around the screen
-	background palette.Index
 	commands   []gl.DrawIndirectCommand
 	parameters []int16
 }
@@ -144,7 +143,6 @@ func (cv Canvas) Paint() {
 	pipeline.Bind()
 	gl.Disable(gl.Blend)
 	gl.DepthMask(false)
-	s.buffer.ClearColorUint(uint32(s.background), 0, 0, 0)
 
 	screenUBO.Bind(layoutScreen)
 	commandsICBO.Bind()
@@ -190,18 +188,20 @@ func (cv Canvas) Display() {
 
 //------------------------------------------------------------------------------
 
+func (cv Canvas) Clear(c palette.Index) {
+	s := &canvases[cv]
+	// s.buffer.Bind(gl.DrawFramebuffer) //TODO: necessary or not?
+	s.buffer.ClearColorUint(uint32(c), 0, 0, 0)
+}
+
+//------------------------------------------------------------------------------
+
 func (cv Canvas) Size() Coord {
 	return canvases[cv].size
 }
 
 func (cv Canvas) Pixel() int32 {
 	return canvases[cv].pixel
-}
-
-//------------------------------------------------------------------------------
-
-func (cv Canvas) SetBackground(c palette.Index) {
-	canvases[cv].background = c
 }
 
 //------------------------------------------------------------------------------

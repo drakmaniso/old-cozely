@@ -4,9 +4,10 @@
 package main
 
 import (
+	"github.com/drakmaniso/glam/x/gl"
+
 	"github.com/drakmaniso/glam/_examples/match3/ecs"
 	"github.com/drakmaniso/glam/_examples/match3/grid"
-	"github.com/drakmaniso/glam/x/gl"
 )
 
 //------------------------------------------------------------------------------
@@ -18,6 +19,8 @@ var colors [ecs.Size]color
 //------------------------------------------------------------------------------
 
 func (loop) Draw() error {
+	screen.Clear(1)
+	
 	var x, y int16 // screen coords
 
 	for e := ecs.First; e < ecs.Last(); e++ {

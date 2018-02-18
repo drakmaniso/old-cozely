@@ -53,7 +53,6 @@ func setup() error {
 	}
 
 	// palette.Change("MSX2")
-	screen.SetBackground(1)
 
 	for i, n := range []string{
 		"red",

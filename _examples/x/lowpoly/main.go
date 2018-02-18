@@ -12,7 +12,7 @@ import (
 	"github.com/drakmaniso/glam/colour"
 	"github.com/drakmaniso/glam/mouse"
 	"github.com/drakmaniso/glam/plane"
-	"github.com/drakmaniso/glam/poly"
+	"github.com/drakmaniso/glam/x/poly"
 	"github.com/drakmaniso/glam/space"
 	"github.com/drakmaniso/glam/x/gl"
 )
@@ -86,9 +86,9 @@ func (loop) Enter() error {
 
 	//
 	meshes = poly.Meshes{}
-	// meshes.AddObj(glam.Path() + "../shared/cube.obj")
-	// meshes.AddObj(glam.Path() + "../shared/teapot.obj")
-	meshes.AddObj(glam.Path() + "../shared/suzanne.obj")
+	// meshes.AddObj(glam.Path() + "../../shared/cube.obj")
+	// meshes.AddObj(glam.Path() + "../../shared/teapot.obj")
+	meshes.AddObj(glam.Path() + "../../shared/suzanne.obj")
 	// meshes.AddObj("E:/objtestfiles/pony.obj")
 	poly.SetupMeshBuffers(meshes)
 

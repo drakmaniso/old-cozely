@@ -2,6 +2,6 @@
 // Licensed under a simplified BSD license (see LICENSE file).
 
 /*
-Package pixel provides a virtual screen designed to display pixel art.
+Package pixel provides types and functions to display pixel art.
 */
 package pixel

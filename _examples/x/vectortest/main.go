@@ -8,7 +8,7 @@ import (
 	"github.com/drakmaniso/glam/colour"
 	"github.com/drakmaniso/glam/mouse"
 	"github.com/drakmaniso/glam/palette"
-	"github.com/drakmaniso/glam/vector"
+	"github.com/drakmaniso/glam/x/vector"
 )
 
 //------------------------------------------------------------------------------

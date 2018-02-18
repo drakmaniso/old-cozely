@@ -14,6 +14,8 @@ import (
 
 //------------------------------------------------------------------------------
 
+var screen = pixel.NewCanvas(pixel.TargetResolution(320, 180))
+
 var (
 	logo    = pixel.NewPicture("graphics/logo")
 	mire    = pixel.NewPicture("graphics/mire")
@@ -22,8 +24,6 @@ var (
 )
 
 var pts [1024]pixel.Coord
-
-var screen = pixel.NewCanvas(pixel.TargetResolution(320, 180))
 
 //------------------------------------------------------------------------------
 
@@ -78,6 +78,8 @@ var (
 //------------------------------------------------------------------------------
 
 func (loop) Draw() error {
+	screen.Clear(0)
+	
 	w, h := screen.Size().X, screen.Size().Y
 
 	timer += glam.FrameTime()

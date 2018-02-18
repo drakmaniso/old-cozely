@@ -47,14 +47,6 @@ type loop struct {
 
 //------------------------------------------------------------------------------
 
-func (loop) Enter() error {
-	screen.SetBackground(background)
-
-	return nil
-}
-
-//------------------------------------------------------------------------------
-
 func (loop) Update() error {
 	return nil
 }
@@ -62,6 +54,8 @@ func (loop) Update() error {
 //------------------------------------------------------------------------------
 
 func (loop) Draw() error {
+	screen.Clear(background)
+
 	cursor.Locate(16, 8)
 
 	cursor.Font(pixop9)
