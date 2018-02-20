@@ -4,6 +4,8 @@
 package main
 
 import (
+	"math/rand"
+
 	"github.com/drakmaniso/glam"
 	"github.com/drakmaniso/glam/palette"
 	"github.com/drakmaniso/glam/pixel"
@@ -26,11 +28,27 @@ type line struct {
 
 var lines []line
 
+type point struct {
+	pos   pixel.Coord
+	vel   pixel.Coord
+	acc   pixel.Coord
+	color palette.Index
+}
+
+var points [100]point
+
 //------------------------------------------------------------------------------
 
 func main() {
+	for i := range points {
+		points[i].pos.X = int16(rand.Intn(640))
+		points[i].pos.Y = int16(rand.Intn(360))
+		// points[i].acc.X = int16(rand.Intn(4))
+		// points[i].acc.Y = int16(rand.Intn(4))
+		points[i].color = palette.Index(1 + rand.Intn(255))
+	}
 	glam.Configure(
-		glam.TimeStep(1 / 60.0),
+		glam.TimeStep(1 / 30.0),
 	)
 	err := glam.Run(loop{})
 	if err != nil {
@@ -56,6 +74,23 @@ func (loop) Enter() error {
 var step int16
 
 func (loop) Update() error {
+	m := screen.Mouse()
+	for i := range points {
+		pt := &points[i]
+		pt.acc = m.Minus(pt.pos).Slash(64)
+		pt.vel = pt.vel.Plus(pt.acc)
+		if pt.vel.X > 8 {
+			pt.vel.X = 8
+		} else if pt.vel.X < -8 {
+			pt.vel.X = -8
+		}
+		if pt.vel.Y > 8 {
+			pt.vel.Y = 8
+		} else if pt.vel.Y < -8 {
+			pt.vel.Y = -8
+		}
+		pt.pos = pt.pos.Plus(pt.vel)
+	}
 	switch {
 	case step < 100:
 		s := step
@@ -107,6 +142,9 @@ func (loop) Draw() error {
 	ox, oy := (s.X-300)/2, (s.Y-300)/2
 	for i, l := range lines {
 		screen.Line(palette.Index(i+int(step)), ox+l.ax, oy+l.ay, ox+l.bx, oy+l.by)
+	}
+	for _, p := range points {
+		screen.Point(p.color, p.pos.X, p.pos.Y)
 	}
 	screen.Display()
 	return pixel.Err()

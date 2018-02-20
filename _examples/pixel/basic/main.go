@@ -34,7 +34,7 @@ func main() {
 	}
 
 	glam.Configure(
-		glam.TimeStep(1.0/60),
+		glam.TimeStep(1.0 / 60),
 	)
 
 	err := glam.Run(loop{})
@@ -79,7 +79,7 @@ var (
 
 func (loop) Draw() error {
 	screen.Clear(0)
-	
+
 	w, h := screen.Size().X, screen.Size().Y
 
 	timer += glam.FrameTime()
@@ -93,7 +93,9 @@ func (loop) Draw() error {
 		}
 	}
 
-	screen.PointList(0x05, pts[:]...)
+	for _, p := range pts {
+		screen.Point(0x05, p.X, p.Y)
+	}
 
 	screen.Picture(logo, x, 10)
 

@@ -47,6 +47,10 @@ static inline void FramebufferClearColorUint(GLuint fbo, const GLuint *v) {
 	glClearNamedFramebufferuiv(fbo, GL_COLOR, 0, v);
 }
 
+static inline void FramebufferClearDepth(GLuint fbo, const GLfloat v) {
+	glClearNamedFramebufferfv(fbo, GL_DEPTH, 0, &v);
+}
+
 static inline void FramebufferBlit(GLuint fbo, GLuint dstFbo, GLint srcX1, GLint srcY1, GLint srcX2, GLint srcY2, GLint dstX1, GLint dstY1, GLint dstX2, GLint dstY2, GLbitfield m, GLenum f) {
 	glBlitNamedFramebuffer(fbo, dstFbo, srcX1, srcY1, srcX2, srcY2, dstX1, dstY1, dstX2, dstY2, m, f);
 }
@@ -178,6 +182,10 @@ func (fb Framebuffer) ClearColorUint(r, g, b, a uint32) {
 	c.B = b
 	c.A = a
 	C.FramebufferClearColorUint(fb.object, (*C.GLuint)(unsafe.Pointer(&c)))
+}
+
+func (fb Framebuffer) ClearDepth(d float32) {
+	C.FramebufferClearDepth(fb.object, (C.GLfloat)(d))
 }
 
 //------------------------------------------------------------------------------

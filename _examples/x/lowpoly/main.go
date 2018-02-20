@@ -8,13 +8,16 @@ package main
 import (
 	"fmt"
 
+	"github.com/drakmaniso/glam/palette"
+	"github.com/drakmaniso/glam/pixel"
+
 	"github.com/drakmaniso/glam"
 	"github.com/drakmaniso/glam/colour"
 	"github.com/drakmaniso/glam/mouse"
 	"github.com/drakmaniso/glam/plane"
-	"github.com/drakmaniso/glam/x/poly"
 	"github.com/drakmaniso/glam/space"
 	"github.com/drakmaniso/glam/x/gl"
+	"github.com/drakmaniso/glam/x/poly"
 )
 
 //------------------------------------------------------------------------------
@@ -30,6 +33,16 @@ func main() {
 		return
 	}
 }
+
+//------------------------------------------------------------------------------
+
+var overlay = pixel.NewCanvas(pixel.Zoom(2))
+
+var cursor = pixel.NewCursor()
+
+var font = pixel.NewFont("../../pixel/print/fonts/pixop11")
+
+var txtColor = palette.Entry(1, "text", colour.SRGB8{0xFF, 0xFF, 0xFF})
 
 //------------------------------------------------------------------------------
 
@@ -78,8 +91,8 @@ func (loop) Enter() error {
 		poly.ToneMapACES(),
 		gl.Shader(glam.Path()+"shader.vert"),
 		gl.Shader(glam.Path()+"shader.frag"),
+		gl.DepthTest(true),
 	)
-	gl.Enable(gl.FramebufferSRGB)
 
 	// Create the uniform buffer
 	miscUBO = gl.NewUniformBuffer(&misc, gl.DynamicStorage)
@@ -145,11 +158,16 @@ func (loop) Draw() error {
 
 	prepare()
 
+	gl.DefaultFramebuffer.Bind(gl.DrawFramebuffer)
+	w, h := glam.WindowSize()
+	gl.Viewport(0, 0, w, h)
 	pipeline.Bind()
+	gl.DepthMask(true)
 	gl.ClearDepthBuffer(1.0)
 	gl.ClearColorBuffer(colour.LRGBA{0.0, 0.0, 0.0, 1.0})
 	// gl.ClearColorBuffer(colour.LRGBA{0.4, 0.45, 0.5, 1.0})
 	gl.Disable(gl.Blend)
+	gl.Enable(gl.FramebufferSRGB)
 
 	camera.Bind()
 	miscUBO.SubData(&misc, 0)
@@ -160,6 +178,15 @@ func (loop) Draw() error {
 	gl.Draw(0, int32(len(meshes.Faces)*6))
 
 	pipeline.Unbind()
+
+	overlay.Clear(0)
+	cursor.Locate(2, 2)
+	ft, or := glam.FrameStats()
+	cursor.Printf("% 3.2f", ft*1000)
+	if or > 0 {
+		cursor.Printf(" (%d)", or)
+	}
+	overlay.Display()
 
 	return gl.Err()
 }

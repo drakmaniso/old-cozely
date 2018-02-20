@@ -15,31 +15,19 @@ const (
 	cmdPictureExt = 2
 	cmdText       = 3
 	cmdPoint      = 4
-	cmdPointList  = 5
-	cmdLine       = 6
+	cmdLine       = 5
 )
 
 //------------------------------------------------------------------------------
 
-func (cv Canvas) Picture(p Picture, x, y int16) {
-	cv.appendCommand(cmdPicture, 4, 1, int16(p), x, y)
+func (cv Canvas) Picture(p Picture, x, y, z int16) {
+	cv.appendCommand(cmdPicture, 4, 1, int16(p), x, y, z)
 }
 
 //------------------------------------------------------------------------------
 
 func (cv Canvas) Point(c palette.Index, x, y int16) {
 	cv.appendCommand(cmdPoint, 3, 1, int16(c), x, y)
-}
-
-func (cv Canvas) PointList(c palette.Index, pts ...Coord) {
-	if len(pts) < 1 {
-		return
-	}
-	prm := []int16{int16(c)} //TODO: remove alloc
-	for _, p := range pts {
-		prm = append(prm, p.X, p.Y)
-	}
-	cv.appendCommand(cmdPointList, 3, uint32(len(prm)/2-1), prm...)
 }
 
 //------------------------------------------------------------------------------
@@ -55,7 +43,6 @@ func (cv Canvas) appendCommand(c uint32, v uint32, n uint32, params ...int16) {
 	l := len(s.commands)
 	if l > 0 &&
 		c != cmdText &&
-		c != cmdPointList &&
 		(s.commands[l-1].FirstVertex>>2) == c {
 		// Collapse with previous draw
 		s.commands[l-1].InstanceCount += n

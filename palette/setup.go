@@ -21,7 +21,6 @@ func init() {
 func setupHook() error {
 
 	ssbo = gl.NewStorageBuffer(uintptr(256*4*4), gl.DynamicStorage|gl.MapWrite)
-	ssbo.Bind(0)
 
 	return gl.Err()
 }
@@ -37,6 +36,7 @@ func uploadHook() error {
 		ssbo.SubData(colours[:], 0)
 		changed = false
 	}
+	ssbo.Bind(0)
 
 	return gl.Err()
 }

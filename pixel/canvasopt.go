@@ -17,7 +17,12 @@ type CanvasOption = func(Canvas) error
 
 //------------------------------------------------------------------------------
 
-// TargetResolution defines a target resolution for the virtual screen.
+// TargetResolution defines a target resolution for the automatic resizing of
+// the canvas.
+//
+// It guarantees that:
+// - the canvas will never be smaller than the target resolution,
+// - the target resolution will occupy as much screen as possible.
 func TargetResolution(w, h int16) CanvasOption {
 	return func(cv Canvas) error {
 		s := &canvases[cv]
@@ -27,7 +32,7 @@ func TargetResolution(w, h int16) CanvasOption {
 	}
 }
 
-// Zoom sets the size of the screen pixels (in window pixels).
+// Zoom sets the pixel size used to display the canvas.
 func Zoom(z int32) CanvasOption {
 	return func(cv Canvas) error {
 		s := &canvases[cv]

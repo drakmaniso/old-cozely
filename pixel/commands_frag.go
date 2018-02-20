@@ -8,8 +8,7 @@ const uint cmdPicture    = 1;
 const uint cmdPictureExt = 2;
 const uint cmdText       = 3;
 const uint cmdPoint      = 4;
-const uint cmdPointList  = 5;
-const uint cmdLine       = 6;
+const uint cmdLine       = 5;
 
 //------------------------------------------------------------------------------
 
@@ -66,7 +65,6 @@ void main(void)
 		break;
 
 	case cmdPoint:
-	case cmdPointList:
 		c = ColorIndex;
 		break;
 
