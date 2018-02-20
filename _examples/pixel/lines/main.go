@@ -141,10 +141,14 @@ func (loop) Draw() error {
 	s := screen.Size()
 	ox, oy := (s.X-300)/2, (s.Y-300)/2
 	for i, l := range lines {
-		screen.Line(palette.Index(i+int(step)), ox+l.ax, oy+l.ay, ox+l.bx, oy+l.by)
+		screen.Line(
+			palette.Index(i+int(step)),
+			ox+l.ax, oy+l.ay, int16(-i),
+			ox+l.bx, oy+l.by, int16(i),
+		)
 	}
 	for _, p := range points {
-		screen.Point(p.color, p.pos.X, p.pos.Y)
+		screen.Point(p.color, p.pos.X, p.pos.Y, 0)
 	}
 	screen.Display()
 	return pixel.Err()

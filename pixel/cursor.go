@@ -20,13 +20,13 @@ import (
 type Cursor uint8
 
 type cursor struct {
-	canvas   Canvas
-	font     Font
-	color    palette.Index
-	tracking int16
-	leading  int16
-	x, y, dx int16
-	params   []int16
+	canvas      Canvas
+	font        Font
+	color       palette.Index
+	tracking    int16
+	leading     int16
+	x, y, z, dx int16
+	params      []int16
 }
 
 var cursors []cursor
@@ -86,27 +86,28 @@ func (c Cursor) ColorShift(s palette.Index) {
 //------------------------------------------------------------------------------
 
 // Locate moves the cursor to a specific position. It also defines column x as
-// the starting point for new line of text: i.e. when writing a newline, the
+// the starting point for new lines of text: i.e. when writing a newline, the
 // cursor will be set to the coordinate (x, current y + interline).
 //
 // Note: Flush is automatically called before the relocation. See also Move and
 // Moveto.
-func (c Cursor) Locate(x, y int16) {
+func (c Cursor) Locate(x, y, z int16) {
 	cu := &cursors[c]
 	c.Flush()
-	cu.x, cu.y = x, y
+	cu.x, cu.y, cu.z = x, y, z
 	cu.dx = 0
 }
 
 // Move moves the cursor relatively to its current position.
 //
 // Note: it does not change the starting point for new lines, and only Flush the
-// cursor when dy is not null. See also MoveTo and Locate.
-func (c Cursor) Move(dx, dy int16) {
+// cursor when dy or dz are not null. See also MoveTo and Locate.
+func (c Cursor) Move(dx, dy, dz int16) {
 	cu := &cursors[c]
-	if dy != 0 {
+	if dy != 0 || dz != 0 {
 		c.Flush()
 		cu.y += dy
+		cu.z += dz
 	}
 	cu.dx += dx
 }
@@ -114,20 +115,22 @@ func (c Cursor) Move(dx, dy int16) {
 // MoveTo changes the cursor position.
 //
 // Note: it does not change the starting point for new lines, and only Flush the
-// cursor when dy is not null. See also Move and Locate.
-func (c Cursor) MoveTo(x, y int16) {
+// cursor when y or z are different than the current position. See also Move and
+// Locate.
+func (c Cursor) MoveTo(x, y, z int16) {
 	cu := &cursors[c]
-	if y != cu.y {
+	if y != cu.y || z != cu.z {
 		c.Flush()
 		cu.y = y
+		cu.z = z
 	}
 	cu.dx = (x - cu.x)
 }
 
 // Position returns the current cursor position.
-func (c Cursor) Position() Coord {
+func (c Cursor) Position() (x, y, z int16) {
 	cu := &cursors[c]
-	return Coord{cu.x + cu.dx, cu.y}
+	return cu.x + cu.dx, cu.y, cu.z
 }
 
 //TODO: implement Link and Unlink
@@ -199,7 +202,12 @@ func (c Cursor) WriteRune(r rune) {
 	}
 
 	if len(cu.params) == 0 {
-		cu.params = append(cu.params, int16(cu.font), int16(cu.color), cu.x, cu.y)
+		cu.params = append(
+			cu.params,
+			int16(cu.font),
+			int16(cu.color),
+			cu.x, cu.y, cu.z,
+		)
 	}
 
 	g := cu.font.glyph(r)

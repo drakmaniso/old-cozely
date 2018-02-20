@@ -26,14 +26,14 @@ func (cv Canvas) Picture(p Picture, x, y, z int16) {
 
 //------------------------------------------------------------------------------
 
-func (cv Canvas) Point(c palette.Index, x, y int16) {
-	cv.appendCommand(cmdPoint, 3, 1, int16(c), x, y)
+func (cv Canvas) Point(c palette.Index, x, y, z int16) {
+	cv.appendCommand(cmdPoint, 3, 1, int16(c), x, y, z)
 }
 
 //------------------------------------------------------------------------------
 
-func (cv Canvas) Line(c palette.Index, x1, y1, x2, y2 int16) {
-	cv.appendCommand(cmdLine, 4, 1, int16(c), x1, y1, x2, y2)
+func (cv Canvas) Line(c palette.Index, x1, y1, z1, x2, y2, z2 int16) {
+	cv.appendCommand(cmdLine, 4, 1, int16(c), x1, y1, z1, x2, y2, z2)
 }
 
 //------------------------------------------------------------------------------

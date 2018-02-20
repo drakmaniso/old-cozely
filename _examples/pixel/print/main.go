@@ -56,7 +56,7 @@ func (loop) Update() error {
 func (loop) Draw() error {
 	screen.Clear(background)
 
-	cursor.Locate(16, 8)
+	cursor.Locate(16, 8, 0)
 
 	cursor.Font(pixop9)
 	cursor.Println("a quick brown fox \"jumps\" over the (lazy) dog.")
@@ -91,21 +91,21 @@ func (loop) Draw() error {
 	cursor.Println()
 
 	cursor.Font(pixop9)
-	cursor.Locate(500, 100)
+	cursor.Locate(500, 100, 0)
 	cursor.Write([]byte("Foo"))
-	cursor.Move(1, 3)
+	cursor.Move(1, 3, 0)
 	cursor.WriteRune('B')
-	cursor.Move(2, 2)
+	cursor.Move(2, 2, 0)
 	cursor.WriteRune('a')
-	cursor.Move(3, 1)
+	cursor.Move(3, 1,0)
 	cursor.WriteRune('r')
-	cursor.MoveTo(532, 132)
+	cursor.MoveTo(532, 132,0)
 	cursor.Flush()
 	cursor.Write([]byte("Boo\n"))
 	cursor.Write([]byte("Choo"))
 	cursor.Flush()
 
-	cursor.Locate(screen.Size().X-200, 2)
+	cursor.Locate(screen.Size().X-200, 2,0)
 	cursor.Font(pixop11)
 	cursor.Printf("Position x=%d, y=%d\n", screen.Mouse().X, screen.Mouse().Y)
 

@@ -47,15 +47,22 @@ out PerVertex {
 
 //------------------------------------------------------------------------------
 
+float floatZ(int z) {
+	return float(z)/float(0x7FFF);
+}
+
+//------------------------------------------------------------------------------
+
 void main(void)
 {
 	Command = gl_VertexID >> 2;
 	int param = gl_BaseInstance;
 	int vertex = gl_VertexID & 0x3;
 
-	int x, y, z, x1, y1, x2, y2, dx, dy;
+	int x, y, z, x1, y1, z1, x2, y2, z2, dx, dy;
 	uint c;
-	vec2 p, wh, v, ov, pts[4];
+	vec2 p, wh;
+	vec3 v, ov, pts[4];
 	switch (Command) {
 	case cmdPicture:
 		// Parameters
@@ -71,7 +78,7 @@ void main(void)
 		wh = vec2(texelFetch(pictureMap, m+3).r, texelFetch(pictureMap, m+4).r);
 		// Picture quad
 		p = (vec2(x, y) + corners[vertex] * wh) * PixelSize;
-		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), float(z)/float(0x7FFF), 1);
+		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), floatZ(z), 1);
 		UV += corners[vertex] * wh;
 		break;
 
@@ -81,11 +88,10 @@ void main(void)
 		c = texelFetch(parameters, param+1).r;
 		x = texelFetch(parameters, param+2).r;
 		y = texelFetch(parameters, param+3).r;
+		z = texelFetch(parameters, param+4).r;
 		// Parameter for the current character
-		int r = texelFetch(parameters, param+4 + 2*gl_InstanceID+0).r;
-		// int cr = int(r & 0x7F);
-		// dx = int((r >> 7)&0x1FF);
-		dx = texelFetch(parameters, param+4 + 2*gl_InstanceID+1).r;
+		int r = texelFetch(parameters, param+5 + 2*gl_InstanceID+0).r;
+		dx = texelFetch(parameters, param+5 + 2*gl_InstanceID+1).r;
 		// Mapping of the current character
 		r *= 5;
 		Bin = texelFetch(glyphMap, r+0).r;
@@ -93,45 +99,48 @@ void main(void)
 		wh = vec2(texelFetch(glyphMap, r+3).r, texelFetch(glyphMap, r+4).r);
 		// Character quad
 		p = (vec2(x+dx, y) + corners[vertex] * wh) * PixelSize;
-		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), 0.5, 1);
+		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), floatZ(z), 1);
 		UV += corners[vertex] * wh;
 		ColorIndex = uint(c);
 		break;
 
 	case cmdPoint:
-		param += 3*gl_InstanceID;
+		param += 4*gl_InstanceID;
 		// Parameters
 		c = texelFetch(parameters, param+0).r;
 		x = texelFetch(parameters, param+1).r;
 		y = texelFetch(parameters, param+2).r;
+		z = texelFetch(parameters, param+3).r;
 		// Position
 		p = (vec2(x, y) + corners[vertex] * vec2(1.5,1.5)) * PixelSize;
-		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), 0.5, 1);
+		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), floatZ(z), 1);
 		// Color
 		ColorIndex = uint(c);
 		break;
 
 	case cmdLine:
-		param += 5*gl_InstanceID;
+		param += 7*gl_InstanceID;
 		// Parameters
 		c = texelFetch(parameters, param+0).r;
 		x1 = texelFetch(parameters, param+1).r;
 		y1 = texelFetch(parameters, param+2).r;
-		x2 = texelFetch(parameters, param+3).r;
-		y2 = texelFetch(parameters, param+4).r;
+		z1 = texelFetch(parameters, param+3).r;
+		x2 = texelFetch(parameters, param+4).r;
+		y2 = texelFetch(parameters, param+5).r;
+		z2 = texelFetch(parameters, param+6).r;
 		// Position
 		dx = x2-x1;
 		dy = y2-y1;
-		v = 0.5*normalize(vec2(x2-x1, y2-y1));
-		ov = 0.5*normalize(vec2(-y2+y1, x2-x1));
-		pts = vec2[4](
-			vec2(x1, y1)-v-ov,
-			vec2(x2, y2)+v-ov,
-			vec2(x1, y1)-v+ov,
-			vec2(x2, y2)+v+ov
+		v = vec3(0.5*normalize(vec2(x2-x1, y2-y1)), 0.0);
+		ov = vec3(0.5*normalize(vec2(-y2+y1, x2-x1)), 0.0);
+		pts = vec3[4](
+			vec3(x1, y1, floatZ(z1))-v-ov,
+			vec3(x2, y2, floatZ(z2))+v-ov,
+			vec3(x1, y1, floatZ(z1))-v+ov,
+			vec3(x2, y2, floatZ(z2))+v+ov
 		);
-		p = (vec2(0.5,0.5) + pts[vertex]) * PixelSize;
-		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), 0.5, 1);
+		p = (vec2(0.5,0.5) + pts[vertex].xy) * PixelSize;
+		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), pts[vertex].z, 1);
 		Orig = vec2(x1, y1);
 		Steep = abs(dx) < abs(dy);
 		if (Steep) {

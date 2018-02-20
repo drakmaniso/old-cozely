@@ -92,6 +92,7 @@ func (loop) Enter() error {
 		gl.Shader(glam.Path()+"shader.vert"),
 		gl.Shader(glam.Path()+"shader.frag"),
 		gl.DepthTest(true),
+		gl.DepthWrite(true),
 	)
 
 	// Create the uniform buffer
@@ -162,7 +163,6 @@ func (loop) Draw() error {
 	w, h := glam.WindowSize()
 	gl.Viewport(0, 0, w, h)
 	pipeline.Bind()
-	gl.DepthMask(true)
 	gl.ClearDepthBuffer(1.0)
 	gl.ClearColorBuffer(colour.LRGBA{0.0, 0.0, 0.0, 1.0})
 	// gl.ClearColorBuffer(colour.LRGBA{0.4, 0.45, 0.5, 1.0})
@@ -180,7 +180,7 @@ func (loop) Draw() error {
 	pipeline.Unbind()
 
 	overlay.Clear(0)
-	cursor.Locate(2, 2)
+	cursor.Locate(2, 2, 0)
 	ft, or := glam.FrameStats()
 	cursor.Printf("% 3.2f", ft*1000)
 	if or > 0 {

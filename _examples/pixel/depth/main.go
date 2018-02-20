@@ -4,9 +4,10 @@
 package main
 
 import (
-	"github.com/drakmaniso/glam/palette"
 	"math/rand"
+
 	"github.com/drakmaniso/glam"
+	"github.com/drakmaniso/glam/palette"
 	"github.com/drakmaniso/glam/pixel"
 )
 
@@ -22,8 +23,8 @@ var shapes = []pixel.Picture{
 }
 
 type object struct {
-	pict pixel.Picture
-	pos  pixel.Coord
+	pict  pixel.Picture
+	pos   pixel.Coord
 	depth int16
 }
 
@@ -67,13 +68,12 @@ func (loop) Enter() error {
 	return nil
 }
 
-
 //------------------------------------------------------------------------------
 
 func (loop) Draw() error {
 	screen.Clear(0)
 	for i, o := range objects {
-		if i > int(glam.GameTime()*25.0) {
+		if float64(i)/32 > glam.GameTime() {
 			break
 		}
 		screen.Picture(o.pict, o.pos.X, o.pos.Y, o.depth)
