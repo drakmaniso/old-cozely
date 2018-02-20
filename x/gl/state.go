@@ -24,10 +24,6 @@ static inline void Blending(GLenum src, GLenum dst) {
 static inline void PointSize(GLfloat s) {
 	glPointSize(s);
 }
-
-static inline void DepthMask(GLboolean w) {
-	glDepthMask(w);
-}
 */
 import "C"
 
@@ -109,16 +105,6 @@ const (
 // PointSize sets the size used when drawing points.
 func PointSize(s float32) {
 	C.PointSize(C.GLfloat(s))
-}
-
-//------------------------------------------------------------------------------
-
-func DepthMask(write bool) {
-	w := (C.GLboolean)(C.GL_FALSE)
-	if write {
-		w = (C.GLboolean)(C.GL_TRUE)
-	}
-	C.DepthMask(w)
 }
 
 //------------------------------------------------------------------------------

@@ -60,6 +60,7 @@ typedef struct {
 
 	// Depth and Stencil State
 	GLboolean	depthTest;
+	GLboolean	depthWrite;
 	GLenum    depthComparison;
 	GLboolean	stencilTest;
 } PipelineState;
@@ -141,6 +142,11 @@ static inline void BindPipeline(GLuint p, GLuint vao, PipelineState *state) {
 			glDisable(GL_DEPTH_TEST);
 		}
 		currentState.depthTest = state->depthTest;
+	}
+
+	if (state->depthWrite != currentState.depthTest) {
+		glDepthMask(state->depthWrite);
+		currentState.depthWrite = state->depthWrite;
 	}
 
 	if (state->depthComparison != currentState.depthComparison) {
@@ -434,6 +440,17 @@ func DepthTest(enable bool) PipelineConfig {
 	}
 	return func(p *Pipeline) {
 		p.state.depthTest = C.GL_FALSE
+	}
+}
+
+func DepthWrite(enable bool) PipelineConfig {
+	if enable {
+		return func(p *Pipeline) {
+			p.state.depthWrite = C.GL_TRUE
+		}
+	}
+	return func(p *Pipeline) {
+		p.state.depthWrite = C.GL_FALSE
 	}
 }
 

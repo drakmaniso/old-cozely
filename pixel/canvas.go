@@ -141,7 +141,6 @@ func (cv Canvas) Paint() {
 	gl.Viewport(0, 0, int32(s.size.X), int32(s.size.Y))
 	pipeline.Bind()
 	gl.Disable(gl.Blend)
-	gl.DepthMask(true)
 
 	screenUBO.Bind(layoutScreen)
 	commandsICBO.Bind()
@@ -176,7 +175,6 @@ func (cv Canvas) Display() {
 	gl.DefaultFramebuffer.Bind(gl.DrawFramebuffer)
 	gl.Enable(gl.FramebufferSRGB)
 	gl.Disable(gl.Blend)
-	gl.DepthMask(false)
 	gl.Viewport(s.ox, s.oy, s.ox+w, s.ox+h)
 	blitUBO.Bind(0)
 	s.texture.Bind(0)
@@ -188,8 +186,7 @@ func (cv Canvas) Display() {
 func (cv Canvas) Clear(c palette.Index) {
 	s := &canvases[cv]
 	s.buffer.ClearColorUint(uint32(c), 0, 0, 0)
-	gl.DepthMask(true)
-	s.buffer.ClearDepth(1.0)
+	s.buffer.ClearDepth(-1.0)
 }
 
 //------------------------------------------------------------------------------
