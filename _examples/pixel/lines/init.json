@@ -1,3 +1,7 @@
 {
-	"Debug": true
+	"Debug": true,
+	"WindowSize": [
+		720,
+		720
+	]
 }

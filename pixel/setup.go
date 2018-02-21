@@ -32,6 +32,7 @@ func setupHook() error {
 	pipeline = gl.NewPipeline(
 		gl.VertexShader(strings.NewReader(vertexShader)),
 		gl.FragmentShader(strings.NewReader(fragmentShader)),
+		gl.CullFace(false, false),
 		gl.Topology(gl.TriangleStrip),
 		gl.DepthTest(true),
 		gl.DepthWrite(true),

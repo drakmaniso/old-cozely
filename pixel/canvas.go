@@ -45,7 +45,7 @@ func NewCanvas(o ...CanvasOption) Canvas {
 	s.target = Coord{X: 640, Y: 360}
 	s.pixel = 2
 	s.commands = make([]gl.DrawIndirectCommand, 0, maxCommandCount)
-	s.parameters = make([]int16, 0, maxCommandCount*maxParamCount)
+	s.parameters = make([]int16, 0, maxParamCount)
 
 	for i := range o {
 		o[i](cv)

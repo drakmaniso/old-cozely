@@ -8,7 +8,8 @@ const uint cmdPicture    = 1;
 const uint cmdPictureExt = 2;
 const uint cmdText       = 3;
 const uint cmdPoint      = 4;
-const uint cmdLine       = 5;
+const uint cmdLines      = 5;
+const uint cmdTriangles  = 6;
 
 //------------------------------------------------------------------------------
 
@@ -65,10 +66,11 @@ void main(void)
 		break;
 
 	case cmdPoint:
+	case cmdTriangles:
 		c = ColorIndex;
 		break;
 
-	case cmdLine:
+	case cmdLines:
 		x = gl_FragCoord.x - Orig.x;
 		y = gl_FragCoord.y - Orig.y;
 		if (Steep) {

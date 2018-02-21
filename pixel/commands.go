@@ -15,7 +15,8 @@ const (
 	cmdPictureExt = 2
 	cmdText       = 3
 	cmdPoint      = 4
-	cmdLine       = 5
+	cmdLines      = 5
+	cmdTriangles  = 6
 )
 
 //------------------------------------------------------------------------------
@@ -32,8 +33,29 @@ func (cv Canvas) Point(c palette.Index, x, y, z int16) {
 
 //------------------------------------------------------------------------------
 
-func (cv Canvas) Line(c palette.Index, x1, y1, z1, x2, y2, z2 int16) {
-	cv.appendCommand(cmdLine, 4, 1, int16(c), x1, y1, z1, x2, y2, z2)
+func (cv Canvas) Lines(c palette.Index, z int16, strip ...Coord) {
+	if len(strip) < 2 {
+		return
+	}
+	prm := []int16{int16(c), z} //TODO: remove alloc
+	for _, p := range strip {
+		prm = append(prm, p.X, p.Y)
+	}
+	cv.appendCommand(cmdLines, 4, uint32(len(strip)-1), prm...)
+	// cv.appendCommand(cmdLine, 4, 1, int16(c), z, x1, y1, x2, y2)
+}
+
+//------------------------------------------------------------------------------
+
+func (cv Canvas) Triangles(c palette.Index, z int16, strip ...Coord) {
+	if len(strip) < 3 {
+		return
+	}
+	prm := []int16{int16(c), z} //TODO: remove alloc
+	for _, p := range strip {
+		prm = append(prm, p.X, p.Y)
+	}
+	cv.appendCommand(cmdTriangles, uint32(len(strip)), 1, prm...)
 }
 
 //------------------------------------------------------------------------------
@@ -43,7 +65,9 @@ func (cv Canvas) appendCommand(c uint32, v uint32, n uint32, params ...int16) {
 	l := len(s.commands)
 	if l > 0 &&
 		c != cmdText &&
-		(s.commands[l-1].FirstVertex>>2) == c {
+		c != cmdLines &&
+		c != cmdTriangles &&
+		(s.commands[l-1].BaseInstance>>24) == c {
 		// Collapse with previous draw
 		s.commands[l-1].InstanceCount += n
 	} else {
@@ -51,8 +75,8 @@ func (cv Canvas) appendCommand(c uint32, v uint32, n uint32, params ...int16) {
 		s.commands = append(s.commands, gl.DrawIndirectCommand{
 			VertexCount:   v,
 			InstanceCount: n,
-			FirstVertex:   uint32(c << 2),
-			BaseInstance:  uint32(len(s.parameters)),
+			FirstVertex:   0,
+			BaseInstance:  uint32(c<<24 | uint32(len(s.parameters)&0xFFFFFF)),
 		})
 	}
 
