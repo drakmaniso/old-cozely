@@ -1,9 +1,11 @@
 // Copyright (c) 2018-2018 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
-package main
+package pixel_test
 
 import (
+	"testing"
+
 	"github.com/drakmaniso/glam"
 	"github.com/drakmaniso/glam/colour"
 	"github.com/drakmaniso/glam/palette"
@@ -12,12 +14,12 @@ import (
 
 //------------------------------------------------------------------------------
 
-var screen = pixel.NewCanvas(pixel.Zoom(2))
+var curScreen = pixel.NewCanvas(pixel.Zoom(2))
 
 var cursor = pixel.NewCursor()
 
 func init() {
-	cursor.Canvas(screen)
+	cursor.Canvas(curScreen)
 }
 
 var (
@@ -32,29 +34,38 @@ var (
 
 //------------------------------------------------------------------------------
 
-func main() {
-	err := glam.Run(loop{})
-	if err != nil {
-		glam.ShowError(err)
-	}
+func TestCursor_print(t *testing.T) {
+	do(func() {
+		err := glam.Run(curLoop{})
+		if err != nil {
+			t.Error(err)
+		}
+	})
 }
 
 //------------------------------------------------------------------------------
 
-type loop struct {
+type curLoop struct {
 	glam.Handlers
 }
 
 //------------------------------------------------------------------------------
 
-func (loop) Update() error {
+func (curLoop) Enter() error {
+	palette.Load("graphics/shape1")
 	return nil
 }
 
 //------------------------------------------------------------------------------
 
-func (loop) Draw() error {
-	screen.Clear(background)
+func (curLoop) Update() error {
+	return nil
+}
+
+//------------------------------------------------------------------------------
+
+func (curLoop) Draw() error {
+	curScreen.Clear(21)
 
 	cursor.Locate(16, 8, 0)
 
@@ -97,19 +108,19 @@ func (loop) Draw() error {
 	cursor.WriteRune('B')
 	cursor.Move(2, 2, 0)
 	cursor.WriteRune('a')
-	cursor.Move(3, 1,0)
+	cursor.Move(3, 1, 0)
 	cursor.WriteRune('r')
-	cursor.MoveTo(532, 132,0)
+	cursor.MoveTo(532, 132, 0)
 	cursor.Flush()
 	cursor.Write([]byte("Boo\n"))
 	cursor.Write([]byte("Choo"))
 	cursor.Flush()
 
-	cursor.Locate(screen.Size().X-200, 2,0)
+	cursor.Locate(curScreen.Size().X-200, 2, 0)
 	cursor.Font(pixop11)
-	cursor.Printf("Position x=%d, y=%d\n", screen.Mouse().X, screen.Mouse().Y)
+	cursor.Printf("Position x=%d, y=%d\n", curScreen.Mouse().X, curScreen.Mouse().Y)
 
-	screen.Display()
+	curScreen.Display()
 	return nil
 }
 
