@@ -26,15 +26,20 @@ import "C"
 func init() {
 	runtime.LockOSThread()
 
-	var err error
-	FilePath, err = os.Executable()
-	if err != nil {
-		FilePath = filepath.Dir(os.Args[0])
+	_, err := os.Stat("testdata")
+	if err == nil {
+		FilePath = "testdata"
+		Path = "testdata/"
+	} else {
+		FilePath, err = os.Executable()
+		if err != nil {
+			FilePath = filepath.Dir(os.Args[0])
+		}
+		FilePath = filepath.Dir(FilePath)
+		FilePath, _ = filepath.EvalSymlinks(FilePath)
+		FilePath = filepath.Clean(FilePath)
+		Path = filepath.ToSlash(FilePath) + "/"
 	}
-	FilePath = filepath.Dir(FilePath)
-	FilePath, _ = filepath.EvalSymlinks(FilePath)
-	FilePath = filepath.Clean(FilePath)
-	Path = filepath.ToSlash(FilePath) + "/"
 }
 
 //------------------------------------------------------------------------------
@@ -44,12 +49,14 @@ func Setup() error {
 
 	//TODO: test if file present.
 	f, err := os.Open(Path + "init.json")
-	if err != nil {
-		return Error(`in configuration file "init.json" opening`, err)
-	}
-	d := json.NewDecoder(f)
-	if err := d.Decode(&Config); err != nil {
-		return Error(`in configuration file "init.json" parsing`, err)
+	if !os.IsNotExist(err) {
+		if err != nil {
+			return Error(`in configuration file "init.json" opening`, err)
+		}
+		d := json.NewDecoder(f)
+		if err := d.Decode(&Config); err != nil {
+			return Error(`in configuration file "init.json" parsing`, err)
+		}
 	}
 
 	// Setup logger

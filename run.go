@@ -173,6 +173,7 @@ func Run(loop GameLoop) error {
 	internal.Loop.Leave()
 
 	internal.Running = false
+	internal.QuitRequested = false
 
 	return nil
 }
