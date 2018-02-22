@@ -65,7 +65,7 @@ void main(void)
 	int x, y, z, x2, y2, x3, y3, dx, dy;
 	uint c;
 	vec2 p, wh;
-	vec2 v, ov, pts[4];
+	vec2 t, n, pts[4];
 	switch (Command) {
 	case cmdPicture:
 		// Parameters
@@ -132,20 +132,20 @@ void main(void)
 		x2 = texelFetch(parameters, param+4+offset).r;
 		y2 = texelFetch(parameters, param+5+offset).r;
 		// Position
+		Orig = vec2(x, y);
 		dx = x2-x;
 		dy = y2-y;
-		v = 0.5*normalize(vec2(x2-x, y2-y));
-		ov = 0.5*normalize(vec2(-y2+y, x2-x));
+		Steep = abs(dx) < abs(dy);
+		t = 0.25*normalize(vec2(dx, dy));
+		n = 0.75*normalize(vec2(-dy, dx));
 		pts = vec2[4](
-			vec2(x, y)-v-ov,
-			vec2(x2, y2)+v-ov,
-			vec2(x, y)-v+ov,
-			vec2(x2, y2)+v+ov
+			vec2(x, y)+n-t,
+			vec2(x, y)-n-t,
+			vec2(x2, y2)+n+t,
+			vec2(x2, y2)-n+t
 		);
 		p = (vec2(0.5,0.5) + pts[vertex].xy) * PixelSize;
 		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), floatZ(z), 1);
-		Orig = vec2(x, y);
-		Steep = abs(dx) < abs(dy);
 		if (Steep) {
 			Slope = float(dx)/float(dy);
 		} else {
