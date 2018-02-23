@@ -21,18 +21,23 @@ const (
 
 //------------------------------------------------------------------------------
 
+// Picture adds a command to show a picture on the canvas.
 func (cv Canvas) Picture(p Picture, x, y, z int16) {
 	cv.appendCommand(cmdPicture, 4, 1, int16(p), x, y, z)
 }
 
 //------------------------------------------------------------------------------
 
+// Point adds a command to draw a point on the canvas.
 func (cv Canvas) Point(c palette.Index, x, y, z int16) {
 	cv.appendCommand(cmdPoint, 3, 1, int16(c), x, y, z)
 }
 
 //------------------------------------------------------------------------------
 
+// Lines adds a command to draw a line strip on the canvas. A line strip is a
+// succesion of points connected by lines; all points and lines share the same
+// depth and color.
 func (cv Canvas) Lines(c palette.Index, z int16, strip ...Coord) {
 	if len(strip) < 2 {
 		return
@@ -47,6 +52,9 @@ func (cv Canvas) Lines(c palette.Index, z int16, strip ...Coord) {
 
 //------------------------------------------------------------------------------
 
+// Triangles adds a command to draw a triangle strip on the canvas. Triangle
+// strip have the same meaning than in OpenGL. All points and triangles share
+// the same depth and color.
 func (cv Canvas) Triangles(c palette.Index, z int16, strip ...Coord) {
 	if len(strip) < 3 {
 		return

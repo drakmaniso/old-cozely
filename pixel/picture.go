@@ -9,6 +9,7 @@ import (
 
 //------------------------------------------------------------------------------
 
+// A Picture identifies an image than can be displayed on a Canvas.
 type Picture uint16
 
 var pictureNames map[string]Picture
@@ -31,8 +32,10 @@ var pictureMap = []mapping{
 
 //------------------------------------------------------------------------------
 
-func NewPicture(name string) Picture {
-	p, ok := pictureNames[name]
+// NewPicture reserves an ID for a picture, that will be loaded from path by
+// glam.Run.
+func NewPicture(path string) Picture {
+	p, ok := pictureNames[path]
 	if ok {
 		return p
 	}
@@ -41,10 +44,10 @@ func NewPicture(name string) Picture {
 		setErr("in NewPitcture", errors.New("too many pictures"))
 		return Picture(0)
 	}
-	
+
 	pictureMap = append(pictureMap, mapping{})
 	p = Picture(len(pictureMap) - 1)
-	pictureNames[name] = p
+	pictureNames[path] = p
 	return p
 }
 

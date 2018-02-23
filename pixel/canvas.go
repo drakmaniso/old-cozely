@@ -29,10 +29,13 @@ type canvas struct {
 
 var canvases []canvas
 
+// A Canvas identifies a surface that can be used to draw, print text or show
+// pictures.
 type Canvas uint16
 
 //------------------------------------------------------------------------------
 
+// NewCanvas reserves an ID for a new canvas, that will be created by glam.Run.
 func NewCanvas(o ...CanvasOption) Canvas {
 	if len(canvases) >= 0xFFFF {
 		setErr("in NewCanvas", errors.New("too many canvases"))
@@ -120,6 +123,9 @@ func (cv Canvas) createTextures() {
 
 //------------------------------------------------------------------------------
 
+// Paint executes all pending commands on the canvas. It is automatically called
+// by Display; the only reason to call it manually is to be able to read from it
+// before display.
 func (cv Canvas) Paint() {
 	s := &canvases[cv]
 
@@ -159,6 +165,8 @@ func (cv Canvas) Paint() {
 
 //------------------------------------------------------------------------------
 
+// Display first execute all pending commands on the canvas (if any), then
+// displays it on the game window.
 func (cv Canvas) Display() {
 	cv.Paint()
 
@@ -183,18 +191,23 @@ func (cv Canvas) Display() {
 
 //------------------------------------------------------------------------------
 
-func (cv Canvas) Clear(c palette.Index) {
+// Clear sets both the color and peth of all pixels on the canvas. Only the
+// color is specified, the depth being initialized to the minimum value.
+func (cv Canvas) Clear(color palette.Index) {
 	s := &canvases[cv]
-	s.buffer.ClearColorUint(uint32(c), 0, 0, 0)
+	s.buffer.ClearColorUint(uint32(color), 0, 0, 0)
 	s.buffer.ClearDepth(-1.0)
 }
 
 //------------------------------------------------------------------------------
 
+// Size returns the current dimension of the canvas.
 func (cv Canvas) Size() Coord {
 	return canvases[cv].size
 }
 
+// Pixel returns the size of pixel that will be used to display the canvas on
+// the game window.
 func (cv Canvas) Pixel() int32 {
 	return canvases[cv].pixel
 }
