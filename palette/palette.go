@@ -31,17 +31,7 @@ func Clear() {
 	for c := range colours {
 		colours[c] = colour.LRGBA{1, 0, 1, 1}
 	}
-	Entry(0, colour.LRGBA{0, 0, 0, 0})
-}
-
-//------------------------------------------------------------------------------
-
-// Entry configures an entry in the palette and returns its index.
-func Entry(index uint8, v colour.Colour) Index {
-	c := Index(index)
-	colours[c] = colour.LRGBAOf(v)
-	changed = true
-	return c
+	Index(0).SetColour(colour.LRGBA{0, 0, 0, 0})
 }
 
 //------------------------------------------------------------------------------
