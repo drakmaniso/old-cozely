@@ -40,6 +40,7 @@ func Clear() {
 		colours[c] = colour.LRGBA{1, 0, 1, 1}
 	}
 	Index(0).SetColour(colour.LRGBA{0, 0, 0, 0})
+	Index(0).Rename("transparent")
 }
 
 //------------------------------------------------------------------------------

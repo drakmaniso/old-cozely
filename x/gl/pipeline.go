@@ -169,13 +169,13 @@ static inline void UnbindPipeline() {
 	glBindVertexArray(0);
 }
 
-void ClosePipeline(GLuint p, GLuint vao) {
+void PipelineDelete(GLuint p, GLuint vao) {
 	glDeleteVertexArrays(1, &vao);
-	glDeleteProgramPipelines(1, &p);
+	glDeleteProgram(p);
 }
 
 void DeletePipelineProgram(GLuint p) {
-	glDeleteProgramPipelines(1, &p);
+	glDeleteProgram(p);
 }
 
 void DeletePipelineVAO(GLuint vao) {
@@ -222,10 +222,6 @@ type Pipeline struct {
 	state  C.PipelineState
 }
 
-type pipelineState struct {
-	cullMode C.GLuint
-}
-
 //------------------------------------------------------------------------------
 
 // A PipelineConfig represents a configuration option used when creating a new
@@ -262,6 +258,7 @@ func NewPipeline(o ...PipelineConfig) *Pipeline {
 		defer C.free(unsafe.Pointer(errm))
 		setErr("linking shaders", errors.New(C.GoString(errm)))
 	}
+	//TODO: unlink shaders
 	// A bit inelegant, but makes the API easier
 	if oObj != p.object {
 		C.DeletePipelineProgram(oObj)
@@ -315,9 +312,9 @@ var currentPipeline *Pipeline
 
 //------------------------------------------------------------------------------
 
-// Close the pipeline.
-func (p *Pipeline) Close() {
-	C.ClosePipeline(p.object, p.vao)
+// Delete closes the pipeline.
+func (p *Pipeline) Delete() {
+	C.PipelineDelete(p.object, p.vao)
 }
 
 //------------------------------------------------------------------------------

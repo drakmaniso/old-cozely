@@ -68,15 +68,41 @@ type Handlers = internal.Handlers
 //
 // Important: must be called from main.main, or at least from a function that is
 // known to run on the main OS thread.
-func Run(loop GameLoop) error {
-	defer internal.SDLQuit()
-	defer internal.DestroyWindow()
+func Run(loop GameLoop) (err error) {
+	defer func() {
+		internal.Running = false
+		internal.QuitRequested = false
+
+		err = internal.VectorCleanup()
+		if err != nil {
+			err = internal.Error("in vector cleanup", err)
+			return
+		}
+
+		err = internal.PixelCleanup()
+		if err != nil {
+			err = internal.Error("in pixel cleanup", err)
+			return
+		}
+
+		err = internal.PaletteCleanup()
+		if err != nil {
+			err = internal.Error("in palette cleanup", err)
+			return
+		}
+
+		err = internal.Cleanup()
+		if err != nil {
+			err = internal.Error("in internal cleanup", err)
+			return
+		}
+	}()
 
 	internal.Loop = loop
 
 	// Setup
 
-	err := internal.Setup()
+	err = internal.Setup()
 	if err != nil {
 		return internal.Error("in internal setup", err)
 	}
@@ -171,11 +197,6 @@ func Run(loop GameLoop) error {
 	}
 
 	internal.Loop.Leave()
-
-	internal.Running = false
-	internal.QuitRequested = false
-
-	//TODO: cleanup
 
 	return nil
 }

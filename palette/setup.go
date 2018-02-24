@@ -15,22 +15,37 @@ var ssbo gl.StorageBuffer
 //------------------------------------------------------------------------------
 
 func init() {
-	internal.PaletteSetup = setupHook
+	internal.PaletteSetup = setup
+	internal.PaletteCleanup = cleanup
 }
 
-func setupHook() error {
+func setup() error {
 	Clear()
 	ssbo = gl.NewStorageBuffer(uintptr(256*4*4), gl.DynamicStorage|gl.MapWrite)
+	return gl.Err()
+}
+
+func cleanup() error {
+	Clear()
+	for n := range palettes {
+		if n != "MSX" &&
+			n != "MSX2" &&
+			n != "C64" &&
+			n != "CPC" {
+			delete(palettes, n)
+		}
+	}
+	ssbo.Delete()
 	return gl.Err()
 }
 
 //------------------------------------------------------------------------------
 
 func init() {
-	internal.PaletteUpload = uploadHook
+	internal.PaletteUpload = upload
 }
 
-func uploadHook() error {
+func upload() error {
 	if changed {
 		ssbo.SubData(colours[:], 0)
 		changed = false

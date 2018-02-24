@@ -55,6 +55,10 @@ static inline void FramebufferBlit(GLuint fbo, GLuint dstFbo, GLint srcX1, GLint
 	glBlitNamedFramebuffer(fbo, dstFbo, srcX1, srcY1, srcX2, srcY2, dstX1, dstY1, dstX2, dstY2, m, f);
 }
 
+static inline void FramebufferDelete(GLuint fbo) {
+	glDeleteFramebuffers(1, &fbo);
+}
+
 */
 import (
 	"C"
@@ -208,5 +212,11 @@ const (
 	DepthBufferBit   BufferMask = C.GL_DEPTH_BUFFER_BIT
 	StencilBufferBit BufferMask = C.GL_STENCIL_BUFFER_BIT
 )
+
+//------------------------------------------------------------------------------
+
+func (fb Framebuffer) Delete() {
+	C.FramebufferDelete(fb.object)
+}
 
 //------------------------------------------------------------------------------

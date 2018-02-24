@@ -14,10 +14,10 @@ import (
 //------------------------------------------------------------------------------
 
 func init() {
-	internal.VectorSetup = setupHook
+	internal.VectorSetup = setup
 }
 
-func setupHook() error {
+func setup() error {
 	pipeline = gl.NewPipeline(
 		gl.VertexShader(strings.NewReader(vertexShader)),
 		gl.FragmentShader(strings.NewReader(fragmentShader)),
@@ -39,6 +39,14 @@ func setupHook() error {
 		gl.DynamicStorage,
 	)
 
+	return gl.Err()
+}
+
+func cleanup() error {
+	pipeline.Delete()
+	screenUBO.Delete()
+	commandsICBO.Delete()
+	parametersTBO.Delete()
 	return gl.Err()
 }
 

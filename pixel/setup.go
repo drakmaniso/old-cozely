@@ -17,10 +17,11 @@ import (
 //------------------------------------------------------------------------------
 
 func init() {
-	internal.PixelSetup = setupHook
+	internal.PixelSetup = setup
+	internal.PixelCleanup = cleanup
 }
 
-func setupHook() error {
+func setup() error {
 	// Create the canvases
 
 	for i := range canvases {
@@ -117,25 +118,38 @@ func setupHook() error {
 		}
 
 		glyphsTA.SubImage(0, 0, 0, int32(i), m)
-
-		// if i == 0 {
-		// 	f, err := os.Create("FOO.png")
-		// 	if err != nil {
-		// 		panic(err)
-		// 	}
-		// 	defer f.Close()
-		// 	m.Palette = []color.Color{
-		// 		color.RGBA{0, 0, 0, 0xFF},
-		// 		color.RGBA{0xFF, 0xFF, 0xFF, 0xFF},
-		// 		color.RGBA{0, 0xFF, 0, 0xFF},
-		// 		color.RGBA{0xFF, 0, 0, 0xFF},
-		// 	}
-		// 	err = png.Encode(f, m)
-		// 	if err != nil {
-		// 		panic(err)
-		// 	}
-		// }
 	}
+
+	return gl.Err()
+}
+
+func cleanup() error {
+	// Canvases
+	for i := range canvases {
+		s := &canvases[i]
+		s.texture.Delete()
+		s.depth.Delete()
+		s.buffer.Delete()
+	}
+
+	// Display pipeline
+	pipeline.Delete()
+	pipeline = nil
+	screenUBO.Delete()
+	commandsICBO.Delete()
+	parametersTBO.Delete()
+
+	// Pictures
+	pictAtlas = nil
+	pictFiles = nil
+	pictureMapTBO.Delete()
+	picturesTA.Delete()
+
+	// Fonts
+	fntAtlas = nil
+	fntFiles = nil
+	glyphMapTBO.Delete()
+	glyphsTA.Delete()
 
 	return gl.Err()
 }

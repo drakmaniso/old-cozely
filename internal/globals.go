@@ -119,11 +119,14 @@ var MouseButtons uint32
 
 var PaletteSetup = func() error { return nil }
 var PaletteUpload = func() error { return nil }
+var PaletteCleanup = func() error { return nil }
 
 var PixelSetup = func() error { return nil }
 var PixelResize = func() {}
+var PixelCleanup = func() error { return nil }
 
 var VectorSetup = func() error { return nil }
 var VectorDraw = func() error { return nil }
+var VectorCleanup = func() error { return nil }
 
 //------------------------------------------------------------------------------

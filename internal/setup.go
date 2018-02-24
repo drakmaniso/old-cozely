@@ -92,4 +92,10 @@ func Setup() error {
 	return nil
 }
 
+func Cleanup() error {
+	destroyWindow()
+	SDLQuit()
+	return nil
+}
+
 //------------------------------------------------------------------------------

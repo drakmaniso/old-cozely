@@ -180,8 +180,8 @@ func SetWindowTitle(title string) {
 
 //------------------------------------------------------------------------------
 
-// DestroyWindow closes the game window and delete the OpenGL context
-func DestroyWindow() {
+// destroyWindow closes the game window and delete the OpenGL context
+func destroyWindow() {
 	C.SDL_GL_DeleteContext(Window.context)
 	C.SDL_DestroyWindow(Window.window)
 }
