@@ -32,8 +32,8 @@ func loadAssets() error {
 
 	// Scan all pictures
 
-	for n, p := range pictureNames {
-		err := scanPicture(n, p)
+	for i := range picturePaths {
+		err := Picture(i).scan()
 		if err != nil {
 			//TODO: sticky error instead?
 			return err
@@ -54,8 +54,8 @@ func loadAssets() error {
 
 	// Load all fonts
 
-	for n, f := range fontNames {
-		err := loadFont(n, f)
+	for i := range fonts {
+		err := Font(i).load()
 		if err != nil {
 			//TODO: sticky error instead?
 			return err
@@ -67,7 +67,12 @@ func loadAssets() error {
 
 //------------------------------------------------------------------------------
 
-func scanPicture(n string, p Picture) error {
+func (p Picture) scan() error {
+	if p == 0 {
+		return nil
+	}
+
+	n := picturePaths[p]
 	//TODO: support other image formats?
 	path := filepath.FromSlash(internal.Path + n + ".png")
 	path, err := filepath.EvalSymlinks(path)
@@ -99,40 +104,36 @@ func scanPicture(n string, p Picture) error {
 	}
 
 	pictureMap[p].w, pictureMap[p].h = w, h
-	pictFiles = append(pictFiles, imgfile{name: n, path: path})
+	pictFiles = append(pictFiles, imgfile(p))
 
 	return nil
 }
 
 //------------------------------------------------------------------------------
 
-type imgfile struct {
-	name string
-	path string
-}
+type imgfile Picture
 
 func (im imgfile) Size() (width, height int16) {
-	s := pictureNames[im.name].Size()
+	s := Picture(im).Size()
 	return s.X, s.Y
 }
 
 func (im imgfile) Put(bin int16, x, y int16) {
-	p := pictureNames[im.name]
-	pictureMap[p].bin = bin
-	pictureMap[p].x, pictureMap[p].y = x, y
+	pictureMap[Picture(im)].bin = bin
+	pictureMap[Picture(im)].x, pictureMap[Picture(im)].y = x, y
 }
 
 func (im imgfile) Paint(dest interface{}) error {
-	p := pictureNames[im.name]
-	px, py := pictureMap[p].x, pictureMap[p].y
-	pw, ph := pictureMap[p].w, pictureMap[p].h
+	px, py := pictureMap[Picture(im)].x, pictureMap[Picture(im)].y
+	pw, ph := pictureMap[Picture(im)].w, pictureMap[Picture(im)].h
 
-	pf, err := os.Open(im.path)
+	fp := filepath.FromSlash(internal.Path + picturePaths[Picture(im)] + ".png")
+	f, err := os.Open(fp)
 	if err != nil {
 		return err
 	}
-	defer pf.Close()
-	src, _, err := image.Decode(pf)
+	defer f.Close()
+	src, _, err := image.Decode(f)
 	if err != nil {
 		return err
 	}

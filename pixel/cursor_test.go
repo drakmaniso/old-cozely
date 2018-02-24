@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/drakmaniso/glam"
-	"github.com/drakmaniso/glam/colour"
 	"github.com/drakmaniso/glam/palette"
 	"github.com/drakmaniso/glam/pixel"
 )
@@ -25,11 +24,6 @@ func init() {
 var (
 	pixop9  = pixel.NewFont("fonts/pixop9")
 	pixop11 = pixel.NewFont("fonts/pixop11")
-)
-
-var (
-	foreground = palette.Entry(1, "foreground", colour.SRGB8{0x10, 0x10, 0x10})
-	background = palette.Entry(2, "background", colour.SRGB8{0xFF, 0xFE, 0xFD})
 )
 
 //------------------------------------------------------------------------------

@@ -26,7 +26,7 @@ func Load(name string) error {
 	if ok {
 		Clear()
 		for i := range p {
-			Entry(uint8(i+1), p[i].name, p[i].colour)
+			Entry(uint8(i+1), p[i].colour)
 		}
 		return nil
 	}
@@ -77,7 +77,7 @@ func loadFile(name string) error {
 		n := "png" + strconv.Itoa(j)
 		pal[j-1].name = n
 		pal[j-1].colour = c
-		Entry(uint8(j), n, c)
+		Entry(uint8(j), c)
 		j++
 	}
 	palettes[name] = pal

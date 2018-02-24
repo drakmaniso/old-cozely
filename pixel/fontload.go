@@ -23,8 +23,9 @@ var (
 
 //------------------------------------------------------------------------------
 
-func loadFont(n string, f Font) error {
+func (f Font) load() error {
 	//TODO: support other image formats?
+	n := fontPaths[f]
 	path := filepath.FromSlash(internal.Path + n + ".png")
 	path, err := filepath.EvalSymlinks(path)
 	if err != nil {

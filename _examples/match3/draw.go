@@ -20,7 +20,7 @@ var colors [ecs.Size]color
 
 func (loop) Draw() error {
 	screen.Clear(1)
-	
+
 	var x, y int16 // screen coords
 
 	for e := ecs.First; e < ecs.Last(); e++ {
@@ -37,7 +37,7 @@ func (loop) Draw() error {
 			if grid.PositionOf(e) == current || e.Has(ecs.MatchFlag) {
 				p = tilesPict[c].big
 			}
-			screen.Picture(p, x, y)
+			screen.Picture(p, x, y, 0)
 		}
 	}
 

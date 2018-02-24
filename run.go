@@ -175,6 +175,8 @@ func Run(loop GameLoop) error {
 	internal.Running = false
 	internal.QuitRequested = false
 
+	//TODO: cleanup
+
 	return nil
 }
 

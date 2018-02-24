@@ -12,13 +12,11 @@ import (
 // A Picture identifies an image than can be displayed on a Canvas.
 type Picture uint16
 
-var pictureNames map[string]Picture
+var picturePaths = []string{""}
 
-func init() {
-	pictureNames = make(map[string]Picture, 128)
+var pictureMap = []mapping{
+	mapping{},
 }
-
-//------------------------------------------------------------------------------
 
 type mapping struct {
 	bin  int16
@@ -26,29 +24,19 @@ type mapping struct {
 	w, h int16
 }
 
-var pictureMap = []mapping{
-	mapping{},
-}
-
 //------------------------------------------------------------------------------
 
 // NewPicture reserves an ID for a picture, that will be loaded from path by
 // glam.Run.
 func NewPicture(path string) Picture {
-	p, ok := pictureNames[path]
-	if ok {
-		return p
-	}
-
 	if len(pictureMap) >= 0xFFFF {
 		setErr("in NewPitcture", errors.New("too many pictures"))
 		return Picture(0)
 	}
 
+	picturePaths = append(picturePaths, path)
 	pictureMap = append(pictureMap, mapping{})
-	p = Picture(len(pictureMap) - 1)
-	pictureNames[path] = p
-	return p
+	return Picture(len(picturePaths) - 1)
 }
 
 //------------------------------------------------------------------------------
@@ -56,18 +44,6 @@ func NewPicture(path string) Picture {
 // Size returns the width and height of the picture.
 func (p Picture) Size() Coord {
 	return Coord{pictureMap[p].w, pictureMap[p].h}
-}
-
-//------------------------------------------------------------------------------
-
-// GetPicture returns the picture associated with a name. If there isn't any, an
-// empty picture is returned, and a sticky error is set.
-func GetPicture(name string) Picture {
-	p, ok := pictureNames[name]
-	if !ok {
-		setErr("in GetPicture", errors.New("picture \""+name+"\" not found"))
-	}
-	return p
 }
 
 //------------------------------------------------------------------------------

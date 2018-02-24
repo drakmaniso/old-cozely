@@ -12,13 +12,7 @@ import (
 // A Font identifies  apixel font that can be used by Cursor to display text.
 type Font uint8
 
-var fontNames map[string]Font
-
-func init() {
-	fontNames = make(map[string]Font, 8)
-}
-
-var glyphMap []mapping
+var fontPaths []string
 
 type font struct {
 	height   int16
@@ -28,25 +22,21 @@ type font struct {
 
 var fonts []font
 
+var glyphMap []mapping
+
 //------------------------------------------------------------------------------
 
 // NewFont reserves an ID for a new font, that will be loaded from path by
 // glam.Run.
 func NewFont(path string) Font {
-	f, ok := fontNames[path]
-	if ok {
-		return f
-	}
-
 	if len(fonts) >= 0xFF {
 		setErr("in NewFont", errors.New("too many fonts"))
 		return Font(0)
 	}
 
 	fonts = append(fonts, font{})
-	f = Font(len(fonts) - 1)
-	fontNames[path] = f
-	return f
+	fontPaths = append(fontPaths, path)
+	return Font(len(fonts) - 1)
 }
 
 //------------------------------------------------------------------------------
@@ -65,18 +55,6 @@ func (f Font) glyph(r rune) uint16 {
 // store the glyphs.
 func (f Font) Height() int16 {
 	return fonts[f].height
-}
-
-//------------------------------------------------------------------------------
-
-// GetFont returns the font associated with a name. If there isn't any, an
-// empty font is returned, and a sticky error is set.
-func GetFont(name string) Font {
-	f, ok := fontNames[name]
-	if !ok {
-		setErr("in GetFont", errors.New("font \""+name+"\" not found"))
-	}
-	return f
 }
 
 //------------------------------------------------------------------------------
