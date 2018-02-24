@@ -19,9 +19,8 @@ func init() {
 }
 
 func setupHook() error {
-
+	Clear()
 	ssbo = gl.NewStorageBuffer(uintptr(256*4*4), gl.DynamicStorage|gl.MapWrite)
-
 	return gl.Err()
 }
 

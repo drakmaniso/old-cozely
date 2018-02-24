@@ -17,8 +17,13 @@ const Transparent Index = 0
 
 var (
 	colours [256]struct{ R, G, B, A float32 }
+	names   map[string]Index
 	changed bool
 )
+
+func init() {
+	names = make(map[string]Index, 256)
+}
 
 //------------------------------------------------------------------------------
 
@@ -28,6 +33,9 @@ var (
 // Note: for debugging purpose, all unused indexes are initialized with pure
 // magenta.
 func Clear() {
+	for n := range names {
+		delete(names, n)
+	}
 	for c := range colours {
 		colours[c] = colour.LRGBA{1, 0, 1, 1}
 	}
@@ -36,9 +44,16 @@ func Clear() {
 
 //------------------------------------------------------------------------------
 
-// Find searches for a color by its colour.LRGBA values. If this exact color
+// Find returns the index associated with a name. If there isn't any, index 0 is
+// returned.
+func Find(name string) Index {
+  c, _ := names[name]
+  return c
+}
+
+// Match searches for a color by its colour.LRGBA values. If this exact color
 // isn't in the palette, index 0 is returned.
-func Find(v colour.Colour) Index {
+func Match(v colour.Colour) Index {
 	lv := colour.LRGBAOf(v)
 	for c, vv := range colours {
 		if vv == lv {
@@ -60,6 +75,27 @@ func (c Index) Colour() colour.LRGBA {
 func (c Index) SetColour(v colour.Colour) {
 	colours[c] = colour.LRGBAOf(v)
 	changed = true
+}
+
+// Name returns the current name of the index, or the empty string if it is
+// unnamed.
+func (c Index) Name() string {
+  for n, nc := range names {
+    if c == nc {
+      return n
+    }
+  }
+  return ""
+}
+
+// Rename changes the name of an index. If the empty string is used, the index
+// becomes unnamed.
+func (c Index) Rename(n string) {
+  if n != "" {
+    names[n] = c
+  } else {
+    delete(names, n)
+  }
 }
 
 //------------------------------------------------------------------------------

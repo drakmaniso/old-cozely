@@ -26,6 +26,8 @@ var (
 	pixop11 = pixel.NewFont("fonts/pixop11")
 )
 
+var curBg, curFg palette.Index
+
 //------------------------------------------------------------------------------
 
 func TestCursor_print(t *testing.T) {
@@ -46,7 +48,10 @@ type curLoop struct {
 //------------------------------------------------------------------------------
 
 func (curLoop) Enter() error {
-	palette.Load("graphics/shape1")
+	palette.Load("C64")
+	curBg = palette.Find("white")
+	curFg = palette.Find("black")
+	cursor.ColorShift(curFg - 1)
 	return nil
 }
 
@@ -59,7 +64,7 @@ func (curLoop) Update() error {
 //------------------------------------------------------------------------------
 
 func (curLoop) Draw() error {
-	curScreen.Clear(21)
+	curScreen.Clear(curBg)
 
 	cursor.Locate(16, 8, 0)
 
