@@ -206,7 +206,7 @@ func (c Cursor) WriteRune(r rune) {
 			cu.params,
 			int16(cu.font),
 			int16(cu.color),
-			cu.x, cu.y, cu.z,
+			cu.x, cu.y-fonts[cu.font].baseline, cu.z,
 		)
 	}
 

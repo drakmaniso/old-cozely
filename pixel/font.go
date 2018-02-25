@@ -43,7 +43,12 @@ func NewFont(path string) Font {
 
 func (f Font) glyph(r rune) uint16 {
 	//TODO: add support for non-ascii runes
-	if r < ' ' || r > 0x7F {
+	switch {
+	case r < ' ':
+		r = 0x7F
+	case r <= 0x7F:
+		r = r - ' '
+	default:
 		r = 0x7F
 	}
 	return fonts[f].first + uint16(r)

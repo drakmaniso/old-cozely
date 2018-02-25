@@ -52,35 +52,43 @@ func (f Font) load() error {
 		internal.Debug.Println(`ignoring image: "` + path + `" (color model not supported)`)
 		return nil
 	}
-	gw, gh := p.Bounds().Dx()/16, p.Bounds().Dy()/8
+	gh := p.Bounds().Dy()
 
 	h := gh - 1
 	fonts[f].height = int16(h)
 	gly := uint16(len(glyphMap))
 	fonts[f].first = gly
 
+	for y := 0; y < p.Bounds().Dy(); y++ {
+		if p.Pix[0+y*p.Stride] != 0 {
+			fonts[f].baseline = int16(y)
+			break
+		}
+	}
+
 	// Create images and reserve mapping for each rune
 
-	for gy := 0; gy < 8; gy++ {
-		for gx := 0; gx < 16; gx++ {
-			w := 0
-			for w < gw && p.Pix[gx*gw+w+(gy*gh+h)*p.Stride] != 0 {
-				w++
-			}
-			m := p.SubImage(image.Rect(gx*gw, gy*gh, gx*gw+w, gy*gh+h))
-			mm, ok := m.(*image.Paletted)
-			if !ok {
-				return errors.New("unexpected subimage in Loadfont")
-			}
-			glyphMap = append(glyphMap, mapping{w: int16(w), h: int16(h)})
-			fntFiles = append(
-				fntFiles,
-				fntrune{
-					glyph: gly + uint16(gx+16*gy),
-					img:   mm,
-				},
-			)
-
+	for x, g := 1, 0; x < p.Bounds().Dx(); g++ {
+		w := 0
+		for x+w < p.Bounds().Dx() && p.Pix[x+w+h*p.Stride] != 0 {
+			w++
+		}
+		m := p.SubImage(image.Rect(x, 0, x+w, h))
+		mm, ok := m.(*image.Paletted)
+		if !ok {
+			return errors.New("unexpected subimage in Loadfont")
+		}
+		glyphMap = append(glyphMap, mapping{w: int16(w), h: int16(h)})
+		fntFiles = append(
+			fntFiles,
+			fntrune{
+				glyph: gly + uint16(g),
+				img:   mm,
+			},
+		)
+		x += w
+		for x < p.Bounds().Dx() && p.Pix[x+h*p.Stride] == 0 {
+			x++
 		}
 	}
 

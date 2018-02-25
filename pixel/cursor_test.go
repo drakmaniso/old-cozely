@@ -72,14 +72,14 @@ func (curLoop) Draw() error {
 	cursor.Println("a quick brown fox \"jumps\" over the (lazy) dog.")
 	cursor.Println("A QUICK BROWN FOX \"JUMPS\" OVER THE (LAZY) DOG.")
 	cursor.Println("0123456789!@#$^&*()-+=_~[]{}|\\;:'\",.<>/?%")
-	cursor.Println("12+34 56-78 90*13 24/35 -5 +2 3*(2+5) 4<5 6>2 2=1+1 *f := &x;")
+	cursor.Println("12+34 56-7.8 90*13 24/35 -5 +2 3*(2+5) 4<5 6>2 2=1+1 *f := &x;")
 	cursor.Println()
 
 	cursor.Font(pixop11)
 	cursor.Println("a quick brown fox \"jumps\" over the (lazy) dog.")
 	cursor.Println("A QUICK BROWN FOX \"JUMPS\" OVER THE (LAZY) DOG.")
 	cursor.Println("0123456789!@#$^&*()-+=_~[]{}|\\;:'\",.<>/?%")
-	cursor.Println("12+34 56-78 90*13 24/35 -5 +2 3*(2+5) 4<5 6>2 2=1+1 *f := &x;")
+	cursor.Println("12+34 56-7.8 90*13 24/35 -5 +2 3*(2+5) 4<5 6>2 2=1+1 *f := &x;")
 	cursor.Println()
 
 	cursor.Font(pixop9)
@@ -115,8 +115,16 @@ func (curLoop) Draw() error {
 	cursor.Write([]byte("Choo"))
 	cursor.Flush()
 
-	cursor.Locate(curScreen.Size().X-200, 2, 0)
+	cursor.Locate(500, 200, 0)
+	cursor.Font(pixop9)
+	cursor.Print("bip")
 	cursor.Font(pixop11)
+	cursor.Print("bip")
+	cursor.Font(pixop9)
+	cursor.Print("bip")
+
+	cursor.Locate(curScreen.Size().X-200, 9, 0)
+	cursor.Font(pixop9)
 	cursor.Printf("Position x=%d, y=%d\n", curScreen.Mouse().X, curScreen.Mouse().Y)
 
 	curScreen.Display()
