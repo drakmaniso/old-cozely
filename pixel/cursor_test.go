@@ -22,8 +22,8 @@ func init() {
 }
 
 var (
-	pixop9  = pixel.NewFont("fonts/pixop9")
-	pixop11 = pixel.NewFont("fonts/pixop11")
+	pixop9  = pixel.NewFont("cozely/pixop9")
+	pixop11 = pixel.NewFont("cozely/pixop11")
 )
 
 var curBg, curFg palette.Index

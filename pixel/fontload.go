@@ -26,38 +26,47 @@ var (
 func (f Font) load() error {
 	//TODO: support other image formats?
 	n := fontPaths[f]
-	path := filepath.FromSlash(internal.Path + n + ".png")
-	path, err := filepath.EvalSymlinks(path)
-	if err != nil {
-		return internal.Error("in path while loading font", err)
-	}
 
-	fl, err := os.Open(path)
-	if err != nil {
-		return internal.Error(`while opening font file "`+path+`"`, err)
-	}
-	defer fl.Close() //TODO: error handling
-
-	img, _, err := image.Decode(fl)
-	switch err {
-	case nil:
-	case image.ErrFormat:
-		return nil
+	var p *image.Paletted
+	switch n {
+	case "cozely/pixop9":
+		p = &pixop9
+	case "cozely/pixop11":
+		p = &pixop11
 	default:
-		return internal.Error("decoding font file", err)
+		path := filepath.FromSlash(internal.Path + n + ".png")
+		path, err := filepath.EvalSymlinks(path)
+		if err != nil {
+			return internal.Error("in path while loading font", err)
+		}
+
+		fl, err := os.Open(path)
+		if err != nil {
+			return internal.Error(`while opening font file "`+path+`"`, err)
+		}
+		defer fl.Close() //TODO: error handling
+
+		img, _, err := image.Decode(fl)
+		switch err {
+		case nil:
+		case image.ErrFormat:
+			return nil
+		default:
+			return internal.Error("decoding font file", err)
+		}
+
+		var ok bool
+		p, ok = img.(*image.Paletted)
+		if !ok {
+			return errors.New("impossible to load font " + path + " (color model not supported)")
+		}
 	}
 
-	p, ok := img.(*image.Paletted)
-	if !ok {
-		internal.Debug.Println(`ignoring image: "` + path + `" (color model not supported)`)
-		return nil
-	}
-	gh := p.Bounds().Dy()
-
-	h := gh - 1
+	h := p.Bounds().Dy() - 1
 	fonts[f].height = int16(h)
-	gly := uint16(len(glyphMap))
-	fonts[f].first = gly
+	g := uint16(len(glyphMap))
+	fonts[f].first = g
+	maxw := 0
 
 	for y := 0; y < p.Bounds().Dy(); y++ {
 		if p.Pix[0+y*p.Stride] != 0 {
@@ -68,10 +77,13 @@ func (f Font) load() error {
 
 	// Create images and reserve mapping for each rune
 
-	for x, g := 1, 0; x < p.Bounds().Dx(); g++ {
+	for x := 1; x < p.Bounds().Dx(); g++ {
 		w := 0
 		for x+w < p.Bounds().Dx() && p.Pix[x+w+h*p.Stride] != 0 {
 			w++
+		}
+		if w > maxw {
+			maxw = w
 		}
 		m := p.SubImage(image.Rect(x, 0, x+w, h))
 		mm, ok := m.(*image.Paletted)
@@ -82,7 +94,7 @@ func (f Font) load() error {
 		fntFiles = append(
 			fntFiles,
 			fntrune{
-				glyph: gly + uint16(g),
+				glyph: g,
 				img:   mm,
 			},
 		)
@@ -95,6 +107,14 @@ func (f Font) load() error {
 	// Pack them into the atlas
 
 	fntAtlas.Pack(fntFiles)
+
+	internal.Debug.Printf(
+		"Loaded font %s (%d glyphs, %dx%d)",
+		fontPaths[f],
+		g-fonts[f].first,
+		maxw,
+		fonts[f].height,
+	)
 
 	return nil
 }

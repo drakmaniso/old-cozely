@@ -44,12 +44,11 @@ func loadAssets() error {
 
 	pictAtlas.Pack(pictFiles)
 
-	iu := pictAtlas.Unused()
 	internal.Debug.Printf(
-		"Packed %d pictures in %d bins: %d unused pixels (%d kb, %d Mb)\n",
+		"Packed %d pictures in %d bins (%.1fkB unused)\n",
 		len(pictFiles),
 		pictAtlas.BinCount(),
-		iu, iu/1024, iu/(1024*1024),
+		float64(pictAtlas.Unused())/1024.0,
 	)
 
 	// Load all fonts
@@ -61,6 +60,13 @@ func loadAssets() error {
 			return err
 		}
 	}
+
+	internal.Debug.Printf(
+		"Packed %d fonts in %d bins (%.1fkB unused)\n",
+		len(fonts),
+		fntAtlas.BinCount(),
+		float64(fntAtlas.Unused())/1024.0,
+	)
 
 	return gl.Err()
 }
