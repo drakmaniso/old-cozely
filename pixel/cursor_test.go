@@ -21,11 +21,6 @@ func init() {
 	cursor.Canvas(curScreen)
 }
 
-var (
-	pixop9  = pixel.NewFont("cozely/pixop9")
-	pixop11 = pixel.NewFont("cozely/pixop11")
-)
-
 var curBg, curFg palette.Index
 
 //------------------------------------------------------------------------------
@@ -68,40 +63,15 @@ func (curLoop) Draw() error {
 
 	cursor.Locate(16, 8, 0)
 
-	cursor.Font(pixop9)
+	cursor.Font(pixel.Font(0))
 	cursor.Println("a quick brown fox \"jumps\" over the (lazy) dog.")
 	cursor.Println("A QUICK BROWN FOX \"JUMPS\" OVER THE (LAZY) DOG.")
 	cursor.Println("0123456789!@#$^&*()-+=_~[]{}|\\;:'\",.<>/?%")
 	cursor.Println("12+34 56-7.8 90*13 24/35 -5 +2 3*(2+5) 4<5 6>2 2=1+1 *f := &x;")
 	cursor.Println()
 
-	cursor.Font(pixop11)
-	cursor.Println("a quick brown fox \"jumps\" over the (lazy) dog.")
-	cursor.Println("A QUICK BROWN FOX \"JUMPS\" OVER THE (LAZY) DOG.")
-	cursor.Println("0123456789!@#$^&*()-+=_~[]{}|\\;:'\",.<>/?%")
-	cursor.Println("12+34 56-7.8 90*13 24/35 -5 +2 3*(2+5) 4<5 6>2 2=1+1 *f := &x;")
-	cursor.Println()
-
-	cursor.Font(pixop9)
-	cursor.Println("My affection for my guest increases every day. He excites at once my")
-	cursor.Println("admiration and my pity to an astonishing degree. How can I see so noble")
-	cursor.Println("a creature destroyed by misery, without feeling the most poignant grief?")
-	cursor.Println("He is so gentle, yet so wise; his mind is so cultivated; and when he")
-	cursor.Println("speaks, although his words are culled with the choicest art, yet they")
-	cursor.Println("flow with rapidity and unparalleled eloquence.")
-	cursor.Println()
-
-	cursor.Font(pixop11)
-	cursor.Println("My affection for my guest increases every day. He excites at once my")
-	cursor.Println("admiration and my pity to an astonishing degree. How can I see so noble")
-	cursor.Println("a creature destroyed by misery, without feeling the most poignant grief?")
-	cursor.Println("He is so gentle, yet so wise; his mind is so cultivated; and when he")
-	cursor.Println("speaks, although his words are culled with the choicest art, yet they")
-	cursor.Println("flow with rapidity and unparalleled eloquence.")
-	cursor.Println()
-
-	cursor.Font(pixop9)
-	cursor.Locate(500, 100, 0)
+	cursor.Font(pixel.Font(0))
+	cursor.Locate(16, 100, 0)
 	cursor.Write([]byte("Foo"))
 	cursor.Move(1, 3, 0)
 	cursor.WriteRune('B')
@@ -109,22 +79,28 @@ func (curLoop) Draw() error {
 	cursor.WriteRune('a')
 	cursor.Move(3, 1, 0)
 	cursor.WriteRune('r')
-	cursor.MoveTo(532, 132, 0)
+	cursor.MoveTo(32, 132, 0)
 	cursor.Flush()
 	cursor.Write([]byte("Boo\n"))
 	cursor.Write([]byte("Choo"))
 	cursor.Flush()
 
-	cursor.Locate(500, 200, 0)
-	cursor.Font(pixop9)
-	cursor.Print("bip")
-	cursor.Font(pixop11)
-	cursor.Print("bip")
-	cursor.Font(pixop9)
-	cursor.Print("bip")
+	cursor.Locate(16, 200, 0)
+	cursor.Font(tinela9)
+	cursor.Print("Tinela")
+	cursor.Font(simpela10)
+	cursor.Print("Simpela10")
+	cursor.Font(simpela12)
+	cursor.Print("Simpela12")
+	cursor.Font(cozela10)
+	cursor.Print("Cozela10")
+	cursor.Font(cozela12)
+	cursor.Print("Cozela12")
+	cursor.Font(chaotela12)
+	cursor.Print("Chaotela12")
 
 	cursor.Locate(curScreen.Size().X-200, 9, 0)
-	cursor.Font(pixop9)
+	cursor.Font(pixel.Font(0))
 	cursor.Printf("Position x=%d, y=%d\n", curScreen.Mouse().X, curScreen.Mouse().Y)
 
 	curScreen.Display()

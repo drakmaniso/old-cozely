@@ -61,6 +61,10 @@ func loadAssets() error {
 		}
 	}
 
+	// Pack them into the atlas
+
+	fntAtlas.Pack(fntFiles)
+
 	internal.Debug.Printf(
 		"Packed %d fonts in %d bins (%.1fkB unused)\n",
 		len(fonts),

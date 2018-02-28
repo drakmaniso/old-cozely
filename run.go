@@ -73,27 +73,27 @@ func Run(loop GameLoop) (err error) {
 		internal.Running = false
 		internal.QuitRequested = false
 
-		err = internal.VectorCleanup()
-		if err != nil {
-			err = internal.Error("in vector cleanup", err)
+		derr := internal.VectorCleanup()
+		if err == nil && derr != nil {
+			err = internal.Error("in vector cleanup", derr)
 			return
 		}
 
-		err = internal.PixelCleanup()
-		if err != nil {
-			err = internal.Error("in pixel cleanup", err)
+		derr = internal.PixelCleanup()
+		if err == nil && derr != nil {
+			err = internal.Error("in pixel cleanup", derr)
 			return
 		}
 
-		err = internal.PaletteCleanup()
-		if err != nil {
-			err = internal.Error("in palette cleanup", err)
+		derr = internal.PaletteCleanup()
+		if err == nil && derr != nil {
+			err = internal.Error("in palette cleanup", derr)
 			return
 		}
 
-		err = internal.Cleanup()
-		if err != nil {
-			err = internal.Error("in internal cleanup", err)
+		derr = internal.Cleanup()
+		if err == nil && derr != nil {
+			err = internal.Error("in internal cleanup", derr)
 			return
 		}
 	}()
@@ -143,7 +143,10 @@ func Run(loop GameLoop) (err error) {
 	gametime := 0.0
 	internal.GameTime = gametime
 
-	internal.Loop.Enter()
+	err = internal.Loop.Enter()
+	if err != nil {
+		return err
+	}
 
 	for !internal.QuitRequested {
 		internal.FrameTime = now - then
@@ -196,7 +199,10 @@ func Run(loop GameLoop) (err error) {
 		now = internal.GetSeconds()
 	}
 
-	internal.Loop.Leave()
+	err = internal.Loop.Leave()
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

@@ -25,15 +25,12 @@ var (
 
 func (f Font) load() error {
 	//TODO: support other image formats?
-	n := fontPaths[f]
-
 	var p *image.Paletted
-	switch n {
-	case "cozely/pixop9":
-		p = &pixop9
-	case "cozely/pixop11":
-		p = &pixop11
-	default:
+
+	if f == 0 {
+		p =&monozela10
+	} else {
+		n := fontPaths[f]
 		path := filepath.FromSlash(internal.Path + n + ".png")
 		path, err := filepath.EvalSymlinks(path)
 		if err != nil {
@@ -103,10 +100,6 @@ func (f Font) load() error {
 			x++
 		}
 	}
-
-	// Pack them into the atlas
-
-	fntAtlas.Pack(fntFiles)
 
 	internal.Debug.Printf(
 		"Loaded font %s (%d glyphs, %dx%d)",

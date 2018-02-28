@@ -68,7 +68,7 @@ func setup() error {
 	// Create texture atlases for pictures and fonts
 
 	pictAtlas = atlas.New(1024, 1024)
-	fntAtlas = atlas.New(256, 256)
+	fntAtlas = atlas.New(128, 128)
 
 	err := loadAssets()
 	if err != nil {
@@ -118,6 +118,21 @@ func setup() error {
 		}
 
 		glyphsTA.SubImage(0, 0, 0, int32(i), m)
+
+		// of, err := os.Create("testdata/fnt" + string('0'+i) + ".png")
+		// if err != nil {
+		// 	panic(err)
+		// }
+		// m.Palette = color.Palette{
+		// 	color.RGBA{0, 0, 0, 255},
+		// 	color.RGBA{255, 255, 255, 255},
+		// 	color.RGBA{255, 0, 255, 255},
+		// }
+		// err = png.Encode(of, m)
+		// if err != nil {
+		// 	panic(err)
+		// }
+		// of.Close()
 	}
 
 	return gl.Err()
