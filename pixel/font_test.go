@@ -24,7 +24,7 @@ var (
 	simpela12  = pixel.NewFont("fonts/simpela12")
 	cozela10   = pixel.NewFont("fonts/cozela10")
 	cozela12   = pixel.NewFont("fonts/cozela12")
-	chaotela12  = pixel.NewFont("fonts/chaotela12")
+	chaotela12 = pixel.NewFont("fonts/chaotela12")
 	font       = monozela10
 )
 
@@ -60,7 +60,7 @@ type fntLoop struct {
 //------------------------------------------------------------------------------
 
 func (fntLoop) Enter() error {
-	f, err := os.Open(glam.Path() + "frankenstein_full.txt")
+	f, err := os.Open(glam.Path() + "frankenstein.txt")
 	if err != nil {
 		return err
 	}
@@ -157,7 +157,7 @@ func (fl fntLoop) KeyDown(l key.Label, p key.Position) {
 		fntInterline++
 	case key.LabelPageDown:
 		fntLine += 40
-		if fntLine > len(fntShow) - 1 {
+		if fntLine > len(fntShow)-1 {
 			fntLine = len(fntShow) - 1
 		}
 	case key.LabelPageUp:
