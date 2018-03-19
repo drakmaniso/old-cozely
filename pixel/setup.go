@@ -101,6 +101,8 @@ func setup() error {
 		picturesTA.SubImage(0, 0, 0, int32(i), m)
 	}
 
+	pictFiles = pictFiles[:0]
+
 	// Create the font texture array
 	w, h = fntAtlas.BinSize()
 	glyphsTA = gl.NewTextureArray2D(1, gl.R8UI, int32(w), int32(h), int32(fntAtlas.BinCount()))
@@ -135,6 +137,8 @@ func setup() error {
 		// of.Close()
 	}
 
+	fntFiles = fntFiles[:0]
+
 	return gl.Err()
 }
 
@@ -156,13 +160,11 @@ func cleanup() error {
 
 	// Pictures
 	pictAtlas = nil
-	pictFiles = nil
 	pictureMapTBO.Delete()
 	picturesTA.Delete()
 
 	// Fonts
 	fntAtlas = nil
-	fntFiles = nil
 	glyphMapTBO.Delete()
 	glyphsTA.Delete()
 
