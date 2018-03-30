@@ -105,6 +105,12 @@ func (v Coord) Dot(o Coord) float32 {
 	return v.X*o.X + v.Y*o.Y
 }
 
+// PerpDot returns the dot product with the perpendicular of v and another
+// vector.
+func (v Coord) PerpDot(o Coord) float32 {
+	return v.X*o.Y - v.Y*o.X
+}
+
 // Length returns the euclidian length of the vector.
 func (v Coord) Length() float32 {
 	// Double conversion is faster than math32.Sqrt because the Go compiler

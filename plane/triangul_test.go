@@ -17,7 +17,7 @@ import (
 
 //------------------------------------------------------------------------------
 
-var screen = pixel.NewCanvas(pixel.Zoom(4))
+var screen = pixel.NewCanvas(pixel.Zoom(2))
 
 var cursor = pixel.NewCursor()
 
@@ -62,9 +62,10 @@ func (triLoop) Enter() error {
 
 	palette.Clear()
 	palette.Index(1).SetColour(colour.LRGB{1, 1, 1})
-	palette.Index(2).SetColour(colour.LRGB{1, 0, 0})
-	palette.Index(3).SetColour(colour.LRGB{0, 1, 0})
-	palette.Index(4).SetColour(colour.LRGB{0, 0, 1})
+	palette.Index(2).SetColour(colour.LRGB{1, 0.2, 0.1})
+	palette.Index(3).SetColour(colour.LRGB{0.1, 1, 0.2})
+	palette.Index(4).SetColour(colour.LRGB{0.1, 0.2, 1})
+	palette.Index(5).SetColour(colour.LRGB{0.2, 0.2, 0.2})
 	return nil
 }
 
@@ -73,25 +74,53 @@ func (triLoop) Enter() error {
 func (triLoop) Draw() error {
 	screen.Clear(0)
 	r := float32(screen.Size().Y)
-	o := (float32(screen.Size().X) - r)
+	ox := (float32(screen.Size().X) - r)
+	oy := float32(screen.Size().Y)
+	pt := make([]pixel.Coord, len(seeds))
 	for i, sd := range seeds {
-		p := pixel.Coord{
-			X: int16(o + sd.X*r),
-			Y: int16(sd.Y * r),
+		pt[i] = pixel.Coord{
+			X: int16(ox + sd.X*r),
+			Y: int16(oy - sd.Y * r),
 		}
-		screen.Point(2+palette.Index(i), p.X, p.Y, 1)
+		// screen.Point(2+palette.Index(i), pt[i].X, pt[i].Y, 1)
+		cursor.Locate(pt[i].X-2, pt[i].Y-3, +2)
+		cursor.ColorShift(1+palette.Index(i))
+		cursor.Print([]string{"A", "B", "C"}[i])
 	}
+	screen.Lines(1, 0, pt[0], pt[1], pt[2], pt[0])
 
 	m := screen.Mouse()
+	p := plane.Coord{X: (float32(m.X) - ox) / r, Y: (oy - float32(m.Y)) / r}
 	cursor.Locate(2, 8, 0x7FFF)
-	cursor.Printf("Pos: %3d, %3d\n", m.X, m.Y)
+	cursor.ColorShift(0)
+	if p.X >= 0 {
+		cursor.Printf("Pos: %.3f, %.3f\n", p.X, p.Y)
+	} else {
+		cursor.Println("Pos:")
+	}
 	screen.Point(1, m.X, m.Y, 1)
 
 	t := plane.Triangle{0, 1, 2}.CounterClockwise(seeds)
 	if t[1] == 1 {
-		cursor.Print("CounterCW")
+		cursor.Println("CounterCW")
 	} else {
-		cursor.Print("CW")
+		cursor.Println("CW")
+	}
+
+	if (plane.Triangle{0, 1, 2}).Contains(seeds, p) {
+		cursor.ColorShift(1)
+		cursor.Println("INSIDE")
+	} else {
+		cursor.ColorShift(0)
+		cursor.Println("Outside")
+	}
+
+	if t.ContainsCCW(seeds, p) {
+		cursor.ColorShift(1)
+		cursor.Println("INSIDE")
+	} else {
+		cursor.ColorShift(0)
+		cursor.Println("Outside")
 	}
 
 	screen.Display()
