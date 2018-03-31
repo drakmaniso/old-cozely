@@ -26,14 +26,14 @@ func init() {
 }
 
 var (
-	seeds []plane.Coord
+	points plane.Vertices
 )
 
 //------------------------------------------------------------------------------
 
 func newSeeds() {
-	for i := range seeds {
-		seeds[i] = plane.Coord{X: rand.Float32(), Y: rand.Float32()}
+	for i := range points {
+		points[i] = plane.Coord{X: rand.Float32(), Y: rand.Float32()}
 	}
 }
 
@@ -57,7 +57,7 @@ type triLoop struct {
 //------------------------------------------------------------------------------
 
 func (triLoop) Enter() error {
-	seeds = make([]plane.Coord, 3)
+	points = make([]plane.Coord, 3)
 	newSeeds()
 
 	palette.Clear()
@@ -76,15 +76,15 @@ func (triLoop) Draw() error {
 	r := float32(screen.Size().Y)
 	ox := (float32(screen.Size().X) - r)
 	oy := float32(screen.Size().Y)
-	pt := make([]pixel.Coord, len(seeds))
-	for i, sd := range seeds {
+	pt := make([]pixel.Coord, len(points))
+	for i, sd := range points {
 		pt[i] = pixel.Coord{
 			X: int16(ox + sd.X*r),
-			Y: int16(oy - sd.Y * r),
+			Y: int16(oy - sd.Y*r),
 		}
 		// screen.Point(2+palette.Index(i), pt[i].X, pt[i].Y, 1)
 		cursor.Locate(pt[i].X-2, pt[i].Y-3, +2)
-		cursor.ColorShift(1+palette.Index(i))
+		cursor.ColorShift(1 + palette.Index(i))
 		cursor.Print([]string{"A", "B", "C"}[i])
 	}
 	screen.Lines(1, 0, pt[0], pt[1], pt[2], pt[0])
@@ -100,14 +100,13 @@ func (triLoop) Draw() error {
 	}
 	screen.Point(1, m.X, m.Y, 1)
 
-	t := plane.Triangle{0, 1, 2}.CounterClockwise(seeds)
-	if t[1] == 1 {
+	if points.IsCCW(0, 1, 2) {
 		cursor.Println("CounterCW")
 	} else {
 		cursor.Println("CW")
 	}
 
-	if (plane.Triangle{0, 1, 2}).Contains(seeds, p) {
+	if points.PointInTriangle(p, 0, 1, 2) {
 		cursor.ColorShift(1)
 		cursor.Println("INSIDE")
 	} else {
@@ -115,7 +114,8 @@ func (triLoop) Draw() error {
 		cursor.Println("Outside")
 	}
 
-	if t.ContainsCCW(seeds, p) {
+	a, b, c := points.CCW(0, 1, 2)
+	if points.PointInTriangleCCW(p, a, b, c) {
 		cursor.ColorShift(1)
 		cursor.Println("INSIDE")
 	} else {
