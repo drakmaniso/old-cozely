@@ -33,9 +33,12 @@ package plane
 //------------------------------------------------------------------------------
 
 type QuadEdges struct {
-	next []Edge
-	data []VertexID
-	free []Edge
+	next     []Edge
+	data     []uint32
+	mark     []uint32
+	free     []Edge
+	capacity uint32
+	nextMark uint32
 }
 
 type Edge uint32
@@ -45,14 +48,18 @@ type Edge uint32
 const (
 	canonical Edge = 0xFFFFFFFC
 	quad      Edge = 0x00000003
+	noEdge    Edge = 0xFFFFFFFF
 )
 
 //------------------------------------------------------------------------------
 
-func NewQuadEdges(capacity int) *QuadEdges {
+func NewQuadEdges(capacity uint32) *QuadEdges {
 	return &QuadEdges{
-		next: make([]Edge, 0, capacity),
-		data: make([]VertexID, 0, capacity),
+		next:     make([]Edge, 0, capacity),
+		data:     make([]uint32, 0, capacity),
+		mark:     make([]uint32, 0, capacity),
+		capacity: capacity,
+		nextMark: 1,
 	}
 }
 
@@ -108,12 +115,12 @@ func (q *QuadEdges) OrigPrev(e Edge) Edge {
 	return q.next[e.Rot()].Rot()
 }
 
-func (q *QuadEdges) DestPrev(e Edge) Edge {
-	return q.next[e.Tor()].Tor()
-}
-
 func (q *QuadEdges) RightPrev(e Edge) Edge {
 	return q.next[e.Sym()]
+}
+
+func (q *QuadEdges) DestPrev(e Edge) Edge {
+	return q.next[e.Tor()].Tor()
 }
 
 func (q *QuadEdges) LeftPrev(e Edge) Edge {
@@ -122,20 +129,107 @@ func (q *QuadEdges) LeftPrev(e Edge) Edge {
 
 //------------------------------------------------------------------------------
 
-func (q *QuadEdges) OrigData(e Edge) VertexID {
+func (q *QuadEdges) OrigData(e Edge) uint32 {
 	return q.data[e]
 }
 
-func (q *QuadEdges) RightData(e Edge) VertexID {
+func (q *QuadEdges) RightData(e Edge) uint32 {
 	return q.data[e.Rot()]
 }
 
-func (q *QuadEdges) DestData(e Edge) VertexID {
+func (q *QuadEdges) DestData(e Edge) uint32 {
 	return q.data[e.Sym()]
 }
 
-func (q *QuadEdges) LeftData(e Edge) VertexID {
+func (q *QuadEdges) LeftData(e Edge) uint32 {
 	return q.data[e.Tor()]
+}
+
+//------------------------------------------------------------------------------
+
+func (q *QuadEdges) MakeEdge(orig, dest uint32, leftRight uint32) Edge {
+
+	//TODO: implement the free list
+
+	s := uint32(len(q.next) + 4)
+	if s > q.capacity {
+		//TODO: grow the slices
+		panic("growing QuadEdges not implemented")
+	}
+
+	// Allocate the new quad
+	e := Edge(len(q.next))
+	q.next = q.next[:s]
+	q.data = q.data[:s]
+
+	// Initialize the quad
+	q.next[e] = e
+	q.data[e] = orig
+	q.next[e.Sym()] = e.Sym()
+	q.data[e.Sym()] = dest
+	q.next[e.Rot()] = e.Tor()
+	q.data[e.Rot()] = leftRight
+	q.next[e.Tor()] = e.Rot()
+	q.data[e.Tor()] = leftRight
+
+	return e
+}
+
+//------------------------------------------------------------------------------
+
+func (q *QuadEdges) Splice(a, b Edge) {
+	alpha := q.OrigNext(a).Rot()
+	beta := q.OrigNext(b).Rot()
+
+	q.next[a], q.data[a], q.next[b], q.data[b] =
+		q.next[b], q.data[b], q.next[a], q.data[a]
+
+	q.next[alpha], q.data[alpha], q.next[beta], q.data[beta] =
+		q.next[beta], q.data[beta], q.next[alpha], q.data[alpha]
+}
+
+//------------------------------------------------------------------------------
+
+func (q *QuadEdges) Destroy(e Edge) {
+	f := e.Sym()
+	if q.next[e] != e {
+		q.Splice(e, q.OrigPrev(e))
+	}
+	if q.next[f] != f {
+		q.Splice(f, q.OrigPrev(f))
+	}
+
+	q.next[e] = noEdge
+	q.data[e] = 0xFFFFFFFF
+	q.mark[e] = 0
+	q.next[e.Rot()] = noEdge
+	q.data[e.Rot()] = 0xFFFFFFFF
+	q.mark[e.Rot()] = 0
+	q.next[e.Sym()] = noEdge
+	q.data[e.Sym()] = 0xFFFFFFFF
+	q.mark[e.Sym()] = 0
+	q.next[e.Tor()] = noEdge
+	q.data[e.Tor()] = 0xFFFFFFFF
+	q.mark[e.Tor()] = 0
+
+	q.free = append(q.free, e)
+}
+
+//------------------------------------------------------------------------------
+
+func (q *QuadEdges) Walk(e Edge, walkFn func(e Edge)) {
+	m := q.nextMark
+	q.nextMark++
+	if q.nextMark == 0 {
+		q.nextMark = 1
+	}
+	q.walkRec(e, walkFn, m)
+}
+
+func (q *QuadEdges) walkRec(e Edge, walkFn func(e Edge), m uint32) {
+	for ; q.mark[e] != m; e = q.next[e] {
+		q.walkRec(q.next[e.Sym()], walkFn, m)
+	}
 }
 
 //------------------------------------------------------------------------------
