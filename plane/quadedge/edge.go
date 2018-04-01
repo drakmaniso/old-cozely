@@ -30,6 +30,10 @@
 
 package quadedge
 
+import (
+	"strconv"
+)
+
 //------------------------------------------------------------------------------
 
 // An Edge is an "edge reference", i.e. it identifies a specific edge of a
@@ -48,6 +52,10 @@ type edgeID uint32
 //------------------------------------------------------------------------------
 
 const (
+	// NoData is the value used to initialize the origin, destination, left and
+	// right fields of new Edge objects.
+	NoData uint32 = 0xFFFFFFFF
+
 	// canonical is a mask to isolate the quad ID in an edge reference.
 	canonical edgeID = 0xFFFFFFFC
 
@@ -57,6 +65,59 @@ const (
 	// noEdge is a dummy edge reference, for uninitialized quads.
 	noEdge edgeID = 0xFFFFFFFF
 )
+
+//------------------------------------------------------------------------------
+
+func (e Edge) String() string {
+	if e.id == noEdge {
+		return "[no edge]"
+	}
+	on := e.pool.next[e.id]
+	o := "Onext:" +
+		on.String() +
+		datastring(e.pool, e.id)
+	rn := e.pool.next[e.id.rot()]
+	r := " Rnext:" +
+		rn.String() +
+		datastring(e.pool, e.id.rot())
+	dn := e.pool.next[e.id.sym()]
+	d := " Dnext:" +
+		dn.String() +
+		datastring(e.pool, e.id.sym())
+	ln := e.pool.next[e.id.tor()]
+	l := " Lnext:" +
+		ln.String() +
+		datastring(e.pool, e.id.tor())
+	return e.id.String() + "=[" + o + r + d + l + "]"
+}
+
+func (e edgeID) String() string {
+	if e == noEdge {
+		return "no_edge"
+	}
+	var s string
+	switch e & quad {
+	case 0:
+		s = "o"
+	case 1:
+		s = "r"
+	case 2:
+		s = "d"
+	case 3:
+		s = "l"
+	default:
+		s = "error"
+	}
+	return strconv.Itoa(int(e>>2)) + "" + s
+}
+
+func datastring(p *Pool, e edgeID) string {
+	d := p.data[e]
+	if d == NoData {
+		return ""
+	}
+	return "/" + strconv.Itoa(int(d))
+}
 
 //------------------------------------------------------------------------------
 
@@ -184,6 +245,16 @@ func (e Edge) SetOrig(data uint32) {
 	e.pool.data[e.id] = data
 }
 
+// SetOrigRing changes the ID of the origin vertex of all edges in the origin
+// edge ring of e.
+func (e Edge) SetOrigRing(data uint32) {
+	f := e.id
+	e.pool.data[e.id] = data
+	for ; f != e.id && f != noEdge; f = e.pool.next[f] {
+		e.pool.data[f] = data
+	}
+}
+
 // Right returns the ID of the right face of e.
 func (e Edge) Right() uint32 {
 	return e.pool.data[e.id.rot()]
@@ -193,6 +264,16 @@ func (e Edge) Right() uint32 {
 // the same right edge ring, they will not be updated.
 func (e Edge) SetRight(data uint32) {
 	e.pool.data[e.id.rot()] = data
+}
+
+// SetRightRing changes the ID of the right face of all edges in the right
+// edge ring of e.
+func (e Edge) SetRightRing(data uint32) {
+	f := e.id.rot()
+	e.pool.data[e.id.rot()] = data
+	for ; f != e.id.rot() && f != noEdge; f = e.pool.next[f] {
+		e.pool.data[f] = data
+	}
 }
 
 // Dest returns the ID of the destination vertex of e.
@@ -206,6 +287,16 @@ func (e Edge) SetDest(data uint32) {
 	e.pool.data[e.id.sym()] = data
 }
 
+// SetDestRing changes the ID of the destination vertex of all edges in the
+// destination edge ring of e.
+func (e Edge) SetDestRing(data uint32) {
+	f := e.id.sym()
+	e.pool.data[e.id.sym()] = data
+	for ; f != e.id.sym() && f != noEdge; f = e.pool.next[f] {
+		e.pool.data[f] = data
+	}
+}
+
 // Left returns the ID of the left face of e.
 func (e Edge) Left() uint32 {
 	return e.pool.data[e.id.tor()]
@@ -215,6 +306,16 @@ func (e Edge) Left() uint32 {
 // the same left edge ring, they will not be updated.
 func (e Edge) SetLeft(data uint32) {
 	e.pool.data[e.id.tor()] = data
+}
+
+// SetLeftRing changes the ID of the left face of all edges in the left
+// edge ring of e.
+func (e Edge) SetLeftRing(data uint32) {
+	f := e.id.tor()
+	e.pool.data[e.id.tor()] = data
+	for ; f != e.id.tor() && f != noEdge; f = e.pool.next[f] {
+		e.pool.data[f] = data
+	}
 }
 
 //------------------------------------------------------------------------------

@@ -54,7 +54,6 @@ func NewPool(capacity uint32) *Pool {
 		next:     make([]edgeID, 0, 4*capacity),
 		data:     make([]uint32, 0, 4*capacity),
 		marks:    make([]uint32, 0, capacity),
-		capacity: capacity,
 		nextMark: 1,
 	}
 }
@@ -71,8 +70,8 @@ func (p *Pool) NewEdge() Edge {
 
 	//TODO: implement the free list
 
-	sz := uint32(len(p.next) + 4)
-	if sz > p.capacity {
+	sz := len(p.next) + 4
+	if sz > cap(p.next) {
 		//TODO: grow the slices
 		panic("growing QuadEdges not implemented")
 	}
@@ -84,13 +83,13 @@ func (p *Pool) NewEdge() Edge {
 
 	// Initialize the quad
 	p.next[e] = e
-	p.data[e] = 0xFFFFFFFF
+	p.data[e] = NoData
 	p.next[e.sym()] = e.sym()
-	p.data[e.sym()] = 0xFFFFFFFF
+	p.data[e.sym()] = NoData
 	p.next[e.rot()] = e.tor()
-	p.data[e.rot()] = 0xFFFFFFFF
+	p.data[e.rot()] = NoData
 	p.next[e.tor()] = e.rot()
-	p.data[e.tor()] = 0xFFFFFFFF
+	p.data[e.tor()] = NoData
 
 	return Edge{pool: p, id: e}
 }
