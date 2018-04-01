@@ -6,7 +6,7 @@
 //   "Primitives for the Manipulation of General Subdivisions
 //   and the Computation of Voronoi Diagrams"
 //
-//   p. Guibas, J. Stolfi, ACM TOG, April 1985
+//   P. Guibas, J. Stolfi, ACM TOG, April 1985
 //
 // Originally written by Jim Roth (DEC CADM Advanced Group) on May 1986.
 // Modified by J. Stolfi on April 1993.
@@ -44,6 +44,11 @@ type Pool struct {
 
 //------------------------------------------------------------------------------
 
+// NewPool returns a newly allocated Pool capable of holding capacity Edge
+// objects.
+//
+// Note: dynamically growing the pool is not yet implemented, so creating more
+// than capacity edges will panic.
 func NewPool(capacity uint32) *Pool {
 	return &Pool{
 		next:     make([]edgeID, 0, 4*capacity),
@@ -56,6 +61,12 @@ func NewPool(capacity uint32) *Pool {
 
 //------------------------------------------------------------------------------
 
+// NewEdge returns a new isolated Edge (it's the MakeEdge operator from Guibas
+// and Stolfi Quad-Edge article).
+//
+// The edge is set up with separate origin and destination vertices, but same
+// left and right faces. To obtain a loop instead (same origin and destination,
+// different left and right), use NewEdge().Rot().
 func (p *Pool) NewEdge() Edge {
 
 	//TODO: implement the free list
@@ -86,6 +97,16 @@ func (p *Pool) NewEdge() Edge {
 
 //------------------------------------------------------------------------------
 
+// Splice implements the second operator from Guibas and Stolfi Quad-Edge
+// article.
+//
+// It affects the two origin edge rings of a and b, as well as their two left
+// edge rings: if the two rings are distinct, they are combined into one; if the
+// two rings are the same, they are broken in separate pieces.
+//
+// In the origin edge rings, the change happens immediately after a.Orig() and
+// b.Orig() (in counterclockwise order); and in the left edge rings, the change
+// happens immediately before a.Left() and b.Left().
 func Splice(a, b Edge) {
 	p := a.pool
 	alpha := p.next[a.id].rot()
@@ -98,6 +119,10 @@ func Splice(a, b Edge) {
 
 //------------------------------------------------------------------------------
 
+// Free removes the edge from any edge ring it belongs to.
+//
+// Note that freeing the corresponding slot in the pool is not yet implemented,
+// so the freed edge still counts as created in regards to pool capacity.
 func (p *Pool) Free(e Edge) {
 	f := e.Sym()
 	if p.next[e.id] != e.id {
