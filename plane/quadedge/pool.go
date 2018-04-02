@@ -32,7 +32,7 @@ package quadedge
 
 //------------------------------------------------------------------------------
 
-// A Pool is an allocator for Edge objects.
+// A Pool is an allocator for quad-edges.
 type Pool struct {
 	next     []edgeID
 	data     []uint32
@@ -44,8 +44,8 @@ type Pool struct {
 
 //------------------------------------------------------------------------------
 
-// NewPool returns a newly allocated Pool capable of holding capacity Edge
-// objects.
+// NewPool returns a newly allocated Pool capable of holding capacity
+// quad-edges.
 //
 // Note: dynamically growing the pool is not yet implemented, so creating more
 // than capacity edges will panic.
@@ -60,20 +60,20 @@ func NewPool(capacity uint32) *Pool {
 
 //------------------------------------------------------------------------------
 
-// NewEdge returns a new isolated Edge (it's the MakeEdge operator from Guibas
-// and Stolfi Quad-Edge article).
+// New creates a new  isolated quad-edge, and returns its canonical directed
+// Edge. It's the MakeEdge operator from Guibas and Stolfi Quad-Edge article.
 //
-// The edge is set up with separate origin and destination vertices, but same
-// left and right faces. To obtain a loop instead (same origin and destination,
-// different left and right), use NewEdge().Rot().
-func (p *Pool) NewEdge() Edge {
+// The quad-edge is set up with separate origin and destination vertices, but
+// same left and right faces. To obtain a loop instead (same origin and
+// destination, different left and right), use New().Rot().
+func (p *Pool) New() Edge {
 
 	//TODO: implement the free list
 
 	sz := len(p.next) + 4
 	if sz > cap(p.next) {
 		//TODO: grow the slices
-		panic("growing QuadEdges not implemented")
+		panic("growing the pool of edges is not yet implemented")
 	}
 
 	// Allocate the new quad
@@ -118,7 +118,7 @@ func Splice(a, b Edge) {
 
 //------------------------------------------------------------------------------
 
-// Free removes the edge from any edge ring it belongs to.
+// Free removes the quad-edge from any edge ring it belongs to.
 //
 // Note that freeing the corresponding slot in the pool is not yet implemented,
 // so the freed edge still counts as created in regards to pool capacity.

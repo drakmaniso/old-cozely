@@ -8,16 +8,38 @@ import (
 
 //------------------------------------------------------------------------------
 
-func TestPool_NewEdge(t *testing.T) {
+func TestPool_New(t *testing.T) {
 	p := quadedge.NewPool(2)
-	e0 := p.NewEdge()
+	e0 := p.New()
+	if quadedge.SameRing(e0, e0.Sym()) {
+		t.Error("new edge incorrect, eOrg==eDest: ", e0)
+	}
+	if !quadedge.SameRing(e0.Rot(), e0.Tor()) {
+		t.Error("new edge incorrect, eRight!=eLeft: ", e0)
+	}
+	if quadedge.SameRing(e0.Sym(), e0) {
+		t.Error("new edge incorrect, eDest==eOrg: ", e0)
+	}
+	if !quadedge.SameRing(e0.Tor(), e0.Rot()) {
+		t.Error("new edge incorrect, eLeft!=eRight: ", e0)
+	}
+	if e0.OrigNext() != e0 ||
+		e0.RightNext() != e0.Sym() ||
+		e0.DestNext() != e0 ||
+		e0.LeftNext() != e0.Sym() {
+		t.Error("new edge incorrect, got: ", e0)
+	}
 	s0 := e0.String()
-	if s0 != "0o=[Onext:0o Rnext:0l Dnext:0d Lnext:0r]" {
+	if s0 != "0o=[orig:->0o right:->0l dest:->0d left:->0r]" {
 		t.Error("new edge incorrect, got: ", s0)
 	}
-	e1 := p.NewEdge()
+	e1 := p.New()
+	e1.SetOrig(1)
+	e1.SetRight(100)
+	e1.SetDest(2)
+	e1.SetLeft(200)
 	s1 := e1.String()
-	if s1 != "1o=[Onext:1o Rnext:1l Dnext:1d Lnext:1r]" {
+	if s1 != "1o=[orig:1->1o right:100->1l dest:2->1d left:200->1r]" {
 		t.Error("new edge incorrect, got: ", s1)
 	}
 }
@@ -26,7 +48,7 @@ func TestPool_NewEdge(t *testing.T) {
 
 func TestEdge_Rot(t *testing.T) {
 	p := quadedge.NewPool(1)
-	e0 := p.NewEdge()
+	e0 := p.New()
 	e0.SetOrig(1)
 	e0.SetRight(100)
 	e0.SetDest(2)
@@ -46,7 +68,7 @@ func TestEdge_Rot(t *testing.T) {
 
 func TestEdge_Sym(t *testing.T) {
 	p := quadedge.NewPool(1)
-	e0 := p.NewEdge()
+	e0 := p.New()
 	e0.SetOrig(1)
 	e0.SetRight(100)
 	e0.SetDest(2)
@@ -66,7 +88,7 @@ func TestEdge_Sym(t *testing.T) {
 
 func TestEdge_Tor(t *testing.T) {
 	p := quadedge.NewPool(1)
-	e0 := p.NewEdge()
+	e0 := p.New()
 	e0.SetOrig(1)
 	e0.SetRight(100)
 	e0.SetDest(2)
@@ -81,6 +103,10 @@ func TestEdge_Tor(t *testing.T) {
 	e2 := e0.Tor().Tor().Tor().Tor()
 	if e2 != e0 {
 		t.Error("quadruple Tor() incorrect, got:", e2)
+	}
+	e3 := e0.Tor().Rot()
+	if e3 != e0 {
+		t.Error("Tor().Rot() incorrect, got:", e2)
 	}
 }
 

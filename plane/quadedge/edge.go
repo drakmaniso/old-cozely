@@ -36,17 +36,18 @@ import (
 
 //------------------------------------------------------------------------------
 
-// An Edge is an "edge reference", i.e. it identifies a specific edge of a
-// quad-edge. To create a new Edge, use Pool.New().
+// An Edge identifies one of the four directed edges of a specific quad-edge. It
+// corresponds to what Guibas and Stolfi call an edge reference. To obtain a new
+// Edge, create a new quad-edge with Pool.New().
 //
-// Note that Edge contains a pointer to the pool used to create it.
+// Note that for convenience, Edge objects contain a pointer to the pool used to
+// create it.
 type Edge struct {
 	pool *Pool
 	id   edgeID
 }
 
-// edgeID is an "edge reference", i.e. it identifies a specific edge of a
-// quad-edge.
+// edgeID is a pure "edge reference", without the pool pointer.
 type edgeID uint32
 
 //------------------------------------------------------------------------------
@@ -234,88 +235,115 @@ func (e Edge) LeftPrev() Edge {
 
 //------------------------------------------------------------------------------
 
-// Orig returns the ID of the origin vertex of e.
+// OrigLoop calls visit on every edges in the origin edge-ring of e, in
+// conter-clockwise order (starting with e).
+func (e Edge) OrigLoop(visit func(e Edge)) {
+	for f := e.id; ; {
+		visit(e)
+		e.id = e.pool.next[e.id]
+		if e.id == f || e.id != noEdge {
+			return
+		}
+	}
+}
+
+// RightLoop calls visit on every edges in the right edge-ring of e, in
+// conter-clockwise order (starting with e).
+func (e Edge) RightLoop(visit func(e Edge)) {
+	for f := e.id; ; {
+		visit(e)
+		e.id = e.pool.next[e.id.rot()].tor()
+		if e.id == f || e.id != noEdge {
+			return
+		}
+	}
+}
+
+// DestLoop calls visit on every edges in the destination edge-ring of e, in
+// conter-clockwise order (starting with e).
+func (e Edge) DestLoop(visit func(e Edge)) {
+	for f := e.id; ; {
+		visit(e)
+		e.id = e.pool.next[e.id.sym()].sym()
+		if e.id == f || e.id != noEdge {
+			return
+		}
+	}
+}
+
+// LeftLoop calls visit on every edges in the left edge-ring of e, in
+// conter-clockwise order (starting with e).
+func (e Edge) LeftLoop(visit func(e Edge)) {
+	for f := e.id; ; {
+		visit(e)
+		e.id = e.pool.next[e.id.tor()].rot()
+		if e.id == f || e.id != noEdge {
+			return
+		}
+	}
+}
+
+//------------------------------------------------------------------------------
+
+// SameRing returns true if a and b are part of the same Onext edge-ring (i.e.,
+// if the two directed edges share the same origin).
+func SameRing(a, b Edge) bool {
+	for f := a.id; ; {
+		if a.id == b.id {
+			return true
+		}
+		a.id = a.pool.next[a.id]
+		if a.id == f || a.id == noEdge {
+			return false
+		}
+	}
+	return false
+}
+
+//------------------------------------------------------------------------------
+
+// Orig returns the vertex ID of the origin of e.
 func (e Edge) Orig() uint32 {
 	return e.pool.data[e.id]
 }
 
-// SetOrig changes the ID of the origin vertex of e. If there is other edges in
-// the same origin edge ring, they will not be updated.
+// SetOrig changes the vertex ID of the origin of e. Note that if there is other
+// edges with the same origin, they will not be updated.
 func (e Edge) SetOrig(data uint32) {
 	e.pool.data[e.id] = data
 }
 
-// SetOrigRing changes the ID of the origin vertex of all edges in the origin
-// edge ring of e.
-func (e Edge) SetOrigRing(data uint32) {
-	f := e.id
-	e.pool.data[e.id] = data
-	for ; f != e.id && f != noEdge; f = e.pool.next[f] {
-		e.pool.data[f] = data
-	}
-}
-
-// Right returns the ID of the right face of e.
+// Right returns the face ID at the right of e.
 func (e Edge) Right() uint32 {
 	return e.pool.data[e.id.rot()]
 }
 
-// SetRight changes the ID of the right face of e. If there is other edges in
-// the same right edge ring, they will not be updated.
+// SetRight changes the face ID at the right of e. Note that if there is other
+// edges with the same right face, they will not be updated.
 func (e Edge) SetRight(data uint32) {
 	e.pool.data[e.id.rot()] = data
 }
 
-// SetRightRing changes the ID of the right face of all edges in the right
-// edge ring of e.
-func (e Edge) SetRightRing(data uint32) {
-	f := e.id.rot()
-	e.pool.data[e.id.rot()] = data
-	for ; f != e.id.rot() && f != noEdge; f = e.pool.next[f] {
-		e.pool.data[f] = data
-	}
-}
-
-// Dest returns the ID of the destination vertex of e.
+// Dest returns the vertex ID of the destination of e.
 func (e Edge) Dest() uint32 {
 	return e.pool.data[e.id.sym()]
 }
 
-// SetDest changes the ID of the destination vertex of e. If there is other
+// SetDest changes the vertex ID of the destination of e. If there is other
 // edges in the same destination edge ring, they will not be updated.
 func (e Edge) SetDest(data uint32) {
 	e.pool.data[e.id.sym()] = data
 }
 
-// SetDestRing changes the ID of the destination vertex of all edges in the
-// destination edge ring of e.
-func (e Edge) SetDestRing(data uint32) {
-	f := e.id.sym()
-	e.pool.data[e.id.sym()] = data
-	for ; f != e.id.sym() && f != noEdge; f = e.pool.next[f] {
-		e.pool.data[f] = data
-	}
-}
-
-// Left returns the ID of the left face of e.
+// Left returns the face ID at the left of e.
 func (e Edge) Left() uint32 {
 	return e.pool.data[e.id.tor()]
 }
 
-// SetLeft changes the ID of the left face of e. If there is other edges in
-// the same left edge ring, they will not be updated.
+// SetLeft changes the face ID at the left of e. Note that if there is other
+// edges with the same left face, they will not be updated.
 func (e Edge) SetLeft(data uint32) {
 	e.pool.data[e.id.tor()] = data
-}
-
-// SetLeftRing changes the ID of the left face of all edges in the left
-// edge ring of e.
-func (e Edge) SetLeftRing(data uint32) {
-	f := e.id.tor()
-	e.pool.data[e.id.tor()] = data
-	for ; f != e.id.tor() && f != noEdge; f = e.pool.next[f] {
-		e.pool.data[f] = data
-	}
 }
 
 //------------------------------------------------------------------------------
