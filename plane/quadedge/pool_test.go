@@ -11,16 +11,16 @@ import (
 func TestPool_New(t *testing.T) {
 	p := quadedge.NewPool(2)
 	e0 := p.New()
-	if quadedge.SameRing(e0, e0.Sym()) {
+	if e0.SameRing(e0.Sym()) {
 		t.Error("new edge incorrect, eOrg==eDest: ", e0)
 	}
-	if !quadedge.SameRing(e0.Rot(), e0.Tor()) {
+	if !e0.Rot().SameRing(e0.Tor()) {
 		t.Error("new edge incorrect, eRight!=eLeft: ", e0)
 	}
-	if quadedge.SameRing(e0.Sym(), e0) {
+	if e0.Sym().SameRing(e0) {
 		t.Error("new edge incorrect, eDest==eOrg: ", e0)
 	}
-	if !quadedge.SameRing(e0.Tor(), e0.Rot()) {
+	if !e0.Tor().SameRing(e0.Rot()) {
 		t.Error("new edge incorrect, eLeft!=eRight: ", e0)
 	}
 	if e0.OrigNext() != e0 ||
