@@ -73,21 +73,21 @@ func (e Edge) String() string {
 		return "[no edge]"
 	}
 	on := e.pool.next[e.id]
-	o := "Onext:" +
-		on.String() +
-		datastring(e.pool, e.id)
+	o := "orig:" +
+		datastring(e.pool, e.id) +
+		"->" + on.String()
 	rn := e.pool.next[e.id.rot()]
-	r := " Rnext:" +
-		rn.String() +
-		datastring(e.pool, e.id.rot())
+	r := " right:" +
+		datastring(e.pool, e.id.rot()) +
+		"->" + rn.String()
 	dn := e.pool.next[e.id.sym()]
-	d := " Dnext:" +
-		dn.String() +
-		datastring(e.pool, e.id.sym())
+	d := " dest:" +
+		datastring(e.pool, e.id.sym()) +
+		"->" + dn.String()
 	ln := e.pool.next[e.id.tor()]
-	l := " Lnext:" +
-		ln.String() +
-		datastring(e.pool, e.id.tor())
+	l := " left:" +
+		datastring(e.pool, e.id.tor()) +
+		"->" + ln.String()
 	return e.id.String() + "=[" + o + r + d + l + "]"
 }
 
@@ -116,7 +116,7 @@ func datastring(p *Pool, e edgeID) string {
 	if d == NoData {
 		return ""
 	}
-	return "/" + strconv.Itoa(int(d))
+	return strconv.Itoa(int(d))
 }
 
 //------------------------------------------------------------------------------
