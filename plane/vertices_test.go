@@ -26,7 +26,7 @@ func init() {
 }
 
 var (
-	points plane.Vertices
+	points []plane.Coord
 )
 
 //------------------------------------------------------------------------------
@@ -100,13 +100,13 @@ func (triLoop) Draw() error {
 	}
 	screen.Point(1, m.X, m.Y, 1)
 
-	if points.IsCCW(0, 1, 2) {
+	if plane.IsCCW(points[0], points[1], points[2]) {
 		cursor.Println("CounterCW")
 	} else {
 		cursor.Println("CW")
 	}
 
-	if points.PointInTriangle(p, 0, 1, 2) {
+	if plane.InTriangle(p, points[0], points[1], points[2]) {
 		cursor.ColorShift(1)
 		cursor.Println("INSIDE")
 	} else {
@@ -114,8 +114,11 @@ func (triLoop) Draw() error {
 		cursor.Println("Outside")
 	}
 
-	a, b, c := points.CCW(0, 1, 2)
-	if points.PointInTriangleCCW(p, a, b, c) {
+	a, b, c := 0, 1, 2
+	if !plane.IsCCW(points[a], points[b], points[c]) {
+		b, c = c, b
+	}
+	if plane.InTriangleCCW(p, points[a], points[b], points[c]) {
 		cursor.ColorShift(1)
 		cursor.Println("INSIDE")
 	} else {

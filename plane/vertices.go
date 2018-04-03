@@ -5,51 +5,28 @@ package plane
 
 //------------------------------------------------------------------------------
 
-// Vertices represents a list of vertices.
-type Vertices []Coord
-
-// A VertexID refers to a point in a list of vertices.
-type VertexID uint32
-
-//------------------------------------------------------------------------------
-
 // IsCCW returns true if a, b and c are in counter-clockwise order.
-func (v Vertices) IsCCW(a, b, c VertexID) bool {
+func IsCCW(a, b, c Coord) bool {
 	// Compute the determinant of the following matrice:
-	//   | xa  ya   1 |
-	//   | xb  yb   1 |
-	//   | xc  yc   1 |
-	xa, ya := v[a].X, v[a].Y
-	xb, yb := v[b].X, v[b].Y
-	xc, yc := v[c].X, v[c].Y
-	d := xa*yb + xb*yc + xc*ya - yb*xc - yc*xa - ya*xb
+	//   | a.X  a.Y   1 |
+	//   | b.X  b.Y   1 |
+	//   | c.X  c.Y   1 |
+	d := a.X*b.Y + b.X*c.Y + c.X*a.Y - b.Y*c.X - c.Y*a.X - a.Y*b.X
 	return d > 0
 }
 
-// CCW returns a, b and c, but reordered so that they are in counter-clockwise
-// order (by swapping b and c if necessary).
-func (v Vertices) CCW(a, b, c VertexID) (VertexID, VertexID, VertexID) {
-	if v.IsCCW(a, b, c) {
-		return a, b, c
-	}
-	return a, c, b
-}
-
 //------------------------------------------------------------------------------
 
-// PointInTriangle returns true if p is inside the triangle a b c.
-func (v Vertices) PointInTriangle(p Coord, a, b, c VertexID) bool {
-	xa, ya := v[a].X, v[a].Y
-	xb, yb := v[b].X, v[b].Y
-	xc, yc := v[c].X, v[c].Y
-	s := ya*xc - xa*yc + (yc-ya)*p.X + (xa-xc)*p.Y
-	d := xa*yb - ya*xb + (ya-yb)*p.X + (xb-xa)*p.Y
+// InTriangle returns true if p is inside the triangle a b c.
+func InTriangle(p Coord, a, b, c Coord) bool {
+	s := a.Y*c.X - a.X*c.Y + (c.Y-a.Y)*p.X + (a.X-c.X)*p.Y
+	d := a.X*b.Y - a.Y*b.X + (a.Y-b.Y)*p.X + (b.X-a.X)*p.Y
 
 	if (s < 0) != (d < 0) {
 		return false
 	}
 
-	r := -yb*xc + ya*(xc-xb) + xa*(yb-yc) + xb*yc
+	r := -b.Y*c.X + a.Y*(c.X-b.X) + a.X*(b.Y-c.Y) + b.X*c.Y
 
 	if r < 0 {
 		s = -s
@@ -59,26 +36,22 @@ func (v Vertices) PointInTriangle(p Coord, a, b, c VertexID) bool {
 	return s > 0 && d > 0 && (s+d) <= r
 }
 
-// PointInTriangleCCW returns true if p is inside the triangle a b c (which must
+// InTriangleCCW returns true if p is inside the triangle a b c (which must
 // be in CCW order).
-func (v Vertices) PointInTriangleCCW(p Coord, a, b, c VertexID) bool {
-	xa, ya := v[a].X, v[a].Y
-	xb, yb := v[b].X, v[b].Y
-	xc, yc := v[c].X, v[c].Y
-
+func InTriangleCCW(p Coord, a, b, c Coord) bool {
 	// Translate to a as origin
-	xbb, ybb := xb-xa, yb-ya
-	xcc, ycc := xc-xa, yc-ya
-	xpp, ypp := p.X-xa, p.Y-ya
+	bb := b.Minus(a)
+	cc := c.Minus(a)
+	pp := p.Minus(a)
 
 	w := Coord{
-		X: ycc*xpp - xcc*ypp,
-		Y: -ybb*xpp + xbb*ypp,
+		X: cc.Y*pp.X - cc.X*pp.Y,
+		Y: -bb.Y*pp.X + bb.X*pp.Y,
 	}
 	if w.X <= 0 || w.Y <= 0 {
 		return false
 	}
-	d := xbb*ycc - xcc*ybb
+	d := bb.X*cc.Y - cc.X*bb.Y
 	return w.X+w.Y < d
 }
 
