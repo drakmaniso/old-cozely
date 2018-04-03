@@ -31,7 +31,7 @@ var (
 
 //------------------------------------------------------------------------------
 
-func newSeeds() {
+func newPoints() {
 	for i := range points {
 		points[i] = plane.Coord{X: rand.Float32(), Y: rand.Float32()}
 	}
@@ -58,7 +58,7 @@ type triLoop struct {
 
 func (triLoop) Enter() error {
 	points = make([]plane.Coord, 3)
-	newSeeds()
+	newPoints()
 
 	palette.Clear()
 	palette.Index(1).SetColour(colour.LRGB{1, 1, 1})
@@ -93,37 +93,52 @@ func (triLoop) Draw() error {
 	p := plane.Coord{X: (float32(m.X) - ox) / r, Y: (oy - float32(m.Y)) / r}
 	cursor.Locate(2, 8, 0x7FFF)
 	cursor.ColorShift(0)
+	cursor.Printf("A: %.3f, %.3f\n", points[0].X, points[0].Y)
+	cursor.Printf("B: %.3f, %.3f\n", points[1].X, points[1].Y)
+	cursor.Printf("C: %.3f, %.3f\n", points[2].X, points[2].Y)
 	if p.X >= 0 {
-		cursor.Printf("Pos: %.3f, %.3f\n", p.X, p.Y)
+		cursor.Printf("   %.3f, %.3f\n", p.X, p.Y)
 	} else {
-		cursor.Println("Pos:")
+		cursor.Println(" ")
 	}
 	screen.Point(1, m.X, m.Y, 1)
 
-	if plane.IsCCW(points[0], points[1], points[2]) {
-		cursor.Println("CounterCW")
-	} else {
-		cursor.Println("CW")
-	}
+	cursor.Println()
 
-	if plane.InTriangle(p, points[0], points[1], points[2]) {
-		cursor.ColorShift(1)
-		cursor.Println("INSIDE")
+	if plane.IsCCW(points[0], points[1], points[2]) {
+		cursor.ColorShift(3)
+		cursor.Println("IsCCW: TRUE")
 	} else {
 		cursor.ColorShift(0)
-		cursor.Println("Outside")
+		cursor.Println("IsCCW: false")
+	}
+
+	if plane.InTriangle(points[0], points[1], points[2], p) {
+		cursor.ColorShift(1)
+		cursor.Println("InTriangle: TRUE")
+	} else {
+		cursor.ColorShift(0)
+		cursor.Println("InTriangle: false")
 	}
 
 	a, b, c := 0, 1, 2
 	if !plane.IsCCW(points[a], points[b], points[c]) {
 		b, c = c, b
 	}
-	if plane.InTriangleCCW(p, points[a], points[b], points[c]) {
+	if plane.InTriangleCCW(points[a], points[b], points[c], p) {
 		cursor.ColorShift(1)
-		cursor.Println("INSIDE")
+		cursor.Println("InTriangleCCW: TRUE")
 	} else {
 		cursor.ColorShift(0)
-		cursor.Println("Outside")
+		cursor.Println("InTriangleCCW: false")
+	}
+
+	if plane.InCircle(points[a], points[b], points[c], p) {
+		cursor.ColorShift(2)
+		cursor.Println("InCircle: TRUE")
+	} else {
+		cursor.ColorShift(0)
+		cursor.Println("InCircle: false")
 	}
 
 	screen.Display()
@@ -135,7 +150,7 @@ func (triLoop) Draw() error {
 func (triLoop) MouseButtonDown(b mouse.Button, _ int) {
 	switch b {
 	case mouse.Left:
-		newSeeds()
+		newPoints()
 	case mouse.Right:
 	}
 }

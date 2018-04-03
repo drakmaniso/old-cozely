@@ -18,7 +18,7 @@ func IsCCW(a, b, c Coord) bool {
 //------------------------------------------------------------------------------
 
 // InTriangle returns true if p is inside the triangle a b c.
-func InTriangle(p Coord, a, b, c Coord) bool {
+func InTriangle(a, b, c Coord, p Coord) bool {
 	s := a.Y*c.X - a.X*c.Y + (c.Y-a.Y)*p.X + (a.X-c.X)*p.Y
 	d := a.X*b.Y - a.Y*b.X + (a.Y-b.Y)*p.X + (b.X-a.X)*p.Y
 
@@ -38,7 +38,7 @@ func InTriangle(p Coord, a, b, c Coord) bool {
 
 // InTriangleCCW returns true if p is inside the triangle a b c (which must
 // be in CCW order).
-func InTriangleCCW(p Coord, a, b, c Coord) bool {
+func InTriangleCCW(a, b, c Coord, p Coord) bool {
 	// Translate to a as origin
 	bb := b.Minus(a)
 	cc := c.Minus(a)
@@ -53,6 +53,15 @@ func InTriangleCCW(p Coord, a, b, c Coord) bool {
 	}
 	d := bb.X*cc.Y - cc.X*bb.Y
 	return w.X+w.Y < d
+}
+
+//------------------------------------------------------------------------------
+
+func InCircle(a, b, c Coord, p Coord) bool {
+	return ((p.Y-a.Y)*(b.X-c.X)+(p.X-a.X)*(b.Y-c.Y))*
+		((p.X-c.X)*(b.X-a.X)-(p.Y-c.Y)*(b.Y-a.Y)) >
+		((p.Y-c.Y)*(b.X-a.X)+(p.X-c.X)*(b.Y-a.Y))*
+			((p.X-a.X)*(b.X-c.X)-(p.Y-a.Y)*(b.Y-c.Y))
 }
 
 //------------------------------------------------------------------------------
