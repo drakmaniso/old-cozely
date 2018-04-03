@@ -38,7 +38,7 @@ func NewPool(capacity uint32) *Pool {
 // The quad-edge is set up with separate origin and destination vertices, but
 // same left and right faces. To obtain a loop instead (same origin and
 // destination, different left and right), use New().Rot().
-func (p *Pool) New() Edge {
+func New(p *Pool) Edge {
 
 	//TODO: implement the free list
 
@@ -55,13 +55,13 @@ func (p *Pool) New() Edge {
 
 	// Initialize the quad
 	p.next[e] = e
-	p.data[e] = NoData
+	p.data[e] = Nil
 	p.next[e.sym()] = e.sym()
-	p.data[e.sym()] = NoData
+	p.data[e.sym()] = Nil
 	p.next[e.rot()] = e.tor()
-	p.data[e.rot()] = NoData
+	p.data[e.rot()] = Nil
 	p.next[e.tor()] = e.rot()
-	p.data[e.tor()] = NoData
+	p.data[e.tor()] = Nil
 
 	return Edge{pool: p, id: e}
 }
@@ -82,14 +82,14 @@ func Delete(e Edge) {
 		Splice(f, f.OrigPrev())
 	}
 
-	p.next[e.id] = noEdge
-	p.data[e.id] = 0xFFFFFFFF
-	p.next[e.id.rot()] = noEdge
-	p.data[e.id.rot()] = 0xFFFFFFFF
-	p.next[e.id.sym()] = noEdge
-	p.data[e.id.sym()] = 0xFFFFFFFF
-	p.next[e.id.tor()] = noEdge
-	p.data[e.id.tor()] = 0xFFFFFFFF
+	p.next[e.id] = Nil
+	p.data[e.id] = Nil
+	p.next[e.id.rot()] = Nil
+	p.data[e.id.rot()] = Nil
+	p.next[e.id.sym()] = Nil
+	p.data[e.id.sym()] = Nil
+	p.next[e.id.tor()] = Nil
+	p.data[e.id.tor()] = Nil
 
 	p.marks[e.id>>2] = 0
 

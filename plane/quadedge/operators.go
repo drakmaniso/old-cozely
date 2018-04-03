@@ -31,7 +31,7 @@ func Splice(a, b Edge) {
 // convenience, it also sets the origin and destination vertex ID of the new
 // edge (but not the right and left face ID).
 func Connect(a, b Edge) Edge {
-	e := a.pool.New()
+	e := New(a.pool)
 	e.SetOrig(a.Dest())
 	e.SetDest(b.Orig())
 	Splice(e, a.LeftNext())

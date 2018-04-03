@@ -10,7 +10,7 @@ import (
 
 func TestPool_New(t *testing.T) {
 	p := quadedge.NewPool(2)
-	e0 := p.New()
+	e0 := quadedge.New(p)
 	if e0.SameRing(e0.Sym()) {
 		t.Error("new edge incorrect, eOrg==eDest: ", e0)
 	}
@@ -33,7 +33,7 @@ func TestPool_New(t *testing.T) {
 	if s0 != "0o=[orig:->0o right:->0l dest:->0d left:->0r]" {
 		t.Error("new edge incorrect, got: ", s0)
 	}
-	e1 := p.New()
+	e1 := quadedge.New(p)
 	e1.SetOrig(1)
 	e1.SetRight(100)
 	e1.SetDest(2)
@@ -48,7 +48,7 @@ func TestPool_New(t *testing.T) {
 
 func TestEdge_Rot(t *testing.T) {
 	p := quadedge.NewPool(1)
-	e0 := p.New()
+	e0 := quadedge.New(p)
 	e0.SetOrig(1)
 	e0.SetRight(100)
 	e0.SetDest(2)
@@ -68,7 +68,7 @@ func TestEdge_Rot(t *testing.T) {
 
 func TestEdge_Sym(t *testing.T) {
 	p := quadedge.NewPool(1)
-	e0 := p.New()
+	e0 := quadedge.New(p)
 	e0.SetOrig(1)
 	e0.SetRight(100)
 	e0.SetDest(2)
@@ -88,7 +88,7 @@ func TestEdge_Sym(t *testing.T) {
 
 func TestEdge_Tor(t *testing.T) {
 	p := quadedge.NewPool(1)
-	e0 := p.New()
+	e0 := quadedge.New(p)
 	e0.SetOrig(1)
 	e0.SetRight(100)
 	e0.SetDest(2)

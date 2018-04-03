@@ -25,24 +25,21 @@ type edgeID uint32
 //------------------------------------------------------------------------------
 
 const (
-	// NoData is the value used to initialize the origin, destination, left and
+	// Nil is the value used to initialize the origin, destination, left and
 	// right fields of new Edge objects.
-	NoData uint32 = 0xFFFFFFFF
+	Nil = 0xFFFFFFFF
 
 	// canonical is a mask to isolate the quad ID in an edge reference.
 	canonical edgeID = 0xFFFFFFFC
 
 	// quad is a mask to isolate the rotation part of an edge reference.
 	quad edgeID = 0x00000003
-
-	// noEdge is a dummy edge reference, for uninitialized quads.
-	noEdge edgeID = 0xFFFFFFFF
 )
 
 //------------------------------------------------------------------------------
 
 func (e Edge) String() string {
-	if e.id == noEdge {
+	if e.id == Nil {
 		return "[no edge]"
 	}
 	on := e.pool.next[e.id]
@@ -65,7 +62,7 @@ func (e Edge) String() string {
 }
 
 func (e edgeID) String() string {
-	if e == noEdge {
+	if e == Nil {
 		return "no_edge"
 	}
 	var s string
@@ -86,7 +83,7 @@ func (e edgeID) String() string {
 
 func datastring(p *Pool, e edgeID) string {
 	d := p.data[e]
-	if d == NoData {
+	if d == Nil {
 		return ""
 	}
 	return strconv.Itoa(int(d))
@@ -210,10 +207,11 @@ func (e Edge) LeftPrev() Edge {
 // OrigLoop calls visit on every edges in the origin edge-ring of e, in
 // conter-clockwise order (starting with e).
 func (e Edge) OrigLoop(visit func(e Edge)) {
-	for f := e.id; ; {
+	f := e.id
+	for e.id != Nil {
 		visit(e)
 		e.id = e.pool.next[e.id]
-		if e.id == f || e.id != noEdge {
+		if e.id == f {
 			return
 		}
 	}
@@ -222,10 +220,11 @@ func (e Edge) OrigLoop(visit func(e Edge)) {
 // RightLoop calls visit on every edges in the right edge-ring of e, in
 // conter-clockwise order (starting with e).
 func (e Edge) RightLoop(visit func(e Edge)) {
-	for f := e.id; ; {
+	f := e.id
+	for e.id != Nil {
 		visit(e)
 		e.id = e.pool.next[e.id.rot()].tor()
-		if e.id == f || e.id != noEdge {
+		if e.id == f  {
 			return
 		}
 	}
@@ -234,10 +233,11 @@ func (e Edge) RightLoop(visit func(e Edge)) {
 // DestLoop calls visit on every edges in the destination edge-ring of e, in
 // conter-clockwise order (starting with e).
 func (e Edge) DestLoop(visit func(e Edge)) {
-	for f := e.id; ; {
+	f := e.id
+	for e.id != Nil {
 		visit(e)
 		e.id = e.pool.next[e.id.sym()].sym()
-		if e.id == f || e.id != noEdge {
+		if e.id == f  {
 			return
 		}
 	}
@@ -246,10 +246,11 @@ func (e Edge) DestLoop(visit func(e Edge)) {
 // LeftLoop calls visit on every edges in the left edge-ring of e, in
 // conter-clockwise order (starting with e).
 func (e Edge) LeftLoop(visit func(e Edge)) {
-	for f := e.id; ; {
+	f := e.id
+	for e.id != Nil {
 		visit(e)
 		e.id = e.pool.next[e.id.tor()].rot()
-		if e.id == f || e.id != noEdge {
+		if e.id == f  {
 			return
 		}
 	}
@@ -260,15 +261,17 @@ func (e Edge) LeftLoop(visit func(e Edge)) {
 // SameRing returns true if o is in the origin edge-ring of e (i.e., if the two
 // directed edges share the same origin).
 func (e Edge) SameRing(o Edge) bool {
-	for f := e.id; ; {
+	f := e.id
+	for e.id != Nil {
 		if e.id == o.id {
 			return true
 		}
 		e.id = e.pool.next[e.id]
-		if e.id == f || e.id == noEdge {
+		if e.id == f {
 			return false
 		}
 	}
+	return false
 }
 
 //------------------------------------------------------------------------------
