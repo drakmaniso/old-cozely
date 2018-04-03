@@ -37,7 +37,7 @@ func InTriangle(a, b, c Coord, p Coord) bool {
 }
 
 // InTriangleCCW returns true if p is inside the triangle a b c (which must
-// be in CCW order).
+// be in counter-clockwise order).
 func InTriangleCCW(a, b, c Coord, p Coord) bool {
 	// Translate to a as origin
 	bb := b.Minus(a)
@@ -57,7 +57,9 @@ func InTriangleCCW(a, b, c Coord, p Coord) bool {
 
 //------------------------------------------------------------------------------
 
-func InCircle(a, b, c Coord, p Coord) bool {
+// InCircumcircle returns true if p is inside the circumcircle of triangle a b c
+// (which must be in counter-clockwise order)
+func InCircumcircle(a, b, c Coord, p Coord) bool {
 	return ((p.Y-a.Y)*(b.X-c.X)+(p.X-a.X)*(b.Y-c.Y))*
 		((p.X-c.X)*(b.X-a.X)-(p.Y-c.Y)*(b.Y-a.Y)) >
 		((p.Y-c.Y)*(b.X-a.X)+(p.X-c.X)*(b.Y-a.Y))*
