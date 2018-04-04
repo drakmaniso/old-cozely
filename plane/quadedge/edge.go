@@ -224,7 +224,7 @@ func (e Edge) RightLoop(visit func(e Edge)) {
 	for e.id != Nil {
 		visit(e)
 		e.id = e.pool.next[e.id.rot()].tor()
-		if e.id == f  {
+		if e.id == f {
 			return
 		}
 	}
@@ -237,7 +237,7 @@ func (e Edge) DestLoop(visit func(e Edge)) {
 	for e.id != Nil {
 		visit(e)
 		e.id = e.pool.next[e.id.sym()].sym()
-		if e.id == f  {
+		if e.id == f {
 			return
 		}
 	}
@@ -250,7 +250,7 @@ func (e Edge) LeftLoop(visit func(e Edge)) {
 	for e.id != Nil {
 		visit(e)
 		e.id = e.pool.next[e.id.tor()].rot()
-		if e.id == f  {
+		if e.id == f {
 			return
 		}
 	}
@@ -332,26 +332,27 @@ func (e Edge) setMark(mark uint32) {
 
 //------------------------------------------------------------------------------
 
-// Walk calls walkFn for every undirected primal edge reachable from e.
+// Walk calls visit for every undirected primal edge reachable from e.
 //
 // It does so by a chain of Sym() and OrigNext() calls, but ensures that in each
 // quad-edge, only one edge is visited (i.e. the symetric of an already
 // encountered edge is never visited).
-func (e Edge) Walk(walkFn func(e Edge)) {
+func (e Edge) Walk(visit func(e Edge)) {
 	m := e.pool.nextMark
 	e.pool.nextMark++
 	if e.pool.nextMark == 0 {
 		e.pool.nextMark = 1
 	}
 	//TODO: non-recursive version?
-	e.pool.walk(e.id, walkFn, m)
+	e.pool.walk(e.id, visit, m)
 }
 
-func (p *Pool) walk(eid edgeID, walkFn func(e Edge), m uint32) {
-	for ; p.marks[eid>>2] != m; eid = p.next[eid] {
-		walkFn(Edge{pool: p, id: eid})
+func (p *Pool) walk(eid edgeID, visit func(e Edge), m uint32) {
+	for p.marks[eid>>2] != m  {
+		visit(Edge{pool: p, id: eid})
 		p.marks[eid>>2] = m
-		p.walk(p.next[eid.sym()], walkFn, m)
+		p.walk(p.next[eid.sym()], visit, m)
+		eid = p.next[eid]
 	}
 }
 

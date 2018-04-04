@@ -52,6 +52,7 @@ func New(p *Pool) Edge {
 	e := edgeID(len(p.next))
 	p.next = p.next[:sz]
 	p.data = p.data[:sz]
+	p.marks = p.marks[:len(p.marks)+1]
 
 	// Initialize the quad
 	p.next[e] = e
