@@ -69,4 +69,9 @@ func (p Coord) ModCW(o Coord) Coord {
 	return Coord{p.X % o.X, p.Y % o.Y}
 }
 
+// Perp returns the vector rotated by 90 in counter-clockwise direction.
+func (p Coord) Perp() Coord {
+	return Coord{-p.Y, p.X}
+}
+
 //------------------------------------------------------------------------------
