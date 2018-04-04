@@ -67,3 +67,24 @@ func InCircumcircle(a, b, c Coord, p Coord) bool {
 }
 
 //------------------------------------------------------------------------------
+
+// Circumcenter returns the coordinates of the circumcenter of triangle a b c.
+func Circumcenter(a, b, c Coord) Coord {
+	// Translate to a as origin
+	ba := b.Minus(a)
+	ca := c.Minus(a)
+
+	lba := ba.Length2()
+	lca := ca.Length2()
+
+	d := 0.5 / (ba.X*ca.Y - ba.Y*ca.X) //TODO: handle div by zero case
+
+	o := Coord{
+		X: (ca.Y*lba - ba.Y*lca) * d,
+		Y: (ba.X*lca - ca.X*lba) * d,
+	}
+
+	return o.Plus(a)
+}
+
+//------------------------------------------------------------------------------
