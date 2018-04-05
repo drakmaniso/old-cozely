@@ -60,7 +60,6 @@ func TestDelaunay(t *testing.T) {
 
 func TestDelaunay_graphic(t *testing.T) {
 	do(func() {
-		glam.Configure(glam.TimeStep(0.0005))
 		err := glam.Run(delLoop{})
 		if err != nil {
 			t.Error(err)
@@ -77,7 +76,7 @@ type delLoop struct {
 //------------------------------------------------------------------------------
 
 func (delLoop) Enter() error {
-	points = make([]plane.Coord, 999)
+	points = make([]plane.Coord, 111)
 	newPoints()
 
 	palette.Clear()
@@ -93,11 +92,6 @@ var (
 	offset plane.Coord
 )
 
-func (delLoop) Update() error {
-	newPoints()
-	return nil
-}
-
 func (delLoop) Draw() error {
 	screen.Clear(0)
 	ratio = float32(screen.Size().Y)
@@ -110,7 +104,7 @@ func (delLoop) Draw() error {
 	p := fromScreen(m)
 	cursor.Locate(2, 8, 0x7FFF)
 	cursor.ColorShift(0)
-	if p.X >= 0 {
+	if p.X >= 0 && p.X <= 1.0 {
 		cursor.Printf("   %.3f, %.3f\n", p.X, p.Y)
 	} else {
 		cursor.Println(" ")
