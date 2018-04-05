@@ -16,7 +16,7 @@ import (
 
 //------------------------------------------------------------------------------
 
-var screen = pixel.NewCanvas(pixel.Zoom(2))
+var screen = pixel.NewCanvas(pixel.Zoom(1))
 
 var cursor = pixel.NewCursor()
 
@@ -34,9 +34,12 @@ var (
 var c0 = []plane.Coord{
 	{1, 2},
 	{1, 2},
+	{0, 8},
+	{1, 2},
+	{0, 8},
 	{1, 2},
 	{1, 2},
-	{1, 2},
+	{0, 8},
 }
 
 var four = []plane.Coord{
@@ -57,6 +60,7 @@ func TestDelaunay(t *testing.T) {
 
 func TestDelaunay_graphic(t *testing.T) {
 	do(func() {
+		glam.Configure(glam.TimeStep(0.0005))
 		err := glam.Run(delLoop{})
 		if err != nil {
 			t.Error(err)
@@ -73,7 +77,7 @@ type delLoop struct {
 //------------------------------------------------------------------------------
 
 func (delLoop) Enter() error {
-	points = make([]plane.Coord, 15)
+	points = make([]plane.Coord, 999)
 	newPoints()
 
 	palette.Clear()
@@ -89,6 +93,11 @@ var (
 	offset plane.Coord
 )
 
+func (delLoop) Update() error {
+	newPoints()
+	return nil
+}
+
 func (delLoop) Draw() error {
 	screen.Clear(0)
 	ratio = float32(screen.Size().Y)
@@ -96,6 +105,17 @@ func (delLoop) Draw() error {
 		X: (float32(screen.Size().X) - ratio) / 2,
 		Y: float32(screen.Size().Y),
 	}
+
+	m := screen.Mouse()
+	p := fromScreen(m)
+	cursor.Locate(2, 8, 0x7FFF)
+	cursor.ColorShift(0)
+	if p.X >= 0 {
+		cursor.Printf("   %.3f, %.3f\n", p.X, p.Y)
+	} else {
+		cursor.Println(" ")
+	}
+
 	pt := make([]pixel.Coord, len(points))
 	l2 := pixel.Coord{2, 2}
 	l1 := pixel.Coord{1, 1}
