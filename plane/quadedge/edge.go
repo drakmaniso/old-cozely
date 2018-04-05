@@ -338,6 +338,9 @@ func (e Edge) setMark(mark uint32) {
 // quad-edge, only one edge is visited (i.e. the symetric of an already
 // encountered edge is never visited).
 func (e Edge) Walk(visit func(e Edge)) {
+	if e.id == Nil {
+		return
+	}
 	m := e.pool.nextMark
 	e.pool.nextMark++
 	if e.pool.nextMark == 0 {

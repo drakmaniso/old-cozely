@@ -33,9 +33,10 @@ var (
 
 var c0 = []plane.Coord{
 	{1, 2},
-	{4, 5},
-	{4, 4},
-	{2, 3},
+	{1, 2},
+	{1, 2},
+	{1, 2},
+	{1, 2},
 }
 
 var four = []plane.Coord{
@@ -46,7 +47,7 @@ var four = []plane.Coord{
 }
 
 func TestDelaunay(t *testing.T) {
-	e := quadedge.Delaunay(four)
+	e := quadedge.Delaunay(c0)
 	e.Walk(func(f quadedge.Edge) {
 		fmt.Println(f.Orig(), "->", f.Dest())
 	})
