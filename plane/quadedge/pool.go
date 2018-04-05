@@ -39,22 +39,19 @@ func NewPool(capacity uint32) *Pool {
 // same left and right faces. To obtain a loop instead (same origin and
 // destination, different left and right), use New().Rot().
 func New(p *Pool) Edge {
+	var e edgeID
 
-	//TODO: implement the free list
-
-	sz := len(p.next) + 4
-	if sz > cap(p.next) {
-		//TODO: grow the slices
-		panic("growing the pool of edges is not yet implemented")
+	if len(p.free) > 0 {
+		e = p.free[0]
+		p.free[0] = p.free[len(p.free)-1]
+		p.free = p.free[:len(p.free)-1]
+	} else {
+		e = edgeID(len(p.next))
+		p.next = append(p.next, []edgeID{Nil, Nil, Nil, Nil}...)
+		p.data = append(p.data, []uint32{Nil, Nil, Nil, Nil}...)
+		p.marks = append(p.marks, 0)
 	}
 
-	// Allocate the new quad
-	e := edgeID(len(p.next))
-	p.next = p.next[:sz]
-	p.data = p.data[:sz]
-	p.marks = p.marks[:len(p.marks)+1]
-
-	// Initialize the quad
 	p.next[e] = e
 	p.data[e] = Nil
 	p.next[e.sym()] = e.sym()

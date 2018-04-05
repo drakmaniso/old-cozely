@@ -16,7 +16,7 @@ import (
 
 //------------------------------------------------------------------------------
 
-var screen = pixel.NewCanvas(pixel.Zoom(1))
+var screen = pixel.NewCanvas(pixel.Zoom(2))
 
 var cursor = pixel.NewCursor()
 
@@ -73,7 +73,7 @@ type delLoop struct {
 //------------------------------------------------------------------------------
 
 func (delLoop) Enter() error {
-	points = make([]plane.Coord, 10)
+	points = make([]plane.Coord, 15)
 	newPoints()
 
 	palette.Clear()

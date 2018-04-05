@@ -3,7 +3,6 @@
 package quadedge
 
 import (
-	"fmt"
 	"sort"
 
 	"github.com/drakmaniso/glam/plane"
@@ -13,7 +12,6 @@ import (
 
 // Delaunay returns the delaunay triangulation of a set of points.
 func Delaunay(points []plane.Coord) Edge {
-	fmt.Println(points)
 	// Construct indices and remove duplicates
 	v := make([]uint32, 0, len(points))
 	for i := range points {
@@ -45,7 +43,7 @@ func Delaunay(points []plane.Coord) Edge {
 	})
 
 	// Divide and conquer algorithm
-	p := NewPool(uint32(len(v) * 10)) //TODO: correct size
+	p := NewPool(uint32(len(v) * 3)) //TODO: correct size
 	l, _ := delaunay(points, p, v)
 
 	return l
