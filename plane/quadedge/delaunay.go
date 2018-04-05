@@ -11,14 +11,15 @@ import (
 
 //------------------------------------------------------------------------------
 
-func Delaunay(sites []plane.Coord) Edge {
-	fmt.Println(sites)
+// Delaunay returns the delaunay triangulation of a set of points.
+func Delaunay(points []plane.Coord) Edge {
+	fmt.Println(points)
 	// Construct indices and remove duplicates
-	v := make([]uint32, 0, len(sites))
-	for i := range sites {
+	v := make([]uint32, 0, len(points))
+	for i := range points {
 		n := true
-		for j := range sites[:i] {
-			if sites[j] == sites[i] {
+		for j := range points[:i] {
+			if points[j] == points[i] {
 				n = false
 				break
 			}
@@ -34,25 +35,25 @@ func Delaunay(sites []plane.Coord) Edge {
 	// Sort
 	sort.Slice(v, func(i int, j int) bool {
 		switch {
-		case sites[v[i]].X < sites[v[j]].X:
+		case points[v[i]].X < points[v[j]].X:
 			return true
-		case sites[v[i]].X > sites[v[j]].X:
+		case points[v[i]].X > points[v[j]].X:
 			return false
 		default:
-			return sites[v[i]].Y < sites[v[j]].Y
+			return points[v[i]].Y < points[v[j]].Y
 		}
 	})
 
 	// Divide and conquer algorithm
 	p := NewPool(uint32(len(v) * 10)) //TODO: correct size
-	l, _ := delaunay(sites, p, v)
+	l, _ := delaunay(points, p, v)
 
 	return l
 }
 
 //------------------------------------------------------------------------------
 
-func delaunay(coords []plane.Coord, p *Pool, sub []uint32) (l, r Edge) {
+func delaunay(points []plane.Coord, p *Pool, sub []uint32) (l, r Edge) {
 	if len(sub) == 2 {
 		// Create an edge connecting sub[0] to sub[1]
 		a := New(p)
@@ -71,11 +72,11 @@ func delaunay(coords []plane.Coord, p *Pool, sub []uint32) (l, r Edge) {
 		b.SetOrig(sub[1])
 		b.SetDest(sub[2])
 		// Close the triangle
-		if plane.IsCCW(coords[sub[0]], coords[sub[1]], coords[sub[2]]) {
+		if plane.IsCCW(points[sub[0]], points[sub[1]], points[sub[2]]) {
 			_ = Connect(b, a)
 			return a, b.Sym()
 		}
-		if plane.IsCCW(coords[sub[0]], coords[sub[2]], coords[sub[1]]) {
+		if plane.IsCCW(points[sub[0]], points[sub[2]], points[sub[1]]) {
 			c := Connect(b, a)
 			return c.Sym(), c
 		}
@@ -84,16 +85,16 @@ func delaunay(coords []plane.Coord, p *Pool, sub []uint32) (l, r Edge) {
 	}
 
 	// Recursion
-	lout, lins := delaunay(coords, p, sub[:len(sub)/2])
-	rins, rout := delaunay(coords, p, sub[len(sub)/2:])
+	lout, lins := delaunay(points, p, sub[:len(sub)/2])
+	rins, rout := delaunay(points, p, sub[len(sub)/2:])
 
 	// Compute the lower common tangent of L and R
 loop:
 	for {
 		switch {
-		case leftOf(coords, rins.Orig(), lins):
+		case leftOf(points, rins.Orig(), lins):
 			lins = lins.LeftNext()
-		case rightOf(coords, lins.Orig(), rins):
+		case rightOf(points, lins.Orig(), rins):
 			rins = rins.RightPrev()
 		default:
 			break loop
@@ -114,8 +115,8 @@ loop:
 		// Locate the first L point lcand.Dest to be encountered by the rising
 		// bubble, and delete L edges out of basel.Dest that fail the circle test.
 		lcand := base.Sym().OrigNext()
-		if valid(coords, lcand, base) {
-			for inCircle(coords,
+		if valid(points, lcand, base) {
+			for inCircle(points,
 				base.Dest(), base.Orig(), lcand.Dest(), lcand.OrigNext().Dest(),
 			) {
 				t := lcand.OrigNext()
@@ -125,8 +126,8 @@ loop:
 		}
 		// Symmetrically, locate the first R point to be hit, and delete R edges.
 		rcand := base.OrigPrev()
-		if valid(coords, rcand, base) {
-			for inCircle(coords,
+		if valid(points, rcand, base) {
+			for inCircle(points,
 				base.Dest(), base.Orig(), rcand.Dest(), rcand.OrigPrev().Dest(),
 			) {
 				t := rcand.OrigPrev()
@@ -136,15 +137,15 @@ loop:
 		}
 		// If both lcand and rcand are invalid, then basel is the upper common
 		// tangent
-		if !valid(coords, lcand, base) && !valid(coords, rcand, base) {
+		if !valid(points, lcand, base) && !valid(points, rcand, base) {
 			break
 		}
 		// the next cross edge is to be connected to either lcand.Dest or
 		// rcand.Dest. If both are valid, then choose the appropriate one using the
 		// InCircle test.
-		if !valid(coords, lcand, base) ||
-			(valid(coords, rcand, base) &&
-				inCircle(coords,
+		if !valid(points, lcand, base) ||
+			(valid(points, rcand, base) &&
+				inCircle(points,
 					lcand.Dest(), lcand.Orig(), rcand.Orig(), rcand.Dest())) {
 			base = Connect(rcand, base.Sym())
 		} else {
@@ -157,20 +158,20 @@ loop:
 
 //------------------------------------------------------------------------------
 
-func inCircle(sites []plane.Coord, a, b, c, d uint32) bool {
-	return plane.InCircumcircle(sites[a], sites[b], sites[c], sites[d])
+func inCircle(points []plane.Coord, a, b, c, d uint32) bool {
+	return plane.InCircumcircle(points[a], points[b], points[c], points[d])
 }
 
-func rightOf(sites []plane.Coord, p uint32, e Edge) bool {
-	return plane.IsCCW(sites[p], sites[e.Dest()], sites[e.Orig()])
+func rightOf(points []plane.Coord, p uint32, e Edge) bool {
+	return plane.IsCCW(points[p], points[e.Dest()], points[e.Orig()])
 }
 
-func leftOf(sites []plane.Coord, p uint32, e Edge) bool {
-	return plane.IsCCW(sites[p], sites[e.Orig()], sites[e.Dest()])
+func leftOf(points []plane.Coord, p uint32, e Edge) bool {
+	return plane.IsCCW(points[p], points[e.Orig()], points[e.Dest()])
 }
 
-func valid(sites []plane.Coord, e, f Edge) bool {
-	return rightOf(sites, e.Dest(), f)
+func valid(points []plane.Coord, e, f Edge) bool {
+	return rightOf(points, e.Dest(), f)
 }
 
 //------------------------------------------------------------------------------
