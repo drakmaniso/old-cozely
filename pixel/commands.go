@@ -70,25 +70,32 @@ func (cv Canvas) Triangles(c palette.Index, z int16, strip ...Coord) {
 
 func (cv Canvas) appendCommand(c uint32, v uint32, n uint32, params ...int16) {
 	s := &canvases[cv]
-	l := len(s.commands)
+	b := len(s.commands)
+	l := len(s.commands[b-1])
+	if l >= maxCommandCount || len(s.parameters[b-1]) + len(params) >= maxParamCount {
+		s.commands = append(s.commands, make([]gl.DrawIndirectCommand, 0, maxCommandCount))
+		s.parameters = append(s.parameters, make([]int16, 0, maxParamCount))
+		b++
+		l = 0
+	}
 	if l > 0 &&
 		c != cmdText &&
 		c != cmdLines &&
 		c != cmdTriangles &&
-		(s.commands[l-1].BaseInstance>>24) == c {
+		(s.commands[b-1][l-1].BaseInstance>>24) == c {
 		// Collapse with previous draw
-		s.commands[l-1].InstanceCount += n
+		s.commands[b-1][l-1].InstanceCount += n
 	} else {
 		// Create new draw
-		s.commands = append(s.commands, gl.DrawIndirectCommand{
+		s.commands[b-1] = append(s.commands[b-1], gl.DrawIndirectCommand{
 			VertexCount:   v,
 			InstanceCount: n,
 			FirstVertex:   0,
-			BaseInstance:  uint32(c<<24 | uint32(len(s.parameters)&0xFFFFFF)),
+			BaseInstance:  uint32(c<<24 | uint32(len(s.parameters[b-1])&0xFFFFFF)),
 		})
 	}
 
-	s.parameters = append(s.parameters, params...)
+	s.parameters[b-1] = append(s.parameters[b-1], params...)
 }
 
 //------------------------------------------------------------------------------

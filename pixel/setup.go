@@ -48,7 +48,7 @@ func setup() error {
 	)
 
 	parametersTBO = gl.NewBufferTexture(
-		uintptr(maxCommandCount*maxParamCount),
+		uintptr(2*maxParamCount),
 		gl.R16I,
 		gl.DynamicStorage,
 	)

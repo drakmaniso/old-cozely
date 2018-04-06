@@ -79,7 +79,7 @@ type delLoop struct {
 //------------------------------------------------------------------------------
 
 func (delLoop) Enter() error {
-	points = make([]plane.Coord, 111)
+	points = make([]plane.Coord, 256)
 	newPoints()
 
 	palette.Clear()
@@ -207,6 +207,19 @@ func (dl delLoop) KeyDown(l key.Label, p key.Position) {
 		const st = 1.0 / 6
 		for x := float32(st); x < 1.0; x += st {
 				points = append(points, plane.Coord{X: x, Y: 0.5 + 0.17*x})
+		}
+		triangulation = quadedge.Delaunay(points)
+	case key.Label5:
+		points = make([]plane.Coord, 20000)
+		newPoints()
+	case key.Label6:
+		points = points[:0]
+		const st = 1.0 / 27
+		const h = 0.5 * 1.732050807568877 * st
+		for x := float32(st); x < 1.0; x += st {
+			for y := float32(st); y < 1.0; y += h {
+				points = append(points, plane.Coord{X: x + 0.5*y -0.25, Y: y})
+			}
 		}
 		triangulation = quadedge.Delaunay(points)
 	default:
