@@ -72,9 +72,14 @@ func (cv Canvas) appendCommand(c uint32, v uint32, n uint32, params ...int16) {
 	s := &canvases[cv]
 	b := len(s.commands)
 	l := len(s.commands[b-1])
-	if l >= maxCommandCount || len(s.parameters[b-1]) + len(params) >= maxParamCount {
-		s.commands = append(s.commands, make([]gl.DrawIndirectCommand, 0, maxCommandCount))
-		s.parameters = append(s.parameters, make([]int16, 0, maxParamCount))
+	if l >= maxCommandCount || len(s.parameters[b-1])+len(params) >= maxParamCount {
+		if len(s.commands) < cap(s.commands) {
+			s.commands = s.commands[:b+1]
+			s.parameters = s.parameters[:b+1]
+		} else {
+			s.commands = append(s.commands, make([]gl.DrawIndirectCommand, 0, maxCommandCount))
+			s.parameters = append(s.parameters, make([]int16, 0, maxParamCount))
+		}
 		b++
 		l = 0
 	}

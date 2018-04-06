@@ -11,7 +11,7 @@ import (
 
 const (
 	maxCommandCount = 1024
-	maxParamCount   = 8*1024
+	maxParamCount   = 4*1024
 )
 
 //------------------------------------------------------------------------------
