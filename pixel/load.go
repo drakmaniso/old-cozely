@@ -18,10 +18,7 @@ import (
 
 //------------------------------------------------------------------------------
 
-var (
-	pictFiles []atlas.Image
-	pictAtlas *atlas.Atlas
-)
+var pictAtlas *atlas.Atlas
 
 //------------------------------------------------------------------------------
 
@@ -32,8 +29,10 @@ func loadAssets() error {
 
 	// Scan all pictures
 
+	prects := []uint32{}
+
 	for i := range picturePaths {
-		err := Picture(i).scan()
+		err := Picture(i).scan(&prects)
 		if err != nil {
 			//TODO: sticky error instead?
 			return err
@@ -42,19 +41,21 @@ func loadAssets() error {
 
 	// Pack them into a texture atlas
 
-	pictAtlas.Pack(pictFiles)
+	pictAtlas.Pack(prects, pictSize, pictPut)
 
 	internal.Debug.Printf(
 		"Packed %d pictures in %d bins (%.1fkB unused)\n",
-		len(pictFiles),
+		len(prects),
 		pictAtlas.BinCount(),
 		float64(pictAtlas.Unused())/1024.0,
 	)
 
 	// Load all fonts
 
+	frects := []uint32{}
+
 	for i := range fonts {
-		err := Font(i).load()
+		err := Font(i).load(&frects)
 		if err != nil {
 			//TODO: sticky error instead?
 			return err
@@ -63,7 +64,7 @@ func loadAssets() error {
 
 	// Pack them into the atlas
 
-	fntAtlas.Pack(fntFiles)
+	fntAtlas.Pack(frects, fntSize, fntPut)
 
 	internal.Debug.Printf(
 		"Packed %d fonts in %d bins (%.1fkB unused)\n",
@@ -77,7 +78,7 @@ func loadAssets() error {
 
 //------------------------------------------------------------------------------
 
-func (p Picture) scan() error {
+func (p Picture) scan(prects *[]uint32) error {
 	if p == 0 {
 		return nil
 	}
@@ -114,30 +115,28 @@ func (p Picture) scan() error {
 	}
 
 	pictureMap[p].w, pictureMap[p].h = w, h
-	pictFiles = append(pictFiles, imgfile(p))
+	*prects = append(*prects, uint32(p))
 
 	return nil
 }
 
 //------------------------------------------------------------------------------
 
-type imgfile Picture
-
-func (im imgfile) Size() (width, height int16) {
-	s := Picture(im).Size()
+func pictSize(rect uint32) (width, height int16) {
+	s := Picture(rect).Size()
 	return s.X, s.Y
 }
 
-func (im imgfile) Put(bin int16, x, y int16) {
-	pictureMap[Picture(im)].bin = bin
-	pictureMap[Picture(im)].x, pictureMap[Picture(im)].y = x, y
+func pictPut(rect uint32, bin int16, x, y int16) {
+	pictureMap[Picture(rect)].bin = bin
+	pictureMap[Picture(rect)].x, pictureMap[Picture(rect)].y = x, y
 }
 
-func (im imgfile) Paint(dest interface{}) error {
-	px, py := pictureMap[Picture(im)].x, pictureMap[Picture(im)].y
-	pw, ph := pictureMap[Picture(im)].w, pictureMap[Picture(im)].h
+func pictPaint(rect uint32, dest interface{}) error {
+	px, py := pictureMap[Picture(rect)].x, pictureMap[Picture(rect)].y
+	pw, ph := pictureMap[Picture(rect)].w, pictureMap[Picture(rect)].h
 
-	fp := filepath.FromSlash(internal.Path + picturePaths[Picture(im)] + ".png")
+	fp := filepath.FromSlash(internal.Path + picturePaths[Picture(rect)] + ".png")
 	f, err := os.Open(fp)
 	if err != nil {
 		return err

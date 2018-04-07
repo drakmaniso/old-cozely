@@ -9,31 +9,25 @@ import (
 
 //------------------------------------------------------------------------------
 
-// An Image represents a rectangle of pixels that will be packed into an atlas.
-type Image interface {
-	Size() (width, height int16)
-	Put(bin int16, x, y int16)
-	Paint(dest interface{}) error
-}
-
-//------------------------------------------------------------------------------
-
 type region struct {
 	first, second *region
 	x, y          int16
 	w, h          int16
-	img           Image
+	rect          uint32
 }
+
+//------------------------------------------------------------------------------
+
+const norect = uint32(0xFFFFFFFF)
 
 //------------------------------------------------------------------------------
 
 func (n *region) String() string {
 	if n.first == nil {
-		if n.img != nil {
-			w, h := n.img.Size()
-			return fmt.Sprintf("%dx%d", w, h)
+		if n.rect != norect {
+			return fmt.Sprintf("%d", n.rect)
 		}
-		return "nil"
+		return "norect"
 	}
 
 	return "{ " + n.first.String() + ", " + n.second.String() + " }"
@@ -41,26 +35,26 @@ func (n *region) String() string {
 
 //------------------------------------------------------------------------------
 
-func (n *region) insert(p Image, bin int16) *region {
+func (n *region) insert(rect uint32, bin int16, size SizeFn, put PutFn) *region {
 	// If already split, recurse
 
 	if n.first != nil {
-		f := n.first.insert(p, bin)
+		f := n.first.insert(rect, bin, size, put)
 		if f != nil {
 			return f
 		}
 
-		return n.second.insert(p, bin)
+		return n.second.insert(rect, bin, size, put)
 	}
 
 	// It's a leaf
 
-	if n.img != nil {
+	if n.rect != norect {
 		// Already filled
 		return nil
 	}
 
-	w, h := p.Size()
+	w, h := size(rect)
 
 	if n.w < w || n.h < h {
 		// Too small
@@ -69,15 +63,15 @@ func (n *region) insert(p Image, bin int16) *region {
 
 	if n.w == w && n.h == h {
 		// It's a match!
-		n.img = p
-		p.Put(bin, n.x, n.y)
+		n.rect = rect
+		put(rect, bin, n.x, n.y)
 		return n
 	}
 
 	// Split the leaf
 
-	n.first = new(region)
-	n.second = new(region)
+	n.first = &region{rect: norect}
+	n.second = &region{rect: norect}
 
 	if n.w-w > n.h-h {
 		n.first.x, n.first.y = n.x, n.y
@@ -95,23 +89,23 @@ func (n *region) insert(p Image, bin int16) *region {
 
 	}
 
-	return n.first.insert(p, bin)
+	return n.first.insert(rect, bin, size, put)
 }
 
 //------------------------------------------------------------------------------
 
-func (n *region) paint(bin int16, dest interface{}) error {
-	if n.img != nil {
-		return n.img.Paint(dest)
+func (n *region) paint(bin int16, dest interface{}, paint PaintFn) error {
+	if n.rect != norect {
+		return paint(n.rect, dest)
 	}
 
 	if n.first != nil {
-		err := n.first.paint(bin, dest)
+		err := n.first.paint(bin, dest, paint)
 		if err != nil {
 			return err
 		}
 
-		return n.second.paint(bin, dest)
+		return n.second.paint(bin, dest, paint)
 	}
 
 	return nil

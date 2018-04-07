@@ -17,13 +17,13 @@ import (
 //------------------------------------------------------------------------------
 
 var (
-	fntFiles []atlas.Image
 	fntAtlas *atlas.Atlas
+	fntImages []*image.Paletted
 )
 
 //------------------------------------------------------------------------------
 
-func (f Font) load() error {
+func (f Font) load(frects *[]uint32) error {
 	//TODO: support other image formats?
 	var p *image.Paletted
 
@@ -88,13 +88,8 @@ func (f Font) load() error {
 			return errors.New("unexpected subimage in Loadfont")
 		}
 		glyphMap = append(glyphMap, mapping{w: int16(w), h: int16(h)})
-		fntFiles = append(
-			fntFiles,
-			fntrune{
-				glyph: g,
-				img:   mm,
-			},
-		)
+		*frects = append(*frects, uint32(g))
+		fntImages = append(fntImages, mm)
 		x += w
 		for x < p.Bounds().Dx() && p.Pix[x+h*p.Stride] == 0 {
 			x++
@@ -114,25 +109,20 @@ func (f Font) load() error {
 
 //------------------------------------------------------------------------------
 
-type fntrune struct {
-	glyph uint16
-	img   *image.Paletted
-}
-
-func (fr fntrune) Size() (width, height int16) {
-	w, h := fr.img.Bounds().Dx(), fr.img.Bounds().Dy()
+func fntSize(rect uint32) (width, height int16) {
+	w, h := fntImages[rect].Bounds().Dx(), fntImages[rect].Bounds().Dy()
 	return int16(w), int16(h)
 }
 
-func (fr fntrune) Put(bin int16, x, y int16) {
-	glyphMap[fr.glyph].bin = bin
-	glyphMap[fr.glyph].x = x
-	glyphMap[fr.glyph].y = y
+func fntPut(rect uint32, bin int16, x, y int16) {
+	glyphMap[rect].bin = bin
+	glyphMap[rect].x = x
+	glyphMap[rect].y = y
 }
 
-func (fr fntrune) Paint(dest interface{}) error {
-	fx, fy := glyphMap[fr.glyph].x, glyphMap[fr.glyph].y
-	fw, fh := glyphMap[fr.glyph].w, glyphMap[fr.glyph].h
+func fntPaint(rect uint32, dest interface{}) error {
+	fx, fy := glyphMap[rect].x, glyphMap[rect].y
+	fw, fh := glyphMap[rect].w, glyphMap[rect].h
 
 	dm, ok := dest.(*image.Paletted)
 	if !ok {
@@ -141,7 +131,7 @@ func (fr fntrune) Paint(dest interface{}) error {
 	for y := 0; y < int(fh); y++ {
 		for x := 0; x < int(fw); x++ {
 			w := dm.Bounds().Dx()
-			ci := fr.img.Pix[x+y*fr.img.Stride]
+			ci := fntImages[rect].Pix[x+y*fntImages[rect].Stride]
 			dm.Pix[int(fx)+x+w*(int(fy)+y)] = uint8(ci)
 		}
 	}

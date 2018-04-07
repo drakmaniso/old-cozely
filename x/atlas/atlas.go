@@ -31,6 +31,12 @@ type Atlas struct {
 	ideal         int
 }
 
+type (
+	SizeFn  func(rect uint32) (int16, int16)
+	PutFn   func(rect uint32, bin int16, x, y int16)
+	PaintFn func(rect uint32, dest interface{}) error
+)
+
 //------------------------------------------------------------------------------
 
 // New returns a new (empty) Atlas. The width and height describe the shape of
@@ -63,18 +69,22 @@ func (a *Atlas) Unused() int {
 
 //------------------------------------------------------------------------------
 
-// Pack fits all the source images in the atlas. New bins are added when needed.
-// It calls the Put method of each image with the corresponding mapping
+// Pack fits all the rectangles in the atlas. New bins are added when needed. It
+// calls the Put method of each image with the corresponding mapping
 // information.
-func (a *Atlas) Pack(sources []Image) {
-	sort.Sort(byPerimeter(sources))
+func (a *Atlas) Pack(rectangles []uint32, size SizeFn, put PutFn) {
+	sort.Slice(rectangles, func(i, j int) bool {
+		wi, hi := size(rectangles[i])
+		wj, hj := size(rectangles[j])
+		return wi*2+hi*2 > wj*2+hj*2
+	})
 
-	for i := range sources {
-		w, h := sources[i].Size()
+	for i := range rectangles {
+		w, h := size(rectangles[i])
 		a.ideal += int(w) * int(h)
 		done := false
 		for j := range a.bins {
-			n := a.bins[j].insert(sources[i], int16(j))
+			n := a.bins[j].insert(rectangles[i], int16(j), size, put)
 			if n != nil {
 				done = true
 				break
@@ -83,9 +93,9 @@ func (a *Atlas) Pack(sources []Image) {
 		if !done {
 			a.bins = append(
 				a.bins,
-				region{w: a.width, h: a.height},
+				region{w: a.width, h: a.height, rect: norect},
 			)
-			n := a.bins[len(a.bins)-1].insert(sources[i], int16(len(a.bins)-1))
+			n := a.bins[len(a.bins)-1].insert(rectangles[i], int16(len(a.bins)-1), size, put)
 			if n != nil {
 
 			} else {
@@ -97,28 +107,10 @@ func (a *Atlas) Pack(sources []Image) {
 
 //------------------------------------------------------------------------------
 
-type byPerimeter []Image
-
-func (bp byPerimeter) Len() int {
-	return len(bp)
-}
-
-func (bp byPerimeter) Swap(i, j int) {
-	bp[i], bp[j] = bp[j], bp[i]
-}
-
-func (bp byPerimeter) Less(i, j int) bool {
-	wi, hi := bp[i].Size()
-	wj, hj := bp[j].Size()
-	return wi*2+hi*2 > wj*2+hj*2
-}
-
-//------------------------------------------------------------------------------
-
 // Paint iterates on all images mapped to the specified bin, and call their own
 // Paint method.
-func (a *Atlas) Paint(bin int16, dest interface{}) error {
-	return a.bins[bin].paint(bin, dest)
+func (a *Atlas) Paint(bin int16, dest interface{}, paint PaintFn) error {
+	return a.bins[bin].paint(bin, dest, paint)
 }
 
 //------------------------------------------------------------------------------

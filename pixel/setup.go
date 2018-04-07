@@ -81,15 +81,13 @@ func setup() error {
 			color.Palette{},
 		)
 
-		err := pictAtlas.Paint(i, m)
+		err := pictAtlas.Paint(i, m, pictPaint)
 		if err != nil {
 			return err
 		}
 
 		picturesTA.SubImage(0, 0, 0, int32(i), m)
 	}
-
-	pictFiles = pictFiles[:0]
 
 	// Create the font texture array
 	w, h = fntAtlas.BinSize()
@@ -102,7 +100,7 @@ func setup() error {
 			color.Palette{},
 		)
 
-		err := fntAtlas.Paint(i, m)
+		err := fntAtlas.Paint(i, m, fntPaint)
 		if err != nil {
 			return err
 		}
@@ -125,7 +123,7 @@ func setup() error {
 		// of.Close()
 	}
 
-	fntFiles = fntFiles[:0]
+	fntImages = fntImages[:0]
 
 	return gl.Err()
 }
@@ -151,6 +149,7 @@ func cleanup() error {
 
 	// Fonts
 	fntAtlas = nil
+	glyphMap = glyphMap[:0]
 	glyphMapTBO.Delete()
 	glyphsTA.Delete()
 
