@@ -71,6 +71,7 @@ func (loop) Enter() error {
 		gl.Topology(gl.Triangles),
 		gl.CullFace(false, true),
 		gl.DepthTest(true),
+		gl.DepthComparison(gl.LessOrEqual),
 	)
 	gl.Enable(gl.FramebufferSRGB)
 

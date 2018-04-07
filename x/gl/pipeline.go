@@ -144,7 +144,7 @@ static inline void BindPipeline(GLuint p, GLuint vao, PipelineState *state) {
 		currentState.depthTest = state->depthTest;
 	}
 
-	if (state->depthWrite != currentState.depthTest) {
+	if (state->depthWrite != currentState.depthWrite) {
 		glDepthMask(state->depthWrite);
 		currentState.depthWrite = state->depthWrite;
 	}
