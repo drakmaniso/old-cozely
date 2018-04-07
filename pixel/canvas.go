@@ -201,6 +201,7 @@ func (cv Canvas) Display() {
 // color is specified, the depth being initialized to the minimum value.
 func (cv Canvas) Clear(color palette.Index) {
 	s := &canvases[cv]
+	pipeline.Bind() //TODO: find another way to enable depthWrite
 	s.buffer.ClearColorUint(uint32(color), 0, 0, 0)
 	s.buffer.ClearDepth(-1.0)
 }
