@@ -107,6 +107,8 @@ func (delLoop) Draw() error {
 	p := fromScreen(m)
 	cursor.Locate(2, 8, 0x7FFF)
 	cursor.ColorShift(0)
+	fsr, fso := glam.FrameStats()
+	cursor.Printf("%.4f (%d)\n", 1000*fsr, fso)
 	if p.X >= 0 && p.X <= 1.0 {
 		cursor.Printf("   %.3f, %.3f\n", p.X, p.Y)
 	} else {

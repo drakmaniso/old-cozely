@@ -23,8 +23,8 @@ type canvas struct {
 	size       Coord
 	pixel      int32
 	ox, oy     int32 // Offset when there is a border around the screen
-	commands   [][]gl.DrawIndirectCommand
-	parameters [][]int16
+	commands   []gl.DrawIndirectCommand
+	parameters []int16
 }
 
 var canvases []canvas
@@ -47,10 +47,8 @@ func NewCanvas(o ...CanvasOption) Canvas {
 	s := &canvases[cv]
 	s.target = Coord{X: 640, Y: 360}
 	s.pixel = 2
-	s.commands = make([][]gl.DrawIndirectCommand, 1, 4)
-	s.commands[0] = make([]gl.DrawIndirectCommand, 0, maxCommandCount)
-	s.parameters = make([][]int16, 1, 4)
-	s.parameters[0] = make([]int16, 0, maxParamCount)
+	s.commands = make([]gl.DrawIndirectCommand, 0, maxCommandCount)
+	s.parameters = make([]int16, 0, maxParamCount)
 
 	for i := range o {
 		o[i](cv)
@@ -131,7 +129,7 @@ func (cv Canvas) createTextures() {
 func (cv Canvas) Paint() {
 	s := &canvases[cv]
 
-	if len(s.commands[0]) == 0 {
+	if len(s.commands) == 0 {
 		return
 	}
 
@@ -158,15 +156,11 @@ func (cv Canvas) Paint() {
 	picturesTA.Bind(layoutPictures)
 	glyphsTA.Bind(layoutGlyphs)
 
-	for i := range s.commands {
-		commandsICBO.SubData(s.commands[i], 0)
-		parametersTBO.SubData(s.parameters[i], 0)
-		gl.DrawIndirect(0, int32(len(s.commands[i])))
-		s.commands[i] = s.commands[i][:0]
-		s.parameters[i] = s.parameters[i][:0]
-	}
-	s.commands = s.commands[:1]
-	s.parameters = s.parameters[:1]
+		commandsICBO.SubData(s.commands, 0)
+		parametersTBO.SubData(s.parameters, 0)
+		gl.DrawIndirect(0, int32(len(s.commands)))
+		s.commands = s.commands[:0]
+		s.parameters = s.parameters[:0]
 }
 
 //------------------------------------------------------------------------------

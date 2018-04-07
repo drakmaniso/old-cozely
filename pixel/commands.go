@@ -4,6 +4,8 @@
 package pixel
 
 import (
+	"unsafe"
+
 	"github.com/drakmaniso/glam/palette"
 	"github.com/drakmaniso/glam/x/gl"
 )
@@ -70,37 +72,45 @@ func (cv Canvas) Triangles(c palette.Index, z int16, strip ...Coord) {
 
 func (cv Canvas) appendCommand(c uint32, v uint32, n uint32, params ...int16) {
 	s := &canvases[cv]
-	b := len(s.commands)
-	l := len(s.commands[b-1])
-	if l >= maxCommandCount || len(s.parameters[b-1])+len(params) >= maxParamCount {
-		if len(s.commands) < cap(s.commands) {
-			s.commands = s.commands[:b+1]
-			s.parameters = s.parameters[:b+1]
-		} else {
-			s.commands = append(s.commands, make([]gl.DrawIndirectCommand, 0, maxCommandCount))
-			s.parameters = append(s.parameters, make([]int16, 0, maxParamCount))
-		}
-		b++
-		l = 0
-	}
+	ccap, pcap := cap(s.commands), cap(s.parameters)
+
+	l := len(s.commands)
+
 	if l > 0 &&
 		c != cmdText &&
 		c != cmdLines &&
 		c != cmdTriangles &&
-		(s.commands[b-1][l-1].BaseInstance>>24) == c {
+		(s.commands[l-1].BaseInstance>>24) == c {
 		// Collapse with previous draw
-		s.commands[b-1][l-1].InstanceCount += n
+		s.commands[l-1].InstanceCount += n
 	} else {
 		// Create new draw
-		s.commands[b-1] = append(s.commands[b-1], gl.DrawIndirectCommand{
+		s.commands = append(s.commands, gl.DrawIndirectCommand{
 			VertexCount:   v,
 			InstanceCount: n,
 			FirstVertex:   0,
-			BaseInstance:  uint32(c<<24 | uint32(len(s.parameters[b-1])&0xFFFFFF)),
+			BaseInstance:  uint32(c<<24 | uint32(len(s.parameters)&0xFFFFFF)),
 		})
 	}
 
-	s.parameters[b-1] = append(s.parameters[b-1], params...)
+	s.parameters = append(s.parameters, params...)
+
+	if ccap < cap(s.commands) {
+		commandsICBO.Delete()
+		commandsICBO = gl.NewIndirectBuffer(
+			uintptr(cap(s.commands))*unsafe.Sizeof(s.commands[0]),
+			gl.DynamicStorage,
+		)
+	}
+
+	if pcap < cap(s.parameters) {
+		parametersTBO.Delete()
+		parametersTBO = gl.NewBufferTexture(
+			uintptr(cap(s.parameters))*unsafe.Sizeof(s.parameters[0]),
+			gl.R16I,
+			gl.DynamicStorage,
+		)
+	}
 }
 
 //------------------------------------------------------------------------------
