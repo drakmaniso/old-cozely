@@ -116,18 +116,13 @@ func (delLoop) Draw() error {
 	}
 
 	pt := make([]pixel.Coord, len(points))
-	l2 := pixel.Coord{2, 2}
-	l1 := pixel.Coord{1, 1}
 	for i, sd := range points {
 		pt[i] = toScreen(sd)
-		screen.Lines(2, 0, pt[i].Minus(l2), pt[i].Plus(l2.Perp()),
-			pt[i].Plus(l2), pt[i].Minus(l2.Perp()), pt[i].Minus(l2))
-		screen.Lines(2, 0, pt[i].Minus(l1), pt[i].Plus(l1.Perp()),
-			pt[i].Plus(l1), pt[i].Minus(l1.Perp()), pt[i].Minus(l1))
+		screen.Box(2, 2, 1, 0, pt[i].X-2, pt[i].Y-2, pt[i].X+2, pt[i].Y+2)
 	}
 
 	triangulation.Walk(func(e quadedge.Edge) {
-		screen.Lines(1, 1, toScreen(points[e.Orig()]), toScreen(points[e.Dest()]))
+		screen.Lines(1, -1, toScreen(points[e.Orig()]), toScreen(points[e.Dest()]))
 	})
 
 	screen.Display()
