@@ -64,10 +64,12 @@ func (triLoop) Enter() error {
 
 	palette.Clear()
 	palette.Index(1).SetColour(colour.LRGB{1, 1, 1})
-	palette.Index(2).SetColour(colour.LRGB{1, 0.2, 0.1})
-	palette.Index(3).SetColour(colour.LRGB{0.1, 1, 0.2})
-	palette.Index(4).SetColour(colour.LRGB{0.1, 0.2, 1})
-	palette.Index(5).SetColour(colour.LRGB{0.3, 0.1, 0.2})
+	palette.Index(2).SetColour(colour.LRGB{0.4, 0.05, 0.0})
+	palette.Index(3).SetColour(colour.LRGB{0.0, 0.4, 0.05})
+	palette.Index(4).SetColour(colour.LRGB{0.0, 0.05, 0.45})
+	palette.Index(5).SetColour(colour.LRGB{0.1, 0.0, 0.15})
+	palette.Index(6).SetColour(colour.LRGB{0.25, 0.25, 0.25})
+	palette.Index(7).SetColour(colour.LRGB{0.025, 0.025, 0.025})
 	return nil
 }
 
@@ -88,12 +90,14 @@ func (triLoop) Draw() error {
 	pt := make([]pixel.Coord, len(points))
 	for i, sd := range points {
 		pt[i] = toScreen(sd)
-		// screen.Point(2+palette.Index(i), pt[i].X, pt[i].Y, 1)
-		cursor.Locate(pt[i].X-2, pt[i].Y-3, +2)
-		cursor.ColorShift(1 + palette.Index(i))
+		screen.Box(2+palette.Index(i), 2+palette.Index(i), 2, 2,
+			pt[i].X-5, pt[i].Y-5, pt[i].X+5, pt[i].Y+5)
+		cursor.Locate(pt[i].X-2, pt[i].Y+3, +12)
+		cursor.ColorShift(0)
 		cursor.Print([]string{"A", "B", "C"}[i])
 	}
-	screen.Lines(1, 0, pt[0], pt[1], pt[2], pt[0])
+	screen.Lines(6, 0, pt[0], pt[1], pt[2], pt[0])
+	screen.Triangles(7, -5, pt[0], pt[1], pt[2], pt[0])
 
 	m := screen.Mouse()
 	p := fromScreen(m)
