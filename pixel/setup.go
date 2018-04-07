@@ -7,7 +7,6 @@ import (
 	"image"
 	"image/color"
 	"strings"
-	"unsafe"
 
 	"github.com/drakmaniso/glam/internal"
 	"github.com/drakmaniso/glam/x/atlas"
@@ -41,17 +40,6 @@ func setup() error {
 	)
 
 	screenUBO = gl.NewUniformBuffer(&screenUniforms, gl.DynamicStorage|gl.MapWrite)
-
-	commandsICBO = gl.NewIndirectBuffer(
-		uintptr(maxCommandCount)*unsafe.Sizeof(gl.DrawIndirectCommand{}),
-		gl.DynamicStorage,
-	)
-
-	parametersTBO = gl.NewBufferTexture(
-		uintptr(2*maxParamCount),
-		gl.R16I,
-		gl.DynamicStorage,
-	)
 
 	// Create the display pipeline
 
@@ -155,8 +143,6 @@ func cleanup() error {
 	pipeline.Delete()
 	pipeline = nil
 	screenUBO.Delete()
-	commandsICBO.Delete()
-	parametersTBO.Delete()
 
 	// Pictures
 	pictAtlas = nil

@@ -29,8 +29,6 @@ var blitUniforms struct {
 var (
 	pipeline      *gl.Pipeline
 	screenUBO     gl.UniformBuffer
-	commandsICBO  gl.IndirectBuffer
-	parametersTBO gl.BufferTexture
 	pictureMapTBO gl.BufferTexture
 	glyphMapTBO   gl.BufferTexture
 	picturesTA    gl.TextureArray2D

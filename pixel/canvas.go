@@ -5,6 +5,7 @@ package pixel
 
 import (
 	"errors"
+	"unsafe"
 
 	"github.com/drakmaniso/glam/internal"
 	"github.com/drakmaniso/glam/mouse"
@@ -15,16 +16,18 @@ import (
 //------------------------------------------------------------------------------
 
 type canvas struct {
-	buffer     gl.Framebuffer
-	texture    gl.Texture2D
-	depth      gl.Renderbuffer
-	target     Coord
-	autozoom   bool
-	size       Coord
-	pixel      int32
-	ox, oy     int32 // Offset when there is a border around the screen
-	commands   []gl.DrawIndirectCommand
-	parameters []int16
+	buffer        gl.Framebuffer
+	texture       gl.Texture2D
+	depth         gl.Renderbuffer
+	commandsICBO  gl.IndirectBuffer
+	parametersTBO gl.BufferTexture
+	target        Coord
+	autozoom      bool
+	size          Coord
+	pixel         int32
+	ox, oy        int32 // Offset when there is a border around the screen
+	commands      []gl.DrawIndirectCommand
+	parameters    []int16
 }
 
 var canvases []canvas
@@ -64,6 +67,16 @@ func NewCanvas(o ...CanvasOption) Canvas {
 func (cv Canvas) createBuffer() {
 	s := &canvases[cv]
 	s.buffer = gl.NewFramebuffer()
+
+	s.commandsICBO = gl.NewIndirectBuffer(
+		uintptr(cap(s.commands))*unsafe.Sizeof(s.commands[0]),
+		gl.DynamicStorage,
+	)
+	s.parametersTBO = gl.NewBufferTexture(
+		uintptr(cap(s.parameters))*unsafe.Sizeof(s.parameters[0]),
+		gl.R16I,
+		gl.DynamicStorage,
+	)
 }
 
 //------------------------------------------------------------------------------
@@ -149,18 +162,18 @@ func (cv Canvas) Paint() {
 	gl.Disable(gl.Blend)
 
 	screenUBO.Bind(layoutScreen)
-	commandsICBO.Bind()
-	parametersTBO.Bind(layoutParameters)
+	s.commandsICBO.Bind()
+	s.parametersTBO.Bind(layoutParameters)
 	pictureMapTBO.Bind(layoutPictureMap)
 	glyphMapTBO.Bind(layoutGlyphMap)
 	picturesTA.Bind(layoutPictures)
 	glyphsTA.Bind(layoutGlyphs)
 
-		commandsICBO.SubData(s.commands, 0)
-		parametersTBO.SubData(s.parameters, 0)
-		gl.DrawIndirect(0, int32(len(s.commands)))
-		s.commands = s.commands[:0]
-		s.parameters = s.parameters[:0]
+	s.commandsICBO.SubData(s.commands, 0)
+	s.parametersTBO.SubData(s.parameters, 0)
+	gl.DrawIndirect(0, int32(len(s.commands)))
+	s.commands = s.commands[:0]
+	s.parameters = s.parameters[:0]
 }
 
 //------------------------------------------------------------------------------

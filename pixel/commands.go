@@ -96,16 +96,16 @@ func (cv Canvas) appendCommand(c uint32, v uint32, n uint32, params ...int16) {
 	s.parameters = append(s.parameters, params...)
 
 	if ccap < cap(s.commands) {
-		commandsICBO.Delete()
-		commandsICBO = gl.NewIndirectBuffer(
+		s.commandsICBO.Delete()
+		s.commandsICBO = gl.NewIndirectBuffer(
 			uintptr(cap(s.commands))*unsafe.Sizeof(s.commands[0]),
 			gl.DynamicStorage,
 		)
 	}
 
 	if pcap < cap(s.parameters) {
-		parametersTBO.Delete()
-		parametersTBO = gl.NewBufferTexture(
+		s.parametersTBO.Delete()
+		s.parametersTBO = gl.NewBufferTexture(
 			uintptr(cap(s.parameters))*unsafe.Sizeof(s.parameters[0]),
 			gl.R16I,
 			gl.DynamicStorage,
