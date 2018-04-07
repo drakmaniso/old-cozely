@@ -19,6 +19,7 @@ const (
 	cmdPoint      = 4
 	cmdLines      = 5
 	cmdTriangles  = 6
+	cmdBox        = 7
 )
 
 //------------------------------------------------------------------------------
@@ -49,7 +50,6 @@ func (cv Canvas) Lines(c palette.Index, z int16, strip ...Coord) {
 		prm = append(prm, p.X, p.Y)
 	}
 	cv.appendCommand(cmdLines, 4, uint32(len(strip)-1), prm...)
-	// cv.appendCommand(cmdLine, 4, 1, int16(c), z, x1, y1, x2, y2)
 }
 
 //------------------------------------------------------------------------------
@@ -66,6 +66,18 @@ func (cv Canvas) Triangles(c palette.Index, z int16, strip ...Coord) {
 		prm = append(prm, p.X, p.Y)
 	}
 	cv.appendCommand(cmdTriangles, uint32(len(strip)), 1, prm...)
+}
+
+//------------------------------------------------------------------------------
+
+// Box adds a command to draw a box on the canvas.
+func (cv Canvas) Box(fg, bg palette.Index, corner int16, z int16, x0, y0, x1, y1 int16) {
+	cv.appendCommand(cmdBox, 4, 1,
+		int16(uint16(fg)<<8|uint16(bg)),
+		corner,
+		z,
+		x0, y0,
+		x1, y1)
 }
 
 //------------------------------------------------------------------------------

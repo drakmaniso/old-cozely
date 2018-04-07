@@ -10,6 +10,7 @@ const uint cmdText       = 3;
 const uint cmdPoint      = 4;
 const uint cmdLines      = 5;
 const uint cmdTriangles  = 6;
+const uint cmdBox        = 7;
 
 //------------------------------------------------------------------------------
 
@@ -18,10 +19,12 @@ in PerVertex {
 	layout(location=1) flat uint Bin;
 	layout(location=2) vec2 UV;
 	layout(location=3) flat uint ColorIndex;
-	layout(location=4) flat vec2 Orig;
+	layout(location=4) flat vec4 Box;
 	layout(location=5) flat float Slope;
-	layout(location=6) flat bool Steep;
+	layout(location=6) flat uint Flags;
 };
+
+const uint steep = 0x01;
 
 layout(origin_upper_left, pixel_center_integer) in vec4 gl_FragCoord;
 
@@ -71,9 +74,9 @@ void main(void)
 		break;
 
 	case cmdLines:
-		x = gl_FragCoord.x - Orig.x;
-		y = gl_FragCoord.y - Orig.y;
-		if (Steep) {
+		x = gl_FragCoord.x - Box.x;
+		y = gl_FragCoord.y - Box.y;
+		if (Flags == steep) {
 			if (x == round(Slope*y)) {
 				c = ColorIndex;
 			}
@@ -82,6 +85,22 @@ void main(void)
 				c = ColorIndex;
 			}
 		}
+		break;
+
+	case cmdBox:
+		x = gl_FragCoord.x;
+		y = gl_FragCoord.y;
+		uint cor = Flags;
+		float dx = min(x-Box.x, Box.z-x);
+		float dy = min(y-Box.y, Box.w-y);
+		if (dx + dy < cor) {
+			c = 0;
+		}	else if (dx + dy == cor || dx < 1 || dy < 1) {
+			c = ColorIndex>>8;
+		} else {
+			c = ColorIndex&0xFF;
+		}
+
 		break;
 	}
 

@@ -10,6 +10,7 @@ const uint cmdText       = 3;
 const uint cmdPoint      = 4;
 const uint cmdLines      = 5;
 const uint cmdTriangles  = 6;
+const uint cmdBox        = 7;
 
 const vec2 corners[4] = vec2[4](
 	vec2(0, 0),
@@ -41,10 +42,12 @@ out PerVertex {
 	layout(location=1) flat uint Bin;
 	layout(location=2) vec2 UV;
 	layout(location=3) flat uint ColorIndex;
-	layout(location=4) flat vec2 Orig;
+	layout(location=4) flat vec4 Box;
 	layout(location=5) flat float Slope;
-	layout(location=6) flat bool Steep;
+	layout(location=6) flat uint Flags;
 };
+
+const uint steep = 0x01;
 
 //------------------------------------------------------------------------------
 
@@ -132,10 +135,10 @@ void main(void)
 		x2 = texelFetch(parameters, param+4+offset).r;
 		y2 = texelFetch(parameters, param+5+offset).r;
 		// Position
-		Orig = vec2(x, y);
+		Box = vec4(x, y, x2, y2);
 		dx = x2-x;
 		dy = y2-y;
-		Steep = abs(dx) < abs(dy);
+		Flags = uint(abs(dx) < abs(dy)) * steep;
 		t = 0.25*normalize(vec2(dx, dy));
 		n = 0.75*normalize(vec2(-dy, dx));
 		pts = vec2[4](
@@ -146,7 +149,7 @@ void main(void)
 		);
 		p = (vec2(0.5,0.5) + pts[vertex].xy) * PixelSize;
 		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), floatZ(z), 1);
-		if (Steep) {
+		if (Flags == steep) {
 			Slope = float(dx)/float(dy);
 		} else {
 			Slope = float(dy)/float(dx);
@@ -168,6 +171,24 @@ void main(void)
 		ColorIndex = uint(c);
 		break;
 
+	case cmdBox:
+		offset = 7*instance;
+		// Parameters
+		c = texelFetch(parameters, param+0+offset).r;
+		Flags = texelFetch(parameters, param+1+offset).r;
+		z = texelFetch(parameters, param+2+offset).r;
+		x = texelFetch(parameters, param+3+offset).r;
+		y = texelFetch(parameters, param+4+offset).r;
+		x2 = texelFetch(parameters, param+5+offset).r;
+		y2 = texelFetch(parameters, param+6+offset).r;
+		wh = vec2(x2 -x+1, y2-y+1);
+		// Position
+		Box = vec4(x, y, x2, y2);
+		p = (vec2(x, y) + corners[vertex] * wh) * PixelSize;
+		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), floatZ(z), 1);
+		// Color
+		ColorIndex = uint(c);
+		break;
 	}
 }
 `
