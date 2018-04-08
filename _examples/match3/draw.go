@@ -4,10 +4,10 @@
 package main
 
 import (
-	"github.com/drakmaniso/glam/x/gl"
-
 	"github.com/drakmaniso/glam/_examples/match3/ecs"
 	"github.com/drakmaniso/glam/_examples/match3/grid"
+	"github.com/drakmaniso/glam/plane"
+	"github.com/drakmaniso/glam/x/gl"
 )
 
 //------------------------------------------------------------------------------
@@ -37,7 +37,7 @@ func (loop) Draw() error {
 			if grid.PositionOf(e) == current || e.Has(ecs.MatchFlag) {
 				p = tilesPict[c].big
 			}
-			screen.Picture(p, x, y, 0)
+			screen.Picture(p, 0, plane.Pixel{x, y})
 		}
 	}
 

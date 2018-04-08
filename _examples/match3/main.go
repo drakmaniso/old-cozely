@@ -47,10 +47,6 @@ func main() {
 //------------------------------------------------------------------------------
 
 func setup() error {
-	err := palette.Load("graphics/blue")
-	if err != nil {
-		return err
-	}
 
 	// palette.Change("MSX2")
 
@@ -97,6 +93,17 @@ func newTile() ecs.Entity {
 
 func init() {
 	rand.Seed(int64(time.Now().Unix()))
+}
+
+//------------------------------------------------------------------------------
+
+func (loop) Enter() error {
+	err := palette.Load("graphics/blue")
+	if err != nil {
+		return err
+	}
+	
+	return nil
 }
 
 //------------------------------------------------------------------------------

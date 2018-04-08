@@ -17,7 +17,7 @@ import (
 
 func main() {
 	path := filepath.Dir(os.Args[0]) + "/"
-	f, err := os.Open(path + "../../shared/cube.obj")
+	f, err := os.Open(path + "../../../shared/cube.obj")
 	if err != nil {
 		fmt.Println(err)
 		return

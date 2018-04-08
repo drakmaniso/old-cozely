@@ -50,13 +50,13 @@ func (loop) MouseMotion(dx, dy int32, _, _ int32) {
 		computeWorldFromObject()
 
 	case mouse.IsPressed(mouse.Middle):
-		d := m.Times(2).SlashCW(s)
+		d := m.Times(2).Slashcw(s)
 		position.X += d.X
 		position.Z += d.Y
 		computeWorldFromObject()
 
 	case mouse.IsPressed(mouse.Right):
-		d := m.Times(2).SlashCW(s)
+		d := m.Times(2).Slashcw(s)
 		position.X += d.X
 		position.Y -= d.Y
 		computeWorldFromObject()

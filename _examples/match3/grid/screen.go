@@ -4,13 +4,13 @@
 package grid
 
 import (
-	"github.com/drakmaniso/glam/pixel"
+	"github.com/drakmaniso/glam/plane"
 )
 
 //------------------------------------------------------------------------------
 
 var (
-	origin pixel.Coord
+	origin plane.Pixel
 )
 
 const cellSize = 20
@@ -36,7 +36,7 @@ func (p Position) ScreenXY() (x, y int16) {
 //------------------------------------------------------------------------------
 
 // PositionAt returns the grid position containing the screen coordinates c.
-func PositionAt(c pixel.Coord) Position {
+func PositionAt(c plane.Pixel) Position {
 	if c.X < origin.X || c.Y < origin.Y {
 		return Nowhere()
 	}

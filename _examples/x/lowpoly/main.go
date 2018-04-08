@@ -8,12 +8,11 @@ package main
 import (
 	"fmt"
 
-	"github.com/drakmaniso/glam/palette"
-	"github.com/drakmaniso/glam/pixel"
-
 	"github.com/drakmaniso/glam"
 	"github.com/drakmaniso/glam/colour"
 	"github.com/drakmaniso/glam/mouse"
+	"github.com/drakmaniso/glam/palette"
+	"github.com/drakmaniso/glam/pixel"
 	"github.com/drakmaniso/glam/plane"
 	"github.com/drakmaniso/glam/space"
 	"github.com/drakmaniso/glam/x/gl"
@@ -38,11 +37,11 @@ func main() {
 
 var overlay = pixel.NewCanvas(pixel.Zoom(2))
 
-var cursor = pixel.NewCursor()
+var cursor = pixel.Cursor{Canvas: overlay}
 
-var font = pixel.NewFont("../../pixel/print/fonts/pixop11")
+var font = pixel.Font(0)
 
-var txtColor = palette.Entry(1, "text", colour.SRGB8{0xFF, 0xFF, 0xFF})
+var txtColor = palette.Index(1)
 
 //------------------------------------------------------------------------------
 
@@ -86,6 +85,8 @@ type loop struct {
 //------------------------------------------------------------------------------
 
 func (loop) Enter() error {
+	txtColor.SetColour(colour.SRGB8{0xFF, 0xFF, 0xFF})
+
 	pipeline = gl.NewPipeline(
 		poly.PipelineSetup(),
 		poly.ToneMapACES(),
@@ -180,7 +181,7 @@ func (loop) Draw() error {
 	pipeline.Unbind()
 
 	overlay.Clear(0)
-	cursor.Locate(2, 2, 0)
+	cursor.Locate(2, 12)
 	ft, or := glam.FrameStats()
 	cursor.Printf("% 3.2f", ft*1000)
 	if or > 0 {
