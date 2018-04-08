@@ -10,6 +10,7 @@ import (
 	"github.com/drakmaniso/glam"
 	"github.com/drakmaniso/glam/palette"
 	"github.com/drakmaniso/glam/pixel"
+	"github.com/drakmaniso/glam/plane"
 )
 
 //------------------------------------------------------------------------------
@@ -25,7 +26,7 @@ var shapePictures = []pixel.Picture{
 
 type shape struct {
 	pict  pixel.Picture
-	pos   pixel.Coord
+	pos   plane.Pixel
 	depth int16
 }
 
@@ -80,7 +81,7 @@ func (cnvLoop) Draw() error {
 		if float64(i)/32 > glam.GameTime() {
 			break
 		}
-		cnvScreen.Picture(o.pict, o.pos.X, o.pos.Y, o.depth)
+		cnvScreen.Picture(o.pict, o.depth, o.pos)
 	}
 	cnvScreen.Display()
 	return nil

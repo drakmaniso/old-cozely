@@ -5,6 +5,8 @@ package pixel
 
 import (
 	"errors"
+
+	"github.com/drakmaniso/glam/plane"
 )
 
 //------------------------------------------------------------------------------
@@ -42,8 +44,8 @@ func NewPicture(path string) Picture {
 //------------------------------------------------------------------------------
 
 // Size returns the width and height of the picture.
-func (p Picture) Size() Coord {
-	return Coord{pictureMap[p].w, pictureMap[p].h}
+func (p Picture) Size() plane.Pixel {
+	return plane.Pixel{pictureMap[p].w, pictureMap[p].h}
 }
 
 //------------------------------------------------------------------------------

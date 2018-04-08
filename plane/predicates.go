@@ -9,7 +9,7 @@ package plane
 // counter-clockwise order, a negative value if it is in clockwise order, and a
 // null value if a b and c are colinear.
 func Orientation(a, b, c Coord) float32 {
-	A, B, C := Coord64Of(a), Coord64Of(b), Coord64Of(c)
+	A, B, C := a.Coord64(), b.Coord64(), c.Coord64()
 	// Compute the determinant of the following matrice:
 	//   | a.X  a.Y   1 |
 	//   | b.X  b.Y   1 |
@@ -20,7 +20,7 @@ func Orientation(a, b, c Coord) float32 {
 
 // IsCCW returns true if a, b and c are in counter-clockwise order.
 func IsCCW(a, b, c Coord) bool {
-	A, B, C := Coord64Of(a), Coord64Of(b), Coord64Of(c)
+	A, B, C := a.Coord64(), b.Coord64(), c.Coord64()
 	// Compute the determinant of the following matrice:
 	//   | a.X  a.Y   1 |
 	//   | b.X  b.Y   1 |
@@ -33,7 +33,7 @@ func IsCCW(a, b, c Coord) bool {
 
 // InTriangle returns true if p is inside the triangle a b c.
 func InTriangle(a, b, c Coord, p Coord) bool {
-	A, B, C, P := Coord64Of(a), Coord64Of(b), Coord64Of(c), Coord64Of(p)
+	A, B, C, P := a.Coord64(), b.Coord64(), c.Coord64(), p.Coord64()
 
 	s := A.Y*C.X - A.X*C.Y + (C.Y-A.Y)*P.X + (A.X-C.X)*P.Y
 	d := A.X*B.Y - A.Y*B.X + (A.Y-B.Y)*P.X + (B.X-A.X)*P.Y
@@ -55,7 +55,7 @@ func InTriangle(a, b, c Coord, p Coord) bool {
 // InTriangleCCW returns true if p is inside the triangle a b c (which must
 // be in counter-clockwise order).
 func InTriangleCCW(a, b, c Coord, p Coord) bool {
-	A, B, C, P := Coord64Of(a), Coord64Of(b), Coord64Of(c), Coord64Of(p)
+	A, B, C, P := a.Coord64(), b.Coord64(), c.Coord64(), p.Coord64()
 
 	// Translate to a as origin
 	bb := B.Minus(A)
@@ -78,7 +78,7 @@ func InTriangleCCW(a, b, c Coord, p Coord) bool {
 // InCircumcircle returns true if p is inside the circumcircle of triangle a b c
 // (which must be in counter-clockwise order)
 func InCircumcircle(a, b, c Coord, p Coord) bool {
-	A, B, C, P := Coord64Of(a), Coord64Of(b), Coord64Of(c), Coord64Of(p)
+	A, B, C, P := a.Coord64(), b.Coord64(), c.Coord64(), p.Coord64()
 
 	return ((P.Y-A.Y)*(B.X-C.X)+(P.X-A.X)*(B.Y-C.Y))*
 		((P.X-C.X)*(B.X-A.X)-(P.Y-C.Y)*(B.Y-A.Y)) >
@@ -90,7 +90,7 @@ func InCircumcircle(a, b, c Coord, p Coord) bool {
 
 // Circumcenter returns the coordinates of the circumcenter of triangle a b c.
 func Circumcenter(a, b, c Coord) Coord {
-	A, B, C := Coord64Of(a), Coord64Of(b), Coord64Of(c)
+	A, B, C := a.Coord64(), b.Coord64(), c.Coord64()
 
 	// Translate to a as origin
 	ba := B.Minus(A)
@@ -106,7 +106,7 @@ func Circumcenter(a, b, c Coord) Coord {
 		Y: (ba.X*lca - ca.X*lba) * d,
 	}
 
-	return o.Plus(A).Coord()
+	return o.Plus(A).Coord32()
 }
 
 //------------------------------------------------------------------------------

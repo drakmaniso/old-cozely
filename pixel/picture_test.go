@@ -6,11 +6,11 @@ package pixel_test
 import (
 	"testing"
 
-	"github.com/drakmaniso/glam/mouse"
-
 	"github.com/drakmaniso/glam"
+	"github.com/drakmaniso/glam/mouse"
 	"github.com/drakmaniso/glam/palette"
 	"github.com/drakmaniso/glam/pixel"
+	"github.com/drakmaniso/glam/plane"
 )
 
 //------------------------------------------------------------------------------
@@ -55,20 +55,20 @@ func (picLoop) Enter() error {
 
 func (picLoop) Draw() error {
 	picScreen.Clear(0)
-	s := picScreen.Size()
+	sz := picScreen.Size()
 	switch picMode {
 	case 0:
-		ps := mire.Size()
-		picScreen.Picture(mire, 0, 0, 0)
-		picScreen.Picture(mire, 0, s.Y-ps.Y, 0)
-		picScreen.Picture(mire, s.X-ps.X, 0, 0)
-		picScreen.Picture(mire, s.X-ps.X, s.Y-ps.Y, 0)
+		pz := mire.Size()
+		picScreen.Picture(mire, 0, plane.Pixel{0, 0})
+		picScreen.Picture(mire, 0, plane.Pixel{0, sz.Y - pz.Y})
+		picScreen.Picture(mire, 0, plane.Pixel{sz.X - pz.X, 0})
+		picScreen.Picture(mire, 0, sz.Minus(pz))
 	case 1:
-		ps := srgbGray.Size()
-		picScreen.Picture(srgbGray, s.X/2-ps.X/2, 32, 0)
-		picScreen.Picture(srgbRed, s.X/4-ps.X/2, 96, 0)
-		picScreen.Picture(srgbGreen, s.X/2-ps.X/2, 96, 0)
-		picScreen.Picture(srgbBlue, 3*s.X/4-ps.X/2, 96, 0)
+		pz := srgbGray.Size()
+		picScreen.Picture(srgbGray, 0, plane.Pixel{sz.X/2 - pz.X/2, 32})
+		picScreen.Picture(srgbRed, 0, plane.Pixel{sz.X/4 - pz.X/2, 96})
+		picScreen.Picture(srgbGreen, 0, plane.Pixel{sz.X/2 - pz.X/2, 96})
+		picScreen.Picture(srgbBlue, 0, plane.Pixel{3*sz.X/4 - pz.X/2, 96})
 	}
 	picScreen.Display()
 	return pixel.Err()

@@ -10,6 +10,7 @@ import (
 	"github.com/drakmaniso/glam/internal"
 	"github.com/drakmaniso/glam/mouse"
 	"github.com/drakmaniso/glam/palette"
+	"github.com/drakmaniso/glam/plane"
 	"github.com/drakmaniso/glam/x/gl"
 )
 
@@ -21,9 +22,9 @@ type canvas struct {
 	depth         gl.Renderbuffer
 	commandsICBO  gl.IndirectBuffer
 	parametersTBO gl.BufferTexture
-	target        Coord
+	target        plane.Pixel
 	autozoom      bool
-	size          Coord
+	size          plane.Pixel
 	pixel         int32
 	ox, oy        int32 // Offset when there is a border around the screen
 	commands      []gl.DrawIndirectCommand
@@ -48,7 +49,7 @@ func NewCanvas(o ...CanvasOption) Canvas {
 	canvases = append(canvases, canvas{})
 
 	s := &canvases[cv]
-	s.target = Coord{X: 640, Y: 360}
+	s.target = plane.Pixel{640, 360}
 	s.pixel = 2
 	s.commands = make([]gl.DrawIndirectCommand, 0, maxCommandCount)
 	s.parameters = make([]int16, 0, maxParamCount)
@@ -99,9 +100,9 @@ func (cv Canvas) autoresize() {
 	}
 
 	// Extend the screen to cover the window
-	s.size = Coord{
-		int16(internal.Window.Width / s.pixel),
-		int16(internal.Window.Height / s.pixel),
+	s.size = plane.Pixel{
+		X: int16(internal.Window.Width / s.pixel),
+		Y: int16(internal.Window.Height / s.pixel),
 	}
 	cv.createTextures()
 
@@ -216,7 +217,7 @@ func (cv Canvas) Clear(color palette.Index) {
 //------------------------------------------------------------------------------
 
 // Size returns the current dimension of the canvas.
-func (cv Canvas) Size() Coord {
+func (cv Canvas) Size() plane.Pixel {
 	return canvases[cv].size
 }
 
@@ -229,9 +230,9 @@ func (cv Canvas) Pixel() int32 {
 //------------------------------------------------------------------------------
 
 // Mouse returns the mouse position on the virtual screen.
-func (cv Canvas) Mouse() Coord {
+func (cv Canvas) Mouse() plane.Pixel {
 	mx, my := mouse.Position()
-	return Coord{
+	return plane.Pixel{
 		X: int16((mx - canvases[cv].ox) / canvases[cv].pixel),
 		Y: int16((my - canvases[cv].oy) / canvases[cv].pixel),
 	}

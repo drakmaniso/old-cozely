@@ -10,14 +10,14 @@ import (
 //------------------------------------------------------------------------------
 
 // Coord64 represents a two-dimensional vector, defined by its cartesian
-// coordinates.
+// coordinates in 64-bit float.
 type Coord64 struct {
 	X float64
 	Y float64
 }
 
-// Coord returns the 32-bit float version of v.
-func (v Coord64) Coord() Coord {
+// Coord32 returns the 32-bit float version of v.
+func (v Coord64) Coord32() Coord {
 	return Coord{float32(v.X), float32(v.Y)}
 }
 
@@ -28,14 +28,8 @@ func (v Coord64) XY() (x, y float32) {
 	return float32(v.X), float32(v.Y)
 }
 
-// Coord64Of returns the cartesian representation of v.
-func Coord64Of(v Vector) Coord64 {
-	x, y := v.XY()
-	return Coord64{float64(x), float64(y)}
-}
-
-// Homogen64 returns the homogenous coordinates of the vector, with Z set to 1.
-func (v Coord64) Homogen64() Homogen64 {
+// Homogen returns the homogenous coordinates of the vector, with Z set to 1.
+func (v Coord64) Homogen() Homogen64 {
 	return Homogen64{v.X, v.Y, 1.0}
 }
 
@@ -44,9 +38,19 @@ func (v Coord64) Plus(o Coord64) Coord64 {
 	return Coord64{v.X + o.X, v.Y + o.Y}
 }
 
+// Pluss returns the component-wise sum with two scalars.
+func (v Coord64) Pluss(x, y float64) Coord64 {
+	return Coord64{v.X + x, v.Y + y}
+}
+
 // Minus returns the difference with another vector.
 func (v Coord64) Minus(o Coord64) Coord64 {
 	return Coord64{v.X - o.X, v.Y - o.Y}
+}
+
+// Minuss returns the component-wise difference with two scalars.
+func (v Coord64) Minuss(x, y float64) Coord64 {
+	return Coord64{v.X - x, v.Y - y}
 }
 
 // Opposite returns the opposite of the vector.
@@ -59,8 +63,13 @@ func (v Coord64) Times(s float64) Coord64 {
 	return Coord64{v.X * s, v.Y * s}
 }
 
-// TimesCW returns the component-wise product with another vector.
-func (v Coord64) TimesCW(o Coord64) Coord64 {
+// Timess returns the component-wise product with two scalars.
+func (v Coord64) Timess(x, y float64) Coord64 {
+	return Coord64{v.X * x, v.Y * y}
+}
+
+// Timescw returns the component-wise product with another vector.
+func (v Coord64) Timescw(o Coord64) Coord64 {
 	return Coord64{v.X * o.X, v.Y * o.Y}
 }
 
@@ -69,9 +78,15 @@ func (v Coord64) Slash(s float64) Coord64 {
 	return Coord64{v.X / s, v.Y / s}
 }
 
-// SlashCW returns the component-wise division by another vector (of which both
+// Slashs returns the component-wise division by two scalars (which must be
+// non-zero).
+func (v Coord64) Slashs(x, y float64) Coord64 {
+	return Coord64{v.X / x, v.Y / y}
+}
+
+// Slashcw returns the component-wise division by another vector (of which both
 // X and Y must be non-zero).
-func (v Coord64) SlashCW(o Coord64) Coord64 {
+func (v Coord64) Slashcw(o Coord64) Coord64 {
 	return Coord64{v.X / o.X, v.Y / o.Y}
 }
 
@@ -81,9 +96,15 @@ func (v Coord64) Mod(s float64) Coord64 {
 	return Coord64{math.Mod(v.X, s), math.Mod(v.Y, s)}
 }
 
-// ModCW returns the remainders (modulus) of the component-wise division by
+// Mods returns the remainder (modulus) of the component-wise division by two
+// scalars (which must be non-zero).
+func (v Coord64) Mods(x, y float64) Coord64 {
+	return Coord64{math.Mod(v.X, x), math.Mod(v.Y, y)}
+}
+
+// Modcw returns the remainders (modulus) of the component-wise division by
 // another vector (of which both X and Y must be non-zero).
-func (v Coord64) ModCW(o Coord64) Coord64 {
+func (v Coord64) Modcw(o Coord64) Coord64 {
 	return Coord64{math.Mod(v.X, o.X), math.Mod(v.Y, o.Y)}
 }
 
@@ -191,9 +212,9 @@ func (v Homogen64) XY() (x, y float32) {
 	return float32(v.X / v.Z), float32(v.Y / v.Z)
 }
 
-// Coord64 returns the cartesian representation of the vector (i.e. the
+// Cartesian returns the cartesian representation of the vector (i.e. the
 // perspective divide of the homogeneous coordinates). Z must be non-zero.
-func (v Homogen64) Coord64() Coord64 {
+func (v Homogen64) Cartesian() Coord64 {
 	return Coord64{v.X / v.Z, v.Y / v.Z}
 }
 

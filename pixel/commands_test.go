@@ -8,6 +8,7 @@ import (
 
 	"github.com/drakmaniso/glam/key"
 	"github.com/drakmaniso/glam/mouse"
+	"github.com/drakmaniso/glam/plane"
 
 	"github.com/drakmaniso/glam"
 	"github.com/drakmaniso/glam/palette"
@@ -18,7 +19,7 @@ import (
 
 var cmdScreen = pixel.NewCanvas(pixel.TargetResolution(128, 128))
 
-var points = []pixel.Coord{
+var points = []plane.Pixel{
 	{4, 4},
 	{4 + 1, 4 + 20},
 	{4 + 1 + 20, 4 + 20 - 1},
@@ -61,9 +62,9 @@ func (cmdLoop) Draw() error {
 	}
 	if !key.IsPressed(key.PositionLShift) {
 		for _, p := range points {
-			cmdScreen.Point(8, p.X, p.Y, 1)
-			cmdScreen.Point(18, m.X, m.Y, 2)
+			cmdScreen.Point(8, 1, p)
 		}
+		cmdScreen.Point(18, 2, m)
 	}
 	cmdScreen.Display()
 	return nil

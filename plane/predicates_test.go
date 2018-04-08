@@ -41,7 +41,7 @@ func newPoints() {
 
 //------------------------------------------------------------------------------
 
-func TestPlane_triangulation(t *testing.T) {
+func TestPlane_predicates(t *testing.T) {
 	do(func() {
 		err := glam.Run(triLoop{})
 		if err != nil {
@@ -87,11 +87,12 @@ func (triLoop) Draw() error {
 		X: (float32(screen.Size().X) - ratio),
 		Y: float32(screen.Size().Y),
 	}
-	pt := make([]pixel.Coord, len(points))
+	pt := make([]plane.Pixel, len(points))
+	s := plane.Pixel{5, 5}
 	for i, sd := range points {
 		pt[i] = toScreen(sd)
 		screen.Box(2+palette.Index(i), 2+palette.Index(i), 2, 2,
-			pt[i].X-5, pt[i].Y-5, pt[i].X+5, pt[i].Y+5)
+			pt[i].Minus(s), pt[i].Plus(s))
 		cursor.Locate(pt[i].X-2, pt[i].Y+3, +12)
 		cursor.ColorShift(0)
 		cursor.Print([]string{"A", "B", "C"}[i])
@@ -111,7 +112,7 @@ func (triLoop) Draw() error {
 	} else {
 		cursor.Println(" ")
 	}
-	screen.Point(1, m.X, m.Y, 1)
+	screen.Point(1, 1, m)
 
 	cursor.Println()
 
@@ -157,17 +158,13 @@ func (triLoop) Draw() error {
 	cursor.ColorShift(0)
 	cursor.Printf("Circumcenter: %.3f, %.3f\n", d.X, d.Y)
 	dd := toScreen(d)
-	l := pixel.Coord{2, 2}
-	screen.Lines(5, -2, dd.Minus(l), dd.Plus(l))
-	screen.Lines(5, -2, dd.Minus(l.Perp()), dd.Plus(l.Perp()))
+	screen.Lines(5, -2, dd.Pluss(-2, -2), dd.Pluss(2, 2))
+	screen.Lines(5, -2, dd.Pluss(2, -2), dd.Pluss(-2, 2))
 
 	r := d.Minus(points[a]).Length()
-	cir := []pixel.Coord{}
-	for i := float32(0); i <= 2*math32.Pi+0.01; i += math32.Pi / 32 {
-		cir = append(cir, toScreen(plane.Coord{
-			X: math32.Cos(i) * r,
-			Y: math32.Sin(i) * r,
-		}.Plus(d)))
+	cir := []plane.Pixel{}
+	for a := float32(0); a <= 2*math32.Pi+0.01; a += math32.Pi / 32 {
+		cir = append(cir, toScreen(plane.Polar{r, a}.Cartesian().Plus(d)))
 	}
 	screen.Lines(5, -2, cir...)
 
@@ -177,14 +174,14 @@ func (triLoop) Draw() error {
 
 //------------------------------------------------------------------------------
 
-func toScreen(p plane.Coord) pixel.Coord {
-	return pixel.Coord{
+func toScreen(p plane.Coord) plane.Pixel {
+	return plane.Pixel{
 		X: int16(offset.X + p.X*ratio),
 		Y: int16(offset.Y - p.Y*ratio),
 	}
 }
 
-func fromScreen(p pixel.Coord) plane.Coord {
+func fromScreen(p plane.Pixel) plane.Coord {
 	return plane.Coord{
 		X: (float32(p.X) - offset.X) / ratio,
 		Y: (offset.Y - float32(p.Y)) / ratio,

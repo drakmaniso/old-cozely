@@ -74,9 +74,9 @@ void main(void)
 		// Parameters
 		offset = 4*instance;
 		int m = texelFetch(parameters, param+0+offset).r;
-		x = texelFetch(parameters, param+1+offset).r;
-		y = texelFetch(parameters, param+2+offset).r;
-		z = texelFetch(parameters, param+3+offset).r;
+		z = texelFetch(parameters, param+1+offset).r;
+		x = texelFetch(parameters, param+2+offset).r;
+		y = texelFetch(parameters, param+3+offset).r;
 		// Mapping of the picture
 		m *= 5;
 		Bin = texelFetch(pictureMap, m+0).r;
