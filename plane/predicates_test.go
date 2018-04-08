@@ -19,13 +19,10 @@ import (
 
 //------------------------------------------------------------------------------
 
-var screen = pixel.NewCanvas(pixel.Zoom(2))
-
-var cursor = pixel.NewCursor()
-
-func init() {
-	cursor.Canvas(screen)
-}
+var (
+	screen = pixel.NewCanvas(pixel.Zoom(2))
+	cursor = pixel.Cursor{Canvas: screen}
+)
 
 var (
 	points []plane.Coord
@@ -82,6 +79,7 @@ var (
 
 func (triLoop) Draw() error {
 	screen.Clear(0)
+	cursor.Depth = 0x7FFF
 	ratio = float32(screen.Size().Y)
 	offset = plane.Coord{
 		X: (float32(screen.Size().X) - ratio),
@@ -93,8 +91,8 @@ func (triLoop) Draw() error {
 		pt[i] = toScreen(sd)
 		screen.Box(2+palette.Index(i), 2+palette.Index(i), 2, 2,
 			pt[i].Minus(s), pt[i].Plus(s))
-		cursor.Locate(pt[i].X-2, pt[i].Y+3, +12)
-		cursor.ColorShift(0)
+		cursor.Locate(pt[i].X-2, pt[i].Y+3)
+		cursor.Color = 0
 		cursor.Print([]string{"A", "B", "C"}[i])
 	}
 	screen.Lines(6, 0, pt[0], pt[1], pt[2], pt[0])
@@ -102,8 +100,8 @@ func (triLoop) Draw() error {
 
 	m := screen.Mouse()
 	p := fromScreen(m)
-	cursor.Locate(2, 8, 0x7FFF)
-	cursor.ColorShift(0)
+	cursor.Locate(2, 8)
+	cursor.Color = 0
 	cursor.Printf("A: %.3f, %.3f\n", points[0].X, points[0].Y)
 	cursor.Printf("B: %.3f, %.3f\n", points[1].X, points[1].Y)
 	cursor.Printf("C: %.3f, %.3f\n", points[2].X, points[2].Y)
@@ -117,18 +115,18 @@ func (triLoop) Draw() error {
 	cursor.Println()
 
 	if plane.IsCCW(points[0], points[1], points[2]) {
-		cursor.ColorShift(3)
+		cursor.Color = 3
 		cursor.Println("IsCCW: TRUE")
 	} else {
-		cursor.ColorShift(0)
+		cursor.Color = 0
 		cursor.Println("IsCCW: false")
 	}
 
 	if plane.InTriangle(points[0], points[1], points[2], p) {
-		cursor.ColorShift(1)
+		cursor.Color = 1
 		cursor.Println("InTriangle: TRUE")
 	} else {
-		cursor.ColorShift(0)
+		cursor.Color = 0
 		cursor.Println("InTriangle: false")
 	}
 
@@ -137,25 +135,25 @@ func (triLoop) Draw() error {
 		b, c = c, b
 	}
 	if plane.InTriangleCCW(points[a], points[b], points[c], p) {
-		cursor.ColorShift(1)
+		cursor.Color = 1
 		cursor.Println("InTriangleCCW: TRUE")
 	} else {
-		cursor.ColorShift(0)
+		cursor.Color = 0
 		cursor.Println("InTriangleCCW: false")
 	}
 
 	if plane.InCircumcircle(points[a], points[b], points[c], p) {
-		cursor.ColorShift(2)
+		cursor.Color = 2
 		cursor.Println("InCircumcircle: TRUE")
 	} else {
-		cursor.ColorShift(0)
+		cursor.Color = 0
 		cursor.Println("InCircumcircle: false")
 	}
 
 	cursor.Println(" ")
 
 	d := plane.Circumcenter(points[0], points[1], points[2])
-	cursor.ColorShift(0)
+	cursor.Color = 0
 	cursor.Printf("Circumcenter: %.3f, %.3f\n", d.X, d.Y)
 	dd := toScreen(d)
 	screen.Lines(5, -2, dd.Pluss(-2, -2), dd.Pluss(2, 2))

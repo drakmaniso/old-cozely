@@ -20,13 +20,10 @@ import (
 
 //------------------------------------------------------------------------------
 
-var screen = pixel.NewCanvas(pixel.Zoom(1))
-
-var cursor = pixel.NewCursor()
-
-func init() {
-	cursor.Canvas(screen)
-}
+var (
+	screen = pixel.NewCanvas(pixel.Zoom(1))
+	cursor = pixel.Cursor{Canvas: screen}
+)
 
 var (
 	points        []plane.Coord
@@ -106,12 +103,12 @@ func (delLoop) Draw() error {
 
 	m := screen.Mouse()
 	p := fromScreen(m)
-	cursor.Locate(2, 8, 0x7FFF)
-	cursor.ColorShift(0)
+	cursor.Locate(2, 8)
+	cursor.Color = 0
 	fsr, fso := glam.FrameStats()
-	cursor.Printf("%.4f (%d)\n", 1000*fsr, fso)
+	cursor.Printf("Framerate: %.2f (%d)\n", 1000*fsr, fso)
 	if p.X >= 0 && p.X <= 1.0 {
-		cursor.Printf("   %.3f, %.3f\n", p.X, p.Y)
+		cursor.Printf("Position: %.3f, %.3f\n", p.X, p.Y)
 	} else {
 		cursor.Println(" ")
 	}

@@ -90,22 +90,20 @@ void main(void)
 
 	case cmdText:
 	  // Parameters of the whole Print command
-		uint f = texelFetch(parameters, param+0).r;
-		c = texelFetch(parameters, param+1).r;
-		x = texelFetch(parameters, param+2).r;
-		y = texelFetch(parameters, param+3).r;
-		z = texelFetch(parameters, param+4).r;
+		c = texelFetch(parameters, param+0).r;
+		z = texelFetch(parameters, param+1).r;
+		y = texelFetch(parameters, param+2).r;
 		// Parameter for the current character
 		offset = 2*instance;
-		int r = texelFetch(parameters, param+5+offset).r;
-		dx = texelFetch(parameters, param+6+offset).r;
+		int r = texelFetch(parameters, param+3+offset).r;
+		x = texelFetch(parameters, param+4+offset).r;
 		// Mapping of the current character
 		r *= 5;
 		Bin = texelFetch(glyphMap, r+0).r;
 		UV = vec2(texelFetch(glyphMap, r+1).r, texelFetch(glyphMap, r+2).r);
 		wh = vec2(texelFetch(glyphMap, r+3).r, texelFetch(glyphMap, r+4).r);
 		// Character quad
-		p = (vec2(x+dx, y) + corners[vertex] * wh) * PixelSize;
+		p = (vec2(x, y) + corners[vertex] * wh) * PixelSize;
 		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), floatZ(z), 1);
 		UV += corners[vertex] * wh;
 		ColorIndex = uint(c);
@@ -115,9 +113,9 @@ void main(void)
 		offset = 4*instance;
 		// Parameters
 		c = texelFetch(parameters, param+0+offset).r;
-		x = texelFetch(parameters, param+1+offset).r;
-		y = texelFetch(parameters, param+2+offset).r;
-		z = texelFetch(parameters, param+3+offset).r;
+		z = texelFetch(parameters, param+1+offset).r;
+		x = texelFetch(parameters, param+2+offset).r;
+		y = texelFetch(parameters, param+3+offset).r;
 		// Position
 		p = (vec2(x, y) + corners[vertex] * vec2(1.5,1.5)) * PixelSize;
 		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), floatZ(z), 1);

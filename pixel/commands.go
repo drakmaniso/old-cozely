@@ -34,7 +34,7 @@ func (cv Canvas) Picture(p Picture, depth int16, pos plane.Pixel) {
 
 // Point adds a command to draw a point on the canvas.
 func (cv Canvas) Point(color palette.Index, depth int16, pos plane.Pixel) {
-	cv.appendCommand(cmdPoint, 3, 1, int16(color), pos.X, pos.Y, depth)
+	cv.appendCommand(cmdPoint, 3, 1, int16(color), depth, pos.X, pos.Y)
 }
 
 //------------------------------------------------------------------------------
@@ -95,24 +95,41 @@ func (cv Canvas) appendCommand(c uint32, v uint32, n uint32, params ...int16) {
 
 	l := len(s.commands)
 
-	if l > 0 &&
-		c != cmdText &&
-		c != cmdLines &&
-		c != cmdTriangles &&
-		c == (s.commands[l-1].BaseInstance>>24) {
-		// Collapse with previous draw
-		s.commands[l-1].InstanceCount += n
-	} else {
-		// Create new draw
+	switch {
+
+	case l > 0 && c == (s.commands[l-1].BaseInstance>>24) &&
+		c != cmdLines && c != cmdTriangles:
+
+		if c != cmdText {
+			// Collapse with previous draw command
+			s.commands[l-1].InstanceCount += n
+			s.parameters = append(s.parameters, params...)
+			break
+
+		} else {
+			// Check if same color, depth and y
+			pi := s.commands[l-1].BaseInstance & 0xFFFFFF
+			if s.parameters[pi] == params[0] && s.parameters[pi+1] == params[1] &&
+				s.parameters[pi+2] == params[2] {
+				// Collapse with previous draw command
+				s.commands[l-1].InstanceCount += n
+				s.parameters = append(s.parameters, params[3:]...)
+				break
+			}
+		}
+		// cmdText but with different params
+		fallthrough
+
+	default:
+		// Create new draw command
 		s.commands = append(s.commands, gl.DrawIndirectCommand{
 			VertexCount:   v,
 			InstanceCount: n,
 			FirstVertex:   0,
 			BaseInstance:  uint32(c<<24 | uint32(len(s.parameters)&0xFFFFFF)),
 		})
+		s.parameters = append(s.parameters, params...)
 	}
-
-	s.parameters = append(s.parameters, params...)
 
 	if ccap < cap(s.commands) {
 		s.commandsICBO.Delete()

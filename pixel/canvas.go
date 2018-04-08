@@ -149,10 +149,6 @@ func (cv Canvas) Paint() {
 
 	internal.PaletteUpload()
 
-	for c := range cursors {
-		Cursor(c).Flush()
-	}
-
 	screenUniforms.PixelSize.X = 1.0 / float32(s.size.X)
 	screenUniforms.PixelSize.Y = 1.0 / float32(s.size.Y)
 	screenUBO.SubData(&screenUniforms, 0)
@@ -221,9 +217,9 @@ func (cv Canvas) Size() plane.Pixel {
 	return canvases[cv].size
 }
 
-// Pixel returns the size of pixel that will be used to display the canvas on
+// PixelSize returns the size of pixel that will be used to display the canvas on
 // the game window.
-func (cv Canvas) Pixel() int32 {
+func (cv Canvas) PixelSize() int32 {
 	return canvases[cv].pixel
 }
 

@@ -80,7 +80,7 @@ func (fntLoop) Enter() error {
 	palette.Load("C64")
 	curBg = palette.Find("white")
 	curFg = palette.Find("black")
-	cursor.ColorShift(curFg - 1)
+	cursor.Color = curFg - 1
 	return nil
 }
 
@@ -95,20 +95,20 @@ func (fntLoop) Update() error {
 func (fntLoop) Draw() error {
 	curScreen.Clear(curBg)
 
-	cursor.Locate(16, font.Height()+2, 0)
+	cursor.Locate(16, font.Height()+2)
 
-	cursor.Font(font)
-	cursor.LetterSpacing(fntLetterSpacing)
-	// cursor.Interline(fntInterline)
+	cursor.Font = font
+	cursor.Spacing = fntLetterSpacing
+	// cursor.Interline = fntInterline
 
-	_, y, _ := cursor.Position()
+	y := cursor.Position.Y
 
 	for l := fntLine; l < len(fntShow) && y < curScreen.Size().Y; l++ {
 		cursor.Println(fntShow[l])
-		_, y, _ = cursor.Position()
+		y = cursor.Position.Y
 	}
 
-	cursor.Locate(curScreen.Size().X-96, 16, 0)
+	cursor.Locate(curScreen.Size().X-96, 16)
 	cursor.Printf("Line %d", fntLine)
 
 	curScreen.Display()
@@ -129,7 +129,7 @@ func (fl fntLoop) KeyDown(l key.Label, p key.Position) {
 			curBg = palette.Find("white")
 			curFg = palette.Find("black")
 		}
-		cursor.ColorShift(curFg - 1)
+		cursor.Color = curFg - 1
 		fntLine = 0
 	case key.Label1:
 		font = tinela9
