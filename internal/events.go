@@ -5,6 +5,8 @@ package internal
 
 import (
 	"unsafe"
+
+	"github.com/drakmaniso/glam/plane"
 )
 
 //------------------------------------------------------------------------------
@@ -37,17 +39,9 @@ type GameLoop interface {
 	Leave() error
 
 	// Window events
-	WindowShown()
-	WindowHidden()
-	WindowResized(width, height int32)
-	WindowMinimized()
-	WindowMaximized()
-	WindowRestored()
-	WindowMouseEnter()
-	WindowMouseLeave()
-	WindowFocusGained()
-	WindowFocusLost()
-	WindowQuit()
+	Resize(s plane.Pixel)
+	Quit()
+	Status(s WindowStatus)
 
 	// Keyboard events
 	KeyDown(l KeyLabel, p KeyPosition)
@@ -59,6 +53,19 @@ type GameLoop interface {
 	MouseButtonUp(b MouseButton, clicks int)
 	MouseWheel(deltaX, deltaY int32)
 }
+
+//------------------------------------------------------------------------------
+
+type WindowStatus C.Uint32
+
+const (
+	Hide     WindowStatus = C.SDL_WINDOWEVENT_HIDDEN
+	Show                  = C.SDL_WINDOWEVENT_SHOWN
+	Focus                 = C.SDL_WINDOWEVENT_FOCUS_GAINED
+	Unfocus               = C.SDL_WINDOWEVENT_FOCUS_LOST
+	Minimize              = C.SDL_WINDOWEVENT_MINIMIZED
+	Restore               = C.SDL_WINDOWEVENT_RESTORED
+)
 
 //------------------------------------------------------------------------------
 
@@ -78,7 +85,7 @@ func ProcessEvents() {
 func dispatch(e unsafe.Pointer) {
 	switch ((*C.SDL_CommonEvent)(e))._type {
 	case C.SDL_QUIT:
-		Loop.WindowQuit()
+		Loop.Quit()
 	// Window Events
 	case C.SDL_WINDOWEVENT:
 		e := (*C.SDL_WindowEvent)(e)
@@ -86,37 +93,35 @@ func dispatch(e unsafe.Pointer) {
 		case C.SDL_WINDOWEVENT_NONE:
 			// Ignore
 		case C.SDL_WINDOWEVENT_SHOWN:
-			Loop.WindowShown()
+			Loop.Status(Show)
 		case C.SDL_WINDOWEVENT_HIDDEN:
-			Loop.WindowHidden()
+			Loop.Status(Hide)
 		case C.SDL_WINDOWEVENT_EXPOSED:
 			// Ignore
 		case C.SDL_WINDOWEVENT_MOVED:
 			// Ignore
 		case C.SDL_WINDOWEVENT_RESIZED:
-			Window.Width, Window.Height = int32(e.data1), int32(e.data2)
+			Window.Size = plane.Pixel{int16(e.data1), int16(e.data2)}
 			PixelResize()
-			Loop.WindowResized(Window.Width, Window.Height)
+			Loop.Resize(Window.Size)
 		case C.SDL_WINDOWEVENT_SIZE_CHANGED:
 			//TODO
 		case C.SDL_WINDOWEVENT_MINIMIZED:
-			Loop.WindowMinimized()
+			Loop.Status(Minimize)
 		case C.SDL_WINDOWEVENT_MAXIMIZED:
-			Loop.WindowMaximized()
+			// Ingnore
 		case C.SDL_WINDOWEVENT_RESTORED:
-			Loop.WindowRestored()
+			Loop.Status(Restore)
 		case C.SDL_WINDOWEVENT_ENTER:
 			HasMouseFocus = true
-			Loop.WindowMouseEnter()
 		case C.SDL_WINDOWEVENT_LEAVE:
 			HasMouseFocus = false
-			Loop.WindowMouseLeave()
 		case C.SDL_WINDOWEVENT_FOCUS_GAINED:
 			HasFocus = true
-			Loop.WindowFocusGained()
+			Loop.Status(Focus)
 		case C.SDL_WINDOWEVENT_FOCUS_LOST:
 			HasFocus = false
-			Loop.WindowFocusLost()
+			Loop.Status(Unfocus)
 		case C.SDL_WINDOWEVENT_CLOSE:
 			// Ignore
 		default:

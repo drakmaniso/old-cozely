@@ -6,6 +6,8 @@ package internal
 import (
 	"log"
 	"os"
+
+	"github.com/drakmaniso/glam/plane"
 )
 
 //------------------------------------------------------------------------------
@@ -31,14 +33,14 @@ var Title = "Glam"
 // Config holds the initial configuration of the game.
 var Config = struct {
 	Debug          bool
-	WindowSize     [2]int32
+	WindowSize     [2]int16
 	Display        int
 	Fullscreen     bool
 	FullscreenMode string
 	VSync          bool
 }{
 	Debug:          false,
-	WindowSize:     [2]int32{1280, 720},
+	WindowSize:     [2]int16{1280, 720},
 	Display:        0,
 	Fullscreen:     false,
 	FullscreenMode: "Desktop",
@@ -80,10 +82,10 @@ var QuitRequested = false
 
 // Window is the game window.
 var Window struct {
-	window        *C.SDL_Window
-	context       C.SDL_GLContext
-	Width, Height int32
-	Multisample   int32
+	window      *C.SDL_Window
+	context     C.SDL_GLContext
+	Size        plane.Pixel
+	Multisample int32
 }
 
 // Focus state

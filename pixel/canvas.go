@@ -24,9 +24,9 @@ type canvas struct {
 	parametersTBO gl.BufferTexture
 	target        plane.Pixel
 	autozoom      bool
+	origin        plane.Pixel // Offset when there is a border around the screen
 	size          plane.Pixel
-	pixel         int32
-	ox, oy        int32 // Offset when there is a border around the screen
+	pixel         int16
 	commands      []gl.DrawIndirectCommand
 	parameters    []int16
 }
@@ -87,12 +87,11 @@ func (cv Canvas) autoresize() {
 
 	if s.autozoom {
 		// Find best fit for pixel size
-		p1 := internal.Window.Width / int32(s.target.X)
-		p2 := internal.Window.Height / int32(s.target.Y)
-		if p1 < p2 {
-			s.pixel = p1
+		p := internal.Window.Size.Slashcw(s.target)
+		if p.X < p.Y {
+			s.pixel = p.X
 		} else {
-			s.pixel = p2
+			s.pixel = p.Y
 		}
 		if s.pixel < 1 {
 			s.pixel = 1
@@ -100,17 +99,12 @@ func (cv Canvas) autoresize() {
 	}
 
 	// Extend the screen to cover the window
-	s.size = plane.Pixel{
-		X: int16(internal.Window.Width / s.pixel),
-		Y: int16(internal.Window.Height / s.pixel),
-	}
+	s.size = internal.Window.Size.Slash(s.pixel)
 	cv.createTextures()
 
 	// Compute offset
-	w := int32(s.size.X) * s.pixel
-	h := int32(s.size.Y) * s.pixel
-	s.ox = (internal.Window.Width - w) / 2
-	s.oy = (internal.Window.Height - h) / 2
+	sz := s.size.Times(s.pixel)
+	s.origin = internal.Window.Size.Minus(sz).Slash(2)
 }
 
 //------------------------------------------------------------------------------
@@ -182,8 +176,7 @@ func (cv Canvas) Display() {
 
 	s := &canvases[cv]
 
-	w := int32(s.size.X) * s.pixel
-	h := int32(s.size.Y) * s.pixel
+	sz := s.size.Times(s.pixel)
 
 	blitUniforms.ScreenSize.X = float32(s.size.X)
 	blitUniforms.ScreenSize.Y = float32(s.size.Y)
@@ -193,7 +186,8 @@ func (cv Canvas) Display() {
 	gl.DefaultFramebuffer.Bind(gl.DrawFramebuffer)
 	gl.Enable(gl.FramebufferSRGB)
 	gl.Disable(gl.Blend)
-	gl.Viewport(s.ox, s.oy, s.ox+w, s.ox+h)
+	gl.Viewport(int32(s.origin.X), int32(s.origin.Y),
+		int32(s.origin.X+sz.X), int32(s.origin.Y+sz.Y))
 	blitUBO.Bind(0)
 	s.texture.Bind(0)
 	gl.Draw(0, 4)
@@ -212,26 +206,23 @@ func (cv Canvas) Clear(color palette.Index) {
 
 //------------------------------------------------------------------------------
 
-// Size returns the current dimension of the canvas.
+// Size returns the current dimension of the canvas (in canvas pixels).
 func (cv Canvas) Size() plane.Pixel {
 	return canvases[cv].size
 }
 
-// PixelSize returns the size of pixel that will be used to display the canvas on
-// the game window.
-func (cv Canvas) PixelSize() int32 {
+// PixelSize returns the size of one canvas pixel, in window pixels.
+func (cv Canvas) PixelSize() int16 {
 	return canvases[cv].pixel
 }
 
 //------------------------------------------------------------------------------
 
-// Mouse returns the mouse position on the virtual screen.
+// Mouse returns the mouse position on the canvas.
 func (cv Canvas) Mouse() plane.Pixel {
 	mx, my := mouse.Position()
-	return plane.Pixel{
-		X: int16((mx - canvases[cv].ox) / canvases[cv].pixel),
-		Y: int16((my - canvases[cv].oy) / canvases[cv].pixel),
-	}
+	m := plane.Pixel{int16(mx), int16(my)}
+	return m.Minus(canvases[cv].origin).Slash(canvases[cv].pixel)
 }
 
 //------------------------------------------------------------------------------

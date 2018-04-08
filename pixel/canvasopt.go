@@ -33,7 +33,7 @@ func TargetResolution(w, h int16) CanvasOption {
 }
 
 // Zoom sets the pixel size used to display the canvas.
-func Zoom(z int32) CanvasOption {
+func Zoom(z int16) CanvasOption {
 	return func(cv Canvas) error {
 		s := &canvases[cv]
 		if z < 1 {

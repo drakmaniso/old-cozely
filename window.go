@@ -5,6 +5,7 @@ package glam
 
 import (
 	"github.com/drakmaniso/glam/internal"
+	"github.com/drakmaniso/glam/plane"
 )
 
 //------------------------------------------------------------------------------
@@ -20,8 +21,8 @@ func HasMouseFocus() bool {
 }
 
 // WindowSize returns the size of the window in (screen) pixels.
-func WindowSize() (width, height int32) {
-	return internal.Window.Width, internal.Window.Height
+func WindowSize() plane.Pixel {
+	return internal.Window.Size
 }
 
 //------------------------------------------------------------------------------

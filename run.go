@@ -8,6 +8,7 @@ import (
 	"github.com/drakmaniso/glam/internal"
 	"github.com/drakmaniso/glam/key"
 	"github.com/drakmaniso/glam/mouse"
+	"github.com/drakmaniso/glam/plane"
 	"github.com/drakmaniso/glam/x/gl"
 )
 
@@ -22,18 +23,13 @@ type GameLoop interface {
 	Draw() error
 	Leave() error
 
-	// Window events
-	WindowShown()
-	WindowHidden()
-	WindowResized(width, height int32)
-	WindowMinimized()
-	WindowMaximized()
-	WindowRestored()
-	WindowMouseEnter()
-	WindowMouseLeave()
-	WindowFocusGained()
-	WindowFocusLost()
-	WindowQuit()
+	// Window Events
+	Resize(s plane.Pixel)
+	Quit()
+	Status(s WindowStatus)
+
+	// Input Events
+	// Activate(a action.Bool, on bool)
 
 	// Keyboard events
 	KeyDown(l key.Label, p key.Position)
@@ -57,6 +53,19 @@ type GameLoop interface {
 // This way it's possible to implement the GameLoop interface without writing a
 // method for each event.
 type Handlers = internal.Handlers
+
+//------------------------------------------------------------------------------
+
+type WindowStatus = internal.WindowStatus
+
+const (
+	Hide     WindowStatus = internal.Hide
+	Show                  = internal.Show
+	Focus                 = internal.Focus
+	Unfocus               = internal.Unfocus
+	Minimize              = internal.Minimize
+	Restore               = internal.Restore
+)
 
 //------------------------------------------------------------------------------
 
@@ -129,7 +138,7 @@ func Run(loop GameLoop) (err error) {
 
 	// First, send a fake resize window event
 	internal.PixelResize()
-	internal.Loop.WindowResized(internal.Window.Width, internal.Window.Height)
+	internal.Loop.Resize(internal.Window.Size)
 
 	// Main Loop
 

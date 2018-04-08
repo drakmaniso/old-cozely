@@ -3,6 +3,10 @@
 
 package internal
 
+import (
+	"github.com/drakmaniso/glam/plane"
+)
+
 //------------------------------------------------------------------------------
 
 // Handlers implements default handlers for all events.
@@ -26,38 +30,14 @@ func (Handlers) Leave() error {return nil}
 
 //------------------------------------------------------------------------------
 
-// WindowShown does nothing.
-func (Handlers) WindowShown() {}
+// Resize does nothing.
+func (Handlers) Resize(s plane.Pixel) {}
 
-// WindowHidden does nothing.
-func (Handlers) WindowHidden() {}
+// Status does nothing.
+func (Handlers) Status(s WindowStatus) {}
 
-// WindowResized does nothing.
-func (Handlers) WindowResized(width, height int32) {}
-
-// WindowMinimized does nothing.
-func (Handlers) WindowMinimized() {}
-
-// WindowMaximized does nothing.
-func (Handlers) WindowMaximized() {}
-
-// WindowRestored does nothing.
-func (Handlers) WindowRestored() {}
-
-// WindowMouseEnter does nothing.
-func (Handlers) WindowMouseEnter() {}
-
-// WindowMouseLeave does nothing.
-func (Handlers) WindowMouseLeave() {}
-
-// WindowFocusGained does nothing.
-func (Handlers) WindowFocusGained() {}
-
-// WindowFocusLost does nothing.
-func (Handlers) WindowFocusLost() {}
-
-// WindowQuit requests the game loop to stop.
-func (Handlers) WindowQuit() {
+// Quit requests the game loop to stop.
+func (Handlers) Quit() {
 	QuitRequested = true
 }
 

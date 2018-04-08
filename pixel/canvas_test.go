@@ -54,7 +54,7 @@ type cnvLoop struct {
 
 //------------------------------------------------------------------------------
 
-func (cnvLoop) WindowResized(_, _ int32) {
+func (cnvLoop) Resize(_ plane.Pixel) {
 	s := cnvScreen.Size()
 	for i := range shapes {
 		j := rand.Intn(len(shapePictures))
