@@ -3,6 +3,11 @@
 
 package action
 
+import (
+	"github.com/drakmaniso/glam/internal"
+	"github.com/drakmaniso/glam/key"
+)
+
 type binding interface {
 	BindTo(c Context, a Action)
 	Unbind()
@@ -11,39 +16,47 @@ type binding interface {
 type gamepadStick struct {
 }
 
-func (g gamepadStick) BindTo(c Context, a Action)     {}
-func (g gamepadStick) Unbind() {}
+func (g gamepadStick) BindTo(c Context, a Action) {}
+func (g gamepadStick) Unbind()                    {}
 
 type gamepadTrigger struct {
 }
 
-func (g gamepadTrigger) BindTo(c Context, a Action)     {}
-func (g gamepadTrigger) Unbind() {}
+func (g gamepadTrigger) BindTo(c Context, a Action) {}
+func (g gamepadTrigger) Unbind()                    {}
 
 type gamepadButton struct {
 }
 
-func (g gamepadButton) BindTo(c Context, a Action)     {}
-func (g gamepadButton) Unbind() {}
+func (g gamepadButton) BindTo(c Context, a Action) {}
+func (g gamepadButton) Unbind()                    {}
 
 type mouse struct {
 }
 
-func (m mouse) BindTo(c Context, a Action)     {}
-func (m mouse) Unbind() {}
+func (m mouse) BindTo(c Context, a Action) {}
+func (m mouse) Unbind()                    {}
 
 type mouseButton struct {
 }
 
-func (m mouseButton) BindTo(c Context, a Action)     {}
-func (m mouseButton) Unbind() {}
+func (m mouseButton) BindTo(c Context, a Action) {}
+func (m mouseButton) Unbind()                    {}
 
 type keyboard struct {
+	pos key.Position
 }
 
 func (k keyboard) BindTo(c Context, a Action) {
 	switch a := a.(type) {
 	case Bool:
+		contexts.KeyboardHooks[c] = append(contexts.KeyboardHooks[c],
+			func() {
+				b := internal.Key(k.pos)
+				internal.Bools.Just[a] = (b != internal.Bools.Pressed[a])
+				internal.Bools.Pressed[a] = b
+			},
+		)
 		print("keyboard", "->bool", a)
 	case Float:
 		print("keyboard", "->float", a)

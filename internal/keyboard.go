@@ -3,6 +3,10 @@
 
 package internal
 
+import (
+	"unsafe"
+)
+
 //------------------------------------------------------------------------------
 
 /*
@@ -20,6 +24,23 @@ type KeyLabel rune
 // A KeyPosition designate a key by its physical position on the keyboard.
 // It is not affected by the layout or any other language settings.
 type KeyPosition uint32
+
+//------------------------------------------------------------------------------
+
+var (
+	keys    *C.Uint8
+	keysLen C.int
+	KeyHooks []func(KeyPosition, bool)
+)
+
+func Key(k KeyPosition) bool {
+	s := *(*uint8)(unsafe.Pointer(uintptr(unsafe.Pointer(keys)) + uintptr(k)))
+	return s != 0
+}
+
+func getKeyboardArray() {
+	keys = C.SDL_GetKeyboardState(&keysLen)
+}
 
 //------------------------------------------------------------------------------
 

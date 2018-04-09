@@ -128,22 +128,22 @@ func dispatch(e unsafe.Pointer) {
 			//TODO: log.Print("unkown window event")
 		}
 	// Keyboard Events
-	case C.SDL_KEYDOWN:
-		e := (*C.SDL_KeyboardEvent)(e)
-		if e.repeat == 0 {
-			KeyState[e.keysym.scancode] = true
-			Loop.KeyDown(
-				KeyLabel(e.keysym.sym),
-				KeyPosition(e.keysym.scancode),
-			)
-		}
-	case C.SDL_KEYUP:
-		e := (*C.SDL_KeyboardEvent)(e)
-		KeyState[e.keysym.scancode] = false
-		Loop.KeyUp(
-			KeyLabel(e.keysym.sym),
-			KeyPosition(e.keysym.scancode),
-		)
+	// case C.SDL_KEYDOWN:
+	// 	e := (*C.SDL_KeyboardEvent)(e)
+	// 	if e.repeat == 0 {
+	// 		KeyState[e.keysym.scancode] = true
+	// 		Loop.KeyDown(
+	// 			KeyLabel(e.keysym.sym),
+	// 			KeyPosition(e.keysym.scancode),
+	// 		)
+	// 	}
+	// case C.SDL_KEYUP:
+	// 	e := (*C.SDL_KeyboardEvent)(e)
+	// 	KeyState[e.keysym.scancode] = false
+	// 	Loop.KeyUp(
+	// 		KeyLabel(e.keysym.sym),
+	// 		KeyPosition(e.keysym.scancode),
+	// 	)
 	// Mouse Events
 	case C.SDL_MOUSEWHEEL:
 		e := (*C.SDL_MouseWheelEvent)(e)

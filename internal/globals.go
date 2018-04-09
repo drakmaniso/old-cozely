@@ -102,7 +102,7 @@ var Loop GameLoop
 //------------------------------------------------------------------------------
 
 // KeyState holds the pressed state of all keys, indexed by position.
-var KeyState [512]bool
+var KeyState [512]bool //TODO: remove
 
 //------------------------------------------------------------------------------
 
@@ -116,6 +116,9 @@ var MousePositionX, MousePositionY int32
 var MouseButtons uint32
 
 //------------------------------------------------------------------------------
+
+var ActionPrepare = func() error {return nil}
+var ActionAmend = func() error {return nil}
 
 var PaletteSetup = func() error { return nil }
 var PaletteUpload = func() error { return nil }

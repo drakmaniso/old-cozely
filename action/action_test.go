@@ -28,39 +28,37 @@ var (
 //------------------------------------------------------------------------------
 
 var (
-	InMenuUp     = action.NewBool("Menu Up")
-	InMenuDown   = action.NewBool("Menu Down")
-	InMenuSelect = action.NewBool("Menu Select")
-	InGameUp     = action.NewBool("Up")
-	InGameLeft   = action.NewBool("Left")
-	InGameDown   = action.NewBool("Down")
-	InGameRight  = action.NewBool("Right")
-	QuitAction   = action.NewBool("Quit")
+	InMenuUp    = action.NewBool("Menu Up")
+	InMenuDown  = action.NewBool("Menu Down")
+	InMenuStart = action.NewBool("Menu Start")
+	InGameUp    = action.NewBool("Up")
+	InGameDown  = action.NewBool("Down")
+	InGamePause = action.NewBool("Pause")
+	QuitAction  = action.NewBool("Quit")
 )
 
 var (
 	InMenu = action.NewContext("Menu",
-		InMenuUp, InMenuDown, InMenuSelect,
+		InMenuUp, InMenuDown, InMenuStart,
 		QuitAction)
 
 	InGame = action.NewContext("Game",
-		InGameUp, InGameDown, InGameLeft, InGameRight,
+		InGameUp, InGameDown, InGamePause,
 		QuitAction)
 )
 
 var (
 	Bindings = map[string]map[string][]string{
 		"Menu": {
-			"Menu Up":     {"Up"},
-			"Menu Down":   {"Down"},
-			"Menu Select": {"Enter"},
-			"Quit":        {"Escape"},
+			"Menu Up":    {"Up"},
+			"Menu Down":  {"Down"},
+			"Menu Start": {"Space"},
+			"Quit":       {"Escape"},
 		},
 		"Game": {
 			"Up":    {"W"},
-			"Left":  {"A"},
 			"Down":  {"S"},
-			"Right": {"D"},
+			"Pause": {"Enter"},
 			"Quit":  {"Escape"},
 		},
 	}
@@ -101,7 +99,9 @@ func (loop) Enter() error {
 var dx, dy int32
 var px, py int32
 var left, middle, right, extra1, extra2 bool
-var gameup, gameleft, gamedown, gameright bool
+
+var menuup, menudown, menustart, quit bool
+var gameup, gamedown, gamepause bool
 
 func (loop) React() error {
 	dx, dy = mouse.Delta()
@@ -111,7 +111,30 @@ func (loop) React() error {
 	right = mouse.IsPressed(mouse.Right)
 	extra1 = mouse.IsPressed(mouse.Extra1)
 	extra2 = mouse.IsPressed(mouse.Extra2)
-	gameup = InGameUp.Active()
+
+	if InMenuStart.JustPressed() {
+		println(" Just Pressed: Menu Start")
+	}
+	if InMenuStart.JustReleased() {
+		println("Just Released: Menu Start")
+		InGame.Activate()
+	}
+	if InGamePause.JustPressed() {
+		println(" Just Pressed: Game Pause")
+		InMenu.Activate()
+	}
+	if InGamePause.JustReleased() {
+		println("Just Released: Game Pause")
+	}
+
+	menuup = InMenuUp.Pressed()
+	menudown = InMenuDown.Pressed()
+	menustart = InMenuStart.Pressed()
+	quit = QuitAction.Pressed()
+	gameup = InGameUp.Pressed()
+	gamedown = InGameDown.Pressed()
+	gamepause = InGamePause.Pressed()
+
 	return nil
 }
 
@@ -152,11 +175,55 @@ func (loop) Draw() error {
 		cursor.Print("extra2\n")
 	}
 
-	cursor.Printf("       actions: ")
+	if InMenu.Active() {
+		cursor.Printf("  MENU ACTIONS: ")
+	} else {
+		cursor.Printf("  menu actions: ")
+	}
+	if menuup {
+		cursor.Print("UP ")
+	} else {
+		cursor.Print("up ")
+	}
+	if menudown {
+		cursor.Print("DOWN ")
+	} else {
+		cursor.Print("down ")
+	}
+	if menustart {
+		cursor.Print("START ")
+	} else {
+		cursor.Print("start ")
+	}
+	cursor.Println(" ")
+
+	if InGame.Active() {
+		cursor.Printf("  GAME ACTIONS: ")
+	} else {
+		cursor.Printf("  game actions: ")
+	}
 	if gameup {
 		cursor.Print("UP ")
 	} else {
 		cursor.Print("up ")
+	}
+	if gamedown {
+		cursor.Print("DOWN ")
+	} else {
+		cursor.Print("down ")
+	}
+	if gamepause {
+		cursor.Print("PAUSE ")
+	} else {
+		cursor.Print("pause ")
+	}
+	cursor.Println(" ")
+
+	cursor.Printf("       actions: ")
+	if quit {
+		cursor.Print("QUIT ")
+	} else {
+		cursor.Print("quit ")
 	}
 
 	screen.Display()

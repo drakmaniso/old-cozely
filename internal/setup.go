@@ -78,6 +78,8 @@ func Setup() error {
 
 	C.SDL_StopTextInput()
 
+	getKeyboardArray()
+
 	// Open the window
 
 	err = OpenWindow(
