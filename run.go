@@ -8,7 +8,6 @@ import (
 	"github.com/drakmaniso/glam/internal"
 	"github.com/drakmaniso/glam/key"
 	"github.com/drakmaniso/glam/mouse"
-	"github.com/drakmaniso/glam/plane"
 	"github.com/drakmaniso/glam/x/gl"
 )
 
@@ -19,20 +18,18 @@ import (
 type GameLoop interface {
 	// The loop
 	Enter() error
+	React() error
 	Update() error
 	Draw() error
 	Leave() error
 
 	// Window Events
-	Resize(s plane.Pixel)
+	Resize()
 	Hide()
 	Show()
 	Focus()
 	Unfocus()
 	Quit()
-
-	// Input Events
-	// Activate(a action.Bool, on bool)
 
 	// Keyboard events
 	KeyDown(l key.Label, p key.Position)
@@ -128,7 +125,7 @@ func Run(loop GameLoop) (err error) {
 
 	// First, send a fake resize window event
 	internal.PixelResize()
-	internal.Loop.Resize(internal.Window.Size)
+	internal.Loop.Resize()
 
 	// Main Loop
 

@@ -5,8 +5,6 @@ package internal
 
 import (
 	"unsafe"
-
-	"github.com/drakmaniso/glam/plane"
 )
 
 //------------------------------------------------------------------------------
@@ -34,12 +32,13 @@ import "C"
 type GameLoop interface {
 	// The loop
 	Enter() error
+	React() error
 	Update() error
 	Draw() error
 	Leave() error
 
 	// Window events
-	Resize(s plane.Pixel)
+	Resize()
 	Hide()
 	Show()
 	Focus()
@@ -91,9 +90,10 @@ func dispatch(e unsafe.Pointer) {
 		case C.SDL_WINDOWEVENT_MOVED:
 			// Ignore
 		case C.SDL_WINDOWEVENT_RESIZED:
-			Window.Size = plane.Pixel{int16(e.data1), int16(e.data2)}
+			Window.Width = int16(e.data1)
+			Window.Height = int16(e.data2)
 			PixelResize()
-			Loop.Resize(Window.Size)
+			Loop.Resize()
 		case C.SDL_WINDOWEVENT_SIZE_CHANGED:
 			//TODO
 		case C.SDL_WINDOWEVENT_MINIMIZED:

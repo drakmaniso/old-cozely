@@ -5,26 +5,28 @@ package action
 
 type Bool uint32
 
-var (
-	bools []bool
-	boolNames []string
-	boolDefaults [][]string
-)
+var boolean struct {
+	names  []string
+	values []bool
+}
 
-func NewBool(name string, defaults ...string) Bool {
-	l := len(bools)
+func NewBool(name string) Bool {
+	l := len(boolean.names)
 	if l >= maxID {
 		//TODO: set error
-		return Bool(0)
+		return Bool(maxID)
 	}
-	
-	bools = append(bools, false)
-	boolNames = append(boolNames, name)
-	boolDefaults = append(boolDefaults, defaults)
+
+	boolean.names = append(boolean.names, name)
+	boolean.values = append(boolean.values, false)
 
 	return Bool(l)
 }
 
 func (b Bool) Active() bool {
-	return bools[b]
+	return boolean.values[b]
+}
+
+func (b Bool) Origins() []Origin {
+	return nil
 }

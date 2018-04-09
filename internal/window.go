@@ -4,7 +4,6 @@
 package internal
 
 import (
-	"github.com/drakmaniso/glam/plane"
 	"fmt"
 	"unsafe"
 )
@@ -26,7 +25,7 @@ import "C"
 // OpenWindow creates the game window and its associated OpenGL context.
 func OpenWindow(
 	title string,
-	size plane.Pixel,
+	width, height int16,
 	display int,
 	fullscreen bool,
 	fullscreenMode string,
@@ -49,7 +48,7 @@ func OpenWindow(
 	t := C.CString(title)
 	defer C.free(unsafe.Pointer(t))
 
-	Window.Size = size
+	Window.Width, Window.Height = width, height
 
 	var fs uint32
 	if fullscreen {
@@ -65,8 +64,8 @@ func OpenWindow(
 		t,
 		C.int(C.SDL_WINDOWPOS_CENTERED_MASK|display),
 		C.int(C.SDL_WINDOWPOS_CENTERED_MASK|display),
-		C.int(Window.Size.X),
-		C.int(Window.Size.Y),
+		C.int(Window.Width),
+		C.int(Window.Height),
 		fl,
 	)
 	if Window.window == nil {

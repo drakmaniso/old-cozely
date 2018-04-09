@@ -9,8 +9,6 @@ import (
 	"os"
 	"path/filepath"
 	"runtime"
-
-	"github.com/drakmaniso/glam/plane"
 )
 
 //------------------------------------------------------------------------------
@@ -79,7 +77,7 @@ func Setup() error {
 
 	err = OpenWindow(
 		Title,
-		plane.Pixel{Config.WindowSize[0], Config.WindowSize[1]},
+		Config.WindowSize[0], Config.WindowSize[1],
 		Config.Display,
 		Config.Fullscreen,
 		Config.FullscreenMode,

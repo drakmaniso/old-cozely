@@ -6,8 +6,6 @@ package internal
 import (
 	"log"
 	"os"
-
-	"github.com/drakmaniso/glam/plane"
 )
 
 //------------------------------------------------------------------------------
@@ -82,10 +80,10 @@ var QuitRequested = false
 
 // Window is the game window.
 var Window struct {
-	window      *C.SDL_Window
-	context     C.SDL_GLContext
-	Size        plane.Pixel
-	Multisample int32
+	window        *C.SDL_Window
+	context       C.SDL_GLContext
+	Width, Height int16
+	Multisample   int32
 }
 
 // Focus state

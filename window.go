@@ -22,7 +22,7 @@ func HasMouseFocus() bool {
 
 // WindowSize returns the size of the window in (screen) pixels.
 func WindowSize() plane.Pixel {
-	return internal.Window.Size
+	return plane.Pixel{internal.Window.Width, internal.Window.Height}
 }
 
 //------------------------------------------------------------------------------

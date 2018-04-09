@@ -12,7 +12,6 @@ import (
 	"github.com/drakmaniso/glam/mouse"
 	"github.com/drakmaniso/glam/palette"
 	"github.com/drakmaniso/glam/pixel"
-	"github.com/drakmaniso/glam/plane"
 
 	"github.com/drakmaniso/glam/_examples/match3/ecs"
 	"github.com/drakmaniso/glam/_examples/match3/grid"
@@ -162,7 +161,7 @@ func (lp loop) KeyDown(l key.Label, p key.Position) {
 
 //------------------------------------------------------------------------------
 
-func (loop) Resize(_ plane.Pixel) {
+func (loop) Resize() {
 	w, h := screen.Size().X, screen.Size().Y
 	grid.ScreenResized(w, h)
 }

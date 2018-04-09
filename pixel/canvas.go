@@ -84,10 +84,11 @@ func (cv Canvas) createBuffer() {
 
 func (cv Canvas) autoresize() {
 	s := &canvases[cv]
+	win := plane.Pixel{internal.Window.Width, internal.Window.Height}
 
 	if s.autozoom {
 		// Find best fit for pixel size
-		p := internal.Window.Size.Slashcw(s.target)
+		p := win.Slashcw(s.target)
 		if p.X < p.Y {
 			s.pixel = p.X
 		} else {
@@ -99,12 +100,12 @@ func (cv Canvas) autoresize() {
 	}
 
 	// Extend the screen to cover the window
-	s.size = internal.Window.Size.Slash(s.pixel)
+	s.size = win.Slash(s.pixel)
 	cv.createTextures()
 
 	// Compute offset
 	sz := s.size.Times(s.pixel)
-	s.origin = internal.Window.Size.Minus(sz).Slash(2)
+	s.origin = win.Minus(sz).Slash(2)
 }
 
 //------------------------------------------------------------------------------

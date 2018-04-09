@@ -3,10 +3,6 @@
 
 package internal
 
-import (
-	"github.com/drakmaniso/glam/plane"
-)
-
 //------------------------------------------------------------------------------
 
 // Handlers implements default handlers for all events.
@@ -17,21 +13,24 @@ type Handlers struct{}
 //------------------------------------------------------------------------------
 
 // Enter does nothing
-func (Handlers) Enter() error {return nil}
+func (Handlers) Enter() error { return nil }
+
+// React does nothing
+func (Handlers) React() error { return nil }
 
 // Update does nothing
-func (Handlers) Update() error {return nil}
+func (Handlers) Update() error { return nil }
 
 // Draw does nothing
-func (Handlers) Draw() error {return nil}
+func (Handlers) Draw() error { return nil }
 
 // Leave does nothing
-func (Handlers) Leave() error {return nil}
+func (Handlers) Leave() error { return nil }
 
 //------------------------------------------------------------------------------
 
 // Resize does nothing.
-func (Handlers) Resize(s plane.Pixel) {}
+func (Handlers) Resize() {}
 
 // Hide does nothing.
 func (Handlers) Hide() {}
