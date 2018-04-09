@@ -7,13 +7,22 @@ import "github.com/drakmaniso/glam/internal"
 
 type Bool uint32
 
+const noBool = Bool(maxID)
+
 func NewBool(name string) Bool {
+	_, ok := actions[name]
+	if ok {
+		//TODO: set error
+		return noBool
+	}
+
 	l := len(internal.Bools.Name)
 	if l >= maxID {
 		//TODO: set error
-		return Bool(maxID)
+		return noBool
 	}
 
+	actions[name] = Bool(l)
 	internal.Bools.Name = append(internal.Bools.Name, name)
 	internal.Bools.Active = append(internal.Bools.Active, false)
 	internal.Bools.Just = append(internal.Bools.Just, false)

@@ -10,13 +10,22 @@ import (
 
 type Coord uint32
 
+const noCoord = Coord(maxID)
+
 func NewCoord(name string) Coord {
+	_, ok := actions[name]
+	if ok {
+		//TODO: set error
+		return noCoord
+	}
+
 	l := len(internal.Coords.Name)
 	if l >= maxID {
 		//TODO: set error
-		return Coord(maxID)
+		return noCoord
 	}
 
+	actions[name] = Coord(l)
 	internal.Coords.Name = append(internal.Coords.Name, name)
 	internal.Coords.Active = append(internal.Coords.Active, false)
 	internal.Coords.X = append(internal.Coords.X, 0)

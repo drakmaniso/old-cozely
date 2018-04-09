@@ -4,48 +4,53 @@
 package action
 
 type binding interface {
-	BindTo(a Action)
-	UnbindFrom(a Action)
+	BindTo(c Context, a Action)
+	Unbind()
 }
 
 type gamepadStick struct {
 }
 
-func (g gamepadStick) BindTo(a Action)     {}
-func (g gamepadStick) UnbindFrom(a Action) {}
+func (g gamepadStick) BindTo(c Context, a Action)     {}
+func (g gamepadStick) Unbind() {}
 
 type gamepadTrigger struct {
 }
 
-func (g gamepadTrigger) BindTo(a Action)     {}
-func (g gamepadTrigger) UnbindFrom(a Action) {}
+func (g gamepadTrigger) BindTo(c Context, a Action)     {}
+func (g gamepadTrigger) Unbind() {}
 
 type gamepadButton struct {
 }
 
-func (g gamepadButton) BindTo(a Action)     {}
-func (g gamepadButton) UnbindFrom(a Action) {}
+func (g gamepadButton) BindTo(c Context, a Action)     {}
+func (g gamepadButton) Unbind() {}
 
 type mouse struct {
 }
 
-func (g mouse) BindTo(a Action)     {}
-func (g mouse) UnbindFrom(a Action) {}
-
-type mouseFloat struct {
-}
-
-func (g mouseFloat) BindTo(a Action)     {}
-func (g mouseFloat) UnbindFrom(a Action) {}
+func (m mouse) BindTo(c Context, a Action)     {}
+func (m mouse) Unbind() {}
 
 type mouseButton struct {
 }
 
-func (g mouseButton) BindTo(a Action)     {}
-func (g mouseButton) UnbindFrom(a Action) {}
+func (m mouseButton) BindTo(c Context, a Action)     {}
+func (m mouseButton) Unbind() {}
 
 type keyboard struct {
 }
 
-func (g keyboard) BindTo(a Action)     {}
-func (g keyboard) UnbindFrom(a Action) {}
+func (k keyboard) BindTo(c Context, a Action) {
+	switch a := a.(type) {
+	case Bool:
+		print("keyboard", "->bool", a)
+	case Float:
+		print("keyboard", "->float", a)
+	case Coord:
+		print("keyboard", "->coord", a)
+	case Delta:
+		print("keyboard", "->delta", a)
+	}
+}
+func (k keyboard) Unbind() {}

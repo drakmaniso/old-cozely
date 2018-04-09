@@ -10,13 +10,22 @@ import (
 
 type Delta uint32
 
+const noDelta = Delta(maxID)
+
 func NewDelta(name string) Delta {
+	_, ok := actions[name]
+	if ok {
+		//TODO: set error
+		return noDelta
+	}
+
 	l := len(internal.Deltas.Name)
 	if l >= maxID {
 		//TODO: set error
-		return Delta(maxID)
+		return noDelta
 	}
 
+	actions[name] = Delta(l)
 	internal.Deltas.Name = append(internal.Deltas.Name, name)
 	internal.Deltas.Active = append(internal.Deltas.Active, false)
 	internal.Deltas.X = append(internal.Deltas.X, 0)

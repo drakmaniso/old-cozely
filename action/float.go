@@ -9,13 +9,22 @@ import (
 
 type Float uint32
 
+const noFloat = Float(maxID)
+
 func NewFloat(name string) Float {
+	_, ok := actions[name]
+	if ok {
+		//TODO: set error
+		return noFloat
+	}
+
 	l := len(internal.Floats.Name)
 	if l >= maxID {
 		//TODO: set error
-		return Float(maxID)
+		return noFloat
 	}
 
+	actions[name] = Float(l)
 	internal.Floats.Name = append(internal.Floats.Name, name)
 	internal.Floats.Active = append(internal.Floats.Active, false)
 	internal.Floats.Value = append(internal.Floats.Value, 0)

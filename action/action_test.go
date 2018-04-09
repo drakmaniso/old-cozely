@@ -69,7 +69,13 @@ var (
 //------------------------------------------------------------------------------
 
 func TestAction(t *testing.T) {
-	err := glam.Run(loop{})
+	err := action.LoadBindings(Bindings)
+	if err != nil {
+		glam.ShowError(err)
+		return
+	}
+
+	err = glam.Run(loop{})
 	if err != nil {
 		glam.ShowError(err)
 		return
