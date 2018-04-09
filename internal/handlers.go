@@ -33,8 +33,17 @@ func (Handlers) Leave() error {return nil}
 // Resize does nothing.
 func (Handlers) Resize(s plane.Pixel) {}
 
-// Status does nothing.
-func (Handlers) Status(s WindowStatus) {}
+// Hide does nothing.
+func (Handlers) Hide() {}
+
+// Show does nothing.
+func (Handlers) Show() {}
+
+// Focus does nothing.
+func (Handlers) Focus() {}
+
+// Unfocus does nothing.
+func (Handlers) Unfocus() {}
 
 // Quit requests the game loop to stop.
 func (Handlers) Quit() {

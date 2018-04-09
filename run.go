@@ -25,8 +25,11 @@ type GameLoop interface {
 
 	// Window Events
 	Resize(s plane.Pixel)
+	Hide()
+	Show()
+	Focus()
+	Unfocus()
 	Quit()
-	Status(s WindowStatus)
 
 	// Input Events
 	// Activate(a action.Bool, on bool)
@@ -53,19 +56,6 @@ type GameLoop interface {
 // This way it's possible to implement the GameLoop interface without writing a
 // method for each event.
 type Handlers = internal.Handlers
-
-//------------------------------------------------------------------------------
-
-type WindowStatus = internal.WindowStatus
-
-const (
-	Hide     WindowStatus = internal.Hide
-	Show                  = internal.Show
-	Focus                 = internal.Focus
-	Unfocus               = internal.Unfocus
-	Minimize              = internal.Minimize
-	Restore               = internal.Restore
-)
 
 //------------------------------------------------------------------------------
 

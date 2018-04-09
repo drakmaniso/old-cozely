@@ -40,8 +40,11 @@ type GameLoop interface {
 
 	// Window events
 	Resize(s plane.Pixel)
+	Hide()
+	Show()
+	Focus()
+	Unfocus()
 	Quit()
-	Status(s WindowStatus)
 
 	// Keyboard events
 	KeyDown(l KeyLabel, p KeyPosition)
@@ -53,19 +56,6 @@ type GameLoop interface {
 	MouseButtonUp(b MouseButton, clicks int)
 	MouseWheel(deltaX, deltaY int32)
 }
-
-//------------------------------------------------------------------------------
-
-type WindowStatus C.Uint32
-
-const (
-	Hide     WindowStatus = C.SDL_WINDOWEVENT_HIDDEN
-	Show                  = C.SDL_WINDOWEVENT_SHOWN
-	Focus                 = C.SDL_WINDOWEVENT_FOCUS_GAINED
-	Unfocus               = C.SDL_WINDOWEVENT_FOCUS_LOST
-	Minimize              = C.SDL_WINDOWEVENT_MINIMIZED
-	Restore               = C.SDL_WINDOWEVENT_RESTORED
-)
 
 //------------------------------------------------------------------------------
 
@@ -93,9 +83,9 @@ func dispatch(e unsafe.Pointer) {
 		case C.SDL_WINDOWEVENT_NONE:
 			// Ignore
 		case C.SDL_WINDOWEVENT_SHOWN:
-			Loop.Status(Show)
+			Loop.Show()
 		case C.SDL_WINDOWEVENT_HIDDEN:
-			Loop.Status(Hide)
+			Loop.Hide()
 		case C.SDL_WINDOWEVENT_EXPOSED:
 			// Ignore
 		case C.SDL_WINDOWEVENT_MOVED:
@@ -107,21 +97,21 @@ func dispatch(e unsafe.Pointer) {
 		case C.SDL_WINDOWEVENT_SIZE_CHANGED:
 			//TODO
 		case C.SDL_WINDOWEVENT_MINIMIZED:
-			Loop.Status(Minimize)
+			//TODO: check that Hide is enough
 		case C.SDL_WINDOWEVENT_MAXIMIZED:
 			// Ingnore
 		case C.SDL_WINDOWEVENT_RESTORED:
-			Loop.Status(Restore)
+			//TODO: check that Show is enough
 		case C.SDL_WINDOWEVENT_ENTER:
 			HasMouseFocus = true
 		case C.SDL_WINDOWEVENT_LEAVE:
 			HasMouseFocus = false
 		case C.SDL_WINDOWEVENT_FOCUS_GAINED:
 			HasFocus = true
-			Loop.Status(Focus)
+			Loop.Focus()
 		case C.SDL_WINDOWEVENT_FOCUS_LOST:
 			HasFocus = false
-			Loop.Status(Unfocus)
+			Loop.Unfocus()
 		case C.SDL_WINDOWEVENT_CLOSE:
 			// Ignore
 		default:

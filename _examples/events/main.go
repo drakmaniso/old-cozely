@@ -11,6 +11,7 @@ import (
 	"github.com/drakmaniso/glam"
 	"github.com/drakmaniso/glam/key"
 	"github.com/drakmaniso/glam/mouse"
+	"github.com/drakmaniso/glam/plane"
 )
 
 //------------------------------------------------------------------------------
@@ -92,48 +93,28 @@ func (loop) MouseWheel(dx, dy int32) {
 
 //------------------------------------------------------------------------------
 
-func (loop) WindowShown() {
-	fmt.Printf("%v: window shown\n", glam.GameTime())
+func (loop) Show() {
+	fmt.Printf("%v: show\n", glam.GameTime())
 }
 
-func (loop) WindowHidden() {
-	fmt.Printf("%v: window hidden\n", glam.GameTime())
+func (loop) Hide() {
+	fmt.Printf("%v: hide\n", glam.GameTime())
 }
 
-func (loop) WindowResized(w, h int32) {
-	fmt.Printf("%v: window resized %dx%d\n", glam.GameTime(), w, h)
+func (loop) Resize(s plane.Pixel) {
+	fmt.Printf("%v: resize %dx%d\n", glam.GameTime(), s.X, s.Y)
 }
 
-func (loop) WindowMinimized() {
-	fmt.Printf("%v: window minimized\n", glam.GameTime())
+func (loop) Focus() {
+	fmt.Printf("%v: focus\n", glam.GameTime())
 }
 
-func (loop) WindowMaximized() {
-	fmt.Printf("%v: window maximized\n", glam.GameTime())
+func (loop) Unfocus() {
+	fmt.Printf("%v: unfocus\n", glam.GameTime())
 }
 
-func (loop) WindowRestored() {
-	fmt.Printf("%v: window restored\n", glam.GameTime())
-}
-
-func (loop) WindowMouseEnter() {
-	fmt.Printf("%v: window mouse enter\n", glam.GameTime())
-}
-
-func (loop) WindowMouseLeave() {
-	fmt.Printf("%v: window mouse leave\n", glam.GameTime())
-}
-
-func (loop) WindowFocusGained() {
-	fmt.Printf("%v: window focus gained\n", glam.GameTime())
-}
-
-func (loop) WindowFocusLost() {
-	fmt.Printf("%v: window focus lost\n", glam.GameTime())
-}
-
-func (loop) WindowQuit() {
-	fmt.Printf("%v: window quit\n", glam.GameTime())
+func (loop) Quit() {
+	fmt.Printf("%v: quit\n", glam.GameTime())
 	glam.Stop()
 }
 
