@@ -71,6 +71,11 @@ func Setup() error {
 		return Error("in SDL initalization", GetSDLError())
 	}
 
+	C.SDL_EventState(C.SDL_MOUSEMOTION, C.SDL_IGNORE)
+	C.SDL_EventState(C.SDL_MOUSEBUTTONDOWN, C.SDL_IGNORE)
+	C.SDL_EventState(C.SDL_MOUSEBUTTONUP, C.SDL_IGNORE)
+	C.SDL_EventState(C.SDL_MOUSEBUTTONDOWN, C.SDL_IGNORE)
+
 	C.SDL_StopTextInput()
 
 	// Open the window

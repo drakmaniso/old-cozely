@@ -3,30 +3,45 @@
 
 package action
 
+import "github.com/drakmaniso/glam/internal"
+
 type Bool uint32
 
-var boolean struct {
-	names  []string
-	values []bool
-}
-
 func NewBool(name string) Bool {
-	l := len(boolean.names)
+	l := len(internal.Bools.Name)
 	if l >= maxID {
 		//TODO: set error
 		return Bool(maxID)
 	}
 
-	boolean.names = append(boolean.names, name)
-	boolean.values = append(boolean.values, false)
+	internal.Bools.Name = append(internal.Bools.Name, name)
+	internal.Bools.Active = append(internal.Bools.Active, false)
+	internal.Bools.Just = append(internal.Bools.Just, false)
+	internal.Bools.Pressed = append(internal.Bools.Pressed, false)
 
 	return Bool(l)
 }
 
-func (b Bool) Active() bool {
-	return boolean.values[b]
+func (b Bool) Name() string {
+	return internal.Bools.Name[b]
 }
 
-func (b Bool) Origins() []Origin {
-	return nil
+func (b Bool) Active() bool {
+	return internal.Bools.Active[b]
+}
+
+func (b Bool) Pressed() bool {
+	return internal.Bools.Pressed[b]
+}
+
+func (b Bool) JustPressed() bool {
+	return internal.Bools.Just[b] && internal.Bools.Pressed[b]
+}
+
+func (b Bool) Released() bool {
+	return !internal.Bools.Pressed[b]
+}
+
+func (b Bool) JustReleased() bool {
+	return internal.Bools.Just[b] && !internal.Bools.Pressed[b]
 }

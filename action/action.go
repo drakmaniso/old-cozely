@@ -4,7 +4,11 @@
 package action
 
 type Action interface {
-	Origins() []Origin
+	Active() bool
 }
+
+const (
+	flagActive byte = 1 << iota
+)
 
 const maxID = 0xFFFFFFFF

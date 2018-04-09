@@ -63,6 +63,16 @@ func ProcessEvents() {
 	more := true
 	for more && !QuitRequested {
 		n := peepEvents()
+
+		var mx, my C.int
+		btn := C.SDL_GetRelativeMouseState(&mx, &my)
+		MouseDeltaX += int32(mx)
+		MouseDeltaY += int32(my)
+		C.SDL_GetMouseState(&mx, &my)
+		MousePositionX = int32(mx)
+		MousePositionY = int32(my)
+		MouseButtons = uint32(btn)
+
 		for i := 0; i < n && !QuitRequested; i++ {
 			e := eventAt(i)
 			dispatch(e)
@@ -135,31 +145,6 @@ func dispatch(e unsafe.Pointer) {
 			KeyPosition(e.keysym.scancode),
 		)
 	// Mouse Events
-	case C.SDL_MOUSEMOTION:
-		e := (*C.SDL_MouseMotionEvent)(e)
-		dx, dy := int32(e.xrel), int32(e.yrel)
-		MouseDeltaX += dx
-		MouseDeltaY += dy
-		MousePositionX, MousePositionY = int32(e.x), int32(e.y)
-		MouseButtons = uint32(e.state)
-		Loop.MouseMotion(
-			dx, dy,
-			MousePositionX, MousePositionY,
-		)
-	case C.SDL_MOUSEBUTTONDOWN:
-		e := (*C.SDL_MouseButtonEvent)(e)
-		MouseButtons |= 1 << (e.button - 1)
-		Loop.MouseButtonDown(
-			MouseButton(e.button),
-			int(e.clicks),
-		)
-	case C.SDL_MOUSEBUTTONUP:
-		e := (*C.SDL_MouseButtonEvent)(e)
-		MouseButtons &= ^(1 << (e.button - 1))
-		Loop.MouseButtonUp(
-			MouseButton(e.button),
-			int(e.clicks),
-		)
 	case C.SDL_MOUSEWHEEL:
 		e := (*C.SDL_MouseWheelEvent)(e)
 		var d int32 = 1
