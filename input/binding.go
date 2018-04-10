@@ -8,39 +8,41 @@ import "errors"
 type binding interface {
 	bind(c Context, a Action)
 	device() Device
+	action() Action
 	asBool() (just bool, value bool)
 }
 
 type gpStick struct{}
 
-func (g gpStick) bind(c Context, a Action) {}
-func (g gpStick) device() Device {return noDevice}
-func (g gpStick) asBool() (just bool, value bool) {return false, false}
+func (a gpStick) bind(c Context, target Action)   {}
+func (a gpStick) device() Device                  { return noDevice }
+func (a gpStick) action() Action                  { return nil }
+func (a gpStick) asBool() (just bool, value bool) { return false, false }
 
 type gpTrigger struct{}
 
-func (g gpTrigger) bind(c Context, a Action) {}
-func (g gpTrigger) device() Device {return noDevice}
-func (g gpTrigger) asBool() (just bool, value bool) {return false, false}
+func (a gpTrigger) bind(c Context, target Action)   {}
+func (a gpTrigger) device() Device                  { return noDevice }
+func (a gpTrigger) action() Action                  { return nil }
+func (a gpTrigger) asBool() (just bool, value bool) { return false, false }
 
 type gpButton struct{}
 
-func (g gpButton) bind(c Context, a Action) {}
-func (g gpButton) device() Device {return noDevice}
-func (g gpButton) asBool() (just bool, value bool) {return false, false}
+func (a gpButton) bind(c Context, target Action)   {}
+func (a gpButton) device() Device                  { return noDevice }
+func (a gpButton) action() Action                  { return nil }
+func (a gpButton) asBool() (just bool, value bool) { return false, false }
 
 func LoadBindings(b map[string]map[string][]string) error {
 	var err error
 
-	// Forget previous bindings
-	var nbctx = len(contexts.Name)
-	keybmouse.keys = make([][]*kbKey, nbctx)
-	keybmouse.buttons = make([][]*msButton, nbctx)
+	// Forget devices (and previous bindings)
+	clearDevices()
 
 	for cn, cb := range b {
 		// Find context by name
 		ctx := noContext
-		for i, n := range contexts.Name {
+		for i, n := range contexts.name {
 			if n == cn {
 				ctx = Context(i)
 				break

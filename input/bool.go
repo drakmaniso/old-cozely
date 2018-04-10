@@ -14,6 +14,12 @@ var bools struct {
 	pressed [][maxDevices]bool
 }
 
+type boolean struct {
+	active  bool
+	just    bool
+	pressed bool
+}
+
 func NewBool(name string) Bool {
 	_, ok := actions[name]
 	if ok {

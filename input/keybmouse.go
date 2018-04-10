@@ -7,26 +7,25 @@ import (
 	"github.com/drakmaniso/glam/internal"
 )
 
-var keybmouse struct {
-	context, new Context
-	keys         [][]*kbKey
-	buttons      [][]*msButton
-}
-
 type kbKey struct {
 	keycode       KeyCode
-	action        Action
+	target        Action
 	just, pressed bool
 }
 
 func (a *kbKey) bind(c Context, target Action) {
 	aa := *a
-	aa.action = target
-	keybmouse.keys[c] = append(keybmouse.keys[c], &aa)
+	aa.target = target
+	devices.bindings[KeyboardAndMouse][c] =
+		append(devices.bindings[KeyboardAndMouse][c], &aa)
 }
 
 func (a *kbKey) device() Device {
 	return KeyboardAndMouse
+}
+
+func (a *kbKey) action() Action {
+	return a.target
 }
 
 func (a *kbKey) asBool() (just bool, value bool) {
@@ -39,15 +38,14 @@ func (a *kbKey) asBool() (just bool, value bool) {
 type msPosition struct {
 }
 
-func (a msPosition) bind(c Context, target Action) {}
-func (a msPosition) device() Device {return noDevice}
-func (a msPosition) asBool() (just bool, value bool) {
-	return false, false
-}
+func (a msPosition) bind(c Context, target Action)   {}
+func (a msPosition) device() Device                  { return noDevice }
+func (a msPosition) action() Action                  { return nil }
+func (a msPosition) asBool() (just bool, value bool) { return false, false }
 
 type msButton struct {
-	button MouseButton
-	action Action
+	button        MouseButton
+	target        Action
 	just, pressed bool
 }
 
@@ -68,12 +66,17 @@ const (
 
 func (a *msButton) bind(c Context, target Action) {
 	aa := *a
-	aa.action = target
-	keybmouse.buttons[c] = append(keybmouse.buttons[c], &aa)
+	aa.target = target
+	devices.bindings[KeyboardAndMouse][c] =
+		append(devices.bindings[KeyboardAndMouse][c], &aa)
 }
 
 func (a *msButton) device() Device {
 	return KeyboardAndMouse
+}
+
+func (a *msButton) action() Action {
+	return a.target
 }
 
 func (a *msButton) asBool() (just bool, value bool) {
