@@ -73,18 +73,18 @@ func init() {
 }
 
 func prepare() error {
-	for i := range bools.just {
-		bools.just[i] = false
-	}
+	// for i := range bools.just {
+	// 	bools.just[i] = false
+	// }
 
 	// Keyboard
 	if keyboard.context != keyboard.new {
 		for _, b := range keyboard.actions[keyboard.context] {
-			b.action.deactivate()
+			b.action.deactivate(Keyboard)
 		}
 		keyboard.context = keyboard.new
 		for _, b := range keyboard.actions[keyboard.context] {
-			b.action.activate()
+			b.action.activateKey(b.position)
 		}
 	}
 	for _, b := range keyboard.actions[keyboard.context] {

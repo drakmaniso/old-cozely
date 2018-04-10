@@ -11,7 +11,6 @@ import (
 
 	"github.com/drakmaniso/glam"
 	"github.com/drakmaniso/glam/input"
-	"github.com/drakmaniso/glam/colour"
 	"github.com/drakmaniso/glam/key"
 	"github.com/drakmaniso/glam/mouse"
 	"github.com/drakmaniso/glam/palette"
@@ -25,54 +24,73 @@ var (
 	cursor = pixel.Cursor{Canvas: screen}
 )
 
+const (
+	Transparent palette.Index = iota
+	Black
+	MediumGreen
+	LightGreen
+	DarkBlue
+	LightBlue
+	DarkRed
+	Cyan
+	MediumRed
+	LightRed
+	DarkYellow
+	LightYellow
+	DarkGreen
+	Magenta
+	Gray
+	White
+)
+
 //------------------------------------------------------------------------------
 
 var (
-	InMenuUp    = input.NewBool("Menu Up")
-	InMenuDown  = input.NewBool("Menu Down")
-	InMenuStart = input.NewBool("Menu Start")
-	InGameUp    = input.NewBool("Up")
-	InGameDown  = input.NewBool("Down")
-	InGamePause = input.NewBool("Pause")
-	QuitAction  = input.NewBool("Quit")
+	InventoryAction        = input.NewBool("Inventory")
+	OptionsAction          = input.NewBool("Options")
+	CloseMenuAction        = input.NewBool("Close Menu")
+	InstantCloseMenuAction = input.NewBool("Instant Close Menu")
+	JumpAction             = input.NewBool("Jump")
+	OpenMenuAction         = input.NewBool("Open Menu")
+	InstantOpenMenuAction  = input.NewBool("Instant Open Menu")
 )
 
 var (
 	InMenu = input.NewContext("Menu",
-		InMenuUp, InMenuDown, InMenuStart, QuitAction)
+		CloseMenuAction, InstantCloseMenuAction, InventoryAction, OptionsAction)
 
 	InGame = input.NewContext("Game",
-		InGameUp, InGameDown, InGamePause, QuitAction)
+		OpenMenuAction, InstantOpenMenuAction, InventoryAction, JumpAction)
 )
 
 var (
 	Bindings = map[string]map[string][]string{
 		"Menu": {
-			"Menu Up":    {"Up"},
-			"Menu Down":  {"Down"},
-			"Menu Start": {"Space"},
-			"Quit":       {"Escape"},
+			"Close Menu":         {"Escape"},
+			"Instant Close Menu": {"Enter"},
+			"Inventory":          {"I"},
+			"Options":            {"O"},
 		},
 		"Game": {
-			"Up":    {"W"},
-			"Down":  {"S"},
-			"Pause": {"Enter"},
-			"Quit":  {"Escape"},
+			"Open Menu":         {"Escape"},
+			"Instant Open Menu": {"Enter"},
+			"Inventory":         {"Tab"},
+			"Jump":              {"Space"},
 		},
 	}
 
 	keyboardBindings = map[input.Context]map[input.KeyCode]input.Action{
 		InMenu: {
-			input.KeyUp:     InMenuUp,
-			input.KeyDown:   InMenuDown,
-			input.KeySpace:  InMenuStart,
-			input.KeyEscape: QuitAction,
+			input.KeyEscape: CloseMenuAction,
+			input.KeyReturn: InstantCloseMenuAction,
+			input.KeyI:      InventoryAction,
+			input.KeyO:      OptionsAction,
 		},
 		InGame: {
-			input.KeyW:      InGameUp,
-			input.KeyS:      InGameDown,
-			input.KeyReturn: InGamePause,
-			input.KeyEscape: QuitAction,
+			input.KeyEscape: OpenMenuAction,
+			input.KeyReturn: InstantOpenMenuAction,
+			input.KeyTab:    InventoryAction,
+			input.KeySpace:  JumpAction,
 		},
 	}
 )
@@ -102,7 +120,7 @@ type loop struct {
 //------------------------------------------------------------------------------
 
 func (loop) Enter() error {
-	palette.Index(1).SetColour(colour.LRGB{1, .95, .9})
+	palette.Load("MSX")
 	InMenu.Activate(0)
 	return nil
 }
@@ -113,8 +131,7 @@ var dx, dy int32
 var px, py int32
 var left, middle, right, extra1, extra2 bool
 
-var menuup, menudown, menustart, quit bool
-var gameup, gamedown, gamepause bool
+var openmenu, closemenu, instopenmenu, instclosemenu, inventory, options, jump bool
 
 func (loop) React() error {
 	dx, dy = mouse.Delta()
@@ -125,38 +142,62 @@ func (loop) React() error {
 	extra1 = mouse.IsPressed(mouse.Extra1)
 	extra2 = mouse.IsPressed(mouse.Extra2)
 
-	if InMenuStart.JustPressed() {
-		println(" Just Pressed: Menu Start")
+	if CloseMenuAction.JustPressed(input.Keyboard) {
+		println(" Just Pressed: CLOSE")
 	}
-	if InMenuStart.JustReleased() {
-		println("Just Released: Menu Start")
+	if CloseMenuAction.JustReleased(input.Keyboard) {
+		println("Just Released: close")
 		InGame.Activate(1)
 	}
-	if InGamePause.JustPressed() {
-		println(" Just Pressed: Game Pause")
+	if OpenMenuAction.JustPressed(input.Keyboard) {
+		println(" Just Pressed: OPEN")
+	}
+	if OpenMenuAction.JustReleased(input.Keyboard) {
+		println("Just Released: open")
 		InMenu.Activate(1)
 	}
-	if InGamePause.JustReleased() {
-		println("Just Released: Game Pause")
+
+	if InstantCloseMenuAction.JustPressed(input.Keyboard) {
+		println(" Just Pressed: INSTANT CLOSE")
+		InGame.Activate(1)
+	}
+	if InstantCloseMenuAction.JustReleased(input.Keyboard) {
+		println("Just Released: instant close")
+	}
+	if InstantOpenMenuAction.JustPressed(input.Keyboard) {
+		println(" Just Pressed: INSTANT OPEN")
+		InMenu.Activate(1)
+	}
+	if InstantOpenMenuAction.JustReleased(input.Keyboard) {
+		println("Just Released: instant open")
 	}
 
-	menuup = InMenuUp.Pressed()
-	menudown = InMenuDown.Pressed()
-	menustart = InMenuStart.Pressed()
-	quit = QuitAction.Pressed()
-	gameup = InGameUp.Pressed()
-	gamedown = InGameDown.Pressed()
-	gamepause = InGamePause.Pressed()
+	openmenu = OpenMenuAction.Pressed(input.Keyboard)
+	closemenu = CloseMenuAction.Pressed(input.Keyboard)
+	instopenmenu = InstantOpenMenuAction.Pressed(input.Keyboard)
+	instclosemenu = InstantCloseMenuAction.Pressed(input.Keyboard)
+	inventory = InventoryAction.Pressed(input.Keyboard)
+	options = OptionsAction.Pressed(input.Keyboard)
+	jump = JumpAction.Pressed(input.Keyboard)
 
 	return nil
 }
 
 //------------------------------------------------------------------------------
 
+func color(p bool) {
+	if p {
+		cursor.Color = LightGreen - 1
+	} else {
+		cursor.Color = DarkBlue - 1
+	}
+}
+
 func (loop) Draw() error {
 	screen.Clear(0)
 
 	cursor.Locate(2, 12)
+	cursor.Color = DarkBlue - 1
 
 	cursor.Printf("   mouse delta:%+6d,%+6d\n", dx, dy)
 	cursor.Printf("mouse position:%6d,%6d\n", px, py)
@@ -188,56 +229,30 @@ func (loop) Draw() error {
 		cursor.Print("extra2\n")
 	}
 
-	if InMenu.Active(1) {
-		cursor.Printf("  MENU ACTIONS: ")
-	} else {
-		cursor.Printf("  menu actions: ")
-	}
-	if menuup {
-		cursor.Print("UP ")
-	} else {
-		cursor.Print("up ")
-	}
-	if menudown {
-		cursor.Print("DOWN ")
-	} else {
-		cursor.Print("down ")
-	}
-	if menustart {
-		cursor.Print("START ")
-	} else {
-		cursor.Print("start ")
-	}
+	color(InMenu.Active(input.Keyboard))
+	cursor.Printf("  Menu: ")
+	color(options)
+	cursor.Print("Options(O) ")
+	color(closemenu)
+	cursor.Print("CloseMenu(ESC) ")
+	color(instclosemenu)
+	cursor.Print("InstantCloseMenu(ENTER) ")
 	cursor.Println(" ")
 
-	if InGame.Active(1) {
-		cursor.Printf("  GAME ACTIONS: ")
-	} else {
-		cursor.Printf("  game actions: ")
-	}
-	if gameup {
-		cursor.Print("UP ")
-	} else {
-		cursor.Print("up ")
-	}
-	if gamedown {
-		cursor.Print("DOWN ")
-	} else {
-		cursor.Print("down ")
-	}
-	if gamepause {
-		cursor.Print("PAUSE ")
-	} else {
-		cursor.Print("pause ")
-	}
+	color(InGame.Active(input.Keyboard))
+	cursor.Printf("  Game: ")
+	color(jump)
+	cursor.Print("Jump(SPACE) ")
+	color(openmenu)
+	cursor.Print("OpenMenu(ESC) ")
+	color(instopenmenu)
+	cursor.Print("InstantOpenMenu(ENTER) ")
 	cursor.Println(" ")
 
-	cursor.Printf("       actions: ")
-	if quit {
-		cursor.Print("QUIT ")
-	} else {
-		cursor.Print("quit ")
-	}
+	color(false)
+	cursor.Printf("  Both: ")
+	color(inventory)
+	cursor.Print("Inventory(I/TAB) ")
 
 	screen.Display()
 	return nil

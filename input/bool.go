@@ -13,9 +13,9 @@ const noBool = Bool(maxID)
 
 var bools struct {
 	name    []string
-	active  []bool
-	just    []bool
-	pressed []bool
+	active  [][maxDevices]bool
+	just    [][maxDevices]bool
+	pressed [][maxDevices]bool
 }
 
 func NewBool(name string) Bool {
@@ -33,9 +33,9 @@ func NewBool(name string) Bool {
 
 	actions[name] = Bool(a)
 	bools.name = append(bools.name, name)
-	bools.active = append(bools.active, false)
-	bools.just = append(bools.just, false)
-	bools.pressed = append(bools.pressed, false)
+	bools.active = append(bools.active, [maxDevices]bool{})
+	bools.just = append(bools.just, [maxDevices]bool{})
+	bools.pressed = append(bools.pressed, [maxDevices]bool{})
 
 	return Bool(a)
 }
@@ -44,38 +44,40 @@ func (a Bool) Name() string {
 	return bools.name[a]
 }
 
-func (a Bool) activate() {
-	bools.active[a] = true
+func (a Bool) deactivate(d Device) {
+	bools.active[a][d] = false
+	bools.just[a][d] = false
+	bools.pressed[a][d] = false
 }
 
-func (a Bool) deactivate() {
-	bools.active[a] = false
-	bools.just[a] = bools.pressed[a]
-	bools.pressed[a] = false
+func (a Bool) activateKey(k KeyCode) {
+	bools.active[a][Keyboard] = true
+	v := internal.Key(k)
+	bools.pressed[a][Keyboard] = v
 }
 
 func (a Bool) prepareKey(k KeyCode) {
 	v := internal.Key(k)
-	bools.just[a] = (v != bools.pressed[a])
-	bools.pressed[a] = v
+	bools.just[a][Keyboard] = (v != bools.pressed[a][Keyboard])
+	bools.pressed[a][Keyboard] = v
 }
 
-func (a Bool) Active() bool {
-	return bools.active[a]
+func (a Bool) Active(d Device) bool {
+	return bools.active[a][d]
 }
 
-func (a Bool) Pressed() bool {
-	return bools.pressed[a]
+func (a Bool) Pressed(d Device) bool {
+	return bools.pressed[a][d]
 }
 
-func (a Bool) JustPressed() bool {
-	return bools.just[a] && bools.pressed[a]
+func (a Bool) JustPressed(d Device) bool {
+	return bools.just[a][d] && bools.pressed[a][d]
 }
 
-func (a Bool) Released() bool {
-	return !bools.pressed[a]
+func (a Bool) Released(d Device) bool {
+	return !bools.pressed[a][d]
 }
 
-func (a Bool) JustReleased() bool {
-	return bools.just[a] && !bools.pressed[a]
+func (a Bool) JustReleased(d Device) bool {
+	return bools.just[a][d] && !bools.pressed[a][d]
 }

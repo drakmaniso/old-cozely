@@ -13,8 +13,8 @@ const noDelta = Delta(maxID)
 
 var deltas struct {
 	name   []string
-	active []bool
-	value  []plane.Coord
+	active [][maxDevices]bool
+	value  [][maxDevices]plane.Coord
 }
 
 func NewDelta(name string) Delta {
@@ -32,31 +32,31 @@ func NewDelta(name string) Delta {
 
 	actions[name] = Delta(a)
 	deltas.name = append(deltas.name, name)
-	deltas.active = append(deltas.active, false)
-	deltas.value = append(deltas.value, plane.Coord{})
+	deltas.active = append(deltas.active, [maxDevices]bool{})
+	deltas.value = append(deltas.value, [maxDevices]plane.Coord{})
 
 	return Delta(a)
 }
 
-func (c Delta) Name() string {
-	return bools.name[c]
+func (a Delta) Name() string {
+	return bools.name[a]
 }
 
-func (a Delta) activate() {
-	deltas.active[a] = true
+func (a Delta) deactivate(d Device) {
+	deltas.active[a][d] = false
 }
 
-func (a Delta) deactivate() {
-	deltas.active[a] = false
+func (a Delta) activateKey(k KeyCode) {
+	deltas.active[a][Keyboard] = true
 }
 
 func (a Delta) prepareKey(k KeyCode) {
 }
 
-func (c Delta) Active() bool {
-	return deltas.active[c]
+func (a Delta) Active(d Device) bool {
+	return deltas.active[a][d]
 }
 
-func (c Delta) Delta() plane.Coord {
-	return deltas.value[c]
+func (a Delta) Delta(d Device) plane.Coord {
+	return deltas.value[a][d]
 }

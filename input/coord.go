@@ -13,8 +13,8 @@ const noCoord = Coord(maxID)
 
 var coords struct {
 	name   []string
-	active []bool
-	value  []plane.Coord
+	active [][maxDevices]bool
+	value  [][maxDevices]plane.Coord
 }
 
 func NewCoord(name string) Coord {
@@ -32,8 +32,8 @@ func NewCoord(name string) Coord {
 
 	actions[name] = Coord(a)
 	coords.name = append(coords.name, name)
-	coords.active = append(coords.active, false)
-	coords.value = append(coords.value, plane.Coord{})
+	coords.active = append(coords.active, [maxDevices]bool{})
+	coords.value = append(coords.value, [maxDevices]plane.Coord{})
 
 	return Coord(a)
 }
@@ -42,21 +42,21 @@ func (a Coord) Name() string {
 	return bools.name[a]
 }
 
-func (a Coord) activate() {
-	coords.active[a] = true
+func (a Coord) deactivate(d Device) {
+	coords.active[a][d] = false
 }
 
-func (a Coord) deactivate() {
-	coords.active[a] = false
+func (a Coord) activateKey(k KeyCode) {
+	coords.active[a][Keyboard] = true
 }
 
 func (a Coord) prepareKey(k KeyCode) {
 }
 
-func (a Coord) Active() bool {
-	return coords.active[a]
+func (a Coord) Active(d Device) bool {
+	return coords.active[a][d]
 }
 
-func (a Coord) Coord() plane.Coord {
-	return coords.value[a]
+func (a Coord) Coord(d Device) plane.Coord {
+	return coords.value[a][d]
 }

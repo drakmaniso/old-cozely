@@ -84,5 +84,6 @@ var bindings = map[string]binding{
 	"Right":  kbKey{pos: KeyRight},
 	"Enter":  kbKey{pos: KeyReturn},
 	"Space":  kbKey{pos: KeySpace},
+	"Tab":    kbKey{pos: KeyTab},
 	"Escape": kbKey{pos: KeyEscape},
 }

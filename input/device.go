@@ -13,6 +13,8 @@ const (
 	Mouse
 )
 
+const maxDevices = 16
+
 type keyAction struct {
 	position KeyCode
 	action   Action

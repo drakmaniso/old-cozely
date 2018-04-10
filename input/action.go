@@ -8,9 +8,9 @@ import (
 )
 
 type Action interface {
-	Active() bool
-	activate()
-	deactivate()
+	Active(d Device) bool
+	deactivate(d Device)
+	activateKey(k KeyCode)
 	prepareKey(k KeyCode)
 }
 
