@@ -3,13 +3,15 @@
 
 package action
 
-import (
-	"github.com/drakmaniso/glam/internal"
-)
-
 type Float uint32
 
 const noFloat = Float(maxID)
+
+var floats struct {
+	name   []string
+	active []bool
+	value  []float32
+}
 
 func NewFloat(name string) Float {
 	_, ok := actions[name]
@@ -18,28 +20,39 @@ func NewFloat(name string) Float {
 		return noFloat
 	}
 
-	l := len(internal.Floats.Name)
-	if l >= maxID {
+	a := len(floats.name)
+	if a >= maxID {
 		//TODO: set error
 		return noFloat
 	}
 
-	actions[name] = Float(l)
-	internal.Floats.Name = append(internal.Floats.Name, name)
-	internal.Floats.Active = append(internal.Floats.Active, false)
-	internal.Floats.Value = append(internal.Floats.Value, 0)
+	actions[name] = Float(a)
+	floats.name = append(floats.name, name)
+	floats.active = append(floats.active, false)
+	floats.value = append(floats.value, 0)
 
-	return Float(l)
+	return Float(a)
 }
 
-func (f Float) Name() string {
-	return internal.Bools.Name[f]
+func (a Float) Name() string {
+	return bools.name[a]
 }
 
-func (f Float) Active() bool {
-	return internal.Floats.Active[f]
+func (a Float) activate() {
+	floats.active[a] = true
 }
 
-func (f Float) Value() float32 {
-	return internal.Floats.Value[f]
+func (a Float) deactivate() {
+	floats.active[a] = false
+}
+
+func (a Float) prepareKey(k KeyCode) {
+}
+
+func (a Float) Active() bool {
+	return floats.active[a]
+}
+
+func (a Float) Value() float32 {
+	return floats.value[a]
 }

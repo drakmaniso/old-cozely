@@ -160,7 +160,6 @@ func Run(loop GameLoop) (err error) {
 			internal.ProcessEvents()
 			internal.ActionPrepare() //TODO: error handling?
 			internal.Loop.React()
-			internal.ActionAmend() //TODO: error handling?
 		}
 		for internal.UpdateLag >= internal.TimeStep {
 			// Do the Time Step
@@ -171,7 +170,6 @@ func Run(loop GameLoop) (err error) {
 			internal.ProcessEvents()
 			internal.ActionPrepare() //TODO: error handling?
 			internal.Loop.React()
-			internal.ActionAmend() //TODO: error handling?
 			// Update
 			err = internal.Loop.Update()
 			if err != nil {

@@ -9,6 +9,9 @@ import (
 
 type Action interface {
 	Active() bool
+	activate()
+	deactivate()
+	prepareKey(k KeyCode)
 }
 
 var actions = map[string]Action{}

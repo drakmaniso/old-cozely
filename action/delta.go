@@ -4,13 +4,18 @@
 package action
 
 import (
-	"github.com/drakmaniso/glam/internal"
 	"github.com/drakmaniso/glam/plane"
 )
 
 type Delta uint32
 
 const noDelta = Delta(maxID)
+
+var deltas struct {
+	name   []string
+	active []bool
+	value  []plane.Coord
+}
 
 func NewDelta(name string) Delta {
 	_, ok := actions[name]
@@ -19,29 +24,39 @@ func NewDelta(name string) Delta {
 		return noDelta
 	}
 
-	l := len(internal.Deltas.Name)
-	if l >= maxID {
+	a := len(deltas.name)
+	if a >= maxID {
 		//TODO: set error
 		return noDelta
 	}
 
-	actions[name] = Delta(l)
-	internal.Deltas.Name = append(internal.Deltas.Name, name)
-	internal.Deltas.Active = append(internal.Deltas.Active, false)
-	internal.Deltas.X = append(internal.Deltas.X, 0)
-	internal.Deltas.Y = append(internal.Deltas.Y, 0)
+	actions[name] = Delta(a)
+	deltas.name = append(deltas.name, name)
+	deltas.active = append(deltas.active, false)
+	deltas.value = append(deltas.value, plane.Coord{})
 
-	return Delta(l)
+	return Delta(a)
 }
 
 func (c Delta) Name() string {
-	return internal.Bools.Name[c]
+	return bools.name[c]
+}
+
+func (a Delta) activate() {
+	deltas.active[a] = true
+}
+
+func (a Delta) deactivate() {
+	deltas.active[a] = false
+}
+
+func (a Delta) prepareKey(k KeyCode) {
 }
 
 func (c Delta) Active() bool {
-	return internal.Deltas.Active[c]
+	return deltas.active[c]
 }
 
 func (c Delta) Delta() plane.Coord {
-	return plane.Coord{internal.Deltas.X[c], internal.Deltas.Y[c]}
+	return deltas.value[c]
 }

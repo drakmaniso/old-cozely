@@ -3,60 +3,56 @@
 
 package action
 
-import (
-	"github.com/drakmaniso/glam/internal"
-	"github.com/drakmaniso/glam/key"
-)
-
 type binding interface {
 	BindTo(c Context, a Action)
 	Unbind()
 }
 
-type gamepadStick struct {
+type gpStick struct {
 }
 
-func (g gamepadStick) BindTo(c Context, a Action) {}
-func (g gamepadStick) Unbind()                    {}
+func (g gpStick) BindTo(c Context, a Action) {}
+func (g gpStick) Unbind()                    {}
 
-type gamepadTrigger struct {
+type gpTrigger struct {
 }
 
-func (g gamepadTrigger) BindTo(c Context, a Action) {}
-func (g gamepadTrigger) Unbind()                    {}
+func (g gpTrigger) BindTo(c Context, a Action) {}
+func (g gpTrigger) Unbind()                    {}
 
-type gamepadButton struct {
+type gpButton struct {
 }
 
-func (g gamepadButton) BindTo(c Context, a Action) {}
-func (g gamepadButton) Unbind()                    {}
+func (g gpButton) BindTo(c Context, a Action) {}
+func (g gpButton) Unbind()                    {}
 
-type mouse struct {
+type msPosition struct {
 }
 
-func (m mouse) BindTo(c Context, a Action) {}
-func (m mouse) Unbind()                    {}
+func (m msPosition) BindTo(c Context, a Action) {}
+func (m msPosition) Unbind()                    {}
 
-type mouseButton struct {
+type msButton struct {
 }
 
-func (m mouseButton) BindTo(c Context, a Action) {}
-func (m mouseButton) Unbind()                    {}
+func (m msButton) BindTo(c Context, a Action) {}
+func (m msButton) Unbind()                    {}
 
-type keyboard struct {
-	pos key.Position
+type kbKey struct {
+	pos KeyCode
 }
 
-func (k keyboard) BindTo(c Context, a Action) {
+func (k kbKey) BindTo(c Context, a Action) {
 	switch a := a.(type) {
 	case Bool:
-		contexts.KeyboardHooks[c] = append(contexts.KeyboardHooks[c],
-			func() {
-				b := internal.Key(k.pos)
-				internal.Bools.Just[a] = (b != internal.Bools.Pressed[a])
-				internal.Bools.Pressed[a] = b
-			},
-		)
+		for len(keyboard.actions) < int(c+1) {
+			keyboard.actions = append(keyboard.actions, []keyAction{})
+		}
+		keyboard.actions[c] = append(keyboard.actions[c],
+			keyAction{
+				position: k.pos,
+				action:   a,
+			})
 		print("keyboard", "->bool", a)
 	case Float:
 		print("keyboard", "->float", a)
@@ -66,4 +62,4 @@ func (k keyboard) BindTo(c Context, a Action) {
 		print("keyboard", "->delta", a)
 	}
 }
-func (k keyboard) Unbind() {}
+func (k kbKey) Unbind() {}

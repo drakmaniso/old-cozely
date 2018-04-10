@@ -46,8 +46,8 @@ type GameLoop interface {
 	Quit()
 
 	// Keyboard events
-	KeyDown(l KeyLabel, p KeyPosition)
-	KeyUp(l KeyLabel, p KeyPosition)
+	KeyDown(l KeyLabel, p KeyCode)
+	KeyUp(l KeyLabel, p KeyCode)
 
 	// Mouse events
 	MouseMotion(deltaX, deltaY int32, posX, posY int32)
@@ -134,7 +134,7 @@ func dispatch(e unsafe.Pointer) {
 	// 		KeyState[e.keysym.scancode] = true
 	// 		Loop.KeyDown(
 	// 			KeyLabel(e.keysym.sym),
-	// 			KeyPosition(e.keysym.scancode),
+	// 			KeyCode(e.keysym.scancode),
 	// 		)
 	// 	}
 	// case C.SDL_KEYUP:
@@ -142,7 +142,7 @@ func dispatch(e unsafe.Pointer) {
 	// 	KeyState[e.keysym.scancode] = false
 	// 	Loop.KeyUp(
 	// 		KeyLabel(e.keysym.sym),
-	// 		KeyPosition(e.keysym.scancode),
+	// 		KeyCode(e.keysym.scancode),
 	// 	)
 	// Mouse Events
 	case C.SDL_MOUSEWHEEL:

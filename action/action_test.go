@@ -39,12 +39,10 @@ var (
 
 var (
 	InMenu = action.NewContext("Menu",
-		InMenuUp, InMenuDown, InMenuStart,
-		QuitAction)
+		InMenuUp, InMenuDown, InMenuStart, QuitAction)
 
 	InGame = action.NewContext("Game",
-		InGameUp, InGameDown, InGamePause,
-		QuitAction)
+		InGameUp, InGameDown, InGamePause, QuitAction)
 )
 
 var (
@@ -60,6 +58,21 @@ var (
 			"Down":  {"S"},
 			"Pause": {"Enter"},
 			"Quit":  {"Escape"},
+		},
+	}
+
+	keyboardBindings = map[action.Context]map[action.KeyCode]action.Action{
+		InMenu: {
+			action.KeyUp:     InMenuUp,
+			action.KeyDown:   InMenuDown,
+			action.KeySpace:  InMenuStart,
+			action.KeyEscape: QuitAction,
+		},
+		InGame: {
+			action.KeyW:      InGameUp,
+			action.KeyS:      InGameDown,
+			action.KeyReturn: InGamePause,
+			action.KeyEscape: QuitAction,
 		},
 	}
 )
@@ -90,7 +103,7 @@ type loop struct {
 
 func (loop) Enter() error {
 	palette.Index(1).SetColour(colour.LRGB{1, .95, .9})
-	InMenu.Activate()
+	InMenu.Activate(0)
 	return nil
 }
 
@@ -117,11 +130,11 @@ func (loop) React() error {
 	}
 	if InMenuStart.JustReleased() {
 		println("Just Released: Menu Start")
-		InGame.Activate()
+		InGame.Activate(1)
 	}
 	if InGamePause.JustPressed() {
 		println(" Just Pressed: Game Pause")
-		InMenu.Activate()
+		InMenu.Activate(1)
 	}
 	if InGamePause.JustReleased() {
 		println("Just Released: Game Pause")
@@ -175,7 +188,7 @@ func (loop) Draw() error {
 		cursor.Print("extra2\n")
 	}
 
-	if InMenu.Active() {
+	if InMenu.Active(1) {
 		cursor.Printf("  MENU ACTIONS: ")
 	} else {
 		cursor.Printf("  menu actions: ")
@@ -197,7 +210,7 @@ func (loop) Draw() error {
 	}
 	cursor.Println(" ")
 
-	if InGame.Active() {
+	if InGame.Active(1) {
 		cursor.Printf("  GAME ACTIONS: ")
 	} else {
 		cursor.Printf("  game actions: ")

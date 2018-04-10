@@ -21,19 +21,19 @@ import "C"
 // pressing the key without any modifiers.
 type KeyLabel rune
 
-// A KeyPosition designate a key by its physical position on the keyboard.
+// A KeyCode designate a key by its physical position on the keyboard.
 // It is not affected by the layout or any other language settings.
-type KeyPosition uint32
+type KeyCode uint32
 
 //------------------------------------------------------------------------------
 
 var (
-	keys    *C.Uint8
-	keysLen C.int
-	KeyHooks []func(KeyPosition, bool)
+	keys     *C.Uint8
+	keysLen  C.int
+	KeyHooks []func(KeyCode, bool)
 )
 
-func Key(k KeyPosition) bool {
+func Key(k KeyCode) bool {
 	s := *(*uint8)(unsafe.Pointer(uintptr(unsafe.Pointer(keys)) + uintptr(k)))
 	return s != 0
 }
@@ -46,14 +46,14 @@ func getKeyboardArray() {
 
 // KeyLabelOf returns the key label at the specified position in the current
 // layout.
-func KeyLabelOf(pos KeyPosition) KeyLabel {
+func KeyLabelOf(pos KeyCode) KeyLabel {
 	return KeyLabel(C.SDL_GetKeyFromScancode(C.SDL_Scancode(pos)))
 }
 
 // KeySearchPositionOf searches the current position of label in the current
 // layout.
-func KeySearchPositionOf(l KeyLabel) KeyPosition {
-	return KeyPosition(C.SDL_GetScancodeFromKey(C.SDL_Keycode(l)))
+func KeySearchPositionOf(l KeyLabel) KeyCode {
+	return KeyCode(C.SDL_GetScancodeFromKey(C.SDL_Keycode(l)))
 }
 
 //------------------------------------------------------------------------------

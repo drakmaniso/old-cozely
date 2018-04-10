@@ -66,7 +66,7 @@ func (Handlers) MouseWheel(dx, dy int32) {}
 //------------------------------------------------------------------------------
 
 // KeyDown requests the game loop to stop if Escape is pressed.
-func (h Handlers) KeyDown(l KeyLabel, p KeyPosition) {
+func (h Handlers) KeyDown(l KeyLabel, p KeyCode) {
 	switch l {
 	case '\033': // key.LabelEscape
 		QuitRequested = true
@@ -76,7 +76,7 @@ func (h Handlers) KeyDown(l KeyLabel, p KeyPosition) {
 }
 
 // KeyUp does nothing.
-func (Handlers) KeyUp(l KeyLabel, p KeyPosition) {}
+func (Handlers) KeyUp(l KeyLabel, p KeyCode) {}
 
 //------------------------------------------------------------------------------
 

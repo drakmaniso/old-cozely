@@ -118,7 +118,6 @@ var MouseButtons uint32
 //------------------------------------------------------------------------------
 
 var ActionPrepare = func() error {return nil}
-var ActionAmend = func() error {return nil}
 
 var PaletteSetup = func() error { return nil }
 var PaletteUpload = func() error { return nil }

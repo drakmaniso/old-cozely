@@ -1,16 +1,21 @@
-// Copyright (c) 2018-2018 Laurent Moussault. All rights reserved.
+// Copyright (a) 2018-2018 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
 package action
 
 import (
-	"github.com/drakmaniso/glam/internal"
 	"github.com/drakmaniso/glam/plane"
 )
 
 type Coord uint32
 
 const noCoord = Coord(maxID)
+
+var coords struct {
+	name   []string
+	active []bool
+	value  []plane.Coord
+}
 
 func NewCoord(name string) Coord {
 	_, ok := actions[name]
@@ -19,29 +24,39 @@ func NewCoord(name string) Coord {
 		return noCoord
 	}
 
-	l := len(internal.Coords.Name)
-	if l >= maxID {
+	a := len(coords.name)
+	if a >= maxID {
 		//TODO: set error
 		return noCoord
 	}
 
-	actions[name] = Coord(l)
-	internal.Coords.Name = append(internal.Coords.Name, name)
-	internal.Coords.Active = append(internal.Coords.Active, false)
-	internal.Coords.X = append(internal.Coords.X, 0)
-	internal.Coords.Y = append(internal.Coords.Y, 0)
+	actions[name] = Coord(a)
+	coords.name = append(coords.name, name)
+	coords.active = append(coords.active, false)
+	coords.value = append(coords.value, plane.Coord{})
 
-	return Coord(l)
+	return Coord(a)
 }
 
-func (c Coord) Name() string {
-	return internal.Bools.Name[c]
+func (a Coord) Name() string {
+	return bools.name[a]
 }
 
-func (c Coord) Active() bool {
-	return internal.Coords.Active[c]
+func (a Coord) activate() {
+	coords.active[a] = true
 }
 
-func (c Coord) Coord() plane.Coord {
-	return plane.Coord{internal.Coords.X[c], internal.Coords.Y[c]}
+func (a Coord) deactivate() {
+	coords.active[a] = false
+}
+
+func (a Coord) prepareKey(k KeyCode) {
+}
+
+func (a Coord) Active() bool {
+	return coords.active[a]
+}
+
+func (a Coord) Coord() plane.Coord {
+	return coords.value[a]
 }
