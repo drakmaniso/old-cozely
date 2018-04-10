@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2018 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
-package action_test
+package input_test
 
 //------------------------------------------------------------------------------
 
@@ -10,7 +10,7 @@ import (
 	"testing"
 
 	"github.com/drakmaniso/glam"
-	"github.com/drakmaniso/glam/action"
+	"github.com/drakmaniso/glam/input"
 	"github.com/drakmaniso/glam/colour"
 	"github.com/drakmaniso/glam/key"
 	"github.com/drakmaniso/glam/mouse"
@@ -28,20 +28,20 @@ var (
 //------------------------------------------------------------------------------
 
 var (
-	InMenuUp    = action.NewBool("Menu Up")
-	InMenuDown  = action.NewBool("Menu Down")
-	InMenuStart = action.NewBool("Menu Start")
-	InGameUp    = action.NewBool("Up")
-	InGameDown  = action.NewBool("Down")
-	InGamePause = action.NewBool("Pause")
-	QuitAction  = action.NewBool("Quit")
+	InMenuUp    = input.NewBool("Menu Up")
+	InMenuDown  = input.NewBool("Menu Down")
+	InMenuStart = input.NewBool("Menu Start")
+	InGameUp    = input.NewBool("Up")
+	InGameDown  = input.NewBool("Down")
+	InGamePause = input.NewBool("Pause")
+	QuitAction  = input.NewBool("Quit")
 )
 
 var (
-	InMenu = action.NewContext("Menu",
+	InMenu = input.NewContext("Menu",
 		InMenuUp, InMenuDown, InMenuStart, QuitAction)
 
-	InGame = action.NewContext("Game",
+	InGame = input.NewContext("Game",
 		InGameUp, InGameDown, InGamePause, QuitAction)
 )
 
@@ -61,18 +61,18 @@ var (
 		},
 	}
 
-	keyboardBindings = map[action.Context]map[action.KeyCode]action.Action{
+	keyboardBindings = map[input.Context]map[input.KeyCode]input.Action{
 		InMenu: {
-			action.KeyUp:     InMenuUp,
-			action.KeyDown:   InMenuDown,
-			action.KeySpace:  InMenuStart,
-			action.KeyEscape: QuitAction,
+			input.KeyUp:     InMenuUp,
+			input.KeyDown:   InMenuDown,
+			input.KeySpace:  InMenuStart,
+			input.KeyEscape: QuitAction,
 		},
 		InGame: {
-			action.KeyW:      InGameUp,
-			action.KeyS:      InGameDown,
-			action.KeyReturn: InGamePause,
-			action.KeyEscape: QuitAction,
+			input.KeyW:      InGameUp,
+			input.KeyS:      InGameDown,
+			input.KeyReturn: InGamePause,
+			input.KeyEscape: QuitAction,
 		},
 	}
 )
@@ -80,7 +80,7 @@ var (
 //------------------------------------------------------------------------------
 
 func TestAction(t *testing.T) {
-	err := action.LoadBindings(Bindings)
+	err := input.LoadBindings(Bindings)
 	if err != nil {
 		glam.ShowError(err)
 		return
