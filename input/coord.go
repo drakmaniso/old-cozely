@@ -13,8 +13,11 @@ const noCoord = Coord(maxID)
 
 var coords struct {
 	name   []string
-	active [][maxDevices]bool
-	value  [][maxDevices]plane.Coord
+}
+
+type coord struct {
+	active bool
+	value plane.Coord
 }
 
 func NewCoord(name string) Coord {
@@ -32,8 +35,6 @@ func NewCoord(name string) Coord {
 
 	actions[name] = Coord(a)
 	coords.name = append(coords.name, name)
-	coords.active = append(coords.active, [maxDevices]bool{})
-	coords.value = append(coords.value, [maxDevices]plane.Coord{})
 
 	return Coord(a)
 }
@@ -43,7 +44,8 @@ func (a Coord) Name() string {
 }
 
 func (a Coord) activate(b binding) {
-	floats.active[a][b.device()] = true
+	d := b.device()
+	devices.coords[d][a].active = true
 }
 
 func (a Coord) newframe(b binding) {
@@ -53,13 +55,13 @@ func (a Coord) prepare(b binding) {
 }
 
 func (a Coord) deactivate(d Device) {
-	coords.active[a][d] = false
+	devices.coords[d][a].active = false
 }
 
 func (a Coord) Active(d Device) bool {
-	return coords.active[a][d]
+	return devices.coords[d][a].active
 }
 
 func (a Coord) Coord(d Device) plane.Coord {
-	return coords.value[a][d]
+	return devices.coords[d][a].value
 }

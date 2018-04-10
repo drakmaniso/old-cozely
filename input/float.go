@@ -9,8 +9,10 @@ const noFloat = Float(maxID)
 
 var floats struct {
 	name   []string
-	active [][maxDevices]bool
-	value  [][maxDevices]float32
+}
+type float struct {
+	active bool
+	value float32
 }
 
 func NewFloat(name string) Float {
@@ -28,8 +30,6 @@ func NewFloat(name string) Float {
 
 	actions[name] = Float(a)
 	floats.name = append(floats.name, name)
-	floats.active = append(floats.active, [maxDevices]bool{})
-	floats.value = append(floats.value, [maxDevices]float32{})
 
 	return Float(a)
 }
@@ -39,7 +39,8 @@ func (a Float) Name() string {
 }
 
 func (a Float) activate(b binding) {
-	floats.active[a][b.device()] = true
+	d := b.device()
+	devices.floats[d][a].active = true
 }
 
 func (a Float) newframe(b binding) {
@@ -49,13 +50,13 @@ func (a Float) prepare(b binding) {
 }
 
 func (a Float) deactivate(d Device) {
-	floats.active[a][d] = false
+	devices.floats[d][a].active = false
 }
 
 func (a Float) Active(d Device) bool {
-	return floats.active[a][d]
+	return devices.floats[d][a].active
 }
 
 func (a Float) Value(d Device) float32 {
-	return floats.value[a][d]
+	return devices.floats[d][a].value
 }

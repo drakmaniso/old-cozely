@@ -13,8 +13,11 @@ const noDelta = Delta(maxID)
 
 var deltas struct {
 	name   []string
-	active [][maxDevices]bool
-	value  [][maxDevices]plane.Coord
+}
+
+type delta  struct {
+	active bool
+	value plane.Coord
 }
 
 func NewDelta(name string) Delta {
@@ -32,8 +35,6 @@ func NewDelta(name string) Delta {
 
 	actions[name] = Delta(a)
 	deltas.name = append(deltas.name, name)
-	deltas.active = append(deltas.active, [maxDevices]bool{})
-	deltas.value = append(deltas.value, [maxDevices]plane.Coord{})
 
 	return Delta(a)
 }
@@ -43,7 +44,8 @@ func (a Delta) Name() string {
 }
 
 func (a Delta) activate(b binding) {
-	floats.active[a][b.device()] = true
+	d := b.device()
+	devices.deltas[d][a].active = true
 }
 
 func (a Delta) newframe(b binding) {
@@ -53,13 +55,13 @@ func (a Delta) prepare(b binding) {
 }
 
 func (a Delta) deactivate(d Device) {
-	deltas.active[a][d] = false
+	devices.deltas[d][a].active = false
 }
 
 func (a Delta) Active(d Device) bool {
-	return deltas.active[a][d]
+	return devices.deltas[d][a].active
 }
 
 func (a Delta) Delta(d Device) plane.Coord {
-	return deltas.value[a][d]
+	return devices.deltas[d][a].value
 }

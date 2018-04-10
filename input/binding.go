@@ -12,27 +12,6 @@ type binding interface {
 	asBool() (just bool, value bool)
 }
 
-type gpStick struct{}
-
-func (a gpStick) bind(c Context, target Action)   {}
-func (a gpStick) device() Device                  { return noDevice }
-func (a gpStick) action() Action                  { return nil }
-func (a gpStick) asBool() (just bool, value bool) { return false, false }
-
-type gpTrigger struct{}
-
-func (a gpTrigger) bind(c Context, target Action)   {}
-func (a gpTrigger) device() Device                  { return noDevice }
-func (a gpTrigger) action() Action                  { return nil }
-func (a gpTrigger) asBool() (just bool, value bool) { return false, false }
-
-type gpButton struct{}
-
-func (a gpButton) bind(c Context, target Action)   {}
-func (a gpButton) device() Device                  { return noDevice }
-func (a gpButton) action() Action                  { return nil }
-func (a gpButton) asBool() (just bool, value bool) { return false, false }
-
 func LoadBindings(b map[string]map[string][]string) error {
 	var err error
 

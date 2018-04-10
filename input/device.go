@@ -21,7 +21,10 @@ var devices struct {
 	new     []Context
 
 	// For each device/action combination
-	bools [][]boolean
+	bools  [][]boolean
+	floats [][]float
+	coords [][]coord
+	deltas [][]delta
 
 	// For each device/context combination, a list of bindings
 	bindings [][][]binding
@@ -40,7 +43,7 @@ func NewDevice(name string) Device {
 	devices.new = append(devices.new, 0)
 
 	n := len(bools.name)
-	devices.bools = append(devices.bools, make ([]boolean, n))
+	devices.bools = append(devices.bools, make([]boolean, n))
 
 	n = len(contexts.name)
 	devices.bindings = append(devices.bindings, make([][]binding, n))
