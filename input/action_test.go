@@ -67,15 +67,15 @@ var (
 	Bindings = map[string]map[string][]string{
 		"Menu": {
 			"Close Menu":         {"Escape"},
-			"Instant Close Menu": {"Enter"},
+			"Instant Close Menu": {"Mouse Right", "Enter"},
 			"Inventory":          {"I"},
-			"Options":            {"O"},
+			"Options":            {"O", "Mouse Left"},
 		},
 		"Game": {
 			"Open Menu":         {"Escape"},
-			"Instant Open Menu": {"Enter"},
+			"Instant Open Menu": {"Mouse Right", "Enter"},
 			"Inventory":         {"Tab"},
-			"Jump":              {"Space"},
+			"Jump":              {"Space", "Mouse Left"},
 		},
 	}
 )
@@ -217,21 +217,21 @@ func (loop) Draw() error {
 	color(InMenu.Active(input.KeyboardAndMouse))
 	cursor.Printf("  Menu: ")
 	color(options)
-	cursor.Print("Options(O) ")
+	cursor.Print("Options(O/L.C.) ")
 	color(closemenu)
 	cursor.Print("CloseMenu(ESC) ")
 	color(instclosemenu)
-	cursor.Print("InstantCloseMenu(ENTER) ")
+	cursor.Print("InstantCloseMenu(ENTER/R.C.) ")
 	cursor.Println(" ")
 
 	color(InGame.Active(input.KeyboardAndMouse))
 	cursor.Printf("  Game: ")
 	color(jump)
-	cursor.Print("Jump(SPACE) ")
+	cursor.Print("Jump(SPACE/L.C.) ")
 	color(openmenu)
 	cursor.Print("OpenMenu(ESC) ")
 	color(instopenmenu)
-	cursor.Print("InstantOpenMenu(ENTER) ")
+	cursor.Print("InstantOpenMenu(ENTER/R.C.) ")
 	cursor.Println(" ")
 
 	color(false)

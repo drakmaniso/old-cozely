@@ -106,17 +106,6 @@ var KeyState [512]bool //TODO: remove
 
 //------------------------------------------------------------------------------
 
-// MouseDelta holds the delta from last mouse position.
-var MouseDeltaX, MouseDeltaY int32
-
-// MousePosition holds the current mouse position.
-var MousePositionX, MousePositionY int32
-
-// MouseButtons holds the state of the mouse buttons.
-var MouseButtons uint32
-
-//------------------------------------------------------------------------------
-
 var ActionPrepare = func() error {return nil}
 
 var PaletteSetup = func() error { return nil }

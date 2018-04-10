@@ -13,7 +13,18 @@ import "C"
 //------------------------------------------------------------------------------
 
 // A MouseButton on the mouse
-type MouseButton uint8
+type MouseButton uint8 //TODO: remove
+
+//------------------------------------------------------------------------------
+
+// MouseDelta holds the delta from last mouse position.
+var MouseDeltaX, MouseDeltaY int32
+
+// MousePosition holds the current mouse position.
+var MousePositionX, MousePositionY int32
+
+// MouseButtons holds the state of the mouse buttons.
+var MouseButtons uint32
 
 //------------------------------------------------------------------------------
 

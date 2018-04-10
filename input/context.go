@@ -73,21 +73,38 @@ func init() {
 }
 
 func prepare() error {
-	// Keyboard
+	// Keyboard and Mouse
 	if keybmouse.context != keybmouse.new {
 		for _, b := range keybmouse.keys[keybmouse.context] {
 			b.action.deactivate(KeyboardAndMouse)
 		}
+		for _, b := range keybmouse.buttons[keybmouse.context] {
+			b.action.deactivate(KeyboardAndMouse)
+		}
+
 		keybmouse.context = keybmouse.new
+
 		for _, b := range keybmouse.keys[keybmouse.context] {
-			b.action.activateKey(b.keycode)
+			b.action.activate(b)
+		}
+		for _, b := range keybmouse.buttons[keybmouse.context] {
+			b.action.activate(b)
 		}
 	}
+
 	for _, b := range keybmouse.keys[keybmouse.context] {
-		b.action.prepareKey(b.keycode)
+		b.action.newframe(b)
+	}
+	for _, b := range keybmouse.buttons[keybmouse.context] {
+		b.action.newframe(b)
 	}
 
-	// Mouse
+	for _, b := range keybmouse.keys[keybmouse.context] {
+		b.action.prepare(b)
+	}
+	for _, b := range keybmouse.buttons[keybmouse.context] {
+		b.action.prepare(b)
+	}
 
 	return nil
 }

@@ -3,10 +3,6 @@
 
 package input
 
-import (
-	"github.com/drakmaniso/glam/internal"
-)
-
 type Bool uint32
 
 const noBool = Bool(maxID)
@@ -44,22 +40,30 @@ func (a Bool) Name() string {
 	return bools.name[a]
 }
 
+func (a Bool) activate(b binding) {
+	bools.active[a][b.device()] = true
+	_, v := b.asBool()
+	if v {
+		bools.pressed[a][b.device()] = true
+	}
+}
+
+func (a Bool) newframe(b binding) {
+	bools.just[a][b.device()] = false
+}
+
+func (a Bool) prepare(b binding) {
+	j, v := b.asBool()
+	if j {
+		bools.just[a][b.device()] = (v != bools.pressed[a][b.device()])
+		bools.pressed[a][b.device()] = v
+	}
+}
+
 func (a Bool) deactivate(d Device) {
 	bools.active[a][d] = false
 	bools.just[a][d] = false
 	bools.pressed[a][d] = false
-}
-
-func (a Bool) activateKey(k KeyCode) {
-	bools.active[a][KeyboardAndMouse] = true
-	v := internal.Key(k)
-	bools.pressed[a][KeyboardAndMouse] = v
-}
-
-func (a Bool) prepareKey(k KeyCode) {
-	v := internal.Key(k)
-	bools.just[a][KeyboardAndMouse] = (v != bools.pressed[a][KeyboardAndMouse])
-	bools.pressed[a][KeyboardAndMouse] = v
 }
 
 func (a Bool) Active(d Device) bool {

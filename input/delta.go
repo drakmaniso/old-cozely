@@ -42,15 +42,18 @@ func (a Delta) Name() string {
 	return bools.name[a]
 }
 
+func (a Delta) activate(b binding) {
+	floats.active[a][b.device()] = true
+}
+
+func (a Delta) newframe(b binding) {
+}
+
+func (a Delta) prepare(b binding) {
+}
+
 func (a Delta) deactivate(d Device) {
 	deltas.active[a][d] = false
-}
-
-func (a Delta) activateKey(k KeyCode) {
-	deltas.active[a][KeyboardAndMouse] = true
-}
-
-func (a Delta) prepareKey(k KeyCode) {
 }
 
 func (a Delta) Active(d Device) bool {

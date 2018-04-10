@@ -38,15 +38,18 @@ func (a Float) Name() string {
 	return bools.name[a]
 }
 
+func (a Float) activate(b binding) {
+	floats.active[a][b.device()] = true
+}
+
+func (a Float) newframe(b binding) {
+}
+
+func (a Float) prepare(b binding) {
+}
+
 func (a Float) deactivate(d Device) {
 	floats.active[a][d] = false
-}
-
-func (a Float) activateKey(k KeyCode) {
-	floats.active[a][KeyboardAndMouse] = true
-}
-
-func (a Float) prepareKey(k KeyCode) {
 }
 
 func (a Float) Active(d Device) bool {

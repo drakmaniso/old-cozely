@@ -3,47 +3,82 @@
 
 package input
 
+import (
+	"github.com/drakmaniso/glam/internal"
+)
+
 var keybmouse struct {
 	context, new Context
-	keys         [][]kbKey
-	buttons      [][]msButton
+	keys         [][]*kbKey
+	buttons      [][]*msButton
 }
 
 type kbKey struct {
-	keycode KeyCode
-	action  Action
+	keycode       KeyCode
+	action        Action
+	just, pressed bool
 }
 
-func (k kbKey) bind(c Context, a Action) {
-	for len(keybmouse.keys) < int(c+1) {
-		keybmouse.keys = append(keybmouse.keys, []kbKey{})
-	}
-	k.action = a
-	keybmouse.keys[c] = append(keybmouse.keys[c], k)
-	// switch a := a.(type) {
-	// case Bool:
-	// 	print("keyboard", "->bool", a)
-	// case Float:
-	// 	print("keyboard", "->float", a)
-	// case Coord:
-	// 	print("keyboard", "->coord", a)
-	// case Delta:
-	// 	print("keyboard", "->delta", a)
-	// }
+func (a *kbKey) bind(c Context, target Action) {
+	aa := *a
+	aa.action = target
+	keybmouse.keys[c] = append(keybmouse.keys[c], &aa)
+}
+
+func (a *kbKey) device() Device {
+	return KeyboardAndMouse
+}
+
+func (a *kbKey) asBool() (just bool, value bool) {
+	v := internal.Key(a.keycode)
+	a.just = (v != a.pressed) //TODO: no need to store?
+	a.pressed = v
+	return a.just, a.pressed
 }
 
 type msPosition struct {
 }
 
-func (m msPosition) bind(c Context, a Action) {
-
+func (a msPosition) bind(c Context, target Action) {}
+func (a msPosition) device() Device {return noDevice}
+func (a msPosition) asBool() (just bool, value bool) {
+	return false, false
 }
 
 type msButton struct {
 	button MouseButton
 	action Action
+	just, pressed bool
 }
 
-func (m msButton) bind(c Context, a Action) {
+// MouseButton identifies a mouse button
+type MouseButton uint32
 
+// MouseButton constants
+const (
+	MouseLeft MouseButton = 1 << iota
+	MouseMiddle
+	MouseRight
+	MouseBack
+	MouseForward
+	Mouse6
+	Mouse7
+	Mouse8
+)
+
+func (a *msButton) bind(c Context, target Action) {
+	aa := *a
+	aa.action = target
+	keybmouse.buttons[c] = append(keybmouse.buttons[c], &aa)
+}
+
+func (a *msButton) device() Device {
+	return KeyboardAndMouse
+}
+
+func (a *msButton) asBool() (just bool, value bool) {
+	v := (MouseButton(internal.MouseButtons) & a.button) != 0
+	a.just = (v != a.pressed) //TODO: no need to store?
+	a.pressed = v
+	return a.just, a.pressed
 }

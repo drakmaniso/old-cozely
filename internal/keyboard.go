@@ -27,11 +27,7 @@ type KeyCode uint32
 
 //------------------------------------------------------------------------------
 
-var (
-	keys     *C.Uint8
-	keysLen  C.int
-	KeyHooks []func(KeyCode, bool)
-)
+var keys    *C.Uint8
 
 func Key(k KeyCode) bool {
 	s := *(*uint8)(unsafe.Pointer(uintptr(unsafe.Pointer(keys)) + uintptr(k)))
@@ -39,7 +35,7 @@ func Key(k KeyCode) bool {
 }
 
 func getKeyboardArray() {
-	keys = C.SDL_GetKeyboardState(&keysLen)
+	keys = C.SDL_GetKeyboardState(nil)
 }
 
 //------------------------------------------------------------------------------

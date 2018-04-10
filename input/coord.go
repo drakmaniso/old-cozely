@@ -42,15 +42,18 @@ func (a Coord) Name() string {
 	return bools.name[a]
 }
 
+func (a Coord) activate(b binding) {
+	floats.active[a][b.device()] = true
+}
+
+func (a Coord) newframe(b binding) {
+}
+
+func (a Coord) prepare(b binding) {
+}
+
 func (a Coord) deactivate(d Device) {
 	coords.active[a][d] = false
-}
-
-func (a Coord) activateKey(k KeyCode) {
-	coords.active[a][KeyboardAndMouse] = true
-}
-
-func (a Coord) prepareKey(k KeyCode) {
 }
 
 func (a Coord) Active(d Device) bool {
