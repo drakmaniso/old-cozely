@@ -8,19 +8,8 @@ type Device uint32
 const noDevice = Device(maxID)
 
 const (
-	Any      Device = 0
-	Keyboard Device = iota
-	Mouse
+	Any              Device = 0
+	KeyboardAndMouse Device = iota
 )
 
 const maxDevices = 16
-
-type keyAction struct {
-	position KeyCode
-	action   Action
-}
-
-var keyboard struct {
-	context, new Context
-	actions      [][]keyAction
-}

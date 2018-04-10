@@ -47,7 +47,7 @@ func (a Coord) deactivate(d Device) {
 }
 
 func (a Coord) activateKey(k KeyCode) {
-	coords.active[a][Keyboard] = true
+	coords.active[a][KeyboardAndMouse] = true
 }
 
 func (a Coord) prepareKey(k KeyCode) {

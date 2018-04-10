@@ -51,15 +51,15 @@ func (a Bool) deactivate(d Device) {
 }
 
 func (a Bool) activateKey(k KeyCode) {
-	bools.active[a][Keyboard] = true
+	bools.active[a][KeyboardAndMouse] = true
 	v := internal.Key(k)
-	bools.pressed[a][Keyboard] = v
+	bools.pressed[a][KeyboardAndMouse] = v
 }
 
 func (a Bool) prepareKey(k KeyCode) {
 	v := internal.Key(k)
-	bools.just[a][Keyboard] = (v != bools.pressed[a][Keyboard])
-	bools.pressed[a][Keyboard] = v
+	bools.just[a][KeyboardAndMouse] = (v != bools.pressed[a][KeyboardAndMouse])
+	bools.pressed[a][KeyboardAndMouse] = v
 }
 
 func (a Bool) Active(d Device) bool {

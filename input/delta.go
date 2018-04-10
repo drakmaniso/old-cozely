@@ -47,7 +47,7 @@ func (a Delta) deactivate(d Device) {
 }
 
 func (a Delta) activateKey(k KeyCode) {
-	deltas.active[a][Keyboard] = true
+	deltas.active[a][KeyboardAndMouse] = true
 }
 
 func (a Delta) prepareKey(k KeyCode) {

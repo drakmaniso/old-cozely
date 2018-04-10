@@ -55,15 +55,15 @@ func NewContext(name string, actions ...Action) Context {
 
 func (c Context) Activate(d Device) {
 	switch d {
-	case Keyboard:
-		keyboard.new = c
+	case KeyboardAndMouse:
+		keybmouse.new = c
 	}
 }
 
 func (c Context) Active(d Device) bool {
 	switch d {
-	case Keyboard:
-		return c == keyboard.context
+	case KeyboardAndMouse:
+		return c == keybmouse.context
 	}
 	return false
 }
@@ -73,23 +73,21 @@ func init() {
 }
 
 func prepare() error {
-	// for i := range bools.just {
-	// 	bools.just[i] = false
-	// }
-
 	// Keyboard
-	if keyboard.context != keyboard.new {
-		for _, b := range keyboard.actions[keyboard.context] {
-			b.action.deactivate(Keyboard)
+	if keybmouse.context != keybmouse.new {
+		for _, b := range keybmouse.keys[keybmouse.context] {
+			b.action.deactivate(KeyboardAndMouse)
 		}
-		keyboard.context = keyboard.new
-		for _, b := range keyboard.actions[keyboard.context] {
-			b.action.activateKey(b.position)
+		keybmouse.context = keybmouse.new
+		for _, b := range keybmouse.keys[keybmouse.context] {
+			b.action.activateKey(b.keycode)
 		}
 	}
-	for _, b := range keyboard.actions[keyboard.context] {
-		b.action.prepareKey(b.position)
+	for _, b := range keybmouse.keys[keybmouse.context] {
+		b.action.prepareKey(b.keycode)
 	}
+
+	// Mouse
 
 	return nil
 }

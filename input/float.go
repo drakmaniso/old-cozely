@@ -43,7 +43,7 @@ func (a Float) deactivate(d Device) {
 }
 
 func (a Float) activateKey(k KeyCode) {
-	floats.active[a][Keyboard] = true
+	floats.active[a][KeyboardAndMouse] = true
 }
 
 func (a Float) prepareKey(k KeyCode) {

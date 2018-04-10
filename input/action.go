@@ -54,14 +54,14 @@ func LoadBindings(b map[string]map[string][]string) error {
 			print("    ", an, " = ")
 
 			for _, n := range ab {
-				bnd, ok := bindings[n]
+				bnd, ok := binders[n]
 				if !ok {
 					if err == nil {
 						err = errors.New("unkown binding: " + n)
 					}
 					continue
 				}
-				bnd.BindTo(ctx, act)
+				bnd.bind(ctx, act)
 				print(", ")
 			}
 			println("")
