@@ -3,7 +3,10 @@
 
 package input
 
-import "errors"
+import (
+	"github.com/drakmaniso/glam/internal"
+	"errors"
+)
 
 type binding interface {
 	bind(c Context, a Action)
@@ -61,6 +64,20 @@ func LoadBindings(b map[string]map[string][]string) error {
 
 		}
 
+	}
+
+	// Add gamepad devices
+
+	n := internal.NumJoysticks()
+	println("NumJoysticks=", n)
+	for j := 0; j < n; j++ {
+		if internal.IsGameController(j) {
+			println("joystick ", j, " is a gamepad")
+			c := internal.GameControllerOpen(j)
+			if c == nil {
+				return errors.New("unable to open joystick as gamepad")
+			}
+		}
 	}
 
 	return err
