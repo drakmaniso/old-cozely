@@ -24,7 +24,7 @@ var FilePath string
 var Path string
 
 // Title of the game
-var Title = "Glam"
+var Title = "Cozely"
 
 ////////////////////////////////////////////////////////////////////////////////
 

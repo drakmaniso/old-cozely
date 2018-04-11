@@ -10,7 +10,7 @@ import (
 
 	"github.com/drakmaniso/cozely"
 	"github.com/drakmaniso/cozely/colour"
-	"github.com/drakmaniso/cozely/mouse"
+	"github.com/drakmaniso/cozely/input"
 	"github.com/drakmaniso/cozely/plane"
 	"github.com/drakmaniso/cozely/x/gl"
 	"github.com/drakmaniso/cozely/x/math32"
@@ -18,19 +18,18 @@ import (
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func main() {
-	angles = make([]float32, len(points))
-	speeds = make([]float32, len(points))
+var (
+	quit      = input.Bool("Quit")
+	randomize = input.Bool("Randomize")
+)
 
-	cozely.Configure(
-		cozely.Multisample(8),
-	)
+var context = input.Context("Default", quit, randomize)
 
-	err := cozely.Run(loop{})
-	if err != nil {
-		cozely.ShowError(err)
-		return
-	}
+var bindings = input.Bindings{
+	"Default": {
+		"Quit":      {"Escape"},
+		"Randomize": {"Space", "Mouse Left"},
+	},
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -62,21 +61,41 @@ var (
 	speeds   []float32
 )
 
+var cleared bool
+
 ////////////////////////////////////////////////////////////////////////////////
 
-type loop struct {
-	cozely.EmptyLoop
+func main() {
+	angles = make([]float32, len(points))
+	speeds = make([]float32, len(points))
+
+	cozely.Configure(cozely.Multisample(8))
+	cozely.Events.Resize = resize
+	err := cozely.Run(loop{})
+	if err != nil {
+		cozely.ShowError(err)
+		return
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
+type loop struct{}
+
+////////////////////////////////////////////////////////////////////////////////
+
 func (loop) Enter() error {
+	input.Load(bindings)
+	context.Activate(1)
+
 	// Create and configure the pipeline
 	pipeline = gl.NewPipeline(
 		gl.Shader(cozely.Path()+"shader.vert"),
 		gl.Shader(cozely.Path()+"shader.frag"),
 		gl.Topology(gl.Points),
 		gl.VertexFormat(0, points[:]),
+		gl.DepthTest(false),
+		gl.DepthWrite(false),
 	)
 
 	// Create the uniform buffer
@@ -94,6 +113,24 @@ func (loop) Enter() error {
 	pipeline.Unbind()
 
 	return cozely.Error("gl", gl.Err())
+}
+
+func (loop) Leave() error {
+	return nil
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+func (loop) React() error {
+	if quit.JustPressed(1) {
+		cozely.Stop()
+	}
+
+	if randomize.JustPressed(1) {
+		setupPoints()
+	}
+
+	return nil
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -121,9 +158,7 @@ var updated bool
 
 ////////////////////////////////////////////////////////////////////////////////
 
-var cleared bool
-
-func (loop) Draw() error {
+func (loop) Render() error {
 	if !cleared {
 		gl.ClearColorBuffer(bgColor)
 		cleared = true
@@ -166,20 +201,18 @@ func setupPoints() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (loop) WindowResized(w, h int32) {
+func resize() {
 	setupPoints()
+
+	s := cozely.WindowSize().Cartesian()
 
 	// Compute ratio
-	if w > h {
-		perFrame.ratio = plane.Coord{float32(h) / float32(w), 1.0}
+	if s.X > s.Y {
+		perFrame.ratio = plane.Coord{s.Y / s.X, 1.0}
 	} else {
-		perFrame.ratio = plane.Coord{1.0, float32(w) / float32(h)}
+		perFrame.ratio = plane.Coord{1.0, s.X / s.Y}
 	}
-	gl.Viewport(0, 0, w, h)
-}
-
-func (loop) MouseButtonDown(b mouse.Button, _ int) {
-	setupPoints()
+	gl.Viewport(0, 0, int32(s.X), int32(s.Y))
 }
 
 ////////////////////////////////////////////////////////////////////////////////

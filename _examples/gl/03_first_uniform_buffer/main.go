@@ -14,16 +14,6 @@ import (
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func main() {
-	err := cozely.Run(loop{})
-	if err != nil {
-		cozely.ShowError(err)
-		return
-	}
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
 // OpenGL objects
 var (
 	pipeline    *gl.Pipeline
@@ -48,9 +38,18 @@ var (
 
 ////////////////////////////////////////////////////////////////////////////////
 
-type loop struct {
-	cozely.EmptyLoop
+func main() {
+	cozely.Events.Resize = resize
+	err := cozely.Run(loop{})
+	if err != nil {
+		cozely.ShowError(err)
+		return
+	}
 }
+
+////////////////////////////////////////////////////////////////////////////////
+
+type loop struct {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -71,9 +70,9 @@ func (loop) Enter() error {
 
 	// Fill and create the vertex buffer
 	triangle = mesh{
-		{plane.Coord{0, 0.75}, colour.LRGB{R: 0.3, G: 0, B: 0.8}},
-		{plane.Coord{-0.65, -0.465}, colour.LRGB{R: 0.8, G: 0.3, B: 0}},
-		{plane.Coord{0.65, -0.465}, colour.LRGB{R: 0, G: 0.6, B: 0.2}},
+		{plane.Coord{0, 0.75}, colour.LRGB{0.3, 0, 0.8}},
+		{plane.Coord{-0.65, -0.465}, colour.LRGB{0.8, 0.3, 0}},
+		{plane.Coord{0.65, -0.465}, colour.LRGB{0, 0.6, 0.2}},
 	}
 	vbo := gl.NewVertexBuffer(triangle, gl.StaticStorage)
 
@@ -85,10 +84,14 @@ func (loop) Enter() error {
 	return cozely.Error("gl", gl.Err())
 }
 
+func (loop) Leave() error {
+	return nil
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
-func (l loop) WindowResized(w, h int32) {
-	gl.Viewport(0, 0, w, h)
+func (loop) React() error {
+	return nil
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -99,7 +102,7 @@ func (loop) Update() error {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (loop) Draw() error {
+func (loop) Render() error {
 	angle -= 1.0 * cozely.RenderTime()
 
 	pipeline.Bind()
@@ -113,6 +116,13 @@ func (loop) Draw() error {
 	pipeline.Unbind()
 
 	return gl.Err()
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+func resize() {
+	s := cozely.WindowSize()
+	gl.Viewport(0, 0, int32(s.X), int32(s.Y))
 }
 
 ////////////////////////////////////////////////////////////////////////////////

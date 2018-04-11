@@ -8,25 +8,28 @@ package main
 import (
 	"math/rand"
 
+	"github.com/drakmaniso/cozely/input"
+
 	"github.com/drakmaniso/cozely"
 	"github.com/drakmaniso/cozely/colour"
-	"github.com/drakmaniso/cozely/mouse"
 	"github.com/drakmaniso/cozely/plane"
 	"github.com/drakmaniso/cozely/x/gl"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func main() {
-	cozely.Configure(
-		cozely.Multisample(8),
-	)
+var (
+	quit      = input.Bool("Quit")
+	randomize = input.Bool("Randomize")
+)
 
-	err := cozely.Run(loop{})
-	if err != nil {
-		cozely.ShowError(err)
-		return
-	}
+var context = input.Context("Default", quit, randomize)
+
+var bindings = input.Bindings{
+	"Default": {
+		"Quit":      {"Escape"},
+		"Randomize": {"Space", "Mouse Left"},
+	},
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -55,15 +58,30 @@ var roses [64]struct {
 	speed       float32     `layout:"5"`
 }
 
+const nbPoints int32 = 512
+
 ////////////////////////////////////////////////////////////////////////////////
 
-type loop struct {
-	cozely.EmptyLoop
+func main() {
+	cozely.Configure(cozely.Multisample(8))
+	cozely.Events.Resize = resize
+	err := cozely.Run(loop{})
+	if err != nil {
+		cozely.ShowError(err)
+		return
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
+type loop struct{}
+
+////////////////////////////////////////////////////////////////////////////////
+
 func (loop) Enter() error {
+	input.Load(bindings)
+	context.Activate(1)
+
 	// Setup the pipeline
 	pipeline = gl.NewPipeline(
 		gl.Shader(cozely.Path()+"shader.vert"),
@@ -88,17 +106,34 @@ func (loop) Enter() error {
 	return cozely.Error("gl", gl.Err())
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
-func (loop) Update() error {
-	perFrame.time += float32(cozely.UpdateTime())
-
+func (loop) Leave() error {
 	return nil
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (loop) Draw() error {
+func (loop) React() error {
+	if quit.JustPressed(1) {
+		cozely.Stop()
+	}
+	if randomize.JustPressed(1) {
+		randomizeRosesData()
+		rosesINBO.SubData(roses[:], 0)
+	}
+	return nil
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+func (loop) Update() error {
+	return nil
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+func (loop) Render() error {
+	perFrame.time += float32(cozely.UpdateTime())
+
 	pipeline.Bind()
 	gl.ClearDepthBuffer(1.0)
 	gl.ClearColorBuffer(colour.LRGBA{0.9, 0.85, 0.80, 1.0})
@@ -117,7 +152,13 @@ func (loop) Draw() error {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-const nbPoints int32 = 512
+func resize() {
+	s := cozely.WindowSize()
+	perFrame.ratio = float32(s.X) / float32(s.Y)
+	gl.Viewport(0, 0, int32(s.X), int32(s.Y))
+}
+
+////////////////////////////////////////////////////////////////////////////////
 
 func randomizeRosesData() {
 	for i := 0; i < len(roses); i++ {
@@ -132,18 +173,6 @@ func randomizeRosesData() {
 			roses[i].speed = -roses[i].speed
 		}
 	}
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-func (loop) WindowResized(w, h int32) {
-	perFrame.ratio = float32(h) / float32(w)
-	gl.Viewport(0, 0, w, h)
-}
-
-func (loop) MouseButtonDown(b mouse.Button, _ int) {
-	randomizeRosesData()
-	rosesINBO.SubData(roses[:], 0)
 }
 
 ////////////////////////////////////////////////////////////////////////////////

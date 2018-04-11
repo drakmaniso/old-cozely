@@ -3,26 +3,23 @@
 
 package main
 
-////////////////////////////////////////////////////////////////////////////////
-
 import (
-	"github.com/drakmaniso/cozely/key"
-	"github.com/drakmaniso/cozely/mouse"
-	"github.com/drakmaniso/cozely/plane"
-	"github.com/drakmaniso/cozely/space"
-	"github.com/drakmaniso/cozely/x/gl"
+	"github.com/drakmaniso/cozely"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (l loop) WindowResized(w, h int32) {
-	gl.Viewport(0, 0, w, h)
-	if camera != nil {
-		camera.WindowResized()
+func (loop) React() error {
+	if quit.JustPressed(1) {
+		cozely.Stop()
 	}
+
+	return nil
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
+/*
 
 func (l loop) MouseWheel(x, y int32) {
 	camera.ChangeDistance(float32(-y))
@@ -88,5 +85,7 @@ func (l loop) KeyUp(_ key.Keyabel, p key.Position) {
 		rolling = 0.0
 	}
 }
+
+*/
 
 ////////////////////////////////////////////////////////////////////////////////

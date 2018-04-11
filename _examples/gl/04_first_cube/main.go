@@ -8,18 +8,30 @@ package main
 import (
 	"github.com/drakmaniso/cozely"
 	"github.com/drakmaniso/cozely/colour"
+	"github.com/drakmaniso/cozely/input"
 	"github.com/drakmaniso/cozely/space"
 	"github.com/drakmaniso/cozely/x/gl"
+	"github.com/drakmaniso/cozely/x/math32"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func main() {
-	err := cozely.Run(loop{})
-	if err != nil {
-		cozely.ShowError(err)
-		return
-	}
+var (
+	quit = input.Bool("Quit")
+	rotate = input.Bool("Rotate")
+	move = input.Bool("Move")
+	zoom = input.Bool("Zoom")
+)
+
+var context = input.Context("Default", quit, rotate, move, zoom)
+
+var bindings = input.Bindings{
+	"Default": {
+		"Quit": {"Escape"},
+		"Rotate": {"Mouse Left"},
+		"Move": {"Mouse Right"},
+		"Zoom": {"Mouse Middle"},
+	},
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -56,13 +68,26 @@ var (
 
 ////////////////////////////////////////////////////////////////////////////////
 
-type loop struct {
-	cozely.EmptyLoop
+func main() {
+	cozely.Configure(cozely.Multisample(8))
+	cozely.Events.Resize = resize
+	err := cozely.Run(loop{})
+	if err != nil {
+		cozely.ShowError(err)
+		return
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
+type loop struct{}
+
+////////////////////////////////////////////////////////////////////////////////
+
 func (loop) Enter() error {
+	input.Load(bindings)
+	context.Activate(1)
+
 	// Create and configure the pipeline
 	pipeline = gl.NewPipeline(
 		gl.Shader(cozely.Path()+"shader.vert"),
@@ -96,6 +121,10 @@ func (loop) Enter() error {
 	return cozely.Error("gl", gl.Err())
 }
 
+func (loop) Leave() error {
+	return nil
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop) Update() error {
@@ -104,7 +133,7 @@ func (loop) Update() error {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (loop) Draw() error {
+func (loop) Render() error {
 	pipeline.Bind()
 	gl.ClearDepthBuffer(1.0)
 	gl.ClearColorBuffer(colour.LRGBA{0.9, 0.9, 0.9, 1.0})
@@ -125,17 +154,11 @@ func (loop) Draw() error {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func computeWorldFromObject() {
-	rot := space.EulerZXY(pitch, yaw, 0)
-	worldFromObject = space.Translation(position).Times(rot)
-}
-
-func computeViewFromWorld() {
-	viewFromWorld = space.LookAt(
-		space.Coord{0, 0, 3},
-		space.Coord{0, 0, 0},
-		space.Coord{0, 1, 0},
-	)
+func resize() {
+	s := cozely.WindowSize()
+	gl.Viewport(0, 0, int32(s.X), int32(s.Y))
+	r := float32(s.X) / float32(s.Y)
+	screenFromView = space.Perspective(math32.Pi/4, r, 0.001, 1000.0)
 }
 
 ////////////////////////////////////////////////////////////////////////////////

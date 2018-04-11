@@ -7,38 +7,29 @@ package main
 
 import (
 	"github.com/drakmaniso/cozely"
-	"github.com/drakmaniso/cozely/mouse"
-	"github.com/drakmaniso/cozely/plane"
+	"github.com/drakmaniso/cozely/input"
 	"github.com/drakmaniso/cozely/space"
-	"github.com/drakmaniso/cozely/x/gl"
 	"github.com/drakmaniso/cozely/x/math32"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (loop) WindowResized(w, h int32) {
-	gl.Viewport(0, 0, w, h)
-	r := float32(w) / float32(h)
-	screenFromView = space.Perspective(math32.Pi/4, r, 0.001, 1000.0)
-}
+func (loop) React() error {
+	if quit.JustPressed(1) {
+		cozely.Stop()
+	}
 
-////////////////////////////////////////////////////////////////////////////////
+	m := input.Cursor.Delta().Cartesian()
+	s := input.Cursor.Position().Cartesian()
 
-func (loop) MouseButtonDown(b mouse.Button, _ int) {
-	mouse.SetRelativeMode(true)
-}
+	if rotate.JustPressed(1) || move.JustPressed(1) || zoom.JustPressed(1) {
+		input.Cursor.Hide()
+	}
+	if rotate.JustReleased(1) || move.JustReleased(1) || zoom.JustReleased(1) {
+		input.Cursor.Show()
+	}
 
-func (loop) MouseButtonUp(b mouse.Button, _ int) {
-	mouse.SetRelativeMode(false)
-}
-
-func (loop) MouseMotion(dx, dy int32, _, _ int32) {
-	m := plane.Coord{float32(dx), float32(dy)}
-	w, h := cozely.WindowSize()
-	s := plane.Coord{float32(w), float32(h)}
-
-	switch {
-	case mouse.IsPressed(mouse.Left):
+	if rotate.Pressed(1) {
 		yaw += 4 * m.X / s.X
 		pitch += 4 * m.Y / s.Y
 		switch {
@@ -48,19 +39,38 @@ func (loop) MouseMotion(dx, dy int32, _, _ int32) {
 			pitch = +math32.Pi / 2
 		}
 		computeWorldFromObject()
+	}
 
-	case mouse.IsPressed(mouse.Middle):
-		d := m.Times(2).Slashcw(s)
-		position.X += d.X
-		position.Z += d.Y
-		computeWorldFromObject()
-
-	case mouse.IsPressed(mouse.Right):
+	if move.Pressed(1) {
 		d := m.Times(2).Slashcw(s)
 		position.X += d.X
 		position.Y -= d.Y
 		computeWorldFromObject()
 	}
+
+	if zoom.Pressed(1) {
+		d := m.Times(2).Slashcw(s)
+		position.X += d.X
+		position.Z += d.Y
+		computeWorldFromObject()
+	}
+
+	return nil
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+func computeWorldFromObject() {
+	rot := space.EulerZXY(pitch, yaw, 0)
+	worldFromObject = space.Translation(position).Times(rot)
+}
+
+func computeViewFromWorld() {
+	viewFromWorld = space.LookAt(
+		space.Coord{0, 0, 3},
+		space.Coord{0, 0, 0},
+		space.Coord{0, 1, 0},
+	)
 }
 
 ////////////////////////////////////////////////////////////////////////////////

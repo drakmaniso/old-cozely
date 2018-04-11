@@ -10,7 +10,7 @@ import (
 
 	"github.com/drakmaniso/cozely"
 	"github.com/drakmaniso/cozely/colour"
-	"github.com/drakmaniso/cozely/mouse"
+	"github.com/drakmaniso/cozely/input"
 	"github.com/drakmaniso/cozely/palette"
 	"github.com/drakmaniso/cozely/pixel"
 	"github.com/drakmaniso/cozely/plane"
@@ -21,25 +21,31 @@ import (
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func main() {
-	cozely.Configure(
-		cozely.UpdateStep(1.0 / 50),
-	)
+var (
+	quit   = input.Bool("Quit")
+	rotate = input.Bool("Rotate")
+	move   = input.Bool("Move")
+	zoom   = input.Bool("Zoom")
+)
 
-	err := cozely.Run(loop{})
-	if err != nil {
-		cozely.ShowError(err)
-		return
-	}
+var context = input.Context("Default", quit, rotate, move, zoom)
+
+var bindings = input.Bindings{
+	"Default": {
+		"Quit":   {"Escape"},
+		"Rotate": {"Mouse Left"},
+		"Move":   {"Mouse Right"},
+		"Zoom":   {"Mouse Middle"},
+	},
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-var overlay = pixel.NewCanvas(pixel.Zoom(2))
+var overlay = pixel.Canvas(pixel.Zoom(2))
 
 var cursor = pixel.Cursor{Canvas: overlay}
 
-var font = pixel.Font(0)
+var font = pixel.FontID(0)
 
 var txtColor = palette.Index(1)
 
@@ -76,15 +82,33 @@ var previous struct {
 
 var meshes poly.Meshes
 
+var gametime float64
+
 ////////////////////////////////////////////////////////////////////////////////
 
-type loop struct {
-	cozely.EmptyLoop
+func main() {
+	cozely.Configure(
+		cozely.UpdateStep(1.0/50),
+		cozely.Multisample(8),
+	)
+	cozely.Events.Resize = resize
+	err := cozely.Run(loop{})
+	if err != nil {
+		cozely.ShowError(err)
+		return
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
+type loop struct{}
+
+////////////////////////////////////////////////////////////////////////////////
+
 func (loop) Enter() error {
+	input.Load(bindings)
+	context.Activate(1)
+
 	txtColor.SetColour(colour.SRGB8{0xFF, 0xFF, 0xFF})
 
 	pipeline = gl.NewPipeline(
@@ -123,8 +147,11 @@ func (loop) Enter() error {
 	return cozely.Error("gl", gl.Err())
 }
 
+func (loop) Leave() error {
+	return nil
+}
+
 ////////////////////////////////////////////////////////////////////////////////
-var gametime float64
 
 func (l loop) MouseMotion(_, _ int32, _, _ int32) {
 	if cozely.GameTime() < gametime {
@@ -133,6 +160,7 @@ func (l loop) MouseMotion(_, _ int32, _, _ int32) {
 	// fmt.Printf("  (%.4f: %.4f, %.4f)\n", cozely.GameTime(), cozely.RenderTime(), cozely.UpdateLag())
 	gametime = cozely.GameTime()
 }
+
 func (loop) Update() error {
 	if cozely.GameTime() < gametime {
 		fmt.Printf("***************ERROR************\n")
@@ -151,7 +179,7 @@ func (loop) Update() error {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (loop) Draw() error {
+func (loop) Render() error {
 	if cozely.GameTime() < gametime {
 		fmt.Printf("***************ERROR************\n")
 	}
@@ -161,8 +189,8 @@ func (loop) Draw() error {
 	prepare()
 
 	gl.DefaultFramebuffer.Bind(gl.DrawFramebuffer)
-	w, h := cozely.WindowSize()
-	gl.Viewport(0, 0, w, h)
+	s := cozely.WindowSize()
+	gl.Viewport(0, 0, int32(s.X), int32(s.Y))
 	pipeline.Bind()
 	gl.ClearDepthBuffer(1.0)
 	gl.ClearColorBuffer(colour.LRGBA{0.0, 0.0, 0.0, 1.0})
@@ -182,7 +210,7 @@ func (loop) Draw() error {
 
 	overlay.Clear(0)
 	cursor.Locate(2, 12)
-	ft, or := cozely.FrameStats()
+	ft, or := cozely.RenderStats()
 	cursor.Printf("% 3.2f", ft*1000)
 	if or > 0 {
 		cursor.Printf(" (%d)", or)
@@ -195,25 +223,36 @@ func (loop) Draw() error {
 ////////////////////////////////////////////////////////////////////////////////
 
 func prepare() {
-	dt := float32(cozely.RenderTime())
+	/*
+		dt := float32(cozely.RenderTime())
 
-	camera.Move(forward*dt, lateral*dt, vertical*dt)
+		camera.Move(forward*dt, lateral*dt, vertical*dt)
 
-	// m := mouse.SmoothDelta()
-	mx, my := mouse.Delta()
-	m := plane.Coord{float32(mx), float32(my)}
+		// m := mouse.SmoothDelta()
+		mx, my := mouse.Delta()
+		m := plane.Coord{float32(mx), float32(my)}
 
-	w, h := cozely.WindowSize()
-	s := plane.Coord{float32(w), float32(h)}
-	switch {
-	case mouse.IsPressed(mouse.Right):
-		camera.Rotate(2*m.X/s.X, 2*m.Y/s.Y, rolling*dt)
-	case mouse.IsPressed(mouse.Left):
-		current.dragDelta = current.dragDelta.Plus(plane.Coord{2 * m.Y / s.Y, 2 * m.X / s.X})
-		r := space.EulerXYZ(current.dragDelta.X, current.dragDelta.Y, 0)
-		vr := camera.View().WithoutTranslation()
-		r = vr.Transpose().Times(r.Times(vr))
-		misc.worldFromObject = r.Times(dragStart)
+		s := cozely.WindowSize().Cartesian()
+		switch {
+		case mouse.IsPressed(mouse.Right):
+			camera.Rotate(2*m.X/s.X, 2*m.Y/s.Y, rolling*dt)
+		case mouse.IsPressed(mouse.Left):
+			current.dragDelta = current.dragDelta.Plus(plane.Coord{2 * m.Y / s.Y, 2 * m.X / s.X})
+			r := space.EulerXYZ(current.dragDelta.X, current.dragDelta.Y, 0)
+			vr := camera.View().WithoutTranslation()
+			r = vr.Transpose().Times(r.Times(vr))
+			misc.worldFromObject = r.Times(dragStart)
+		}
+	*/
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+func resize() {
+	s := cozely.WindowSize()
+	gl.Viewport(0, 0, int32(s.X), int32(s.Y))
+	if camera != nil {
+		camera.WindowResized()
 	}
 }
 

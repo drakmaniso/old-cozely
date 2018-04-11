@@ -8,8 +8,7 @@ import (
 	"time"
 
 	"github.com/drakmaniso/cozely"
-	"github.com/drakmaniso/cozely/key"
-	"github.com/drakmaniso/cozely/mouse"
+	"github.com/drakmaniso/cozely/input"
 	"github.com/drakmaniso/cozely/palette"
 	"github.com/drakmaniso/cozely/pixel"
 
@@ -19,13 +18,31 @@ import (
 
 ////////////////////////////////////////////////////////////////////////////////
 
+var (
+	quit  = input.Bool("Quit")
+	selct = input.Bool("Select")
+	test  = input.Bool("Test")
+)
+
+var context = input.Context("Default", quit, selct, test)
+
+var bindings = input.Bindings{
+	"Default": {
+		"Quit":   {"Escape"},
+		"Select": {"Mouse Left"},
+		"Test":   {"Space"},
+	},
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 var tilesPict [8]struct {
-	normal, big pixel.Picture
+	normal, big pixel.PictureID
 }
 
 var current grid.Position
 
-var screen = pixel.NewCanvas(pixel.TargetResolution(180, 180))
+var screen = pixel.Canvas(pixel.TargetResolution(180, 180))
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -45,8 +62,7 @@ func main() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func setup() error {
-
-	// palette.Change("MSX2")
+	cozely.Events.Resize = resize
 
 	for i, n := range []string{
 		"red",
@@ -58,8 +74,8 @@ func setup() error {
 		"dark",
 		"multi",
 	} {
-		tilesPict[i].normal = pixel.NewPicture("graphics/" + n)
-		tilesPict[i].big = pixel.NewPicture("graphics/" + n + "_big")
+		tilesPict[i].normal = pixel.Picture("graphics/" + n)
+		tilesPict[i].big = pixel.Picture("graphics/" + n + "_big")
 	}
 
 	current = grid.Nowhere()
@@ -72,9 +88,23 @@ func setup() error {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-type loop struct {
-	cozely.EmptyLoop
+type loop struct{}
+
+////////////////////////////////////////////////////////////////////////////////
+
+func (loop) Enter() error {
+	input.Load(bindings)
+	context.Activate(1)
+
+	err := palette.Load("graphics/blue")
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
+
+func (loop) Leave() error { return nil }
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -95,36 +125,42 @@ func init() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (loop) Enter() error {
-	err := palette.Load("graphics/blue")
-	if err != nil {
-		return err
+func (loop) React() error {
+	if quit.JustPressed(1) {
+		cozely.Stop()
 	}
 
-	return nil
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-func (loop) Update() error {
-	return nil
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-func (loop) MouseButtonDown(_ mouse.Button, _ int) {
-	m := screen.Mouse()
-	current = grid.PositionAt(m)
-	if current != grid.Nowhere() {
-		e := grid.At(current)
-		n := 0
-		f := func(e ecs.Entity) {
-			print(grid.PositionOf(e).String(), " ")
-			n++
+	if selct.JustPressed(1) {
+		m := screen.Mouse()
+		current = grid.PositionAt(m)
+		if current != grid.Nowhere() {
+			e := grid.At(current)
+			n := 0
+			f := func(e ecs.Entity) {
+				print(grid.PositionOf(e).String(), " ")
+				n++
+			}
+			grid.PositionOf(e).TestAndMark(testMatch, f)
+			println("-> ", n)
 		}
-		grid.PositionOf(e).TestAndMark(testMatch, f)
-		println("-> ", n)
 	}
+
+	if selct.JustReleased(1) {
+		current = grid.Nowhere()
+	}
+
+	if test.JustPressed(1) {
+		f := func(e ecs.Entity) {
+			if !e.Has(ecs.MatchFlag) {
+				print(grid.PositionOf(e).String(), " ")
+				e.Add(ecs.MatchFlag)
+			}
+		}
+		grid.TestAndMark(testMatch, f)
+		println()
+	}
+
+	return nil
 }
 
 func testMatch(e1, e2 ecs.Entity) bool {
@@ -136,32 +172,15 @@ func testMatch(e1, e2 ecs.Entity) bool {
 	return c1 == c2
 }
 
-func (loop) MouseButtonUp(_ mouse.Button, _ int) {
-	current = grid.Nowhere()
+////////////////////////////////////////////////////////////////////////////////
+
+func (loop) Update() error {
+	return nil
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (lp loop) KeyDown(l key.Keyabel, p key.Position) {
-	switch l {
-	case key.LabelSpace:
-		f := func(e ecs.Entity) {
-			if !e.Has(ecs.MatchFlag) {
-				print(grid.PositionOf(e).String(), " ")
-				e.Add(ecs.MatchFlag)
-			}
-		}
-		grid.TestAndMark(testMatch, f)
-		println()
-
-	default:
-		lp.EmptyLoop.KeyDown(l, p)
-	}
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-func (loop) Resize() {
+func resize() {
 	w, h := screen.Size().X, screen.Size().Y
 	grid.ScreenResized(w, h)
 }

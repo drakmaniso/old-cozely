@@ -23,7 +23,7 @@ func drawHook() error {
 	screenUBO.SubData(&screenUniforms, 0)
 
 	gl.DefaultFramebuffer.Bind(gl.DrawReadFramebuffer)
-	gl.Viewport(0, 0, internal.Window.Width, internal.Window.Height)
+	gl.Viewport(0, 0, int32(internal.Window.Width), int32(internal.Window.Height))
 	pipeline.Bind()
 	gl.ClearColorBuffer(colour.LRGBA{0, 0, 0, 0})
 	gl.Blending(gl.SrcAlpha, gl.OneMinusSrcAlpha)

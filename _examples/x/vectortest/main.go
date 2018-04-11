@@ -6,7 +6,7 @@ package main
 import (
 	"github.com/drakmaniso/cozely"
 	"github.com/drakmaniso/cozely/colour"
-	"github.com/drakmaniso/cozely/mouse"
+	"github.com/drakmaniso/cozely/input"
 	"github.com/drakmaniso/cozely/palette"
 	"github.com/drakmaniso/cozely/x/vector"
 )
@@ -22,14 +22,16 @@ func main() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-type loop struct {
-	cozely.EmptyLoop
-}
+type loop struct{}
 
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop) Enter() error {
 	palette.Load("MSX2")
+	return nil
+}
+
+func (loop) Leave() error {
 	return nil
 }
 
@@ -39,11 +41,15 @@ func (loop) Update() error {
 	return nil
 }
 
-func (loop) Draw() error {
+func (loop) React() error {
+	return nil
+}
+
+func (loop) Render() error {
 	vector.Line(colour.SRGB{1, 0.5, 0}, 10, 10, 100, 100)
-	wx, wy := cozely.WindowSize()
-	mx, my := mouse.Position()
-	vector.Line(colour.SRGB{1, 1, 1}, int16(wx/2), int16(wy/2), int16(mx), int16(my))
+	w := cozely.WindowSize()
+	m := input.Cursor.Position()
+	vector.Line(colour.SRGB{1, 1, 1}, w.X/2, w.Y/2, m.X, m.Y)
 	return nil
 }
 

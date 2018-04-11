@@ -4,10 +4,11 @@
 package main
 
 import (
-	"github.com/drakmaniso/cozely/_examples/match3/ecs"
-	"github.com/drakmaniso/cozely/_examples/match3/grid"
 	"github.com/drakmaniso/cozely/plane"
 	"github.com/drakmaniso/cozely/x/gl"
+
+	"github.com/drakmaniso/cozely/_examples/match3/ecs"
+	"github.com/drakmaniso/cozely/_examples/match3/grid"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -18,7 +19,7 @@ var colors [ecs.Size]color
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (loop) Draw() error {
+func (loop) Render() error {
 	screen.Clear(1)
 
 	var x, y int16 // screen coords
