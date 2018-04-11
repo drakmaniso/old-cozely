@@ -6,17 +6,17 @@ package input
 import "github.com/drakmaniso/glam/internal"
 
 type msButton struct {
-	button        MouseButton
+	button        mouseButton
 	target        Action
 	just, pressed bool
 }
 
-// MouseButton identifies a mouse button
-type MouseButton uint32
+// mouseButton identifies a mouse button
+type mouseButton uint32
 
-// MouseButton constants
+// mouseButton constants
 const (
-	MouseLeft MouseButton = 1 << iota
+	MouseLeft mouseButton = 1 << iota
 	MouseMiddle
 	MouseRight
 	MouseBack
@@ -38,7 +38,7 @@ func (a *msButton) activate(d Device) {
 }
 
 func (a *msButton) asBool() (just bool, value bool) {
-	v := (MouseButton(internal.MouseButtons) & a.button) != 0
+	v := (mouseButton(internal.MouseButtons) & a.button) != 0
 	a.just = (v != a.pressed) //TODO: no need to store?
 	a.pressed = v
 	return a.just, a.pressed

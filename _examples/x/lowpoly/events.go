@@ -51,7 +51,7 @@ func (l loop) MouseButtonUp(b mouse.Button, _ int) {
 
 //------------------------------------------------------------------------------
 
-func (l loop) KeyDown(lb key.Label, p key.Position) {
+func (l loop) KeyDown(lb key.Keyabel, p key.Position) {
 	const s = 2.0
 	switch p {
 	case key.PositionW:
@@ -71,11 +71,11 @@ func (l loop) KeyDown(lb key.Label, p key.Position) {
 	case key.PositionE:
 		rolling = 1.0
 	default:
-		l.Handlers.KeyDown(lb, p)
+		l.EmptyLoop.KeyDown(lb, p)
 	}
 }
 
-func (l loop) KeyUp(_ key.Label, p key.Position) {
+func (l loop) KeyUp(_ key.Keyabel, p key.Position) {
 	const s = 5.0
 	switch p {
 	case key.PositionW, key.PositionS:

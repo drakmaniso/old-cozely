@@ -43,7 +43,7 @@ var perObject struct {
 // Vertex buffer
 type mesh []struct {
 	position space.Coord `layout:"0"`
-	color    colour.LRGB  `layout:"1"`
+	color    colour.LRGB `layout:"1"`
 }
 
 // Transformation matrices
@@ -62,7 +62,7 @@ var (
 //------------------------------------------------------------------------------
 
 type loop struct {
-	glam.Handlers
+	glam.EmptyLoop
 }
 
 //------------------------------------------------------------------------------

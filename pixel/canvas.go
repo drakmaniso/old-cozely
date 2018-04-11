@@ -7,8 +7,8 @@ import (
 	"errors"
 	"unsafe"
 
+	"github.com/drakmaniso/glam/input"
 	"github.com/drakmaniso/glam/internal"
-	"github.com/drakmaniso/glam/mouse"
 	"github.com/drakmaniso/glam/palette"
 	"github.com/drakmaniso/glam/plane"
 	"github.com/drakmaniso/glam/x/gl"
@@ -221,8 +221,7 @@ func (cv Canvas) PixelSize() int16 {
 
 // Mouse returns the mouse position on the canvas.
 func (cv Canvas) Mouse() plane.Pixel {
-	mx, my := mouse.Position()
-	m := plane.Pixel{int16(mx), int16(my)}
+	m := input.Cursor.Position()
 	return m.Minus(canvases[cv].origin).Slash(canvases[cv].pixel)
 }
 

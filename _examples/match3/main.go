@@ -73,7 +73,7 @@ func setup() error {
 //------------------------------------------------------------------------------
 
 type loop struct {
-	glam.Handlers
+	glam.EmptyLoop
 }
 
 //------------------------------------------------------------------------------
@@ -142,7 +142,7 @@ func (loop) MouseButtonUp(_ mouse.Button, _ int) {
 
 //------------------------------------------------------------------------------
 
-func (lp loop) KeyDown(l key.Label, p key.Position) {
+func (lp loop) KeyDown(l key.Keyabel, p key.Position) {
 	switch l {
 	case key.LabelSpace:
 		f := func(e ecs.Entity) {
@@ -155,7 +155,7 @@ func (lp loop) KeyDown(l key.Label, p key.Position) {
 		println()
 
 	default:
-		lp.Handlers.KeyDown(l, p)
+		lp.EmptyLoop.KeyDown(l, p)
 	}
 }
 

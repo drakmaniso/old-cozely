@@ -71,7 +71,7 @@ func TestDelaunay_graphic(t *testing.T) {
 //------------------------------------------------------------------------------
 
 type delLoop struct {
-	glam.Handlers
+	glam.EmptyLoop
 }
 
 //------------------------------------------------------------------------------
@@ -174,7 +174,7 @@ func newPoints() {
 
 //------------------------------------------------------------------------------
 
-func (dl delLoop) KeyDown(l key.Label, p key.Position) {
+func (dl delLoop) KeyDown(l key.Keyabel, p key.Position) {
 	switch l {
 	case key.Label1:
 		points = points[:0]
@@ -225,7 +225,7 @@ func (dl delLoop) KeyDown(l key.Label, p key.Position) {
 		}
 		triangulation = quadedge.Delaunay(points)
 	default:
-		dl.Handlers.KeyDown(l, p)
+		dl.EmptyLoop.KeyDown(l, p)
 	}
 }
 

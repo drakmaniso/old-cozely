@@ -8,7 +8,7 @@ import (
 )
 
 type kbKey struct {
-	keycode       KeyCode
+	keycode       keyCode
 	target        Action
 	just, pressed bool
 }

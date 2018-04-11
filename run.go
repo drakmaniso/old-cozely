@@ -6,8 +6,6 @@ package glam
 import (
 	"github.com/drakmaniso/glam/colour"
 	"github.com/drakmaniso/glam/internal"
-	"github.com/drakmaniso/glam/key"
-	"github.com/drakmaniso/glam/mouse"
 	"github.com/drakmaniso/glam/x/gl"
 )
 
@@ -16,43 +14,36 @@ import (
 // GameLoop methods are called during the main loop to process events, Update
 // the game state and render it.
 type GameLoop interface {
-	// The loop
+	// Initialization and cleanup of the loop
 	Enter() error
+	Leave() error
+
+	// The loop itself
 	React() error
 	Update() error
 	Draw() error
-	Leave() error
 
-	// Window Events
+	// Window events
 	Resize()
 	Hide()
 	Show()
 	Focus()
 	Unfocus()
 	Quit()
-
-	// Keyboard events
-	KeyDown(l key.Label, p key.Position)
-	KeyUp(l key.Label, p key.Position)
-
-	// Mouse events
-	MouseMotion(deltaX, deltaY int32, posX, posY int32)
-	MouseButtonDown(b mouse.Button, clicks int)
-	MouseButtonUp(b mouse.Button, clicks int)
-	MouseWheel(deltaX, deltaY int32)
 }
 
-// Handlers implements default handlers for all events.
+// EmptyLoop implements a default, empty game loop.
 //
-// It's an empty struct intended to be embedded in the user-defined GameLoop:
+// It's an empty struct intended to be embedded in the user-defined GameLoop,
+// for convenience.
 //
 //  type loop struct {
-//    glam.Handlers
+//    glam.EmptyLoop
 //  }
 //
-// This way it's possible to implement the GameLoop interface without writing a
-// method for each event.
-type Handlers = internal.Handlers
+// This makes it possible to implement the GameLoop interface without
+// implementing each method.
+type EmptyLoop = internal.EmptyLoop
 
 //------------------------------------------------------------------------------
 

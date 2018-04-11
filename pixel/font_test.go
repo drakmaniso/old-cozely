@@ -8,8 +8,6 @@ import (
 	"os"
 	"testing"
 
-	"github.com/drakmaniso/glam/key"
-
 	"github.com/drakmaniso/glam"
 	"github.com/drakmaniso/glam/palette"
 	"github.com/drakmaniso/glam/pixel"
@@ -54,7 +52,7 @@ func TestFont_load(t *testing.T) {
 //------------------------------------------------------------------------------
 
 type fntLoop struct {
-	glam.Handlers
+	glam.EmptyLoop
 }
 
 //------------------------------------------------------------------------------
@@ -117,58 +115,59 @@ func (fntLoop) Draw() error {
 
 //------------------------------------------------------------------------------
 
-func (fl fntLoop) KeyDown(l key.Label, p key.Position) {
-	switch l {
-	case key.LabelSpace:
-		if fntShow[0] == fntText[0] {
-			fntShow = fntCode
-			curBg = palette.Find("black")
-			curFg = palette.Find("green")
-		} else {
-			fntShow = fntText
-			curBg = palette.Find("white")
-			curFg = palette.Find("black")
-		}
-		cursor.Color = curFg - 1
-		fntLine = 0
-	case key.Label1:
-		font = tinela9
-	case key.Label2:
-		font = monozela10
-	case key.Label3:
-		font = simpela10
-	case key.Label4:
-		font = cozela10
-	case key.Label5:
-		font = simpela12
-	case key.Label6:
-		font = cozela12
-	case key.Label7:
-		font = chaotela12
-	case key.Label0:
-		font = pixel.Font(0)
-	case key.LabelKPDivide:
-		fntLetterSpacing--
-	case key.LabelKPMultiply:
-		fntLetterSpacing++
-	case key.LabelKPMinus:
-		fntInterline--
-	case key.LabelKPPlus:
-		fntInterline++
-	case key.LabelPageDown:
-		fntLine += 40
-		if fntLine > len(fntShow)-1 {
-			fntLine = len(fntShow) - 1
-		}
-	case key.LabelPageUp:
-		fntLine -= 40
-		if fntLine < 0 {
-			fntLine = 0
-		}
-	default:
-		fl.Handlers.KeyDown(l, p)
-	}
-}
+//TODO:
+// func (fl fntLoop) KeyDown(l key.Keyabel, p key.Position) {
+// 	switch l {
+// 	case key.LabelSpace:
+// 		if fntShow[0] == fntText[0] {
+// 			fntShow = fntCode
+// 			curBg = palette.Find("black")
+// 			curFg = palette.Find("green")
+// 		} else {
+// 			fntShow = fntText
+// 			curBg = palette.Find("white")
+// 			curFg = palette.Find("black")
+// 		}
+// 		cursor.Color = curFg - 1
+// 		fntLine = 0
+// 	case key.Label1:
+// 		font = tinela9
+// 	case key.Label2:
+// 		font = monozela10
+// 	case key.Label3:
+// 		font = simpela10
+// 	case key.Label4:
+// 		font = cozela10
+// 	case key.Label5:
+// 		font = simpela12
+// 	case key.Label6:
+// 		font = cozela12
+// 	case key.Label7:
+// 		font = chaotela12
+// 	case key.Label0:
+// 		font = pixel.Font(0)
+// 	case key.LabelKPDivide:
+// 		fntLetterSpacing--
+// 	case key.LabelKPMultiply:
+// 		fntLetterSpacing++
+// 	case key.LabelKPMinus:
+// 		fntInterline--
+// 	case key.LabelKPPlus:
+// 		fntInterline++
+// 	case key.LabelPageDown:
+// 		fntLine += 40
+// 		if fntLine > len(fntShow)-1 {
+// 			fntLine = len(fntShow) - 1
+// 		}
+// 	case key.LabelPageUp:
+// 		fntLine -= 40
+// 		if fntLine < 0 {
+// 			fntLine = 0
+// 		}
+// 	default:
+// 		fl.EmptyLoop.KeyDown(l, p)
+// 	}
+// }
 
 //------------------------------------------------------------------------------
 

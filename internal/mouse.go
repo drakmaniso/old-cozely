@@ -12,11 +12,6 @@ import "C"
 
 //------------------------------------------------------------------------------
 
-// A MouseButton on the mouse
-type MouseButton uint8 //TODO: remove
-
-//------------------------------------------------------------------------------
-
 // MouseDelta holds the delta from last mouse position.
 var MouseDeltaX, MouseDeltaY int16
 

@@ -9,12 +9,11 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/drakmaniso/glam/plane"
-
 	"github.com/drakmaniso/glam"
 	"github.com/drakmaniso/glam/input"
 	"github.com/drakmaniso/glam/palette"
 	"github.com/drakmaniso/glam/pixel"
+	"github.com/drakmaniso/glam/plane"
 )
 
 //------------------------------------------------------------------------------
@@ -93,7 +92,7 @@ func TestAction(t *testing.T) {
 //------------------------------------------------------------------------------
 
 type loop struct {
-	glam.Handlers
+	glam.EmptyLoop
 }
 
 //------------------------------------------------------------------------------

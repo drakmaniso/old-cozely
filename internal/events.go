@@ -44,16 +44,6 @@ type GameLoop interface {
 	Focus()
 	Unfocus()
 	Quit()
-
-	// Keyboard events
-	KeyDown(l KeyLabel, p KeyCode)
-	KeyUp(l KeyLabel, p KeyCode)
-
-	// Mouse events
-	MouseMotion(deltaX, deltaY int32, posX, posY int32)
-	MouseButtonDown(b MouseButton, clicks int)
-	MouseButtonUp(b MouseButton, clicks int)
-	MouseWheel(deltaX, deltaY int32)
 }
 
 //------------------------------------------------------------------------------
@@ -134,9 +124,11 @@ func dispatch(e unsafe.Pointer) {
 		if e.direction == C.SDL_MOUSEWHEEL_FLIPPED {
 			d = -1
 		}
-		Loop.MouseWheel(
-			int32(e.x)*d, int32(e.y)*d,
-		)
+		//TODO:
+		_ = d
+		// Loop.MouseWheel(
+		// 	int32(e.x)*d, int32(e.y)*d,
+		// )
 	//TODO: Joystick Events
 	case C.SDL_JOYAXISMOTION:
 	case C.SDL_JOYBALLMOTION:
