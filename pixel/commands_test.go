@@ -24,7 +24,7 @@ var (
 var cmdContext = input.NewContext("TestCommands",
 	quit, newPoint, previous, hidePoints, hideLines)
 
-var cmdBindings = map[string]map[string][]string{
+var cmdBindings = input.Bindings{
 	"TestCommands": {
 		"Quit":       {"Escape"},
 		"NewPoint":   {"Mouse Left"},
@@ -65,9 +65,9 @@ type cmdLoop struct{}
 //------------------------------------------------------------------------------
 
 func (cmdLoop) Enter() error {
-	palette.Load("graphics/shape1")
-	input.LoadBindings(cmdBindings)
+	input.Load(cmdBindings)
 	cmdContext.Activate(1)
+	palette.Load("graphics/shape1")
 	return nil
 }
 

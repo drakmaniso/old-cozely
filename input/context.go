@@ -38,6 +38,7 @@ func NewContext(name string, la ...Action) Context {
 //------------------------------------------------------------------------------
 
 func (a Context) Activate(d Device) {
+	println("-->", d, a)
 	devices.newcontext[d] = a
 }
 

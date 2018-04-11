@@ -35,9 +35,9 @@ type boxLoop struct{}
 //------------------------------------------------------------------------------
 
 func (boxLoop) Enter() error {
-	palette.Load("graphics/shape1")
-	input.LoadBindings(testBindings)
+	input.Load(testBindings)
 	testContext.Activate(1)
+	palette.Load("graphics/shape1")
 	return nil
 }
 

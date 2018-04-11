@@ -45,7 +45,7 @@ type picLoop struct{}
 //------------------------------------------------------------------------------
 
 func (picLoop) Enter() error {
-	input.LoadBindings(testBindings)
+	input.Load(testBindings)
 	testContext.Activate(1)
 
 	palette.Load("graphics/mire")

@@ -5,6 +5,7 @@ package input
 
 import (
 	"errors"
+
 	"github.com/drakmaniso/glam/internal"
 )
 
@@ -14,7 +15,9 @@ type binding interface {
 	asBool() (just bool, value bool)
 }
 
-func LoadBindings(b map[string]map[string][]string) error {
+type Bindings map[string]map[string][]string
+
+func Load(b Bindings) error {
 	var err error
 
 	// Forget devices (and previous bindings)

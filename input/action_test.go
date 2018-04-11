@@ -19,6 +19,43 @@ import (
 //------------------------------------------------------------------------------
 
 var (
+	InventoryAction        = input.NewBool("Inventory")
+	OptionsAction          = input.NewBool("Options")
+	CloseMenuAction        = input.NewBool("Close Menu")
+	InstantCloseMenuAction = input.NewBool("Instant Close Menu")
+	JumpAction             = input.NewBool("Jump")
+	OpenMenuAction         = input.NewBool("Open Menu")
+	InstantOpenMenuAction  = input.NewBool("Instant Open Menu")
+)
+
+var (
+	InMenu = input.NewContext("Menu",
+		CloseMenuAction, InstantCloseMenuAction, InventoryAction, OptionsAction)
+
+	InGame = input.NewContext("Game",
+		OpenMenuAction, InstantOpenMenuAction, InventoryAction, JumpAction)
+)
+
+var (
+	Bindings = input.Bindings{
+		"Menu": {
+			"Close Menu":         {"Escape"},
+			"Instant Close Menu": {"Mouse Right", "Enter"},
+			"Inventory":          {"I"},
+			"Options":            {"O", "Mouse Left"},
+		},
+		"Game": {
+			"Open Menu":         {"Escape"},
+			"Instant Open Menu": {"Mouse Right", "Enter"},
+			"Inventory":         {"Tab"},
+			"Jump":              {"Space", "Mouse Left"},
+		},
+	}
+)
+
+//------------------------------------------------------------------------------
+
+var (
 	screen = pixel.NewCanvas(pixel.Zoom(3))
 	cursor = pixel.Cursor{Canvas: screen}
 )
@@ -44,43 +81,6 @@ const (
 
 //------------------------------------------------------------------------------
 
-var (
-	InventoryAction        = input.NewBool("Inventory")
-	OptionsAction          = input.NewBool("Options")
-	CloseMenuAction        = input.NewBool("Close Menu")
-	InstantCloseMenuAction = input.NewBool("Instant Close Menu")
-	JumpAction             = input.NewBool("Jump")
-	OpenMenuAction         = input.NewBool("Open Menu")
-	InstantOpenMenuAction  = input.NewBool("Instant Open Menu")
-)
-
-var (
-	InMenu = input.NewContext("Menu",
-		CloseMenuAction, InstantCloseMenuAction, InventoryAction, OptionsAction)
-
-	InGame = input.NewContext("Game",
-		OpenMenuAction, InstantOpenMenuAction, InventoryAction, JumpAction)
-)
-
-var (
-	Bindings = map[string]map[string][]string{
-		"Menu": {
-			"Close Menu":         {"Escape"},
-			"Instant Close Menu": {"Mouse Right", "Enter"},
-			"Inventory":          {"I"},
-			"Options":            {"O", "Mouse Left"},
-		},
-		"Game": {
-			"Open Menu":         {"Escape"},
-			"Instant Open Menu": {"Mouse Right", "Enter"},
-			"Inventory":         {"Tab"},
-			"Jump":              {"Space", "Mouse Left"},
-		},
-	}
-)
-
-//------------------------------------------------------------------------------
-
 func TestAction(t *testing.T) {
 	err := glam.Run(loop{})
 	if err != nil {
@@ -96,7 +96,7 @@ type loop struct {}
 //------------------------------------------------------------------------------
 
 func (loop) Enter() error {
-	err := input.LoadBindings(Bindings)
+	err := input.Load(Bindings)
 	if err != nil {
 		return err
 	}

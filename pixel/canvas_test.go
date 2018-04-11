@@ -16,9 +16,9 @@ import (
 
 //------------------------------------------------------------------------------
 
-var cnvActions = input.NewContext("TestCanvas", quit)
+var cnvContext = input.NewContext("TestCanvas", quit)
 
-var cnvBindings = map[string]map[string][]string{
+var cnvBindings = input.Bindings{
 	"TestCanvas": {
 		"Quit":  {"Escape"},
 	},
@@ -64,7 +64,8 @@ type cnvLoop struct{}
 //------------------------------------------------------------------------------
 
 func (cnvLoop) Enter() error {
-	input.LoadBindings(cnvBindings)
+	input.Load(cnvBindings)
+	cnvContext.Activate(1)
 	palette.Load("graphics/shape1")
 	return nil
 }

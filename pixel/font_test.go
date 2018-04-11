@@ -57,7 +57,7 @@ type fntLoop struct{}
 //------------------------------------------------------------------------------
 
 func (fntLoop) Enter() error {
-	input.LoadBindings(testBindings)
+	input.Load(testBindings)
 	testContext.Activate(1)
 
 	f, err := os.Open(glam.Path() + "frankenstein.txt")

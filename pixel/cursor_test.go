@@ -40,7 +40,7 @@ type curLoop struct{}
 //------------------------------------------------------------------------------
 
 func (curLoop) Enter() error {
-	input.LoadBindings(testBindings)
+	input.Load(testBindings)
 	testContext.Activate(1)
 	palette.Load("C64")
 	curBg = palette.Find("white")
