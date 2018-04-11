@@ -11,8 +11,8 @@ import (
 
 //------------------------------------------------------------------------------
 
-// A Picture identifies an image than can be displayed on a Canvas.
-type Picture uint16
+// A PictureID identifies an image than can be displayed on a Canvas.
+type PictureID uint16
 
 var picturePaths = []string{""}
 
@@ -28,23 +28,23 @@ type mapping struct {
 
 //------------------------------------------------------------------------------
 
-// NewPicture reserves an ID for a picture, that will be loaded from path by
+// Picture reserves an ID for a picture, that will be loaded from path by
 // glam.Run.
-func NewPicture(path string) Picture {
+func Picture(path string) PictureID {
 	if len(pictureMap) >= 0xFFFF {
 		setErr("in NewPitcture", errors.New("too many pictures"))
-		return Picture(0)
+		return PictureID(0)
 	}
 
 	picturePaths = append(picturePaths, path)
 	pictureMap = append(pictureMap, mapping{})
-	return Picture(len(picturePaths) - 1)
+	return PictureID(len(picturePaths) - 1)
 }
 
 //------------------------------------------------------------------------------
 
 // Size returns the width and height of the picture.
-func (p Picture) Size() plane.Pixel {
+func (p PictureID) Size() plane.Pixel {
 	return plane.Pixel{pictureMap[p].w, pictureMap[p].h}
 }
 

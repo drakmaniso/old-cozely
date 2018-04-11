@@ -33,19 +33,19 @@ type canvas struct {
 
 var canvases []canvas
 
-// A Canvas identifies a surface that can be used to draw, print text or show
+// A CanvasID identifies a surface that can be used to draw, print text or show
 // pictures.
-type Canvas uint16
+type CanvasID uint16
 
 //------------------------------------------------------------------------------
 
-// NewCanvas reserves an ID for a new canvas, that will be created by glam.Run.
-func NewCanvas(o ...CanvasOption) Canvas {
+// Canvas reserves an ID for a new canvas, that will be created by glam.Run.
+func Canvas(o ...CanvasOption) CanvasID {
 	if len(canvases) >= 0xFFFF {
 		setErr("in NewCanvas", errors.New("too many canvases"))
 	}
 
-	cv := Canvas(len(canvases))
+	cv := CanvasID(len(canvases))
 	canvases = append(canvases, canvas{})
 
 	s := &canvases[cv]
@@ -65,7 +65,7 @@ func NewCanvas(o ...CanvasOption) Canvas {
 
 //------------------------------------------------------------------------------
 
-func (cv Canvas) createBuffer() {
+func (cv CanvasID) createBuffer() {
 	s := &canvases[cv]
 	s.buffer = gl.NewFramebuffer()
 
@@ -82,7 +82,7 @@ func (cv Canvas) createBuffer() {
 
 //------------------------------------------------------------------------------
 
-func (cv Canvas) autoresize() {
+func (cv CanvasID) autoresize() {
 	s := &canvases[cv]
 	win := plane.Pixel{internal.Window.Width, internal.Window.Height}
 
@@ -110,7 +110,7 @@ func (cv Canvas) autoresize() {
 
 //------------------------------------------------------------------------------
 
-func (cv Canvas) createTextures() {
+func (cv CanvasID) createTextures() {
 	s := &canvases[cv]
 
 	s.texture.Delete()
@@ -135,7 +135,7 @@ func (cv Canvas) createTextures() {
 // Paint executes all pending commands on the canvas. It is automatically called
 // by Display; the only reason to call it manually is to be able to read from it
 // before display.
-func (cv Canvas) Paint() {
+func (cv CanvasID) Paint() {
 	s := &canvases[cv]
 
 	if len(s.commands) == 0 {
@@ -172,7 +172,7 @@ func (cv Canvas) Paint() {
 
 // Display first execute all pending commands on the canvas (if any), then
 // displays it on the game window.
-func (cv Canvas) Display() {
+func (cv CanvasID) Display() {
 	cv.Paint()
 
 	s := &canvases[cv]
@@ -198,7 +198,7 @@ func (cv Canvas) Display() {
 
 // Clear sets both the color and peth of all pixels on the canvas. Only the
 // color is specified, the depth being initialized to the minimum value.
-func (cv Canvas) Clear(color palette.Index) {
+func (cv CanvasID) Clear(color palette.Index) {
 	s := &canvases[cv]
 	pipeline.Bind() //TODO: find another way to enable depthWrite
 	s.buffer.ClearColorUint(uint32(color), 0, 0, 0)
@@ -208,19 +208,19 @@ func (cv Canvas) Clear(color palette.Index) {
 //------------------------------------------------------------------------------
 
 // Size returns the current dimension of the canvas (in canvas pixels).
-func (cv Canvas) Size() plane.Pixel {
+func (cv CanvasID) Size() plane.Pixel {
 	return canvases[cv].size
 }
 
 // PixelSize returns the size of one canvas pixel, in window pixels.
-func (cv Canvas) PixelSize() int16 {
+func (cv CanvasID) PixelSize() int16 {
 	return canvases[cv].pixel
 }
 
 //------------------------------------------------------------------------------
 
 // Mouse returns the mouse position on the canvas.
-func (cv Canvas) Mouse() plane.Pixel {
+func (cv CanvasID) Mouse() plane.Pixel {
 	m := input.Cursor.Position()
 	return m.Minus(canvases[cv].origin).Slash(canvases[cv].pixel)
 }

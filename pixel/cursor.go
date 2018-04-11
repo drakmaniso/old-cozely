@@ -18,8 +18,8 @@ import (
 // It maintains the current position, but also the x coordinate used for new
 // lines of text.
 type Cursor struct {
-	Canvas    Canvas
-	Font      Font
+	Canvas    CanvasID
+	Font      FontID
 	Color     palette.Index
 	Spacing   int16
 	Interline int16

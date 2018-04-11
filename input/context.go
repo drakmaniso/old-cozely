@@ -5,11 +5,11 @@ package input
 
 //------------------------------------------------------------------------------
 
-type Context uint32
+type ContextID uint32
 
-const noContext = Context(maxID)
+const noContext = ContextID(maxID)
 
-var current, new = Context(0), Context(0)
+var current, new = ContextID(0), ContextID(0)
 
 var contexts struct {
 	// For each context
@@ -21,14 +21,14 @@ var contexts struct {
 
 //------------------------------------------------------------------------------
 
-func NewContext(name string, la ...Action) Context {
+func Context(name string, la ...Action) ContextID {
 	l := len(contexts.name)
 	if l >= maxID {
 		//TODO: set error
-		return Context(maxID)
+		return ContextID(maxID)
 	}
 
-	c := Context(l)
+	c := ContextID(l)
 	contexts.name = append(contexts.name, name)
 	contexts.actions = append(contexts.actions, la)
 
@@ -37,11 +37,11 @@ func NewContext(name string, la ...Action) Context {
 
 //------------------------------------------------------------------------------
 
-func (a Context) Activate(d Device) {
+func (a ContextID) Activate(d DeviceID) {
 	devices.newcontext[d] = a
 }
 
-func (a Context) Active(d Device) bool {
+func (a ContextID) Active(d DeviceID) bool {
 	return a == devices.context[d]
 }
 

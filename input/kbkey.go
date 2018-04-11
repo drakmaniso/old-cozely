@@ -13,14 +13,14 @@ type kbKey struct {
 	just, pressed bool
 }
 
-func (a *kbKey) bind(c Context, target Action) {
+func (a *kbKey) bind(c ContextID, target Action) {
 	aa := *a
 	aa.target = target
 	devices.bindings[kbmouse][c] =
 		append(devices.bindings[kbmouse][c], &aa)
 }
 
-func (a *kbKey) device() Device {
+func (a *kbKey) device() DeviceID {
 	return kbmouse
 }
 
@@ -28,7 +28,7 @@ func (a *kbKey) action() Action {
 	return a.target
 }
 
-func (a *kbKey) activate(d Device) {
+func (a *kbKey) activate(d DeviceID) {
 	a.target.activate(d, a)
 }
 

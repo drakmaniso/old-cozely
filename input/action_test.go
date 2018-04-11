@@ -19,20 +19,20 @@ import (
 //------------------------------------------------------------------------------
 
 var (
-	InventoryAction        = input.NewBool("Inventory")
-	OptionsAction          = input.NewBool("Options")
-	CloseMenuAction        = input.NewBool("Close Menu")
-	InstantCloseMenuAction = input.NewBool("Instant Close Menu")
-	JumpAction             = input.NewBool("Jump")
-	OpenMenuAction         = input.NewBool("Open Menu")
-	InstantOpenMenuAction  = input.NewBool("Instant Open Menu")
+	InventoryAction        = input.Bool("Inventory")
+	OptionsAction          = input.Bool("Options")
+	CloseMenuAction        = input.Bool("Close Menu")
+	InstantCloseMenuAction = input.Bool("Instant Close Menu")
+	JumpAction             = input.Bool("Jump")
+	OpenMenuAction         = input.Bool("Open Menu")
+	InstantOpenMenuAction  = input.Bool("Instant Open Menu")
 )
 
 var (
-	InMenu = input.NewContext("Menu",
+	InMenu = input.Context("Menu",
 		CloseMenuAction, InstantCloseMenuAction, InventoryAction, OptionsAction)
 
-	InGame = input.NewContext("Game",
+	InGame = input.Context("Game",
 		OpenMenuAction, InstantOpenMenuAction, InventoryAction, JumpAction)
 )
 
@@ -56,7 +56,7 @@ var (
 //------------------------------------------------------------------------------
 
 var (
-	screen = pixel.NewCanvas(pixel.Zoom(3))
+	screen = pixel.Canvas(pixel.Zoom(3))
 	cursor = pixel.Cursor{Canvas: screen}
 )
 
@@ -79,6 +79,10 @@ const (
 	White
 )
 
+var hidden bool
+var mousepos, mousedelta plane.Pixel
+var openmenu, closemenu, instopenmenu, instclosemenu, inventory, options, jump bool
+
 //------------------------------------------------------------------------------
 
 func TestAction(t *testing.T) {
@@ -91,7 +95,7 @@ func TestAction(t *testing.T) {
 
 //------------------------------------------------------------------------------
 
-type loop struct {}
+type loop struct{}
 
 //------------------------------------------------------------------------------
 
@@ -106,16 +110,9 @@ func (loop) Enter() error {
 	return nil
 }
 
-func (loop) Leave() error {return nil}
+func (loop) Leave() error { return nil }
 
 //------------------------------------------------------------------------------
-
-var hidden bool
-
-var dx, dy int32
-var mousepos, mousedelta plane.Pixel
-
-var openmenu, closemenu, instopenmenu, instclosemenu, inventory, options, jump bool
 
 func (loop) React() error {
 	mousepos = input.Cursor.Position()
@@ -158,19 +155,11 @@ func (loop) React() error {
 
 //------------------------------------------------------------------------------
 
-func (loop) Update() error {return nil}
+func (loop) Update() error { return nil }
 
 //------------------------------------------------------------------------------
 
-func color(p bool) {
-	if p {
-		cursor.Color = LightGreen - 1
-	} else {
-		cursor.Color = DarkBlue - 1
-	}
-}
-
-func (loop) Draw() error {
+func (loop) Render() error {
 	screen.Clear(0)
 
 	cursor.Locate(2, 12)
@@ -217,6 +206,14 @@ func (loop) Draw() error {
 
 	screen.Display()
 	return nil
+}
+
+func color(p bool) {
+	if p {
+		cursor.Color = LightGreen - 1
+	} else {
+		cursor.Color = DarkBlue - 1
+	}
 }
 
 //------------------------------------------------------------------------------

@@ -17,18 +17,18 @@ import (
 //------------------------------------------------------------------------------
 
 var (
-	fntAtlas *atlas.Atlas
+	fntAtlas  *atlas.Atlas
 	fntImages []*image.Paletted
 )
 
 //------------------------------------------------------------------------------
 
-func (f Font) load(frects *[]uint32) error {
+func (f FontID) load(frects *[]uint32) error {
 	//TODO: support other image formats?
 	var p *image.Paletted
 
 	if f == 0 {
-		p =&monozela10
+		p = &monozela10
 	} else {
 		n := fontPaths[f]
 		path := filepath.FromSlash(internal.Path + n + ".png")

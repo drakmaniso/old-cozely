@@ -16,7 +16,7 @@ import (
 //------------------------------------------------------------------------------
 
 var (
-	curScreen = pixel.NewCanvas(pixel.Zoom(2))
+	curScreen = pixel.Canvas(pixel.Zoom(2))
 	cursor    = pixel.Cursor{Canvas: curScreen}
 )
 
@@ -66,19 +66,19 @@ func (curLoop) Update() error { return nil }
 
 //------------------------------------------------------------------------------
 
-func (curLoop) Draw() error {
+func (curLoop) Render() error {
 	curScreen.Clear(curBg)
 
 	cursor.Locate(2, 8)
 
-	cursor.Font = pixel.Font(0)
+	cursor.Font = pixel.FontID(0)
 	cursor.Println("a quick brown fox \"jumps\" over the (lazy) dog.")
 	cursor.Println("A QUICK BROWN FOX \"JUMPS\" OVER THE (LAZY) DOG.")
 	cursor.Println("0123456789!@#$^&*()-+=_~[]{}|\\;:'\",.<>/?%")
 	cursor.Println("12+34 56-7.8 90*13 24/35 -5 +2 3*(2+5) 4<5 6>2 2=1+1 *f := &x;")
 	cursor.Println()
 
-	cursor.Font = pixel.Font(0)
+	cursor.Font = pixel.FontID(0)
 	cursor.Locate(16, 100)
 	cursor.Write([]byte("Foo"))
 	cursor.Position = cursor.Position.Pluss(1, 3)
@@ -106,22 +106,11 @@ func (curLoop) Draw() error {
 	cursor.Print("Chaotela12")
 
 	cursor.Locate(curScreen.Size().X-200, 9)
-	cursor.Font = pixel.Font(0)
+	cursor.Font = pixel.FontID(0)
 	cursor.Printf("Position x=%d, y=%d\n", curScreen.Mouse().X, curScreen.Mouse().Y)
 
 	curScreen.Display()
 	return nil
-}
-
-//------------------------------------------------------------------------------
-
-func (curLoop) Resize()  {}
-func (curLoop) Show()    {}
-func (curLoop) Hide()    {}
-func (curLoop) Focus()   {}
-func (curLoop) Unfocus() {}
-func (curLoop) Quit() {
-	glam.Stop()
 }
 
 //------------------------------------------------------------------------------

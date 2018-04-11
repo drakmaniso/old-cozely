@@ -9,10 +9,10 @@ import (
 
 //------------------------------------------------------------------------------
 
-// A Font identifies  apixel font that can be used by Cursor to display text.
-type Font uint8
+// A FontID identifies a pixel font that can be used by Cursor to display text.
+type FontID uint8
 
-var fontPaths = []string {"builtin monozela 10"}
+var fontPaths = []string{"builtin monozela 10"}
 
 var fonts = []font{{}}
 
@@ -26,22 +26,22 @@ var glyphMap []mapping
 
 //------------------------------------------------------------------------------
 
-// NewFont reserves an ID for a new font, that will be loaded from path by
+// Font reserves an ID for a new font, that will be loaded from path by
 // glam.Run.
-func NewFont(path string) Font {
+func Font(path string) FontID {
 	if len(fonts) >= 0xFF {
 		setErr("in NewFont", errors.New("too many fonts"))
-		return Font(0)
+		return FontID(0)
 	}
 
 	fonts = append(fonts, font{})
 	fontPaths = append(fontPaths, path)
-	return Font(len(fonts) - 1)
+	return FontID(len(fonts) - 1)
 }
 
 //------------------------------------------------------------------------------
 
-func (f Font) glyph(r rune) uint16 {
+func (f FontID) glyph(r rune) uint16 {
 	//TODO: add support for non-ascii runes
 	switch {
 	case r < ' ':
@@ -58,7 +58,7 @@ func (f Font) glyph(r rune) uint16 {
 
 // Height returns the height of the font, i.e. the height of the images used to
 // store the glyphs.
-func (f Font) Height() int16 {
+func (f FontID) Height() int16 {
 	return fonts[f].height
 }
 

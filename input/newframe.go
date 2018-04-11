@@ -22,18 +22,18 @@ func newframe() error {
 		if c != devices.newcontext[d] {
 			if c != noContext {
 				for _, t := range contexts.actions[c] {
-					t.deactivate(Device(d))
+					t.deactivate(DeviceID(d))
 				}
 			}
 			devices.context[d] = devices.newcontext[d]
 			c = devices.context[d]
 			for _, b := range devices.bindings[d][c] {
-				b.activate(Device(d))
+				b.activate(DeviceID(d))
 			}
 		}
 
 		for _, t := range contexts.actions[c] {
-			t.newframe(Device(d))
+			t.newframe(DeviceID(d))
 		}
 	}
 

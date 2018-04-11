@@ -43,10 +43,10 @@ func Title(t string) Option {
 
 //------------------------------------------------------------------------------
 
-// TimeStep sets the time step between calls to Update.
-func TimeStep(t float64) Option {
+// UpdateStep sets the time step between calls to Update.
+func UpdateStep(t float64) Option {
 	return func() error {
-		internal.TimeStep = t
+		internal.UpdateStep = t
 		return nil
 	}
 }

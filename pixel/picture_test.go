@@ -15,14 +15,14 @@ import (
 
 //------------------------------------------------------------------------------
 
-var picScreen = pixel.NewCanvas(pixel.TargetResolution(320, 180))
+var picScreen = pixel.Canvas(pixel.TargetResolution(320, 180))
 
 var (
-	mire      = pixel.NewPicture("graphics/mire")
-	srgbGray  = pixel.NewPicture("graphics/srgb-gray")
-	srgbRed   = pixel.NewPicture("graphics/srgb-red")
-	srgbGreen = pixel.NewPicture("graphics/srgb-green")
-	srgbBlue  = pixel.NewPicture("graphics/srgb-blue")
+	mire      = pixel.Picture("graphics/mire")
+	srgbGray  = pixel.Picture("graphics/srgb-gray")
+	srgbRed   = pixel.Picture("graphics/srgb-red")
+	srgbGreen = pixel.Picture("graphics/srgb-green")
+	srgbBlue  = pixel.Picture("graphics/srgb-blue")
 )
 
 var picMode int
@@ -83,7 +83,7 @@ func (picLoop) Update() error { return nil }
 
 //------------------------------------------------------------------------------
 
-func (picLoop) Draw() error {
+func (picLoop) Render() error {
 	picScreen.Clear(0)
 	sz := picScreen.Size()
 	switch picMode {
@@ -119,16 +119,5 @@ func (picLoop) Draw() error {
 // 		palette.Load("graphics/srgb-gray")
 // 	}
 // }
-
-//------------------------------------------------------------------------------
-
-func (picLoop) Resize()  {}
-func (picLoop) Show()    {}
-func (picLoop) Hide()    {}
-func (picLoop) Focus()   {}
-func (picLoop) Unfocus() {}
-func (picLoop) Quit() {
-	glam.Stop()
-}
 
 //------------------------------------------------------------------------------

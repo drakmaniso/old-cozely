@@ -8,25 +8,25 @@ import (
 	"github.com/drakmaniso/glam/plane"
 )
 
-type cursor struct {}
+type cursor struct{}
 
 // Cursor is special action linked to the position of the mouse cursor.
 var Cursor cursor
 
 var (
 	cursorhidden bool
-	cursordelta plane.Pixel
+	cursordelta  plane.Pixel
 )
 
-func (cursor) Active(Device) bool {
+func (cursor) Active(DeviceID) bool {
 	return true
 }
 
-func (cursor) deactivate(Device) {}
+func (cursor) deactivate(DeviceID) {}
 
-func (cursor) activate(Device, binding) {}
+func (cursor) activate(DeviceID, binding) {}
 
-func (cursor) newframe(Device) {
+func (cursor) newframe(DeviceID) {
 	cursordelta = plane.Pixel{
 		X: internal.MouseDeltaX,
 		Y: internal.MouseDeltaY,

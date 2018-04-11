@@ -12,8 +12,8 @@ import (
 //------------------------------------------------------------------------------
 
 type binding interface {
-	bind(c Context, a Action)
-	activate(d Device)
+	bind(c ContextID, a Action)
+	activate(d DeviceID)
 	asBool() (just bool, value bool)
 }
 
@@ -34,7 +34,7 @@ func Load(b Bindings) error {
 		ctx := noContext
 		for i, n := range contexts.name {
 			if n == cn {
-				ctx = Context(i)
+				ctx = ContextID(i)
 				break
 			}
 		}

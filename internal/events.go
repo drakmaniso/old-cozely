@@ -27,29 +27,27 @@ import "C"
 
 //------------------------------------------------------------------------------
 
-// GameLoop methods are called to setup the game, and during the main loop to
-// process events, Update the game state and Draw it.
+// GameLoop (identic to glam.GameLoop).
 type GameLoop interface {
-	// The loop
+	Leave() error
 	Enter() error
+
 	React() error
 	Update() error
-	Draw() error
-	Leave() error
-
-	// Window events
-	Resize()
-	Hide()
-	Show()
-	Focus()
-	Unfocus()
-	Quit()
+	Render() error
 }
 
 //------------------------------------------------------------------------------
 
 // ProcessEvents processes and dispatches all events.
-func ProcessEvents() {
+func ProcessEvents(win struct {
+	Resize  func()
+	Hide    func()
+	Show    func()
+	Focus   func()
+	Unfocus func()
+	Quit    func()
+}) {
 	more := true
 	for more && !QuitRequested {
 		n := peepEvents()
@@ -65,16 +63,23 @@ func ProcessEvents() {
 
 		for i := 0; i < n && !QuitRequested; i++ {
 			e := eventAt(i)
-			dispatch(e)
+			dispatch(e, win)
 		}
 		more = n >= C.PEEP_SIZE
 	}
 }
 
-func dispatch(e unsafe.Pointer) {
+func dispatch(e unsafe.Pointer, win struct{
+	Resize  func()
+	Hide    func()
+	Show    func()
+	Focus   func()
+	Unfocus func()
+	Quit    func()
+}) {
 	switch ((*C.SDL_CommonEvent)(e))._type {
 	case C.SDL_QUIT:
-		Loop.Quit()
+		win.Quit()
 	// Window Events
 	case C.SDL_WINDOWEVENT:
 		e := (*C.SDL_WindowEvent)(e)
@@ -82,9 +87,9 @@ func dispatch(e unsafe.Pointer) {
 		case C.SDL_WINDOWEVENT_NONE:
 			// Ignore
 		case C.SDL_WINDOWEVENT_SHOWN:
-			Loop.Show()
+			win.Show()
 		case C.SDL_WINDOWEVENT_HIDDEN:
-			Loop.Hide()
+			win.Hide()
 		case C.SDL_WINDOWEVENT_EXPOSED:
 			// Ignore
 		case C.SDL_WINDOWEVENT_MOVED:
@@ -93,7 +98,7 @@ func dispatch(e unsafe.Pointer) {
 			Window.Width = int16(e.data1)
 			Window.Height = int16(e.data2)
 			PixelResize()
-			Loop.Resize()
+			win.Resize()
 		case C.SDL_WINDOWEVENT_SIZE_CHANGED:
 			//TODO
 		case C.SDL_WINDOWEVENT_MINIMIZED:
@@ -108,10 +113,10 @@ func dispatch(e unsafe.Pointer) {
 			HasMouseFocus = false
 		case C.SDL_WINDOWEVENT_FOCUS_GAINED:
 			HasFocus = true
-			Loop.Focus()
+			win.Focus()
 		case C.SDL_WINDOWEVENT_FOCUS_LOST:
 			HasFocus = false
-			Loop.Unfocus()
+			win.Unfocus()
 		case C.SDL_WINDOWEVENT_CLOSE:
 			// Ignore
 		default:

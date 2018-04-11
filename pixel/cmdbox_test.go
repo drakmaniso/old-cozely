@@ -15,7 +15,7 @@ import (
 
 //------------------------------------------------------------------------------
 
-var boxScreen = pixel.NewCanvas(pixel.Zoom(3))
+var boxScreen = pixel.Canvas(pixel.Zoom(3))
 
 //------------------------------------------------------------------------------
 
@@ -58,7 +58,7 @@ func (boxLoop) Update() error { return nil }
 
 //------------------------------------------------------------------------------
 
-func (boxLoop) Draw() error {
+func (boxLoop) Render() error {
 	boxScreen.Clear(0)
 
 	const corner = 3
@@ -91,17 +91,6 @@ func (boxLoop) Draw() error {
 	boxScreen.Point(18, 2, m)
 	boxScreen.Display()
 	return nil
-}
-
-//------------------------------------------------------------------------------
-
-func (boxLoop) Resize()  {}
-func (boxLoop) Show()    {}
-func (boxLoop) Hide()    {}
-func (boxLoop) Focus()   {}
-func (boxLoop) Unfocus() {}
-func (boxLoop) Quit() {
-	glam.Stop()
 }
 
 //------------------------------------------------------------------------------

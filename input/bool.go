@@ -3,9 +3,9 @@
 
 package input
 
-type Bool uint32
+type BoolID uint32
 
-const noBool = Bool(maxID)
+const noBool = BoolID(maxID)
 
 var bools struct {
 	// For each bool
@@ -21,7 +21,7 @@ type boolean struct {
 	pressed bool
 }
 
-func NewBool(name string) Bool {
+func Bool(name string) BoolID {
 	_, ok := actions.names[name]
 	if ok {
 		//TODO: set error
@@ -34,17 +34,17 @@ func NewBool(name string) Bool {
 		return noBool
 	}
 
-	actions.names[name] = Bool(a)
+	actions.names[name] = BoolID(a)
 	bools.name = append(bools.name, name)
 
-	return Bool(a)
+	return BoolID(a)
 }
 
-func (a Bool) Name() string {
+func (a BoolID) Name() string {
 	return bools.name[a]
 }
 
-func (a Bool) activate(d Device, b binding) {
+func (a BoolID) activate(d DeviceID, b binding) {
 	devices.bools[d][a].active = true
 	devices.boolbinds[d][a] = append(devices.boolbinds[d][a], b)
 	_, v := b.asBool()
@@ -53,7 +53,7 @@ func (a Bool) activate(d Device, b binding) {
 	}
 }
 
-func (a Bool) newframe(d Device) {
+func (a BoolID) newframe(d DeviceID) {
 	devices.bools[d][a].just = false
 	for _, b := range devices.boolbinds[d][a] {
 		j, v := b.asBool()
@@ -64,29 +64,29 @@ func (a Bool) newframe(d Device) {
 	}
 }
 
-func (a Bool) deactivate(d Device) {
+func (a BoolID) deactivate(d DeviceID) {
 	devices.boolbinds[d][a] = devices.boolbinds[d][a][:0]
 	devices.bools[d][a].active = false
 	devices.bools[d][a].just = false
 	devices.bools[d][a].pressed = false
 }
 
-func (a Bool) Active(d Device) bool {
+func (a BoolID) Active(d DeviceID) bool {
 	return devices.bools[d][a].active
 }
 
-func (a Bool) Pressed(d Device) bool {
+func (a BoolID) Pressed(d DeviceID) bool {
 	return devices.bools[d][a].pressed
 }
 
-func (a Bool) JustPressed(d Device) bool {
+func (a BoolID) JustPressed(d DeviceID) bool {
 	return devices.bools[d][a].just && devices.bools[d][a].pressed
 }
 
-func (a Bool) Released(d Device) bool {
+func (a BoolID) Released(d DeviceID) bool {
 	return !devices.bools[d][a].pressed
 }
 
-func (a Bool) JustReleased(d Device) bool {
+func (a BoolID) JustReleased(d DeviceID) bool {
 	return devices.bools[d][a].just && !devices.bools[d][a].pressed
 }

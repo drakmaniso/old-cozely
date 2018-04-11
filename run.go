@@ -11,25 +11,36 @@ import (
 
 //------------------------------------------------------------------------------
 
-// GameLoop methods are called during the main loop to process events, Update
-// the game state and render it.
+// GameLoop methods are called in a loop to React to user inputs, Update the
+// game state, and Render it.
 type GameLoop interface {
-	// Initialization and cleanup of the loop
+	// Initialization and cleanup
 	Enter() error
 	Leave() error
 
 	// The loop itself
 	React() error
 	Update() error
-	Draw() error
+	Render() error
+}
 
-	// Window events
-	Resize()
-	Hide()
-	Show()
-	Focus()
-	Unfocus()
-	Quit()
+//------------------------------------------------------------------------------
+
+// Window holds the callbacks for window events
+var Window = struct {
+	Resize  func()
+	Hide    func()
+	Show    func()
+	Focus   func()
+	Unfocus func()
+	Quit    func()
+}{
+	Resize:  func() {},
+	Hide:    func() {},
+	Show:    func() {},
+	Focus:   func() {},
+	Unfocus: func() {},
+	Quit:    func() { Stop() },
 }
 
 //------------------------------------------------------------------------------
@@ -103,13 +114,13 @@ func Run(loop GameLoop) (err error) {
 
 	// First, send a fake resize window event
 	internal.PixelResize()
-	internal.Loop.Resize()
+	Window.Resize()
 
 	// Main Loop
 
 	internal.Running = true
 
-	internal.FrameTime = 0.0
+	internal.RenderTime = 0.0
 	internal.UpdateLag = 0.0
 
 	then := internal.GetSeconds()
@@ -123,29 +134,29 @@ func Run(loop GameLoop) (err error) {
 	}
 
 	for !internal.QuitRequested {
-		internal.FrameTime = now - then
+		internal.RenderTime = now - then
 		countFrames()
-		if internal.FrameTime > 4*internal.TimeStep {
+		if internal.RenderTime > 4*internal.UpdateStep {
 			// Prevent "spiral of death" when Draw can't keep up with Update
-			internal.FrameTime = 4 * internal.TimeStep
+			internal.RenderTime = 4 * internal.UpdateStep
 		}
 
 		// Update and Events
 
-		internal.UpdateLag += internal.FrameTime
-		if internal.UpdateLag < internal.TimeStep {
+		internal.UpdateLag += internal.RenderTime
+		if internal.UpdateLag < internal.UpdateStep {
 			// Process events even if there is no Update this frame
-			internal.ProcessEvents()
+			internal.ProcessEvents(Window)
 			internal.ActionNewFrame() //TODO: error handling?
 			internal.Loop.React()
 		}
-		for internal.UpdateLag >= internal.TimeStep {
+		for internal.UpdateLag >= internal.UpdateStep {
 			// Do the Time Step
-			internal.UpdateLag -= internal.TimeStep
-			gametime += internal.TimeStep
+			internal.UpdateLag -= internal.UpdateStep
+			gametime += internal.UpdateStep
 			internal.GameTime = gametime
 			// Events
-			internal.ProcessEvents()
+			internal.ProcessEvents(Window)
 			internal.ActionNewFrame() //TODO: error handling?
 			internal.Loop.React()
 			// Update
@@ -161,7 +172,7 @@ func Run(loop GameLoop) (err error) {
 		gl.ClearColorBuffer(colour.LRGBA{0, 0, 0, 0}) //TODO: ...
 
 		internal.GameTime = gametime + internal.UpdateLag
-		err = internal.Loop.Draw()
+		err = internal.Loop.Render()
 		if err != nil {
 			return internal.Error("in Draw callback", err)
 		}
@@ -194,19 +205,19 @@ func GameTime() float64 {
 }
 
 // UpdateTime returns the time between previous update and current one. It is a
-// fixed value, that only changes when configured with TimeStep.
+// fixed value, that only changes when configured with UpdateStep.
 //
 // See also UpdateLag.
 func UpdateTime() float64 {
-	return internal.TimeStep
+	return internal.UpdateStep
 }
 
-// FrameTime returns the time elapsed between the previous frame and the one
+// RenderTime returns the time elapsed between the previous frame and the one
 // being drawn.
 //
-// See also Updatetime and UpdateLag.
-func FrameTime() float64 {
-	return internal.FrameTime
+// See also UpdateTime and UpdateLag.
+func RenderTime() float64 {
+	return internal.RenderTime
 }
 
 // UpdateLag returns the time elapsed between the last update and the frame
@@ -216,7 +227,7 @@ func FrameTime() float64 {
 // Note: if called during Update (or an event callback), it returns the time
 // between the current update and the next Draw call.
 //
-// See also UpdateTime and FrameTime.
+// See also UpdateTime and RenderTime.
 func UpdateLag() float64 {
 	return internal.UpdateLag
 }
@@ -225,8 +236,8 @@ func UpdateLag() float64 {
 
 func countFrames() {
 	frCount++
-	frSum += internal.FrameTime
-	if internal.FrameTime > xrunThreshold {
+	frSum += internal.RenderTime
+	if internal.RenderTime > xrunThreshold {
 		xrunCount++
 	}
 	if frSum >= frInterval {
@@ -239,10 +250,10 @@ func countFrames() {
 	}
 }
 
-// FrameStats returns the average durations of frames; it is updated 4
+// RenderStats returns the average durations of frames; it is updated 4
 // times per second. It also returns the number of overruns (i.e. frame time
 // longer than the threshold) during the last measurment interval.
-func FrameStats() (t float64, overruns int) {
+func RenderStats() (t float64, overruns int) {
 	return frAverage, xrunPrevious
 }
 

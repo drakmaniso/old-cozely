@@ -7,9 +7,9 @@ import (
 	"github.com/drakmaniso/glam/plane"
 )
 
-type Delta uint32
+type DeltaID uint32
 
-const noDelta = Delta(maxID)
+const noDelta = DeltaID(maxID)
 
 var deltas struct {
 	// For each delta
@@ -24,7 +24,7 @@ type delta struct {
 	value  plane.Coord
 }
 
-func NewDelta(name string) Delta {
+func Delta(name string) DeltaID {
 	_, ok := actions.names[name]
 	if ok {
 		//TODO: set error
@@ -37,33 +37,33 @@ func NewDelta(name string) Delta {
 		return noDelta
 	}
 
-	actions.names[name] = Delta(a)
+	actions.names[name] = DeltaID(a)
 	deltas.name = append(deltas.name, name)
 
-	return Delta(a)
+	return DeltaID(a)
 }
 
-func (a Delta) Name() string {
+func (a DeltaID) Name() string {
 	return bools.name[a]
 }
 
-func (a Delta) activate(d Device, b binding) {
+func (a DeltaID) activate(d DeviceID, b binding) {
 	devices.deltas[d][a].active = true
 	devices.deltabinds[d][a] = append(devices.deltabinds[d][a], b)
 }
 
-func (a Delta) newframe(d Device) {
+func (a DeltaID) newframe(d DeviceID) {
 }
 
-func (a Delta) deactivate(d Device) {
+func (a DeltaID) deactivate(d DeviceID) {
 	devices.deltabinds[d][a] = devices.deltabinds[d][a][:0]
 	devices.deltas[d][a].active = false
 }
 
-func (a Delta) Active(d Device) bool {
+func (a DeltaID) Active(d DeviceID) bool {
 	return devices.deltas[d][a].active
 }
 
-func (a Delta) Delta(d Device) plane.Coord {
+func (a DeltaID) Delta(d DeviceID) plane.Coord {
 	return devices.deltas[d][a].value
 }

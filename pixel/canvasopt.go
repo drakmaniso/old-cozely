@@ -13,7 +13,7 @@ import (
 
 // A CanvasOption represents a configuration option used to change some
 // parameters of a canvas see NewCanvas.
-type CanvasOption = func(Canvas) error
+type CanvasOption = func(CanvasID) error
 
 //------------------------------------------------------------------------------
 
@@ -24,7 +24,7 @@ type CanvasOption = func(Canvas) error
 // - the canvas will never be smaller than the target resolution,
 // - the target resolution will occupy as much screen as possible.
 func TargetResolution(w, h int16) CanvasOption {
-	return func(cv Canvas) error {
+	return func(cv CanvasID) error {
 		s := &canvases[cv]
 		s.target.X, s.target.Y = w, h
 		s.autozoom = true
@@ -34,7 +34,7 @@ func TargetResolution(w, h int16) CanvasOption {
 
 // Zoom sets the pixel size used to display the canvas.
 func Zoom(z int16) CanvasOption {
-	return func(cv Canvas) error {
+	return func(cv CanvasID) error {
 		s := &canvases[cv]
 		if z < 1 {
 			return errors.New("pixel zoom null or negative")
@@ -42,7 +42,7 @@ func Zoom(z int16) CanvasOption {
 		s.pixel = z
 		s.autozoom = false
 		if internal.Running {
-			Canvas(0).autoresize()
+			CanvasID(0).autoresize()
 		}
 		return nil
 	}

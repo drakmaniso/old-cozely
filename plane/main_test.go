@@ -13,12 +13,12 @@ import (
 //------------------------------------------------------------------------------
 
 var (
-	quit     = input.NewBool("Quit")
-	next     = input.NewBool("Next")
-	previous = input.NewBool("Previous")
+	quit     = input.Bool("Quit")
+	next     = input.Bool("Next")
+	previous = input.Bool("Previous")
 )
 
-var testContext = input.NewContext("Test", quit, next, previous)
+var testContext = input.Context("Test", quit, next, previous)
 
 var testBindings = map[string]map[string][]string{
 	"Test": {

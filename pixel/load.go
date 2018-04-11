@@ -32,7 +32,7 @@ func loadAssets() error {
 	prects := []uint32{}
 
 	for i := range picturePaths {
-		err := Picture(i).scan(&prects)
+		err := PictureID(i).scan(&prects)
 		if err != nil {
 			//TODO: sticky error instead?
 			return err
@@ -55,7 +55,7 @@ func loadAssets() error {
 	frects := []uint32{}
 
 	for i := range fonts {
-		err := Font(i).load(&frects)
+		err := FontID(i).load(&frects)
 		if err != nil {
 			//TODO: sticky error instead?
 			return err
@@ -78,7 +78,7 @@ func loadAssets() error {
 
 //------------------------------------------------------------------------------
 
-func (p Picture) scan(prects *[]uint32) error {
+func (p PictureID) scan(prects *[]uint32) error {
 	if p == 0 {
 		return nil
 	}
@@ -123,20 +123,20 @@ func (p Picture) scan(prects *[]uint32) error {
 //------------------------------------------------------------------------------
 
 func pictSize(rect uint32) (width, height int16) {
-	s := Picture(rect).Size()
+	s := PictureID(rect).Size()
 	return s.X, s.Y
 }
 
 func pictPut(rect uint32, bin int16, x, y int16) {
-	pictureMap[Picture(rect)].bin = bin
-	pictureMap[Picture(rect)].x, pictureMap[Picture(rect)].y = x, y
+	pictureMap[PictureID(rect)].bin = bin
+	pictureMap[PictureID(rect)].x, pictureMap[PictureID(rect)].y = x, y
 }
 
 func pictPaint(rect uint32, dest interface{}) error {
-	px, py := pictureMap[Picture(rect)].x, pictureMap[Picture(rect)].y
-	pw, ph := pictureMap[Picture(rect)].w, pictureMap[Picture(rect)].h
+	px, py := pictureMap[PictureID(rect)].x, pictureMap[PictureID(rect)].y
+	pw, ph := pictureMap[PictureID(rect)].w, pictureMap[PictureID(rect)].h
 
-	fp := filepath.FromSlash(internal.Path + picturePaths[Picture(rect)] + ".png")
+	fp := filepath.FromSlash(internal.Path + picturePaths[PictureID(rect)] + ".png")
 	f, err := os.Open(fp)
 	if err != nil {
 		return err

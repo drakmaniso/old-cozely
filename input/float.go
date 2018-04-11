@@ -3,9 +3,9 @@
 
 package input
 
-type Float uint32
+type FloatID uint32
 
-const noFloat = Float(maxID)
+const noFloat = FloatID(maxID)
 
 var floats struct {
 	// For each float
@@ -20,7 +20,7 @@ type float struct {
 	value  float32
 }
 
-func NewFloat(name string) Float {
+func NewFloat(name string) FloatID {
 	_, ok := actions.names[name]
 	if ok {
 		//TODO: set error
@@ -33,33 +33,33 @@ func NewFloat(name string) Float {
 		return noFloat
 	}
 
-	actions.names[name] = Float(a)
+	actions.names[name] = FloatID(a)
 	floats.name = append(floats.name, name)
 
-	return Float(a)
+	return FloatID(a)
 }
 
-func (a Float) Name() string {
+func (a FloatID) Name() string {
 	return bools.name[a]
 }
 
-func (a Float) activate(d Device, b binding) {
+func (a FloatID) activate(d DeviceID, b binding) {
 	devices.floats[d][a].active = true
 	devices.floatbinds[d][a] = append(devices.floatbinds[d][a], b)
 }
 
-func (a Float) newframe(d Device) {
+func (a FloatID) newframe(d DeviceID) {
 }
 
-func (a Float) deactivate(d Device) {
+func (a FloatID) deactivate(d DeviceID) {
 	devices.floatbinds[d][a] = devices.floatbinds[d][a][:0]
 	devices.floats[d][a].active = false
 }
 
-func (a Float) Active(d Device) bool {
+func (a FloatID) Active(d DeviceID) bool {
 	return devices.floats[d][a].active
 }
 
-func (a Float) Value(d Device) float32 {
+func (a FloatID) Value(d DeviceID) float32 {
 	return devices.floats[d][a].value
 }

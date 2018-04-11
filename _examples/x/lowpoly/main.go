@@ -23,7 +23,7 @@ import (
 
 func main() {
 	glam.Configure(
-		glam.TimeStep(1.0 / 50),
+		glam.UpdateStep(1.0 / 50),
 	)
 
 	err := glam.Run(loop{})
@@ -130,14 +130,14 @@ func (l loop) MouseMotion(_, _ int32, _, _ int32) {
 	if glam.GameTime() < gametime {
 		fmt.Printf("***************ERROR************\n")
 	}
-	// fmt.Printf("  (%.4f: %.4f, %.4f)\n", glam.GameTime(), glam.FrameTime(), glam.UpdateLag())
+	// fmt.Printf("  (%.4f: %.4f, %.4f)\n", glam.GameTime(), glam.RenderTime(), glam.UpdateLag())
 	gametime = glam.GameTime()
 }
 func (loop) Update() error {
 	if glam.GameTime() < gametime {
 		fmt.Printf("***************ERROR************\n")
 	}
-	// fmt.Printf(" - %.4f: %.4f, %.4f\n", glam.GameTime(), glam.FrameTime(), glam.UpdateLag())
+	// fmt.Printf(" - %.4f: %.4f, %.4f\n", glam.GameTime(), glam.RenderTime(), glam.UpdateLag())
 	gametime = glam.GameTime()
 
 	// prepare()
@@ -155,7 +155,7 @@ func (loop) Draw() error {
 	if glam.GameTime() < gametime {
 		fmt.Printf("***************ERROR************\n")
 	}
-	// fmt.Printf("## %.4f: %.4f, %.4f\n", glam.GameTime(), glam.FrameTime(), glam.UpdateLag())
+	// fmt.Printf("## %.4f: %.4f, %.4f\n", glam.GameTime(), glam.RenderTime(), glam.UpdateLag())
 	gametime = glam.GameTime()
 
 	prepare()
@@ -195,7 +195,7 @@ func (loop) Draw() error {
 //------------------------------------------------------------------------------
 
 func prepare() {
-	dt := float32(glam.FrameTime())
+	dt := float32(glam.RenderTime())
 
 	camera.Move(forward*dt, lateral*dt, vertical*dt)
 

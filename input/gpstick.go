@@ -5,6 +5,6 @@ package input
 
 type gpStick struct{}
 
-func (a gpStick) bind(c Context, target Action)   {}
-func (a gpStick) activate(d Device)              {}
+func (a gpStick) bind(c ContextID, target Action) {}
+func (a gpStick) activate(d DeviceID)             {}
 func (a gpStick) asBool() (just bool, value bool) { return false, false }

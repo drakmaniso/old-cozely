@@ -5,6 +5,6 @@ package input
 
 type gpTrigger struct{}
 
-func (a gpTrigger) bind(c Context, target Action)   {}
-func (a gpTrigger) activate(d Device)              {}
+func (a gpTrigger) bind(c ContextID, target Action) {}
+func (a gpTrigger) activate(d DeviceID)             {}
 func (a gpTrigger) asBool() (just bool, value bool) { return false, false }

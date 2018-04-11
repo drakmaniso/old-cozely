@@ -16,12 +16,12 @@ import (
 //------------------------------------------------------------------------------
 
 var (
-	newPoint   = input.NewBool("NewPoint")
-	hidePoints = input.NewBool("HidePoints")
-	hideLines  = input.NewBool("HideLines")
+	newPoint   = input.Bool("NewPoint")
+	hidePoints = input.Bool("HidePoints")
+	hideLines  = input.Bool("HideLines")
 )
 
-var cmdContext = input.NewContext("TestCommands",
+var cmdContext = input.Context("TestCommands",
 	quit, newPoint, previous, hidePoints, hideLines)
 
 var cmdBindings = input.Bindings{
@@ -36,7 +36,7 @@ var cmdBindings = input.Bindings{
 
 //------------------------------------------------------------------------------
 
-var cmdScreen = pixel.NewCanvas(pixel.TargetResolution(128, 128))
+var cmdScreen = pixel.Canvas(pixel.TargetResolution(128, 128))
 
 var points = []plane.Pixel{
 	{4, 4},
@@ -98,7 +98,7 @@ func (cmdLoop) React() error {
 
 //------------------------------------------------------------------------------
 
-func (cmdLoop) Draw() error {
+func (cmdLoop) Render() error {
 	cmdScreen.Clear(0)
 	m := cmdScreen.Mouse()
 	cmdScreen.Triangles(2, -2, points...)
@@ -119,16 +119,5 @@ func (cmdLoop) Draw() error {
 //------------------------------------------------------------------------------
 
 func (cmdLoop) Update() error { return nil }
-
-//------------------------------------------------------------------------------
-
-func (cmdLoop) Resize()  {}
-func (cmdLoop) Show()    {}
-func (cmdLoop) Hide()    {}
-func (cmdLoop) Focus()   {}
-func (cmdLoop) Unfocus() {}
-func (cmdLoop) Quit() {
-	glam.Stop()
-}
 
 //------------------------------------------------------------------------------

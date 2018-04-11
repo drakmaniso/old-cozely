@@ -100,7 +100,7 @@ func (loop) Update() error {
 //------------------------------------------------------------------------------
 
 func (loop) Draw() error {
-	angle -= 1.0 * glam.FrameTime()
+	angle -= 1.0 * glam.RenderTime()
 
 	pipeline.Bind()
 	gl.ClearColorBuffer(colour.LRGBA{0.9, 0.9, 0.9, 1.0})

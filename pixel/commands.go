@@ -26,14 +26,14 @@ const (
 //------------------------------------------------------------------------------
 
 // Picture adds a command to show a picture on the canvas.
-func (cv Canvas) Picture(p Picture, depth int16, pos plane.Pixel) {
+func (cv CanvasID) Picture(p PictureID, depth int16, pos plane.Pixel) {
 	cv.appendCommand(cmdPicture, 4, 1, int16(p), depth, pos.X, pos.Y)
 }
 
 //------------------------------------------------------------------------------
 
 // Point adds a command to draw a point on the canvas.
-func (cv Canvas) Point(color palette.Index, depth int16, pos plane.Pixel) {
+func (cv CanvasID) Point(color palette.Index, depth int16, pos plane.Pixel) {
 	cv.appendCommand(cmdPoint, 3, 1, int16(color), depth, pos.X, pos.Y)
 }
 
@@ -42,7 +42,7 @@ func (cv Canvas) Point(color palette.Index, depth int16, pos plane.Pixel) {
 // Lines adds a command to draw a line strip on the canvas. A line strip is a
 // succesion of points connected by lines; all points and lines share the same
 // depth and color.
-func (cv Canvas) Lines(c palette.Index, depth int16, strip ...plane.Pixel) {
+func (cv CanvasID) Lines(c palette.Index, depth int16, strip ...plane.Pixel) {
 	if len(strip) < 2 {
 		return
 	}
@@ -58,7 +58,7 @@ func (cv Canvas) Lines(c palette.Index, depth int16, strip ...plane.Pixel) {
 // Triangles adds a command to draw a triangle strip on the canvas. Triangle
 // strip have the same meaning than in OpenGL. All points and triangles share
 // the same depth and color.
-func (cv Canvas) Triangles(c palette.Index, depth int16, strip ...plane.Pixel) {
+func (cv CanvasID) Triangles(c palette.Index, depth int16, strip ...plane.Pixel) {
 	if len(strip) < 3 {
 		return
 	}
@@ -72,7 +72,7 @@ func (cv Canvas) Triangles(c palette.Index, depth int16, strip ...plane.Pixel) {
 //------------------------------------------------------------------------------
 
 // Box adds a command to draw a box on the canvas.
-func (cv Canvas) Box(fg, bg palette.Index, corner int16, depth int16, a, b plane.Pixel) {
+func (cv CanvasID) Box(fg, bg palette.Index, corner int16, depth int16, a, b plane.Pixel) {
 	if b.X < a.X {
 		a.X, b.X = b.X, a.X
 	}
@@ -89,7 +89,7 @@ func (cv Canvas) Box(fg, bg palette.Index, corner int16, depth int16, a, b plane
 
 //------------------------------------------------------------------------------
 
-func (cv Canvas) appendCommand(c uint32, v uint32, n uint32, params ...int16) {
+func (cv CanvasID) appendCommand(c uint32, v uint32, n uint32, params ...int16) {
 	s := &canvases[cv]
 	ccap, pcap := cap(s.commands), cap(s.parameters)
 

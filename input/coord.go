@@ -7,9 +7,9 @@ import (
 	"github.com/drakmaniso/glam/plane"
 )
 
-type Coord uint32
+type CoordID uint32
 
-const noCoord = Coord(maxID)
+const noCoord = CoordID(maxID)
 
 var coords struct {
 	// For each coord
@@ -24,7 +24,7 @@ type coord struct {
 	value  plane.Coord
 }
 
-func NewCoord(name string) Coord {
+func Coord(name string) CoordID {
 	_, ok := actions.names[name]
 	if ok {
 		//TODO: set error
@@ -37,33 +37,33 @@ func NewCoord(name string) Coord {
 		return noCoord
 	}
 
-	actions.names[name] = Coord(a)
+	actions.names[name] = CoordID(a)
 	coords.name = append(coords.name, name)
 
-	return Coord(a)
+	return CoordID(a)
 }
 
-func (a Coord) Name() string {
+func (a CoordID) Name() string {
 	return bools.name[a]
 }
 
-func (a Coord) activate(d Device, b binding) {
+func (a CoordID) activate(d DeviceID, b binding) {
 	devices.coords[d][a].active = true
 	devices.coordbinds[d][a] = append(devices.coordbinds[d][a], b)
 }
 
-func (a Coord) newframe(d Device) {
+func (a CoordID) newframe(d DeviceID) {
 }
 
-func (a Coord) deactivate(d Device) {
+func (a CoordID) deactivate(d DeviceID) {
 	devices.coordbinds[d][a] = devices.coordbinds[d][a][:0]
 	devices.coords[d][a].active = false
 }
 
-func (a Coord) Active(d Device) bool {
+func (a CoordID) Active(d DeviceID) bool {
 	return devices.coords[d][a].active
 }
 
-func (a Coord) Coord(d Device) plane.Coord {
+func (a CoordID) Coord(d DeviceID) plane.Coord {
 	return devices.coords[d][a].value
 }

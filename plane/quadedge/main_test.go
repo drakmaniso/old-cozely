@@ -13,22 +13,22 @@ import (
 //------------------------------------------------------------------------------
 
 var (
-	quit     = input.NewBool("Quit")
-	next     = input.NewBool("Next")
-	previous = input.NewBool("Previous")
-	scene1   = input.NewBool("Scene1")
-	scene2   = input.NewBool("Scene2")
-	scene3   = input.NewBool("Scene3")
-	scene4   = input.NewBool("Scene4")
-	scene5   = input.NewBool("Scene5")
-	scene6   = input.NewBool("Scene6")
-	scene7   = input.NewBool("Scene7")
-	scene8   = input.NewBool("Scene8")
-	scene9   = input.NewBool("Scene9")
-	scene10  = input.NewBool("Scene10")
+	quit     = input.Bool("Quit")
+	next     = input.Bool("Next")
+	previous = input.Bool("Previous")
+	scene1   = input.Bool("Scene1")
+	scene2   = input.Bool("Scene2")
+	scene3   = input.Bool("Scene3")
+	scene4   = input.Bool("Scene4")
+	scene5   = input.Bool("Scene5")
+	scene6   = input.Bool("Scene6")
+	scene7   = input.Bool("Scene7")
+	scene8   = input.Bool("Scene8")
+	scene9   = input.Bool("Scene9")
+	scene10  = input.Bool("Scene10")
 )
 
-var testContext = input.NewContext("Test", quit, next, previous,
+var testContext = input.Context("Test", quit, next, previous,
 	scene1, scene2, scene3, scene4, scene5, scene6, scene7, scene8, scene9)
 
 var testBindings = map[string]map[string][]string{

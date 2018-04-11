@@ -60,12 +60,12 @@ var Running = false
 // GameTime is the current time.
 var GameTime float64
 
-// TimeStep is the fixed time between calls to Update
-var TimeStep = float64(1.0 / 50)
+// UpdateStep is the fixed time between calls to Update
+var UpdateStep = float64(1.0 / 50)
 
 var (
-	// FrameTime is the time elapsed between current and previous frames.
-	FrameTime float64
+	// RenderTime is the time elapsed between current and previous frames.
+	RenderTime float64
 	// UpdateLag is the time accumulator used to decorrelate render frames from
 	// updates.
 	UpdateLag float64

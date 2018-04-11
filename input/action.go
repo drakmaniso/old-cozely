@@ -4,10 +4,10 @@
 package input
 
 type Action interface {
-	Active(d Device) bool
-	deactivate(d Device)
-	activate(d Device, b binding)
-	newframe(d Device)
+	Active(d DeviceID) bool
+	deactivate(d DeviceID)
+	activate(d DeviceID, b binding)
+	newframe(d DeviceID)
 }
 
 var actions = struct {

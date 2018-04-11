@@ -19,7 +19,7 @@ import (
 //------------------------------------------------------------------------------
 
 var (
-	screen = pixel.NewCanvas(pixel.Zoom(2))
+	screen = pixel.Canvas(pixel.Zoom(2))
 	cursor = pixel.Cursor{Canvas: screen}
 )
 
@@ -60,7 +60,7 @@ type triLoop struct{}
 func (triLoop) Enter() error {
 	input.Load(testBindings)
 	testContext.Activate(1)
-	
+
 	points = make([]plane.Coord, 3)
 	newPoints()
 
@@ -96,7 +96,7 @@ func (triLoop) Update() error { return nil }
 
 //------------------------------------------------------------------------------
 
-func (triLoop) Draw() error {
+func (triLoop) Render() error {
 	screen.Clear(0)
 	cursor.Depth = 0x7FFF
 	ratio = float32(screen.Size().Y)
@@ -203,17 +203,6 @@ func fromScreen(p plane.Pixel) plane.Coord {
 		X: (float32(p.X) - offset.X) / ratio,
 		Y: (offset.Y - float32(p.Y)) / ratio,
 	}
-}
-
-//------------------------------------------------------------------------------
-
-func (triLoop) Resize()  {}
-func (triLoop) Show()    {}
-func (triLoop) Hide()    {}
-func (triLoop) Focus()   {}
-func (triLoop) Unfocus() {}
-func (triLoop) Quit() {
-	glam.Stop()
 }
 
 //------------------------------------------------------------------------------

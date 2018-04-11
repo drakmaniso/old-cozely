@@ -24,7 +24,7 @@ func setup() error {
 	// Create the canvases
 
 	for i := range canvases {
-		Canvas(i).createBuffer()
+		CanvasID(i).createBuffer()
 	}
 
 	// Create the paint pipeline
@@ -161,7 +161,7 @@ func cleanup() error {
 func init() {
 	internal.PixelResize = func() {
 		for i := range canvases {
-			Canvas(i).autoresize()
+			CanvasID(i).autoresize()
 		}
 	}
 }

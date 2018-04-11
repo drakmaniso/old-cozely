@@ -17,7 +17,7 @@ import (
 //------------------------------------------------------------------------------
 
 var (
-	screen = pixel.NewCanvas(pixel.Zoom(1))
+	screen = pixel.Canvas(pixel.Zoom(1))
 	cursor = pixel.Cursor{Canvas: screen}
 )
 
@@ -144,7 +144,7 @@ func (delLoop) Update() error { return nil }
 
 //------------------------------------------------------------------------------
 
-func (delLoop) Draw() error {
+func (delLoop) Render() error {
 	screen.Clear(0)
 	ratio = float32(screen.Size().Y)
 	orig = plane.Coord{
@@ -156,7 +156,7 @@ func (delLoop) Draw() error {
 	p := fromScreen(m)
 	cursor.Locate(2, 8)
 	cursor.Color = 0
-	fsr, fso := glam.FrameStats()
+	fsr, fso := glam.RenderStats()
 	cursor.Printf("Framerate: %.2f (%d)\n", 1000*fsr, fso)
 	if p.X >= 0 && p.X <= 1.0 {
 		cursor.Printf("Position: %.3f, %.3f\n", p.X, p.Y)
@@ -208,17 +208,6 @@ func newPoints() {
 		points[i] = plane.Coord{rand.Float32(), rand.Float32()}
 	}
 	triangulation = quadedge.Delaunay(points)
-}
-
-//------------------------------------------------------------------------------
-
-func (delLoop) Resize()  {}
-func (delLoop) Show()    {}
-func (delLoop) Hide()    {}
-func (delLoop) Focus()   {}
-func (delLoop) Unfocus() {}
-func (delLoop) Quit() {
-	glam.Stop()
 }
 
 //------------------------------------------------------------------------------

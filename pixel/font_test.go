@@ -17,13 +17,13 @@ import (
 //------------------------------------------------------------------------------
 
 var (
-	tinela9    = pixel.NewFont("fonts/tinela9")
-	monozela10 = pixel.NewFont("fonts/monozela10")
-	simpela10  = pixel.NewFont("fonts/simpela10")
-	simpela12  = pixel.NewFont("fonts/simpela12")
-	cozela10   = pixel.NewFont("fonts/cozela10")
-	cozela12   = pixel.NewFont("fonts/cozela12")
-	chaotela12 = pixel.NewFont("fonts/chaotela12")
+	tinela9    = pixel.Font("fonts/tinela9")
+	monozela10 = pixel.Font("fonts/monozela10")
+	simpela10  = pixel.Font("fonts/simpela10")
+	simpela12  = pixel.Font("fonts/simpela12")
+	cozela10   = pixel.Font("fonts/cozela10")
+	cozela12   = pixel.Font("fonts/cozela12")
+	chaotela12 = pixel.Font("fonts/chaotela12")
 	font       = monozela10
 )
 
@@ -101,7 +101,7 @@ func (fntLoop) Update() error { return nil }
 
 //------------------------------------------------------------------------------
 
-func (fntLoop) Draw() error {
+func (fntLoop) Render() error {
 	curScreen.Clear(curBg)
 
 	cursor.Locate(16, font.Height()+2)
@@ -188,16 +188,5 @@ func (fntLoop) Draw() error {
 // 		fntLine = len(fntShow) - 1
 // 	}
 // }
-
-//------------------------------------------------------------------------------
-
-func (fntLoop) Resize()  {}
-func (fntLoop) Show()    {}
-func (fntLoop) Hide()    {}
-func (fntLoop) Focus()   {}
-func (fntLoop) Unfocus() {}
-func (fntLoop) Quit() {
-	glam.Stop()
-}
 
 //------------------------------------------------------------------------------

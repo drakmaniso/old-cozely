@@ -26,14 +26,14 @@ const (
 	Mouse8
 )
 
-func (a *msButton) bind(c Context, target Action) {
+func (a *msButton) bind(c ContextID, target Action) {
 	aa := *a
 	aa.target = target
 	devices.bindings[kbmouse][c] =
 		append(devices.bindings[kbmouse][c], &aa)
 }
 
-func (a *msButton) activate(d Device) {
+func (a *msButton) activate(d DeviceID) {
 	a.target.activate(d, a)
 }
 

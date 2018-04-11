@@ -5,22 +5,22 @@ package input
 
 //------------------------------------------------------------------------------
 
-type Device uint32
+type DeviceID uint32
 
-const noDevice = Device(maxID)
+const noDevice = DeviceID(maxID)
 
 const (
-	anydev  Device = 0
-	kbmouse Device = iota
+	anydev  DeviceID = 0
+	kbmouse DeviceID = iota
 )
 
-const maxDevices = 16
+const maxdevices = 16
 
 var devices struct {
 	// For each device
 	name       []string
-	context    []Context
-	newcontext []Context
+	context    []ContextID
+	newcontext []ContextID
 
 	// For each device/action combination
 	bools  [][]boolean
@@ -40,14 +40,14 @@ var devices struct {
 
 //------------------------------------------------------------------------------
 
-func newDevice(name string) Device {
+func addDevice(name string) DeviceID {
 	l := len(devices.name)
 	if l >= maxID {
 		//TODO: set error
-		return Device(maxID)
+		return DeviceID(maxID)
 	}
 
-	a := Device(l)
+	a := DeviceID(l)
 	devices.name = append(devices.name, name)
 	devices.context = append(devices.context, noContext)
 	devices.newcontext = append(devices.newcontext, 0)
@@ -90,8 +90,8 @@ func clearDevices() {
 	devices.deltabinds = nil
 	devices.bindings = nil
 
-	newDevice("Any")
-	newDevice("KeyboardAndMouse")
+	addDevice("Any")
+	addDevice("KeyboardAndMouse")
 }
 
 //------------------------------------------------------------------------------
