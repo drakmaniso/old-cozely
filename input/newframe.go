@@ -14,6 +14,8 @@ func init() {
 }
 
 func newframe() error {
+	Cursor.newframe(1)
+
 	for d := range devices.name {
 		// Activate this device context if necessary
 		c := devices.context[d]

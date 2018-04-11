@@ -18,19 +18,19 @@ type MouseButton uint8 //TODO: remove
 //------------------------------------------------------------------------------
 
 // MouseDelta holds the delta from last mouse position.
-var MouseDeltaX, MouseDeltaY int32
+var MouseDeltaX, MouseDeltaY int16
 
 // MousePosition holds the current mouse position.
-var MousePositionX, MousePositionY int32
+var MousePositionX, MousePositionY int16
 
 // MouseButtons holds the state of the mouse buttons.
 var MouseButtons uint32
 
 //------------------------------------------------------------------------------
 
-// MouseSetRelativeMode enables or disables the relative mode, where the mouse is
+// MouseSetRelative enables or disables the relative mode, where the mouse is
 // hidden and mouse motions are continuously reported.
-func MouseSetRelativeMode(enabled bool) error {
+func MouseSetRelative(enabled bool) error {
 	var m C.SDL_bool
 	if enabled {
 		m = 1
@@ -44,8 +44,8 @@ func MouseSetRelativeMode(enabled bool) error {
 	return nil
 }
 
-// MouseGetRelativeMode returns true if the relative mode is enabled.
-func MouseGetRelativeMode() bool {
+// MouseRelative returns true if the relative mode is enabled.
+func MouseRelative() bool {
 	return C.SDL_GetRelativeMouseMode() == C.SDL_TRUE
 }
 

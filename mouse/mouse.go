@@ -13,25 +13,25 @@ import (
 // Position returns the current mouse position, relative to the game window.
 // Updated at the start of each game loop iteration.
 func Position() (x, y int32) {
-	return internal.MousePositionX, internal.MousePositionY
+	return int32(internal.MousePositionX), int32(internal.MousePositionY)
 }
 
 // Delta returns the mouse position relative to the last call of Delta.
 func Delta() (dx, dy int32) {
-	dx, dy = internal.MouseDeltaX, internal.MouseDeltaY
+	dx, dy = int32(internal.MouseDeltaX), int32(internal.MouseDeltaY)
 	internal.MouseDeltaX, internal.MouseDeltaY = 0, 0
 	return dx, dy
 }
 
-// SetRelativeMode enables or disables the relative mode, where the mouse is
+// SetRelative enables or disables the relative mode, where the mouse is
 // hidden and mouse motions are continuously reported.
-func SetRelativeMode(enabled bool) error {
-	return internal.MouseSetRelativeMode(enabled)
+func SetRelative(enabled bool) error {
+	return internal.MouseSetRelative(enabled)
 }
 
-// GetRelativeMode returns true if the relative mode is enabled.
-func GetRelativeMode() bool {
-	return internal.MouseGetRelativeMode()
+// Relative returns true if the relative mode is enabled.
+func RelativeMode() bool {
+	return internal.MouseRelative()
 }
 
 //------------------------------------------------------------------------------

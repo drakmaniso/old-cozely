@@ -65,12 +65,12 @@ func ProcessEvents() {
 		n := peepEvents()
 
 		var mx, my C.int
-		btn := C.SDL_GetRelativeMouseState(&mx, &my)
-		MouseDeltaX += int32(mx)
-		MouseDeltaY += int32(my)
-		C.SDL_GetMouseState(&mx, &my)
-		MousePositionX = int32(mx)
-		MousePositionY = int32(my)
+		C.SDL_GetRelativeMouseState(&mx, &my)
+		MouseDeltaX += int16(mx)
+		MouseDeltaY += int16(my)
+		btn := C.SDL_GetMouseState(&mx, &my)
+		MousePositionX = int16(mx)
+		MousePositionY = int16(my)
 		MouseButtons = uint32(btn)
 
 		for i := 0; i < n && !QuitRequested; i++ {

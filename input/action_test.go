@@ -9,10 +9,10 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/drakmaniso/glam/plane"
+
 	"github.com/drakmaniso/glam"
 	"github.com/drakmaniso/glam/input"
-	"github.com/drakmaniso/glam/key"
-	"github.com/drakmaniso/glam/mouse"
 	"github.com/drakmaniso/glam/palette"
 	"github.com/drakmaniso/glam/pixel"
 )
@@ -111,50 +111,40 @@ func (loop) Enter() error {
 
 //------------------------------------------------------------------------------
 
+var hidden bool
+
 var dx, dy int32
-var px, py int32
-var left, middle, right, extra1, extra2 bool
+var mousepos, mousedelta plane.Pixel
 
 var openmenu, closemenu, instopenmenu, instclosemenu, inventory, options, jump bool
 
 func (loop) React() error {
-	dx, dy = mouse.Delta()
-	px, py = mouse.Position()
-	left = mouse.IsPressed(mouse.Left)
-	middle = mouse.IsPressed(mouse.Middle)
-	right = mouse.IsPressed(mouse.Right)
-	extra1 = mouse.IsPressed(mouse.Extra1)
-	extra2 = mouse.IsPressed(mouse.Extra2)
+	mousepos = input.Cursor.Position()
+	mousedelta = input.Cursor.Delta()
 
-	if CloseMenuAction.JustPressed(1) {
-		println(" Just Pressed: CLOSE")
+	if JumpAction.JustPressed(1) {
+		println(" Just Pressed: *JUMP*")
 	}
+	if JumpAction.JustReleased(1) {
+		println("Just Released: (jump)")
+	}
+
 	if CloseMenuAction.JustReleased(1) {
-		println("Just Released: close")
 		InGame.Activate(1)
-	}
-	if OpenMenuAction.JustPressed(1) {
-		println(" Just Pressed: OPEN")
+		input.Cursor.Hide()
 	}
 	if OpenMenuAction.JustReleased(1) {
-		println("Just Released: open")
 		InMenu.Activate(1)
+		input.Cursor.Show()
 	}
 
 	if InstantCloseMenuAction.JustPressed(1) {
-		println(" Just Pressed: INSTANT CLOSE")
 		InGame.Activate(1)
 	}
-	if InstantCloseMenuAction.JustReleased(1) {
-		println("Just Released: instant close")
-	}
 	if InstantOpenMenuAction.JustPressed(1) {
-		println(" Just Pressed: INSTANT OPEN")
 		InMenu.Activate(1)
 	}
-	if InstantOpenMenuAction.JustReleased(1) {
-		println("Just Released: instant open")
-	}
+	hidden = input.Cursor.Hidden()
 
 	openmenu = OpenMenuAction.Pressed(1)
 	closemenu = CloseMenuAction.Pressed(1)
@@ -183,35 +173,19 @@ func (loop) Draw() error {
 	cursor.Locate(2, 12)
 	cursor.Color = DarkBlue - 1
 
-	cursor.Printf("   mouse delta:%+6d,%+6d\n", dx, dy)
-	cursor.Printf("mouse position:%6d,%6d\n", px, py)
+	cursor.Printf("cursor position:%6d,%6d\n", mousepos.X, mousepos.Y)
+	cursor.Printf("   cursor delta:%+6d,%+6d\n", mousedelta.X, mousedelta.Y)
+	cursor.Printf("     visibility:   ")
+	if hidden {
+		color(true)
+		cursor.Printf("HIDDEN\n")
+	} else {
+		color(false)
+		cursor.Printf("shown\n")
+	}
 
-	cursor.Printf(" mouse buttons: ")
-	if left {
-		cursor.Print("LEFT ")
-	} else {
-		cursor.Print("left ")
-	}
-	if middle {
-		cursor.Print("MIDDLE ")
-	} else {
-		cursor.Print("middle ")
-	}
-	if right {
-		cursor.Print("RIGHT ")
-	} else {
-		cursor.Print("right ")
-	}
-	if extra1 {
-		cursor.Print("EXTRA1 ")
-	} else {
-		cursor.Print("extra1 ")
-	}
-	if extra2 {
-		cursor.Print("EXTRA2\n")
-	} else {
-		cursor.Print("extra2\n")
-	}
+	cursor.Println()
+	color(false)
 
 	color(InMenu.Active(1))
 	cursor.Printf("  Menu: ")
@@ -240,25 +214,6 @@ func (loop) Draw() error {
 
 	screen.Display()
 	return nil
-}
-
-//------------------------------------------------------------------------------
-
-var relative = false
-
-func (loop) KeyDown(l key.Label, p key.Position) {
-	if l == key.LabelSpace {
-		relative = !relative
-		mouse.SetRelativeMode(relative)
-	}
-	if l == key.LabelEscape {
-		glam.Stop()
-	}
-	fmt.Printf("%v: Key Down: %v %v\n", glam.GameTime(), l, p)
-}
-
-func (loop) MouseWheel(dx, dy int32) {
-	fmt.Printf("%v: mouse wheel: %+d,%+d\n", glam.GameTime(), dx, dy)
 }
 
 //------------------------------------------------------------------------------
