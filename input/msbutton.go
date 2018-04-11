@@ -29,16 +29,12 @@ const (
 func (a *msButton) bind(c Context, target Action) {
 	aa := *a
 	aa.target = target
-	devices.bindings[KeyboardAndMouse][c] =
-		append(devices.bindings[KeyboardAndMouse][c], &aa)
+	devices.bindings[kbmouse][c] =
+		append(devices.bindings[kbmouse][c], &aa)
 }
 
-func (a *msButton) device() Device {
-	return KeyboardAndMouse
-}
-
-func (a *msButton) action() Action {
-	return a.target
+func (a *msButton) activate(d Device) {
+	a.target.activate(d, a)
 }
 
 func (a *msButton) asBool() (just bool, value bool) {

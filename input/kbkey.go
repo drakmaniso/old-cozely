@@ -16,16 +16,20 @@ type kbKey struct {
 func (a *kbKey) bind(c Context, target Action) {
 	aa := *a
 	aa.target = target
-	devices.bindings[KeyboardAndMouse][c] =
-		append(devices.bindings[KeyboardAndMouse][c], &aa)
+	devices.bindings[kbmouse][c] =
+		append(devices.bindings[kbmouse][c], &aa)
 }
 
 func (a *kbKey) device() Device {
-	return KeyboardAndMouse
+	return kbmouse
 }
 
 func (a *kbKey) action() Action {
 	return a.target
+}
+
+func (a *kbKey) activate(d Device) {
+	a.target.activate(d, a)
 }
 
 func (a *kbKey) asBool() (just bool, value bool) {

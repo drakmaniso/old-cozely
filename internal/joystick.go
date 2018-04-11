@@ -13,7 +13,7 @@ import "C"
 //------------------------------------------------------------------------------
 
 // GameController is a pointer to a SDL object.
-type GameController *C.SDL_GameController
+type GameController C.SDL_GameController
 
 //------------------------------------------------------------------------------
 
@@ -31,9 +31,19 @@ func IsGameController(j int) bool {
 
 // GameControllerOpen Returns a gamecontroller pointer or nil if an error
 // occurred; call SDL_GetError() for more information.
-func GameControllerOpen(j int) GameController {
+func GameControllerOpen(j int) *GameController {
 	c := C.SDL_GameControllerOpen(C.int(j))
-	return GameController(c)
+	return (*GameController)(c)
+}
+
+func (a *GameController) Name() string {
+	n := C.SDL_GameControllerName((*C.SDL_GameController)(a))
+	return C.GoString(n)
+}
+
+func JoystickNameForIndex(j int) string {
+	n := C.SDL_JoystickNameForIndex(C.int(j))
+	return C.GoString(n)
 }
 
 //------------------------------------------------------------------------------

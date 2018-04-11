@@ -4,14 +4,13 @@
 package input
 
 import (
-	"github.com/drakmaniso/glam/internal"
 	"errors"
+	"github.com/drakmaniso/glam/internal"
 )
 
 type binding interface {
 	bind(c Context, a Action)
-	device() Device
-	action() Action
+	activate(d Device)
 	asBool() (just bool, value bool)
 }
 
@@ -40,7 +39,7 @@ func LoadBindings(b map[string]map[string][]string) error {
 
 		for an, ab := range cb {
 			// Find action by name
-			act, ok := actions[an]
+			act, ok := actions.names[an]
 			if !ok {
 				if err == nil {
 					err = errors.New("unkown action: " + an)
@@ -69,14 +68,19 @@ func LoadBindings(b map[string]map[string][]string) error {
 	// Add gamepad devices
 
 	n := internal.NumJoysticks()
-	println("NumJoysticks=", n)
+	internal.Debug.Printf("Number of controllers detected: %d", n)
 	for j := 0; j < n; j++ {
 		if internal.IsGameController(j) {
-			println("joystick ", j, " is a gamepad")
 			c := internal.GameControllerOpen(j)
 			if c == nil {
 				return errors.New("unable to open joystick as gamepad")
 			}
+			// nm := c.Name()
+			nm := internal.JoystickNameForIndex(j)
+			internal.Debug.Printf("#%d: %s is a gamepad", j, nm)
+		} else {
+			nm := internal.JoystickNameForIndex(j)
+			internal.Debug.Printf("#%d: %s is a joystick", j, nm)
 		}
 	}
 

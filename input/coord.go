@@ -12,16 +12,20 @@ type Coord uint32
 const noCoord = Coord(maxID)
 
 var coords struct {
-	name   []string
+	// For each coord
+	name []string
+
+	// For each device, a list of coords
+	byDevice [][]coord
 }
 
 type coord struct {
 	active bool
-	value plane.Coord
+	value  plane.Coord
 }
 
 func NewCoord(name string) Coord {
-	_, ok := actions[name]
+	_, ok := actions.names[name]
 	if ok {
 		//TODO: set error
 		return noCoord
@@ -33,7 +37,7 @@ func NewCoord(name string) Coord {
 		return noCoord
 	}
 
-	actions[name] = Coord(a)
+	actions.names[name] = Coord(a)
 	coords.name = append(coords.name, name)
 
 	return Coord(a)
@@ -43,18 +47,16 @@ func (a Coord) Name() string {
 	return bools.name[a]
 }
 
-func (a Coord) activate(b binding) {
-	d := b.device()
+func (a Coord) activate(d Device, b binding) {
 	devices.coords[d][a].active = true
+	devices.coordbinds[d][a] = append(devices.coordbinds[d][a], b)
 }
 
-func (a Coord) newframe(b binding) {
-}
-
-func (a Coord) prepare(b binding) {
+func (a Coord) newframe(d Device) {
 }
 
 func (a Coord) deactivate(d Device) {
+	devices.coordbinds[d][a] = devices.coordbinds[d][a][:0]
 	devices.coords[d][a].active = false
 }
 

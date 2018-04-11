@@ -6,11 +6,14 @@ package input
 type Action interface {
 	Active(d Device) bool
 	deactivate(d Device)
-	activate(b binding)
-	newframe(b binding)
-	prepare(b binding)
+	activate(d Device, b binding)
+	newframe(d Device)
 }
 
-var actions = map[string]Action{}
+var actions = struct {
+	names map[string]Action
+}{
+	names: map[string]Action{},
+}
 
 const maxID = 0xFFFFFFFF

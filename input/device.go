@@ -3,22 +3,24 @@
 
 package input
 
+//------------------------------------------------------------------------------
+
 type Device uint32
 
 const noDevice = Device(maxID)
 
 const (
-	Any              Device = 0
-	KeyboardAndMouse Device = iota
+	anydev  Device = 0
+	kbmouse Device = iota
 )
 
 const maxDevices = 16
 
 var devices struct {
 	// For each device
-	name    []string
-	context []Context
-	new     []Context
+	name       []string
+	context    []Context
+	newcontext []Context
 
 	// For each device/action combination
 	bools  [][]boolean
@@ -26,11 +28,19 @@ var devices struct {
 	coords [][]coord
 	deltas [][]delta
 
-	// For each device/context combination, a list of bindings
+	// For each device/context combination, the list of bindings
 	bindings [][][]binding
+
+	// For each device/action combination, the list of *current* bindings
+	boolbinds  [][][]binding
+	floatbinds [][][]binding
+	coordbinds [][][]binding
+	deltabinds [][][]binding
 }
 
-func NewDevice(name string) Device {
+//------------------------------------------------------------------------------
+
+func newDevice(name string) Device {
 	l := len(devices.name)
 	if l >= maxID {
 		//TODO: set error
@@ -39,11 +49,24 @@ func NewDevice(name string) Device {
 
 	a := Device(l)
 	devices.name = append(devices.name, name)
-	devices.context = append(devices.context, 0)
-	devices.new = append(devices.new, 0)
+	devices.context = append(devices.context, noContext)
+	devices.newcontext = append(devices.newcontext, 0)
 
 	n := len(bools.name)
 	devices.bools = append(devices.bools, make([]boolean, n))
+	devices.boolbinds = append(devices.boolbinds, make([][]binding, n))
+
+	n = len(floats.name)
+	devices.floats = append(devices.floats, make([]float, n))
+	devices.floatbinds = append(devices.floatbinds, make([][]binding, n))
+
+	n = len(coords.name)
+	devices.coords = append(devices.coords, make([]coord, n))
+	devices.coordbinds = append(devices.coordbinds, make([][]binding, n))
+
+	n = len(deltas.name)
+	devices.deltas = append(devices.deltas, make([]delta, n))
+	devices.deltabinds = append(devices.deltabinds, make([][]binding, n))
 
 	n = len(contexts.name)
 	devices.bindings = append(devices.bindings, make([][]binding, n))
@@ -51,13 +74,17 @@ func NewDevice(name string) Device {
 	return a
 }
 
+//------------------------------------------------------------------------------
+
 func clearDevices() {
 	devices.name = nil
 	devices.context = nil
-	devices.new = nil
+	devices.newcontext = nil
 	devices.bools = nil
 	devices.bindings = nil
 
-	NewDevice("Any")
-	NewDevice("KeyboardAndMouse")
+	newDevice("Any")
+	newDevice("KeyboardAndMouse")
 }
+
+//------------------------------------------------------------------------------

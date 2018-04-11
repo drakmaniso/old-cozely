@@ -6,6 +6,5 @@ package input
 type gpButton struct{}
 
 func (a gpButton) bind(c Context, target Action)   {}
-func (a gpButton) device() Device                  { return noDevice }
-func (a gpButton) action() Action                  { return nil }
+func (a gpButton) activate(d Device)               {}
 func (a gpButton) asBool() (just bool, value bool) { return false, false }

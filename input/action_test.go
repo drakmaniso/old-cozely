@@ -83,13 +83,7 @@ var (
 //------------------------------------------------------------------------------
 
 func TestAction(t *testing.T) {
-	err := input.LoadBindings(Bindings)
-	if err != nil {
-		glam.ShowError(err)
-		return
-	}
-
-	err = glam.Run(loop{})
+	err := glam.Run(loop{})
 	if err != nil {
 		glam.ShowError(err)
 		return
@@ -105,6 +99,11 @@ type loop struct {
 //------------------------------------------------------------------------------
 
 func (loop) Enter() error {
+	err := input.LoadBindings(Bindings)
+	if err != nil {
+		return err
+	}
+
 	palette.Load("MSX")
 	InMenu.Activate(0)
 	return nil
@@ -127,43 +126,43 @@ func (loop) React() error {
 	extra1 = mouse.IsPressed(mouse.Extra1)
 	extra2 = mouse.IsPressed(mouse.Extra2)
 
-	if CloseMenuAction.JustPressed(input.KeyboardAndMouse) {
+	if CloseMenuAction.JustPressed(1) {
 		println(" Just Pressed: CLOSE")
 	}
-	if CloseMenuAction.JustReleased(input.KeyboardAndMouse) {
+	if CloseMenuAction.JustReleased(1) {
 		println("Just Released: close")
 		InGame.Activate(1)
 	}
-	if OpenMenuAction.JustPressed(input.KeyboardAndMouse) {
+	if OpenMenuAction.JustPressed(1) {
 		println(" Just Pressed: OPEN")
 	}
-	if OpenMenuAction.JustReleased(input.KeyboardAndMouse) {
+	if OpenMenuAction.JustReleased(1) {
 		println("Just Released: open")
 		InMenu.Activate(1)
 	}
 
-	if InstantCloseMenuAction.JustPressed(input.KeyboardAndMouse) {
+	if InstantCloseMenuAction.JustPressed(1) {
 		println(" Just Pressed: INSTANT CLOSE")
 		InGame.Activate(1)
 	}
-	if InstantCloseMenuAction.JustReleased(input.KeyboardAndMouse) {
+	if InstantCloseMenuAction.JustReleased(1) {
 		println("Just Released: instant close")
 	}
-	if InstantOpenMenuAction.JustPressed(input.KeyboardAndMouse) {
+	if InstantOpenMenuAction.JustPressed(1) {
 		println(" Just Pressed: INSTANT OPEN")
 		InMenu.Activate(1)
 	}
-	if InstantOpenMenuAction.JustReleased(input.KeyboardAndMouse) {
+	if InstantOpenMenuAction.JustReleased(1) {
 		println("Just Released: instant open")
 	}
 
-	openmenu = OpenMenuAction.Pressed(input.KeyboardAndMouse)
-	closemenu = CloseMenuAction.Pressed(input.KeyboardAndMouse)
-	instopenmenu = InstantOpenMenuAction.Pressed(input.KeyboardAndMouse)
-	instclosemenu = InstantCloseMenuAction.Pressed(input.KeyboardAndMouse)
-	inventory = InventoryAction.Pressed(input.KeyboardAndMouse)
-	options = OptionsAction.Pressed(input.KeyboardAndMouse)
-	jump = JumpAction.Pressed(input.KeyboardAndMouse)
+	openmenu = OpenMenuAction.Pressed(1)
+	closemenu = CloseMenuAction.Pressed(1)
+	instopenmenu = InstantOpenMenuAction.Pressed(1)
+	instclosemenu = InstantCloseMenuAction.Pressed(1)
+	inventory = InventoryAction.Pressed(1)
+	options = OptionsAction.Pressed(1)
+	jump = JumpAction.Pressed(1)
 
 	return nil
 }
@@ -214,7 +213,7 @@ func (loop) Draw() error {
 		cursor.Print("extra2\n")
 	}
 
-	color(InMenu.Active(input.KeyboardAndMouse))
+	color(InMenu.Active(1))
 	cursor.Printf("  Menu: ")
 	color(options)
 	cursor.Print("Options(O/L.C.) ")
@@ -224,7 +223,7 @@ func (loop) Draw() error {
 	cursor.Print("InstantCloseMenu(ENTER/R.C.) ")
 	cursor.Println(" ")
 
-	color(InGame.Active(input.KeyboardAndMouse))
+	color(InGame.Active(1))
 	cursor.Printf("  Game: ")
 	color(jump)
 	cursor.Print("Jump(SPACE/L.C.) ")

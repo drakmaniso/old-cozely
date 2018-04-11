@@ -106,7 +106,7 @@ var KeyState [512]bool //TODO: remove
 
 //------------------------------------------------------------------------------
 
-var ActionPrepare = func() error {return nil}
+var ActionNewFrame = func() error { return nil }
 
 var PaletteSetup = func() error { return nil }
 var PaletteUpload = func() error { return nil }

@@ -3,9 +3,7 @@
 
 package input
 
-import (
-	"github.com/drakmaniso/glam/internal"
-)
+//------------------------------------------------------------------------------
 
 type Context uint32
 
@@ -14,10 +12,16 @@ const noContext = Context(maxID)
 var current, new = Context(0), Context(0)
 
 var contexts struct {
+	// For each context
 	name []string
+
+	// For each context, a list of actions
+	actions [][]Action
 }
 
-func NewContext(name string, actions ...Action) Context {
+//------------------------------------------------------------------------------
+
+func NewContext(name string, la ...Action) Context {
 	l := len(contexts.name)
 	if l >= maxID {
 		//TODO: set error
@@ -26,45 +30,19 @@ func NewContext(name string, actions ...Action) Context {
 
 	c := Context(l)
 	contexts.name = append(contexts.name, name)
+	contexts.actions = append(contexts.actions, la)
 
 	return c
 }
 
-func (c Context) Activate(d Device) {
-	devices.new[d] = c
+//------------------------------------------------------------------------------
+
+func (a Context) Activate(d Device) {
+	devices.newcontext[d] = a
 }
 
-func (c Context) Active(d Device) bool {
-	return c == devices.context[d]
+func (a Context) Active(d Device) bool {
+	return a == devices.context[d]
 }
 
-func init() {
-	internal.ActionPrepare = prepare
-}
-
-func prepare() error {
-	for d := range devices.name {
-		if devices.context[d] != devices.new[d] {
-			for _, b := range devices.bindings[d][devices.context[d]] {
-				b.action().deactivate(KeyboardAndMouse)
-			}
-
-			devices.context[d] = devices.new[d]
-
-			for _, b := range devices.bindings[d][devices.context[d]] {
-				b.action().activate(b)
-			}
-		}
-
-		for _, b := range devices.bindings[d][devices.context[d]] {
-			b.action().newframe(b)
-		}
-
-		for _, b := range devices.bindings[d][devices.context[d]] {
-			b.action().prepare(b)
-		}
-
-	}
-
-	return nil
-}
+//------------------------------------------------------------------------------

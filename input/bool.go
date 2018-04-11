@@ -8,7 +8,11 @@ type Bool uint32
 const noBool = Bool(maxID)
 
 var bools struct {
-	name    []string
+	// For each bool
+	name []string
+
+	// For each device, a list of bools
+	byDevice [][]boolean
 }
 
 type boolean struct {
@@ -18,7 +22,7 @@ type boolean struct {
 }
 
 func NewBool(name string) Bool {
-	_, ok := actions[name]
+	_, ok := actions.names[name]
 	if ok {
 		//TODO: set error
 		return noBool
@@ -30,7 +34,7 @@ func NewBool(name string) Bool {
 		return noBool
 	}
 
-	actions[name] = Bool(a)
+	actions.names[name] = Bool(a)
 	bools.name = append(bools.name, name)
 
 	return Bool(a)
@@ -40,30 +44,28 @@ func (a Bool) Name() string {
 	return bools.name[a]
 }
 
-func (a Bool) activate(b binding) {
-	d := b.device()
+func (a Bool) activate(d Device, b binding) {
 	devices.bools[d][a].active = true
+	devices.boolbinds[d][a] = append(devices.boolbinds[d][a], b)
 	_, v := b.asBool()
 	if v {
 		devices.bools[d][a].pressed = true
 	}
 }
 
-func (a Bool) newframe(b binding) {
-	d := b.device()
+func (a Bool) newframe(d Device) {
 	devices.bools[d][a].just = false
-}
-
-func (a Bool) prepare(b binding) {
-	d := b.device()
-	j, v := b.asBool()
-	if j {
-		devices.bools[d][a].just = (v != devices.bools[d][a].pressed)
-		devices.bools[d][a].pressed = v
+	for _, b := range devices.boolbinds[d][a] {
+		j, v := b.asBool()
+		if j {
+			devices.bools[d][a].just = (v != devices.bools[d][a].pressed)
+			devices.bools[d][a].pressed = v
+		}
 	}
 }
 
 func (a Bool) deactivate(d Device) {
+	devices.boolbinds[d][a] = devices.boolbinds[d][a][:0]
 	devices.bools[d][a].active = false
 	devices.bools[d][a].just = false
 	devices.bools[d][a].pressed = false
