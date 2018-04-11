@@ -8,10 +8,21 @@ import (
 	"testing"
 
 	"github.com/drakmaniso/glam"
+	"github.com/drakmaniso/glam/input"
 	"github.com/drakmaniso/glam/palette"
 	"github.com/drakmaniso/glam/pixel"
 	"github.com/drakmaniso/glam/plane"
 )
+
+//------------------------------------------------------------------------------
+
+var cnvActions = input.NewContext("TestCanvas", quit)
+
+var cnvBindings = map[string]map[string][]string{
+	"TestCanvas": {
+		"Quit":  {"Escape"},
+	},
+}
 
 //------------------------------------------------------------------------------
 
@@ -48,8 +59,43 @@ func TestCanvas_depth(t *testing.T) {
 
 //------------------------------------------------------------------------------
 
-type cnvLoop struct {
-	glam.EmptyLoop
+type cnvLoop struct{}
+
+//------------------------------------------------------------------------------
+
+func (cnvLoop) Enter() error {
+	input.LoadBindings(cnvBindings)
+	palette.Load("graphics/shape1")
+	return nil
+}
+
+func (cnvLoop) Leave() error { return nil }
+
+//------------------------------------------------------------------------------
+
+func (cnvLoop) React() error {
+	if quit.JustPressed(1) {
+		glam.Stop()
+	}
+	return nil
+}
+
+//------------------------------------------------------------------------------
+
+func (cnvLoop) Update() error { return nil }
+
+//------------------------------------------------------------------------------
+
+func (cnvLoop) Draw() error {
+	cnvScreen.Clear(0)
+	for i, o := range shapes {
+		if float64(i)/32 > glam.GameTime() {
+			break
+		}
+		cnvScreen.Picture(o.pict, o.depth, o.pos)
+	}
+	cnvScreen.Display()
+	return nil
 }
 
 //------------------------------------------------------------------------------
@@ -65,26 +111,12 @@ func (cnvLoop) Resize() {
 		shapes[i].pos.Y = int16(rand.Intn(int(s.Y - p.Size().Y)))
 	}
 }
-
-//------------------------------------------------------------------------------
-
-func (cnvLoop) Enter() error {
-	palette.Load("graphics/shape1")
-	return nil
-}
-
-//------------------------------------------------------------------------------
-
-func (cnvLoop) Draw() error {
-	cnvScreen.Clear(0)
-	for i, o := range shapes {
-		if float64(i)/32 > glam.GameTime() {
-			break
-		}
-		cnvScreen.Picture(o.pict, o.depth, o.pos)
-	}
-	cnvScreen.Display()
-	return nil
+func (cnvLoop) Show()    {}
+func (cnvLoop) Hide()    {}
+func (cnvLoop) Focus()   {}
+func (cnvLoop) Unfocus() {}
+func (cnvLoop) Quit() {
+	glam.Stop()
 }
 
 //------------------------------------------------------------------------------

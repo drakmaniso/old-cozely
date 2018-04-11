@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/drakmaniso/glam"
-	"github.com/drakmaniso/glam/mouse"
+	"github.com/drakmaniso/glam/input"
 	"github.com/drakmaniso/glam/palette"
 	"github.com/drakmaniso/glam/pixel"
 	"github.com/drakmaniso/glam/plane"
@@ -40,16 +40,46 @@ func TestPicture_basic(t *testing.T) {
 
 //------------------------------------------------------------------------------
 
-type picLoop struct {
-	glam.EmptyLoop
-}
+type picLoop struct{}
 
 //------------------------------------------------------------------------------
 
 func (picLoop) Enter() error {
+	input.LoadBindings(testBindings)
+	testContext.Activate(1)
+
 	palette.Load("graphics/mire")
 	return nil
 }
+
+func (picLoop) Leave() error { return nil }
+
+//------------------------------------------------------------------------------
+
+func (picLoop) React() error {
+	if quit.JustPressed(1) {
+		glam.Stop()
+	}
+
+	if next.JustPressed(1) {
+		picMode++
+		if picMode > 1 {
+			picMode = 0
+		}
+		switch picMode {
+		case 0:
+			palette.Load("graphics/mire")
+		case 1:
+			palette.Load("graphics/srgb-gray")
+		}
+	}
+
+	return nil
+}
+
+//------------------------------------------------------------------------------
+
+func (picLoop) Update() error { return nil }
 
 //------------------------------------------------------------------------------
 
@@ -76,17 +106,29 @@ func (picLoop) Draw() error {
 
 //------------------------------------------------------------------------------
 
-func (picLoop) MouseButtonDown(_ mouse.Button, _ int) {
-	picMode++
-	if picMode > 1 {
-		picMode = 0
-	}
-	switch picMode {
-	case 0:
-		palette.Load("graphics/mire")
-	case 1:
-		palette.Load("graphics/srgb-gray")
-	}
+//TODO:
+// func (picLoop) MouseButtonDown(_ mouse.Button, _ int) {
+// 	picMode++
+// 	if picMode > 1 {
+// 		picMode = 0
+// 	}
+// 	switch picMode {
+// 	case 0:
+// 		palette.Load("graphics/mire")
+// 	case 1:
+// 		palette.Load("graphics/srgb-gray")
+// 	}
+// }
+
+//------------------------------------------------------------------------------
+
+func (picLoop) Resize()  {}
+func (picLoop) Show()    {}
+func (picLoop) Hide()    {}
+func (picLoop) Focus()   {}
+func (picLoop) Unfocus() {}
+func (picLoop) Quit() {
+	glam.Stop()
 }
 
 //------------------------------------------------------------------------------

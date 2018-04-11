@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/drakmaniso/glam"
+	"github.com/drakmaniso/glam/input"
 	"github.com/drakmaniso/glam/palette"
 	"github.com/drakmaniso/glam/pixel"
 )
@@ -51,13 +52,14 @@ func TestFont_load(t *testing.T) {
 
 //------------------------------------------------------------------------------
 
-type fntLoop struct {
-	glam.EmptyLoop
-}
+type fntLoop struct{}
 
 //------------------------------------------------------------------------------
 
 func (fntLoop) Enter() error {
+	input.LoadBindings(testBindings)
+	testContext.Activate(1)
+
 	f, err := os.Open(glam.Path() + "frankenstein.txt")
 	if err != nil {
 		return err
@@ -82,11 +84,20 @@ func (fntLoop) Enter() error {
 	return nil
 }
 
+func (fntLoop) Leave() error { return nil }
+
 //------------------------------------------------------------------------------
 
-func (fntLoop) Update() error {
+func (fntLoop) React() error {
+	if quit.JustPressed(1) {
+		glam.Stop()
+	}
 	return nil
 }
+
+//------------------------------------------------------------------------------
+
+func (fntLoop) Update() error { return nil }
 
 //------------------------------------------------------------------------------
 
@@ -169,15 +180,24 @@ func (fntLoop) Draw() error {
 // 	}
 // }
 
+// func (fntLoop) MouseWheel(_, dy int32) {
+// 	fntLine -= int(dy)
+// 	if fntLine < 0 {
+// 		fntLine = 0
+// 	} else if fntLine > len(fntShow)-1 {
+// 		fntLine = len(fntShow) - 1
+// 	}
+// }
+
 //------------------------------------------------------------------------------
 
-func (fntLoop) MouseWheel(_, dy int32) {
-	fntLine -= int(dy)
-	if fntLine < 0 {
-		fntLine = 0
-	} else if fntLine > len(fntShow)-1 {
-		fntLine = len(fntShow) - 1
-	}
+func (fntLoop) Resize()  {}
+func (fntLoop) Show()    {}
+func (fntLoop) Hide()    {}
+func (fntLoop) Focus()   {}
+func (fntLoop) Unfocus() {}
+func (fntLoop) Quit() {
+	glam.Stop()
 }
 
 //------------------------------------------------------------------------------

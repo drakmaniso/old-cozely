@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/drakmaniso/glam"
+	"github.com/drakmaniso/glam/input"
 	"github.com/drakmaniso/glam/palette"
 	"github.com/drakmaniso/glam/pixel"
 	"github.com/drakmaniso/glam/plane"
@@ -34,13 +35,13 @@ func TestCursor_print(t *testing.T) {
 
 //------------------------------------------------------------------------------
 
-type curLoop struct {
-	glam.EmptyLoop
-}
+type curLoop struct{}
 
 //------------------------------------------------------------------------------
 
 func (curLoop) Enter() error {
+	input.LoadBindings(testBindings)
+	testContext.Activate(1)
 	palette.Load("C64")
 	curBg = palette.Find("white")
 	curFg = palette.Find("black")
@@ -48,11 +49,20 @@ func (curLoop) Enter() error {
 	return nil
 }
 
+func (curLoop) Leave() error { return nil }
+
 //------------------------------------------------------------------------------
 
-func (curLoop) Update() error {
+func (curLoop) React() error {
+	if quit.JustPressed(1) {
+		glam.Stop()
+	}
 	return nil
 }
+
+//------------------------------------------------------------------------------
+
+func (curLoop) Update() error { return nil }
 
 //------------------------------------------------------------------------------
 
@@ -101,6 +111,17 @@ func (curLoop) Draw() error {
 
 	curScreen.Display()
 	return nil
+}
+
+//------------------------------------------------------------------------------
+
+func (curLoop) Resize()  {}
+func (curLoop) Show()    {}
+func (curLoop) Hide()    {}
+func (curLoop) Focus()   {}
+func (curLoop) Unfocus() {}
+func (curLoop) Quit() {
+	glam.Stop()
 }
 
 //------------------------------------------------------------------------------

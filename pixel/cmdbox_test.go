@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/drakmaniso/glam"
+	"github.com/drakmaniso/glam/input"
 	"github.com/drakmaniso/glam/palette"
 	"github.com/drakmaniso/glam/pixel"
 	"github.com/drakmaniso/glam/plane"
@@ -29,16 +30,31 @@ func TestPaint_box(t *testing.T) {
 
 //------------------------------------------------------------------------------
 
-type boxLoop struct {
-	glam.EmptyLoop
-}
+type boxLoop struct{}
 
 //------------------------------------------------------------------------------
 
 func (boxLoop) Enter() error {
 	palette.Load("graphics/shape1")
+	input.LoadBindings(testBindings)
+	testContext.Activate(1)
 	return nil
 }
+
+func (boxLoop) Leave() error { return nil }
+
+//------------------------------------------------------------------------------
+
+func (boxLoop) React() error {
+	if quit.JustPressed(1) {
+		glam.Stop()
+	}
+	return nil
+}
+
+//------------------------------------------------------------------------------
+
+func (boxLoop) Update() error { return nil }
 
 //------------------------------------------------------------------------------
 
@@ -75,6 +91,17 @@ func (boxLoop) Draw() error {
 	boxScreen.Point(18, 2, m)
 	boxScreen.Display()
 	return nil
+}
+
+//------------------------------------------------------------------------------
+
+func (boxLoop) Resize()  {}
+func (boxLoop) Show()    {}
+func (boxLoop) Hide()    {}
+func (boxLoop) Focus()   {}
+func (boxLoop) Unfocus() {}
+func (boxLoop) Quit() {
+	glam.Stop()
 }
 
 //------------------------------------------------------------------------------
