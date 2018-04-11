@@ -6,18 +6,18 @@ package main
 //------------------------------------------------------------------------------
 
 import (
-	"github.com/drakmaniso/glam"
-	"github.com/drakmaniso/glam/colour"
-	"github.com/drakmaniso/glam/plane"
-	"github.com/drakmaniso/glam/x/gl"
+	"github.com/drakmaniso/cozely"
+	"github.com/drakmaniso/cozely/colour"
+	"github.com/drakmaniso/cozely/plane"
+	"github.com/drakmaniso/cozely/x/gl"
 )
 
 //------------------------------------------------------------------------------
 
 func main() {
-	err := glam.Run(loop{})
+	err := cozely.Run(loop{})
 	if err != nil {
-		glam.ShowError(err)
+		cozely.ShowError(err)
 		return
 	}
 }
@@ -38,7 +38,7 @@ type mesh []struct {
 //------------------------------------------------------------------------------
 
 type loop struct {
-	glam.EmptyLoop
+	cozely.EmptyLoop
 }
 
 //------------------------------------------------------------------------------
@@ -48,8 +48,8 @@ func (loop) Enter() error {
 
 	// Create and configure the pipeline
 	pipeline = gl.NewPipeline(
-		gl.Shader(glam.Path()+"shader.vert"),
-		gl.Shader(glam.Path()+"shader.frag"),
+		gl.Shader(cozely.Path()+"shader.vert"),
+		gl.Shader(cozely.Path()+"shader.frag"),
 		gl.VertexFormat(0, triangle),
 		gl.Topology(gl.Triangles),
 	)
@@ -68,7 +68,7 @@ func (loop) Enter() error {
 	vbo.Bind(0, 0)
 	pipeline.Unbind()
 
-	return glam.Error("gl", gl.Err())
+	return cozely.Error("gl", gl.Err())
 }
 
 //------------------------------------------------------------------------------

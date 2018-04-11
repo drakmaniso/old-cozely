@@ -3,7 +3,7 @@
 
 package input
 
-import "github.com/drakmaniso/glam/internal"
+import "github.com/drakmaniso/cozely/internal"
 
 type msButton struct {
 	button        mouseButton

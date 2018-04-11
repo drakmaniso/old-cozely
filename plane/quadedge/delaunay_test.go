@@ -4,14 +4,14 @@ import (
 	"math/rand"
 	"testing"
 
-	"github.com/drakmaniso/glam"
-	"github.com/drakmaniso/glam/colour"
-	"github.com/drakmaniso/glam/input"
-	"github.com/drakmaniso/glam/palette"
-	"github.com/drakmaniso/glam/pixel"
-	"github.com/drakmaniso/glam/plane"
-	"github.com/drakmaniso/glam/plane/quadedge"
-	"github.com/drakmaniso/glam/x/math32"
+	"github.com/drakmaniso/cozely"
+	"github.com/drakmaniso/cozely/colour"
+	"github.com/drakmaniso/cozely/input"
+	"github.com/drakmaniso/cozely/palette"
+	"github.com/drakmaniso/cozely/pixel"
+	"github.com/drakmaniso/cozely/plane"
+	"github.com/drakmaniso/cozely/plane/quadedge"
+	"github.com/drakmaniso/cozely/x/math32"
 )
 
 //------------------------------------------------------------------------------
@@ -35,7 +35,7 @@ var (
 
 func TestDelaunay(t *testing.T) {
 	do(func() {
-		err := glam.Run(delLoop{})
+		err := cozely.Run(delLoop{})
 		if err != nil {
 			t.Error(err)
 		}
@@ -67,7 +67,7 @@ func (delLoop) Leave() error { return nil }
 
 func (delLoop) React() error {
 	if quit.JustPressed(1) {
-		glam.Stop()
+		cozely.Stop()
 	}
 
 	if next.JustPressed(1) {
@@ -156,7 +156,7 @@ func (delLoop) Render() error {
 	p := fromScreen(m)
 	cursor.Locate(2, 8)
 	cursor.Color = 0
-	fsr, fso := glam.RenderStats()
+	fsr, fso := cozely.RenderStats()
 	cursor.Printf("Framerate: %.2f (%d)\n", 1000*fsr, fso)
 	if p.X >= 0 && p.X <= 1.0 {
 		cursor.Printf("Position: %.3f, %.3f\n", p.X, p.Y)

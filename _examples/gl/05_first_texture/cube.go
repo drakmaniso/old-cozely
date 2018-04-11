@@ -6,8 +6,8 @@ package main
 //------------------------------------------------------------------------------
 
 import (
-	"github.com/drakmaniso/glam/plane"
-	"github.com/drakmaniso/glam/space"
+	"github.com/drakmaniso/cozely/plane"
+	"github.com/drakmaniso/cozely/space"
 )
 
 //------------------------------------------------------------------------------

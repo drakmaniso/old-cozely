@@ -7,14 +7,14 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/drakmaniso/glam"
-	"github.com/drakmaniso/glam/key"
-	"github.com/drakmaniso/glam/mouse"
-	"github.com/drakmaniso/glam/palette"
-	"github.com/drakmaniso/glam/pixel"
+	"github.com/drakmaniso/cozely"
+	"github.com/drakmaniso/cozely/key"
+	"github.com/drakmaniso/cozely/mouse"
+	"github.com/drakmaniso/cozely/palette"
+	"github.com/drakmaniso/cozely/pixel"
 
-	"github.com/drakmaniso/glam/_examples/match3/ecs"
-	"github.com/drakmaniso/glam/_examples/match3/grid"
+	"github.com/drakmaniso/cozely/_examples/match3/ecs"
+	"github.com/drakmaniso/cozely/_examples/match3/grid"
 )
 
 //------------------------------------------------------------------------------
@@ -32,13 +32,13 @@ var screen = pixel.NewCanvas(pixel.TargetResolution(180, 180))
 func main() {
 	setup()
 
-	glam.Configure(
-		glam.Title("Match 3"),
+	cozely.Configure(
+		cozely.Title("Match 3"),
 	)
 
-	err := glam.Run(loop{})
+	err := cozely.Run(loop{})
 	if err != nil {
-		glam.ShowError(err)
+		cozely.ShowError(err)
 	}
 }
 
@@ -73,7 +73,7 @@ func setup() error {
 //------------------------------------------------------------------------------
 
 type loop struct {
-	glam.EmptyLoop
+	cozely.EmptyLoop
 }
 
 //------------------------------------------------------------------------------

@@ -10,7 +10,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/drakmaniso/glam/formats/obj"
+	"github.com/drakmaniso/cozely/formats/obj"
 )
 
 //------------------------------------------------------------------------------

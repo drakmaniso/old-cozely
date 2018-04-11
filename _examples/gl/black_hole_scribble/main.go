@@ -8,12 +8,12 @@ package main
 import (
 	"math/rand"
 
-	"github.com/drakmaniso/glam"
-	"github.com/drakmaniso/glam/colour"
-	"github.com/drakmaniso/glam/mouse"
-	"github.com/drakmaniso/glam/plane"
-	"github.com/drakmaniso/glam/x/gl"
-	"github.com/drakmaniso/glam/x/math32"
+	"github.com/drakmaniso/cozely"
+	"github.com/drakmaniso/cozely/colour"
+	"github.com/drakmaniso/cozely/mouse"
+	"github.com/drakmaniso/cozely/plane"
+	"github.com/drakmaniso/cozely/x/gl"
+	"github.com/drakmaniso/cozely/x/math32"
 )
 
 //------------------------------------------------------------------------------
@@ -22,13 +22,13 @@ func main() {
 	angles = make([]float32, len(points))
 	speeds = make([]float32, len(points))
 
-	glam.Configure(
-		glam.Multisample(8),
+	cozely.Configure(
+		cozely.Multisample(8),
 	)
 
-	err := glam.Run(loop{})
+	err := cozely.Run(loop{})
 	if err != nil {
-		glam.ShowError(err)
+		cozely.ShowError(err)
 		return
 	}
 }
@@ -65,7 +65,7 @@ var (
 //------------------------------------------------------------------------------
 
 type loop struct {
-	glam.EmptyLoop
+	cozely.EmptyLoop
 }
 
 //------------------------------------------------------------------------------
@@ -73,8 +73,8 @@ type loop struct {
 func (loop) Enter() error {
 	// Create and configure the pipeline
 	pipeline = gl.NewPipeline(
-		gl.Shader(glam.Path()+"shader.vert"),
-		gl.Shader(glam.Path()+"shader.frag"),
+		gl.Shader(cozely.Path()+"shader.vert"),
+		gl.Shader(cozely.Path()+"shader.frag"),
 		gl.Topology(gl.Points),
 		gl.VertexFormat(0, points[:]),
 	)
@@ -93,7 +93,7 @@ func (loop) Enter() error {
 	pointsVBO.Bind(0, 0)
 	pipeline.Unbind()
 
-	return glam.Error("gl", gl.Err())
+	return cozely.Error("gl", gl.Err())
 }
 
 //------------------------------------------------------------------------------

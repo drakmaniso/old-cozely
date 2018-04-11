@@ -7,11 +7,11 @@ import (
 	"math/rand"
 	"testing"
 
-	"github.com/drakmaniso/glam"
-	"github.com/drakmaniso/glam/input"
-	"github.com/drakmaniso/glam/palette"
-	"github.com/drakmaniso/glam/pixel"
-	"github.com/drakmaniso/glam/plane"
+	"github.com/drakmaniso/cozely"
+	"github.com/drakmaniso/cozely/input"
+	"github.com/drakmaniso/cozely/palette"
+	"github.com/drakmaniso/cozely/pixel"
+	"github.com/drakmaniso/cozely/plane"
 )
 
 //------------------------------------------------------------------------------
@@ -47,11 +47,11 @@ var shapes [2048]shape
 
 func TestCanvas_depth(t *testing.T) {
 	do(func() {
-		glam.Configure(
-			glam.UpdateStep(1 / 60.0),
+		cozely.Configure(
+			cozely.UpdateStep(1 / 60.0),
 		)
-		glam.Events.Resize = resize
-		err := glam.Run(cnvLoop{})
+		cozely.Events.Resize = resize
+		err := cozely.Run(cnvLoop{})
 		if err != nil {
 			t.Error(err)
 		}
@@ -77,7 +77,7 @@ func (cnvLoop) Leave() error { return nil }
 
 func (cnvLoop) React() error {
 	if quit.JustPressed(1) {
-		glam.Stop()
+		cozely.Stop()
 	}
 	return nil
 }
@@ -91,7 +91,7 @@ func (cnvLoop) Update() error { return nil }
 func (cnvLoop) Render() error {
 	cnvScreen.Clear(0)
 	for i, o := range shapes {
-		if float64(i)/32 > glam.GameTime() {
+		if float64(i)/32 > cozely.GameTime() {
 			break
 		}
 		cnvScreen.Picture(o.pict, o.depth, o.pos)

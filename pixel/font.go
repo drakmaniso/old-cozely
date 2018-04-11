@@ -27,7 +27,7 @@ var glyphMap []mapping
 //------------------------------------------------------------------------------
 
 // Font reserves an ID for a new font, that will be loaded from path by
-// glam.Run.
+// cozely.Run.
 func Font(path string) FontID {
 	if len(fonts) >= 0xFF {
 		setErr("in NewFont", errors.New("too many fonts"))

@@ -6,11 +6,11 @@ package pixel_test
 import (
 	"testing"
 
-	"github.com/drakmaniso/glam"
-	"github.com/drakmaniso/glam/input"
-	"github.com/drakmaniso/glam/palette"
-	"github.com/drakmaniso/glam/pixel"
-	"github.com/drakmaniso/glam/plane"
+	"github.com/drakmaniso/cozely"
+	"github.com/drakmaniso/cozely/input"
+	"github.com/drakmaniso/cozely/palette"
+	"github.com/drakmaniso/cozely/pixel"
+	"github.com/drakmaniso/cozely/plane"
 )
 
 //------------------------------------------------------------------------------
@@ -51,7 +51,7 @@ var pointshidden, lineshidden bool
 
 func TestPaint_commands(t *testing.T) {
 	do(func() {
-		err := glam.Run(cmdLoop{})
+		err := cozely.Run(cmdLoop{})
 		if err != nil {
 			t.Error(err)
 		}
@@ -77,7 +77,7 @@ func (cmdLoop) Leave() error { return nil }
 
 func (cmdLoop) React() error {
 	if quit.JustPressed(1) {
-		glam.Stop()
+		cozely.Stop()
 	}
 
 	if newPoint.JustPressed(1) {

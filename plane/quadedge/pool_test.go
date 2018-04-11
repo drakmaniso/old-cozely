@@ -3,7 +3,7 @@ package quadedge_test
 import (
 	"testing"
 
-	"github.com/drakmaniso/glam/plane/quadedge"
+	"github.com/drakmaniso/cozely/plane/quadedge"
 )
 
 //------------------------------------------------------------------------------

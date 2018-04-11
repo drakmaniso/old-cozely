@@ -1,19 +1,21 @@
-# Glam
+# Cozely
 
-[![GoDoc](https://godoc.org/github.com/drakmaniso/glam?status.svg)](https://godoc.org/github.com/drakmaniso/glam)
-[![Go Report Card](https://goreportcard.com/badge/github.com/drakmaniso/glam)](https://goreportcard.com/report/github.com/drakmaniso/glam)
+[![GoDoc](https://godoc.org/github.com/drakmaniso/cozely?status.svg)](https://godoc.org/github.com/drakmaniso/cozely)
+[![Go Report Card](https://goreportcard.com/badge/github.com/drakmaniso/cozely)](https://goreportcard.com/report/github.com/drakmaniso/cozely)
 
-Glam aims to be a minimalist framework for making games in Go. It focuses on
-pixel art for 2D, and polygonal art (aka low-poly) for 3D.
-
-## Work in Progress
+Cozely aims to be a simple framework for making games in Go. It focuses on pixel
+art for 2D, and polygonal art (aka low-poly) for 3D.
 
 **Not yet in a usable state**: the framework is *very* incomplete, and the API
 is subject to frequent changes.
 
+## Platforms
+
+The framework currently supports windows and linux.
+
 ## Dependencies
 
-The only dependancies are SDL 2 and OpenGL 4.5.
+The only dependancies are SDL 2 and OpenGL 4.6.
 
 ## License
 

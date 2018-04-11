@@ -4,7 +4,7 @@
 package space
 
 import (
-	"github.com/drakmaniso/glam/x/math32"
+	"github.com/drakmaniso/cozely/x/math32"
 )
 
 //------------------------------------------------------------------------------

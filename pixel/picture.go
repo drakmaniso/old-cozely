@@ -6,7 +6,7 @@ package pixel
 import (
 	"errors"
 
-	"github.com/drakmaniso/glam/plane"
+	"github.com/drakmaniso/cozely/plane"
 )
 
 //------------------------------------------------------------------------------
@@ -29,7 +29,7 @@ type mapping struct {
 //------------------------------------------------------------------------------
 
 // Picture reserves an ID for a picture, that will be loaded from path by
-// glam.Run.
+// cozely.Run.
 func Picture(path string) PictureID {
 	if len(pictureMap) >= 0xFFFF {
 		setErr("in NewPitcture", errors.New("too many pictures"))

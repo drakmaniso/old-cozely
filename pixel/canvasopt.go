@@ -6,7 +6,7 @@ package pixel
 import (
 	"errors"
 
-	"github.com/drakmaniso/glam/internal"
+	"github.com/drakmaniso/cozely/internal"
 )
 
 //------------------------------------------------------------------------------

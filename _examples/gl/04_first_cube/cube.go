@@ -6,8 +6,8 @@ package main
 //------------------------------------------------------------------------------
 
 import (
-	"github.com/drakmaniso/glam/colour"
-	"github.com/drakmaniso/glam/space"
+	"github.com/drakmaniso/cozely/colour"
+	"github.com/drakmaniso/cozely/space"
 )
 
 //------------------------------------------------------------------------------

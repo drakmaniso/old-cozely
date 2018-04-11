@@ -4,7 +4,7 @@
 package input
 
 import (
-	"github.com/drakmaniso/glam/internal"
+	"github.com/drakmaniso/cozely/internal"
 )
 
 //------------------------------------------------------------------------------

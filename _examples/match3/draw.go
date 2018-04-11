@@ -4,10 +4,10 @@
 package main
 
 import (
-	"github.com/drakmaniso/glam/_examples/match3/ecs"
-	"github.com/drakmaniso/glam/_examples/match3/grid"
-	"github.com/drakmaniso/glam/plane"
-	"github.com/drakmaniso/glam/x/gl"
+	"github.com/drakmaniso/cozely/_examples/match3/ecs"
+	"github.com/drakmaniso/cozely/_examples/match3/grid"
+	"github.com/drakmaniso/cozely/plane"
+	"github.com/drakmaniso/cozely/x/gl"
 )
 
 //------------------------------------------------------------------------------

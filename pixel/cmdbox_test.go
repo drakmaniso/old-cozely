@@ -6,11 +6,11 @@ package pixel_test
 import (
 	"testing"
 
-	"github.com/drakmaniso/glam"
-	"github.com/drakmaniso/glam/input"
-	"github.com/drakmaniso/glam/palette"
-	"github.com/drakmaniso/glam/pixel"
-	"github.com/drakmaniso/glam/plane"
+	"github.com/drakmaniso/cozely"
+	"github.com/drakmaniso/cozely/input"
+	"github.com/drakmaniso/cozely/palette"
+	"github.com/drakmaniso/cozely/pixel"
+	"github.com/drakmaniso/cozely/plane"
 )
 
 //------------------------------------------------------------------------------
@@ -21,7 +21,7 @@ var boxScreen = pixel.Canvas(pixel.Zoom(3))
 
 func TestPaint_box(t *testing.T) {
 	do(func() {
-		err := glam.Run(boxLoop{})
+		err := cozely.Run(boxLoop{})
 		if err != nil {
 			t.Error(err)
 		}
@@ -47,7 +47,7 @@ func (boxLoop) Leave() error { return nil }
 
 func (boxLoop) React() error {
 	if quit.JustPressed(1) {
-		glam.Stop()
+		cozely.Stop()
 	}
 	return nil
 }

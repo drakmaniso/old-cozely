@@ -6,22 +6,22 @@ package main
 //------------------------------------------------------------------------------
 
 import (
-	"github.com/drakmaniso/glam"
-	"github.com/drakmaniso/glam/colour"
-	"github.com/drakmaniso/glam/space"
-	"github.com/drakmaniso/glam/x/gl"
+	"github.com/drakmaniso/cozely"
+	"github.com/drakmaniso/cozely/colour"
+	"github.com/drakmaniso/cozely/space"
+	"github.com/drakmaniso/cozely/x/gl"
 )
 
 //------------------------------------------------------------------------------
 
 func main() {
-	glam.Configure(
-		glam.Multisample(8),
+	cozely.Configure(
+		cozely.Multisample(8),
 	)
 
-	err := glam.Run(loop{})
+	err := cozely.Run(loop{})
 	if err != nil {
-		glam.ShowError(err)
+		cozely.ShowError(err)
 		return
 	}
 }
@@ -62,7 +62,7 @@ var (
 //------------------------------------------------------------------------------
 
 type loop struct {
-	glam.EmptyLoop
+	cozely.EmptyLoop
 }
 
 //------------------------------------------------------------------------------
@@ -70,16 +70,16 @@ type loop struct {
 func (loop) Enter() error {
 	// Create and configure the pipelines
 	facePipeline = gl.NewPipeline(
-		gl.Shader(glam.Path()+"shader.vert"),
-		gl.Shader(glam.Path()+"shader.frag"),
+		gl.Shader(cozely.Path()+"shader.vert"),
+		gl.Shader(cozely.Path()+"shader.frag"),
 		gl.VertexFormat(0, mesh{}),
 		gl.Topology(gl.Triangles),
 		gl.CullFace(false, true),
 		gl.DepthTest(true),
 	)
 	edgePipeline = gl.NewPipeline(
-		gl.Shader(glam.Path()+"shader.vert"),
-		gl.Shader(glam.Path()+"shader.frag"),
+		gl.Shader(cozely.Path()+"shader.vert"),
+		gl.Shader(cozely.Path()+"shader.frag"),
 		gl.VertexFormat(0, mesh{}),
 		gl.Topology(gl.Lines),
 		gl.CullFace(false, false),
@@ -113,7 +113,7 @@ func (loop) Enter() error {
 
 	edgePipeline.Unbind()
 
-	return glam.Error("gl", gl.Err())
+	return cozely.Error("gl", gl.Err())
 }
 
 //------------------------------------------------------------------------------

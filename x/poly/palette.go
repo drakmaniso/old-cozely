@@ -4,8 +4,8 @@
 package poly
 
 import (
-	"github.com/drakmaniso/glam/colour"
-	"github.com/drakmaniso/glam/x/gl"
+	"github.com/drakmaniso/cozely/colour"
+	"github.com/drakmaniso/cozely/x/gl"
 )
 
 //------------------------------------------------------------------------------

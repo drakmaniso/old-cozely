@@ -96,7 +96,7 @@ var (
 
 // Loop holds the active looper.
 //
-// Note: The variable is set with glam.Loop.
+// Note: The variable is set with cozely.Loop.
 var Loop GameLoop
 
 //------------------------------------------------------------------------------

@@ -7,11 +7,11 @@ import (
 	"errors"
 	"unsafe"
 
-	"github.com/drakmaniso/glam/input"
-	"github.com/drakmaniso/glam/internal"
-	"github.com/drakmaniso/glam/palette"
-	"github.com/drakmaniso/glam/plane"
-	"github.com/drakmaniso/glam/x/gl"
+	"github.com/drakmaniso/cozely/input"
+	"github.com/drakmaniso/cozely/internal"
+	"github.com/drakmaniso/cozely/palette"
+	"github.com/drakmaniso/cozely/plane"
+	"github.com/drakmaniso/cozely/x/gl"
 )
 
 //------------------------------------------------------------------------------
@@ -39,7 +39,7 @@ type CanvasID uint16
 
 //------------------------------------------------------------------------------
 
-// Canvas reserves an ID for a new canvas, that will be created by glam.Run.
+// Canvas reserves an ID for a new canvas, that will be created by cozely.Run.
 func Canvas(o ...CanvasOption) CanvasID {
 	if len(canvases) >= 0xFFFF {
 		setErr("in NewCanvas", errors.New("too many canvases"))

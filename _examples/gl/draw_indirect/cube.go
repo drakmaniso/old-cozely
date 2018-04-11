@@ -5,7 +5,7 @@ package main
 
 //------------------------------------------------------------------------------
 
-import "github.com/drakmaniso/glam/space"
+import "github.com/drakmaniso/cozely/space"
 
 //------------------------------------------------------------------------------
 

@@ -8,23 +8,23 @@ package main
 import (
 	"math/rand"
 
-	"github.com/drakmaniso/glam"
-	"github.com/drakmaniso/glam/colour"
-	"github.com/drakmaniso/glam/mouse"
-	"github.com/drakmaniso/glam/plane"
-	"github.com/drakmaniso/glam/x/gl"
+	"github.com/drakmaniso/cozely"
+	"github.com/drakmaniso/cozely/colour"
+	"github.com/drakmaniso/cozely/mouse"
+	"github.com/drakmaniso/cozely/plane"
+	"github.com/drakmaniso/cozely/x/gl"
 )
 
 //------------------------------------------------------------------------------
 
 func main() {
-	glam.Configure(
-		glam.Multisample(8),
+	cozely.Configure(
+		cozely.Multisample(8),
 	)
 
-	err := glam.Run(loop{})
+	err := cozely.Run(loop{})
 	if err != nil {
-		glam.ShowError(err)
+		cozely.ShowError(err)
 		return
 	}
 }
@@ -58,7 +58,7 @@ var roses [64]struct {
 //------------------------------------------------------------------------------
 
 type loop struct {
-	glam.EmptyLoop
+	cozely.EmptyLoop
 }
 
 //------------------------------------------------------------------------------
@@ -66,8 +66,8 @@ type loop struct {
 func (loop) Enter() error {
 	// Setup the pipeline
 	pipeline = gl.NewPipeline(
-		gl.Shader(glam.Path()+"shader.vert"),
-		gl.Shader(glam.Path()+"shader.frag"),
+		gl.Shader(cozely.Path()+"shader.vert"),
+		gl.Shader(cozely.Path()+"shader.frag"),
 		gl.VertexFormat(1, roses[:]),
 		gl.Topology(gl.LineStrip),
 	)
@@ -85,13 +85,13 @@ func (loop) Enter() error {
 	rosesINBO.Bind(1, 0)
 	pipeline.Unbind()
 
-	return glam.Error("gl", gl.Err())
+	return cozely.Error("gl", gl.Err())
 }
 
 //------------------------------------------------------------------------------
 
 func (loop) Update() error {
-	perFrame.time += float32(glam.UpdateTime())
+	perFrame.time += float32(cozely.UpdateTime())
 
 	return nil
 }

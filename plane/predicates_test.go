@@ -4,16 +4,16 @@
 package plane_test
 
 import (
-	"github.com/drakmaniso/glam/input"
+	"github.com/drakmaniso/cozely/input"
 	"math/rand"
 	"testing"
 
-	"github.com/drakmaniso/glam"
-	"github.com/drakmaniso/glam/colour"
-	"github.com/drakmaniso/glam/palette"
-	"github.com/drakmaniso/glam/pixel"
-	"github.com/drakmaniso/glam/plane"
-	"github.com/drakmaniso/glam/x/math32"
+	"github.com/drakmaniso/cozely"
+	"github.com/drakmaniso/cozely/colour"
+	"github.com/drakmaniso/cozely/palette"
+	"github.com/drakmaniso/cozely/pixel"
+	"github.com/drakmaniso/cozely/plane"
+	"github.com/drakmaniso/cozely/x/math32"
 )
 
 //------------------------------------------------------------------------------
@@ -44,7 +44,7 @@ func newPoints() {
 
 func TestPlane_predicates(t *testing.T) {
 	do(func() {
-		err := glam.Run(triLoop{})
+		err := cozely.Run(triLoop{})
 		if err != nil {
 			t.Error(err)
 		}
@@ -81,7 +81,7 @@ func (triLoop) Leave() error { return nil }
 
 func (triLoop) React() error {
 	if quit.JustPressed(1) {
-		glam.Stop()
+		cozely.Stop()
 	}
 
 	if next.JustPressed(1) {

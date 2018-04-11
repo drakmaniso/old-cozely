@@ -6,12 +6,12 @@ package main
 //------------------------------------------------------------------------------
 
 import (
-	"github.com/drakmaniso/glam"
-	"github.com/drakmaniso/glam/mouse"
-	"github.com/drakmaniso/glam/plane"
-	"github.com/drakmaniso/glam/space"
-	"github.com/drakmaniso/glam/x/gl"
-	"github.com/drakmaniso/glam/x/math32"
+	"github.com/drakmaniso/cozely"
+	"github.com/drakmaniso/cozely/mouse"
+	"github.com/drakmaniso/cozely/plane"
+	"github.com/drakmaniso/cozely/space"
+	"github.com/drakmaniso/cozely/x/gl"
+	"github.com/drakmaniso/cozely/x/math32"
 )
 
 //------------------------------------------------------------------------------
@@ -34,7 +34,7 @@ func (loop) MouseButtonUp(b mouse.Button, _ int) {
 
 func (loop) MouseMotion(dx, dy int32, _, _ int32) {
 	m := plane.Coord{float32(dx), float32(dy)}
-	w, h := glam.WindowSize()
+	w, h := cozely.WindowSize()
 	s := plane.Coord{float32(w), float32(h)}
 
 	switch {

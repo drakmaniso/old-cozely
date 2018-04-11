@@ -8,27 +8,27 @@ package main
 import (
 	"fmt"
 
-	"github.com/drakmaniso/glam"
-	"github.com/drakmaniso/glam/colour"
-	"github.com/drakmaniso/glam/mouse"
-	"github.com/drakmaniso/glam/palette"
-	"github.com/drakmaniso/glam/pixel"
-	"github.com/drakmaniso/glam/plane"
-	"github.com/drakmaniso/glam/space"
-	"github.com/drakmaniso/glam/x/gl"
-	"github.com/drakmaniso/glam/x/poly"
+	"github.com/drakmaniso/cozely"
+	"github.com/drakmaniso/cozely/colour"
+	"github.com/drakmaniso/cozely/mouse"
+	"github.com/drakmaniso/cozely/palette"
+	"github.com/drakmaniso/cozely/pixel"
+	"github.com/drakmaniso/cozely/plane"
+	"github.com/drakmaniso/cozely/space"
+	"github.com/drakmaniso/cozely/x/gl"
+	"github.com/drakmaniso/cozely/x/poly"
 )
 
 //------------------------------------------------------------------------------
 
 func main() {
-	glam.Configure(
-		glam.UpdateStep(1.0 / 50),
+	cozely.Configure(
+		cozely.UpdateStep(1.0 / 50),
 	)
 
-	err := glam.Run(loop{})
+	err := cozely.Run(loop{})
 	if err != nil {
-		glam.ShowError(err)
+		cozely.ShowError(err)
 		return
 	}
 }
@@ -79,7 +79,7 @@ var meshes poly.Meshes
 //------------------------------------------------------------------------------
 
 type loop struct {
-	glam.EmptyLoop
+	cozely.EmptyLoop
 }
 
 //------------------------------------------------------------------------------
@@ -90,8 +90,8 @@ func (loop) Enter() error {
 	pipeline = gl.NewPipeline(
 		poly.PipelineSetup(),
 		poly.ToneMapACES(),
-		gl.Shader(glam.Path()+"shader.vert"),
-		gl.Shader(glam.Path()+"shader.frag"),
+		gl.Shader(cozely.Path()+"shader.vert"),
+		gl.Shader(cozely.Path()+"shader.frag"),
 		gl.DepthTest(true),
 		gl.DepthWrite(true),
 	)
@@ -101,9 +101,9 @@ func (loop) Enter() error {
 
 	//
 	meshes = poly.Meshes{}
-	// meshes.AddObj(glam.Path() + "../../shared/cube.obj")
-	// meshes.AddObj(glam.Path() + "../../shared/teapot.obj")
-	meshes.AddObj(glam.Path() + "../../shared/suzanne.obj")
+	// meshes.AddObj(cozely.Path() + "../../shared/cube.obj")
+	// meshes.AddObj(cozely.Path() + "../../shared/teapot.obj")
+	meshes.AddObj(cozely.Path() + "../../shared/suzanne.obj")
 	// meshes.AddObj("E:/objtestfiles/pony.obj")
 	poly.SetupMeshBuffers(meshes)
 
@@ -120,25 +120,25 @@ func (loop) Enter() error {
 	// Setup light
 	misc.SunIlluminance = poly.DirectionalLightSpectralIlluminance(116400.0, 5400.0)
 
-	return glam.Error("gl", gl.Err())
+	return cozely.Error("gl", gl.Err())
 }
 
 //------------------------------------------------------------------------------
 var gametime float64
 
 func (l loop) MouseMotion(_, _ int32, _, _ int32) {
-	if glam.GameTime() < gametime {
+	if cozely.GameTime() < gametime {
 		fmt.Printf("***************ERROR************\n")
 	}
-	// fmt.Printf("  (%.4f: %.4f, %.4f)\n", glam.GameTime(), glam.RenderTime(), glam.UpdateLag())
-	gametime = glam.GameTime()
+	// fmt.Printf("  (%.4f: %.4f, %.4f)\n", cozely.GameTime(), cozely.RenderTime(), cozely.UpdateLag())
+	gametime = cozely.GameTime()
 }
 func (loop) Update() error {
-	if glam.GameTime() < gametime {
+	if cozely.GameTime() < gametime {
 		fmt.Printf("***************ERROR************\n")
 	}
-	// fmt.Printf(" - %.4f: %.4f, %.4f\n", glam.GameTime(), glam.RenderTime(), glam.UpdateLag())
-	gametime = glam.GameTime()
+	// fmt.Printf(" - %.4f: %.4f, %.4f\n", cozely.GameTime(), cozely.RenderTime(), cozely.UpdateLag())
+	gametime = cozely.GameTime()
 
 	// prepare()
 
@@ -152,16 +152,16 @@ func (loop) Update() error {
 //------------------------------------------------------------------------------
 
 func (loop) Draw() error {
-	if glam.GameTime() < gametime {
+	if cozely.GameTime() < gametime {
 		fmt.Printf("***************ERROR************\n")
 	}
-	// fmt.Printf("## %.4f: %.4f, %.4f\n", glam.GameTime(), glam.RenderTime(), glam.UpdateLag())
-	gametime = glam.GameTime()
+	// fmt.Printf("## %.4f: %.4f, %.4f\n", cozely.GameTime(), cozely.RenderTime(), cozely.UpdateLag())
+	gametime = cozely.GameTime()
 
 	prepare()
 
 	gl.DefaultFramebuffer.Bind(gl.DrawFramebuffer)
-	w, h := glam.WindowSize()
+	w, h := cozely.WindowSize()
 	gl.Viewport(0, 0, w, h)
 	pipeline.Bind()
 	gl.ClearDepthBuffer(1.0)
@@ -182,7 +182,7 @@ func (loop) Draw() error {
 
 	overlay.Clear(0)
 	cursor.Locate(2, 12)
-	ft, or := glam.FrameStats()
+	ft, or := cozely.FrameStats()
 	cursor.Printf("% 3.2f", ft*1000)
 	if or > 0 {
 		cursor.Printf(" (%d)", or)
@@ -195,7 +195,7 @@ func (loop) Draw() error {
 //------------------------------------------------------------------------------
 
 func prepare() {
-	dt := float32(glam.RenderTime())
+	dt := float32(cozely.RenderTime())
 
 	camera.Move(forward*dt, lateral*dt, vertical*dt)
 
@@ -203,7 +203,7 @@ func prepare() {
 	mx, my := mouse.Delta()
 	m := plane.Coord{float32(mx), float32(my)}
 
-	w, h := glam.WindowSize()
+	w, h := cozely.WindowSize()
 	s := plane.Coord{float32(w), float32(h)}
 	switch {
 	case mouse.IsPressed(mouse.Right):

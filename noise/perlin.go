@@ -4,8 +4,8 @@
 package noise
 
 import (
-	"github.com/drakmaniso/glam/x/math32"
-	"github.com/drakmaniso/glam/space"
+	"github.com/drakmaniso/cozely/x/math32"
+	"github.com/drakmaniso/cozely/space"
 )
 
 //------------------------------------------------------------------------------

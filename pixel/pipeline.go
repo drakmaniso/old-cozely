@@ -4,7 +4,7 @@
 package pixel
 
 import (
-	"github.com/drakmaniso/glam/x/gl"
+	"github.com/drakmaniso/cozely/x/gl"
 )
 
 //------------------------------------------------------------------------------

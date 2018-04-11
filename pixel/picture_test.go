@@ -6,11 +6,11 @@ package pixel_test
 import (
 	"testing"
 
-	"github.com/drakmaniso/glam"
-	"github.com/drakmaniso/glam/input"
-	"github.com/drakmaniso/glam/palette"
-	"github.com/drakmaniso/glam/pixel"
-	"github.com/drakmaniso/glam/plane"
+	"github.com/drakmaniso/cozely"
+	"github.com/drakmaniso/cozely/input"
+	"github.com/drakmaniso/cozely/palette"
+	"github.com/drakmaniso/cozely/pixel"
+	"github.com/drakmaniso/cozely/plane"
 )
 
 //------------------------------------------------------------------------------
@@ -31,7 +31,7 @@ var picMode int
 
 func TestPicture_basic(t *testing.T) {
 	do(func() {
-		err := glam.Run(picLoop{})
+		err := cozely.Run(picLoop{})
 		if err != nil {
 			t.Error(err)
 		}
@@ -58,7 +58,7 @@ func (picLoop) Leave() error { return nil }
 
 func (picLoop) React() error {
 	if quit.JustPressed(1) {
-		glam.Stop()
+		cozely.Stop()
 	}
 
 	if next.JustPressed(1) {

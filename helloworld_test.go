@@ -1,9 +1,9 @@
-package glam_test
+package cozely_test
 
 import (
-	"github.com/drakmaniso/glam"
-	"github.com/drakmaniso/glam/palette"
-	"github.com/drakmaniso/glam/pixel"
+	"github.com/drakmaniso/cozely"
+	"github.com/drakmaniso/cozely/palette"
+	"github.com/drakmaniso/cozely/pixel"
 )
 
 // Initialization //////////////////////////////////////////////////////////////
@@ -14,7 +14,7 @@ var (
 )
 
 func Example_helloWorld() {
-	glam.Run(loop{})
+	cozely.Run(loop{})
 	// Output:
 }
 

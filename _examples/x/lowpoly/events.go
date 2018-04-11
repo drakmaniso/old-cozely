@@ -6,11 +6,11 @@ package main
 //------------------------------------------------------------------------------
 
 import (
-	"github.com/drakmaniso/glam/key"
-	"github.com/drakmaniso/glam/mouse"
-	"github.com/drakmaniso/glam/plane"
-	"github.com/drakmaniso/glam/space"
-	"github.com/drakmaniso/glam/x/gl"
+	"github.com/drakmaniso/cozely/key"
+	"github.com/drakmaniso/cozely/mouse"
+	"github.com/drakmaniso/cozely/plane"
+	"github.com/drakmaniso/cozely/space"
+	"github.com/drakmaniso/cozely/x/gl"
 )
 
 //------------------------------------------------------------------------------

@@ -4,7 +4,7 @@
 package input
 
 import (
-	"github.com/drakmaniso/glam/plane"
+	"github.com/drakmaniso/cozely/plane"
 )
 
 type DeltaID uint32

@@ -9,11 +9,11 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/drakmaniso/glam"
-	"github.com/drakmaniso/glam/input"
-	"github.com/drakmaniso/glam/palette"
-	"github.com/drakmaniso/glam/pixel"
-	"github.com/drakmaniso/glam/plane"
+	"github.com/drakmaniso/cozely"
+	"github.com/drakmaniso/cozely/input"
+	"github.com/drakmaniso/cozely/palette"
+	"github.com/drakmaniso/cozely/pixel"
+	"github.com/drakmaniso/cozely/plane"
 )
 
 //------------------------------------------------------------------------------
@@ -86,9 +86,9 @@ var openmenu, closemenu, instopenmenu, instclosemenu, inventory, options, jump b
 //------------------------------------------------------------------------------
 
 func TestAction(t *testing.T) {
-	err := glam.Run(loop{})
+	err := cozely.Run(loop{})
 	if err != nil {
-		glam.ShowError(err)
+		cozely.ShowError(err)
 		return
 	}
 }
@@ -219,29 +219,29 @@ func color(p bool) {
 //------------------------------------------------------------------------------
 
 func (loop) Show() {
-	fmt.Printf("%v: show\n", glam.GameTime())
+	fmt.Printf("%v: show\n", cozely.GameTime())
 }
 
 func (loop) Hide() {
-	fmt.Printf("%v: hide\n", glam.GameTime())
+	fmt.Printf("%v: hide\n", cozely.GameTime())
 }
 
 func (loop) Resize() {
-	s := glam.WindowSize()
-	fmt.Printf("%v: resize %dx%d\n", glam.GameTime(), s.X, s.Y)
+	s := cozely.WindowSize()
+	fmt.Printf("%v: resize %dx%d\n", cozely.GameTime(), s.X, s.Y)
 }
 
 func (loop) Focus() {
-	fmt.Printf("%v: focus\n", glam.GameTime())
+	fmt.Printf("%v: focus\n", cozely.GameTime())
 }
 
 func (loop) Unfocus() {
-	fmt.Printf("%v: unfocus\n", glam.GameTime())
+	fmt.Printf("%v: unfocus\n", cozely.GameTime())
 }
 
 func (loop) Quit() {
-	fmt.Printf("%v: quit\n", glam.GameTime())
-	glam.Stop()
+	fmt.Printf("%v: quit\n", cozely.GameTime())
+	cozely.Stop()
 }
 
 //------------------------------------------------------------------------------

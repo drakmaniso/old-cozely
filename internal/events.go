@@ -27,7 +27,7 @@ import "C"
 
 //------------------------------------------------------------------------------
 
-// GameLoop (identic to glam.GameLoop).
+// GameLoop (identic to cozely.GameLoop).
 type GameLoop interface {
 	Leave() error
 	Enter() error

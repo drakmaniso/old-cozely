@@ -8,10 +8,10 @@ import (
 	"os"
 	"testing"
 
-	"github.com/drakmaniso/glam"
-	"github.com/drakmaniso/glam/input"
-	"github.com/drakmaniso/glam/palette"
-	"github.com/drakmaniso/glam/pixel"
+	"github.com/drakmaniso/cozely"
+	"github.com/drakmaniso/cozely/input"
+	"github.com/drakmaniso/cozely/palette"
+	"github.com/drakmaniso/cozely/pixel"
 )
 
 //------------------------------------------------------------------------------
@@ -43,7 +43,7 @@ var (
 
 func TestFont_load(t *testing.T) {
 	do(func() {
-		err := glam.Run(fntLoop{})
+		err := cozely.Run(fntLoop{})
 		if err != nil {
 			t.Error(err)
 		}
@@ -60,7 +60,7 @@ func (fntLoop) Enter() error {
 	input.Load(testBindings)
 	testContext.Activate(1)
 
-	f, err := os.Open(glam.Path() + "frankenstein.txt")
+	f, err := os.Open(cozely.Path() + "frankenstein.txt")
 	if err != nil {
 		return err
 	}
@@ -68,7 +68,7 @@ func (fntLoop) Enter() error {
 	for s.Scan() {
 		fntText = append(fntText, s.Text())
 	}
-	f, err = os.Open(glam.Path() + "sourcecode.txt")
+	f, err = os.Open(cozely.Path() + "sourcecode.txt")
 	if err != nil {
 		return err
 	}
@@ -90,7 +90,7 @@ func (fntLoop) Leave() error { return nil }
 
 func (fntLoop) React() error {
 	if quit.JustPressed(1) {
-		glam.Stop()
+		cozely.Stop()
 	}
 	return nil
 }

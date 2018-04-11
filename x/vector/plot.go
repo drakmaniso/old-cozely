@@ -4,7 +4,7 @@
 package vector
 
 import (
-	"github.com/drakmaniso/glam/colour"
+	"github.com/drakmaniso/cozely/colour"
 )
 
 //------------------------------------------------------------------------------

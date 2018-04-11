@@ -6,7 +6,7 @@ package plane
 import (
 	"math"
 
-	"github.com/drakmaniso/glam/x/math32"
+	"github.com/drakmaniso/cozely/x/math32"
 )
 
 //------------------------------------------------------------------------------

@@ -4,17 +4,17 @@
 package main
 
 import (
-	"github.com/drakmaniso/glam"
-	"github.com/drakmaniso/glam/colour"
-	"github.com/drakmaniso/glam/x/gl"
+	"github.com/drakmaniso/cozely"
+	"github.com/drakmaniso/cozely/colour"
+	"github.com/drakmaniso/cozely/x/gl"
 )
 
 //------------------------------------------------------------------------------
 
 func main() {
-	err := glam.Run(loop{})
+	err := cozely.Run(loop{})
 	if err != nil {
-		glam.ShowError(err)
+		cozely.ShowError(err)
 		return
 	}
 }
@@ -29,7 +29,7 @@ var (
 //------------------------------------------------------------------------------
 
 type loop struct {
-	glam.EmptyLoop
+	cozely.EmptyLoop
 }
 
 //------------------------------------------------------------------------------
@@ -37,12 +37,12 @@ type loop struct {
 func (loop) Enter() error {
 	// Create and configure the pipeline
 	pipeline = gl.NewPipeline(
-		gl.Shader(glam.Path()+"shader.vert"),
-		gl.Shader(glam.Path()+"shader.frag"),
+		gl.Shader(cozely.Path()+"shader.vert"),
+		gl.Shader(cozely.Path()+"shader.frag"),
 		gl.Topology(gl.Triangles),
 	)
 
-	return glam.Error("gfx", gl.Err())
+	return cozely.Error("gfx", gl.Err())
 }
 
 //------------------------------------------------------------------------------

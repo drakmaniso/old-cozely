@@ -4,26 +4,26 @@
 package main
 
 import (
-	"github.com/drakmaniso/glam"
-	"github.com/drakmaniso/glam/colour"
-	"github.com/drakmaniso/glam/mouse"
-	"github.com/drakmaniso/glam/palette"
-	"github.com/drakmaniso/glam/x/vector"
+	"github.com/drakmaniso/cozely"
+	"github.com/drakmaniso/cozely/colour"
+	"github.com/drakmaniso/cozely/mouse"
+	"github.com/drakmaniso/cozely/palette"
+	"github.com/drakmaniso/cozely/x/vector"
 )
 
 //------------------------------------------------------------------------------
 
 func main() {
-	err := glam.Run(loop{})
+	err := cozely.Run(loop{})
 	if err != nil {
-		glam.ShowError(err)
+		cozely.ShowError(err)
 	}
 }
 
 //------------------------------------------------------------------------------
 
 type loop struct {
-	glam.EmptyLoop
+	cozely.EmptyLoop
 }
 
 //------------------------------------------------------------------------------
@@ -41,7 +41,7 @@ func (loop) Update() error {
 
 func (loop) Draw() error {
 	vector.Line(colour.SRGB{1, 0.5, 0}, 10, 10, 100, 100)
-	wx, wy := glam.WindowSize()
+	wx, wy := cozely.WindowSize()
 	mx, my := mouse.Position()
 	vector.Line(colour.SRGB{1, 1, 1}, int16(wx/2), int16(wy/2), int16(mx), int16(my))
 	return nil

@@ -1,11 +1,11 @@
-package glam_test
+package cozely_test
 
 import (
-	"github.com/drakmaniso/glam/plane"
-	"github.com/drakmaniso/glam"
-	"github.com/drakmaniso/glam/input"
-	"github.com/drakmaniso/glam/palette"
-	"github.com/drakmaniso/glam/pixel"
+	"github.com/drakmaniso/cozely/plane"
+	"github.com/drakmaniso/cozely"
+	"github.com/drakmaniso/cozely/input"
+	"github.com/drakmaniso/cozely/palette"
+	"github.com/drakmaniso/cozely/pixel"
 )
 
 // Input Bindings //////////////////////////////////////////////////////////////
@@ -28,7 +28,7 @@ var (
 )
 
 func Example_interactive() {
-	glam.Run(interactive{})
+	cozely.Run(interactive{})
 	// Output:
 }
 
@@ -51,7 +51,7 @@ func (interactive) Leave() error {
 
 func (interactive) React() error {
 	if quit.JustPressed(1) {
-		glam.Stop()
+		cozely.Stop()
 	}
 	return nil
 }

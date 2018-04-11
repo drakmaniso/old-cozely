@@ -4,8 +4,8 @@
 package input
 
 import (
-	"github.com/drakmaniso/glam/internal"
-	"github.com/drakmaniso/glam/plane"
+	"github.com/drakmaniso/cozely/internal"
+	"github.com/drakmaniso/cozely/plane"
 )
 
 type cursor struct{}

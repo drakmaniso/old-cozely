@@ -4,7 +4,7 @@
 package grid
 
 import (
-	"github.com/drakmaniso/glam/plane"
+	"github.com/drakmaniso/cozely/plane"
 )
 
 //------------------------------------------------------------------------------

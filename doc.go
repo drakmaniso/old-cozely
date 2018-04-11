@@ -2,8 +2,8 @@
 // Licensed under a simplified BSD license (see LICENSE file).
 
 /*
-Package glam is the starting point of the framework.
+Package cozely is the starting point of the framework.
 
 It provides, among other things, a game loop with fixed time step.
 */
-package glam
+package cozely

@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"unicode/utf8"
 
-	"github.com/drakmaniso/glam/palette"
-	"github.com/drakmaniso/glam/plane"
+	"github.com/drakmaniso/cozely/palette"
+	"github.com/drakmaniso/cozely/plane"
 )
 
 //------------------------------------------------------------------------------

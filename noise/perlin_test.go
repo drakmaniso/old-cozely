@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/drakmaniso/glam/space"
+	"github.com/drakmaniso/cozely/space"
 )
 
 //------------------------------------------------------------------------------
