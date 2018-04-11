@@ -7,7 +7,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/drakmaniso/cozely/input"
+	"github.com/cozely/cozely/input"
 )
 
 ////////////////////////////////////////////////////////////////////////////////

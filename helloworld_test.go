@@ -1,9 +1,9 @@
 package cozely_test
 
 import (
-	"github.com/drakmaniso/cozely"
-	"github.com/drakmaniso/cozely/palette"
-	"github.com/drakmaniso/cozely/pixel"
+	"github.com/cozely/cozely"
+	"github.com/cozely/cozely/palette"
+	"github.com/cozely/cozely/pixel"
 )
 
 // Initialization //////////////////////////////////////////////////////////////

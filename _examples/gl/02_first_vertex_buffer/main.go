@@ -6,10 +6,10 @@ package main
 ////////////////////////////////////////////////////////////////////////////////
 
 import (
-	"github.com/drakmaniso/cozely"
-	"github.com/drakmaniso/cozely/colour"
-	"github.com/drakmaniso/cozely/plane"
-	"github.com/drakmaniso/cozely/x/gl"
+	"github.com/cozely/cozely"
+	"github.com/cozely/cozely/colour"
+	"github.com/cozely/cozely/plane"
+	"github.com/cozely/cozely/x/gl"
 )
 
 ////////////////////////////////////////////////////////////////////////////////

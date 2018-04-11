@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"unicode/utf8"
 
-	"github.com/drakmaniso/cozely/palette"
-	"github.com/drakmaniso/cozely/plane"
+	"github.com/cozely/cozely/palette"
+	"github.com/cozely/cozely/plane"
 )
 
 ////////////////////////////////////////////////////////////////////////////////

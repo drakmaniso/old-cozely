@@ -7,13 +7,13 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/drakmaniso/cozely"
-	"github.com/drakmaniso/cozely/input"
-	"github.com/drakmaniso/cozely/palette"
-	"github.com/drakmaniso/cozely/pixel"
+	"github.com/cozely/cozely"
+	"github.com/cozely/cozely/input"
+	"github.com/cozely/cozely/palette"
+	"github.com/cozely/cozely/pixel"
 
-	"github.com/drakmaniso/cozely/_examples/match3/ecs"
-	"github.com/drakmaniso/cozely/_examples/match3/grid"
+	"github.com/cozely/cozely/_examples/match3/ecs"
+	"github.com/cozely/cozely/_examples/match3/grid"
 )
 
 ////////////////////////////////////////////////////////////////////////////////

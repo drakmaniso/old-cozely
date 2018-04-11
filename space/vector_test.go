@@ -7,7 +7,7 @@ import (
 	"testing"
 	"unsafe"
 
-	"github.com/drakmaniso/cozely/x/space"
+	"github.com/cozely/cozely/x/space"
 )
 
 //-----------------------------------------------------------------------------

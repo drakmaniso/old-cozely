@@ -4,7 +4,7 @@
 package grid
 
 import (
-	"github.com/drakmaniso/cozely/_examples/match3/ecs"
+	"github.com/cozely/cozely/_examples/match3/ecs"
 )
 
 ////////////////////////////////////////////////////////////////////////////////

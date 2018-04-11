@@ -6,10 +6,10 @@ package main
 ////////////////////////////////////////////////////////////////////////////////
 
 import (
-	"github.com/drakmaniso/cozely"
-	"github.com/drakmaniso/cozely/input"
-	"github.com/drakmaniso/cozely/space"
-	"github.com/drakmaniso/cozely/x/math32"
+	"github.com/cozely/cozely"
+	"github.com/cozely/cozely/input"
+	"github.com/cozely/cozely/space"
+	"github.com/cozely/cozely/x/math32"
 )
 
 ////////////////////////////////////////////////////////////////////////////////

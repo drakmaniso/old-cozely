@@ -6,8 +6,8 @@ package poly
 import (
 	"math"
 
-	"github.com/drakmaniso/cozely/colour"
-	"github.com/drakmaniso/cozely/x/math32"
+	"github.com/cozely/cozely/colour"
+	"github.com/cozely/cozely/x/math32"
 )
 
 ////////////////////////////////////////////////////////////////////////////////

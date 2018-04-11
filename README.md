@@ -1,7 +1,7 @@
 # Cozely
 
-[![GoDoc](https://godoc.org/github.com/drakmaniso/cozely?status.svg)](https://godoc.org/github.com/drakmaniso/cozely)
-[![Go Report Card](https://goreportcard.com/badge/github.com/drakmaniso/cozely)](https://goreportcard.com/report/github.com/drakmaniso/cozely)
+[![GoDoc](https://godoc.org/github.com/cozely/cozely?status.svg)](https://godoc.org/github.com/cozely/cozely)
+[![Go Report Card](https://goreportcard.com/badge/github.com/cozely/cozely)](https://goreportcard.com/report/github.com/cozely/cozely)
 
 Cozely aims to be a simple, all-in-one framework for making games in Go. It
 focuses on pixel art for 2D, and polygonal art (aka low-poly) for 3D.

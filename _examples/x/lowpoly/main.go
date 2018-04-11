@@ -8,15 +8,15 @@ package main
 import (
 	"fmt"
 
-	"github.com/drakmaniso/cozely"
-	"github.com/drakmaniso/cozely/colour"
-	"github.com/drakmaniso/cozely/input"
-	"github.com/drakmaniso/cozely/palette"
-	"github.com/drakmaniso/cozely/pixel"
-	"github.com/drakmaniso/cozely/plane"
-	"github.com/drakmaniso/cozely/space"
-	"github.com/drakmaniso/cozely/x/gl"
-	"github.com/drakmaniso/cozely/x/poly"
+	"github.com/cozely/cozely"
+	"github.com/cozely/cozely/colour"
+	"github.com/cozely/cozely/input"
+	"github.com/cozely/cozely/palette"
+	"github.com/cozely/cozely/pixel"
+	"github.com/cozely/cozely/plane"
+	"github.com/cozely/cozely/space"
+	"github.com/cozely/cozely/x/gl"
+	"github.com/cozely/cozely/x/poly"
 )
 
 ////////////////////////////////////////////////////////////////////////////////

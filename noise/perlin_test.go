@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/drakmaniso/cozely/space"
+	"github.com/cozely/cozely/space"
 )
 
 ////////////////////////////////////////////////////////////////////////////////

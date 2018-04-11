@@ -4,9 +4,9 @@
 package cozely
 
 import (
-	"github.com/drakmaniso/cozely/colour"
-	"github.com/drakmaniso/cozely/internal"
-	"github.com/drakmaniso/cozely/x/gl"
+	"github.com/cozely/cozely/colour"
+	"github.com/cozely/cozely/internal"
+	"github.com/cozely/cozely/x/gl"
 )
 
 ////////////////////////////////////////////////////////////////////////////////

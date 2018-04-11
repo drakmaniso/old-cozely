@@ -4,7 +4,7 @@
 package input
 
 import (
-	"github.com/drakmaniso/cozely/plane"
+	"github.com/cozely/cozely/plane"
 )
 
 type CoordID uint32

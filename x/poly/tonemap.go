@@ -6,7 +6,7 @@ package poly
 import (
 	"strings"
 
-	"github.com/drakmaniso/cozely/x/gl"
+	"github.com/cozely/cozely/x/gl"
 )
 
 ////////////////////////////////////////////////////////////////////////////////

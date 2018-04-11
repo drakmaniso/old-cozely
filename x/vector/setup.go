@@ -7,8 +7,8 @@ import (
 	"strings"
 	"unsafe"
 
-	"github.com/drakmaniso/cozely/internal"
-	"github.com/drakmaniso/cozely/x/gl"
+	"github.com/cozely/cozely/internal"
+	"github.com/cozely/cozely/x/gl"
 )
 
 ////////////////////////////////////////////////////////////////////////////////

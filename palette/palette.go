@@ -4,7 +4,7 @@
 package palette
 
 import (
-	"github.com/drakmaniso/cozely/colour"
+	"github.com/cozely/cozely/colour"
 )
 
 ////////////////////////////////////////////////////////////////////////////////

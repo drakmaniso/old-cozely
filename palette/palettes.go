@@ -6,7 +6,7 @@ package palette
 import (
 	"strconv"
 
-	"github.com/drakmaniso/cozely/colour"
+	"github.com/cozely/cozely/colour"
 )
 
 ////////////////////////////////////////////////////////////////////////////////

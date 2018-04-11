@@ -6,9 +6,9 @@ package pixel
 import (
 	"unsafe"
 
-	"github.com/drakmaniso/cozely/palette"
-	"github.com/drakmaniso/cozely/plane"
-	"github.com/drakmaniso/cozely/x/gl"
+	"github.com/cozely/cozely/palette"
+	"github.com/cozely/cozely/plane"
+	"github.com/cozely/cozely/x/gl"
 )
 
 ////////////////////////////////////////////////////////////////////////////////

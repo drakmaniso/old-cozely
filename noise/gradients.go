@@ -4,9 +4,9 @@
 package noise
 
 import (
-	"github.com/drakmaniso/cozely/plane"
-	"github.com/drakmaniso/cozely/space"
-	"github.com/drakmaniso/cozely/x/math32"
+	"github.com/cozely/cozely/plane"
+	"github.com/cozely/cozely/space"
+	"github.com/cozely/cozely/x/math32"
 )
 
 ////////////////////////////////////////////////////////////////////////////////

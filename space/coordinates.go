@@ -6,7 +6,7 @@ package space
 import (
 	"math"
 
-	"github.com/drakmaniso/cozely/x/math32"
+	"github.com/cozely/cozely/x/math32"
 )
 
 ////////////////////////////////////////////////////////////////////////////////

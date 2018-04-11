@@ -6,7 +6,7 @@ package cozely
 import (
 	"errors"
 
-	"github.com/drakmaniso/cozely/internal"
+	"github.com/cozely/cozely/internal"
 )
 
 ////////////////////////////////////////////////////////////////////////////////

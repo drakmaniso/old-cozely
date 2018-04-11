@@ -4,11 +4,11 @@
 package main
 
 import (
-	"github.com/drakmaniso/cozely/plane"
-	"github.com/drakmaniso/cozely/x/gl"
+	"github.com/cozely/cozely/plane"
+	"github.com/cozely/cozely/x/gl"
 
-	"github.com/drakmaniso/cozely/_examples/match3/ecs"
-	"github.com/drakmaniso/cozely/_examples/match3/grid"
+	"github.com/cozely/cozely/_examples/match3/ecs"
+	"github.com/cozely/cozely/_examples/match3/grid"
 )
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -5,7 +5,7 @@ package quadedge
 import (
 	"sort"
 
-	"github.com/drakmaniso/cozely/plane"
+	"github.com/cozely/cozely/plane"
 )
 
 ////////////////////////////////////////////////////////////////////////////////

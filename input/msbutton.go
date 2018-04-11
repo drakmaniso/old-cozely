@@ -3,7 +3,7 @@
 
 package input
 
-import "github.com/drakmaniso/cozely/internal"
+import "github.com/cozely/cozely/internal"
 
 type msButton struct {
 	button        mouseButton

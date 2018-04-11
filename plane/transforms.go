@@ -3,7 +3,7 @@
 
 package plane
 
-import "github.com/drakmaniso/cozely/x/math32"
+import "github.com/cozely/cozely/x/math32"
 
 ////////////////////////////////////////////////////////////////////////////////
 

@@ -8,9 +8,9 @@ import (
 	"image/color"
 	"strings"
 
-	"github.com/drakmaniso/cozely/internal"
-	"github.com/drakmaniso/cozely/x/atlas"
-	"github.com/drakmaniso/cozely/x/gl"
+	"github.com/cozely/cozely/internal"
+	"github.com/cozely/cozely/x/atlas"
+	"github.com/cozely/cozely/x/gl"
 )
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -6,7 +6,7 @@ package machine_test
 import (
 	"fmt"
 
-	"github.com/drakmaniso/cozely/x/machine"
+	"github.com/cozely/cozely/x/machine"
 )
 
 var counter int

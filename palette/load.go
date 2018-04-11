@@ -11,8 +11,8 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/drakmaniso/cozely/colour"
-	"github.com/drakmaniso/cozely/internal"
+	"github.com/cozely/cozely/colour"
+	"github.com/cozely/cozely/internal"
 )
 
 ////////////////////////////////////////////////////////////////////////////////

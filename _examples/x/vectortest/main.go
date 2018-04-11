@@ -4,11 +4,11 @@
 package main
 
 import (
-	"github.com/drakmaniso/cozely"
-	"github.com/drakmaniso/cozely/colour"
-	"github.com/drakmaniso/cozely/input"
-	"github.com/drakmaniso/cozely/palette"
-	"github.com/drakmaniso/cozely/x/vector"
+	"github.com/cozely/cozely"
+	"github.com/cozely/cozely/colour"
+	"github.com/cozely/cozely/input"
+	"github.com/cozely/cozely/palette"
+	"github.com/cozely/cozely/x/vector"
 )
 
 ////////////////////////////////////////////////////////////////////////////////

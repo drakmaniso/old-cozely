@@ -10,7 +10,7 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/drakmaniso/cozely/formats/obj"
+	"github.com/cozely/cozely/formats/obj"
 )
 
 ////////////////////////////////////////////////////////////////////////////////

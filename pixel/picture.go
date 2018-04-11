@@ -6,7 +6,7 @@ package pixel
 import (
 	"errors"
 
-	"github.com/drakmaniso/cozely/plane"
+	"github.com/cozely/cozely/plane"
 )
 
 ////////////////////////////////////////////////////////////////////////////////

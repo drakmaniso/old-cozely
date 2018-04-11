@@ -4,16 +4,16 @@
 package plane_test
 
 import (
-	"github.com/drakmaniso/cozely/input"
+	"github.com/cozely/cozely/input"
 	"math/rand"
 	"testing"
 
-	"github.com/drakmaniso/cozely"
-	"github.com/drakmaniso/cozely/colour"
-	"github.com/drakmaniso/cozely/palette"
-	"github.com/drakmaniso/cozely/pixel"
-	"github.com/drakmaniso/cozely/plane"
-	"github.com/drakmaniso/cozely/x/math32"
+	"github.com/cozely/cozely"
+	"github.com/cozely/cozely/colour"
+	"github.com/cozely/cozely/palette"
+	"github.com/cozely/cozely/pixel"
+	"github.com/cozely/cozely/plane"
+	"github.com/cozely/cozely/x/math32"
 )
 
 ////////////////////////////////////////////////////////////////////////////////

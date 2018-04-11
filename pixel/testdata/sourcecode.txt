@@ -10,8 +10,8 @@ import (
   "os"
   "path/filepath"
 
-  "github.com/drakmaniso/cozely/internal"
-  "github.com/drakmaniso/cozely/x/atlas"
+  "github.com/cozely/cozely/internal"
+  "github.com/cozely/cozely/x/atlas"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
