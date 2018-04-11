@@ -32,19 +32,6 @@ type GameLoop interface {
 	Quit()
 }
 
-// EmptyLoop implements a default, empty game loop.
-//
-// It's an empty struct intended to be embedded in the user-defined GameLoop,
-// for convenience.
-//
-//  type loop struct {
-//    glam.EmptyLoop
-//  }
-//
-// This makes it possible to implement the GameLoop interface without
-// implementing each method.
-type EmptyLoop = internal.EmptyLoop
-
 //------------------------------------------------------------------------------
 
 // Run initializes the framework, load the assets and starts the game loop.
