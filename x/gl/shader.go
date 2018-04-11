@@ -89,7 +89,7 @@ func Shader(path string) PipelineConfig {
 	case strings.HasSuffix(path, ".comp"):
 		return ComputeShader(f)
 	}
-	setErr("opening shader file", errors.New("unkown shader file extension"))
+	setErr("opening shader file", errors.New("unknown shader file extension"))
 	return func(*Pipeline) {}
 }
 

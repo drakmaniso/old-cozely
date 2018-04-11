@@ -90,7 +90,7 @@ func NewUniformBuffer(data interface{}, f BufferFlags) UniformBuffer {
 
 // SubData updates the buffer with data, starting at a specified offset.
 //
-// It is your responsability to ensure that the size of data plus the offset
+// It is your responsibility to ensure that the size of data plus the offset
 // does not exceed the buffer size.
 func (ub *UniformBuffer) SubData(data interface{}, atOffset uintptr) {
 	p, s, err := pointerAndSizeOf(data)
@@ -141,7 +141,7 @@ func NewStorageBuffer(data interface{}, f BufferFlags) StorageBuffer {
 
 // SubData updates the buffer with data, starting at a specified offset.
 //
-// It is your responsability to ensure that the size of data plus the offset
+// It is your responsibility to ensure that the size of data plus the offset
 // does not exceed the buffer size.
 func (sb *StorageBuffer) SubData(data interface{}, atOffset uintptr) {
 	p, s, err := pointerAndSizeOf(data)
@@ -194,7 +194,7 @@ func NewVertexBuffer(data interface{}, f BufferFlags) VertexBuffer {
 
 // SubData updates the buffer with data, starting at a specified offset.
 //
-// It is your responsability to ensure that the size of data plus the offset
+// It is your responsibility to ensure that the size of data plus the offset
 // does not exceed the buffer size.
 func (vb *VertexBuffer) SubData(data interface{}, atOffset uintptr) {
 	p, s, st, err := pointerSizeAndStrideOf(data)
@@ -251,7 +251,7 @@ func NewIndexBuffer(data interface{}, f BufferFlags) IndexBuffer {
 
 // SubData updates the buffer with data, starting at a specified offset.
 //
-// It is your responsability to ensure that the size of data plus the offset
+// It is your responsibility to ensure that the size of data plus the offset
 // does not exceed the buffer size.
 func (eb *IndexBuffer) SubData(data interface{}, atOffset uintptr) {
 	p, s, t, err := pointerSizeAndUintTypeOf(data)
@@ -341,7 +341,7 @@ func NewIndirectBuffer(data interface{}, f BufferFlags) IndirectBuffer {
 
 // SubData updates the buffer with data, starting at a specified offset.
 //
-// It is your responsability to ensure that the size of data plus the offset
+// It is your responsibility to ensure that the size of data plus the offset
 // does not exceed the buffer size.
 func (ib *IndirectBuffer) SubData(data interface{}, atOffset uintptr) {
 	p, s, err := pointerAndSizeOf(data)
@@ -392,7 +392,7 @@ func (bt BufferTexture) Bind(index uint32) {
 
 // SubData updates the buffer with data, starting at a specified offset.
 //
-// It is your responsability to ensure that the size of data plus the offset
+// It is your responsibility to ensure that the size of data plus the offset
 // does not exceed the buffer size.
 func (bt *BufferTexture) SubData(data interface{}, atOffset uintptr) {
 	p, s, err := pointerAndSizeOf(data)

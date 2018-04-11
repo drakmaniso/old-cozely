@@ -27,7 +27,7 @@ type KeyCode uint32
 
 //------------------------------------------------------------------------------
 
-var keys    *C.Uint8
+var keys *C.Uint8
 
 func Key(k KeyCode) bool {
 	s := *(*uint8)(unsafe.Pointer(uintptr(unsafe.Pointer(keys)) + uintptr(k)))

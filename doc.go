@@ -3,7 +3,7 @@
 
 /*
 Package cozely is the starting point of the Cozely framework, a simple,
-all-in-one framework for making games in Go.
+all-in-one set of packages for making games in Go.
 
 It focuses on pixel art for 2D, and polygonal art (aka low-poly) for 3D,
 supports windows and linux, and has only two dependencies (SDL2 and Opengl 4.6).

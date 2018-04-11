@@ -68,7 +68,7 @@ func Setup() error {
 	// Initialize SDL
 
 	if errcode := C.SDL_Init(C.SDL_INIT_VIDEO | C.SDL_INIT_JOYSTICK); errcode != 0 {
-		return Error("in SDL initalization", GetSDLError())
+		return Error("in SDL initialization", GetSDLError())
 	}
 
 	C.SDL_EventState(C.SDL_MOUSEMOTION, C.SDL_IGNORE)

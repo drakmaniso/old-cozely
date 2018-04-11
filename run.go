@@ -31,7 +31,7 @@ type GameLoop interface {
 
 	// Render is called to display the game state to the player.
 	//
-	// Note that the framerate of Update and Render is independant, so the game
+	// Note that the framerate of Update and Render is independent, so the game
 	// state might need to be interpolated.
 	Render() error
 }

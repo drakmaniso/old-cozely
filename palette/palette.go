@@ -48,8 +48,8 @@ func Clear() {
 // Find returns the index associated with a name. If there isn't any, index 0 is
 // returned.
 func Find(name string) Index {
-  c, _ := names[name]
-  return c
+	c, _ := names[name]
+	return c
 }
 
 // Match searches for a color by its colour.LRGBA values. If this exact color
@@ -81,22 +81,22 @@ func (c Index) SetColour(v colour.Colour) {
 // Name returns the current name of the index, or the empty string if it is
 // unnamed.
 func (c Index) Name() string {
-  for n, nc := range names {
-    if c == nc {
-      return n
-    }
-  }
-  return ""
+	for n, nc := range names {
+		if c == nc {
+			return n
+		}
+	}
+	return ""
 }
 
 // Rename changes the name of an index. If the empty string is used, the index
 // becomes unnamed.
 func (c Index) Rename(n string) {
-  if n != "" {
-    names[n] = c
-  } else {
-    delete(names, n)
-  }
+	if n != "" {
+		names[n] = c
+	} else {
+		delete(names, n)
+	}
 }
 
 //------------------------------------------------------------------------------

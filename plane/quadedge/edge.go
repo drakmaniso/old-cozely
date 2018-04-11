@@ -351,7 +351,7 @@ func (e Edge) Walk(visit func(e Edge)) {
 }
 
 func (p *Pool) walk(eid edgeID, visit func(e Edge), m uint32) {
-	for p.marks[eid>>2] != m  {
+	for p.marks[eid>>2] != m {
 		visit(Edge{pool: p, id: eid})
 		p.marks[eid>>2] = m
 		p.walk(p.next[eid.sym()], visit, m)

@@ -40,7 +40,7 @@ func Load(b Bindings) error {
 		}
 		if ctx == noContext {
 			if err == nil {
-				err = errors.New("unkown context: " + cn)
+				err = errors.New("unknown context: " + cn)
 			}
 			continue
 		}
@@ -51,7 +51,7 @@ func Load(b Bindings) error {
 			act, ok := actions.names[an]
 			if !ok {
 				if err == nil {
-					err = errors.New("unkown action: " + an)
+					err = errors.New("unknown action: " + an)
 				}
 				continue
 			}
@@ -60,7 +60,7 @@ func Load(b Bindings) error {
 				bnd, ok := binders[n]
 				if !ok {
 					if err == nil {
-						err = errors.New("unkown binding: " + n)
+						err = errors.New("unknown binding: " + n)
 					}
 					continue
 				}

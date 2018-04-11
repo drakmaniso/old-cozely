@@ -69,7 +69,7 @@ func ProcessEvents(win struct {
 	}
 }
 
-func dispatch(e unsafe.Pointer, win struct{
+func dispatch(e unsafe.Pointer, win struct {
 	Resize  func()
 	Hide    func()
 	Show    func()
@@ -120,7 +120,7 @@ func dispatch(e unsafe.Pointer, win struct{
 		case C.SDL_WINDOWEVENT_CLOSE:
 			// Ignore
 		default:
-			//TODO: log.Print("unkown window event")
+			//TODO: log.Print("unknown window event")
 		}
 	// Mouse Events
 	case C.SDL_MOUSEWHEEL:

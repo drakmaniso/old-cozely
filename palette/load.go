@@ -26,8 +26,8 @@ func Load(name string) error {
 	if ok {
 		Clear()
 		for i := range p {
-			Index(i+1).SetColour(p[i].colour)
-			Index(i+1).Rename(p[i].name)
+			Index(i + 1).SetColour(p[i].colour)
+			Index(i + 1).Rename(p[i].name)
 		}
 		return nil
 	}

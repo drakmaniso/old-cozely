@@ -8,9 +8,9 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/drakmaniso/cozely/x/gl"
 	"github.com/drakmaniso/cozely/formats/obj"
 	"github.com/drakmaniso/cozely/space"
+	"github.com/drakmaniso/cozely/x/gl"
 )
 
 //------------------------------------------------------------------------------

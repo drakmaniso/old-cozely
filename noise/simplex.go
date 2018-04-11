@@ -4,8 +4,8 @@
 package noise
 
 import (
-	"github.com/drakmaniso/cozely/x/math32"
 	"github.com/drakmaniso/cozely/plane"
+	"github.com/drakmaniso/cozely/x/math32"
 )
 
 //------------------------------------------------------------------------------

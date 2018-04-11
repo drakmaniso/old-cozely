@@ -4,7 +4,6 @@
 package main
 
 import (
-	"strings"
 	"fmt"
 	"image"
 	"image/color"
@@ -12,6 +11,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 func main() {

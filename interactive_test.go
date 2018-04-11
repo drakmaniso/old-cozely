@@ -1,11 +1,11 @@
 package cozely_test
 
 import (
-	"github.com/drakmaniso/cozely/plane"
 	"github.com/drakmaniso/cozely"
 	"github.com/drakmaniso/cozely/input"
 	"github.com/drakmaniso/cozely/palette"
 	"github.com/drakmaniso/cozely/pixel"
+	"github.com/drakmaniso/cozely/plane"
 )
 
 // Input Bindings //////////////////////////////////////////////////////////////

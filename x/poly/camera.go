@@ -6,11 +6,11 @@ package poly
 import (
 	"math"
 
-	"github.com/drakmaniso/cozely/x/gl"
-	"github.com/drakmaniso/cozely/x/math32"
 	"github.com/drakmaniso/cozely/internal"
 	"github.com/drakmaniso/cozely/plane"
 	"github.com/drakmaniso/cozely/space"
+	"github.com/drakmaniso/cozely/x/gl"
+	"github.com/drakmaniso/cozely/x/math32"
 )
 
 //------------------------------------------------------------------------------

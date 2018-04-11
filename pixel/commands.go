@@ -40,7 +40,7 @@ func (cv CanvasID) Point(color palette.Index, depth int16, pos plane.Pixel) {
 //------------------------------------------------------------------------------
 
 // Lines adds a command to draw a line strip on the canvas. A line strip is a
-// succesion of points connected by lines; all points and lines share the same
+// succession of points connected by lines; all points and lines share the same
 // depth and color.
 func (cv CanvasID) Lines(c palette.Index, depth int16, strip ...plane.Pixel) {
 	if len(strip) < 2 {
