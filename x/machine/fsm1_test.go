@@ -1,27 +1,27 @@
 // Copyright (c) 2013-2018 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
-package glam_test
+package machine_test
 
 import (
 	"fmt"
 
-	"github.com/drakmaniso/glam"
+	"github.com/drakmaniso/glam/x/machine"
 )
 
 var counter int
 
-func state1() glam.State {
+func state1() machine.State {
 	fmt.Println("State 1")
 	return state2
 }
 
-func state2() glam.State {
+func state2() machine.State {
 	fmt.Println("State 2")
 	return state3
 }
 
-func state3() glam.State {
+func state3() machine.State {
 	fmt.Println("State 3")
 	if counter > 6 {
 		return nil
@@ -29,8 +29,8 @@ func state3() glam.State {
 	return state2
 }
 
-func ExampleState_noAllocations() {
-	m := glam.State(state1)
+func Example_noAllocations() {
+	m := machine.State(state1)
 
 	for m != nil {
 		counter++

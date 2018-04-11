@@ -14,20 +14,36 @@ import (
 // GameLoop methods are called in a loop to React to user inputs, Update the
 // game state, and Render it.
 type GameLoop interface {
-	// Initialization and cleanup
+	// Enter is called once, after the framework initialization, but before the
+	// loop is started.
 	Enter() error
+
+	// Leave is called when the loop is stopped.
 	Leave() error
 
-	// The loop itself
+	// Enter is called once, after the framework initialization, and before the
+	// loop.
 	React() error
+
+	// Update is called at fixed intervals, to update the game state (e.g. logic,
+	// physics, AI...).
 	Update() error
+
+	// Render is called to display the game state to the player.
+	//
+	// Note that the framerate of Update and Render is independant, so the game
+	// state might need to be interpolated.
 	Render() error
 }
 
 //------------------------------------------------------------------------------
 
-// Window holds the callbacks for window events
-var Window = struct {
+// Events holds the callbacks for each window events.
+//
+// They can be modified at anytime, but should always contain valid callbacks
+// (i.e., non nil). The change will take effect at the next call to the React
+// method of the game loop.
+var Events = struct {
 	Resize  func()
 	Hide    func()
 	Show    func()
@@ -47,8 +63,8 @@ var Window = struct {
 
 // Run initializes the framework, load the assets and starts the game loop.
 //
-// The Update callback is called with a fixed time step, while the Draw callback
-// is tied to the framerate. Event callbacks are called before each Update, but
+// The Update method is called with a fixed time step, while the Render method
+// is tied to the framerate. The React method is called before each Update, but
 // at least once for every frame. The loop runs until Stop() is called.
 //
 // Important: must be called from main.main, or at least from a function that is
@@ -114,7 +130,7 @@ func Run(loop GameLoop) (err error) {
 
 	// First, send a fake resize window event
 	internal.PixelResize()
-	Window.Resize()
+	Events.Resize()
 
 	// Main Loop
 
@@ -137,16 +153,18 @@ func Run(loop GameLoop) (err error) {
 		internal.RenderTime = now - then
 		countFrames()
 		if internal.RenderTime > 4*internal.UpdateStep {
-			// Prevent "spiral of death" when Draw can't keep up with Update
+			// Prevent "spiral of death" when Render can't keep up with Update
 			internal.RenderTime = 4 * internal.UpdateStep
 		}
 
 		// Update and Events
 
 		internal.UpdateLag += internal.RenderTime
+		//TODO: ProcessEvents should always be called with GameTime = now!
 		if internal.UpdateLag < internal.UpdateStep {
 			// Process events even if there is no Update this frame
-			internal.ProcessEvents(Window)
+			internal.GameTime = now //TODO: check if correct
+			internal.ProcessEvents(Events)
 			internal.ActionNewFrame() //TODO: error handling?
 			internal.Loop.React()
 		}
@@ -156,7 +174,7 @@ func Run(loop GameLoop) (err error) {
 			gametime += internal.UpdateStep
 			internal.GameTime = gametime
 			// Events
-			internal.ProcessEvents(Window)
+			internal.ProcessEvents(Events)
 			internal.ActionNewFrame() //TODO: error handling?
 			internal.Loop.React()
 			// Update
@@ -166,15 +184,15 @@ func Run(loop GameLoop) (err error) {
 			}
 		}
 
-		// Draw
+		// Render
 
 		gl.DefaultFramebuffer.Bind(gl.DrawFramebuffer)
 		gl.ClearColorBuffer(colour.LRGBA{0, 0, 0, 0}) //TODO: ...
 
-		internal.GameTime = gametime + internal.UpdateLag
+		internal.GameTime = gametime + internal.UpdateLag //TODO: check if correct
 		err = internal.Loop.Render()
 		if err != nil {
-			return internal.Error("in Draw callback", err)
+			return internal.Error("in Render callback", err)
 		}
 
 		err = internal.VectorDraw()
@@ -199,7 +217,7 @@ func Run(loop GameLoop) (err error) {
 //------------------------------------------------------------------------------
 
 // GameTime returns the time elapsed in the game. It is updated before each call
-// to Update and before each call to Draw.
+// to Update and before each call to Render.
 func GameTime() float64 {
 	return internal.GameTime
 }
@@ -213,7 +231,7 @@ func UpdateTime() float64 {
 }
 
 // RenderTime returns the time elapsed between the previous frame and the one
-// being drawn.
+// being rendered.
 //
 // See also UpdateTime and UpdateLag.
 func RenderTime() float64 {
@@ -221,11 +239,11 @@ func RenderTime() float64 {
 }
 
 // UpdateLag returns the time elapsed between the last update and the frame
-// being drawn. It should be used during Draw to extrapolate (or interpolate)
-// the game state.
+// being rendered. It should be used during Render to extrapolate (or
+// interpolate) the game state.
 //
 // Note: if called during Update (or an event callback), it returns the time
-// between the current update and the next Draw call.
+// between the current update and the next Render call.
 //
 // See also UpdateTime and RenderTime.
 func UpdateLag() float64 {

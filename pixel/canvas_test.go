@@ -50,7 +50,7 @@ func TestCanvas_depth(t *testing.T) {
 		glam.Configure(
 			glam.UpdateStep(1 / 60.0),
 		)
-		glam.Window.Resize = resize
+		glam.Events.Resize = resize
 		err := glam.Run(cnvLoop{})
 		if err != nil {
 			t.Error(err)

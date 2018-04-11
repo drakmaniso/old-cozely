@@ -1,31 +1,31 @@
 // Copyright (c) 2013-2018 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
-package glam_test
+package machine_test
 
 import (
 	"fmt"
 
-	"github.com/drakmaniso/glam"
+	"github.com/drakmaniso/glam/x/machine"
 )
 
-func ExampleState() {
+func Example() {
 	counter := 0
 
 	// Define the State Machine
-	var s1, s2, s3 glam.State
+	var s1, s2, s3 machine.State
 
-	s1 = func() glam.State {
+	s1 = func() machine.State {
 		fmt.Println("State 1")
 		return s2
 	}
 
-	s2 = func() glam.State {
+	s2 = func() machine.State {
 		fmt.Println("State 2")
 		return s3
 	}
 
-	s3 = func() glam.State {
+	s3 = func() machine.State {
 		fmt.Println("State 3")
 		if counter > 6 {
 			return nil
