@@ -4,17 +4,16 @@
 package plane_test
 
 import (
+	"github.com/drakmaniso/glam/input"
 	"math/rand"
 	"testing"
 
-	"github.com/drakmaniso/glam/x/math32"
-
 	"github.com/drakmaniso/glam"
 	"github.com/drakmaniso/glam/colour"
-	"github.com/drakmaniso/glam/mouse"
 	"github.com/drakmaniso/glam/palette"
 	"github.com/drakmaniso/glam/pixel"
 	"github.com/drakmaniso/glam/plane"
+	"github.com/drakmaniso/glam/x/math32"
 )
 
 //------------------------------------------------------------------------------
@@ -26,6 +25,11 @@ var (
 
 var (
 	points []plane.Coord
+)
+
+var (
+	ratio  float32
+	offset plane.Coord
 )
 
 //------------------------------------------------------------------------------
@@ -49,13 +53,14 @@ func TestPlane_predicates(t *testing.T) {
 
 //------------------------------------------------------------------------------
 
-type triLoop struct {
-	glam.EmptyLoop
-}
+type triLoop struct{}
 
 //------------------------------------------------------------------------------
 
 func (triLoop) Enter() error {
+	input.Load(testBindings)
+	testContext.Activate(1)
+	
 	points = make([]plane.Coord, 3)
 	newPoints()
 
@@ -70,12 +75,26 @@ func (triLoop) Enter() error {
 	return nil
 }
 
+func (triLoop) Leave() error { return nil }
+
 //------------------------------------------------------------------------------
 
-var (
-	ratio  float32
-	offset plane.Coord
-)
+func (triLoop) React() error {
+	if quit.JustPressed(1) {
+		glam.Stop()
+	}
+
+	if next.JustPressed(1) {
+		newPoints()
+	}
+	return nil
+}
+
+//------------------------------------------------------------------------------
+
+func (triLoop) Update() error { return nil }
+
+//------------------------------------------------------------------------------
 
 func (triLoop) Draw() error {
 	screen.Clear(0)
@@ -188,12 +207,13 @@ func fromScreen(p plane.Pixel) plane.Coord {
 
 //------------------------------------------------------------------------------
 
-func (triLoop) MouseButtonDown(b mouse.Button, _ int) {
-	switch b {
-	case mouse.Left:
-		newPoints()
-	case mouse.Right:
-	}
+func (triLoop) Resize()  {}
+func (triLoop) Show()    {}
+func (triLoop) Hide()    {}
+func (triLoop) Focus()   {}
+func (triLoop) Unfocus() {}
+func (triLoop) Quit() {
+	glam.Stop()
 }
 
 //------------------------------------------------------------------------------

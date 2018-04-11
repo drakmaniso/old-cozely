@@ -6,7 +6,27 @@ package plane_test
 import (
 	"os"
 	"testing"
+
+	"github.com/drakmaniso/glam/input"
 )
+
+//------------------------------------------------------------------------------
+
+var (
+	quit     = input.NewBool("Quit")
+	next     = input.NewBool("Next")
+	previous = input.NewBool("Previous")
+)
+
+var testContext = input.NewContext("Test", quit, next, previous)
+
+var testBindings = map[string]map[string][]string{
+	"Test": {
+		"Quit":     {"Escape"},
+		"Next":     {"Mouse Left", "Space"},
+		"Previous": {"Mouse Right", "U"},
+	},
+}
 
 //------------------------------------------------------------------------------
 
