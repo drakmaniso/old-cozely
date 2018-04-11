@@ -81,6 +81,13 @@ func clearDevices() {
 	devices.context = nil
 	devices.newcontext = nil
 	devices.bools = nil
+	devices.boolbinds = nil
+	devices.floats = nil
+	devices.floatbinds = nil
+	devices.coords = nil
+	devices.coordbinds = nil
+	devices.deltas = nil
+	devices.deltabinds = nil
 	devices.bindings = nil
 
 	newDevice("Any")

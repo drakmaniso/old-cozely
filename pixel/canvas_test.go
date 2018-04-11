@@ -64,8 +64,8 @@ type cnvLoop struct{}
 //------------------------------------------------------------------------------
 
 func (cnvLoop) Enter() error {
-	input.Load(cnvBindings)
-	cnvContext.Activate(1)
+	input.Load(testBindings)
+	testContext.Activate(1)
 	palette.Load("graphics/shape1")
 	return nil
 }

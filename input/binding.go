@@ -9,6 +9,8 @@ import (
 	"github.com/drakmaniso/glam/internal"
 )
 
+//------------------------------------------------------------------------------
+
 type binding interface {
 	bind(c Context, a Action)
 	activate(d Device)
@@ -17,11 +19,15 @@ type binding interface {
 
 type Bindings map[string]map[string][]string
 
+//------------------------------------------------------------------------------
+
 func Load(b Bindings) error {
 	var err error
 
 	// Forget devices (and previous bindings)
 	clearDevices()
+
+	lcn := "Loaded input bindings (contexts:"
 
 	for cn, cb := range b {
 		// Find context by name
@@ -38,7 +44,7 @@ func Load(b Bindings) error {
 			}
 			continue
 		}
-		println(cn)
+		lcn = lcn + " " + cn
 
 		for an, ab := range cb {
 			// Find action by name
@@ -49,7 +55,6 @@ func Load(b Bindings) error {
 				}
 				continue
 			}
-			print("    ", an, " = ")
 
 			for _, n := range ab {
 				bnd, ok := binders[n]
@@ -60,18 +65,15 @@ func Load(b Bindings) error {
 					continue
 				}
 				bnd.bind(ctx, act)
-				print(", ")
 			}
-			println("")
-
 		}
-
+		internal.Debug.Printf(lcn + ")")
 	}
 
 	// Add gamepad devices
 
 	n := internal.NumJoysticks()
-	internal.Debug.Printf("Number of controllers detected: %d", n)
+	internal.Debug.Printf("Detected %d controllers:", n)
 	for j := 0; j < n; j++ {
 		if internal.IsGameController(j) {
 			c := internal.GameControllerOpen(j)
@@ -80,12 +82,14 @@ func Load(b Bindings) error {
 			}
 			// nm := c.Name()
 			nm := internal.JoystickNameForIndex(j)
-			internal.Debug.Printf("#%d: %s is a gamepad", j, nm)
+			internal.Debug.Printf("Controller %d is a gamepad (%s)", j, nm)
 		} else {
 			nm := internal.JoystickNameForIndex(j)
-			internal.Debug.Printf("#%d: %s is a joystick", j, nm)
+			internal.Debug.Printf("Controller %d is a joystick (%s)", j, nm)
 		}
 	}
 
 	return err
 }
+
+//------------------------------------------------------------------------------
