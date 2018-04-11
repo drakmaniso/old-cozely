@@ -8,7 +8,7 @@ import (
 	"github.com/drakmaniso/cozely/plane"
 )
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // HasFocus returns true if the game windows has focus.
 func HasFocus() bool {
@@ -25,4 +25,4 @@ func WindowSize() plane.Pixel {
 	return plane.Pixel{internal.Window.Width, internal.Window.Height}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////

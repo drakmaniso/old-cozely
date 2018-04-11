@@ -15,7 +15,7 @@ import (
 	"github.com/drakmaniso/cozely/internal"
 )
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Load clears the palette and load a new one. The only format currently
 // supported is indexed PNG files. Note that once loaded, the palette is cached,
@@ -35,7 +35,7 @@ func Load(name string) error {
 	return loadFile(name)
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 func loadFile(name string) error {
 	f, err := os.Open(internal.Path + name + ".png")
@@ -88,4 +88,4 @@ func loadFile(name string) error {
 	return nil
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////

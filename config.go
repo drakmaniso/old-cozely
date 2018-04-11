@@ -9,13 +9,13 @@ import (
 	"github.com/drakmaniso/cozely/internal"
 )
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // An Option represents a configuration option used to change some parameters of
 // the framework: see Configure.
 type Option = func() error
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Configure the framework.
 func Configure(c ...Option) error {
@@ -28,7 +28,7 @@ func Configure(c ...Option) error {
 	return nil
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Title sets the title of the game.
 func Title(t string) Option {
@@ -41,7 +41,7 @@ func Title(t string) Option {
 	}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // UpdateStep sets the time step between calls to Update.
 func UpdateStep(t float64) Option {
@@ -51,7 +51,7 @@ func UpdateStep(t float64) Option {
 	}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Multisample activate multisampling for the game window. Note that this is
 // currently incompatible with the pixel package.
@@ -65,4 +65,4 @@ func Multisample(s int32) Option {
 	}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////

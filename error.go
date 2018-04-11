@@ -7,7 +7,7 @@ import (
 	"github.com/drakmaniso/cozely/internal"
 )
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Error returns nil if err is nil, or a wrapped error otherwise.
 func Error(context string, err error) error {
@@ -34,4 +34,4 @@ func Log(format string, v ...interface{}) {
 	internal.Log.Printf(format, v...)
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////

@@ -14,7 +14,7 @@ import (
 	"unsafe"
 )
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 /*
 #include <stdlib.h>
@@ -50,7 +50,7 @@ void BindSubroutines(GLenum st, GLsizei c, void *ind) {
 */
 import "C"
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // A shader is a compiled program run by the GPU.
 type shader struct {
@@ -58,7 +58,7 @@ type shader struct {
 	stages C.GLenum
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Shader compiles a shader. The path is slash-separated, and the file extension
 // determine the type of shader:
@@ -93,7 +93,7 @@ func Shader(path string) PipelineConfig {
 	return func(*Pipeline) {}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // VertexShader compiles a vertex shader.
 func VertexShader(r io.Reader) PipelineConfig {
@@ -196,7 +196,7 @@ func newShader(t uint32, r io.Reader) (C.GLuint, error) {
 	return s, nil
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // BindVertexSubroutines binds the vertex shader subroutines to indices in s.
 func BindVertexSubroutines(s []uint32) {
@@ -232,4 +232,4 @@ func BindComputeSubroutines(s []uint32) {
 	C.BindSubroutines(C.GL_COMPUTE_SHADER, C.GLsizei(len(s)), unsafe.Pointer(&s[0]))
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////

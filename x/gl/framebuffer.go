@@ -8,7 +8,7 @@ import (
 	"unsafe"
 )
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 /*
 #include "glad.h"
@@ -64,7 +64,7 @@ import (
 	"C"
 )
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 type Framebuffer struct {
 	object C.GLuint
@@ -74,7 +74,7 @@ var DefaultFramebuffer = Framebuffer{
 	object: C.GLuint(0),
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 func NewFramebuffer() Framebuffer {
 	var f Framebuffer
@@ -82,7 +82,7 @@ func NewFramebuffer() Framebuffer {
 	return f
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 func (fb Framebuffer) Texture(a FramebufferAttachment, t Texture2D, level int32) {
 	C.FramebufferTexture(fb.object, C.GLenum(a), t.object, C.GLint(level))
@@ -105,7 +105,7 @@ const (
 	NoAttachment           FramebufferAttachment = C.GL_NONE
 )
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 func (fb Framebuffer) ReadBuffer(a FramebufferAttachment) {
 	C.FramebufferReadBuffer(fb.object, C.GLenum(a))
@@ -115,7 +115,7 @@ func (fb Framebuffer) DrawBuffer(a FramebufferAttachment) {
 	C.FramebufferDrawBuffer(fb.object, C.GLenum(a))
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 func (fb Framebuffer) Bind(t FramebufferTarget) {
 	C.FramebufferBind(fb.object, C.GLenum(t))
@@ -129,7 +129,7 @@ const (
 	DrawReadFramebuffer FramebufferTarget = C.GL_FRAMEBUFFER
 )
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 func (fb Framebuffer) CheckStatus(t FramebufferTarget) FramebufferStatus {
 	e := C.FramebufferCheckStatus(fb.object, C.GLenum(t))
@@ -176,7 +176,7 @@ func (fbs FramebufferStatus) String() string {
 	return "(unknown framebuffer status: " + strconv.Itoa(int(fbs)) + ")"
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 func (fb Framebuffer) ClearColorUint(r, g, b, a uint32) {
 	//TODO: other variants
@@ -192,7 +192,7 @@ func (fb Framebuffer) ClearDepth(d float32) {
 	C.FramebufferClearDepth(fb.object, (C.GLfloat)(d))
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 func (fb Framebuffer) Blit(dst Framebuffer, srcX1, srcY1, srcX2, srcY2, dstX1, dstY1, dstX2, dstY2 int32, m BufferMask, f FilterMode) {
 	C.FramebufferBlit(
@@ -213,10 +213,10 @@ const (
 	StencilBufferBit BufferMask = C.GL_STENCIL_BUFFER_BIT
 )
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 func (fb Framebuffer) Delete() {
 	C.FramebufferDelete(fb.object)
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////

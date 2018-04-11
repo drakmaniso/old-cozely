@@ -2,7 +2,7 @@
 
 package quadedge
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Splice implements the second operator from Guibas and Stolfi Quad-Edge
 // article.
@@ -24,7 +24,7 @@ func Splice(a, b Edge) {
 	p.next[alpha], p.next[beta] = p.next[beta], p.next[alpha]
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Connect creates and returns a new edge connecting the destination of a to the
 // origin of b, in such a way that a, e and b share the same left face. For
@@ -39,7 +39,7 @@ func Connect(a, b Edge) Edge {
 	return e
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // SwapTriangles disconnects e, which must have two triangles as left and right
 // faces, and reconnect it to the other two vertices of the quadrilateral formed
@@ -57,4 +57,4 @@ func SwapTriangles(e Edge) {
 	e.SetDest(b.Dest())
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////

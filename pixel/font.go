@@ -7,7 +7,7 @@ import (
 	"errors"
 )
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // A FontID identifies a pixel font that can be used by Cursor to display text.
 type FontID uint8
@@ -24,7 +24,7 @@ type font struct {
 
 var glyphMap []mapping
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Font reserves an ID for a new font, that will be loaded from path by
 // cozely.Run.
@@ -39,7 +39,7 @@ func Font(path string) FontID {
 	return FontID(len(fonts) - 1)
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 func (f FontID) glyph(r rune) uint16 {
 	//TODO: add support for non-ascii runes
@@ -54,7 +54,7 @@ func (f FontID) glyph(r rune) uint16 {
 	return fonts[f].first + uint16(r)
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Height returns the height of the font, i.e. the height of the images used to
 // store the glyphs.
@@ -62,4 +62,4 @@ func (f FontID) Height() int16 {
 	return fonts[f].height
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////

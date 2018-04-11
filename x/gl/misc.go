@@ -3,7 +3,7 @@
 
 package gl
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 /*
 #include "glad.h"
@@ -18,7 +18,7 @@ static void DepthRange(GLdouble n, GLdouble f) {
 */
 import "C"
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Viewport sets the size in pixels of the GL viewport.
 //
@@ -28,7 +28,7 @@ func Viewport(ox, oy, width, height int32) {
 	C.Viewport(C.GLint(ox), C.GLint(oy), C.GLsizei(width), C.GLsizei(height))
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // DepthRange specifies the mapping of depth values from normalized device
 // coordinates to window coordinates.
@@ -36,4 +36,4 @@ func DepthRange(near, far float64) {
 	C.DepthRange(C.GLdouble(near), C.GLdouble(far))
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////

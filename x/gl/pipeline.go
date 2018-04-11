@@ -8,7 +8,7 @@ import (
 	"unsafe"
 )
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 /*
 #include <stdlib.h>
@@ -196,7 +196,7 @@ static inline void ClearStencilBuffer(GLint m) {
 */
 import "C"
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 func init() {
 	// VkPipelineInputAssemblyStateCreateInfo
@@ -213,7 +213,7 @@ func init() {
 	C.currentState.stencilTest = C.GL_FALSE
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // A Pipeline consists of shaders and state for the GPU.
 type Pipeline struct {
@@ -222,13 +222,13 @@ type Pipeline struct {
 	state  C.PipelineState
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // A PipelineConfig represents a configuration option used when creating a new
 // pipeline.
 type PipelineConfig func(*Pipeline)
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // NewPipeline returns a pipeline with created from a specific set of shaders.
 func NewPipeline(o ...PipelineConfig) *Pipeline {
@@ -275,7 +275,7 @@ func (p *Pipeline) attachShader(s shader) {
 	return
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // ClearColorBuffer clears the color buffer with c.
 func ClearColorBuffer(c struct{ R, G, B, A float32 }) {
@@ -292,7 +292,7 @@ func ClearStencilBuffer(m int32) {
 	C.ClearStencilBuffer((C.GLint)(m))
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Bind the pipeline for use by the GPU in all following draw commands.
 func (p *Pipeline) Bind() {
@@ -310,14 +310,14 @@ func (p *Pipeline) Unbind() {
 
 var currentPipeline *Pipeline
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Delete closes the pipeline.
 func (p *Pipeline) Delete() {
 	C.PipelineDelete(p.object, p.vao)
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Input Assembly State
 
@@ -357,7 +357,7 @@ func PrimitiveRestart(enable bool) PipelineConfig {
 	}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Rasterization State
 
@@ -425,7 +425,7 @@ const (
 	CounterClockwise WindingDirection = C.GL_CCW
 )
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Depth and Stencil State
 
@@ -471,7 +471,7 @@ func StencilTest(enable bool) PipelineConfig {
 	}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 func ShareShadersWith(other *Pipeline) PipelineConfig {
 	return func(p *Pipeline) {
@@ -485,4 +485,4 @@ func ShareVertexFormatsWith(other *Pipeline) PipelineConfig {
 	}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////

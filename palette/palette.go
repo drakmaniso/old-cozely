@@ -7,7 +7,7 @@ import (
 	"github.com/drakmaniso/cozely/colour"
 )
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // An Index identifies a color inside the palette.
 type Index uint8
@@ -25,7 +25,7 @@ func init() {
 	names = make(map[string]Index, 256)
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Clear removes all colors and names from the palette, initialize index 0 with
 // a fully transparent color.
@@ -43,7 +43,7 @@ func Clear() {
 	Index(0).Rename("transparent")
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Find returns the index associated with a name. If there isn't any, index 0 is
 // returned.
@@ -65,7 +65,7 @@ func Match(v colour.Colour) Index {
 	return Index(0)
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Colour returns the color corresponding to a palette index.
 func (c Index) Colour() colour.LRGBA {
@@ -99,4 +99,4 @@ func (c Index) Rename(n string) {
 	}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////

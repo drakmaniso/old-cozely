@@ -7,7 +7,7 @@ import (
 	"math"
 )
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Coord64 represents a two-dimensional vector, defined by its cartesian
 // coordinates in 64-bit float.
@@ -196,7 +196,7 @@ func (v Coord64) Normalized() Coord64 {
 // 		math.IsRoughlyEqual(v.Y, o.Y, epsilon)
 // }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Homogen64 represents a two-dimensional vector, defined by its homogeneous
 // coordinates.
@@ -218,7 +218,7 @@ func (v Homogen64) Cartesian() Coord64 {
 	return Coord64{v.X / v.Z, v.Y / v.Z}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Polar64 represents a two dimensional vector, defined by its polar coordinates.
 type Polar64 struct {
@@ -237,4 +237,4 @@ func (v Polar64) Coord64() Coord64 {
 	return Coord64{v.R * math.Cos(v.Theta), v.R * math.Sin(v.Theta)}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////

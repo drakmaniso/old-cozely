@@ -3,7 +3,7 @@
 
 package plane
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Orientation returns a psitive value if the triangle a b c is in
 // counter-clockwise order, a negative value if it is in clockwise order, and a
@@ -29,7 +29,7 @@ func IsCCW(a, b, c Coord) bool {
 	return d > 0
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // InTriangle returns true if p is inside the triangle a b c.
 func InTriangle(a, b, c Coord, p Coord) bool {
@@ -73,7 +73,7 @@ func InTriangleCCW(a, b, c Coord, p Coord) bool {
 	return w.X+w.Y < d
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // InCircumcircle returns true if p is inside the circumcircle of triangle a b c
 // (which must be in counter-clockwise order)
@@ -86,7 +86,7 @@ func InCircumcircle(a, b, c Coord, p Coord) bool {
 			((P.X-A.X)*(B.X-C.X)-(P.Y-A.Y)*(B.Y-C.Y))
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Circumcenter returns the coordinates of the circumcenter of triangle a b c.
 func Circumcenter(a, b, c Coord) Coord {
@@ -109,4 +109,4 @@ func Circumcenter(a, b, c Coord) Coord {
 	return o.Plus(A).Coord32()
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////

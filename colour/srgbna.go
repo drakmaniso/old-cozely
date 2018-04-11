@@ -3,7 +3,7 @@
 
 package colour
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // SRGBnA represents a color in *non* alpha-premultiplied sRGB color space. Each
 // value ranges within [0, 1].
@@ -20,7 +20,7 @@ type SRGBnA struct {
 	A float32
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // SRGBnAOf converts any color to sRGB non alpha-premultiplied sRGB color space.
 func SRGBnAOf(c Colour) SRGBnA {
@@ -31,7 +31,7 @@ func SRGBnAOf(c Colour) SRGBnA {
 	return SRGBnA{r, g, b, a}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Linear implements the Colour interface: it returns the color converted to
 // alpha-premultipled linear color space.
@@ -50,7 +50,7 @@ func (c SRGBnA) Standard() (r, g, b, a float32) {
 	return r, g, b, c.A
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // RGBA implements the image.Color interface: it returns the four components
 // scaled by 0xFFFF.
@@ -58,4 +58,4 @@ func (c SRGBnA) RGBA() (r, g, b, a uint32) {
 	return uint32(c.A * c.R * 0xFFFF), uint32(c.A * c.G * 0xFFFF), uint32(c.A * c.B * 0xFFFF), uint32(c.A * 0xFFFF)
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////

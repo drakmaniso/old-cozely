@@ -6,7 +6,7 @@ import (
 	"strconv"
 )
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // An Edge identifies one of the four directed edges of a specific quad-edge. It
 // corresponds to what Guibas and Stolfi call an edge reference. To obtain a new
@@ -22,7 +22,7 @@ type Edge struct {
 // edgeID is a pure "edge reference", without the pool pointer.
 type edgeID uint32
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 const (
 	// Nil is the value used to initialize the origin, destination, left and
@@ -36,7 +36,7 @@ const (
 	quad edgeID = 0x00000003
 )
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 func (e Edge) String() string {
 	if e.id == Nil {
@@ -89,14 +89,14 @@ func datastring(p *Pool, e edgeID) string {
 	return strconv.Itoa(int(d))
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Pool returns the allocator that was used to create e.
 func (e Edge) Pool() *Pool {
 	return e.pool
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // rot returns the rotated version of e (counter-clockwise), i.e. the edge that
 // belongs to the same quad-edge, but is the dual of e, directed from right to
@@ -118,7 +118,7 @@ func (e edgeID) tor() edgeID {
 	return (e & canonical) + ((e + 3) & quad)
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Canonical returns the canonical representation of e. All four edges of a
 // quad-edge return the same value.
@@ -150,7 +150,7 @@ func (e Edge) Tor() Edge {
 	return e
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // OrigNext returns the next counter-clockwise edge with the same origin vertex.
 func (e Edge) OrigNext() Edge {
@@ -202,7 +202,7 @@ func (e Edge) LeftPrev() Edge {
 	return e
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // OrigLoop calls visit on every edges in the origin edge-ring of e, in
 // conter-clockwise order (starting with e).
@@ -256,7 +256,7 @@ func (e Edge) LeftLoop(visit func(e Edge)) {
 	}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // SameRing returns true if o is in the origin edge-ring of e (i.e., if the two
 // directed edges share the same origin).
@@ -274,7 +274,7 @@ func (e Edge) SameRing(o Edge) bool {
 	return false
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Orig returns the vertex ID of the origin of e.
 func (e Edge) Orig() uint32 {
@@ -320,7 +320,7 @@ func (e Edge) SetLeft(data uint32) {
 	e.pool.data[e.id.tor()] = data
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 func (e Edge) mark() uint32 {
 	return e.pool.marks[e.id>>2]
@@ -330,7 +330,7 @@ func (e Edge) setMark(mark uint32) {
 	e.pool.marks[e.id>>2] = mark
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Walk calls visit for every undirected primal edge reachable from e.
 //
@@ -359,4 +359,4 @@ func (p *Pool) walk(eid edgeID, visit func(e Edge), m uint32) {
 	}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////

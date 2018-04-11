@@ -3,7 +3,7 @@
 
 package colour
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // LRGB represents a color in linear color space. Each value ranges within
 // [0, 1], and can be used directly by GPU shaders.
@@ -13,7 +13,7 @@ type LRGB struct {
 	B float32
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // LRGBOf converts any color to linear color space with no alpha.
 func LRGBOf(c Colour) LRGB {
@@ -21,7 +21,7 @@ func LRGBOf(c Colour) LRGB {
 	return LRGB{r, g, b}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Linear implements the Colour interface.
 func (c LRGB) Linear() (r, g, b, a float32) {
@@ -36,7 +36,7 @@ func (c LRGB) Standard() (r, g, b, a float32) {
 	return r, g, b, 1
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // RGBA implements the image.Color interface: it returns the four components
 // scaled by 0xFFFF.
@@ -48,4 +48,4 @@ func (c LRGB) RGBA() (r, g, b, a uint32) {
 	return r, g, b, a
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////

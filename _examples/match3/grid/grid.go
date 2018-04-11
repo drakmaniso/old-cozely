@@ -9,7 +9,7 @@ import (
 	"github.com/drakmaniso/cozely/_examples/match3/ecs"
 )
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // A Position on the grid
 type Position struct {
@@ -21,7 +21,7 @@ var positions [ecs.Size]Position
 
 var width, height int8
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Setup prepare a new grid of width w and height h.
 func Setup(w, h int8) {
@@ -29,7 +29,7 @@ func Setup(w, h int8) {
 	grid = make([]ecs.Entity, w*h, w*h)
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Fill the grid with new tiles.
 func Fill(newTile func() ecs.Entity) {
@@ -41,7 +41,7 @@ func Fill(newTile func() ecs.Entity) {
 	}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // put entity e at grid coordinates x, y.
 func put(e ecs.Entity, x, y int8) {
@@ -55,7 +55,7 @@ func get(x, y int8) ecs.Entity {
 	return grid[x+y*width]
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // PositionOf returns the grid position of entity e.
 func PositionOf(e ecs.Entity) Position {
@@ -65,25 +65,25 @@ func PositionOf(e ecs.Entity) Position {
 	return positions[e]
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // At returns the entity currently at the grid position.
 func At(p Position) ecs.Entity {
 	return grid[p.x+p.y*width]
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // String returns a string representation of p.
 func (p Position) String() string {
 	return fmt.Sprintf("(%d,%d)", p.x, p.y)
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Nowhere returns the nil value for grid positions.
 func Nowhere() Position {
 	return Position{x: -1, y: -1}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////

@@ -3,7 +3,7 @@
 
 package colour
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // LRGBA represents a color in alpha-premultiplied linear color space. Each
 // value ranges within [0, 1], and can be used directly by GPU shaders.
@@ -20,7 +20,7 @@ type LRGBA struct {
 	A float32
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // LRGBAOf converts any color to alpha-premultiplied, linear color space.
 func LRGBAOf(c Colour) LRGBA {
@@ -28,7 +28,7 @@ func LRGBAOf(c Colour) LRGBA {
 	return LRGBA{r, g, b, a}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Linear implements the Colour interface.
 func (c LRGBA) Linear() (r, g, b, a float32) {
@@ -43,7 +43,7 @@ func (c LRGBA) Standard() (r, g, b, a float32) {
 	return r, g, b, c.A
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // RGBA implements the image.Color interface: it returns the four components
 // scaled by 0xFFFF.
@@ -55,4 +55,4 @@ func (c LRGBA) RGBA() (r, g, b, a uint32) {
 	return r, g, b, a
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////

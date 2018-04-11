@@ -8,7 +8,7 @@ import (
 	"github.com/drakmaniso/cozely/plane"
 )
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Delaunay returns the delaunay triangulation of a set of points.
 func Delaunay(points []plane.Coord) Edge {
@@ -49,7 +49,7 @@ func Delaunay(points []plane.Coord) Edge {
 	return l
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 func delaunay(points []plane.Coord, p *Pool, sub []uint32) (l, r Edge) {
 	if len(sub) == 2 {
@@ -154,7 +154,7 @@ loop:
 	return lout, rout
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 func inCircle(points []plane.Coord, a, b, c, d uint32) bool {
 	return plane.InCircumcircle(points[a], points[b], points[c], points[d])
@@ -172,4 +172,4 @@ func valid(points []plane.Coord, e, f Edge) bool {
 	return rightOf(points, e.Dest(), f)
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////

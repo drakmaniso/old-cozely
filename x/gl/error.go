@@ -3,7 +3,7 @@
 
 package gl
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // makeError returns nil if err is nil, or a wrapped error otherwise.
 func makeError(context string, err error) error {
@@ -22,7 +22,7 @@ func (e wrappedError) Error() string {
 	return e.Context + ": " + e.Err.Error()
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Err returns the first OpenGL error since the previous call to Err().
 func Err() error {
@@ -40,4 +40,4 @@ func setErr(context string, err error) {
 
 var stickyErr error
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////

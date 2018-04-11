@@ -9,7 +9,7 @@ import (
 	"github.com/drakmaniso/cozely/x/math32"
 )
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Vector represents any three-dimensional vector.
 type Vector interface {
@@ -17,7 +17,7 @@ type Vector interface {
 	XYZ() (x, y, z float32)
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Coord represents a three-dimensional vector, defined by its cartesian
 // coordinates.
@@ -183,7 +183,7 @@ func (v Coord) IsRoughlyEqual(o Coord, epsilon float32) bool {
 		math32.IsRoughlyEqual(v.Z, o.Z, epsilon)
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Homogen represents a three-dimensional vector, defined by its homogeneous
 // coordinates.
@@ -206,8 +206,8 @@ func (v Homogen) Coord() Coord {
 	return Coord{v.X / v.W, v.Y / v.W, v.Z / v.W}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 //TODO: Spherical and Cylindrical types
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////

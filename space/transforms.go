@@ -7,7 +7,7 @@ import (
 	"github.com/drakmaniso/cozely/x/math32"
 )
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Identity returns the identity matrix.
 func Identity() Matrix {
@@ -19,7 +19,7 @@ func Identity() Matrix {
 	}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Apply a tranformation matrix to a vector (i.e. returns matrix multiplied by
 // column vector).
@@ -32,7 +32,7 @@ func Apply(m Matrix, v Homogen) Homogen {
 	}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Translation by a vector.
 func Translation(t Coord) Matrix {
@@ -44,7 +44,7 @@ func Translation(t Coord) Matrix {
 	}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Rotation around an axis.
 func Rotation(angle float32, axis Coord) Matrix {
@@ -61,7 +61,7 @@ func Rotation(angle float32, axis Coord) Matrix {
 	}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // EulerYXZ returns a transformation matrix corresponding to a sequence of three
 // intrinsic rotations around the (local) axis Y, X, Z, in that order.
@@ -171,7 +171,7 @@ func EulerZXY(angleX, angleY, angleZ float32) Matrix {
 	}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Scaling along the 3 axis.
 func Scaling(s Coord) Matrix {
@@ -183,7 +183,7 @@ func Scaling(s Coord) Matrix {
 	}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // LookAt returns a transformation matrix which put eye at origin and target
 // along negative Z. In other words, if a projection matrix is applied to the
@@ -201,7 +201,7 @@ func LookAt(eye, target, up Coord) Matrix {
 	}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Perspective returns a perspective projection matrix.
 func Perspective(fieldOfView, aspectRatio, near, far float32) Matrix {
@@ -248,4 +248,4 @@ func OrthographicFrustum(left, right, bottom, top, near, far float32) Matrix {
 	}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////

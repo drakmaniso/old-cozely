@@ -1,7 +1,7 @@
 // Copyright (c) 2013 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // SLOWER than the Go function
 // func FastFloorAsm(s float32) int32
@@ -13,4 +13,4 @@ TEXT ·fastFloorAsm(SB),7,$0
 	MOVL       BX,ret+4(FP)
 	RET
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////

@@ -13,7 +13,7 @@ import (
 	"github.com/drakmaniso/cozely/x/math32"
 )
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 //TODO: add another camera class using quaternions
 
@@ -49,7 +49,7 @@ type PlanarCamera struct {
 	yaw, pitch, roll float32
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // NewPlanarCamera returns a new camera.
 func NewPlanarCamera() *PlanarCamera {
@@ -61,7 +61,7 @@ func NewPlanarCamera() *PlanarCamera {
 	return &c
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 func (c *PlanarCamera) View() space.Matrix {
 	if !c.ready {
@@ -70,7 +70,7 @@ func (c *PlanarCamera) View() space.Matrix {
 	return c.view
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 func (c *PlanarCamera) SetFieldOfView(fov float32, near, far float32) {
 	c.ready = false
@@ -80,7 +80,7 @@ func (c *PlanarCamera) SetFieldOfView(fov float32, near, far float32) {
 	c.WindowResized()
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 func (c *PlanarCamera) WindowResized() {
 	s := plane.Coord{
@@ -91,7 +91,7 @@ func (c *PlanarCamera) WindowResized() {
 	c.projection = space.Perspective(c.fieldOfView, r, c.near, c.far)
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 func (c *PlanarCamera) SetFocus(p space.Coord) {
 	c.ready = false
@@ -113,7 +113,7 @@ func (c *PlanarCamera) Move(forward, lateral, vertical float32) {
 	c.focus.Y += vertical
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 func (c *PlanarCamera) SetDistance(d float32) {
 	c.distance = d
@@ -129,7 +129,7 @@ func (c *PlanarCamera) Distance() float32 {
 	return c.distance
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 func (c *PlanarCamera) SetOrientation(yaw, pitch, roll float32) {
 	c.ready = false
@@ -178,7 +178,7 @@ func (c *PlanarCamera) Orientation() (yaw, pitch, roll float32) {
 	return c.yaw, c.pitch, c.roll
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 func (c *PlanarCamera) SetExposure(aperture, shutterTime, sensitivity float64) {
 	// See "Moving Frostbite to Physically Based Rendering", Lagarde, de Rousiers (SIGGRAPH 2014)
@@ -187,7 +187,7 @@ func (c *PlanarCamera) SetExposure(aperture, shutterTime, sensitivity float64) {
 	c.buffer.CameraExposure = float32(1.0 / maxLum)
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 func (c *PlanarCamera) Bind() {
 	if !c.ready {
@@ -197,7 +197,7 @@ func (c *PlanarCamera) Bind() {
 	c.ubo.Bind(0)
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 func (c *PlanarCamera) prepare() {
 	// Compute the view and projection matrices
@@ -215,4 +215,4 @@ func (c *PlanarCamera) prepare() {
 	c.ready = true
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////

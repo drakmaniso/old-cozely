@@ -14,7 +14,7 @@ import (
 	"github.com/drakmaniso/cozely/x/gl"
 )
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 type canvas struct {
 	buffer        gl.Framebuffer
@@ -37,7 +37,7 @@ var canvases []canvas
 // pictures.
 type CanvasID uint16
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Canvas reserves an ID for a new canvas, that will be created by cozely.Run.
 func Canvas(o ...CanvasOption) CanvasID {
@@ -63,7 +63,7 @@ func Canvas(o ...CanvasOption) CanvasID {
 	return cv
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 func (cv CanvasID) createBuffer() {
 	s := &canvases[cv]
@@ -80,7 +80,7 @@ func (cv CanvasID) createBuffer() {
 	)
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 func (cv CanvasID) autoresize() {
 	s := &canvases[cv]
@@ -108,7 +108,7 @@ func (cv CanvasID) autoresize() {
 	s.origin = win.Minus(sz).Slash(2)
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 func (cv CanvasID) createTextures() {
 	s := &canvases[cv]
@@ -130,7 +130,7 @@ func (cv CanvasID) createTextures() {
 	}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Paint executes all pending commands on the canvas. It is automatically called
 // by Display; the only reason to call it manually is to be able to read from it
@@ -168,7 +168,7 @@ func (cv CanvasID) Paint() {
 	s.parameters = s.parameters[:0]
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Display first execute all pending commands on the canvas (if any), then
 // displays it on the game window.
@@ -194,7 +194,7 @@ func (cv CanvasID) Display() {
 	gl.Draw(0, 4)
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Clear sets both the color and peth of all pixels on the canvas. Only the
 // color is specified, the depth being initialized to the minimum value.
@@ -205,7 +205,7 @@ func (cv CanvasID) Clear(color palette.Index) {
 	s.buffer.ClearDepth(-1.0)
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Size returns the current dimension of the canvas (in canvas pixels).
 func (cv CanvasID) Size() plane.Pixel {
@@ -217,7 +217,7 @@ func (cv CanvasID) PixelSize() int16 {
 	return canvases[cv].pixel
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Mouse returns the mouse position on the canvas.
 func (cv CanvasID) Mouse() plane.Pixel {
@@ -225,4 +225,4 @@ func (cv CanvasID) Mouse() plane.Pixel {
 	return m.Minus(canvases[cv].origin).Slash(canvases[cv].pixel)
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////

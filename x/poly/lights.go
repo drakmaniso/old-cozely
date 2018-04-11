@@ -10,7 +10,7 @@ import (
 	"github.com/drakmaniso/cozely/x/math32"
 )
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 func TemperatureColor(temperature float64) colour.LRGB {
 	// Ported by Renaud Bédard (@renaudbedard), from original code
@@ -49,7 +49,7 @@ func TemperatureColor(temperature float64) colour.LRGB {
 	return h
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 func DirectionalLightSpectralIlluminance(illuminance, temperature float64) colour.LRGB {
 	h := TemperatureColor(temperature)
@@ -61,4 +61,4 @@ func DirectionalLightSpectralIlluminance(illuminance, temperature float64) colou
 	return h
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////

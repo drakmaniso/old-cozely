@@ -9,13 +9,13 @@ import (
 	"github.com/drakmaniso/cozely/internal"
 )
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // A CanvasOption represents a configuration option used to change some
 // parameters of a canvas see NewCanvas.
 type CanvasOption = func(CanvasID) error
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // TargetResolution defines a target resolution for the automatic resizing of
 // the canvas.
@@ -48,4 +48,4 @@ func Zoom(z int16) CanvasOption {
 	}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////

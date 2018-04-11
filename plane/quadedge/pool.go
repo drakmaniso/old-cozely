@@ -2,7 +2,7 @@
 
 package quadedge
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // A Pool is an allocator for quad-edges.
 type Pool struct {
@@ -14,7 +14,7 @@ type Pool struct {
 	nextMark uint32
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // NewPool returns a newly allocated Pool capable of holding capacity
 // quad-edges.
@@ -30,7 +30,7 @@ func NewPool(capacity uint32) *Pool {
 	}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // New creates a new  isolated quad-edge, and returns its canonical directed
 // Edge. It's the MakeEdge operator from Guibas and Stolfi Quad-Edge article.
@@ -64,7 +64,7 @@ func New(p *Pool) Edge {
 	return Edge{pool: p, id: e}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Delete removes the quad-edge from any edge ring it belongs to.
 //
@@ -94,4 +94,4 @@ func Delete(e Edge) {
 	p.free = append(p.free, e.id)
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////

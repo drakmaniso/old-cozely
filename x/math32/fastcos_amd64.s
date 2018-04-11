@@ -1,8 +1,8 @@
-// This code is adapted from: 
+// This code is adapted from:
 // http://devmaster.net/forums/topic/4648-fast-and-accurate-sinecosine/
 // Copyright Nicolas Capens
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 #define PISLASHTWO 1.57079632679489661923132169164
 #define PI 3.14159265358979323846264338328
@@ -15,7 +15,7 @@
 
 #define P 0.224008178776
 #define Q 0.775991821224
-		
+
 // func FastCos(s float32) float32
 TEXT ·FastCos(SB),7,$0
 	MOVL		x+0(FP), X0	// X0 = x
@@ -34,15 +34,15 @@ TEXT ·FastCos(SB),7,$0
 	SUBSS		X1, X0		// X0 = x = (x + Pi/2) modulo (2*Pi)*/
 
 inrange:
-	
+
 	MOVL		X0, AX
 	ANDL		$ABS, AX
-	MOVL		AX, X1		// X1 = |x|	
+	MOVL		AX, X1		// X1 = |x|
 	MULSS		X0, X1		// X1 = x * |x|
 	MULSS		$B, X0		// X0 = B * x
 	MULSS		$C, X1		// X1 = C * x * |x|
 	ADDSS		X1, X0		// X0 = y = C * x * |x| + B * x
-	
+
 	MOVL		X0, AX
 	ANDL		$ABS, AX
 	MOVL		AX, X1		// X1 = |y|
@@ -50,8 +50,8 @@ inrange:
 	MULSS		$Q, X0		// X0 = Q * y
 	MULSS		$P, X1		// X1 = P * y * |y|
 	ADDSS		X1, X0		// X0 = P * y * |y| + Q * y
-	
+
 	MOVSS		X0, ret+8(FP)
 	RET
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////

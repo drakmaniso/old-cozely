@@ -3,7 +3,7 @@
 
 package gl
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 /*
 #include "glad.h"
@@ -28,14 +28,14 @@ static inline void DrawIndirect(GLenum m, GLsizeiptr f, GLsizei dc, GLsizei s) {
 */
 import "C"
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Draw asks the GPU to draw a sequence of primitives.
 func Draw(first int32, count int32) {
 	C.DrawArrays(currentPipeline.state.topology, C.GLuint(first), C.GLuint(count))
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // DrawInstanced asks the GPU to draw several instances of a sequence of
 // primitives.
@@ -43,7 +43,7 @@ func DrawInstanced(first int32, count int32, instances int32) {
 	C.DrawArraysInstanced(currentPipeline.state.topology, C.GLuint(first), C.GLuint(count), C.GLuint(instances))
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // DrawIndexed asks the GPU to draw a sequence of primitives with indexed
 // vertices.
@@ -60,7 +60,7 @@ func DrawIndexed(first int32, count int32) {
 	C.DrawIndexed(currentPipeline.state.topology, C.GLsizei(count), boundElement.gltype, C.GLsizeiptr(first*s))
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // A DrawIndirectCommand describes a single draw call. A slice of these is used
 // to fill indirect buffers.
@@ -77,4 +77,4 @@ func DrawIndirect(firstdraw uintptr, drawcount int32) {
 	C.DrawIndirect(currentPipeline.state.topology, C.GLsizeiptr(firstdraw), C.GLsizei(drawcount), C.GLsizei(0))
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////

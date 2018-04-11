@@ -3,7 +3,7 @@
 
 package plane
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Matrix represents a transformation matrix.
 //
@@ -11,7 +11,7 @@ package plane
 // to the GPU. You should convert it to a GPUMatrix first.
 type Matrix [3][3]float32
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Transpose of the matrix.
 func (m Matrix) Transpose() Matrix {
@@ -43,7 +43,7 @@ func (m Matrix) Times(o Matrix) Matrix {
 	}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Translation returns the translation vector of the transformation matrix.
 func (m Matrix) Translation() Coord {
@@ -60,7 +60,7 @@ func (m Matrix) WithoutTranslation() Matrix {
 
 //TODO: implement matrix decomposition (see "Graphics Gem 2", p. 320)
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // GPUMatrix represents a transformation matrix with a memory layout compatible
 // with the GPU.
@@ -75,4 +75,4 @@ func (m Matrix) GPU() GPUMatrix {
 	}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////

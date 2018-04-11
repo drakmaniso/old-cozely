@@ -8,7 +8,7 @@ import (
 	"github.com/drakmaniso/cozely/x/math32"
 )
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Skewing and unskewing factors for 2, 3, and 4 dimensions
 const sqrt3 = 1.732050807568877
@@ -22,7 +22,7 @@ const g4 = (5.0 - sqrt5) / 20.0
 
 const simplexNormalization = 99.204334582718712976990005025589
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Simplex2D returns the 2D simplex noise at position p.
 func Simplex2D(p plane.Coord, grad []plane.Coord) float32 {
@@ -110,7 +110,7 @@ func Simplex2D(p plane.Coord, grad []plane.Coord) float32 {
 	return simplexNormalization * (n0 + n1 + n2)
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // SimplexAxial returns the 2D simplex noise at position (q, r), expressed
 // in axial coordinates.
@@ -197,4 +197,4 @@ func SimplexAxial(q, r float32, grad []plane.Coord) float32 {
 	return 99.2043 * (n0 + n1 + n2)
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////

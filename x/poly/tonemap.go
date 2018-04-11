@@ -9,14 +9,14 @@ import (
 	"github.com/drakmaniso/cozely/x/gl"
 )
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Main sources are:
 // http://filmicworlds.com/blog/filmic-tonemapping-operators/
 // https://www.shadertoy.com/view/lslGzl
 // http://duikerresearch.com/2015/09/filmic-tonemapping-for-real-time-rendering/
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Reinhardt Operator.
 // (white-preserving luma based version)
@@ -40,7 +40,7 @@ func ToneMapReinhardt() gl.PipelineConfig {
 	return gl.FragmentShader(strings.NewReader(tmReinhardt))
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Jim Hejl approximation of a filmic curve.
 // https://twitter.com/jimhejl/status/633777619998130176
@@ -64,7 +64,7 @@ func ToneMapHejl() gl.PipelineConfig {
 	return gl.FragmentShader(strings.NewReader(tmHejl))
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // John Hable approximation of a filmic curve.
 // (aka "uncharted 2")
@@ -96,7 +96,7 @@ func ToneMapHable() gl.PipelineConfig {
 	return gl.FragmentShader(strings.NewReader(tmHable))
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // ACES filmic tone mapping curve (simple) approximation
 // Source:
@@ -123,7 +123,7 @@ func ToneMapSimpleACES() gl.PipelineConfig {
 	return gl.FragmentShader(strings.NewReader(tmSimpleACES))
 }
 
-//--------------------------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////--------------------
 
 // Stephen Hill approximation of ACES filmic curve
 const tmACES = `
@@ -194,4 +194,4 @@ func ToneMapACES() gl.PipelineConfig {
 	return gl.FragmentShader(strings.NewReader(tmACES))
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////

@@ -9,7 +9,7 @@ import (
 	"github.com/drakmaniso/cozely/x/gl"
 )
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // GameLoop methods are called in a loop to React to user inputs, Update the
 // game state, and Render it.
@@ -36,7 +36,7 @@ type GameLoop interface {
 	Render() error
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Events holds the callbacks for each window events.
 //
@@ -59,7 +59,7 @@ var Events = struct {
 	Quit:    func() { Stop() },
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Run initializes the framework, load the assets and starts the game loop.
 //
@@ -214,7 +214,7 @@ func Run(loop GameLoop) (err error) {
 	return nil
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // GameTime returns the time elapsed in the game. It is updated before each call
 // to Update and before each call to Render.
@@ -250,7 +250,7 @@ func UpdateLag() float64 {
 	return internal.UpdateLag
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 func countFrames() {
 	frCount++
@@ -285,14 +285,14 @@ const xrunThreshold float64 = 17 / 1000.0
 
 var xrunCount, xrunPrevious int
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Stop request the game loop to stop.
 func Stop() {
 	internal.QuitRequested = true
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Path returns the (slash-separated) path of the executable, with a trailing
 // slash.
@@ -300,4 +300,4 @@ func Path() string {
 	return internal.Path
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////

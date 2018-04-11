@@ -9,7 +9,7 @@ import (
 	"github.com/drakmaniso/cozely/plane"
 )
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // A PictureID identifies an image than can be displayed on a Canvas.
 type PictureID uint16
@@ -26,7 +26,7 @@ type mapping struct {
 	w, h int16
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Picture reserves an ID for a picture, that will be loaded from path by
 // cozely.Run.
@@ -41,11 +41,11 @@ func Picture(path string) PictureID {
 	return PictureID(len(picturePaths) - 1)
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Size returns the width and height of the picture.
 func (p PictureID) Size() plane.Pixel {
 	return plane.Pixel{pictureMap[p].w, pictureMap[p].h}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////

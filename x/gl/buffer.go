@@ -9,7 +9,7 @@ import (
 	"unsafe"
 )
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 /*
 #include "glad.h"
@@ -63,7 +63,7 @@ static inline void BindTextureUnit(GLuint unit, GLuint texture) {
 */
 import "C"
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // A UniformBuffer is a block of memory owned by the GPU.
 type UniformBuffer struct {
@@ -114,7 +114,7 @@ func (ub *UniformBuffer) Delete() {
 	C.DeleteBuffer(C.GLuint(ub.object))
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // A StorageBuffer is a block of memory owned by the GPU.
 type StorageBuffer struct {
@@ -165,7 +165,7 @@ func (sb *StorageBuffer) Delete() {
 	C.DeleteBuffer(C.GLuint(sb.object))
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // A VertexBuffer is a block of memory owned by the GPU.
 type VertexBuffer struct {
@@ -221,7 +221,7 @@ func (vb *VertexBuffer) Delete() {
 	C.DeleteBuffer(C.GLuint(vb.object))
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // An IndexBuffer is a block of memory owned by the GPU, used to store vertex
 // indices.
@@ -314,7 +314,7 @@ func (eb *IndexBuffer) Delete() {
 	C.DeleteBuffer(C.GLuint(eb.object))
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // An IndirectBuffer is a block of memory owned by the GPU.
 type IndirectBuffer struct {
@@ -365,7 +365,7 @@ func (ib *IndirectBuffer) Delete() {
 	C.DeleteBuffer(C.GLuint(ib.object))
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 type BufferTexture struct {
 	object  C.GLuint
@@ -409,9 +409,9 @@ func (tb *BufferTexture) Delete() {
 	//TODO: delete texture
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
-// BufferFlags specifiy which settings to use when creating a new buffer. Values
+// BufferFlags specify which settings to use when creating a new buffer. Values
 // can be ORed together.
 type BufferFlags C.GLbitfield
 
@@ -426,7 +426,7 @@ const (
 	ClientStorage  BufferFlags = C.GL_CLIENT_STORAGE_BIT  // Prefer storage on application side
 )
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 func pointerAndSizeOf(data interface{}) (ptr unsafe.Pointer, size uintptr, err error) {
 	var p unsafe.Pointer
@@ -480,4 +480,4 @@ func pointerSizeAndStrideOf(data interface{}) (ptr unsafe.Pointer, size uintptr,
 	return p, s, st, nil
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////

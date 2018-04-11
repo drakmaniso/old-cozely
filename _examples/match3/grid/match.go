@@ -7,7 +7,7 @@ import (
 	"github.com/drakmaniso/cozely/_examples/match3/ecs"
 )
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 func (p Position) TestAndMark(test func(e1, e2 ecs.Entity) bool, mark func(e ecs.Entity)) {
 	e := get(p.x, p.y)
@@ -57,7 +57,7 @@ func (p Position) TestAndMark(test func(e1, e2 ecs.Entity) bool, mark func(e ecs
 	}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 func TestAndMark(test func(e1, e2 ecs.Entity) bool, mark func(e ecs.Entity)) {
 	for y := int8(0); y < height; y++ {
@@ -68,4 +68,4 @@ func TestAndMark(test func(e1, e2 ecs.Entity) bool, mark func(e ecs.Entity)) {
 	}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////

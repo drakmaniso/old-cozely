@@ -21,7 +21,7 @@ TODO:
 - pre-allocate the bins
 */
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // An Atlas contains the mapping information to pack a set of images into an
 // array of bigger textures (called bins).
@@ -37,7 +37,7 @@ type (
 	PaintFn func(rect uint32, dest interface{}) error
 )
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // New returns a new (empty) Atlas. The width and height describe the shape of
 // the bins.
@@ -49,7 +49,7 @@ func New(width, height int16) *Atlas {
 	}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // BinSize returns the width and height of the bins managed by the atlas.
 func (a *Atlas) BinSize() (width, height int16) {
@@ -67,7 +67,7 @@ func (a *Atlas) Unused() int {
 	return len(a.bins)*int(a.width)*int(a.height) - a.ideal
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Pack fits all the rectangles in the atlas. New bins are added when needed. It
 // calls the Put method of each image with the corresponding mapping
@@ -105,7 +105,7 @@ func (a *Atlas) Pack(rectangles []uint32, size SizeFn, put PutFn) {
 	}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Paint iterates on all images mapped to the specified bin, and call their own
 // Paint method.
@@ -113,4 +113,4 @@ func (a *Atlas) Paint(bin int16, dest interface{}, paint PaintFn) error {
 	return a.bins[bin].paint(bin, dest, paint)
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////

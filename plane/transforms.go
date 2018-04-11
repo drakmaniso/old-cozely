@@ -5,7 +5,7 @@ package plane
 
 import "github.com/drakmaniso/cozely/x/math32"
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Identity matrix.
 func Identity() Matrix {
@@ -16,7 +16,7 @@ func Identity() Matrix {
 	}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Apply a tranformation matrix to a vector (i.e. returns matrix multiplied by
 // column vector).
@@ -28,7 +28,7 @@ func Apply(m Matrix, v Homogen) Homogen {
 	}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Translation by a vector.
 func Translation(t Coord) Matrix {
@@ -40,7 +40,7 @@ func Translation(t Coord) Matrix {
 	}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Rotation by an angle.
 func Rotation(angle float32) Matrix {
@@ -54,7 +54,7 @@ func Rotation(angle float32) Matrix {
 	}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // RotationAround a point.
 func RotationAround(angle float32, center Coord) Matrix {
@@ -70,7 +70,7 @@ func RotationAround(angle float32, center Coord) Matrix {
 	}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Scaling and/or mirror along both axis.
 func Scaling(s Coord) Matrix {
@@ -81,7 +81,7 @@ func Scaling(s Coord) Matrix {
 	}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // ScalingAround a point (and/or mirror).
 func ScalingAround(s Coord, center Coord) Matrix {
@@ -95,7 +95,7 @@ func ScalingAround(s Coord, center Coord) Matrix {
 	}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Shearing along both axis.
 func Shearing(s Coord) Matrix {
@@ -106,7 +106,7 @@ func Shearing(s Coord) Matrix {
 	}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Viewport returns a transformation matrix that scale to an aspect ratio and
 // zoom.
@@ -116,4 +116,4 @@ func Viewport(zoom, aspectRatio float32) Matrix {
 	return Scaling(Coord{X: width, Y: height})
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////

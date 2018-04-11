@@ -3,7 +3,7 @@
 
 package internal
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 type logger interface {
 	Print(v ...interface{})
@@ -17,7 +17,7 @@ func (nolog) Print(v ...interface{})                 {}
 func (nolog) Println(v ...interface{})               {}
 func (nolog) Printf(format string, v ...interface{}) {}
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Error returns nil if err is nil, or a wrapped error otherwise.
 func Error(context string, err error) error {
@@ -36,4 +36,4 @@ func (e WrappedError) Error() string {
 	return e.Context + ": " + e.Err.Error()
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////

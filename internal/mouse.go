@@ -3,14 +3,14 @@
 
 package internal
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 /*
 #include "sdl.h"
 */
 import "C"
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // MouseDelta holds the delta from last mouse position.
 var MouseDeltaX, MouseDeltaY int16
@@ -21,7 +21,7 @@ var MousePositionX, MousePositionY int16
 // MouseButtons holds the state of the mouse buttons.
 var MouseButtons uint32
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // MouseSetRelative enables or disables the relative mode, where the mouse is
 // hidden and mouse motions are continuously reported.
@@ -44,4 +44,4 @@ func MouseRelative() bool {
 	return C.SDL_GetRelativeMouseMode() == C.SDL_TRUE
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////

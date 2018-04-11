@@ -11,7 +11,7 @@ import (
 	"strings"
 )
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Parse reads r as a ".obj" file and calls b for each statement recognized.
 func Parse(r io.Reader, b Builder) {
@@ -89,7 +89,7 @@ func Parse(r io.Reader, b Builder) {
 	}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // A Builder is used when parsing a ".obj" file. The methods are called each
 // time a statement is encountered, in the order they appear in the file.
@@ -123,7 +123,7 @@ type Indices struct {
 	Normal   int
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 func parseFloats(words []string) []float32 {
 	var v []float32
@@ -135,7 +135,7 @@ func parseFloats(words []string) []float32 {
 	return v
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 func parseIndices(words []string) []Indices {
 	var verts []Indices
@@ -158,7 +158,7 @@ func parseIndices(words []string) []Indices {
 	return verts
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 type DefaultBuilder struct{}
 
@@ -226,4 +226,4 @@ func (DefaultBuilder) NotSupported(txt string) error {
 	return nil
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////

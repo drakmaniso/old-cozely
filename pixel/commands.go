@@ -11,7 +11,7 @@ import (
 	"github.com/drakmaniso/cozely/x/gl"
 )
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 const (
 	cmdPicture    = 1
@@ -23,21 +23,21 @@ const (
 	cmdBox        = 7
 )
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Picture adds a command to show a picture on the canvas.
 func (cv CanvasID) Picture(p PictureID, depth int16, pos plane.Pixel) {
 	cv.appendCommand(cmdPicture, 4, 1, int16(p), depth, pos.X, pos.Y)
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Point adds a command to draw a point on the canvas.
 func (cv CanvasID) Point(color palette.Index, depth int16, pos plane.Pixel) {
 	cv.appendCommand(cmdPoint, 3, 1, int16(color), depth, pos.X, pos.Y)
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Lines adds a command to draw a line strip on the canvas. A line strip is a
 // succession of points connected by lines; all points and lines share the same
@@ -53,7 +53,7 @@ func (cv CanvasID) Lines(c palette.Index, depth int16, strip ...plane.Pixel) {
 	cv.appendCommand(cmdLines, 4, uint32(len(strip)-1), prm...)
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Triangles adds a command to draw a triangle strip on the canvas. Triangle
 // strip have the same meaning than in OpenGL. All points and triangles share
@@ -69,7 +69,7 @@ func (cv CanvasID) Triangles(c palette.Index, depth int16, strip ...plane.Pixel)
 	cv.appendCommand(cmdTriangles, uint32(len(strip)), 1, prm...)
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Box adds a command to draw a box on the canvas.
 func (cv CanvasID) Box(fg, bg palette.Index, corner int16, depth int16, a, b plane.Pixel) {
@@ -87,7 +87,7 @@ func (cv CanvasID) Box(fg, bg palette.Index, corner int16, depth int16, a, b pla
 		b.X, b.Y)
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 func (cv CanvasID) appendCommand(c uint32, v uint32, n uint32, params ...int16) {
 	s := &canvases[cv]
@@ -149,4 +149,4 @@ func (cv CanvasID) appendCommand(c uint32, v uint32, n uint32, params ...int16) 
 	}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////

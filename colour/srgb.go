@@ -3,7 +3,7 @@
 
 package colour
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // SRGB represents a color in sRGB color space. Each value ranges within
 // [0, 1], and can be used directly by GPU shaders.
@@ -13,7 +13,7 @@ type SRGB struct {
 	B float32
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // SRGBOf converts any color to sRGB color space with no alpha.
 func SRGBOf(c Colour) SRGB {
@@ -21,7 +21,7 @@ func SRGBOf(c Colour) SRGB {
 	return SRGB{r, g, b}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Linear implements the Colour interface.
 func (c SRGB) Linear() (r, g, b, a float32) {
@@ -36,7 +36,7 @@ func (c SRGB) Standard() (r, g, b, a float32) {
 	return c.R, c.G, c.B, 1
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // RGBA implements the image.Color interface: it returns the four components
 // scaled by 0xFFFF.
@@ -44,4 +44,4 @@ func (c SRGB) RGBA() (r, g, b, a uint32) {
 	return uint32(c.R * 0xFFFF), uint32(c.G * 0xFFFF), uint32(c.B * 0xFFFF), uint32(0xFFFF)
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////

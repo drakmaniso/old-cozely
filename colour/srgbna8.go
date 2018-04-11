@@ -3,7 +3,7 @@
 
 package colour
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // SRGBnA8 represents a 32-bit color in *non* alpha-premultiplied sRGB color
 // space. There is 8 bits for each compnent.
@@ -14,7 +14,7 @@ type SRGBnA8 struct {
 	A uint8
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // SRGBnA8Of converts any color to non alpha-premultiplied sRGB color space.
 func SRGBnA8Of(c Colour) SRGBnA8 {
@@ -29,7 +29,7 @@ func SRGBnA8Of(c Colour) SRGBnA8 {
 	return SRGBnA8{uint8(r * 0xFF), uint8(g * 0xFF), uint8(b * 0xFF), uint8(a * 0xFF)}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Linear implements the Colour interface.
 func (c SRGBnA8) Linear() (r, g, b, a float32) {
@@ -49,7 +49,7 @@ func (c SRGBnA8) Standard() (r, g, b, a float32) {
 	return r, g, b, a
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // RGBA implements the image.Color interface: it returns the four components
 // scaled by 0xFFFF.
@@ -62,4 +62,4 @@ func (c SRGBnA8) RGBA() (r, g, b, a uint32) {
 	return r, g, b, a
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////

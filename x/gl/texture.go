@@ -8,14 +8,14 @@ import (
 	"unsafe"
 )
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 /*
 #include "glad.h"
 */
 import "C"
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // A TextureFormat specifies the format used to store textures in memory.
 type TextureFormat C.GLenum
@@ -69,7 +69,7 @@ const (
 	Depth32F TextureFormat = C.GL_DEPTH_COMPONENT32F
 )
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 func pointerFormatAndTypeOf(img image.Image) (p unsafe.Pointer, pformat C.GLenum, ptype C.GLenum) {
 	switch img := img.(type) {
@@ -90,4 +90,4 @@ func pointerFormatAndTypeOf(img image.Image) (p unsafe.Pointer, pformat C.GLenum
 	return p, pformat, ptype
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////

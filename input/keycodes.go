@@ -7,7 +7,7 @@ import (
 	"github.com/drakmaniso/cozely/internal"
 )
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // A keyCode designate a key by its physical position on the keyboard.
 // It is not affected by the layout or any other language settings.
@@ -284,4 +284,4 @@ const (
 // maxKey is the maximum valid position.
 const maxKey keyCode = 512
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////

@@ -9,7 +9,7 @@ import (
 	"github.com/drakmaniso/cozely/x/math32"
 )
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Vector represents any two-dimensional vector.
 type Vector interface {
@@ -17,7 +17,7 @@ type Vector interface {
 	XY() (x, y float32)
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Coord represents a two-dimensional vector, defined by its cartesian
 // coordinates.
@@ -215,7 +215,7 @@ func (c Coord) IsRoughlyEqual(o Coord, epsilon float32) bool {
 		math32.IsRoughlyEqual(c.Y, o.Y, epsilon)
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Homogen represents a two-dimensional vector, defined by its homogeneous
 // coordinates.
@@ -237,7 +237,7 @@ func (h Homogen) Cartesian() Coord {
 	return Coord{h.X / h.Z, h.Y / h.Z}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Polar represents a two dimensional vector, defined by its polar coordinates.
 type Polar struct {
@@ -256,4 +256,4 @@ func (p Polar) Cartesian() Coord {
 	return Coord{p.R * math32.Cos(p.Theta), p.R * math32.Sin(p.Theta)}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////

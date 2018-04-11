@@ -7,7 +7,7 @@ import (
 	"unsafe"
 )
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 /*
 #include "glad.h"
@@ -57,7 +57,7 @@ static inline void SamplerBind(GLuint binding, GLuint sampler) {
 */
 import "C"
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // A Sampler describes a way to sample textures inside shaders.
 type Sampler struct {
@@ -67,7 +67,7 @@ type Sampler struct {
 // A SamplerOption is a setting used when creating a new `Sampler`.
 type SamplerOption func(sa *Sampler)
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // NewSampler returns a new sampler.
 func NewSampler(o ...SamplerOption) Sampler {
@@ -79,7 +79,7 @@ func NewSampler(o ...SamplerOption) Sampler {
 	return sa
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Minification specifies which filter is used when minifying the texture.
 //
@@ -113,7 +113,7 @@ const (
 	LinearMipmapLinear  FilterMode = C.GL_LINEAR_MIPMAP_LINEAR
 )
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // LevelOfDetail specifies the minimum and maximum LOD to use.
 //
@@ -124,7 +124,7 @@ func LevelOfDetail(min, max float32) SamplerOption {
 	}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Anisotropy specifies the maximum anisotropy level.
 func Anisotropy(max float32) SamplerOption {
@@ -133,7 +133,7 @@ func Anisotropy(max float32) SamplerOption {
 	}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Wrapping sets the wrapping modes for texture coordinates.
 //
@@ -164,7 +164,7 @@ func BorderColor(color struct{ R, G, B, A float32 }) SamplerOption {
 	}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Comparison specifies the mode and operator used when comparing depth
 // textures.
@@ -189,11 +189,11 @@ const (
 	Never          ComparisonOp = C.GL_NEVER
 )
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Bind a sampler to a texture unit index.
 func (sa Sampler) Bind(binding uint32) {
 	C.SamplerBind(C.GLuint(binding), sa.object)
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////

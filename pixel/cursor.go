@@ -11,7 +11,7 @@ import (
 	"github.com/drakmaniso/cozely/plane"
 )
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // A Cursor holds the state necessary to write text on a canvas.
 //
@@ -28,7 +28,7 @@ type Cursor struct {
 	Position  plane.Pixel
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Locate moves the cursor to a specific position. It also defines column x as
 // the starting point for new lines of text: i.e. when writing a newline, the
@@ -41,7 +41,7 @@ func (c *Cursor) Locate(x, y int16) {
 	c.Origin = c.Position
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Print displays text on the canvas; it works like fmt.Print.
 //
@@ -67,7 +67,7 @@ func (c *Cursor) Printf(format string, a ...interface{}) (n int, err error) {
 	return n, err
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // Write implements the io.Writer interface. It is a low-level method used to
 // display p (interpreted as an UTF8 string) on the canvas.
@@ -109,4 +109,4 @@ func (c *Cursor) WriteRune(r rune) {
 	c.Position.X += glyphMap[g].w + c.Spacing
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////

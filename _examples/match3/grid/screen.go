@@ -7,7 +7,7 @@ import (
 	"github.com/drakmaniso/cozely/plane"
 )
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 var (
 	origin plane.Pixel
@@ -15,7 +15,7 @@ var (
 
 const cellSize = 20
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // ScreenResized repositions the grid on the screen
 func ScreenResized(w, h int16) {
@@ -23,7 +23,7 @@ func ScreenResized(w, h int16) {
 	origin.Y = (h - (int16(height) * cellSize)) / 2
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // ScreenXY returns the screen coordinates of the grid position, given a cell
 // size of s.
@@ -33,7 +33,7 @@ func (p Position) ScreenXY() (x, y int16) {
 	return x, y
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 // PositionAt returns the grid position containing the screen coordinates c.
 func PositionAt(c plane.Pixel) Position {
@@ -51,4 +51,4 @@ func PositionAt(c plane.Pixel) Position {
 	return Position{x: x, y: height - 1 - y}
 }
 
-//------------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
