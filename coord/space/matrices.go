@@ -3,7 +3,9 @@
 
 package space
 
-import "github.com/cozely/cozely/coord"
+import (
+	"github.com/cozely/cozely/coord"
+)
 
 ////////////////////////////////////////////////////////////////////////////////
 

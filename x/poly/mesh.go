@@ -9,8 +9,8 @@ import (
 	"strconv"
 
 	"github.com/cozely/cozely/coord"
+	"github.com/cozely/cozely/coord/space"
 	"github.com/cozely/cozely/formats/obj"
-	"github.com/cozely/cozely/space"
 	"github.com/cozely/cozely/x/gl"
 )
 
