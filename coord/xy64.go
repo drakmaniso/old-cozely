@@ -212,29 +212,21 @@ func (a XYZ64) Cartesian() (x, y float32) {
 	return float32(a.X / a.Z), float32(a.Y / a.Z)
 }
 
-// XY64 returns the cartesian representation of the vector (i.e. the
-// perspective divide of the homogeneous coordinates). Z must be non-zero.
-func (a XYZ64) XY64() XY64 {
-	return XY64{a.X / a.Z, a.Y / a.Z}
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 
-// DA64 represents a two dimensional vector, defined by its polar coordinates.
-type DA64 struct {
-	D float64 // Distance from origin (i.e. radius)
-	A float64 // Angle //TODO: what angle?
+// XYZ64 represents a two-dimensional vector, defined by its homogeneous
+// coordinates.
+type XYZW64 struct {
+	X float64
+	Y float64
+	Z float64
+	W float64
 }
 
-// Cartesian returns the cartesian coordinates of the vector. This implements the
-// Vector interface.
-func (a DA64) Cartesian() (x, y float32) {
-	return float32(a.D * math.Cos(a.A)), float32(a.D * math.Sin(a.A))
-}
-
-// XY64 returns the cartesian representation of the vector.
-func (a DA64) XY64() XY64 {
-	return XY64{a.D * math.Cos(a.A), a.D * math.Sin(a.A)}
+// Cartesian returns the cartesian coordinates of the vector (i.e. the perspective
+// divide of the homogeneous coordinates).
+func (a XYZW64) Cartesian() (x, y, z float32) {
+	return float32(a.X / a.W), float32(a.Y / a.W), float32(a.Z / a.W)
 }
 
 ////////////////////////////////////////////////////////////////////////////////

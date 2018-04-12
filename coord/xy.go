@@ -25,10 +25,17 @@ func (a XY) Cartesian() (x, y, z float32) {
 	return a.X, a.Y, 0
 }
 
-// CR return the pixel coordinates of the vector. Note that the sign of Y is
-// flipped.
+// CR return the interger coordinates of the vector.
 func (a XY) CR() CR {
-	return CR{int16(a.X), int16(-a.Y)}
+	return CR{int16(a.X), int16(a.Y)}
+}
+
+// CRound return the rounded interger coordinates of the vector.
+func (a XY) CRound() CR {
+	return CR{
+		int16(math.Round(float64(a.X))),
+		int16(math.Round(float64(a.Y))),
+	}
 }
 
 // XY64 returns the 64-bit float representation of a.

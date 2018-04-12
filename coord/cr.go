@@ -7,26 +7,18 @@ package coord
 
 // CR represents the position of a cell on a square grid, defined by column C
 // and row R (i.e., a pair of integer coordinates).
-//
-// Note that the R axis is in the opposition direction than the cartesian
-// coordinates (Coord).
 type CR struct {
 	C, R int16
 }
 
 // Cartesian returns the cartesian coordinates of the grid cell.
-//
-// Note that the sign of R is flipped. This function implements the Vector
-// interface.
 func (a CR) Cartesian() (x, y, z float32) {
-	return float32(a.C), float32(-a.R), 0
+	return float32(a.C), float32(a.R), 0
 }
 
 // XY returns the cartesian coordinates of the grid cell.
-//
-// Note that the sign of R is flipped.
 func (a CR) XY() XY {
-	return XY{float32(a.C), float32(-a.R)}
+	return XY{float32(a.C), float32(a.R)}
 }
 
 ////////////////////////////////////////////////////////////////////////////////

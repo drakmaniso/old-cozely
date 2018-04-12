@@ -181,38 +181,38 @@ func (a XYZ) IsRoughlyEqual(b XYZ, epsilon float32) bool {
 
 // XYproj returns the cartesian representation of the vector (i.e. the perspective
 // divide of the homogeneous coordinates). Z must be non-zero.
-func (h XYZ) XYproj() XY {
-	return XY{h.X / h.Z, h.Y / h.Z}
+func (a XYZ) XYproj() XY {
+	return XY{a.X / a.Z, a.Y / a.Z}
 }
 
 // XY returns the planar coordinates {X, Y}.
-func (h XYZ) XY() XY {
-	return XY{h.X, h.Y}
+func (a XYZ) XY() XY {
+	return XY{a.X, a.Y}
 }
 
 // XZ returns the planar coordinates {X, Z}.
-func (h XYZ) XZ() XY {
-	return XY{h.X, h.Z}
+func (a XYZ) XZ() XY {
+	return XY{a.X, a.Z}
 }
 
 // YX returns the planar coordinates {Y, X}.
-func (h XYZ) YX() XY {
-	return XY{h.Y, h.X}
+func (a XYZ) YX() XY {
+	return XY{a.Y, a.X}
 }
 
 // YZ returns the planar coordinates {Y, Z}.
-func (h XYZ) YZ() XY {
-	return XY{h.Y, h.Z}
+func (a XYZ) YZ() XY {
+	return XY{a.Y, a.Z}
 }
 
 // ZX returns the planar coordinates {Z, X}.
-func (h XYZ) ZX() XY {
-	return XY{h.Z, h.X}
+func (a XYZ) ZX() XY {
+	return XY{a.Z, a.X}
 }
 
 // ZY returns the planar coordinates {Z, Y}.
-func (h XYZ) ZY() XY {
-	return XY{h.Z, h.Y}
+func (a XYZ) ZY() XY {
+	return XY{a.Z, a.Y}
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -17,7 +17,7 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 
 var (
-	screen = pixel.Canvas(pixel.Zoom(1))
+	screen = pixel.Canvas(pixel.Zoom(2))
 	cursor = pixel.Cursor{Canvas: screen}
 )
 
@@ -52,12 +52,12 @@ func (delLoop) Enter() error {
 	input.Load(testBindings)
 	testContext.Activate(1)
 
-	points = make([]coord.XY, 256)
+	points = make([]coord.XY, 64)
 	newPoints()
 
 	palette.Clear()
-	palette.Index(1).SetColour(colour.LRGB{0.1, 0.3, 0.6})
-	palette.Index(2).SetColour(colour.LRGB{0.8, 0.1, 0.0})
+	palette.Index(1).SetColour(colour.LRGB{0.1, 0.2, 0.5})
+	palette.Index(2).SetColour(colour.LRGB{0.5, 0.1, 0.0})
 	return nil
 }
 
