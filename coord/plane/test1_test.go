@@ -19,10 +19,7 @@ import (
 
 ////////////////////////////////////////////////////////////////////////////////
 
-var (
-	screen = pixel.Canvas(pixel.Zoom(2))
-	cursor = pixel.Cursor{Canvas: screen}
-)
+var canvas1 = pixel.Canvas(pixel.Zoom(2))
 
 var (
 	points []coord.XY
@@ -32,6 +29,8 @@ var (
 	ratio  float32
 	offset coord.XY
 )
+
+const aboveall = int16(0x7FFF)
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -43,9 +42,9 @@ func newPoints() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func TestPlane_predicates(t *testing.T) {
+func TestTest1(t *testing.T) {
 	do(func() {
-		err := cozely.Run(triLoop{})
+		err := cozely.Run(loop1{})
 		if err != nil {
 			t.Error(err)
 		}
@@ -54,11 +53,11 @@ func TestPlane_predicates(t *testing.T) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-type triLoop struct{}
+type loop1 struct{}
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (triLoop) Enter() error {
+func (loop1) Enter() error {
 	input.Load(testBindings)
 	testContext.Activate(1)
 
@@ -76,11 +75,11 @@ func (triLoop) Enter() error {
 	return nil
 }
 
-func (triLoop) Leave() error { return nil }
+func (loop1) Leave() error { return nil }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (triLoop) React() error {
+func (loop1) React() error {
 	if quit.JustPressed(1) {
 		cozely.Stop()
 	}
@@ -93,61 +92,60 @@ func (triLoop) React() error {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (triLoop) Update() error { return nil }
+func (loop1) Update() error { return nil }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (triLoop) Render() error {
-	screen.Clear(0)
-	cursor.Depth = 0x7FFF
-	ratio = float32(screen.Size().R)
+func (loop1) Render() error {
+	canvas1.Clear(0)
+	ratio = float32(canvas1.Size().R)
 	offset = coord.XY{
-		X: (float32(screen.Size().C) - ratio),
-		Y: float32(screen.Size().R),
+		X: (float32(canvas1.Size().C) - ratio),
+		Y: float32(canvas1.Size().R),
 	}
 	pt := make([]coord.CR, len(points))
 	s := coord.CR{5, 5}
 	for i, sd := range points {
 		pt[i] = toScreen(sd)
-		screen.Box(2+palette.Index(i), 2+palette.Index(i), 2, 2,
+		canvas1.Box(2+palette.Index(i), 2+palette.Index(i), 2, 2,
 			pt[i].Minus(s), pt[i].Plus(s))
-		cursor.Locate(pt[i].C-2, pt[i].R+3)
-		cursor.Color = 0
-		cursor.Print([]string{"A", "B", "C"}[i])
+		canvas1.Locate(pt[i].C-2, pt[i].R+3, aboveall)
+		canvas1.Text(0, 0)
+		canvas1.Print([]string{"A", "B", "C"}[i])
 	}
-	screen.Lines(6, 0, pt[0], pt[1], pt[2], pt[0])
-	screen.Triangles(7, -5, pt[0], pt[1], pt[2], pt[0])
+	canvas1.Lines(6, 0, pt[0], pt[1], pt[2], pt[0])
+	canvas1.Triangles(7, -5, pt[0], pt[1], pt[2], pt[0])
 
-	m := screen.Mouse()
+	m := canvas1.Mouse()
 	p := fromScreen(m)
-	cursor.Locate(2, 8)
-	cursor.Color = 0
-	cursor.Printf("A: %.3f, %.3f\n", points[0].X, points[0].Y)
-	cursor.Printf("B: %.3f, %.3f\n", points[1].X, points[1].Y)
-	cursor.Printf("C: %.3f, %.3f\n", points[2].X, points[2].Y)
+	canvas1.Locate(2, 8, aboveall)
+	canvas1.Text(0, 0)
+	canvas1.Printf("A: %.3f, %.3f\n", points[0].X, points[0].Y)
+	canvas1.Printf("B: %.3f, %.3f\n", points[1].X, points[1].Y)
+	canvas1.Printf("C: %.3f, %.3f\n", points[2].X, points[2].Y)
 	if p.X >= 0 {
-		cursor.Printf("   %.3f, %.3f\n", p.X, p.Y)
+		canvas1.Printf("   %.3f, %.3f\n", p.X, p.Y)
 	} else {
-		cursor.Println(" ")
+		canvas1.Println(" ")
 	}
-	screen.Point(1, 1, m)
+	canvas1.Point(1, 1, m)
 
-	cursor.Println()
+	canvas1.Println()
 
 	if plane.IsCCW(points[0], points[1], points[2]) {
-		cursor.Color = 3
-		cursor.Println("IsCCW: TRUE")
+		canvas1.Text(3, 0)
+		canvas1.Println("IsCCW: TRUE")
 	} else {
-		cursor.Color = 0
-		cursor.Println("IsCCW: false")
+		canvas1.Text(0, 0)
+		canvas1.Println("IsCCW: false")
 	}
 
 	if plane.InTriangle(points[0], points[1], points[2], p) {
-		cursor.Color = 1
-		cursor.Println("InTriangle: TRUE")
+		canvas1.Text(1, 0)
+		canvas1.Println("InTriangle: TRUE")
 	} else {
-		cursor.Color = 0
-		cursor.Println("InTriangle: false")
+		canvas1.Text(0, 0)
+		canvas1.Println("InTriangle: false")
 	}
 
 	a, b, c := 0, 1, 2
@@ -155,38 +153,38 @@ func (triLoop) Render() error {
 		b, c = c, b
 	}
 	if plane.InTriangleCCW(points[a], points[b], points[c], p) {
-		cursor.Color = 1
-		cursor.Println("InTriangleCCW: TRUE")
+		canvas1.Text(1, 0)
+		canvas1.Println("InTriangleCCW: TRUE")
 	} else {
-		cursor.Color = 0
-		cursor.Println("InTriangleCCW: false")
+		canvas1.Text(0, 0)
+		canvas1.Println("InTriangleCCW: false")
 	}
 
 	if plane.InCircumcircle(points[a], points[b], points[c], p) {
-		cursor.Color = 2
-		cursor.Println("InCircumcircle: TRUE")
+		canvas1.Text(2, 0)
+		canvas1.Println("InCircumcircle: TRUE")
 	} else {
-		cursor.Color = 0
-		cursor.Println("InCircumcircle: false")
+		canvas1.Text(0, 0)
+		canvas1.Println("InCircumcircle: false")
 	}
 
-	cursor.Println(" ")
+	canvas1.Println(" ")
 
 	d := plane.Circumcenter(points[0], points[1], points[2])
-	cursor.Color = 0
-	cursor.Printf("Circumcenter: %.3f, %.3f\n", d.X, d.Y)
+	canvas1.Text(0, 0)
+	canvas1.Printf("Circumcenter: %.3f, %.3f\n", d.X, d.Y)
 	dd := toScreen(d)
-	screen.Lines(5, -2, dd.Pluss(-2, -2), dd.Pluss(2, 2))
-	screen.Lines(5, -2, dd.Pluss(2, -2), dd.Pluss(-2, 2))
+	canvas1.Lines(5, -2, dd.Pluss(-2, -2), dd.Pluss(2, 2))
+	canvas1.Lines(5, -2, dd.Pluss(2, -2), dd.Pluss(-2, 2))
 
 	r := d.Minus(points[a]).Length()
 	cir := []coord.CR{}
 	for a := float32(0); a <= 2*math32.Pi+0.01; a += math32.Pi / 32 {
 		cir = append(cir, toScreen(coord.RA{r, a}.XY().Plus(d)))
 	}
-	screen.Lines(5, -2, cir...)
+	canvas1.Lines(5, -2, cir...)
 
-	screen.Display()
+	canvas1.Display()
 	return nil
 }
 
@@ -200,10 +198,7 @@ func toScreen(p coord.XY) coord.CR {
 }
 
 func fromScreen(p coord.CR) coord.XY {
-	return coord.XY{
-		X: (float32(p.C) - offset.X) / ratio,
-		Y: (offset.Y - float32(p.R)) / ratio,
-	}
+	return (p.XY().FlipY().Minus(offset.FlipY())).Slash(ratio)
 }
 
 ////////////////////////////////////////////////////////////////////////////////

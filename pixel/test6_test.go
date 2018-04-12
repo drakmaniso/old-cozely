@@ -15,13 +15,13 @@ import (
 
 ////////////////////////////////////////////////////////////////////////////////
 
-var boxScreen = pixel.Canvas(pixel.Zoom(3))
+var canvas6 = pixel.Canvas(pixel.Zoom(3))
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func TestPaint_box(t *testing.T) {
+func TestTest6(t *testing.T) {
 	do(func() {
-		err := cozely.Run(boxLoop{})
+		err := cozely.Run(test6{})
 		if err != nil {
 			t.Error(err)
 		}
@@ -30,22 +30,22 @@ func TestPaint_box(t *testing.T) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-type boxLoop struct{}
+type test6 struct{}
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (boxLoop) Enter() error {
-	input.Load(testBindings)
-	testContext.Activate(1)
+func (test6) Enter() error {
+	input.Load(bindings)
+	context.Activate(1)
 	palette.Load("graphics/shape1")
 	return nil
 }
 
-func (boxLoop) Leave() error { return nil }
+func (test6) Leave() error { return nil }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (boxLoop) React() error {
+func (test6) React() error {
 	if quit.JustPressed(1) {
 		cozely.Stop()
 	}
@@ -54,12 +54,12 @@ func (boxLoop) React() error {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (boxLoop) Update() error { return nil }
+func (test6) Update() error { return nil }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (boxLoop) Render() error {
-	boxScreen.Clear(0)
+func (test6) Render() error {
+	canvas6.Clear(0)
 
 	const corner = 3
 
@@ -69,27 +69,27 @@ func (boxLoop) Render() error {
 	dy := coord.CR{0, 32}
 
 	for i := int16(0); i < 13; i++ {
-		boxScreen.Box(6, 0, i, 0, o.Plus(dx.Times(i)), o.Plus(dx.Times(i)).Plus(s))
+		canvas6.Box(6, 0, i, 0, o.Plus(dx.Times(i)), o.Plus(dx.Times(i)).Plus(s))
 	}
 
 	o = o.Plus(dy)
 	for i := int16(0); i < 13; i++ {
-		boxScreen.Box(0, 4, i, 0, o.Plus(dx.Times(i)), o.Plus(dx.Times(i)).Plus(s))
+		canvas6.Box(0, 4, i, 0, o.Plus(dx.Times(i)), o.Plus(dx.Times(i)).Plus(s))
 	}
 
 	o = o.Plus(dy)
 	for i := int16(0); i < 13; i++ {
-		boxScreen.Box(6, 4, i, 0, o.Plus(dx.Times(i)), o.Plus(dx.Times(i)).Plus(s))
+		canvas6.Box(6, 4, i, 0, o.Plus(dx.Times(i)), o.Plus(dx.Times(i)).Plus(s))
 	}
 
 	o = o.Plus(dy)
 	for i := int16(0); i < 13; i++ {
-		boxScreen.Box(4, 4, i, 0, o.Plus(dx.Times(i)), o.Plus(dx.Times(i)).Plus(s))
+		canvas6.Box(4, 4, i, 0, o.Plus(dx.Times(i)), o.Plus(dx.Times(i)).Plus(s))
 	}
 
-	m := boxScreen.Mouse()
-	boxScreen.Point(18, 2, m)
-	boxScreen.Display()
+	m := canvas6.Mouse()
+	canvas6.Point(18, 2, m)
+	canvas6.Display()
 	return nil
 }
 

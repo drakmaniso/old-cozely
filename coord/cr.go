@@ -21,6 +21,11 @@ func (a CR) XY() XY {
 	return XY{float32(a.C), float32(a.R)}
 }
 
+// CRD returns the cubic grid cell (C, R, d)
+func (a CR) CRD(d int16) CRD {
+	return CRD{a.C, a.R, d}
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 // Plus returns the sum with another pair of coordinates.

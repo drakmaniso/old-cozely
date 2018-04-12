@@ -55,10 +55,7 @@ var (
 
 ////////////////////////////////////////////////////////////////////////////////
 
-var (
-	screen = pixel.Canvas(pixel.Zoom(3))
-	cursor = pixel.Cursor{Canvas: screen}
-)
+var canvas1 = pixel.Canvas(pixel.Zoom(3))
 
 const (
 	Transparent palette.Index = iota
@@ -85,8 +82,8 @@ var openmenu, closemenu, instopenmenu, instclosemenu, inventory, options, jump b
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func TestAction(t *testing.T) {
-	err := cozely.Run(loop{})
+func TestTest1(t *testing.T) {
+	err := cozely.Run(loop1{})
 	if err != nil {
 		cozely.ShowError(err)
 		return
@@ -95,11 +92,11 @@ func TestAction(t *testing.T) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-type loop struct{}
+type loop1 struct{}
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (loop) Enter() error {
+func (loop1) Enter() error {
 	err := input.Load(Bindings)
 	if err != nil {
 		return err
@@ -110,11 +107,11 @@ func (loop) Enter() error {
 	return nil
 }
 
-func (loop) Leave() error { return nil }
+func (loop1) Leave() error { return nil }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (loop) React() error {
+func (loop1) React() error {
 	mousepos = input.Cursor.Position()
 	mousedelta = input.Cursor.Delta()
 
@@ -155,91 +152,91 @@ func (loop) React() error {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (loop) Update() error { return nil }
+func (loop1) Update() error { return nil }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (loop) Render() error {
-	screen.Clear(0)
+func (loop1) Render() error {
+	canvas1.Clear(0)
 
-	cursor.Locate(2, 12)
-	cursor.Color = DarkBlue - 1
+	canvas1.Locate(2, 12, 0)
+	canvas1.Text(DarkBlue-1, pixel.Monozela10)
 
-	cursor.Printf("cursor position:%6d,%6d\n", mousepos.C, mousepos.R)
-	cursor.Printf("   cursor delta:%+6d,%+6d\n", mousedelta.C, mousedelta.R)
-	cursor.Printf("     visibility:   ")
+	canvas1.Printf("screen position:%6d,%6d\n", mousepos.C, mousepos.R)
+	canvas1.Printf("   screen delta:%+6d,%+6d\n", mousedelta.C, mousedelta.R)
+	canvas1.Printf("     visibility:   ")
 	if hidden {
 		color(true)
-		cursor.Printf("HIDDEN\n")
+		canvas1.Printf("HIDDEN\n")
 	} else {
 		color(false)
-		cursor.Printf("shown\n")
+		canvas1.Printf("shown\n")
 	}
 
-	cursor.Println()
+	canvas1.Println()
 	color(false)
 
 	color(InMenu.Active(1))
-	cursor.Printf("  Menu: ")
+	canvas1.Printf("  Menu: ")
 	color(options)
-	cursor.Print("Options(O/L.C.) ")
+	canvas1.Print("Options(O/L.C.) ")
 	color(closemenu)
-	cursor.Print("CloseMenu(ESC) ")
+	canvas1.Print("CloseMenu(ESC) ")
 	color(instclosemenu)
-	cursor.Print("InstantCloseMenu(ENTER/R.C.) ")
-	cursor.Println(" ")
+	canvas1.Print("InstantCloseMenu(ENTER/R.C.) ")
+	canvas1.Println(" ")
 
 	color(InGame.Active(1))
-	cursor.Printf("  Game: ")
+	canvas1.Printf("  Game: ")
 	color(jump)
-	cursor.Print("Jump(SPACE/L.C.) ")
+	canvas1.Print("Jump(SPACE/L.C.) ")
 	color(openmenu)
-	cursor.Print("OpenMenu(ESC) ")
+	canvas1.Print("OpenMenu(ESC) ")
 	color(instopenmenu)
-	cursor.Print("InstantOpenMenu(ENTER/R.C.) ")
-	cursor.Println(" ")
+	canvas1.Print("InstantOpenMenu(ENTER/R.C.) ")
+	canvas1.Println(" ")
 
 	color(false)
-	cursor.Printf("  Both: ")
+	canvas1.Printf("  Both: ")
 	color(inventory)
-	cursor.Print("Inventory(I/TAB) ")
+	canvas1.Print("Inventory(I/TAB) ")
 
-	screen.Display()
+	canvas1.Display()
 	return nil
 }
 
 func color(p bool) {
 	if p {
-		cursor.Color = LightGreen - 1
+		canvas1.Text(LightGreen-1, pixel.Monozela10)
 	} else {
-		cursor.Color = DarkBlue - 1
+		canvas1.Text(DarkBlue-1, pixel.Monozela10)
 	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (loop) Show() {
+func (loop1) Show() {
 	fmt.Printf("%v: show\n", cozely.GameTime())
 }
 
-func (loop) Hide() {
+func (loop1) Hide() {
 	fmt.Printf("%v: hide\n", cozely.GameTime())
 }
 
-func (loop) Resize() {
+func (loop1) Resize() {
 	s := cozely.WindowSize()
 	fmt.Printf("%v: resize %dx%d\n", cozely.GameTime(), s.C, s.R)
 }
 
-func (loop) Focus() {
+func (loop1) Focus() {
 	fmt.Printf("%v: focus\n", cozely.GameTime())
 }
 
-func (loop) Unfocus() {
+func (loop1) Unfocus() {
 	fmt.Printf("%v: unfocus\n", cozely.GameTime())
 }
 
-func (loop) Quit() {
+func (loop1) Quit() {
 	fmt.Printf("%v: quit\n", cozely.GameTime())
 	cozely.Stop()
 }

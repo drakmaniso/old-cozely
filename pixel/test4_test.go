@@ -28,22 +28,22 @@ var (
 )
 
 var (
-	fntInterline     = int16(18)
-	fntLetterSpacing = int16(0)
+	interline     = int16(18)
+	letterspacing = int16(0)
 )
 
 var (
-	fntText []string
-	fntCode []string
-	fntShow []string
-	fntLine int
+	text []string
+	code []string
+	show []string
+	line int
 )
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func TestFont_load(t *testing.T) {
+func TestTest4(t *testing.T) {
 	do(func() {
-		err := cozely.Run(fntLoop{})
+		err := cozely.Run(loop4{})
 		if err != nil {
 			t.Error(err)
 		}
@@ -52,13 +52,13 @@ func TestFont_load(t *testing.T) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-type fntLoop struct{}
+type loop4 struct{}
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (fntLoop) Enter() error {
-	input.Load(testBindings)
-	testContext.Activate(1)
+func (loop4) Enter() error {
+	input.Load(bindings)
+	context.Activate(1)
 
 	f, err := os.Open(cozely.Path() + "frankenstein.txt")
 	if err != nil {
@@ -66,7 +66,7 @@ func (fntLoop) Enter() error {
 	}
 	s := bufio.NewScanner(f)
 	for s.Scan() {
-		fntText = append(fntText, s.Text())
+		text = append(text, s.Text())
 	}
 	f, err = os.Open(cozely.Path() + "sourcecode.txt")
 	if err != nil {
@@ -74,21 +74,20 @@ func (fntLoop) Enter() error {
 	}
 	s = bufio.NewScanner(f)
 	for s.Scan() {
-		fntCode = append(fntCode, s.Text())
+		code = append(code, s.Text())
 	}
-	fntShow = fntText
+	show = text
 	palette.Load("C64")
-	curBg = palette.Find("white")
-	curFg = palette.Find("black")
-	cursor.Color = curFg - 1
+	bg3 = palette.Find("white")
+	fg3 = palette.Find("black")
 	return nil
 }
 
-func (fntLoop) Leave() error { return nil }
+func (loop4) Leave() error { return nil }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (fntLoop) React() error {
+func (loop4) React() error {
 	if quit.JustPressed(1) {
 		cozely.Stop()
 	}
@@ -97,30 +96,31 @@ func (fntLoop) React() error {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (fntLoop) Update() error { return nil }
+func (loop4) Update() error { return nil }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (fntLoop) Render() error {
-	curScreen.Clear(curBg)
+func (loop4) Render() error {
+	canvas3.Clear(bg3)
 
-	cursor.Locate(16, font.Height()+2)
+	canvas3.Cursor().Color = fg3 - 1
+	canvas3.Locate(16, font.Height()+2, 0)
 
-	cursor.Font = font
-	cursor.Spacing = fntLetterSpacing
-	// cursor.Interline = fntInterline
+	canvas3.Cursor().Font = font
+	canvas3.Cursor().LetterSpacing = letterspacing
+	// curScreen.Interline = fntInterline
 
-	y := cursor.Position.R
+	y := canvas3.Cursor().Position.R
 
-	for l := fntLine; l < len(fntShow) && y < curScreen.Size().R; l++ {
-		cursor.Println(fntShow[l])
-		y = cursor.Position.R
+	for l := line; l < len(show) && y < canvas3.Size().R; l++ {
+		canvas3.Println(show[l])
+		y = canvas3.Cursor().Position.R
 	}
 
-	cursor.Locate(curScreen.Size().C-96, 16)
-	cursor.Printf("Line %d", fntLine)
+	canvas3.Locate(canvas3.Size().C-96, 16, 0)
+	canvas3.Printf("Line %d", line)
 
-	curScreen.Display()
+	canvas3.Display()
 	return nil
 }
 
@@ -139,7 +139,7 @@ func (fntLoop) Render() error {
 // 			curBg = palette.Find("white")
 // 			curFg = palette.Find("black")
 // 		}
-// 		cursor.Color = curFg - 1
+// 		curScreen.Color = curFg - 1
 // 		fntLine = 0
 // 	case key.Label1:
 // 		font = tinela9

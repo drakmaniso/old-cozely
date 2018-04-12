@@ -35,8 +35,10 @@ Various structs for hexagonal and triangular grids:
 
 	// Hexagonal grid coordinates
 	var a = QR{1, 2}
+
 	// Axial (hex) coordinates
 	var b = AL{1.0, 2.0}
+
 	// triangular grid coordinates
 	var c = QRT{1, 2, 3}
 
@@ -44,8 +46,10 @@ And finally structs to manipulate angles:
 
 	// Polar coordinates
 	var a = RA{1.0, 3.14}
+
 	// Cylindrical coordinates
 	var b = RAZ{1.0, 3.14, 2.0}
+
 	// Spherical coordinates
 	var c = RAS{1.0, 3.14, 6.28}
 */

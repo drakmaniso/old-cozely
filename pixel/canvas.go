@@ -29,6 +29,7 @@ type canvas struct {
 	pixel         int16
 	commands      []gl.DrawIndirectCommand
 	parameters    []int16
+	cursor        Cursor
 }
 
 var canvases []canvas
@@ -45,36 +46,36 @@ func Canvas(o ...CanvasOption) CanvasID {
 		setErr("in NewCanvas", errors.New("too many canvases"))
 	}
 
-	cv := CanvasID(len(canvases))
+	a := CanvasID(len(canvases))
 	canvases = append(canvases, canvas{})
 
-	s := &canvases[cv]
-	s.target = coord.CR{640, 360}
-	s.pixel = 2
-	s.commands = make([]gl.DrawIndirectCommand, 0, maxCommandCount)
-	s.parameters = make([]int16, 0, maxParamCount)
+	aa := &canvases[a]
+	aa.target = coord.CR{640, 360}
+	aa.pixel = 2
+	aa.commands = make([]gl.DrawIndirectCommand, 0, maxCommandCount)
+	aa.parameters = make([]int16, 0, maxParamCount)
 
 	for i := range o {
-		o[i](cv)
+		o[i](a)
 	}
 
 	//TODO: create textures if not autoresize
 
-	return cv
+	return a
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (cv CanvasID) createBuffer() {
-	s := &canvases[cv]
-	s.buffer = gl.NewFramebuffer()
+func (a CanvasID) createBuffer() {
+	aa := &canvases[a]
+	aa.buffer = gl.NewFramebuffer()
 
-	s.commandsICBO = gl.NewIndirectBuffer(
-		uintptr(cap(s.commands))*unsafe.Sizeof(s.commands[0]),
+	aa.commandsICBO = gl.NewIndirectBuffer(
+		uintptr(cap(aa.commands))*unsafe.Sizeof(aa.commands[0]),
 		gl.DynamicStorage,
 	)
-	s.parametersTBO = gl.NewBufferTexture(
-		uintptr(cap(s.parameters))*unsafe.Sizeof(s.parameters[0]),
+	aa.parametersTBO = gl.NewBufferTexture(
+		uintptr(cap(aa.parameters))*unsafe.Sizeof(aa.parameters[0]),
 		gl.R16I,
 		gl.DynamicStorage,
 	)
@@ -82,49 +83,49 @@ func (cv CanvasID) createBuffer() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (cv CanvasID) autoresize() {
-	s := &canvases[cv]
+func (a CanvasID) autoresize() {
+	aa := &canvases[a]
 	win := coord.CR{internal.Window.Width, internal.Window.Height}
 
-	if s.autozoom {
+	if aa.autozoom {
 		// Find best fit for pixel size
-		p := win.Slashcw(s.target)
+		p := win.Slashcw(aa.target)
 		if p.C < p.R {
-			s.pixel = p.C
+			aa.pixel = p.C
 		} else {
-			s.pixel = p.R
+			aa.pixel = p.R
 		}
-		if s.pixel < 1 {
-			s.pixel = 1
+		if aa.pixel < 1 {
+			aa.pixel = 1
 		}
 	}
 
 	// Extend the screen to cover the window
-	s.size = win.Slash(s.pixel)
-	cv.createTextures()
+	aa.size = win.Slash(aa.pixel)
+	a.createTextures()
 
 	// Compute offset
-	sz := s.size.Times(s.pixel)
-	s.origin = win.Minus(sz).Slash(2)
+	sz := aa.size.Times(aa.pixel)
+	aa.origin = win.Minus(sz).Slash(2)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (cv CanvasID) createTextures() {
-	s := &canvases[cv]
+func (a CanvasID) createTextures() {
+	aa := &canvases[a]
 
-	s.texture.Delete()
-	s.texture = gl.NewTexture2D(1, gl.R8UI, int32(s.size.C), int32(s.size.R))
-	s.buffer.Texture(gl.ColorAttachment0, s.texture, 0)
+	aa.texture.Delete()
+	aa.texture = gl.NewTexture2D(1, gl.R8UI, int32(aa.size.C), int32(aa.size.R))
+	aa.buffer.Texture(gl.ColorAttachment0, aa.texture, 0)
 
-	s.depth.Delete()
-	s.depth = gl.NewRenderbuffer(gl.Depth32F, int32(s.size.C), int32(s.size.R))
-	s.buffer.Renderbuffer(gl.DepthAttachment, s.depth)
+	aa.depth.Delete()
+	aa.depth = gl.NewRenderbuffer(gl.Depth32F, int32(aa.size.C), int32(aa.size.R))
+	aa.buffer.Renderbuffer(gl.DepthAttachment, aa.depth)
 
-	s.buffer.DrawBuffer(gl.ColorAttachment0)
-	s.buffer.ReadBuffer(gl.NoAttachment)
+	aa.buffer.DrawBuffer(gl.ColorAttachment0)
+	aa.buffer.ReadBuffer(gl.NoAttachment)
 
-	st := s.buffer.CheckStatus(gl.DrawReadFramebuffer)
+	st := aa.buffer.CheckStatus(gl.DrawReadFramebuffer)
 	if st != gl.FramebufferComplete {
 		setErr("while creating screen textures", errors.New(st.String()))
 	}
@@ -135,62 +136,62 @@ func (cv CanvasID) createTextures() {
 // Paint executes all pending commands on the canvas. It is automatically called
 // by Display; the only reason to call it manually is to be able to read from it
 // before display.
-func (cv CanvasID) Paint() {
-	s := &canvases[cv]
+func (a CanvasID) Paint() {
+	aa := &canvases[a]
 
-	if len(s.commands) == 0 {
+	if len(aa.commands) == 0 {
 		return
 	}
 
 	internal.PaletteUpload()
 
-	screenUniforms.PixelSize.X = 1.0 / float32(s.size.C)
-	screenUniforms.PixelSize.Y = 1.0 / float32(s.size.R)
+	screenUniforms.PixelSize.X = 1.0 / float32(aa.size.C)
+	screenUniforms.PixelSize.Y = 1.0 / float32(aa.size.R)
 	screenUBO.SubData(&screenUniforms, 0)
 
-	s.buffer.Bind(gl.DrawFramebuffer)
-	gl.Viewport(0, 0, int32(s.size.C), int32(s.size.R))
+	aa.buffer.Bind(gl.DrawFramebuffer)
+	gl.Viewport(0, 0, int32(aa.size.C), int32(aa.size.R))
 	pipeline.Bind()
 	gl.Disable(gl.Blend)
 
 	screenUBO.Bind(layoutScreen)
-	s.commandsICBO.Bind()
-	s.parametersTBO.Bind(layoutParameters)
+	aa.commandsICBO.Bind()
+	aa.parametersTBO.Bind(layoutParameters)
 	pictureMapTBO.Bind(layoutPictureMap)
 	glyphMapTBO.Bind(layoutGlyphMap)
 	picturesTA.Bind(layoutPictures)
 	glyphsTA.Bind(layoutGlyphs)
 
-	s.commandsICBO.SubData(s.commands, 0)
-	s.parametersTBO.SubData(s.parameters, 0)
-	gl.DrawIndirect(0, int32(len(s.commands)))
-	s.commands = s.commands[:0]
-	s.parameters = s.parameters[:0]
+	aa.commandsICBO.SubData(aa.commands, 0)
+	aa.parametersTBO.SubData(aa.parameters, 0)
+	gl.DrawIndirect(0, int32(len(aa.commands)))
+	aa.commands = aa.commands[:0]
+	aa.parameters = aa.parameters[:0]
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 // Display first execute all pending commands on the canvas (if any), then
 // displays it on the game window.
-func (cv CanvasID) Display() {
-	cv.Paint()
+func (a CanvasID) Display() {
+	a.Paint()
 
-	s := &canvases[cv]
+	aa := &canvases[a]
 
-	sz := s.size.Times(s.pixel)
+	sz := aa.size.Times(aa.pixel)
 
-	blitUniforms.ScreenSize.X = float32(s.size.C)
-	blitUniforms.ScreenSize.Y = float32(s.size.R)
+	blitUniforms.ScreenSize.X = float32(aa.size.C)
+	blitUniforms.ScreenSize.Y = float32(aa.size.R)
 	blitUBO.SubData(&blitUniforms, 0)
 
 	blitPipeline.Bind()
 	gl.DefaultFramebuffer.Bind(gl.DrawFramebuffer)
 	gl.Enable(gl.FramebufferSRGB)
 	gl.Disable(gl.Blend)
-	gl.Viewport(int32(s.origin.C), int32(s.origin.R),
-		int32(s.origin.C+sz.C), int32(s.origin.R+sz.R))
+	gl.Viewport(int32(aa.origin.C), int32(aa.origin.R),
+		int32(aa.origin.C+sz.C), int32(aa.origin.R+sz.R))
 	blitUBO.Bind(0)
-	s.texture.Bind(0)
+	aa.texture.Bind(0)
 	gl.Draw(0, 4)
 }
 
@@ -198,31 +199,31 @@ func (cv CanvasID) Display() {
 
 // Clear sets both the color and peth of all pixels on the canvas. Only the
 // color is specified, the depth being initialized to the minimum value.
-func (cv CanvasID) Clear(color palette.Index) {
-	s := &canvases[cv]
+func (a CanvasID) Clear(color palette.Index) {
+	aa := &canvases[a]
 	pipeline.Bind() //TODO: find another way to enable depthWrite
-	s.buffer.ClearColorUint(uint32(color), 0, 0, 0)
-	s.buffer.ClearDepth(-1.0)
+	aa.buffer.ClearColorUint(uint32(color), 0, 0, 0)
+	aa.buffer.ClearDepth(-1.0)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 // Size returns the current dimension of the canvas (in canvas pixels).
-func (cv CanvasID) Size() coord.CR {
-	return canvases[cv].size
+func (a CanvasID) Size() coord.CR {
+	return canvases[a].size
 }
 
 // PixelSize returns the size of one canvas pixel, in window pixels.
-func (cv CanvasID) PixelSize() int16 {
-	return canvases[cv].pixel
+func (a CanvasID) PixelSize() int16 {
+	return canvases[a].pixel
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 // Mouse returns the mouse position on the canvas.
-func (cv CanvasID) Mouse() coord.CR {
+func (a CanvasID) Mouse() coord.CR {
 	m := input.Cursor.Position()
-	return m.Minus(canvases[cv].origin).Slash(canvases[cv].pixel)
+	return m.Minus(canvases[a].origin).Slash(canvases[a].pixel)
 }
 
 ////////////////////////////////////////////////////////////////////////////////

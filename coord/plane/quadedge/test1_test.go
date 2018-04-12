@@ -16,10 +16,7 @@ import (
 
 ////////////////////////////////////////////////////////////////////////////////
 
-var (
-	screen = pixel.Canvas(pixel.Zoom(2))
-	cursor = pixel.Cursor{Canvas: screen}
-)
+var canvas1 = pixel.Canvas(pixel.Zoom(2))
 
 var (
 	points        []coord.XY
@@ -33,9 +30,9 @@ var (
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func TestDelaunay(t *testing.T) {
+func TestTest1(t *testing.T) {
 	do(func() {
-		err := cozely.Run(delLoop{})
+		err := cozely.Run(loop1{})
 		if err != nil {
 			t.Error(err)
 		}
@@ -44,11 +41,11 @@ func TestDelaunay(t *testing.T) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-type delLoop struct{}
+type loop1 struct{}
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (delLoop) Enter() error {
+func (loop1) Enter() error {
 	input.Load(testBindings)
 	testContext.Activate(1)
 
@@ -61,11 +58,11 @@ func (delLoop) Enter() error {
 	return nil
 }
 
-func (delLoop) Leave() error { return nil }
+func (loop1) Leave() error { return nil }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (delLoop) React() error {
+func (loop1) React() error {
 	if quit.JustPressed(1) {
 		cozely.Stop()
 	}
@@ -75,7 +72,7 @@ func (delLoop) React() error {
 	}
 
 	if previous.JustPressed(1) {
-		p := fromScreen(screen.Mouse())
+		p := fromScreen(canvas1.Mouse())
 		points = append(points, p)
 		triangulation = quadedge.Delaunay(points)
 	}
@@ -140,65 +137,52 @@ func (delLoop) React() error {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (delLoop) Update() error { return nil }
+func (loop1) Update() error { return nil }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (delLoop) Render() error {
-	screen.Clear(0)
-	ratio = float32(screen.Size().R)
+func (loop1) Render() error {
+	canvas1.Clear(0)
+	ratio = float32(canvas1.Size().R)
 	orig = coord.XY{
-		X: (float32(screen.Size().C) - ratio) / 2,
-		Y: float32(screen.Size().R),
+		X: (float32(canvas1.Size().C) - ratio) / 2,
+		Y: float32(canvas1.Size().R),
 	}
 
-	m := screen.Mouse()
+	m := canvas1.Mouse()
 	p := fromScreen(m)
-	cursor.Locate(2, 8)
-	cursor.Color = 0
+	canvas1.Locate(2, 8, 0)
+	canvas1.Text(0, 0)
 	fsr, fso := cozely.RenderStats()
-	cursor.Printf("Framerate: %.2f (%d)\n", 1000*fsr, fso)
+	canvas1.Printf("Framerate: %.2f (%d)\n", 1000*fsr, fso)
 	if p.X >= 0 && p.X <= 1.0 {
-		cursor.Printf("Position: %.3f, %.3f\n", p.X, p.Y)
+		canvas1.Printf("Position: %.3f, %.3f\n", p.X, p.Y)
 	} else {
-		cursor.Println(" ")
+		canvas1.Println(" ")
 	}
 
 	pt := make([]coord.CR, len(points))
 	for i, sd := range points {
 		pt[i] = toScreen(sd)
-		screen.Box(2, 2, 1, 0, pt[i].Minuss(2, 2), pt[i].Pluss(2, 2))
+		canvas1.Box(2, 2, 1, 0, pt[i].Minuss(2, 2), pt[i].Pluss(2, 2))
 	}
 
 	triangulation.Walk(func(e quadedge.Edge) {
-		screen.Lines(1, -1, toScreen(points[e.Orig()]), toScreen(points[e.Dest()]))
+		canvas1.Lines(1, -1, toScreen(points[e.Orig()]), toScreen(points[e.Dest()]))
 	})
 
-	screen.Display()
+	canvas1.Display()
 	return nil
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 func toScreen(p coord.XY) coord.CR {
-	// return pixel.Coord(p.Times(ratio).Pixel()).Plus(orig)
-	// return pixel.From(p.Times(ratio).XY()).Plus(orig)
-	// return pixel.From(p.Times(ratio)).Plus(orig)
-	// return p.Times(ratio).Pixel().Plus(orig)
-	return coord.CR{
-		C: int16(orig.X + p.X*ratio),
-		R: int16(orig.Y - p.Y*ratio),
-	}
+	return orig.Plus(p.FlipY().Times(ratio)).CR()
 }
 
 func fromScreen(p coord.CR) coord.XY {
-	// return plane.From(p.Minus(orig).XY()).Slash(ratio)
-	// return plane.From(p.Minus(orig)).Slash(ratio)
-	// return p.Minus(orig).Cartesian().Slash(ratio)
-	return coord.XY{
-		X: (float32(p.C) - orig.X) / ratio,
-		Y: (orig.Y - float32(p.R)) / ratio,
-	}
+	return (p.XY().FlipY().Minus(orig.FlipY())).Slash(ratio)
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -8,10 +8,7 @@ import (
 
 // Initialization //////////////////////////////////////////////////////////////
 
-var (
-	canvas = pixel.Canvas()
-	cursor = pixel.Cursor{Canvas: canvas}
-)
+var canvas = pixel.Canvas()
 
 func Example_helloWorld() {
 	cozely.Run(loop{})
@@ -37,9 +34,9 @@ func (loop) Update() error { return nil }
 func (loop) Render() error {
 	canvas.Clear(0)
 
-	cursor.Locate(8, 12)
-	cursor.Color = 3
-	cursor.Print("Hello, World!")
+	canvas.Text(3, pixel.Monozela10)
+	canvas.Locate(8, 12, 0)
+	canvas.Print("Hello, World!")
 
 	canvas.Display()
 	return nil

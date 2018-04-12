@@ -15,7 +15,7 @@ import (
 
 ////////////////////////////////////////////////////////////////////////////////
 
-var picScreen = pixel.Canvas(pixel.TargetResolution(320, 180))
+var canvas1 = pixel.Canvas(pixel.TargetResolution(320, 180))
 
 var (
 	mire      = pixel.Picture("graphics/mire")
@@ -25,13 +25,13 @@ var (
 	srgbBlue  = pixel.Picture("graphics/srgb-blue")
 )
 
-var picMode int
+var mode int
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func TestPicture_basic(t *testing.T) {
+func TestTest1(t *testing.T) {
 	do(func() {
-		err := cozely.Run(picLoop{})
+		err := cozely.Run(loop1{})
 		if err != nil {
 			t.Error(err)
 		}
@@ -40,33 +40,35 @@ func TestPicture_basic(t *testing.T) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-type picLoop struct{}
+type loop1 struct{}
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (picLoop) Enter() error {
-	input.Load(testBindings)
-	testContext.Activate(1)
+func (loop1) Enter() error {
+	input.Load(bindings)
+	context.Activate(1)
+
+	mode = 0
 
 	palette.Load("graphics/mire")
 	return nil
 }
 
-func (picLoop) Leave() error { return nil }
+func (loop1) Leave() error { return nil }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (picLoop) React() error {
+func (loop1) React() error {
 	if quit.JustPressed(1) {
 		cozely.Stop()
 	}
 
 	if next.JustPressed(1) {
-		picMode++
-		if picMode > 1 {
-			picMode = 0
+		mode++
+		if mode > 1 {
+			mode = 0
 		}
-		switch picMode {
+		switch mode {
 		case 0:
 			palette.Load("graphics/mire")
 		case 1:
@@ -79,45 +81,29 @@ func (picLoop) React() error {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (picLoop) Update() error { return nil }
+func (loop1) Update() error { return nil }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (picLoop) Render() error {
-	picScreen.Clear(0)
-	sz := picScreen.Size()
-	switch picMode {
+func (loop1) Render() error {
+	canvas1.Clear(0)
+	sz := canvas1.Size()
+	switch mode {
 	case 0:
 		pz := mire.Size()
-		picScreen.Picture(mire, 0, coord.CR{0, 0})
-		picScreen.Picture(mire, 0, coord.CR{0, sz.R - pz.R})
-		picScreen.Picture(mire, 0, coord.CR{sz.C - pz.C, 0})
-		picScreen.Picture(mire, 0, sz.Minus(pz))
+		canvas1.Picture(mire, 0, coord.CR{0, 0})
+		canvas1.Picture(mire, 0, coord.CR{0, sz.R - pz.R})
+		canvas1.Picture(mire, 0, coord.CR{sz.C - pz.C, 0})
+		canvas1.Picture(mire, 0, sz.Minus(pz))
 	case 1:
 		pz := srgbGray.Size()
-		picScreen.Picture(srgbGray, 0, coord.CR{sz.C/2 - pz.C/2, 32})
-		picScreen.Picture(srgbRed, 0, coord.CR{sz.C/4 - pz.C/2, 96})
-		picScreen.Picture(srgbGreen, 0, coord.CR{sz.C/2 - pz.C/2, 96})
-		picScreen.Picture(srgbBlue, 0, coord.CR{3*sz.C/4 - pz.C/2, 96})
+		canvas1.Picture(srgbGray, 0, coord.CR{sz.C/2 - pz.C/2, 32})
+		canvas1.Picture(srgbRed, 0, coord.CR{sz.C/4 - pz.C/2, 96})
+		canvas1.Picture(srgbGreen, 0, coord.CR{sz.C/2 - pz.C/2, 96})
+		canvas1.Picture(srgbBlue, 0, coord.CR{3*sz.C/4 - pz.C/2, 96})
 	}
-	picScreen.Display()
+	canvas1.Display()
 	return pixel.Err()
 }
-
-////////////////////////////////////////////////////////////////////////////////
-
-//TODO:
-// func (picLoop) MouseButtonDown(_ mouse.Button, _ int) {
-// 	picMode++
-// 	if picMode > 1 {
-// 		picMode = 0
-// 	}
-// 	switch picMode {
-// 	case 0:
-// 		palette.Load("graphics/mire")
-// 	case 1:
-// 		palette.Load("graphics/srgb-gray")
-// 	}
-// }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -9,8 +9,13 @@ import (
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// A FontID identifies a pixel font that can be used by Cursor to display text.
+// A FontID identifies a pixel font that can be used to display text on the
+// canvas.
 type FontID uint8
+
+// Monozela10 is the default font. It's a 10 pixel high monospace font that is
+// automatically loaded when the framework starts.
+const Monozela10 = FontID(0)
 
 var fontPaths = []string{"builtin monozela 10"}
 
@@ -26,8 +31,8 @@ var glyphMap []mapping
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// Font reserves an ID for a new font, that will be loaded from path by
-// cozely.Run.
+// Font reserves an ID for a new font, that will be loaded from path when the
+// framework starts.
 func Font(path string) FontID {
 	if len(fonts) >= 0xFF {
 		setErr("in NewFont", errors.New("too many fonts"))

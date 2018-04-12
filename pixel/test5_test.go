@@ -21,10 +21,10 @@ var (
 	hideLines  = input.Bool("HideLines")
 )
 
-var cmdContext = input.Context("TestCommands",
+var context5 = input.Context("TestCommands",
 	quit, newPoint, previous, hidePoints, hideLines)
 
-var cmdBindings = input.Bindings{
+var bindings5 = input.Bindings{
 	"TestCommands": {
 		"Quit":       {"Escape"},
 		"NewPoint":   {"Mouse Left"},
@@ -36,7 +36,7 @@ var cmdBindings = input.Bindings{
 
 ////////////////////////////////////////////////////////////////////////////////
 
-var cmdScreen = pixel.Canvas(pixel.TargetResolution(128, 128))
+var canvas5 = pixel.Canvas(pixel.TargetResolution(128, 128))
 
 var points = []coord.CR{
 	{4, 4},
@@ -49,9 +49,9 @@ var pointshidden, lineshidden bool
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func TestPaint_commands(t *testing.T) {
+func TestTest5(t *testing.T) {
 	do(func() {
-		err := cozely.Run(cmdLoop{})
+		err := cozely.Run(loop5{})
 		if err != nil {
 			t.Error(err)
 		}
@@ -60,28 +60,28 @@ func TestPaint_commands(t *testing.T) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-type cmdLoop struct{}
+type loop5 struct{}
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (cmdLoop) Enter() error {
-	input.Load(cmdBindings)
-	cmdContext.Activate(1)
+func (loop5) Enter() error {
+	input.Load(bindings5)
+	context5.Activate(1)
 	palette.Load("graphics/shape1")
 	return nil
 }
 
-func (cmdLoop) Leave() error { return nil }
+func (loop5) Leave() error { return nil }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (cmdLoop) React() error {
+func (loop5) React() error {
 	if quit.JustPressed(1) {
 		cozely.Stop()
 	}
 
 	if newPoint.JustPressed(1) {
-		points = append(points, cmdScreen.Mouse())
+		points = append(points, canvas5.Mouse())
 	}
 
 	if previous.JustPressed(1) {
@@ -98,26 +98,26 @@ func (cmdLoop) React() error {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (cmdLoop) Render() error {
-	cmdScreen.Clear(0)
-	m := cmdScreen.Mouse()
-	cmdScreen.Triangles(2, -2, points...)
+func (loop5) Render() error {
+	canvas5.Clear(0)
+	m := canvas5.Mouse()
+	canvas5.Triangles(2, -2, points...)
 	if !lineshidden {
-		cmdScreen.Lines(5, 0, points...)
-		cmdScreen.Lines(13, -1, points[len(points)-1], m)
+		canvas5.Lines(5, 0, points...)
+		canvas5.Lines(13, -1, points[len(points)-1], m)
 	}
 	if !pointshidden {
 		for _, p := range points {
-			cmdScreen.Point(8, 1, p)
+			canvas5.Point(8, 1, p)
 		}
-		cmdScreen.Point(18, 2, m)
+		canvas5.Point(18, 2, m)
 	}
-	cmdScreen.Display()
+	canvas5.Display()
 	return nil
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (cmdLoop) Update() error { return nil }
+func (loop5) Update() error { return nil }
 
 ////////////////////////////////////////////////////////////////////////////////

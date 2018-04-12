@@ -16,9 +16,9 @@ import (
 
 ////////////////////////////////////////////////////////////////////////////////
 
-var cnvContext = input.Context("TestCanvas", quit)
+var context2 = input.Context("TestCanvas", quit)
 
-var cnvBindings = input.Bindings{
+var bindings2 = input.Bindings{
 	"TestCanvas": {
 		"Quit": {"Escape"},
 	},
@@ -26,7 +26,7 @@ var cnvBindings = input.Bindings{
 
 ////////////////////////////////////////////////////////////////////////////////
 
-var cnvScreen = pixel.Canvas(pixel.Zoom(2))
+var canvas2 = pixel.Canvas(pixel.Zoom(2))
 
 var shapePictures = []pixel.PictureID{
 	pixel.Picture("graphics/shape1"),
@@ -45,13 +45,13 @@ var shapes [2048]shape
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func TestCanvas_depth(t *testing.T) {
+func TestTest2(t *testing.T) {
 	do(func() {
 		cozely.Configure(
 			cozely.UpdateStep(1 / 60.0),
 		)
 		cozely.Events.Resize = resize
-		err := cozely.Run(cnvLoop{})
+		err := cozely.Run(loop2{})
 		if err != nil {
 			t.Error(err)
 		}
@@ -60,22 +60,22 @@ func TestCanvas_depth(t *testing.T) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-type cnvLoop struct{}
+type loop2 struct{}
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (cnvLoop) Enter() error {
-	input.Load(testBindings)
-	testContext.Activate(1)
+func (loop2) Enter() error {
+	input.Load(bindings)
+	context.Activate(1)
 	palette.Load("graphics/shape1")
 	return nil
 }
 
-func (cnvLoop) Leave() error { return nil }
+func (loop2) Leave() error { return nil }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (cnvLoop) React() error {
+func (loop2) React() error {
 	if quit.JustPressed(1) {
 		cozely.Stop()
 	}
@@ -84,26 +84,26 @@ func (cnvLoop) React() error {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (cnvLoop) Update() error { return nil }
+func (loop2) Update() error { return nil }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (cnvLoop) Render() error {
-	cnvScreen.Clear(0)
+func (loop2) Render() error {
+	canvas2.Clear(0)
 	for i, o := range shapes {
 		if float64(i)/32 > cozely.GameTime() {
 			break
 		}
-		cnvScreen.Picture(o.pict, o.depth, o.pos)
+		canvas2.Picture(o.pict, o.depth, o.pos)
 	}
-	cnvScreen.Display()
+	canvas2.Display()
 	return nil
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 func resize() {
-	s := cnvScreen.Size()
+	s := canvas2.Size()
 	for i := range shapes {
 		j := rand.Intn(len(shapePictures))
 		shapes[i].depth = int16(j)

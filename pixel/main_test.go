@@ -18,9 +18,9 @@ var (
 	previous = input.Bool("Previous")
 )
 
-var testContext = input.Context("Test", quit, next, previous)
+var context = input.Context("Test", quit, next, previous)
 
-var testBindings = map[string]map[string][]string{
+var bindings = map[string]map[string][]string{
 	"Test": {
 		"Quit":     {"Escape"},
 		"Next":     {"Mouse Left", "Space"},
