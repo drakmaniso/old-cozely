@@ -7,9 +7,9 @@ import (
 	"testing"
 
 	"github.com/cozely/cozely"
+	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
-	"github.com/cozely/cozely/palette"
 	"github.com/cozely/cozely/pixel"
 )
 
@@ -19,7 +19,7 @@ var (
 	canvas3 = pixel.Canvas(pixel.Zoom(2))
 )
 
-var bg3, fg3 palette.Index
+var bg3, fg3 color.Index
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -41,9 +41,9 @@ type loop3 struct{}
 func (loop3) Enter() error {
 	input.Load(bindings)
 	context.Activate(1)
-	palette.Load("C64")
-	bg3 = palette.Find("white")
-	fg3 = palette.Find("black")
+	color.Load("C64")
+	bg3 = color.Find("white")
+	fg3 = color.Find("black")
 	canvas3.Cursor().Color = fg3 - 1
 	return nil
 }

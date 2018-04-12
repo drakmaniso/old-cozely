@@ -9,7 +9,6 @@ import (
 	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/coord/plane/quadedge"
 	"github.com/cozely/cozely/input"
-	"github.com/cozely/cozely/palette"
 	"github.com/cozely/cozely/pixel"
 	"github.com/cozely/cozely/x/math32"
 )
@@ -52,9 +51,9 @@ func (loop1) Enter() error {
 	points = make([]coord.XY, 64)
 	newPoints()
 
-	palette.Clear()
-	palette.Index(1).Set(color.LRGB{0.1, 0.2, 0.5})
-	palette.Index(2).Set(color.LRGB{0.5, 0.1, 0.0})
+	color.Clear()
+	color.Index(1).Set(color.LRGB{0.1, 0.2, 0.5})
+	color.Index(2).Set(color.LRGB{0.5, 0.1, 0.0})
 	return nil
 }
 

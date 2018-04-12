@@ -88,7 +88,7 @@ func Run(loop GameLoop) (err error) {
 
 		derr = internal.PaletteCleanup()
 		if err == nil && derr != nil {
-			err = internal.Error("in palette cleanup", derr)
+			err = internal.Error("in color cleanup", derr)
 			return
 		}
 
@@ -115,7 +115,7 @@ func Run(loop GameLoop) (err error) {
 
 	err = internal.PaletteSetup()
 	if err != nil {
-		return internal.Error("in palette setup", err)
+		return internal.Error("in color setup", err)
 	}
 
 	err = internal.PixelSetup()

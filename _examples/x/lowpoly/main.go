@@ -9,10 +9,10 @@ import (
 	"fmt"
 
 	"github.com/cozely/cozely"
+	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/coord/space"
 	"github.com/cozely/cozely/input"
-	"github.com/cozely/cozely/palette"
 	"github.com/cozely/cozely/pixel"
 	"github.com/cozely/cozely/x/gl"
 	"github.com/cozely/cozely/x/poly"
@@ -46,7 +46,7 @@ var cursor = pixel.Cursor{Canvas: overlay}
 
 var font = pixel.FontID(0)
 
-var txtColor = palette.Index(1)
+var txtColor = color.Index(1)
 
 ////////////////////////////////////////////////////////////////////////////////
 

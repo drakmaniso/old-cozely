@@ -1,7 +1,7 @@
 // Copyright (c) 2018-2018 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
-package palette
+package color
 
 import (
 	"errors"
@@ -11,14 +11,13 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/internal"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
 
 // Load clears the palette and load a new one. The only format currently
-// supported is indexed PNG files. Note that once loaded, the palette is cached,
+// supported is indexed PNG files. Note that once loaded, the color is cached,
 // so only the first call to Load will read the file. Several names are
 // predefined: "MSX", "MSX2", "CPC", "C64".
 func Load(name string) error {
@@ -55,7 +54,7 @@ func loadFile(name string) error {
 	Clear()
 	pal := make([]struct {
 		name  string
-		color color.Color
+		color Color
 	},
 		len(p)-1,
 		len(p)-1)
@@ -69,7 +68,7 @@ func loadFile(name string) error {
 		if j > 255 {
 			return errors.New("too many colors for palette " + name)
 		}
-		c := color.SRGBA{
+		c := SRGBA{
 			R: float32(r) / float32(0xFFFF),
 			G: float32(g) / float32(0xFFFF),
 			B: float32(b) / float32(0xFFFF),

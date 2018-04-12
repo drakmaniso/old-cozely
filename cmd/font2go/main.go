@@ -38,7 +38,7 @@ func main() {
 	}
 	_, ok = mm.ColorModel().(stdcolor.Palette)
 	if !ok {
-		log.Fatal("unable to retrieve source image palette")
+		log.Fatal("unable to retrieve source image color")
 	}
 
 	o, err := os.Create(os.Args[2])

@@ -2,7 +2,7 @@ package cozely_test
 
 import (
 	"github.com/cozely/cozely"
-	"github.com/cozely/cozely/palette"
+	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/pixel"
 )
 
@@ -20,7 +20,7 @@ func Example_helloWorld() {
 type loop struct{}
 
 func (loop) Enter() error {
-	palette.Load("C64")
+	color.Load("C64")
 
 	return nil
 }

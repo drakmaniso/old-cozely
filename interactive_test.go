@@ -2,9 +2,9 @@ package cozely_test
 
 import (
 	"github.com/cozely/cozely"
+	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
-	"github.com/cozely/cozely/palette"
 	"github.com/cozely/cozely/pixel"
 )
 
@@ -40,7 +40,7 @@ func (interactive) Enter() error {
 	input.Load(bindings)
 	context.Activate(1)
 
-	palette.Load("C64")
+	color.Load("C64")
 
 	return nil
 }

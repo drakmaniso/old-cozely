@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"unicode/utf8"
 
+	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/coord"
-	"github.com/cozely/cozely/palette"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@ import (
 // It maintains the current position, but also the x coordinate used for new
 // lines of text.
 type Cursor struct {
-	Color         palette.Index
+	Color         color.Index
 	Font          FontID
 	Margin        int16
 	LetterSpacing int16
@@ -32,7 +32,7 @@ type Cursor struct {
 //
 // Note that you can also directly change the attributes of the cursor: see
 // Cursor.
-func (a CanvasID) Text(c palette.Index, f FontID) {
+func (a CanvasID) Text(c color.Index, f FontID) {
 	cu := &canvases[a].cursor
 	cu.Color = c
 	cu.Font = f

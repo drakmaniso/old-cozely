@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"github.com/cozely/cozely"
+	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/input"
-	"github.com/cozely/cozely/palette"
 	"github.com/cozely/cozely/pixel"
 
 	"github.com/cozely/cozely/_examples/match3/ecs"
@@ -96,7 +96,7 @@ func (loop) Enter() error {
 	input.Load(bindings)
 	context.Activate(1)
 
-	err := palette.Load("graphics/blue")
+	err := color.Load("graphics/blue")
 	if err != nil {
 		return err
 	}

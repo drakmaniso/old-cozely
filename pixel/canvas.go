@@ -7,10 +7,10 @@ import (
 	"errors"
 	"unsafe"
 
+	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/internal"
-	"github.com/cozely/cozely/palette"
 	"github.com/cozely/cozely/x/gl"
 )
 
@@ -199,7 +199,7 @@ func (a CanvasID) Display() {
 
 // Clear sets both the color and peth of all pixels on the canvas. Only the
 // color is specified, the depth being initialized to the minimum value.
-func (a CanvasID) Clear(color palette.Index) {
+func (a CanvasID) Clear(color color.Index) {
 	aa := &canvases[a]
 	pipeline.Bind() //TODO: find another way to enable depthWrite
 	aa.buffer.ClearColorUint(uint32(color), 0, 0, 0)

@@ -10,9 +10,9 @@ import (
 	"testing"
 
 	"github.com/cozely/cozely"
+	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
-	"github.com/cozely/cozely/palette"
 	"github.com/cozely/cozely/pixel"
 )
 
@@ -58,7 +58,7 @@ var (
 var canvas1 = pixel.Canvas(pixel.Zoom(3))
 
 const (
-	Transparent palette.Index = iota
+	Transparent color.Index = iota
 	Black
 	MediumGreen
 	LightGreen
@@ -102,7 +102,7 @@ func (loop1) Enter() error {
 		return err
 	}
 
-	palette.Load("MSX")
+	color.Load("MSX")
 	InMenu.Activate(0)
 	return nil
 }
@@ -166,46 +166,46 @@ func (loop1) Render() error {
 	canvas1.Printf("   screen delta:%+6d,%+6d\n", mousedelta.C, mousedelta.R)
 	canvas1.Printf("     visibility:   ")
 	if hidden {
-		color(true)
+		changecolor(true)
 		canvas1.Printf("HIDDEN\n")
 	} else {
-		color(false)
+		changecolor(false)
 		canvas1.Printf("shown\n")
 	}
 
 	canvas1.Println()
-	color(false)
+	changecolor(false)
 
-	color(InMenu.Active(1))
+	changecolor(InMenu.Active(1))
 	canvas1.Printf("  Menu: ")
-	color(options)
+	changecolor(options)
 	canvas1.Print("Options(O/L.C.) ")
-	color(closemenu)
+	changecolor(closemenu)
 	canvas1.Print("CloseMenu(ESC) ")
-	color(instclosemenu)
+	changecolor(instclosemenu)
 	canvas1.Print("InstantCloseMenu(ENTER/R.C.) ")
 	canvas1.Println(" ")
 
-	color(InGame.Active(1))
+	changecolor(InGame.Active(1))
 	canvas1.Printf("  Game: ")
-	color(jump)
+	changecolor(jump)
 	canvas1.Print("Jump(SPACE/L.C.) ")
-	color(openmenu)
+	changecolor(openmenu)
 	canvas1.Print("OpenMenu(ESC) ")
-	color(instopenmenu)
+	changecolor(instopenmenu)
 	canvas1.Print("InstantOpenMenu(ENTER/R.C.) ")
 	canvas1.Println(" ")
 
-	color(false)
+	changecolor(false)
 	canvas1.Printf("  Both: ")
-	color(inventory)
+	changecolor(inventory)
 	canvas1.Print("Inventory(I/TAB) ")
 
 	canvas1.Display()
 	return nil
 }
 
-func color(p bool) {
+func changecolor(p bool) {
 	if p {
 		canvas1.Text(LightGreen-1, pixel.Monozela10)
 	} else {

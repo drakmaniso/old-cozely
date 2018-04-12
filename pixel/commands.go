@@ -6,8 +6,8 @@ package pixel
 import (
 	"unsafe"
 
+	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/coord"
-	"github.com/cozely/cozely/palette"
 	"github.com/cozely/cozely/x/gl"
 )
 
@@ -33,7 +33,7 @@ func (a CanvasID) Picture(p PictureID, depth int16, pos coord.CR) {
 ////////////////////////////////////////////////////////////////////////////////
 
 // Point adds a command to draw a point on the canvas.
-func (a CanvasID) Point(color palette.Index, depth int16, pos coord.CR) {
+func (a CanvasID) Point(color color.Index, depth int16, pos coord.CR) {
 	a.command(cmdPoint, 3, 1, int16(color), depth, pos.C, pos.R)
 }
 
@@ -42,7 +42,7 @@ func (a CanvasID) Point(color palette.Index, depth int16, pos coord.CR) {
 // Lines adds a command to draw a line strip on the canvas. A line strip is a
 // succession of points connected by lines; all points and lines share the same
 // depth and color.
-func (a CanvasID) Lines(c palette.Index, depth int16, strip ...coord.CR) {
+func (a CanvasID) Lines(c color.Index, depth int16, strip ...coord.CR) {
 	if len(strip) < 2 {
 		return
 	}
@@ -58,7 +58,7 @@ func (a CanvasID) Lines(c palette.Index, depth int16, strip ...coord.CR) {
 // Triangles adds a command to draw a triangle strip on the canvas. Triangle
 // strip have the same meaning than in OpenGL. All points and triangles share
 // the same depth and color.
-func (a CanvasID) Triangles(c palette.Index, depth int16, strip ...coord.CR) {
+func (a CanvasID) Triangles(c color.Index, depth int16, strip ...coord.CR) {
 	if len(strip) < 3 {
 		return
 	}
@@ -72,7 +72,7 @@ func (a CanvasID) Triangles(c palette.Index, depth int16, strip ...coord.CR) {
 ////////////////////////////////////////////////////////////////////////////////
 
 // Box adds a command to draw a box on the canvas.
-func (a CanvasID) Box(fg, bg palette.Index, corner int16, depth int16, p1, p2 coord.CR) {
+func (a CanvasID) Box(fg, bg color.Index, corner int16, depth int16, p1, p2 coord.CR) {
 	if p2.C < p1.C {
 		p1.C, p2.C = p2.C, p1.C
 	}

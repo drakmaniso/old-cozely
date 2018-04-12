@@ -12,7 +12,6 @@ import (
 	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/coord/plane"
 	"github.com/cozely/cozely/input"
-	"github.com/cozely/cozely/palette"
 	"github.com/cozely/cozely/pixel"
 	"github.com/cozely/cozely/x/math32"
 )
@@ -64,14 +63,14 @@ func (loop1) Enter() error {
 	points = make([]coord.XY, 3)
 	newPoints()
 
-	palette.Clear()
-	palette.Index(1).Set(color.LRGB{1, 1, 1})
-	palette.Index(2).Set(color.LRGB{0.4, 0.05, 0.0})
-	palette.Index(3).Set(color.LRGB{0.0, 0.4, 0.05})
-	palette.Index(4).Set(color.LRGB{0.0, 0.05, 0.45})
-	palette.Index(5).Set(color.LRGB{0.1, 0.0, 0.15})
-	palette.Index(6).Set(color.LRGB{0.25, 0.25, 0.25})
-	palette.Index(7).Set(color.LRGB{0.025, 0.025, 0.025})
+	color.Clear()
+	color.Index(1).Set(color.LRGB{1, 1, 1})
+	color.Index(2).Set(color.LRGB{0.4, 0.05, 0.0})
+	color.Index(3).Set(color.LRGB{0.0, 0.4, 0.05})
+	color.Index(4).Set(color.LRGB{0.0, 0.05, 0.45})
+	color.Index(5).Set(color.LRGB{0.1, 0.0, 0.15})
+	color.Index(6).Set(color.LRGB{0.25, 0.25, 0.25})
+	color.Index(7).Set(color.LRGB{0.025, 0.025, 0.025})
 	return nil
 }
 
@@ -107,7 +106,7 @@ func (loop1) Render() error {
 	s := coord.CR{5, 5}
 	for i, sd := range points {
 		pt[i] = toScreen(sd)
-		canvas1.Box(2+palette.Index(i), 2+palette.Index(i), 2, 2,
+		canvas1.Box(2+color.Index(i), 2+color.Index(i), 2, 2,
 			pt[i].Minus(s), pt[i].Plus(s))
 		canvas1.Locate(pt[i].C-2, pt[i].R+3, aboveall)
 		canvas1.Text(0, 0)

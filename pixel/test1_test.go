@@ -7,9 +7,9 @@ import (
 	"testing"
 
 	"github.com/cozely/cozely"
+	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
-	"github.com/cozely/cozely/palette"
 	"github.com/cozely/cozely/pixel"
 )
 
@@ -50,7 +50,7 @@ func (loop1) Enter() error {
 
 	mode = 0
 
-	palette.Load("graphics/mire")
+	color.Load("graphics/mire")
 	return nil
 }
 
@@ -70,9 +70,9 @@ func (loop1) React() error {
 		}
 		switch mode {
 		case 0:
-			palette.Load("graphics/mire")
+			color.Load("graphics/mire")
 		case 1:
-			palette.Load("graphics/srgb-gray")
+			color.Load("graphics/srgb-gray")
 		}
 	}
 

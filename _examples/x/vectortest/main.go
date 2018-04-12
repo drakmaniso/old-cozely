@@ -5,8 +5,8 @@ package main
 
 import (
 	"github.com/cozely/cozely"
+	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/input"
-	"github.com/cozely/cozely/palette"
 	"github.com/cozely/cozely/x/vector"
 )
 
@@ -26,7 +26,7 @@ type loop struct{}
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop) Enter() error {
-	palette.Load("MSX2")
+	color.Load("MSX2")
 	return nil
 }
 

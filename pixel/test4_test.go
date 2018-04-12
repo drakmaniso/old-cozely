@@ -9,8 +9,8 @@ import (
 	"testing"
 
 	"github.com/cozely/cozely"
+	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/input"
-	"github.com/cozely/cozely/palette"
 	"github.com/cozely/cozely/pixel"
 )
 
@@ -77,9 +77,9 @@ func (loop4) Enter() error {
 		code = append(code, s.Text())
 	}
 	show = text
-	palette.Load("C64")
-	bg3 = palette.Find("white")
-	fg3 = palette.Find("black")
+	color.Load("C64")
+	bg3 = color.Find("white")
+	fg3 = color.Find("black")
 	return nil
 }
 
@@ -132,12 +132,12 @@ func (loop4) Render() error {
 // 	case key.LabelSpace:
 // 		if fntShow[0] == fntText[0] {
 // 			fntShow = fntCode
-// 			curBg = palette.Find("black")
-// 			curFg = palette.Find("green")
+// 			curBg = color.Find("black")
+// 			curFg = color.Find("green")
 // 		} else {
 // 			fntShow = fntText
-// 			curBg = palette.Find("white")
-// 			curFg = palette.Find("black")
+// 			curBg = color.Find("white")
+// 			curFg = color.Find("black")
 // 		}
 // 		curScreen.Color = curFg - 1
 // 		fntLine = 0
