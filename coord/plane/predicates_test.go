@@ -182,7 +182,7 @@ func (triLoop) Render() error {
 	r := d.Minus(points[a]).Length()
 	cir := []coord.CR{}
 	for a := float32(0); a <= 2*math32.Pi+0.01; a += math32.Pi / 32 {
-		cir = append(cir, toScreen(coord.DA{r, a}.XY().Plus(d)))
+		cir = append(cir, toScreen(coord.RA{r, a}.XY().Plus(d)))
 	}
 	screen.Lines(5, -2, cir...)
 

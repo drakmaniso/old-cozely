@@ -108,7 +108,7 @@ func Circumcenter(a, b, c coord.XY) coord.XY {
 		Y: (ba.X*lca - ca.X*lba) * d,
 	}
 
-	return o.Plus(A).XY32()
+	return o.Plus(A).XY()
 }
 
 ////////////////////////////////////////////////////////////////////////////////

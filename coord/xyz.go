@@ -11,8 +11,8 @@ import (
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// Vector3D represents any three-dimensional vector.
-type Vector3D interface {
+// Vector represents any three-dimensional vector.
+type Vector interface {
 	// Cartesian returns the cartesian coordinates of the vector.
 	Cartesian() (x, y, z float32)
 }
@@ -30,117 +30,117 @@ type XYZ struct {
 // Cartesian returns the cartesian coordinates of the vector.
 //
 // This implements the Vector interface.
-func (v XYZ) Cartesian() (x, y, z float32) {
-	return v.X, v.Y, v.Z
+func (a XYZ) Cartesian() (x, y, z float32) {
+	return a.X, a.Y, a.Z
 }
 
 // XYZW returns the homogenous coordinates of the vector, with W set to w.
-func (v XYZ) XYZW(w float32) XYZW {
-	return XYZW{v.X, v.Y, v.Z, w}
+func (a XYZ) XYZW(w float32) XYZW {
+	return XYZW{a.X, a.Y, a.Z, w}
 }
 
 // Plus returns the sum with another vector.
-func (v XYZ) Plus(o XYZ) XYZ {
-	return XYZ{v.X + o.X, v.Y + o.Y, v.Z + o.Z}
+func (a XYZ) Plus(b XYZ) XYZ {
+	return XYZ{a.X + b.X, a.Y + b.Y, a.Z + b.Z}
 }
 
 // Minus returns the difference with another vector.
-func (v XYZ) Minus(o XYZ) XYZ {
-	return XYZ{v.X - o.X, v.Y - o.Y, v.Z - o.Z}
+func (a XYZ) Minus(b XYZ) XYZ {
+	return XYZ{a.X - b.X, a.Y - b.Y, a.Z - b.Z}
 }
 
 // Opposite returns the opposite of the vector.
-func (v XYZ) Opposite() XYZ {
-	return XYZ{-v.X, -v.Y, -v.Z}
+func (a XYZ) Opposite() XYZ {
+	return XYZ{-a.X, -a.Y, -a.Z}
 }
 
 // Times returns the product with a scalar.
-func (v XYZ) Times(s float32) XYZ {
-	return XYZ{v.X * s, v.Y * s, v.Z * s}
+func (a XYZ) Times(s float32) XYZ {
+	return XYZ{a.X * s, a.Y * s, a.Z * s}
 }
 
 // TimesCW returns the component-wise product with another vector.
-func (v XYZ) TimesCW(o XYZ) XYZ {
-	return XYZ{v.X * o.X, v.Y * o.Y, v.Z * o.Z}
+func (a XYZ) TimesCW(b XYZ) XYZ {
+	return XYZ{a.X * b.X, a.Y * b.Y, a.Z * b.Z}
 }
 
 // Slash returns the division by a scalar (which must be non-zero).
-func (v XYZ) Slash(s float32) XYZ {
-	return XYZ{v.X / s, v.Y / s, v.Z / s}
+func (a XYZ) Slash(s float32) XYZ {
+	return XYZ{a.X / s, a.Y / s, a.Z / s}
 }
 
 // SlashCW returns the component-wise division by another vector (of which X, Y
 // and Z must be non-zero).
-func (v XYZ) SlashCW(o XYZ) XYZ {
-	return XYZ{v.X / o.X, v.Y / o.Y, v.Z / o.Z}
+func (a XYZ) SlashCW(b XYZ) XYZ {
+	return XYZ{a.X / b.X, a.Y / b.Y, a.Z / b.Z}
 }
 
 // Mod returns the remainder (modulus) of the division by a scalar (which must
 // be non-zero).
-func (v XYZ) Mod(s float32) XYZ {
-	return XYZ{math32.Mod(v.X, s), math32.Mod(v.Y, s), math32.Mod(v.Z, s)}
+func (a XYZ) Mod(s float32) XYZ {
+	return XYZ{math32.Mod(a.X, s), math32.Mod(a.Y, s), math32.Mod(a.Z, s)}
 }
 
 // ModCW returns the remainders (modulus) of the component-wise division by
 // another vector (of which X, Y and Z must be non-zero).
-func (v XYZ) ModCW(o XYZ) XYZ {
-	return XYZ{math32.Mod(v.X, o.X), math32.Mod(v.Y, o.Y), math32.Mod(v.Z, o.Z)}
+func (a XYZ) ModCW(b XYZ) XYZ {
+	return XYZ{math32.Mod(a.X, b.X), math32.Mod(a.Y, b.Y), math32.Mod(a.Z, b.Z)}
 }
 
 // Modf returns the integer part and the fractional part of (each component of)
 // the vector.
-func (v XYZ) Modf() (intg, frac XYZ) {
-	xintg, xfrac := math32.Modf(v.X)
-	yintg, yfrac := math32.Modf(v.Y)
-	zintg, zfrac := math32.Modf(v.Z)
+func (a XYZ) Modf() (intg, frac XYZ) {
+	xintg, xfrac := math32.Modf(a.X)
+	yintg, yfrac := math32.Modf(a.Y)
+	zintg, zfrac := math32.Modf(a.Z)
 	return XYZ{xintg, yintg, zintg}, XYZ{xfrac, yfrac, zfrac}
 }
 
 // Dot returns the dot product with another vector.
-func (v XYZ) Dot(o XYZ) float32 {
-	return v.X*o.X + v.Y*o.Y + v.Z*o.Z
+func (a XYZ) Dot(b XYZ) float32 {
+	return a.X*b.X + a.Y*b.Y + a.Z*b.Z
 }
 
 // Cross returns the cross product with another vector.
-func (v XYZ) Cross(o XYZ) XYZ {
+func (a XYZ) Cross(b XYZ) XYZ {
 	return XYZ{
-		v.Y*o.Z - v.Z*o.Y,
-		v.Z*o.X - v.X*o.Z,
-		v.X*o.Y - v.Y*o.X,
+		a.Y*b.Z - a.Z*b.Y,
+		a.Z*b.X - a.X*b.Z,
+		a.X*b.Y - a.Y*b.X,
 	}
 }
 
 // Length returns the euclidian length of the vector.
-func (v XYZ) Length() float32 {
+func (a XYZ) Length() float32 {
 	// Double conversion is faster than math32.Sqrt because the Go compiler
 	// optimizes it.
-	return float32(math.Sqrt(float64(v.X*v.X + v.Y*v.Y + v.Z*v.Z)))
+	return float32(math.Sqrt(float64(a.X*a.X + a.Y*a.Y + a.Z*a.Z)))
 }
 
 // Length2 returns the square of the euclidian length of the vector.
-func (v XYZ) Length2() float32 {
-	return v.X*v.X + v.Y*v.Y + v.Z*v.Z
+func (a XYZ) Length2() float32 {
+	return a.X*a.X + a.Y*a.Y + a.Z*a.Z
 }
 
 // Distance returns the distance with another vector.
-func (v XYZ) Distance(o XYZ) float32 {
-	d := XYZ{v.X - o.X, v.Y - o.Y, v.Z - o.Z}
+func (a XYZ) Distance(b XYZ) float32 {
+	d := XYZ{a.X - b.X, a.Y - b.Y, a.Z - b.Z}
 	return float32(math.Sqrt(float64(d.X*d.X + d.Y*d.Y + d.Z*d.Z)))
 }
 
 // Distance2 returns the square of the distance with another vector.
-func (v XYZ) Distance2(o XYZ) float32 {
-	d := XYZ{v.X - o.X, v.Y - o.Y, v.Z - o.Z}
+func (a XYZ) Distance2(b XYZ) float32 {
+	d := XYZ{a.X - b.X, a.Y - b.Y, a.Z - b.Z}
 	return d.X*d.X + d.Y*d.Y + d.Z*d.Z
 }
 
 // Normalized return the normalization of the vector (i.e. the vector divided
 // by its length, which must be non-zero).
-func (v XYZ) Normalized() XYZ {
+func (a XYZ) Normalized() XYZ {
 	// Double conversion is faster than math32.Sqrt because the Go compiler
 	// optimizes it.
-	l := float32(math.Sqrt(float64(v.X*v.X + v.Y*v.Y + v.Z*v.Z)))
-	return XYZ{v.X / l, v.Y / l, v.Z / l}
+	l := float32(math.Sqrt(float64(a.X*a.X + a.Y*a.Y + a.Z*a.Z)))
+	return XYZ{a.X / l, a.Y / l, a.Z / l}
 }
 
 // IsAlmostEqual returns true if the difference between the two vectors is less
@@ -149,10 +149,10 @@ func (v XYZ) Normalized() XYZ {
 // Handle special cases: zero, infinites, denormals.
 //
 // See also IsNearlyEqual and IsRoughlyEqual.
-func (v XYZ) IsAlmostEqual(o XYZ, ulps uint32) bool {
-	return math32.IsAlmostEqual(v.X, o.X, ulps) &&
-		math32.IsAlmostEqual(v.Y, o.Y, ulps) &&
-		math32.IsAlmostEqual(v.Z, o.Z, ulps)
+func (a XYZ) IsAlmostEqual(b XYZ, ulps uint32) bool {
+	return math32.IsAlmostEqual(a.X, b.X, ulps) &&
+		math32.IsAlmostEqual(a.Y, b.Y, ulps) &&
+		math32.IsAlmostEqual(a.Z, b.Z, ulps)
 }
 
 // IsNearlyEqual Returns true if the relative error between the two vectors is
@@ -161,20 +161,20 @@ func (v XYZ) IsAlmostEqual(o XYZ, ulps uint32) bool {
 // Handles special cases: zero, infinites, denormals.
 //
 // See also IsAlmostEqual and IsRoughlyEqual.
-func (v XYZ) IsNearlyEqual(o XYZ, epsilon float32) bool {
-	return math32.IsNearlyEqual(v.X, o.X, epsilon) &&
-		math32.IsNearlyEqual(v.Y, o.Y, epsilon) &&
-		math32.IsNearlyEqual(v.Z, o.Z, epsilon)
+func (a XYZ) IsNearlyEqual(b XYZ, epsilon float32) bool {
+	return math32.IsNearlyEqual(a.X, b.X, epsilon) &&
+		math32.IsNearlyEqual(a.Y, b.Y, epsilon) &&
+		math32.IsNearlyEqual(a.Z, b.Z, epsilon)
 }
 
 // IsRoughlyEqual Returns true if the absolute error between the two vectors is
 // less than epsilon.
 //
 // See also IsNearlyEqual and IsAlmostEqual.
-func (v XYZ) IsRoughlyEqual(o XYZ, epsilon float32) bool {
-	return math32.IsRoughlyEqual(v.X, o.X, epsilon) &&
-		math32.IsRoughlyEqual(v.Y, o.Y, epsilon) &&
-		math32.IsRoughlyEqual(v.Z, o.Z, epsilon)
+func (a XYZ) IsRoughlyEqual(b XYZ, epsilon float32) bool {
+	return math32.IsRoughlyEqual(a.X, b.X, epsilon) &&
+		math32.IsRoughlyEqual(a.Y, b.Y, epsilon) &&
+		math32.IsRoughlyEqual(a.Z, b.Z, epsilon)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -214,32 +214,5 @@ func (h XYZ) ZX() XY {
 func (h XYZ) ZY() XY {
 	return XY{h.Z, h.Y}
 }
-
-////////////////////////////////////////////////////////////////////////////////
-
-// XYZW represents a three-dimensional vector, defined by its homogeneous
-// coordinates.
-type XYZW struct {
-	X float32
-	Y float32
-	Z float32
-	W float32
-}
-
-// Cartesian returns the cartesian coordinates of the vector (i.e. the perspective
-// divide of the homogeneous coordinates). W must be non-zero.
-func (v XYZW) Cartesian() (x, y, z float32) {
-	return v.X / v.W, v.Y / v.W, v.Z / v.W
-}
-
-// XYZ returns the cartesian representation of the vector (i.e. the
-// perspective divide of the homogeneous coordinates). W must be non-zero.
-func (v XYZW) XYZ() XYZ {
-	return XYZ{v.X / v.W, v.Y / v.W, v.Z / v.W}
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-//TODO: Spherical and Cylindrical types
 
 ////////////////////////////////////////////////////////////////////////////////
