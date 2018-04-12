@@ -57,7 +57,7 @@ var vertexSSBO gl.StorageBuffer
 
 type Meshes struct {
 	Faces    []Face
-	Vertices []space.Coord
+	Vertices []space.XYZ
 }
 
 type MeshID struct {
@@ -99,7 +99,7 @@ func (b *builder) V(coords ...float32) error {
 		return nil //TODO:error handling
 	}
 
-	v := space.Coord{coords[0], coords[1], coords[2]}
+	v := space.XYZ{coords[0], coords[1], coords[2]}
 	b.meshes.Vertices = append(b.meshes.Vertices, v)
 
 	return nil

@@ -21,7 +21,7 @@ var deltas struct {
 
 type delta struct {
 	active bool
-	value  plane.Coord
+	value  plane.XY
 }
 
 func Delta(name string) DeltaID {
@@ -64,6 +64,6 @@ func (a DeltaID) Active(d DeviceID) bool {
 	return devices.deltas[d][a].active
 }
 
-func (a DeltaID) Delta(d DeviceID) plane.Coord {
+func (a DeltaID) Delta(d DeviceID) plane.XY {
 	return devices.deltas[d][a].value
 }

@@ -20,8 +20,8 @@ func Identity() Matrix {
 
 // Apply a tranformation matrix to a vector (i.e. returns matrix multiplied by
 // column vector).
-func Apply(m Matrix, v Homogen) Homogen {
-	return Homogen{
+func Apply(m Matrix, v XYZ) XYZ {
+	return XYZ{
 		X: m[0][0]*v.X + m[1][0]*v.Y + m[2][0]*v.Z,
 		Y: m[0][1]*v.X + m[1][1]*v.Y + m[2][1]*v.Z,
 		Z: m[0][2]*v.X + m[1][2]*v.Y + m[2][2]*v.Z,
@@ -31,7 +31,7 @@ func Apply(m Matrix, v Homogen) Homogen {
 ////////////////////////////////////////////////////////////////////////////////
 
 // Translation by a vector.
-func Translation(t Coord) Matrix {
+func Translation(t XY) Matrix {
 
 	return Matrix{
 		{1, 0, 0},
@@ -57,7 +57,7 @@ func Rotation(angle float32) Matrix {
 ////////////////////////////////////////////////////////////////////////////////
 
 // RotationAround a point.
-func RotationAround(angle float32, center Coord) Matrix {
+func RotationAround(angle float32, center XY) Matrix {
 	c := math32.Cos(angle)
 	s := math32.Sin(angle)
 
@@ -73,7 +73,7 @@ func RotationAround(angle float32, center Coord) Matrix {
 ////////////////////////////////////////////////////////////////////////////////
 
 // Scaling and/or mirror along both axis.
-func Scaling(s Coord) Matrix {
+func Scaling(s XY) Matrix {
 	return Matrix{
 		{s.X, 0, 0},
 		{0, s.Y, 0},
@@ -84,7 +84,7 @@ func Scaling(s Coord) Matrix {
 ////////////////////////////////////////////////////////////////////////////////
 
 // ScalingAround a point (and/or mirror).
-func ScalingAround(s Coord, center Coord) Matrix {
+func ScalingAround(s XY, center XY) Matrix {
 	sx, sy := s.X, s.Y
 	cx, cy := center.X, center.Y
 
@@ -98,7 +98,7 @@ func ScalingAround(s Coord, center Coord) Matrix {
 ////////////////////////////////////////////////////////////////////////////////
 
 // Shearing along both axis.
-func Shearing(s Coord) Matrix {
+func Shearing(s XY) Matrix {
 	return Matrix{
 		{1, s.Y, 0},
 		{s.X, 1, 0},
@@ -113,7 +113,7 @@ func Shearing(s Coord) Matrix {
 func Viewport(zoom, aspectRatio float32) Matrix {
 	height := zoom / 2
 	width := height * aspectRatio
-	return Scaling(Coord{X: width, Y: height})
+	return Scaling(XY{X: width, Y: height})
 }
 
 ////////////////////////////////////////////////////////////////////////////////

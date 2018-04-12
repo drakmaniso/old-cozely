@@ -63,10 +63,10 @@ func (boxLoop) Render() error {
 
 	const corner = 3
 
-	o := plane.Pixel{8, 8}
-	s := plane.Pixel{24, 24}
-	dx := plane.Pixel{32, 0}
-	dy := plane.Pixel{0, 32}
+	o := plane.CR{8, 8}
+	s := plane.CR{24, 24}
+	dx := plane.CR{32, 0}
+	dy := plane.CR{0, 32}
 
 	for i := int16(0); i < 13; i++ {
 		boxScreen.Box(6, 0, i, 0, o.Plus(dx.Times(i)), o.Plus(dx.Times(i)).Plus(s))

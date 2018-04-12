@@ -23,8 +23,8 @@ func Identity() Matrix {
 
 // Apply a tranformation matrix to a vector (i.e. returns matrix multiplied by
 // column vector).
-func Apply(m Matrix, v Homogen) Homogen {
-	return Homogen{
+func Apply(m Matrix, v XYZW) XYZW {
+	return XYZW{
 		X: m[0][0]*v.X + m[1][0]*v.Y + m[2][0]*v.Z + m[3][0]*v.W,
 		Y: m[0][1]*v.X + m[1][1]*v.Y + m[2][1]*v.Z + m[3][1]*v.W,
 		Z: m[0][2]*v.X + m[1][2]*v.Y + m[2][2]*v.Z + m[3][2]*v.W,
@@ -35,7 +35,7 @@ func Apply(m Matrix, v Homogen) Homogen {
 ////////////////////////////////////////////////////////////////////////////////
 
 // Translation by a vector.
-func Translation(t Coord) Matrix {
+func Translation(t XYZ) Matrix {
 	return Matrix{
 		{1, 0, 0, 0},
 		{0, 1, 0, 0},
@@ -47,7 +47,7 @@ func Translation(t Coord) Matrix {
 ////////////////////////////////////////////////////////////////////////////////
 
 // Rotation around an axis.
-func Rotation(angle float32, axis Coord) Matrix {
+func Rotation(angle float32, axis XYZ) Matrix {
 	c := math32.Cos(angle)
 	s := math32.Sin(angle)
 
@@ -174,7 +174,7 @@ func EulerZXY(angleX, angleY, angleZ float32) Matrix {
 ////////////////////////////////////////////////////////////////////////////////
 
 // Scaling along the 3 axis.
-func Scaling(s Coord) Matrix {
+func Scaling(s XYZ) Matrix {
 	return Matrix{
 		{s.X, 0, 0, 0},
 		{0, s.Y, 0, 0},
@@ -188,7 +188,7 @@ func Scaling(s Coord) Matrix {
 // LookAt returns a transformation matrix which put eye at origin and target
 // along negative Z. In other words, if a projection matrix is applied to the
 // result, target will be in the center of the viewport.
-func LookAt(eye, target, up Coord) Matrix {
+func LookAt(eye, target, up XYZ) Matrix {
 	f := target.Minus(eye).Normalized()
 	s := f.Cross(up.Normalized()).Normalized()
 	u := s.Cross(f)

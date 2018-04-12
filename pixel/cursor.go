@@ -24,8 +24,8 @@ type Cursor struct {
 	Spacing   int16
 	Interline int16
 	Depth     int16
-	Origin    plane.Pixel
-	Position  plane.Pixel
+	Origin    plane.CR
+	Position  plane.CR
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -37,7 +37,7 @@ type Cursor struct {
 // Note: Flush is automatically called before the relocation. See also Move and
 // Moveto.
 func (c *Cursor) Locate(x, y int16) {
-	c.Position.X, c.Position.Y = x, y
+	c.Position.C, c.Position.R = x, y
 	c.Origin = c.Position
 }
 
@@ -94,19 +94,19 @@ func (c *Cursor) Write(p []byte) (n int, err error) {
 func (c *Cursor) WriteRune(r rune) {
 	if r == '\n' {
 		if c.Interline == 0 {
-			c.Position.Y += int16(float32(c.Font.Height()) * 1.25)
+			c.Position.R += int16(float32(c.Font.Height()) * 1.25)
 		} else {
-			c.Position.Y += c.Interline
+			c.Position.R += c.Interline
 		}
-		c.Position.X = c.Origin.X
+		c.Position.C = c.Origin.C
 		return
 	}
 
 	g := c.Font.glyph(r)
 	c.Canvas.appendCommand(cmdText, 4, 1,
-		int16(c.Color), c.Depth, c.Position.Y-fonts[c.Font].baseline,
-		int16(g), c.Position.X)
-	c.Position.X += glyphMap[g].w + c.Spacing
+		int16(c.Color), c.Depth, c.Position.R-fonts[c.Font].baseline,
+		int16(g), c.Position.C)
+	c.Position.C += glyphMap[g].w + c.Spacing
 }
 
 ////////////////////////////////////////////////////////////////////////////////

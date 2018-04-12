@@ -55,7 +55,7 @@ func perlinFade(x float32) float32 {
 ////////////////////////////////////////////////////////////////////////////////
 
 // Perlin3D returns the value of a 3D Perlin noise function at position `p`.
-func Perlin3D(p space.Coord) float32 {
+func Perlin3D(p space.XYZ) float32 {
 	// Source: "Simplex Noise Demystified" by Stefan Gustavson
 	// http://www.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf
 
@@ -86,14 +86,14 @@ func Perlin3D(p space.Coord) float32 {
 	g111 := permutation[ix+1+permutation[iy+1+permutation[iz+1]]] % gl
 
 	// Noise contribution for each corner
-	n000 := Gradient3D[g000].Dot(space.Coord{X: rx, Y: ry, Z: rz})
-	n100 := Gradient3D[g100].Dot(space.Coord{X: rx - 1, Y: ry, Z: rz})
-	n010 := Gradient3D[g010].Dot(space.Coord{X: rx, Y: ry - 1, Z: rz})
-	n110 := Gradient3D[g110].Dot(space.Coord{X: rx - 1, Y: ry - 1, Z: rz})
-	n001 := Gradient3D[g001].Dot(space.Coord{X: rx, Y: ry, Z: rz - 1})
-	n101 := Gradient3D[g101].Dot(space.Coord{X: rx - 1, Y: ry, Z: rz - 1})
-	n011 := Gradient3D[g011].Dot(space.Coord{X: rx, Y: ry - 1, Z: rz - 1})
-	n111 := Gradient3D[g111].Dot(space.Coord{X: rx - 1, Y: ry - 1, Z: rz - 1})
+	n000 := Gradient3D[g000].Dot(space.XYZ{X: rx, Y: ry, Z: rz})
+	n100 := Gradient3D[g100].Dot(space.XYZ{X: rx - 1, Y: ry, Z: rz})
+	n010 := Gradient3D[g010].Dot(space.XYZ{X: rx, Y: ry - 1, Z: rz})
+	n110 := Gradient3D[g110].Dot(space.XYZ{X: rx - 1, Y: ry - 1, Z: rz})
+	n001 := Gradient3D[g001].Dot(space.XYZ{X: rx, Y: ry, Z: rz - 1})
+	n101 := Gradient3D[g101].Dot(space.XYZ{X: rx - 1, Y: ry, Z: rz - 1})
+	n011 := Gradient3D[g011].Dot(space.XYZ{X: rx, Y: ry - 1, Z: rz - 1})
+	n111 := Gradient3D[g111].Dot(space.XYZ{X: rx - 1, Y: ry - 1, Z: rz - 1})
 
 	// Fade courbe
 	u := perlinFade(rx)

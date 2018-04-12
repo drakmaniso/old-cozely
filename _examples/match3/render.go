@@ -38,7 +38,7 @@ func (loop) Render() error {
 			if grid.PositionOf(e) == current || e.Has(ecs.MatchFlag) {
 				p = tilesPict[c].big
 			}
-			screen.Picture(p, 0, plane.Pixel{x, y})
+			screen.Picture(p, 0, plane.CR{x, y})
 		}
 	}
 

@@ -80,7 +80,7 @@ const (
 )
 
 var hidden bool
-var mousepos, mousedelta plane.Pixel
+var mousepos, mousedelta plane.CR
 var openmenu, closemenu, instopenmenu, instclosemenu, inventory, options, jump bool
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -165,8 +165,8 @@ func (loop) Render() error {
 	cursor.Locate(2, 12)
 	cursor.Color = DarkBlue - 1
 
-	cursor.Printf("cursor position:%6d,%6d\n", mousepos.X, mousepos.Y)
-	cursor.Printf("   cursor delta:%+6d,%+6d\n", mousedelta.X, mousedelta.Y)
+	cursor.Printf("cursor position:%6d,%6d\n", mousepos.C, mousepos.R)
+	cursor.Printf("   cursor delta:%+6d,%+6d\n", mousedelta.C, mousedelta.R)
 	cursor.Printf("     visibility:   ")
 	if hidden {
 		color(true)
@@ -228,7 +228,7 @@ func (loop) Hide() {
 
 func (loop) Resize() {
 	s := cozely.WindowSize()
-	fmt.Printf("%v: resize %dx%d\n", cozely.GameTime(), s.X, s.Y)
+	fmt.Printf("%v: resize %dx%d\n", cozely.GameTime(), s.C, s.R)
 }
 
 func (loop) Focus() {

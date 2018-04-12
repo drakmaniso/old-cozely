@@ -38,7 +38,7 @@ var cmdBindings = input.Bindings{
 
 var cmdScreen = pixel.Canvas(pixel.TargetResolution(128, 128))
 
-var points = []plane.Pixel{
+var points = []plane.CR{
 	{4, 4},
 	{4 + 1, 4 + 20},
 	{4 + 1 + 20, 4 + 20 - 1},

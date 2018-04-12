@@ -63,8 +63,8 @@ func (interactive) Update() error {
 func (interactive) Render() error {
 	screen.Clear(0)
 
-	b := plane.Pixel{16, 12}
-	screen.Box(4, 9, 4, 0, b, screen.Size().Minus(b))
+	margin := plane.CR{16, 12}
+	screen.Box(4, 9, 4, 0, margin, screen.Size().Minus(margin))
 
 	screen.Display()
 	return nil

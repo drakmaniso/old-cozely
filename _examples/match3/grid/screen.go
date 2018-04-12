@@ -10,7 +10,7 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 
 var (
-	origin plane.Pixel
+	origin plane.CR
 )
 
 const cellSize = 20
@@ -19,8 +19,8 @@ const cellSize = 20
 
 // ScreenResized repositions the grid on the screen
 func ScreenResized(w, h int16) {
-	origin.X = (w - (int16(width) * cellSize)) / 2
-	origin.Y = (h - (int16(height) * cellSize)) / 2
+	origin.C = (w - (int16(width) * cellSize)) / 2
+	origin.R = (h - (int16(height) * cellSize)) / 2
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -28,21 +28,21 @@ func ScreenResized(w, h int16) {
 // ScreenXY returns the screen coordinates of the grid position, given a cell
 // size of s.
 func (p Position) ScreenXY() (x, y int16) {
-	x = origin.X + int16(p.x)*cellSize
-	y = origin.Y + int16(height-1-p.y)*cellSize
+	x = origin.C + int16(p.x)*cellSize
+	y = origin.R + int16(height-1-p.y)*cellSize
 	return x, y
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 // PositionAt returns the grid position containing the screen coordinates c.
-func PositionAt(c plane.Pixel) Position {
-	if c.X < origin.X || c.Y < origin.Y {
+func PositionAt(c plane.CR) Position {
+	if c.C < origin.C || c.R < origin.R {
 		return Nowhere()
 	}
 
-	x := int8((int16(c.X) - origin.X) / cellSize)
-	y := int8((int16(c.Y) - origin.Y) / cellSize)
+	x := int8((int16(c.C) - origin.C) / cellSize)
+	y := int8((int16(c.R) - origin.R) / cellSize)
 
 	if x >= width || y >= height {
 		return Nowhere()

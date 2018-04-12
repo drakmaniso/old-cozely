@@ -52,45 +52,45 @@ func (m *Matrix) setTo(
 	m[3][3] = p
 }
 
-func add(a, b Coord) Coord {
-	return Coord{
+func add(a, b XYZ) XYZ {
+	return XYZ{
 		a.X + b.X,
 		a.Y + b.Y,
 		a.Z + b.Z,
 	}
 }
 
-func (v *Coord) add(a, b Coord) {
+func (v *XYZ) add(a, b XYZ) {
 	v.X = a.X + b.X
 	v.Y = a.Y + b.Y
 	v.Z = a.Z + b.Z
 }
 
-func (v *Coord) subtract(a, b Coord) {
+func (v *XYZ) subtract(a, b XYZ) {
 	v.X = a.X - b.X
 	v.Y = a.Y - b.Y
 	v.Z = a.Z - b.Z
 }
 
-func (v *Coord) invert() {
+func (v *XYZ) invert() {
 	v.X = -v.X
 	v.Y = -v.Y
 	v.Z = -v.Z
 }
 
-func (v *Coord) multiply(o Coord, s float32) {
+func (v *XYZ) multiply(o XYZ, s float32) {
 	v.X = o.X * s
 	v.Y = o.Y * s
 	v.Z = o.Z * s
 }
 
-func (v *Coord) divide(o Coord, s float32) {
+func (v *XYZ) divide(o XYZ, s float32) {
 	v.X = o.X / s
 	v.Y = o.Y / s
 	v.Z = o.Z / s
 }
 
-func (v *Coord) normalize() {
+func (v *XYZ) normalize() {
 	length := math32.Sqrt(v.X*v.X + v.Y*v.Y + v.Z*v.Z)
 	v.X /= length
 	v.Y /= length
@@ -112,9 +112,9 @@ func (v *arrayCoord) add(a, b arrayCoord) {
 //-----------------------------------------------------------------------------
 
 func BenchmarkCoord_Plus(b *testing.B) {
-	m := Coord{1.1, 2.2, 3.3}
-	n := Coord{5.5, 6.6, 7.7}
-	var o Coord
+	m := XYZ{1.1, 2.2, 3.3}
+	n := XYZ{5.5, 6.6, 7.7}
+	var o XYZ
 	for i := 0; i < b.N; i++ {
 		o = m.Plus(n)
 	}
@@ -122,9 +122,9 @@ func BenchmarkCoord_Plus(b *testing.B) {
 }
 
 func BenchmarkCoord_Plus_Add(b *testing.B) {
-	m := Coord{1.1, 2.2, 3.3}
-	n := Coord{5.5, 6.6, 7.7}
-	var o Coord
+	m := XYZ{1.1, 2.2, 3.3}
+	n := XYZ{5.5, 6.6, 7.7}
+	var o XYZ
 	for i := 0; i < b.N; i++ {
 		o = add(m, n)
 	}
@@ -142,8 +142,8 @@ func BenchmarkCoord_Plus_Array(b *testing.B) {
 }
 
 func BenchmarkCoord_Plus_Self(b *testing.B) {
-	m := Coord{1.1, 2.2, 3.3}
-	n := Coord{5.5, 6.6, 7.7}
+	m := XYZ{1.1, 2.2, 3.3}
+	n := XYZ{5.5, 6.6, 7.7}
 	for i := 0; i < b.N; i++ {
 		m = m.Plus(n)
 	}
@@ -160,9 +160,9 @@ func BenchmarkCoord_Plus_ArraySelf(b *testing.B) {
 }
 
 func BenchmarkCoord_Plus_ByRef(b *testing.B) {
-	m := Coord{1.1, 2.2, 3.3}
-	n := Coord{5.5, 6.6, 7.7}
-	var o Coord
+	m := XYZ{1.1, 2.2, 3.3}
+	n := XYZ{5.5, 6.6, 7.7}
+	var o XYZ
 	for i := 0; i < b.N; i++ {
 		o.add(m, n)
 	}
@@ -180,8 +180,8 @@ func BenchmarkCoord_Plus_ArrayByRef(b *testing.B) {
 }
 
 func BenchmarkCoord_Plus_ByRefSelf(b *testing.B) {
-	m := Coord{1.1, 2.2, 3.3}
-	n := Coord{5.5, 6.6, 7.7}
+	m := XYZ{1.1, 2.2, 3.3}
+	n := XYZ{5.5, 6.6, 7.7}
 	for i := 0; i < b.N; i++ {
 		m.add(m, n)
 	}
@@ -200,9 +200,9 @@ func BenchmarkCoord_Plus_ArrayByRefSelf(b *testing.B) {
 //-----------------------------------------------------------------------------
 
 func BenchmarkCoord_Times(b *testing.B) {
-	m := Coord{1.1, 2.2, 3.3}
+	m := XYZ{1.1, 2.2, 3.3}
 	n := float32(5.5)
-	var o Coord
+	var o XYZ
 	for i := 0; i < b.N; i++ {
 		o = m.Times(n)
 	}
@@ -210,7 +210,7 @@ func BenchmarkCoord_Times(b *testing.B) {
 }
 
 func BenchmarkCoord_Times_Self(b *testing.B) {
-	m := Coord{1.1, 2.2, 3.3}
+	m := XYZ{1.1, 2.2, 3.3}
 	n := float32(5.5)
 	for i := 0; i < b.N; i++ {
 		m = m.Times(n)
@@ -219,9 +219,9 @@ func BenchmarkCoord_Times_Self(b *testing.B) {
 }
 
 func BenchmarkCoord_Times_ByRef(b *testing.B) {
-	m := Coord{1.1, 2.2, 3.3}
+	m := XYZ{1.1, 2.2, 3.3}
 	n := float32(5.5)
-	var o Coord
+	var o XYZ
 	for i := 0; i < b.N; i++ {
 		o.multiply(m, n)
 	}
@@ -229,7 +229,7 @@ func BenchmarkCoord_Times_ByRef(b *testing.B) {
 }
 
 func BenchmarkCoord_Times_ByRefSelf(b *testing.B) {
-	m := Coord{1.1, 2.2, 3.3}
+	m := XYZ{1.1, 2.2, 3.3}
 	n := float32(5.5)
 	for i := 0; i < b.N; i++ {
 		m.multiply(m, n)
@@ -240,9 +240,9 @@ func BenchmarkCoord_Times_ByRefSelf(b *testing.B) {
 //-----------------------------------------------------------------------------
 
 func BenchmarkCoord_Slash(b *testing.B) {
-	m := Coord{1.1, 2.2, 3.3}
+	m := XYZ{1.1, 2.2, 3.3}
 	n := float32(5.5)
-	var o Coord
+	var o XYZ
 	for i := 0; i < b.N; i++ {
 		o = m.Slash(n)
 	}
@@ -250,7 +250,7 @@ func BenchmarkCoord_Slash(b *testing.B) {
 }
 
 func BenchmarkCoord_Slash_Self(b *testing.B) {
-	m := Coord{1.1, 2.2, 3.3}
+	m := XYZ{1.1, 2.2, 3.3}
 	n := float32(5.5)
 	for i := 0; i < b.N; i++ {
 		m = m.Slash(n)
@@ -259,9 +259,9 @@ func BenchmarkCoord_Slash_Self(b *testing.B) {
 }
 
 func BenchmarkCoord_Slash_ByRef(b *testing.B) {
-	m := Coord{1.1, 2.2, 3.3}
+	m := XYZ{1.1, 2.2, 3.3}
 	n := float32(5.5)
-	var o Coord
+	var o XYZ
 	for i := 0; i < b.N; i++ {
 		o.divide(m, n)
 	}
@@ -269,7 +269,7 @@ func BenchmarkCoord_Slash_ByRef(b *testing.B) {
 }
 
 func BenchmarkCoord_Slash_ByRefSelf(b *testing.B) {
-	m := Coord{1.1, 2.2, 3.3}
+	m := XYZ{1.1, 2.2, 3.3}
 	n := float32(5.5)
 	for i := 0; i < b.N; i++ {
 		m.divide(m, n)
@@ -280,8 +280,8 @@ func BenchmarkCoord_Slash_ByRefSelf(b *testing.B) {
 //-----------------------------------------------------------------------------
 
 func BenchmarkCoord_Normalized(b *testing.B) {
-	m := Coord{1.1, 2.2, 3.3}
-	var o Coord
+	m := XYZ{1.1, 2.2, 3.3}
+	var o XYZ
 	for i := 0; i < b.N; i++ {
 		o = m.Normalized()
 	}
@@ -289,7 +289,7 @@ func BenchmarkCoord_Normalized(b *testing.B) {
 }
 
 func BenchmarkCoord_Normalized_Self(b *testing.B) {
-	m := Coord{1.1, 2.2, 3.3}
+	m := XYZ{1.1, 2.2, 3.3}
 	for i := 0; i < b.N; i++ {
 		m = m.Normalized()
 	}
@@ -297,7 +297,7 @@ func BenchmarkCoord_Normalized_Self(b *testing.B) {
 }
 
 func BenchmarkCoord_Normalize_ByRef(b *testing.B) {
-	m := Coord{1.1, 2.2, 3.3}
+	m := XYZ{1.1, 2.2, 3.3}
 	for i := 0; i < b.N; i++ {
 		m.normalize()
 	}
@@ -593,7 +593,7 @@ func BenchmarkMatrix_Times_RecvByValAddr_ArgByVal(b *testing.B) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (m *Matrix) rotationSetAndReturn(angle float32, axis Coord) Matrix {
+func (m *Matrix) rotationSetAndReturn(angle float32, axis XYZ) Matrix {
 	c := math32.Cos(angle)
 	s := math32.Sin(angle)
 
@@ -620,7 +620,7 @@ func (m *Matrix) rotationSetAndReturn(angle float32, axis Coord) Matrix {
 	return *m
 }
 
-func (m *Matrix) rotationSetOnly(angle float32, axis Coord) {
+func (m *Matrix) rotationSetOnly(angle float32, axis XYZ) {
 	c := math32.Cos(angle)
 	s := math32.Sin(angle)
 
@@ -655,7 +655,7 @@ func (m *Matrix) rotationSetOnly(angle float32, axis Coord) {
 // }
 
 func BenchmarkMatrix_Rotation_SetAndReturn(b *testing.B) {
-	axis := Coord{1, 2, 3}
+	axis := XYZ{1, 2, 3}
 	var m Matrix
 	var o Matrix
 	for i := 0; i < b.N; i++ {
@@ -665,7 +665,7 @@ func BenchmarkMatrix_Rotation_SetAndReturn(b *testing.B) {
 }
 
 func BenchmarkMatrix_Rotation_SetAndDiscardReturn(b *testing.B) {
-	axis := Coord{1, 2, 3}
+	axis := XYZ{1, 2, 3}
 	var o Matrix
 	for i := 0; i < b.N; i++ {
 		o.rotationSetAndReturn(3.14, axis)
@@ -674,7 +674,7 @@ func BenchmarkMatrix_Rotation_SetAndDiscardReturn(b *testing.B) {
 }
 
 func BenchmarkMatrix_Rotation_SetOnly(b *testing.B) {
-	axis := Coord{1, 2, 3}
+	axis := XYZ{1, 2, 3}
 	var o Matrix
 	for i := 0; i < b.N; i++ {
 		o.rotationSetOnly(3.14, axis)

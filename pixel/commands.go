@@ -26,15 +26,15 @@ const (
 ////////////////////////////////////////////////////////////////////////////////
 
 // Picture adds a command to show a picture on the canvas.
-func (cv CanvasID) Picture(p PictureID, depth int16, pos plane.Pixel) {
-	cv.appendCommand(cmdPicture, 4, 1, int16(p), depth, pos.X, pos.Y)
+func (cv CanvasID) Picture(p PictureID, depth int16, pos plane.CR) {
+	cv.appendCommand(cmdPicture, 4, 1, int16(p), depth, pos.C, pos.R)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 // Point adds a command to draw a point on the canvas.
-func (cv CanvasID) Point(color palette.Index, depth int16, pos plane.Pixel) {
-	cv.appendCommand(cmdPoint, 3, 1, int16(color), depth, pos.X, pos.Y)
+func (cv CanvasID) Point(color palette.Index, depth int16, pos plane.CR) {
+	cv.appendCommand(cmdPoint, 3, 1, int16(color), depth, pos.C, pos.R)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -42,13 +42,13 @@ func (cv CanvasID) Point(color palette.Index, depth int16, pos plane.Pixel) {
 // Lines adds a command to draw a line strip on the canvas. A line strip is a
 // succession of points connected by lines; all points and lines share the same
 // depth and color.
-func (cv CanvasID) Lines(c palette.Index, depth int16, strip ...plane.Pixel) {
+func (cv CanvasID) Lines(c palette.Index, depth int16, strip ...plane.CR) {
 	if len(strip) < 2 {
 		return
 	}
 	prm := []int16{int16(c), depth} //TODO: remove alloc
 	for _, p := range strip {
-		prm = append(prm, p.X, p.Y)
+		prm = append(prm, p.C, p.R)
 	}
 	cv.appendCommand(cmdLines, 4, uint32(len(strip)-1), prm...)
 }
@@ -58,13 +58,13 @@ func (cv CanvasID) Lines(c palette.Index, depth int16, strip ...plane.Pixel) {
 // Triangles adds a command to draw a triangle strip on the canvas. Triangle
 // strip have the same meaning than in OpenGL. All points and triangles share
 // the same depth and color.
-func (cv CanvasID) Triangles(c palette.Index, depth int16, strip ...plane.Pixel) {
+func (cv CanvasID) Triangles(c palette.Index, depth int16, strip ...plane.CR) {
 	if len(strip) < 3 {
 		return
 	}
 	prm := []int16{int16(c), depth} //TODO: remove alloc
 	for _, p := range strip {
-		prm = append(prm, p.X, p.Y)
+		prm = append(prm, p.C, p.R)
 	}
 	cv.appendCommand(cmdTriangles, uint32(len(strip)), 1, prm...)
 }
@@ -72,19 +72,19 @@ func (cv CanvasID) Triangles(c palette.Index, depth int16, strip ...plane.Pixel)
 ////////////////////////////////////////////////////////////////////////////////
 
 // Box adds a command to draw a box on the canvas.
-func (cv CanvasID) Box(fg, bg palette.Index, corner int16, depth int16, a, b plane.Pixel) {
-	if b.X < a.X {
-		a.X, b.X = b.X, a.X
+func (cv CanvasID) Box(fg, bg palette.Index, corner int16, depth int16, a, b plane.CR) {
+	if b.C < a.C {
+		a.C, b.C = b.C, a.C
 	}
-	if b.Y < a.Y {
-		a.Y, b.Y = b.Y, a.Y
+	if b.R < a.R {
+		a.R, b.R = b.R, a.R
 	}
 	cv.appendCommand(cmdBox, 4, 1,
 		int16(uint16(fg)<<8|uint16(bg)),
 		corner,
 		depth,
-		a.X, a.Y,
-		b.X, b.Y)
+		a.C, a.R,
+		b.C, b.R)
 }
 
 ////////////////////////////////////////////////////////////////////////////////

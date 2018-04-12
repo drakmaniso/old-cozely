@@ -71,11 +71,11 @@ var forward, lateral, vertical, rolling float32
 var dragStart space.Matrix
 
 var current struct {
-	dragDelta plane.Coord
+	dragDelta plane.XY
 }
 
 var previous struct {
-	dragDelta plane.Coord
+	dragDelta plane.XY
 }
 
 // worldFromObject
@@ -135,7 +135,7 @@ func (loop) Enter() error {
 
 	camera = poly.NewPlanarCamera()
 	camera.SetExposure(16.0, 1.0/125.0, 100.0)
-	camera.SetFocus(space.Coord{0, 0, 0})
+	camera.SetFocus(space.XYZ{0, 0, 0})
 	camera.SetDistance(4)
 
 	// Setup model
@@ -190,7 +190,7 @@ func (loop) Render() error {
 
 	gl.DefaultFramebuffer.Bind(gl.DrawFramebuffer)
 	s := cozely.WindowSize()
-	gl.Viewport(0, 0, int32(s.X), int32(s.Y))
+	gl.Viewport(0, 0, int32(s.C), int32(s.R))
 	pipeline.Bind()
 	gl.ClearDepthBuffer(1.0)
 	gl.ClearColorBuffer(colour.LRGBA{0.0, 0.0, 0.0, 1.0})
@@ -250,7 +250,7 @@ func prepare() {
 
 func resize() {
 	s := cozely.WindowSize()
-	gl.Viewport(0, 0, int32(s.X), int32(s.Y))
+	gl.Viewport(0, 0, int32(s.C), int32(s.R))
 	if camera != nil {
 		camera.WindowResized()
 	}

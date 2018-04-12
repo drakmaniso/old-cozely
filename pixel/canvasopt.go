@@ -26,7 +26,7 @@ type CanvasOption = func(CanvasID) error
 func TargetResolution(w, h int16) CanvasOption {
 	return func(cv CanvasID) error {
 		s := &canvases[cv]
-		s.target.X, s.target.Y = w, h
+		s.target.C, s.target.R = w, h
 		s.autozoom = true
 		return nil
 	}

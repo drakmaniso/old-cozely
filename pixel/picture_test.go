@@ -89,16 +89,16 @@ func (picLoop) Render() error {
 	switch picMode {
 	case 0:
 		pz := mire.Size()
-		picScreen.Picture(mire, 0, plane.Pixel{0, 0})
-		picScreen.Picture(mire, 0, plane.Pixel{0, sz.Y - pz.Y})
-		picScreen.Picture(mire, 0, plane.Pixel{sz.X - pz.X, 0})
+		picScreen.Picture(mire, 0, plane.CR{0, 0})
+		picScreen.Picture(mire, 0, plane.CR{0, sz.R - pz.R})
+		picScreen.Picture(mire, 0, plane.CR{sz.C - pz.C, 0})
 		picScreen.Picture(mire, 0, sz.Minus(pz))
 	case 1:
 		pz := srgbGray.Size()
-		picScreen.Picture(srgbGray, 0, plane.Pixel{sz.X/2 - pz.X/2, 32})
-		picScreen.Picture(srgbRed, 0, plane.Pixel{sz.X/4 - pz.X/2, 96})
-		picScreen.Picture(srgbGreen, 0, plane.Pixel{sz.X/2 - pz.X/2, 96})
-		picScreen.Picture(srgbBlue, 0, plane.Pixel{3*sz.X/4 - pz.X/2, 96})
+		picScreen.Picture(srgbGray, 0, plane.CR{sz.C/2 - pz.C/2, 32})
+		picScreen.Picture(srgbRed, 0, plane.CR{sz.C/4 - pz.C/2, 96})
+		picScreen.Picture(srgbGreen, 0, plane.CR{sz.C/2 - pz.C/2, 96})
+		picScreen.Picture(srgbBlue, 0, plane.CR{3*sz.C/4 - pz.C/2, 96})
 	}
 	picScreen.Display()
 	return pixel.Err()

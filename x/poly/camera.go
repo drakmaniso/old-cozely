@@ -26,7 +26,7 @@ type PlanarCamera struct {
 
 	buffer struct {
 		ProjectionView space.Matrix
-		CameraPosition space.Coord
+		CameraPosition space.XYZ
 		CameraExposure float32
 	}
 
@@ -44,7 +44,7 @@ type PlanarCamera struct {
 
 	view space.Matrix
 
-	focus            space.Coord
+	focus            space.XYZ
 	distance         float32
 	yaw, pitch, roll float32
 }
@@ -83,7 +83,7 @@ func (c *PlanarCamera) SetFieldOfView(fov float32, near, far float32) {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (c *PlanarCamera) WindowResized() {
-	s := plane.Coord{
+	s := plane.XY{
 		float32(internal.Window.Width),
 		float32(internal.Window.Height),
 	}
@@ -93,13 +93,13 @@ func (c *PlanarCamera) WindowResized() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (c *PlanarCamera) SetFocus(p space.Coord) {
+func (c *PlanarCamera) SetFocus(p space.XYZ) {
 	c.ready = false
 
 	c.focus = p
 }
 
-func (c *PlanarCamera) Focus() space.Coord {
+func (c *PlanarCamera) Focus() space.XYZ {
 	return c.focus
 }
 
@@ -202,14 +202,14 @@ func (c *PlanarCamera) Bind() {
 func (c *PlanarCamera) prepare() {
 	// Compute the view and projection matrices
 	r := space.EulerZXY(c.pitch, c.yaw, c.roll)
-	c.view = space.Translation(space.Coord{0, 0, -c.distance})
+	c.view = space.Translation(space.XYZ{0, 0, -c.distance})
 	c.view = c.view.Times(r)
 	c.view = c.view.Times(space.Translation(c.focus.Opposite()))
 
 	c.buffer.ProjectionView = c.projection.Times(c.view)
 
 	// Compute the focus point position
-	d := space.Apply(r.Transpose(), space.Homogen{0, 0, c.distance, 1}).Coord()
+	d := space.Apply(r.Transpose(), space.XYZW{0, 0, c.distance, 1}).XYZ()
 	c.buffer.CameraPosition = c.focus.Plus(d)
 
 	c.ready = true

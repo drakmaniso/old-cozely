@@ -22,10 +22,10 @@ type canvas struct {
 	depth         gl.Renderbuffer
 	commandsICBO  gl.IndirectBuffer
 	parametersTBO gl.BufferTexture
-	target        plane.Pixel
+	target        plane.CR
 	autozoom      bool
-	origin        plane.Pixel // Offset when there is a border around the screen
-	size          plane.Pixel
+	origin        plane.CR // Offset when there is a border around the screen
+	size          plane.CR
 	pixel         int16
 	commands      []gl.DrawIndirectCommand
 	parameters    []int16
@@ -49,7 +49,7 @@ func Canvas(o ...CanvasOption) CanvasID {
 	canvases = append(canvases, canvas{})
 
 	s := &canvases[cv]
-	s.target = plane.Pixel{640, 360}
+	s.target = plane.CR{640, 360}
 	s.pixel = 2
 	s.commands = make([]gl.DrawIndirectCommand, 0, maxCommandCount)
 	s.parameters = make([]int16, 0, maxParamCount)
@@ -84,15 +84,15 @@ func (cv CanvasID) createBuffer() {
 
 func (cv CanvasID) autoresize() {
 	s := &canvases[cv]
-	win := plane.Pixel{internal.Window.Width, internal.Window.Height}
+	win := plane.CR{internal.Window.Width, internal.Window.Height}
 
 	if s.autozoom {
 		// Find best fit for pixel size
 		p := win.Slashcw(s.target)
-		if p.X < p.Y {
-			s.pixel = p.X
+		if p.C < p.R {
+			s.pixel = p.C
 		} else {
-			s.pixel = p.Y
+			s.pixel = p.R
 		}
 		if s.pixel < 1 {
 			s.pixel = 1
@@ -114,11 +114,11 @@ func (cv CanvasID) createTextures() {
 	s := &canvases[cv]
 
 	s.texture.Delete()
-	s.texture = gl.NewTexture2D(1, gl.R8UI, int32(s.size.X), int32(s.size.Y))
+	s.texture = gl.NewTexture2D(1, gl.R8UI, int32(s.size.C), int32(s.size.R))
 	s.buffer.Texture(gl.ColorAttachment0, s.texture, 0)
 
 	s.depth.Delete()
-	s.depth = gl.NewRenderbuffer(gl.Depth32F, int32(s.size.X), int32(s.size.Y))
+	s.depth = gl.NewRenderbuffer(gl.Depth32F, int32(s.size.C), int32(s.size.R))
 	s.buffer.Renderbuffer(gl.DepthAttachment, s.depth)
 
 	s.buffer.DrawBuffer(gl.ColorAttachment0)
@@ -144,12 +144,12 @@ func (cv CanvasID) Paint() {
 
 	internal.PaletteUpload()
 
-	screenUniforms.PixelSize.X = 1.0 / float32(s.size.X)
-	screenUniforms.PixelSize.Y = 1.0 / float32(s.size.Y)
+	screenUniforms.PixelSize.X = 1.0 / float32(s.size.C)
+	screenUniforms.PixelSize.Y = 1.0 / float32(s.size.R)
 	screenUBO.SubData(&screenUniforms, 0)
 
 	s.buffer.Bind(gl.DrawFramebuffer)
-	gl.Viewport(0, 0, int32(s.size.X), int32(s.size.Y))
+	gl.Viewport(0, 0, int32(s.size.C), int32(s.size.R))
 	pipeline.Bind()
 	gl.Disable(gl.Blend)
 
@@ -179,16 +179,16 @@ func (cv CanvasID) Display() {
 
 	sz := s.size.Times(s.pixel)
 
-	blitUniforms.ScreenSize.X = float32(s.size.X)
-	blitUniforms.ScreenSize.Y = float32(s.size.Y)
+	blitUniforms.ScreenSize.X = float32(s.size.C)
+	blitUniforms.ScreenSize.Y = float32(s.size.R)
 	blitUBO.SubData(&blitUniforms, 0)
 
 	blitPipeline.Bind()
 	gl.DefaultFramebuffer.Bind(gl.DrawFramebuffer)
 	gl.Enable(gl.FramebufferSRGB)
 	gl.Disable(gl.Blend)
-	gl.Viewport(int32(s.origin.X), int32(s.origin.Y),
-		int32(s.origin.X+sz.X), int32(s.origin.Y+sz.Y))
+	gl.Viewport(int32(s.origin.C), int32(s.origin.R),
+		int32(s.origin.C+sz.C), int32(s.origin.R+sz.R))
 	blitUBO.Bind(0)
 	s.texture.Bind(0)
 	gl.Draw(0, 4)
@@ -208,7 +208,7 @@ func (cv CanvasID) Clear(color palette.Index) {
 ////////////////////////////////////////////////////////////////////////////////
 
 // Size returns the current dimension of the canvas (in canvas pixels).
-func (cv CanvasID) Size() plane.Pixel {
+func (cv CanvasID) Size() plane.CR {
 	return canvases[cv].size
 }
 
@@ -220,7 +220,7 @@ func (cv CanvasID) PixelSize() int16 {
 ////////////////////////////////////////////////////////////////////////////////
 
 // Mouse returns the mouse position on the canvas.
-func (cv CanvasID) Mouse() plane.Pixel {
+func (cv CanvasID) Mouse() plane.CR {
 	m := input.Cursor.Position()
 	return m.Minus(canvases[cv].origin).Slash(canvases[cv].pixel)
 }

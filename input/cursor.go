@@ -15,7 +15,7 @@ var Cursor cursor
 
 var (
 	cursorhidden bool
-	cursordelta  plane.Pixel
+	cursordelta  plane.CR
 )
 
 func (cursor) Active(DeviceID) bool {
@@ -27,22 +27,22 @@ func (cursor) deactivate(DeviceID) {}
 func (cursor) activate(DeviceID, binding) {}
 
 func (cursor) newframe(DeviceID) {
-	cursordelta = plane.Pixel{
-		X: internal.MouseDeltaX,
-		Y: internal.MouseDeltaY,
+	cursordelta = plane.CR{
+		C: internal.MouseDeltaX,
+		R: internal.MouseDeltaY,
 	}
 	internal.MouseDeltaX = 0
 	internal.MouseDeltaY = 0
 }
 
-func (cursor) Position() plane.Pixel {
-	return plane.Pixel{
-		X: internal.MousePositionX,
-		Y: internal.MousePositionY,
+func (cursor) Position() plane.CR {
+	return plane.CR{
+		C: internal.MousePositionX,
+		R: internal.MousePositionY,
 	}
 }
 
-func (cursor) Delta() plane.Pixel {
+func (cursor) Delta() plane.CR {
 	return cursordelta
 }
 

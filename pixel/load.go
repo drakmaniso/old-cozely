@@ -124,7 +124,7 @@ func (p PictureID) scan(prects *[]uint32) error {
 
 func pictSize(rect uint32) (width, height int16) {
 	s := PictureID(rect).Size()
-	return s.X, s.Y
+	return s.C, s.R
 }
 
 func pictPut(rect uint32, bin int16, x, y int16) {

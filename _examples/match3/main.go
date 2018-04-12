@@ -181,7 +181,7 @@ func (loop) Update() error {
 ////////////////////////////////////////////////////////////////////////////////
 
 func resize() {
-	w, h := screen.Size().X, screen.Size().Y
+	w, h := screen.Size().C, screen.Size().R
 	grid.ScreenResized(w, h)
 }
 

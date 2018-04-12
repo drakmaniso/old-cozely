@@ -37,7 +37,7 @@ var shapePictures = []pixel.PictureID{
 
 type shape struct {
 	pict  pixel.PictureID
-	pos   plane.Pixel
+	pos   plane.CR
 	depth int16
 }
 
@@ -109,8 +109,8 @@ func resize() {
 		shapes[i].depth = int16(j)
 		p := shapePictures[j]
 		shapes[i].pict = p
-		shapes[i].pos.X = int16(rand.Intn(int(s.X - p.Size().X)))
-		shapes[i].pos.Y = int16(rand.Intn(int(s.Y - p.Size().Y)))
+		shapes[i].pos.C = int16(rand.Intn(int(s.C - p.Size().C)))
+		shapes[i].pos.R = int16(rand.Intn(int(s.R - p.Size().R)))
 	}
 }
 

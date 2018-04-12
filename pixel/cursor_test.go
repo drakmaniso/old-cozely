@@ -87,7 +87,7 @@ func (curLoop) Render() error {
 	cursor.WriteRune('a')
 	cursor.Position = cursor.Position.Pluss(3, 1)
 	cursor.WriteRune('r')
-	cursor.Position = plane.Pixel{32, 132}
+	cursor.Position = plane.CR{32, 132}
 	cursor.Write([]byte("Boo\n"))
 	cursor.Write([]byte("Choo"))
 
@@ -105,9 +105,9 @@ func (curLoop) Render() error {
 	cursor.Font = chaotela12
 	cursor.Print("Chaotela12")
 
-	cursor.Locate(curScreen.Size().X-200, 9)
+	cursor.Locate(curScreen.Size().C-200, 9)
 	cursor.Font = pixel.FontID(0)
-	cursor.Printf("Position x=%d, y=%d\n", curScreen.Mouse().X, curScreen.Mouse().Y)
+	cursor.Printf("Position x=%d, y=%d\n", curScreen.Mouse().C, curScreen.Mouse().R)
 
 	curScreen.Display()
 	return nil

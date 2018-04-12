@@ -110,14 +110,14 @@ func (fntLoop) Render() error {
 	cursor.Spacing = fntLetterSpacing
 	// cursor.Interline = fntInterline
 
-	y := cursor.Position.Y
+	y := cursor.Position.R
 
-	for l := fntLine; l < len(fntShow) && y < curScreen.Size().Y; l++ {
+	for l := fntLine; l < len(fntShow) && y < curScreen.Size().R; l++ {
 		cursor.Println(fntShow[l])
-		y = cursor.Position.Y
+		y = cursor.Position.R
 	}
 
-	cursor.Locate(curScreen.Size().X-96, 16)
+	cursor.Locate(curScreen.Size().C-96, 16)
 	cursor.Printf("Line %d", fntLine)
 
 	curScreen.Display()

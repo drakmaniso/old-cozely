@@ -44,8 +44,8 @@ func Picture(path string) PictureID {
 ////////////////////////////////////////////////////////////////////////////////
 
 // Size returns the width and height of the picture.
-func (p PictureID) Size() plane.Pixel {
-	return plane.Pixel{pictureMap[p].w, pictureMap[p].h}
+func (p PictureID) Size() plane.CR {
+	return plane.CR{pictureMap[p].w, pictureMap[p].h}
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -21,7 +21,7 @@ var coords struct {
 
 type coord struct {
 	active bool
-	value  plane.Coord
+	value  plane.XY
 }
 
 func Coord(name string) CoordID {
@@ -64,6 +64,6 @@ func (a CoordID) Active(d DeviceID) bool {
 	return devices.coords[d][a].active
 }
 
-func (a CoordID) Coord(d DeviceID) plane.Coord {
+func (a CoordID) Coord(d DeviceID) plane.XY {
 	return devices.coords[d][a].value
 }
