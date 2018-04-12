@@ -6,12 +6,12 @@ package palette
 import (
 	"errors"
 	"image"
-	"image/color"
+	stdcolor "image/color"
 	_ "image/png" // Activate PNG support
 	"os"
 	"strconv"
 
-	"github.com/cozely/cozely/colour"
+	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/internal"
 )
 
@@ -26,7 +26,7 @@ func Load(name string) error {
 	if ok {
 		Clear()
 		for i := range p {
-			Index(i + 1).SetColour(p[i].colour)
+			Index(i + 1).Set(p[i].color)
 			Index(i + 1).Rename(p[i].name)
 		}
 		return nil
@@ -47,15 +47,15 @@ func loadFile(name string) error {
 		return errors.New("unable to decode file for palette " + name)
 	}
 
-	p, ok := cf.ColorModel.(color.Palette)
+	p, ok := cf.ColorModel.(stdcolor.Palette)
 	if !ok {
 		return errors.New("image file not paletted for palette " + name)
 	}
 
 	Clear()
 	pal := make([]struct {
-		name   string
-		colour colour.Colour
+		name  string
+		color color.Color
 	},
 		len(p)-1,
 		len(p)-1)
@@ -69,7 +69,7 @@ func loadFile(name string) error {
 		if j > 255 {
 			return errors.New("too many colors for palette " + name)
 		}
-		c := colour.SRGBA{
+		c := color.SRGBA{
 			R: float32(r) / float32(0xFFFF),
 			G: float32(g) / float32(0xFFFF),
 			B: float32(b) / float32(0xFFFF),
@@ -77,8 +77,8 @@ func loadFile(name string) error {
 		}
 		n := "png" + strconv.Itoa(j)
 		pal[j-1].name = n
-		pal[j-1].colour = c
-		Index(j).SetColour(c)
+		pal[j-1].color = c
+		Index(j).Set(c)
 		j++
 	}
 	palettes[name] = pal

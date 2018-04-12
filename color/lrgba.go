@@ -1,50 +1,57 @@
 // Copyright (c) 2013-2018 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
-package colour
+package color
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// LRGB represents a color in linear color space. Each value ranges within
-// [0, 1], and can be used directly by GPU shaders.
-type LRGB struct {
+// LRGBA represents a color in alpha-premultiplied linear color space. Each
+// value ranges within [0, 1], and can be used directly by GPU shaders.
+//
+// An alpha-premultiplied color component c has been scaled by alpha (a), so has
+// valid values 0 <= c <= a.
+//
+// Note that additive blending can also be achieved when alpha is set to 0 while
+// the color components are non-null.
+type LRGBA struct {
 	R float32
 	G float32
 	B float32
+	A float32
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// LRGBOf converts any color to linear color space with no alpha.
-func LRGBOf(c Colour) LRGB {
-	r, g, b, _ := c.Linear()
-	return LRGB{r, g, b}
+// LRGBAOf converts any color to alpha-premultiplied, linear color space.
+func LRGBAOf(c Color) LRGBA {
+	r, g, b, a := c.Linear()
+	return LRGBA{r, g, b, a}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 // Linear implements the Colour interface.
-func (c LRGB) Linear() (r, g, b, a float32) {
-	return c.R, c.G, c.B, 1
+func (c LRGBA) Linear() (r, g, b, a float32) {
+	return c.R, c.G, c.B, c.A
 }
 
 // Standard implements the Colour interface.
-func (c LRGB) Standard() (r, g, b, a float32) {
+func (c LRGBA) Standard() (r, g, b, a float32) {
 	r = standardOf(c.R)
 	g = standardOf(c.G)
 	b = standardOf(c.B)
-	return r, g, b, 1
+	return r, g, b, c.A
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 // RGBA implements the image.Color interface: it returns the four components
 // scaled by 0xFFFF.
-func (c LRGB) RGBA() (r, g, b, a uint32) {
+func (c LRGBA) RGBA() (r, g, b, a uint32) {
 	r = uint32(c.R * 0xFFFF)
 	g = uint32(c.G * 0xFFFF)
 	b = uint32(c.B * 0xFFFF)
-	a = uint32(0xFFFF)
+	a = uint32(c.A * 0xFFFF)
 	return r, g, b, a
 }
 

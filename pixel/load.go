@@ -6,7 +6,7 @@ package pixel
 import (
 	"errors"
 	"image"
-	"image/color"
+	stdcolor "image/color"
 	_ "image/png" // Activate PNG support
 	"os"
 	"path/filepath"
@@ -109,7 +109,7 @@ func (p PictureID) scan(prects *[]uint32) error {
 	//TODO: check for width and height overflow
 	w, h := int16(conf.Width), int16(conf.Height)
 
-	_, ok := conf.ColorModel.(color.Palette)
+	_, ok := conf.ColorModel.(stdcolor.Palette)
 	if !ok {
 		return errors.New("image format not supported")
 	}

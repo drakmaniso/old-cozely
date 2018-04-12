@@ -6,13 +6,12 @@ package poly
 import (
 	"math"
 
-	"github.com/cozely/cozely/colour"
 	"github.com/cozely/cozely/x/math32"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func TemperatureColor(temperature float64) colour.LRGB {
+func TemperatureColor(temperature float64) color.LRGB {
 	// Ported by Renaud Bédard (@renaudbedard), from original code
 	// by Tanner Helland:
 	// http://www.tannerhelland.com/4435/convert-temperature-rgb-algorithm-code/
@@ -20,7 +19,7 @@ func TemperatureColor(temperature float64) colour.LRGB {
 	// licensed and released under Creative Commons 3.0 Attribution
 	// https://creativecommons.org/licenses/by/3.0/
 
-	var h colour.LRGB
+	var h color.LRGB
 
 	temperature = clamp(temperature, 1000.0, 40000.0) / 100.0
 
@@ -51,7 +50,7 @@ func TemperatureColor(temperature float64) colour.LRGB {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func DirectionalLightSpectralIlluminance(illuminance, temperature float64) colour.LRGB {
+func DirectionalLightSpectralIlluminance(illuminance, temperature float64) color.LRGB {
 	h := TemperatureColor(temperature)
 	s := float32(illuminance) * (1.0 / math32.Pi)
 	h.R *= s

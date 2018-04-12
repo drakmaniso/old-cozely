@@ -5,7 +5,6 @@ package main
 
 import (
 	"github.com/cozely/cozely"
-	"github.com/cozely/cozely/colour"
 	"github.com/cozely/cozely/x/gl"
 )
 
@@ -64,7 +63,7 @@ func (loop) Update() error {
 
 func (loop) Render() error {
 	pipeline.Bind()
-	gl.ClearColorBuffer(colour.LRGBA{0.9, 0.9, 0.9, 1.0})
+	gl.ClearColorBuffer(color.LRGBA{0.9, 0.9, 0.9, 1.0})
 
 	gl.Draw(0, 3)
 	pipeline.Unbind()

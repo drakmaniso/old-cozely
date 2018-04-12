@@ -7,7 +7,6 @@ package main
 
 import (
 	"github.com/cozely/cozely"
-	"github.com/cozely/cozely/colour"
 	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/coord/space"
 	"github.com/cozely/cozely/input"
@@ -91,14 +90,14 @@ var commands = []gl.DrawIndirectCommand{
 // Instance Buffer
 
 var draws = []struct {
-	colour colour.LRGB `layout:"1" divisor:"1"`
+	color color.LRGB `layout:"1" divisor:"1"`
 }{
-	{colour.LRGB{R: 0.2, G: 0, B: 0.6}},
-	{colour.LRGB{R: 0.2, G: 0, B: 0.6}},
-	{colour.LRGB{R: 0, G: 0.3, B: 0.1}},
-	{colour.LRGB{R: 0, G: 0.3, B: 0.1}},
-	{colour.LRGB{R: 0.8, G: 0.3, B: 0}},
-	{colour.LRGB{R: 0.8, G: 0.3, B: 0}},
+	{color.LRGB{R: 0.2, G: 0, B: 0.6}},
+	{color.LRGB{R: 0.2, G: 0, B: 0.6}},
+	{color.LRGB{R: 0, G: 0.3, B: 0.1}},
+	{color.LRGB{R: 0, G: 0.3, B: 0.1}},
+	{color.LRGB{R: 0.8, G: 0.3, B: 0}},
+	{color.LRGB{R: 0.8, G: 0.3, B: 0}},
 }
 
 // Vertex buffer
@@ -195,7 +194,7 @@ func (loop) Update() error {
 func (loop) Render() error {
 	pipeline.Bind()
 	gl.ClearDepthBuffer(1.0)
-	gl.ClearColorBuffer(colour.LRGBA{0.9, 0.9, 0.9, 1.0})
+	gl.ClearColorBuffer(color.LRGBA{0.9, 0.9, 0.9, 1.0})
 
 	perFrame.screenFromObject = screenFromView.Times(viewFromWorld)
 	perFrame.screenFromObject = perFrame.screenFromObject.Times(worldFromObject)

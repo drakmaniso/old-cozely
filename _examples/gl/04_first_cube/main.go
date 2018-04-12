@@ -7,7 +7,6 @@ package main
 
 import (
 	"github.com/cozely/cozely"
-	"github.com/cozely/cozely/colour"
 	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/coord/space"
 	"github.com/cozely/cozely/input"
@@ -50,8 +49,8 @@ var perObject struct {
 
 // Vertex buffer
 type mesh []struct {
-	position coord.XYZ   `layout:"0"`
-	color    colour.LRGB `layout:"1"`
+	position coord.XYZ  `layout:"0"`
+	color    color.LRGB `layout:"1"`
 }
 
 // Transformation matrices
@@ -137,7 +136,7 @@ func (loop) Update() error {
 func (loop) Render() error {
 	pipeline.Bind()
 	gl.ClearDepthBuffer(1.0)
-	gl.ClearColorBuffer(colour.LRGBA{0.9, 0.9, 0.9, 1.0})
+	gl.ClearColorBuffer(color.LRGBA{0.9, 0.9, 0.9, 1.0})
 
 	perObject.screenFromObject =
 		screenFromView.

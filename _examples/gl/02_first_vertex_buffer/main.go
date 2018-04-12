@@ -7,7 +7,6 @@ package main
 
 import (
 	"github.com/cozely/cozely"
-	"github.com/cozely/cozely/colour"
 	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/x/gl"
 )
@@ -21,8 +20,8 @@ var (
 
 // Vertex buffer
 type mesh []struct {
-	position coord.XY    `layout:"0"`
-	color    colour.LRGB `layout:"1"`
+	position coord.XY   `layout:"0"`
+	color    color.LRGB `layout:"1"`
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -56,9 +55,9 @@ func (loop) Enter() error {
 
 	// Create and fill the vertex buffer
 	triangle = mesh{
-		{coord.XY{0, 0.65}, colour.LRGB{R: 0.3, G: 0, B: 0.8}},
-		{coord.XY{-0.65, -0.475}, colour.LRGB{R: 0.8, G: 0.3, B: 0}},
-		{coord.XY{0.65, -0.475}, colour.LRGB{R: 0, G: 0.6, B: 0.2}},
+		{coord.XY{0, 0.65}, color.LRGB{R: 0.3, G: 0, B: 0.8}},
+		{coord.XY{-0.65, -0.475}, color.LRGB{R: 0.8, G: 0.3, B: 0}},
+		{coord.XY{0.65, -0.475}, color.LRGB{R: 0, G: 0.6, B: 0.2}},
 	}
 	vbo := gl.NewVertexBuffer(triangle, gl.StaticStorage)
 
@@ -90,7 +89,7 @@ func (loop) Update() error {
 
 func (loop) Render() error {
 	pipeline.Bind()
-	gl.ClearColorBuffer(colour.LRGBA{0.9, 0.9, 0.9, 1.0})
+	gl.ClearColorBuffer(color.LRGBA{0.9, 0.9, 0.9, 1.0})
 
 	gl.Draw(0, 3)
 	pipeline.Unbind()

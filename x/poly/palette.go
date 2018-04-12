@@ -4,7 +4,6 @@
 package poly
 
 import (
-	"github.com/cozely/cozely/colour"
 	"github.com/cozely/cozely/x/gl"
 )
 
@@ -32,7 +31,7 @@ func DeleteMaterialBuffer() {
 var materialSSBO gl.StorageBuffer
 
 type Material struct {
-	diffuse colour.LRGB
+	diffuse color.LRGB
 }
 
 ////////////////////////////////////////////////////////////////////////////////

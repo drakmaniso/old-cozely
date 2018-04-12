@@ -11,7 +11,6 @@ import (
 	"os"
 
 	"github.com/cozely/cozely"
-	"github.com/cozely/cozely/colour"
 	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/coord/space"
 	"github.com/cozely/cozely/input"
@@ -161,7 +160,7 @@ func (loop) Update() error {
 func (loop) Render() error {
 	pipeline.Bind()
 	gl.ClearDepthBuffer(1.0)
-	gl.ClearColorBuffer(colour.LRGBA{0.9, 0.9, 0.9, 1.0})
+	gl.ClearColorBuffer(color.LRGBA{0.9, 0.9, 0.9, 1.0})
 	gl.Enable(gl.FramebufferSRGB)
 
 	perObject.screenFromObject =

@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2018 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
-package colour
+package color
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -16,7 +16,7 @@ type SRGB struct {
 ////////////////////////////////////////////////////////////////////////////////
 
 // SRGBOf converts any color to sRGB color space with no alpha.
-func SRGBOf(c Colour) SRGB {
+func SRGBOf(c Color) SRGB {
 	r, g, b, _ := c.Standard()
 	return SRGB{r, g, b}
 }

@@ -5,7 +5,6 @@ package main
 
 import (
 	"github.com/cozely/cozely"
-	"github.com/cozely/cozely/colour"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/palette"
 	"github.com/cozely/cozely/x/vector"
@@ -46,10 +45,10 @@ func (loop) React() error {
 }
 
 func (loop) Render() error {
-	vector.Line(colour.SRGB{1, 0.5, 0}, 10, 10, 100, 100)
+	vector.Line(color.SRGB{1, 0.5, 0}, 10, 10, 100, 100)
 	w := cozely.WindowSize()
 	m := input.Cursor.Position()
-	vector.Line(colour.SRGB{1, 1, 1}, w.X/2, w.Y/2, m.X, m.Y)
+	vector.Line(color.SRGB{1, 1, 1}, w.X/2, w.Y/2, m.X, m.Y)
 	return nil
 }
 

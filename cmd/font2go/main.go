@@ -6,7 +6,7 @@ package main
 import (
 	"fmt"
 	"image"
-	"image/color"
+	stdcolor "image/color"
 	_ "image/png" // activate png support
 	"log"
 	"os"
@@ -36,7 +36,7 @@ func main() {
 	if !ok {
 		log.Fatal("font image file should be in indexed color format")
 	}
-	_, ok = mm.ColorModel().(color.Palette)
+	_, ok = mm.ColorModel().(stdcolor.Palette)
 	if !ok {
 		log.Fatal("unable to retrieve source image palette")
 	}

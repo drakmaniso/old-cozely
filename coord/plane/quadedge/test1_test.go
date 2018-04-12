@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/cozely/cozely"
-	"github.com/cozely/cozely/colour"
+	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/coord/plane/quadedge"
 	"github.com/cozely/cozely/input"
@@ -53,8 +53,8 @@ func (loop1) Enter() error {
 	newPoints()
 
 	palette.Clear()
-	palette.Index(1).SetColour(colour.LRGB{0.1, 0.2, 0.5})
-	palette.Index(2).SetColour(colour.LRGB{0.5, 0.1, 0.0})
+	palette.Index(1).Set(color.LRGB{0.1, 0.2, 0.5})
+	palette.Index(2).Set(color.LRGB{0.5, 0.1, 0.0})
 	return nil
 }
 

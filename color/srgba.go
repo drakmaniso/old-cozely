@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2018 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
-package colour
+package color
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -23,7 +23,7 @@ type SRGBA struct {
 ////////////////////////////////////////////////////////////////////////////////
 
 // SRGBAOf converts any color to sRGB alpha-premultiplied color space.
-func SRGBAOf(c Colour) SRGBA {
+func SRGBAOf(c Color) SRGBA {
 	r, g, b, a := c.Standard()
 	return SRGBA{r, g, b, a}
 }

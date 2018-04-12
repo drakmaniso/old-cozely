@@ -5,7 +5,7 @@ package pixel
 
 import (
 	"image"
-	"image/color"
+	stdcolor "image/color"
 	"strings"
 
 	"github.com/cozely/cozely/internal"
@@ -78,7 +78,7 @@ func setup() error {
 			Min: image.Point{0, 0},
 			Max: image.Point{int(w), int(h)},
 		},
-			color.Palette{},
+			stdcolor.Palette{},
 		)
 
 		err := pictAtlas.Paint(i, m, pictPaint)
@@ -97,7 +97,7 @@ func setup() error {
 			Min: image.Point{0, 0},
 			Max: image.Point{int(w), int(h)},
 		},
-			color.Palette{},
+			stdcolor.Palette{},
 		)
 
 		err := fntAtlas.Paint(i, m, fntPaint)

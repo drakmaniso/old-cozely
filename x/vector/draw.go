@@ -4,7 +4,6 @@
 package vector
 
 import (
-	"github.com/cozely/cozely/colour"
 	"github.com/cozely/cozely/internal"
 	"github.com/cozely/cozely/x/gl"
 )
@@ -25,7 +24,7 @@ func drawHook() error {
 	gl.DefaultFramebuffer.Bind(gl.DrawReadFramebuffer)
 	gl.Viewport(0, 0, int32(internal.Window.Width), int32(internal.Window.Height))
 	pipeline.Bind()
-	gl.ClearColorBuffer(colour.LRGBA{0, 0, 0, 0})
+	gl.ClearColorBuffer(color.LRGBA{0, 0, 0, 0})
 	gl.Blending(gl.SrcAlpha, gl.OneMinusSrcAlpha)
 	gl.Enable(gl.Blend)
 	gl.Enable(gl.FramebufferSRGB)

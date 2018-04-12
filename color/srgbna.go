@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2018 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
-package colour
+package color
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -23,7 +23,7 @@ type SRGBnA struct {
 ////////////////////////////////////////////////////////////////////////////////
 
 // SRGBnAOf converts any color to sRGB non alpha-premultiplied sRGB color space.
-func SRGBnAOf(c Colour) SRGBnA {
+func SRGBnAOf(c Color) SRGBnA {
 	r, g, b, a := c.Linear()
 	r = standardOf(r / a)
 	g = standardOf(g / a)

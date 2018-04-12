@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2018 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
-package colour
+package color
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -21,7 +21,7 @@ type LRGBnA struct {
 
 // LRGBnAOf converts any color to non alpha-premultiplied linear color
 // space.
-func LRGBnAOf(c Colour) LRGBnA {
+func LRGBnAOf(c Color) LRGBnA {
 	r, g, b, a := c.Linear()
 	return LRGBnA{r / a, g / a, b / a, a}
 }

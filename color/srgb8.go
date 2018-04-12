@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2018 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
-package colour
+package color
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -16,7 +16,7 @@ type SRGB8 struct {
 ////////////////////////////////////////////////////////////////////////////////
 
 // SRGB8Of converts any color to sRGB color space.
-func SRGB8Of(c Colour) SRGB8 {
+func SRGB8Of(c Color) SRGB8 {
 	cc, ok := c.(SRGB8)
 	if ok {
 		return cc

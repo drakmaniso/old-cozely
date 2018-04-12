@@ -2,7 +2,7 @@
 // Licensed under a simplified BSD license (see LICENSE file).
 
 /*
-Package colour provides types and functions to manipulate colors.
+Package color provides types and functions to manipulate colors.
 
 It is compatible with the standard library "image/color" package, but is
 designed to work well with GPUs.
@@ -19,4 +19,4 @@ values within [0, alpha]. It is the most useful choice for alpha-blending. For
 an explanation, see:
 https://blogs.msdn.microsoft.com/shawnhar/2009/11/06/premultiplied-alpha/
 */
-package colour
+package color

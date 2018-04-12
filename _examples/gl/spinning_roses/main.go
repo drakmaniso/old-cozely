@@ -12,7 +12,6 @@ import (
 	"github.com/cozely/cozely/input"
 
 	"github.com/cozely/cozely"
-	"github.com/cozely/cozely/colour"
 	"github.com/cozely/cozely/x/gl"
 )
 
@@ -136,7 +135,7 @@ func (loop) Render() error {
 
 	pipeline.Bind()
 	gl.ClearDepthBuffer(1.0)
-	gl.ClearColorBuffer(colour.LRGBA{0.9, 0.85, 0.80, 1.0})
+	gl.ClearColorBuffer(color.LRGBA{0.9, 0.85, 0.80, 1.0})
 	gl.Enable(gl.LineSmooth)
 	gl.Enable(gl.Blend)
 	gl.Blending(gl.SrcAlpha, gl.OneMinusSrcAlpha)
@@ -178,7 +177,7 @@ func randomizeRosesData() {
 ////////////////////////////////////////////////////////////////////////////////
 
 // func rose(nbPoints int, num int, den int, offset float32) []perVertex {
-// 	// var m = []perVertex{{coord.XY{0.0, 0.0}, colour.LRGB{0.9, 0.9, 0.9}}}
+// 	// var m = []perVertex{{coord.XY{0.0, 0.0}, color.LRGB{0.9, 0.9, 0.9}}}
 // 	var m = []perVertex{}
 // 	for i := den * nbPoints; i >= 0; i-- {
 // 		var k = float32(num) / float32(den)

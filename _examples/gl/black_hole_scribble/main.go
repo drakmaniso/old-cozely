@@ -9,7 +9,6 @@ import (
 	"math/rand"
 
 	"github.com/cozely/cozely"
-	"github.com/cozely/cozely/colour"
 	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/x/gl"
@@ -54,7 +53,7 @@ var points [512]struct {
 
 // Application State
 var (
-	bgColor  = colour.LRGBA{0.9, 0.87, 0.85, 1.0}
+	bgColor  = color.LRGBA{0.9, 0.87, 0.85, 1.0}
 	rotSpeed = float32(0.003)
 	jitter   = float32(0.002)
 	angles   []float32

@@ -9,7 +9,6 @@ import (
 	"fmt"
 
 	"github.com/cozely/cozely"
-	"github.com/cozely/cozely/colour"
 	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/coord/space"
 	"github.com/cozely/cozely/input"
@@ -57,7 +56,7 @@ var pipeline *gl.Pipeline
 var miscUBO gl.UniformBuffer
 var misc struct {
 	worldFromObject space.Matrix
-	SunIlluminance  colour.LRGB
+	SunIlluminance  color.LRGB
 	_               byte
 }
 
@@ -109,7 +108,7 @@ func (loop) Enter() error {
 	input.Load(bindings)
 	context.Activate(1)
 
-	txtColor.SetColour(colour.SRGB8{0xFF, 0xFF, 0xFF})
+	txtColor.SetColour(color.SRGB8{0xFF, 0xFF, 0xFF})
 
 	pipeline = gl.NewPipeline(
 		poly.PipelineSetup(),
@@ -193,8 +192,8 @@ func (loop) Render() error {
 	gl.Viewport(0, 0, int32(s.C), int32(s.R))
 	pipeline.Bind()
 	gl.ClearDepthBuffer(1.0)
-	gl.ClearColorBuffer(colour.LRGBA{0.0, 0.0, 0.0, 1.0})
-	// gl.ClearColorBuffer(colour.LRGBA{0.4, 0.45, 0.5, 1.0})
+	gl.ClearColorBuffer(color.LRGBA{0.0, 0.0, 0.0, 1.0})
+	// gl.ClearColorBuffer(color.LRGBA{0.4, 0.45, 0.5, 1.0})
 	gl.Disable(gl.Blend)
 	gl.Enable(gl.FramebufferSRGB)
 

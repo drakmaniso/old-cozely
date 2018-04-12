@@ -3,9 +3,7 @@
 
 package palette
 
-import (
-	"github.com/cozely/cozely/colour"
-)
+import "github.com/cozely/cozely/color"
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -37,9 +35,9 @@ func Clear() {
 		delete(names, n)
 	}
 	for c := range colours {
-		colours[c] = colour.LRGBA{1, 0, 1, 1}
+		colours[c] = color.LRGBA{1, 0, 1, 1}
 	}
-	Index(0).SetColour(colour.LRGBA{0, 0, 0, 0})
+	Index(0).Set(color.LRGBA{0, 0, 0, 0})
 	Index(0).Rename("transparent")
 }
 
@@ -52,10 +50,10 @@ func Find(name string) Index {
 	return c
 }
 
-// Match searches for a color by its colour.LRGBA values. If this exact color
+// Match searches for a color by its color.LRGBA values. If this exact color
 // isn't in the palette, index 0 is returned.
-func Match(v colour.Colour) Index {
-	lv := colour.LRGBAOf(v)
+func Match(v color.Color) Index {
+	lv := color.LRGBAOf(v)
 	for c, vv := range colours {
 		if vv == lv {
 			return Index(c)
@@ -67,14 +65,14 @@ func Match(v colour.Colour) Index {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// Colour returns the color corresponding to a palette index.
-func (c Index) Colour() colour.LRGBA {
+// Color returns the color corresponding to a palette index.
+func (c Index) Color() color.LRGBA {
 	return colours[c]
 }
 
-// SetColour changes the color corresponding to a palette index.
-func (c Index) SetColour(v colour.Colour) {
-	colours[c] = colour.LRGBAOf(v)
+// Set changes the color corresponding to a palette index.
+func (c Index) Set(v color.Color) {
+	colours[c] = color.LRGBAOf(v)
 	changed = true
 }
 

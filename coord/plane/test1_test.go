@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"github.com/cozely/cozely"
-	"github.com/cozely/cozely/colour"
+	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/coord/plane"
 	"github.com/cozely/cozely/input"
@@ -65,13 +65,13 @@ func (loop1) Enter() error {
 	newPoints()
 
 	palette.Clear()
-	palette.Index(1).SetColour(colour.LRGB{1, 1, 1})
-	palette.Index(2).SetColour(colour.LRGB{0.4, 0.05, 0.0})
-	palette.Index(3).SetColour(colour.LRGB{0.0, 0.4, 0.05})
-	palette.Index(4).SetColour(colour.LRGB{0.0, 0.05, 0.45})
-	palette.Index(5).SetColour(colour.LRGB{0.1, 0.0, 0.15})
-	palette.Index(6).SetColour(colour.LRGB{0.25, 0.25, 0.25})
-	palette.Index(7).SetColour(colour.LRGB{0.025, 0.025, 0.025})
+	palette.Index(1).Set(color.LRGB{1, 1, 1})
+	palette.Index(2).Set(color.LRGB{0.4, 0.05, 0.0})
+	palette.Index(3).Set(color.LRGB{0.0, 0.4, 0.05})
+	palette.Index(4).Set(color.LRGB{0.0, 0.05, 0.45})
+	palette.Index(5).Set(color.LRGB{0.1, 0.0, 0.15})
+	palette.Index(6).Set(color.LRGB{0.25, 0.25, 0.25})
+	palette.Index(7).Set(color.LRGB{0.025, 0.025, 0.025})
 	return nil
 }
 

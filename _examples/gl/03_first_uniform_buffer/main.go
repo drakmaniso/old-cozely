@@ -7,7 +7,6 @@ package main
 
 import (
 	"github.com/cozely/cozely"
-	"github.com/cozely/cozely/colour"
 	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/coord/plane"
 	"github.com/cozely/cozely/x/gl"
@@ -28,8 +27,8 @@ var perFrame struct {
 
 // Vertex buffer
 type mesh []struct {
-	position coord.XY    `layout:"0"`
-	color    colour.LRGB `layout:"1"`
+	position coord.XY   `layout:"0"`
+	color    color.LRGB `layout:"1"`
 }
 
 // Animation state
@@ -71,9 +70,9 @@ func (loop) Enter() error {
 
 	// Fill and create the vertex buffer
 	triangle = mesh{
-		{coord.XY{0, 0.75}, colour.LRGB{0.3, 0, 0.8}},
-		{coord.XY{-0.65, -0.465}, colour.LRGB{0.8, 0.3, 0}},
-		{coord.XY{0.65, -0.465}, colour.LRGB{0, 0.6, 0.2}},
+		{coord.XY{0, 0.75}, color.LRGB{0.3, 0, 0.8}},
+		{coord.XY{-0.65, -0.465}, color.LRGB{0.8, 0.3, 0}},
+		{coord.XY{0.65, -0.465}, color.LRGB{0, 0.6, 0.2}},
 	}
 	vbo := gl.NewVertexBuffer(triangle, gl.StaticStorage)
 
@@ -107,7 +106,7 @@ func (loop) Render() error {
 	angle -= 1.0 * cozely.RenderTime()
 
 	pipeline.Bind()
-	gl.ClearColorBuffer(colour.LRGBA{0.9, 0.9, 0.9, 1.0})
+	gl.ClearColorBuffer(color.LRGBA{0.9, 0.9, 0.9, 1.0})
 
 	perFrame.transform = plane.Rotation(float32(angle)).GPU()
 	perFrameUBO.SubData(&perFrame, 0)

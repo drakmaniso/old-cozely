@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2018 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
-package colour
+package color
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -23,7 +23,7 @@ type SRGBA8 struct {
 ////////////////////////////////////////////////////////////////////////////////
 
 // SRGBA8Of converts any color to alpha-premultiplied sRGB color space.
-func SRGBA8Of(c Colour) SRGBA8 {
+func SRGBA8Of(c Color) SRGBA8 {
 	cc, ok := c.(SRGBA8)
 	if ok {
 		return cc
