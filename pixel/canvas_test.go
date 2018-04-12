@@ -8,10 +8,10 @@ import (
 	"testing"
 
 	"github.com/cozely/cozely"
+	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/palette"
 	"github.com/cozely/cozely/pixel"
-	"github.com/cozely/cozely/plane"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -37,7 +37,7 @@ var shapePictures = []pixel.PictureID{
 
 type shape struct {
 	pict  pixel.PictureID
-	pos   plane.CR
+	pos   coord.CR
 	depth int16
 }
 

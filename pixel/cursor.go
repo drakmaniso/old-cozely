@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"unicode/utf8"
 
+	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/palette"
-	"github.com/cozely/cozely/plane"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -24,8 +24,8 @@ type Cursor struct {
 	Spacing   int16
 	Interline int16
 	Depth     int16
-	Origin    plane.CR
-	Position  plane.CR
+	Origin    coord.CR
+	Position  coord.CR
 }
 
 ////////////////////////////////////////////////////////////////////////////////

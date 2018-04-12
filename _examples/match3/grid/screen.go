@@ -3,14 +3,12 @@
 
 package grid
 
-import (
-	"github.com/cozely/cozely/plane"
-)
+import "github.com/cozely/cozely/coord"
 
 ////////////////////////////////////////////////////////////////////////////////
 
 var (
-	origin plane.CR
+	origin coord.CR
 )
 
 const cellSize = 20
@@ -36,7 +34,7 @@ func (p Position) ScreenXY() (x, y int16) {
 ////////////////////////////////////////////////////////////////////////////////
 
 // PositionAt returns the grid position containing the screen coordinates c.
-func PositionAt(c plane.CR) Position {
+func PositionAt(c coord.CR) Position {
 	if c.C < origin.C || c.R < origin.R {
 		return Nowhere()
 	}

@@ -7,10 +7,10 @@ import (
 	"testing"
 
 	"github.com/cozely/cozely"
+	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/palette"
 	"github.com/cozely/cozely/pixel"
-	"github.com/cozely/cozely/plane"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -89,16 +89,16 @@ func (picLoop) Render() error {
 	switch picMode {
 	case 0:
 		pz := mire.Size()
-		picScreen.Picture(mire, 0, plane.CR{0, 0})
-		picScreen.Picture(mire, 0, plane.CR{0, sz.R - pz.R})
-		picScreen.Picture(mire, 0, plane.CR{sz.C - pz.C, 0})
+		picScreen.Picture(mire, 0, coord.CR{0, 0})
+		picScreen.Picture(mire, 0, coord.CR{0, sz.R - pz.R})
+		picScreen.Picture(mire, 0, coord.CR{sz.C - pz.C, 0})
 		picScreen.Picture(mire, 0, sz.Minus(pz))
 	case 1:
 		pz := srgbGray.Size()
-		picScreen.Picture(srgbGray, 0, plane.CR{sz.C/2 - pz.C/2, 32})
-		picScreen.Picture(srgbRed, 0, plane.CR{sz.C/4 - pz.C/2, 96})
-		picScreen.Picture(srgbGreen, 0, plane.CR{sz.C/2 - pz.C/2, 96})
-		picScreen.Picture(srgbBlue, 0, plane.CR{3*sz.C/4 - pz.C/2, 96})
+		picScreen.Picture(srgbGray, 0, coord.CR{sz.C/2 - pz.C/2, 32})
+		picScreen.Picture(srgbRed, 0, coord.CR{sz.C/4 - pz.C/2, 96})
+		picScreen.Picture(srgbGreen, 0, coord.CR{sz.C/2 - pz.C/2, 96})
+		picScreen.Picture(srgbBlue, 0, coord.CR{3*sz.C/4 - pz.C/2, 96})
 	}
 	picScreen.Display()
 	return pixel.Err()

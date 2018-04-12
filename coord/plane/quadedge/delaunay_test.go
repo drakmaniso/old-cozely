@@ -6,11 +6,11 @@ import (
 
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/colour"
+	"github.com/cozely/cozely/coord"
+	"github.com/cozely/cozely/coord/plane/quadedge"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/palette"
 	"github.com/cozely/cozely/pixel"
-	"github.com/cozely/cozely/plane"
-	"github.com/cozely/cozely/plane/quadedge"
 	"github.com/cozely/cozely/x/math32"
 )
 
@@ -22,13 +22,13 @@ var (
 )
 
 var (
-	points        []plane.XY
+	points        []coord.XY
 	triangulation quadedge.Edge
 )
 
 var (
 	ratio float32
-	orig  plane.XY
+	orig  coord.XY
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -52,7 +52,7 @@ func (delLoop) Enter() error {
 	input.Load(testBindings)
 	testContext.Activate(1)
 
-	points = make([]plane.XY, 256)
+	points = make([]coord.XY, 256)
 	newPoints()
 
 	palette.Clear()
@@ -85,7 +85,7 @@ func (delLoop) React() error {
 		const st = 1.0 / 16
 		for x := float32(st); x < 1.0; x += st {
 			for y := float32(st); y < 1.0; y += st {
-				points = append(points, plane.XY{x, y})
+				points = append(points, coord.XY{x, y})
 			}
 		}
 		triangulation = quadedge.Delaunay(points)
@@ -93,7 +93,7 @@ func (delLoop) React() error {
 	if scene2.JustPressed(1) {
 		points = points[:0]
 		for a := float32(0); a < 2*math32.Pi; a += math32.Pi / 8 {
-			points = append(points, plane.XY{
+			points = append(points, coord.XY{
 				X: .5 - math32.Cos(a)*.5,
 				Y: .5 + math32.Sin(a)*.5,
 			})
@@ -104,7 +104,7 @@ func (delLoop) React() error {
 		points = points[:0]
 		const n = 26
 		for a := float32(0); a < n*2*math32.Pi; a += math32.Pi / 26 {
-			points = append(points, plane.XY{
+			points = append(points, coord.XY{
 				X: .5 + math32.Cos(a)*.5*a/(n*2*math32.Pi),
 				Y: .5 + math32.Sin(a)*.5*a/(n*2*math32.Pi),
 			})
@@ -115,12 +115,12 @@ func (delLoop) React() error {
 		points = points[:0]
 		const st = 1.0 / 6
 		for x := float32(st); x < 1.0; x += st {
-			points = append(points, plane.XY{x, 0.5 + 0.17*x})
+			points = append(points, coord.XY{x, 0.5 + 0.17*x})
 		}
 		triangulation = quadedge.Delaunay(points)
 	}
 	if scene5.JustPressed(1) {
-		points = make([]plane.XY, 25000)
+		points = make([]coord.XY, 25000)
 		newPoints()
 	}
 	if scene6.JustPressed(1) {
@@ -129,7 +129,7 @@ func (delLoop) React() error {
 		const h = 0.5 * 1.732050807568877 * st
 		for x := float32(st); x < 1.0; x += st {
 			for y := float32(st); y < 1.0; y += h {
-				points = append(points, plane.XY{x + 0.5*y - 0.25, y})
+				points = append(points, coord.XY{x + 0.5*y - 0.25, y})
 			}
 		}
 		triangulation = quadedge.Delaunay(points)
@@ -147,7 +147,7 @@ func (delLoop) Update() error { return nil }
 func (delLoop) Render() error {
 	screen.Clear(0)
 	ratio = float32(screen.Size().R)
-	orig = plane.XY{
+	orig = coord.XY{
 		X: (float32(screen.Size().C) - ratio) / 2,
 		Y: float32(screen.Size().R),
 	}
@@ -164,7 +164,7 @@ func (delLoop) Render() error {
 		cursor.Println(" ")
 	}
 
-	pt := make([]plane.CR, len(points))
+	pt := make([]coord.CR, len(points))
 	for i, sd := range points {
 		pt[i] = toScreen(sd)
 		screen.Box(2, 2, 1, 0, pt[i].Minuss(2, 2), pt[i].Pluss(2, 2))
@@ -180,22 +180,22 @@ func (delLoop) Render() error {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func toScreen(p plane.XY) plane.CR {
+func toScreen(p coord.XY) coord.CR {
 	// return pixel.Coord(p.Times(ratio).Pixel()).Plus(orig)
 	// return pixel.From(p.Times(ratio).XY()).Plus(orig)
 	// return pixel.From(p.Times(ratio)).Plus(orig)
 	// return p.Times(ratio).Pixel().Plus(orig)
-	return plane.CR{
+	return coord.CR{
 		C: int16(orig.X + p.X*ratio),
 		R: int16(orig.Y - p.Y*ratio),
 	}
 }
 
-func fromScreen(p plane.CR) plane.XY {
+func fromScreen(p coord.CR) coord.XY {
 	// return plane.From(p.Minus(orig).XY()).Slash(ratio)
 	// return plane.From(p.Minus(orig)).Slash(ratio)
 	// return p.Minus(orig).Cartesian().Slash(ratio)
-	return plane.XY{
+	return coord.XY{
 		X: (float32(p.C) - orig.X) / ratio,
 		Y: (orig.Y - float32(p.R)) / ratio,
 	}
@@ -205,7 +205,7 @@ func fromScreen(p plane.CR) plane.XY {
 
 func newPoints() {
 	for i := range points {
-		points[i] = plane.XY{rand.Float32(), rand.Float32()}
+		points[i] = coord.XY{rand.Float32(), rand.Float32()}
 	}
 	triangulation = quadedge.Delaunay(points)
 }

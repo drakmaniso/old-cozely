@@ -7,15 +7,15 @@ package main
 
 import (
 	"github.com/cozely/cozely/colour"
-	"github.com/cozely/cozely/space"
+	"github.com/cozely/cozely/coord"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
 
 var (
-	purple = colour.LRGB{R: 0.2, G: 0, B: 0.6}
-	orange = colour.LRGB{R: 0.8, G: 0.3, B: 0}
-	green  = colour.LRGB{R: 0, G: 0.3, B: 0.1}
+	purple = colour.LRGB{0.2, 0, 0.6}
+	orange = colour.LRGB{0.8, 0.3, 0}
+	green  = colour.LRGB{0, 0.3, 0.1}
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -23,47 +23,47 @@ var (
 func cube() mesh {
 	return mesh{
 		// Front Face
-		{space.Coord{-0.5, -0.5, +0.5}, purple},
-		{space.Coord{+0.5, +0.5, +0.5}, purple},
-		{space.Coord{-0.5, +0.5, +0.5}, purple},
-		{space.Coord{-0.5, -0.5, +0.5}, purple},
-		{space.Coord{+0.5, -0.5, +0.5}, purple},
-		{space.Coord{+0.5, +0.5, +0.5}, purple},
+		{coord.XYZ{-0.5, -0.5, +0.5}, purple},
+		{coord.XYZ{+0.5, +0.5, +0.5}, purple},
+		{coord.XYZ{-0.5, +0.5, +0.5}, purple},
+		{coord.XYZ{-0.5, -0.5, +0.5}, purple},
+		{coord.XYZ{+0.5, -0.5, +0.5}, purple},
+		{coord.XYZ{+0.5, +0.5, +0.5}, purple},
 		// Back Face
-		{space.Coord{-0.5, -0.5, -0.5}, purple},
-		{space.Coord{-0.5, +0.5, -0.5}, purple},
-		{space.Coord{+0.5, +0.5, -0.5}, purple},
-		{space.Coord{-0.5, -0.5, -0.5}, purple},
-		{space.Coord{+0.5, +0.5, -0.5}, purple},
-		{space.Coord{+0.5, -0.5, -0.5}, purple},
+		{coord.XYZ{-0.5, -0.5, -0.5}, purple},
+		{coord.XYZ{-0.5, +0.5, -0.5}, purple},
+		{coord.XYZ{+0.5, +0.5, -0.5}, purple},
+		{coord.XYZ{-0.5, -0.5, -0.5}, purple},
+		{coord.XYZ{+0.5, +0.5, -0.5}, purple},
+		{coord.XYZ{+0.5, -0.5, -0.5}, purple},
 		// Right Face
-		{space.Coord{+0.5, -0.5, +0.5}, green},
-		{space.Coord{+0.5, +0.5, -0.5}, green},
-		{space.Coord{+0.5, +0.5, +0.5}, green},
-		{space.Coord{+0.5, -0.5, +0.5}, green},
-		{space.Coord{+0.5, -0.5, -0.5}, green},
-		{space.Coord{+0.5, +0.5, -0.5}, green},
+		{coord.XYZ{+0.5, -0.5, +0.5}, green},
+		{coord.XYZ{+0.5, +0.5, -0.5}, green},
+		{coord.XYZ{+0.5, +0.5, +0.5}, green},
+		{coord.XYZ{+0.5, -0.5, +0.5}, green},
+		{coord.XYZ{+0.5, -0.5, -0.5}, green},
+		{coord.XYZ{+0.5, +0.5, -0.5}, green},
 		// Left Face
-		{space.Coord{-0.5, -0.5, +0.5}, green},
-		{space.Coord{-0.5, +0.5, +0.5}, green},
-		{space.Coord{-0.5, +0.5, -0.5}, green},
-		{space.Coord{-0.5, -0.5, +0.5}, green},
-		{space.Coord{-0.5, +0.5, -0.5}, green},
-		{space.Coord{-0.5, -0.5, -0.5}, green},
+		{coord.XYZ{-0.5, -0.5, +0.5}, green},
+		{coord.XYZ{-0.5, +0.5, +0.5}, green},
+		{coord.XYZ{-0.5, +0.5, -0.5}, green},
+		{coord.XYZ{-0.5, -0.5, +0.5}, green},
+		{coord.XYZ{-0.5, +0.5, -0.5}, green},
+		{coord.XYZ{-0.5, -0.5, -0.5}, green},
 		// Bottom Face
-		{space.Coord{-0.5, -0.5, +0.5}, orange},
-		{space.Coord{-0.5, -0.5, -0.5}, orange},
-		{space.Coord{+0.5, -0.5, +0.5}, orange},
-		{space.Coord{-0.5, -0.5, -0.5}, orange},
-		{space.Coord{+0.5, -0.5, -0.5}, orange},
-		{space.Coord{+0.5, -0.5, +0.5}, orange},
+		{coord.XYZ{-0.5, -0.5, +0.5}, orange},
+		{coord.XYZ{-0.5, -0.5, -0.5}, orange},
+		{coord.XYZ{+0.5, -0.5, +0.5}, orange},
+		{coord.XYZ{-0.5, -0.5, -0.5}, orange},
+		{coord.XYZ{+0.5, -0.5, -0.5}, orange},
+		{coord.XYZ{+0.5, -0.5, +0.5}, orange},
 		// Top Face
-		{space.Coord{-0.5, +0.5, +0.5}, orange},
-		{space.Coord{+0.5, +0.5, +0.5}, orange},
-		{space.Coord{-0.5, +0.5, -0.5}, orange},
-		{space.Coord{-0.5, +0.5, -0.5}, orange},
-		{space.Coord{+0.5, +0.5, +0.5}, orange},
-		{space.Coord{+0.5, +0.5, -0.5}, orange},
+		{coord.XYZ{-0.5, +0.5, +0.5}, orange},
+		{coord.XYZ{+0.5, +0.5, +0.5}, orange},
+		{coord.XYZ{-0.5, +0.5, -0.5}, orange},
+		{coord.XYZ{-0.5, +0.5, -0.5}, orange},
+		{coord.XYZ{+0.5, +0.5, +0.5}, orange},
+		{coord.XYZ{+0.5, +0.5, -0.5}, orange},
 	}
 }
 

@@ -4,15 +4,16 @@
 package plane_test
 
 import (
-	"github.com/cozely/cozely/input"
 	"math/rand"
 	"testing"
 
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/colour"
+	"github.com/cozely/cozely/coord"
+	"github.com/cozely/cozely/coord/plane"
+	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/palette"
 	"github.com/cozely/cozely/pixel"
-	"github.com/cozely/cozely/plane"
 	"github.com/cozely/cozely/x/math32"
 )
 
@@ -24,19 +25,19 @@ var (
 )
 
 var (
-	points []plane.XY
+	points []coord.XY
 )
 
 var (
 	ratio  float32
-	offset plane.XY
+	offset coord.XY
 )
 
 ////////////////////////////////////////////////////////////////////////////////
 
 func newPoints() {
 	for i := range points {
-		points[i] = plane.XY{X: rand.Float32(), Y: rand.Float32()}
+		points[i] = coord.XY{X: rand.Float32(), Y: rand.Float32()}
 	}
 }
 
@@ -61,7 +62,7 @@ func (triLoop) Enter() error {
 	input.Load(testBindings)
 	testContext.Activate(1)
 
-	points = make([]plane.XY, 3)
+	points = make([]coord.XY, 3)
 	newPoints()
 
 	palette.Clear()
@@ -100,12 +101,12 @@ func (triLoop) Render() error {
 	screen.Clear(0)
 	cursor.Depth = 0x7FFF
 	ratio = float32(screen.Size().R)
-	offset = plane.XY{
+	offset = coord.XY{
 		X: (float32(screen.Size().C) - ratio),
 		Y: float32(screen.Size().R),
 	}
-	pt := make([]plane.CR, len(points))
-	s := plane.CR{5, 5}
+	pt := make([]coord.CR, len(points))
+	s := coord.CR{5, 5}
 	for i, sd := range points {
 		pt[i] = toScreen(sd)
 		screen.Box(2+palette.Index(i), 2+palette.Index(i), 2, 2,
@@ -179,9 +180,9 @@ func (triLoop) Render() error {
 	screen.Lines(5, -2, dd.Pluss(2, -2), dd.Pluss(-2, 2))
 
 	r := d.Minus(points[a]).Length()
-	cir := []plane.CR{}
+	cir := []coord.CR{}
 	for a := float32(0); a <= 2*math32.Pi+0.01; a += math32.Pi / 32 {
-		cir = append(cir, toScreen(plane.DA{r, a}.XY().Plus(d)))
+		cir = append(cir, toScreen(coord.DA{r, a}.XY().Plus(d)))
 	}
 	screen.Lines(5, -2, cir...)
 
@@ -191,15 +192,15 @@ func (triLoop) Render() error {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func toScreen(p plane.XY) plane.CR {
-	return plane.CR{
+func toScreen(p coord.XY) coord.CR {
+	return coord.CR{
 		C: int16(offset.X + p.X*ratio),
 		R: int16(offset.Y - p.Y*ratio),
 	}
 }
 
-func fromScreen(p plane.CR) plane.XY {
-	return plane.XY{
+func fromScreen(p coord.CR) coord.XY {
+	return coord.XY{
 		X: (float32(p.C) - offset.X) / ratio,
 		Y: (offset.Y - float32(p.R)) / ratio,
 	}

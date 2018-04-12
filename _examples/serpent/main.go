@@ -2,9 +2,9 @@ package main
 
 import (
 	"github.com/cozely/cozely"
+	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/palette"
 	"github.com/cozely/cozely/pixel"
-	"github.com/cozely/cozely/plane"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -14,10 +14,10 @@ var (
 )
 
 var (
-	resolution = plane.CR{640, 360}
-	gridsize   = plane.CR{35, 21}
-	cellsize   = plane.CR{16, 16}
-	origin     plane.CR
+	resolution = coord.CR{640, 360}
+	gridsize   = coord.CR{35, 21}
+	cellsize   = coord.CR{16, 16}
+	origin     coord.CR
 )
 
 const (
@@ -83,7 +83,7 @@ func (loop) Render() error {
 	for c := int16(0); c < gridsize.C; c++ {
 		for r := int16(0); r < gridsize.R; r++ {
 			offset := resolution.Minus(gridsize.Times(16)).Slash(2)
-			p := plane.CR{c, r}.Timescw(cellsize).Plus(offset)
+			p := coord.CR{c, r}.Timescw(cellsize).Plus(offset)
 			canvas.Box(Yellow, 0, 2, 0, origin.Plus(p), origin.Plus(p).Pluss(15, 15))
 		}
 	}

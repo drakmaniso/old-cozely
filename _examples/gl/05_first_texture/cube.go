@@ -6,8 +6,7 @@ package main
 ////////////////////////////////////////////////////////////////////////////////
 
 import (
-	"github.com/cozely/cozely/plane"
-	"github.com/cozely/cozely/space"
+	"github.com/cozely/cozely/coord"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -15,47 +14,47 @@ import (
 func cube() mesh {
 	return mesh{
 		// Front Face
-		{space.Coord{-0.5, -0.5, +0.5}, plane.Coord{0, 1}},
-		{space.Coord{+0.5, -0.5, +0.5}, plane.Coord{1, 1}},
-		{space.Coord{+0.5, +0.5, +0.5}, plane.Coord{1, 0}},
-		{space.Coord{-0.5, -0.5, +0.5}, plane.Coord{0, 1}},
-		{space.Coord{+0.5, +0.5, +0.5}, plane.Coord{1, 0}},
-		{space.Coord{-0.5, +0.5, +0.5}, plane.Coord{0, 0}},
+		{coord.XYZ{-0.5, -0.5, +0.5}, coord.XY{0, 1}},
+		{coord.XYZ{+0.5, -0.5, +0.5}, coord.XY{1, 1}},
+		{coord.XYZ{+0.5, +0.5, +0.5}, coord.XY{1, 0}},
+		{coord.XYZ{-0.5, -0.5, +0.5}, coord.XY{0, 1}},
+		{coord.XYZ{+0.5, +0.5, +0.5}, coord.XY{1, 0}},
+		{coord.XYZ{-0.5, +0.5, +0.5}, coord.XY{0, 0}},
 		// Back Face
-		{space.Coord{+0.5, -0.5, -0.5}, plane.Coord{0, 1}},
-		{space.Coord{-0.5, -0.5, -0.5}, plane.Coord{1, 1}},
-		{space.Coord{-0.5, +0.5, -0.5}, plane.Coord{1, 0}},
-		{space.Coord{+0.5, -0.5, -0.5}, plane.Coord{0, 1}},
-		{space.Coord{-0.5, +0.5, -0.5}, plane.Coord{1, 0}},
-		{space.Coord{+0.5, +0.5, -0.5}, plane.Coord{0, 0}},
+		{coord.XYZ{+0.5, -0.5, -0.5}, coord.XY{0, 1}},
+		{coord.XYZ{-0.5, -0.5, -0.5}, coord.XY{1, 1}},
+		{coord.XYZ{-0.5, +0.5, -0.5}, coord.XY{1, 0}},
+		{coord.XYZ{+0.5, -0.5, -0.5}, coord.XY{0, 1}},
+		{coord.XYZ{-0.5, +0.5, -0.5}, coord.XY{1, 0}},
+		{coord.XYZ{+0.5, +0.5, -0.5}, coord.XY{0, 0}},
 		// Right Face
-		{space.Coord{+0.5, -0.5, +0.5}, plane.Coord{0, 1}},
-		{space.Coord{+0.5, -0.5, -0.5}, plane.Coord{1, 1}},
-		{space.Coord{+0.5, +0.5, -0.5}, plane.Coord{1, 0}},
-		{space.Coord{+0.5, -0.5, +0.5}, plane.Coord{0, 1}},
-		{space.Coord{+0.5, +0.5, -0.5}, plane.Coord{1, 0}},
-		{space.Coord{+0.5, +0.5, +0.5}, plane.Coord{0, 0}},
+		{coord.XYZ{+0.5, -0.5, +0.5}, coord.XY{0, 1}},
+		{coord.XYZ{+0.5, -0.5, -0.5}, coord.XY{1, 1}},
+		{coord.XYZ{+0.5, +0.5, -0.5}, coord.XY{1, 0}},
+		{coord.XYZ{+0.5, -0.5, +0.5}, coord.XY{0, 1}},
+		{coord.XYZ{+0.5, +0.5, -0.5}, coord.XY{1, 0}},
+		{coord.XYZ{+0.5, +0.5, +0.5}, coord.XY{0, 0}},
 		// Left Face
-		{space.Coord{-0.5, -0.5, -0.5}, plane.Coord{0, 1}},
-		{space.Coord{-0.5, -0.5, +0.5}, plane.Coord{1, 1}},
-		{space.Coord{-0.5, +0.5, +0.5}, plane.Coord{1, 0}},
-		{space.Coord{-0.5, -0.5, -0.5}, plane.Coord{0, 1}},
-		{space.Coord{-0.5, +0.5, +0.5}, plane.Coord{1, 0}},
-		{space.Coord{-0.5, +0.5, -0.5}, plane.Coord{0, 0}},
+		{coord.XYZ{-0.5, -0.5, -0.5}, coord.XY{0, 1}},
+		{coord.XYZ{-0.5, -0.5, +0.5}, coord.XY{1, 1}},
+		{coord.XYZ{-0.5, +0.5, +0.5}, coord.XY{1, 0}},
+		{coord.XYZ{-0.5, -0.5, -0.5}, coord.XY{0, 1}},
+		{coord.XYZ{-0.5, +0.5, +0.5}, coord.XY{1, 0}},
+		{coord.XYZ{-0.5, +0.5, -0.5}, coord.XY{0, 0}},
 		// Bottom Face
-		{space.Coord{-0.5, -0.5, -0.5}, plane.Coord{0, 1}},
-		{space.Coord{+0.5, -0.5, -0.5}, plane.Coord{1, 1}},
-		{space.Coord{+0.5, -0.5, +0.5}, plane.Coord{1, 0}},
-		{space.Coord{-0.5, -0.5, -0.5}, plane.Coord{0, 1}},
-		{space.Coord{+0.5, -0.5, +0.5}, plane.Coord{1, 0}},
-		{space.Coord{-0.5, -0.5, +0.5}, plane.Coord{0, 0}},
+		{coord.XYZ{-0.5, -0.5, -0.5}, coord.XY{0, 1}},
+		{coord.XYZ{+0.5, -0.5, -0.5}, coord.XY{1, 1}},
+		{coord.XYZ{+0.5, -0.5, +0.5}, coord.XY{1, 0}},
+		{coord.XYZ{-0.5, -0.5, -0.5}, coord.XY{0, 1}},
+		{coord.XYZ{+0.5, -0.5, +0.5}, coord.XY{1, 0}},
+		{coord.XYZ{-0.5, -0.5, +0.5}, coord.XY{0, 0}},
 		// Top Face
-		{space.Coord{-0.5, +0.5, +0.5}, plane.Coord{0, 1}},
-		{space.Coord{+0.5, +0.5, +0.5}, plane.Coord{1, 1}},
-		{space.Coord{+0.5, +0.5, -0.5}, plane.Coord{1, 0}},
-		{space.Coord{-0.5, +0.5, +0.5}, plane.Coord{0, 1}},
-		{space.Coord{+0.5, +0.5, -0.5}, plane.Coord{1, 0}},
-		{space.Coord{-0.5, +0.5, -0.5}, plane.Coord{0, 0}},
+		{coord.XYZ{-0.5, +0.5, +0.5}, coord.XY{0, 1}},
+		{coord.XYZ{+0.5, +0.5, +0.5}, coord.XY{1, 1}},
+		{coord.XYZ{+0.5, +0.5, -0.5}, coord.XY{1, 0}},
+		{coord.XYZ{-0.5, +0.5, +0.5}, coord.XY{0, 1}},
+		{coord.XYZ{+0.5, +0.5, -0.5}, coord.XY{1, 0}},
+		{coord.XYZ{-0.5, +0.5, -0.5}, coord.XY{0, 0}},
 	}
 }
 

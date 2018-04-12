@@ -10,10 +10,10 @@ import (
 
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/colour"
+	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/palette"
 	"github.com/cozely/cozely/pixel"
-	"github.com/cozely/cozely/plane"
 	"github.com/cozely/cozely/space"
 	"github.com/cozely/cozely/x/gl"
 	"github.com/cozely/cozely/x/poly"
@@ -71,11 +71,11 @@ var forward, lateral, vertical, rolling float32
 var dragStart space.Matrix
 
 var current struct {
-	dragDelta plane.XY
+	dragDelta coord.XY
 }
 
 var previous struct {
-	dragDelta plane.XY
+	dragDelta coord.XY
 }
 
 // worldFromObject
@@ -135,7 +135,7 @@ func (loop) Enter() error {
 
 	camera = poly.NewPlanarCamera()
 	camera.SetExposure(16.0, 1.0/125.0, 100.0)
-	camera.SetFocus(space.XYZ{0, 0, 0})
+	camera.SetFocus(coord.XYZ{0, 0, 0})
 	camera.SetDistance(4)
 
 	// Setup model

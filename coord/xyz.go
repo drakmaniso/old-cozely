@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2018 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
-package space
+package coord
 
 import (
 	"math"
@@ -11,8 +11,8 @@ import (
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// Vector represents any three-dimensional vector.
-type Vector interface {
+// Vector3D represents any three-dimensional vector.
+type Vector3D interface {
 	// Cartesian returns the cartesian coordinates of the vector.
 	Cartesian() (x, y, z float32)
 }
@@ -175,6 +175,44 @@ func (v XYZ) IsRoughlyEqual(o XYZ, epsilon float32) bool {
 	return math32.IsRoughlyEqual(v.X, o.X, epsilon) &&
 		math32.IsRoughlyEqual(v.Y, o.Y, epsilon) &&
 		math32.IsRoughlyEqual(v.Z, o.Z, epsilon)
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+// XYproj returns the cartesian representation of the vector (i.e. the perspective
+// divide of the homogeneous coordinates). Z must be non-zero.
+func (h XYZ) XYproj() XY {
+	return XY{h.X / h.Z, h.Y / h.Z}
+}
+
+// XY returns the planar coordinates {X, Y}.
+func (h XYZ) XY() XY {
+	return XY{h.X, h.Y}
+}
+
+// XZ returns the planar coordinates {X, Z}.
+func (h XYZ) XZ() XY {
+	return XY{h.X, h.Z}
+}
+
+// YX returns the planar coordinates {Y, X}.
+func (h XYZ) YX() XY {
+	return XY{h.Y, h.X}
+}
+
+// YZ returns the planar coordinates {Y, Z}.
+func (h XYZ) YZ() XY {
+	return XY{h.Y, h.Z}
+}
+
+// ZX returns the planar coordinates {Z, X}.
+func (h XYZ) ZX() XY {
+	return XY{h.Z, h.X}
+}
+
+// ZY returns the planar coordinates {Z, Y}.
+func (h XYZ) ZY() XY {
+	return XY{h.Z, h.Y}
 }
 
 ////////////////////////////////////////////////////////////////////////////////

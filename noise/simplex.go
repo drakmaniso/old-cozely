@@ -4,7 +4,7 @@
 package noise
 
 import (
-	"github.com/cozely/cozely/plane"
+	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/x/math32"
 )
 
@@ -25,7 +25,7 @@ const simplexNormalization = 99.204334582718712976990005025589
 ////////////////////////////////////////////////////////////////////////////////
 
 // Simplex2D returns the 2D simplex noise at position p.
-func Simplex2D(p plane.XY, grad []plane.XY) float32 {
+func Simplex2D(p coord.XY, grad []coord.XY) float32 {
 	// Source: "Simplex Noise Demystified" by Stefan Gustavson
 	// http://www.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf
 	// and
@@ -85,7 +85,7 @@ func Simplex2D(p plane.XY, grad []plane.XY) float32 {
 		n0 = 0.0
 	} else {
 		t0 *= t0
-		n0 = t0 * t0 * (grad[gi0].Dot(plane.XY{dx0, dy0}))
+		n0 = t0 * t0 * (grad[gi0].Dot(coord.XY{dx0, dy0}))
 	}
 
 	var t1 = 0.5 - x1*x1 - y1*y1
@@ -93,7 +93,7 @@ func Simplex2D(p plane.XY, grad []plane.XY) float32 {
 		n1 = 0.0
 	} else {
 		t1 *= t1
-		n1 = t1 * t1 * (grad[gi1].Dot(plane.XY{x1, y1}))
+		n1 = t1 * t1 * (grad[gi1].Dot(coord.XY{x1, y1}))
 	}
 
 	var t2 = 0.5 - x2*x2 - y2*y2
@@ -101,7 +101,7 @@ func Simplex2D(p plane.XY, grad []plane.XY) float32 {
 		n2 = 0.0
 	} else {
 		t2 *= t2
-		n2 = t2 * t2 * (grad[gi2].Dot(plane.XY{x2, y2}))
+		n2 = t2 * t2 * (grad[gi2].Dot(coord.XY{x2, y2}))
 	}
 
 	// Add contributions from each corner to get the final noise value.
@@ -114,7 +114,7 @@ func Simplex2D(p plane.XY, grad []plane.XY) float32 {
 
 // SimplexAxial returns the 2D simplex noise at position (q, r), expressed
 // in axial coordinates.
-func SimplexAxial(q, r float32, grad []plane.XY) float32 {
+func SimplexAxial(q, r float32, grad []coord.XY) float32 {
 	// Source: "Simplex Noise Demystified" by Stefan Gustavson
 	// http://www.itn.liu.se/~stegu/simplexnoise/simplexnoise.pdf
 	// and
@@ -172,7 +172,7 @@ func SimplexAxial(q, r float32, grad []plane.XY) float32 {
 		n0 = 0.0
 	} else {
 		t0 *= t0
-		n0 = t0 * t0 * (grad[gi0].Dot(plane.XY{dx0, dy0}))
+		n0 = t0 * t0 * (grad[gi0].Dot(coord.XY{dx0, dy0}))
 	}
 
 	var t1 = 0.5 - x1*x1 - y1*y1
@@ -180,7 +180,7 @@ func SimplexAxial(q, r float32, grad []plane.XY) float32 {
 		n1 = 0.0
 	} else {
 		t1 *= t1
-		n1 = t1 * t1 * (grad[gi1].Dot(plane.XY{x1, y1}))
+		n1 = t1 * t1 * (grad[gi1].Dot(coord.XY{x1, y1}))
 	}
 
 	var t2 = 0.5 - x2*x2 - y2*y2
@@ -188,7 +188,7 @@ func SimplexAxial(q, r float32, grad []plane.XY) float32 {
 		n2 = 0.0
 	} else {
 		t2 *= t2
-		n2 = t2 * t2 * (grad[gi2].Dot(plane.XY{x2, y2}))
+		n2 = t2 * t2 * (grad[gi2].Dot(coord.XY{x2, y2}))
 	}
 
 	// Add contributions from each corner to get the final noise value.

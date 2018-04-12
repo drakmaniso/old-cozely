@@ -4,7 +4,7 @@
 package input
 
 import (
-	"github.com/cozely/cozely/plane"
+	coordi "github.com/cozely/cozely/coord"
 )
 
 type CoordID uint32
@@ -16,12 +16,12 @@ var coords struct {
 	name []string
 
 	// For each device, a list of coords
-	byDevice [][]coord
+	byDevice [][]coordinates
 }
 
-type coord struct {
+type coordinates struct {
 	active bool
-	value  plane.XY
+	value  coordi.XY
 }
 
 func Coord(name string) CoordID {
@@ -64,6 +64,6 @@ func (a CoordID) Active(d DeviceID) bool {
 	return devices.coords[d][a].active
 }
 
-func (a CoordID) Coord(d DeviceID) plane.XY {
+func (a CoordID) Coord(d DeviceID) coordi.XY {
 	return devices.coords[d][a].value
 }

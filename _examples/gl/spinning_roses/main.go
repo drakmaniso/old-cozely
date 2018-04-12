@@ -8,11 +8,11 @@ package main
 import (
 	"math/rand"
 
+	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
 
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/colour"
-	"github.com/cozely/cozely/plane"
 	"github.com/cozely/cozely/x/gl"
 )
 
@@ -50,12 +50,12 @@ var perFrame struct {
 // Instance Buffer
 
 var roses [64]struct {
-	position    plane.Coord `layout:"0" divisor:"1"`
-	size        float32     `layout:"1"`
-	numerator   int32       `layout:"2"`
-	denominator int32       `layout:"3"`
-	offset      float32     `layout:"4"`
-	speed       float32     `layout:"5"`
+	position    coord.XY `layout:"0" divisor:"1"`
+	size        float32  `layout:"1"`
+	numerator   int32    `layout:"2"`
+	denominator int32    `layout:"3"`
+	offset      float32  `layout:"4"`
+	speed       float32  `layout:"5"`
 }
 
 const nbPoints int32 = 512
@@ -154,8 +154,8 @@ func (loop) Render() error {
 
 func resize() {
 	s := cozely.WindowSize()
-	perFrame.ratio = float32(s.X) / float32(s.Y)
-	gl.Viewport(0, 0, int32(s.X), int32(s.Y))
+	perFrame.ratio = float32(s.C) / float32(s.R)
+	gl.Viewport(0, 0, int32(s.C), int32(s.R))
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -178,7 +178,7 @@ func randomizeRosesData() {
 ////////////////////////////////////////////////////////////////////////////////
 
 // func rose(nbPoints int, num int, den int, offset float32) []perVertex {
-// 	// var m = []perVertex{{plane.Coord{0.0, 0.0}, colour.LRGB{0.9, 0.9, 0.9}}}
+// 	// var m = []perVertex{{coord.XY{0.0, 0.0}, colour.LRGB{0.9, 0.9, 0.9}}}
 // 	var m = []perVertex{}
 // 	for i := den * nbPoints; i >= 0; i-- {
 // 		var k = float32(num) / float32(den)

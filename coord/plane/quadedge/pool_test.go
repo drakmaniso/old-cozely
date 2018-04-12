@@ -3,7 +3,7 @@ package quadedge_test
 import (
 	"testing"
 
-	"github.com/cozely/cozely/plane/quadedge"
+	"github.com/cozely/cozely/coord/plane/quadedge"
 )
 
 ////////////////////////////////////////////////////////////////////////////////

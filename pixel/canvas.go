@@ -7,10 +7,10 @@ import (
 	"errors"
 	"unsafe"
 
+	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/internal"
 	"github.com/cozely/cozely/palette"
-	"github.com/cozely/cozely/plane"
 	"github.com/cozely/cozely/x/gl"
 )
 
@@ -22,10 +22,10 @@ type canvas struct {
 	depth         gl.Renderbuffer
 	commandsICBO  gl.IndirectBuffer
 	parametersTBO gl.BufferTexture
-	target        plane.CR
+	target        coord.CR
 	autozoom      bool
-	origin        plane.CR // Offset when there is a border around the screen
-	size          plane.CR
+	origin        coord.CR // Offset when there is a border around the screen
+	size          coord.CR
 	pixel         int16
 	commands      []gl.DrawIndirectCommand
 	parameters    []int16
@@ -49,7 +49,7 @@ func Canvas(o ...CanvasOption) CanvasID {
 	canvases = append(canvases, canvas{})
 
 	s := &canvases[cv]
-	s.target = plane.CR{640, 360}
+	s.target = coord.CR{640, 360}
 	s.pixel = 2
 	s.commands = make([]gl.DrawIndirectCommand, 0, maxCommandCount)
 	s.parameters = make([]int16, 0, maxParamCount)
@@ -84,7 +84,7 @@ func (cv CanvasID) createBuffer() {
 
 func (cv CanvasID) autoresize() {
 	s := &canvases[cv]
-	win := plane.CR{internal.Window.Width, internal.Window.Height}
+	win := coord.CR{internal.Window.Width, internal.Window.Height}
 
 	if s.autozoom {
 		// Find best fit for pixel size
@@ -208,7 +208,7 @@ func (cv CanvasID) Clear(color palette.Index) {
 ////////////////////////////////////////////////////////////////////////////////
 
 // Size returns the current dimension of the canvas (in canvas pixels).
-func (cv CanvasID) Size() plane.CR {
+func (cv CanvasID) Size() coord.CR {
 	return canvases[cv].size
 }
 
@@ -220,7 +220,7 @@ func (cv CanvasID) PixelSize() int16 {
 ////////////////////////////////////////////////////////////////////////////////
 
 // Mouse returns the mouse position on the canvas.
-func (cv CanvasID) Mouse() plane.CR {
+func (cv CanvasID) Mouse() coord.CR {
 	m := input.Cursor.Position()
 	return m.Minus(canvases[cv].origin).Slash(canvases[cv].pixel)
 }

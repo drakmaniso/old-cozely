@@ -7,10 +7,10 @@ import (
 	"testing"
 
 	"github.com/cozely/cozely"
+	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/palette"
 	"github.com/cozely/cozely/pixel"
-	"github.com/cozely/cozely/plane"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -38,7 +38,7 @@ var cmdBindings = input.Bindings{
 
 var cmdScreen = pixel.Canvas(pixel.TargetResolution(128, 128))
 
-var points = []plane.CR{
+var points = []coord.CR{
 	{4, 4},
 	{4 + 1, 4 + 20},
 	{4 + 1 + 20, 4 + 20 - 1},

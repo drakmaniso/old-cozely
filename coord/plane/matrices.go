@@ -3,6 +3,8 @@
 
 package plane
 
+import "github.com/cozely/cozely/coord"
+
 ////////////////////////////////////////////////////////////////////////////////
 
 // Matrix represents a transformation matrix.
@@ -46,8 +48,8 @@ func (m Matrix) Times(o Matrix) Matrix {
 ////////////////////////////////////////////////////////////////////////////////
 
 // Translation returns the translation vector of the transformation matrix.
-func (m Matrix) Translation() XY {
-	return XY{m[2][0], m[2][1]}
+func (m Matrix) Translation() coord.XY {
+	return coord.XY{m[2][0], m[2][1]}
 }
 
 // WithoutTranslation returns the transformation matrix with the translation

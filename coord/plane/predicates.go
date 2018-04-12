@@ -3,12 +3,14 @@
 
 package plane
 
+import "github.com/cozely/cozely/coord"
+
 ////////////////////////////////////////////////////////////////////////////////
 
 // Orientation returns a psitive value if the triangle a b c is in
 // counter-clockwise order, a negative value if it is in clockwise order, and a
 // null value if a b and c are colinear.
-func Orientation(a, b, c XY) float32 {
+func Orientation(a, b, c coord.XY) float32 {
 	A, B, C := a.XY64(), b.XY64(), c.XY64()
 	// Compute the determinant of the following matrice:
 	//   | a.X  a.Y   1 |
@@ -19,7 +21,7 @@ func Orientation(a, b, c XY) float32 {
 }
 
 // IsCCW returns true if a, b and c are in counter-clockwise order.
-func IsCCW(a, b, c XY) bool {
+func IsCCW(a, b, c coord.XY) bool {
 	A, B, C := a.XY64(), b.XY64(), c.XY64()
 	// Compute the determinant of the following matrice:
 	//   | a.X  a.Y   1 |
@@ -32,7 +34,7 @@ func IsCCW(a, b, c XY) bool {
 ////////////////////////////////////////////////////////////////////////////////
 
 // InTriangle returns true if p is inside the triangle a b c.
-func InTriangle(a, b, c XY, p XY) bool {
+func InTriangle(a, b, c coord.XY, p coord.XY) bool {
 	A, B, C, P := a.XY64(), b.XY64(), c.XY64(), p.XY64()
 
 	s := A.Y*C.X - A.X*C.Y + (C.Y-A.Y)*P.X + (A.X-C.X)*P.Y
@@ -54,7 +56,7 @@ func InTriangle(a, b, c XY, p XY) bool {
 
 // InTriangleCCW returns true if p is inside the triangle a b c (which must
 // be in counter-clockwise order).
-func InTriangleCCW(a, b, c XY, p XY) bool {
+func InTriangleCCW(a, b, c coord.XY, p coord.XY) bool {
 	A, B, C, P := a.XY64(), b.XY64(), c.XY64(), p.XY64()
 
 	// Translate to a as origin
@@ -62,7 +64,7 @@ func InTriangleCCW(a, b, c XY, p XY) bool {
 	cc := C.Minus(A)
 	pp := P.Minus(A)
 
-	w := XY64{
+	w := coord.XY64{
 		X: cc.Y*pp.X - cc.X*pp.Y,
 		Y: -bb.Y*pp.X + bb.X*pp.Y,
 	}
@@ -77,7 +79,7 @@ func InTriangleCCW(a, b, c XY, p XY) bool {
 
 // InCircumcircle returns true if p is inside the circumcircle of triangle a b c
 // (which must be in counter-clockwise order)
-func InCircumcircle(a, b, c XY, p XY) bool {
+func InCircumcircle(a, b, c coord.XY, p coord.XY) bool {
 	A, B, C, P := a.XY64(), b.XY64(), c.XY64(), p.XY64()
 
 	return ((P.Y-A.Y)*(B.X-C.X)+(P.X-A.X)*(B.Y-C.Y))*
@@ -89,7 +91,7 @@ func InCircumcircle(a, b, c XY, p XY) bool {
 ////////////////////////////////////////////////////////////////////////////////
 
 // Circumcenter returns the coordinates of the circumcenter of triangle a b c.
-func Circumcenter(a, b, c XY) XY {
+func Circumcenter(a, b, c coord.XY) coord.XY {
 	A, B, C := a.XY64(), b.XY64(), c.XY64()
 
 	// Translate to a as origin
@@ -101,7 +103,7 @@ func Circumcenter(a, b, c XY) XY {
 
 	d := 0.5 / (ba.X*ca.Y - ba.Y*ca.X) //TODO: handle div by zero case
 
-	o := XY64{
+	o := coord.XY64{
 		X: (ca.Y*lba - ba.Y*lca) * d,
 		Y: (ba.X*lca - ca.X*lba) * d,
 	}

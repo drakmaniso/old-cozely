@@ -3,6 +3,8 @@
 
 package space
 
+import "github.com/cozely/cozely/coord"
+
 ////////////////////////////////////////////////////////////////////////////////
 
 // Matrix represents a transformation matrix.
@@ -53,8 +55,8 @@ func (m Matrix) Times(o Matrix) Matrix {
 ////////////////////////////////////////////////////////////////////////////////
 
 // Translation returns the translation vector of the transformation matrix.
-func (m Matrix) Translation() XYZ {
-	return XYZ{m[3][0], m[3][1], m[3][2]}
+func (m Matrix) Translation() coord.XYZ {
+	return coord.XYZ{m[3][0], m[3][1], m[3][2]}
 }
 
 // WithoutTranslation returns the transformation matrix with the translation

@@ -4,8 +4,8 @@
 package input
 
 import (
+	coordi "github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/internal"
-	"github.com/cozely/cozely/plane"
 )
 
 type cursor struct{}
@@ -15,7 +15,7 @@ var Cursor cursor
 
 var (
 	cursorhidden bool
-	cursordelta  plane.CR
+	cursordelta  coordi.CR
 )
 
 func (cursor) Active(DeviceID) bool {
@@ -27,7 +27,7 @@ func (cursor) deactivate(DeviceID) {}
 func (cursor) activate(DeviceID, binding) {}
 
 func (cursor) newframe(DeviceID) {
-	cursordelta = plane.CR{
+	cursordelta = coordi.CR{
 		C: internal.MouseDeltaX,
 		R: internal.MouseDeltaY,
 	}
@@ -35,14 +35,14 @@ func (cursor) newframe(DeviceID) {
 	internal.MouseDeltaY = 0
 }
 
-func (cursor) Position() plane.CR {
-	return plane.CR{
+func (cursor) Position() coordi.CR {
+	return coordi.CR{
 		C: internal.MousePositionX,
 		R: internal.MousePositionY,
 	}
 }
 
-func (cursor) Delta() plane.CR {
+func (cursor) Delta() coordi.CR {
 	return cursordelta
 }
 

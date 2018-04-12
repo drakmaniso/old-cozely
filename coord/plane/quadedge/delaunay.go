@@ -5,13 +5,14 @@ package quadedge
 import (
 	"sort"
 
-	"github.com/cozely/cozely/plane"
+	"github.com/cozely/cozely/coord"
+	"github.com/cozely/cozely/coord/plane"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
 
 // Delaunay returns the delaunay triangulation of a set of points.
-func Delaunay(points []plane.XY) Edge {
+func Delaunay(points []coord.XY) Edge {
 	// Construct indices and remove duplicates
 	v := make([]uint32, 0, len(points))
 	for i := range points {
@@ -51,7 +52,7 @@ func Delaunay(points []plane.XY) Edge {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func delaunay(points []plane.XY, p *Pool, sub []uint32) (l, r Edge) {
+func delaunay(points []coord.XY, p *Pool, sub []uint32) (l, r Edge) {
 	if len(sub) == 2 {
 		// Create an edge connecting sub[0] to sub[1]
 		a := New(p)
@@ -156,19 +157,19 @@ loop:
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func inCircle(points []plane.XY, a, b, c, d uint32) bool {
+func inCircle(points []coord.XY, a, b, c, d uint32) bool {
 	return plane.InCircumcircle(points[a], points[b], points[c], points[d])
 }
 
-func rightOf(points []plane.XY, p uint32, e Edge) bool {
+func rightOf(points []coord.XY, p uint32, e Edge) bool {
 	return plane.IsCCW(points[p], points[e.Dest()], points[e.Orig()])
 }
 
-func leftOf(points []plane.XY, p uint32, e Edge) bool {
+func leftOf(points []coord.XY, p uint32, e Edge) bool {
 	return plane.IsCCW(points[p], points[e.Orig()], points[e.Dest()])
 }
 
-func valid(points []plane.XY, e, f Edge) bool {
+func valid(points []coord.XY, e, f Edge) bool {
 	return rightOf(points, e.Dest(), f)
 }
 

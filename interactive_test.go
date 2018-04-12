@@ -2,10 +2,10 @@ package cozely_test
 
 import (
 	"github.com/cozely/cozely"
+	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/palette"
 	"github.com/cozely/cozely/pixel"
-	"github.com/cozely/cozely/plane"
 )
 
 // Input Bindings //////////////////////////////////////////////////////////////
@@ -63,7 +63,7 @@ func (interactive) Update() error {
 func (interactive) Render() error {
 	screen.Clear(0)
 
-	margin := plane.CR{16, 12}
+	margin := coord.CR{16, 12}
 	screen.Box(4, 9, 4, 0, margin, screen.Size().Minus(margin))
 
 	screen.Display()

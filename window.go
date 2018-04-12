@@ -4,8 +4,8 @@
 package cozely
 
 import (
+	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/internal"
-	"github.com/cozely/cozely/plane"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -21,8 +21,8 @@ func HasMouseFocus() bool {
 }
 
 // WindowSize returns the size of the window in (screen) pixels.
-func WindowSize() plane.CR {
-	return plane.CR{internal.Window.Width, internal.Window.Height}
+func WindowSize() coord.CR {
+	return coord.CR{internal.Window.Width, internal.Window.Height}
 }
 
 ////////////////////////////////////////////////////////////////////////////////

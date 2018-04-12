@@ -3,7 +3,10 @@
 
 package plane
 
-import "github.com/cozely/cozely/x/math32"
+import (
+	"github.com/cozely/cozely/coord"
+	"github.com/cozely/cozely/x/math32"
+)
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -20,8 +23,8 @@ func Identity() Matrix {
 
 // Apply a tranformation matrix to a vector (i.e. returns matrix multiplied by
 // column vector).
-func Apply(m Matrix, v XYZ) XYZ {
-	return XYZ{
+func Apply(m Matrix, v coord.XYZ) coord.XYZ {
+	return coord.XYZ{
 		X: m[0][0]*v.X + m[1][0]*v.Y + m[2][0]*v.Z,
 		Y: m[0][1]*v.X + m[1][1]*v.Y + m[2][1]*v.Z,
 		Z: m[0][2]*v.X + m[1][2]*v.Y + m[2][2]*v.Z,
@@ -31,7 +34,7 @@ func Apply(m Matrix, v XYZ) XYZ {
 ////////////////////////////////////////////////////////////////////////////////
 
 // Translation by a vector.
-func Translation(t XY) Matrix {
+func Translation(t coord.XY) Matrix {
 
 	return Matrix{
 		{1, 0, 0},
@@ -57,7 +60,7 @@ func Rotation(angle float32) Matrix {
 ////////////////////////////////////////////////////////////////////////////////
 
 // RotationAround a point.
-func RotationAround(angle float32, center XY) Matrix {
+func RotationAround(angle float32, center coord.XY) Matrix {
 	c := math32.Cos(angle)
 	s := math32.Sin(angle)
 
@@ -73,7 +76,7 @@ func RotationAround(angle float32, center XY) Matrix {
 ////////////////////////////////////////////////////////////////////////////////
 
 // Scaling and/or mirror along both axis.
-func Scaling(s XY) Matrix {
+func Scaling(s coord.XY) Matrix {
 	return Matrix{
 		{s.X, 0, 0},
 		{0, s.Y, 0},
@@ -84,7 +87,7 @@ func Scaling(s XY) Matrix {
 ////////////////////////////////////////////////////////////////////////////////
 
 // ScalingAround a point (and/or mirror).
-func ScalingAround(s XY, center XY) Matrix {
+func ScalingAround(s coord.XY, center coord.XY) Matrix {
 	sx, sy := s.X, s.Y
 	cx, cy := center.X, center.Y
 
@@ -98,7 +101,7 @@ func ScalingAround(s XY, center XY) Matrix {
 ////////////////////////////////////////////////////////////////////////////////
 
 // Shearing along both axis.
-func Shearing(s XY) Matrix {
+func Shearing(s coord.XY) Matrix {
 	return Matrix{
 		{1, s.Y, 0},
 		{s.X, 1, 0},
@@ -113,7 +116,7 @@ func Shearing(s XY) Matrix {
 func Viewport(zoom, aspectRatio float32) Matrix {
 	height := zoom / 2
 	width := height * aspectRatio
-	return Scaling(XY{X: width, Y: height})
+	return Scaling(coord.XY{X: width, Y: height})
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -6,8 +6,8 @@ package pixel
 import (
 	"unsafe"
 
+	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/palette"
-	"github.com/cozely/cozely/plane"
 	"github.com/cozely/cozely/x/gl"
 )
 
@@ -26,14 +26,14 @@ const (
 ////////////////////////////////////////////////////////////////////////////////
 
 // Picture adds a command to show a picture on the canvas.
-func (cv CanvasID) Picture(p PictureID, depth int16, pos plane.CR) {
+func (cv CanvasID) Picture(p PictureID, depth int16, pos coord.CR) {
 	cv.appendCommand(cmdPicture, 4, 1, int16(p), depth, pos.C, pos.R)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 // Point adds a command to draw a point on the canvas.
-func (cv CanvasID) Point(color palette.Index, depth int16, pos plane.CR) {
+func (cv CanvasID) Point(color palette.Index, depth int16, pos coord.CR) {
 	cv.appendCommand(cmdPoint, 3, 1, int16(color), depth, pos.C, pos.R)
 }
 
@@ -42,7 +42,7 @@ func (cv CanvasID) Point(color palette.Index, depth int16, pos plane.CR) {
 // Lines adds a command to draw a line strip on the canvas. A line strip is a
 // succession of points connected by lines; all points and lines share the same
 // depth and color.
-func (cv CanvasID) Lines(c palette.Index, depth int16, strip ...plane.CR) {
+func (cv CanvasID) Lines(c palette.Index, depth int16, strip ...coord.CR) {
 	if len(strip) < 2 {
 		return
 	}
@@ -58,7 +58,7 @@ func (cv CanvasID) Lines(c palette.Index, depth int16, strip ...plane.CR) {
 // Triangles adds a command to draw a triangle strip on the canvas. Triangle
 // strip have the same meaning than in OpenGL. All points and triangles share
 // the same depth and color.
-func (cv CanvasID) Triangles(c palette.Index, depth int16, strip ...plane.CR) {
+func (cv CanvasID) Triangles(c palette.Index, depth int16, strip ...coord.CR) {
 	if len(strip) < 3 {
 		return
 	}
@@ -72,7 +72,7 @@ func (cv CanvasID) Triangles(c palette.Index, depth int16, strip ...plane.CR) {
 ////////////////////////////////////////////////////////////////////////////////
 
 // Box adds a command to draw a box on the canvas.
-func (cv CanvasID) Box(fg, bg palette.Index, corner int16, depth int16, a, b plane.CR) {
+func (cv CanvasID) Box(fg, bg palette.Index, corner int16, depth int16, a, b coord.CR) {
 	if b.C < a.C {
 		a.C, b.C = b.C, a.C
 	}

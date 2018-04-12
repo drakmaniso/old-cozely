@@ -3,56 +3,57 @@
 
 package main
 
-////////////////////////////////////////////////////////////////////////////////
+import (
+	"github.com/cozely/cozely/coord"
+)
 
-import "github.com/cozely/cozely/space"
 
 ////////////////////////////////////////////////////////////////////////////////
 
 func cube() mesh {
 	return mesh{
 		// Front Face
-		{space.Coord{-0.5, -0.5, +0.5}},
-		{space.Coord{+0.5, +0.5, +0.5}},
-		{space.Coord{-0.5, +0.5, +0.5}},
-		{space.Coord{-0.5, -0.5, +0.5}},
-		{space.Coord{+0.5, -0.5, +0.5}},
-		{space.Coord{+0.5, +0.5, +0.5}},
+		{coord.XYZ{-0.5, -0.5, +0.5}},
+		{coord.XYZ{+0.5, +0.5, +0.5}},
+		{coord.XYZ{-0.5, +0.5, +0.5}},
+		{coord.XYZ{-0.5, -0.5, +0.5}},
+		{coord.XYZ{+0.5, -0.5, +0.5}},
+		{coord.XYZ{+0.5, +0.5, +0.5}},
 		// Back Face
-		{space.Coord{-0.5, -0.5, -0.5}},
-		{space.Coord{-0.5, +0.5, -0.5}},
-		{space.Coord{+0.5, +0.5, -0.5}},
-		{space.Coord{-0.5, -0.5, -0.5}},
-		{space.Coord{+0.5, +0.5, -0.5}},
-		{space.Coord{+0.5, -0.5, -0.5}},
+		{coord.XYZ{-0.5, -0.5, -0.5}},
+		{coord.XYZ{-0.5, +0.5, -0.5}},
+		{coord.XYZ{+0.5, +0.5, -0.5}},
+		{coord.XYZ{-0.5, -0.5, -0.5}},
+		{coord.XYZ{+0.5, +0.5, -0.5}},
+		{coord.XYZ{+0.5, -0.5, -0.5}},
 		// Right Face
-		{space.Coord{+0.5, -0.5, +0.5}},
-		{space.Coord{+0.5, +0.5, -0.5}},
-		{space.Coord{+0.5, +0.5, +0.5}},
-		{space.Coord{+0.5, -0.5, +0.5}},
-		{space.Coord{+0.5, -0.5, -0.5}},
-		{space.Coord{+0.5, +0.5, -0.5}},
+		{coord.XYZ{+0.5, -0.5, +0.5}},
+		{coord.XYZ{+0.5, +0.5, -0.5}},
+		{coord.XYZ{+0.5, +0.5, +0.5}},
+		{coord.XYZ{+0.5, -0.5, +0.5}},
+		{coord.XYZ{+0.5, -0.5, -0.5}},
+		{coord.XYZ{+0.5, +0.5, -0.5}},
 		// Left Face
-		{space.Coord{-0.5, -0.5, +0.5}},
-		{space.Coord{-0.5, +0.5, +0.5}},
-		{space.Coord{-0.5, +0.5, -0.5}},
-		{space.Coord{-0.5, -0.5, +0.5}},
-		{space.Coord{-0.5, +0.5, -0.5}},
-		{space.Coord{-0.5, -0.5, -0.5}},
+		{coord.XYZ{-0.5, -0.5, +0.5}},
+		{coord.XYZ{-0.5, +0.5, +0.5}},
+		{coord.XYZ{-0.5, +0.5, -0.5}},
+		{coord.XYZ{-0.5, -0.5, +0.5}},
+		{coord.XYZ{-0.5, +0.5, -0.5}},
+		{coord.XYZ{-0.5, -0.5, -0.5}},
 		// Bottom Face
-		{space.Coord{-0.5, -0.5, +0.5}},
-		{space.Coord{-0.5, -0.5, -0.5}},
-		{space.Coord{+0.5, -0.5, +0.5}},
-		{space.Coord{-0.5, -0.5, -0.5}},
-		{space.Coord{+0.5, -0.5, -0.5}},
-		{space.Coord{+0.5, -0.5, +0.5}},
+		{coord.XYZ{-0.5, -0.5, +0.5}},
+		{coord.XYZ{-0.5, -0.5, -0.5}},
+		{coord.XYZ{+0.5, -0.5, +0.5}},
+		{coord.XYZ{-0.5, -0.5, -0.5}},
+		{coord.XYZ{+0.5, -0.5, -0.5}},
+		{coord.XYZ{+0.5, -0.5, +0.5}},
 		// Top Face
-		{space.Coord{-0.5, +0.5, +0.5}},
-		{space.Coord{+0.5, +0.5, +0.5}},
-		{space.Coord{-0.5, +0.5, -0.5}},
-		{space.Coord{-0.5, +0.5, -0.5}},
-		{space.Coord{+0.5, +0.5, +0.5}},
-		{space.Coord{+0.5, +0.5, -0.5}},
+		{coord.XYZ{-0.5, +0.5, +0.5}},
+		{coord.XYZ{+0.5, +0.5, +0.5}},
+		{coord.XYZ{-0.5, +0.5, -0.5}},
+		{coord.XYZ{-0.5, +0.5, -0.5}},
+		{coord.XYZ{+0.5, +0.5, +0.5}},
+		{coord.XYZ{+0.5, +0.5, -0.5}},
 	}
 }
 

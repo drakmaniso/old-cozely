@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/cozely/cozely/space"
+	"github.com/cozely/cozely/coord"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -16,7 +16,7 @@ func ExamplePerlin3D() {
 	for z := 0; z < 4; z++ {
 		for y := 0; y < 10; y++ {
 			for x := 0; x < 10; x++ {
-				v := Perlin3D(space.XYZ{X: float32(x), Y: float32(y), Z: float32(z * 10)}.Slash(10.0))
+				v := Perlin3D(coord.XYZ{X: float32(x), Y: float32(y), Z: float32(z * 10)}.Slash(10.0))
 				iv := uint8(v*50.0 + 50.0)
 				fmt.Printf("%2d", iv)
 				if x < 9 {
@@ -194,7 +194,7 @@ func TestPerlin3D(t *testing.T) {
 	for z := 0; z < 10; z++ {
 		for y := 0; y < 10; y++ {
 			for x := 0; x < 10; x++ {
-				outputPerlin3D[x][y][z] = Perlin3D(space.XYZ{X: float32(x), Y: float32(y), Z: float32(z * 10)}.Slash(10.0))
+				outputPerlin3D[x][y][z] = Perlin3D(coord.XYZ{X: float32(x), Y: float32(y), Z: float32(z * 10)}.Slash(10.0))
 			}
 		}
 	}

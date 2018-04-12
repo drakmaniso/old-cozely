@@ -10,10 +10,10 @@ import (
 	"testing"
 
 	"github.com/cozely/cozely"
+	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/palette"
 	"github.com/cozely/cozely/pixel"
-	"github.com/cozely/cozely/plane"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -80,7 +80,7 @@ const (
 )
 
 var hidden bool
-var mousepos, mousedelta plane.CR
+var mousepos, mousedelta coord.CR
 var openmenu, closemenu, instopenmenu, instclosemenu, inventory, options, jump bool
 
 ////////////////////////////////////////////////////////////////////////////////

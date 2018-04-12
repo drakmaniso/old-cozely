@@ -25,7 +25,7 @@ var devices struct {
 	// For each device/action combination
 	bools  [][]boolean
 	floats [][]float
-	coords [][]coord
+	coords [][]coordinates
 	deltas [][]delta
 
 	// For each device/context combination, the list of bindings
@@ -61,7 +61,7 @@ func addDevice(name string) DeviceID {
 	devices.floatbinds = append(devices.floatbinds, make([][]binding, n))
 
 	n = len(coords.name)
-	devices.coords = append(devices.coords, make([]coord, n))
+	devices.coords = append(devices.coords, make([]coordinates, n))
 	devices.coordbinds = append(devices.coordbinds, make([][]binding, n))
 
 	n = len(deltas.name)

@@ -7,10 +7,10 @@ import (
 	"testing"
 
 	"github.com/cozely/cozely"
+	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/palette"
 	"github.com/cozely/cozely/pixel"
-	"github.com/cozely/cozely/plane"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -87,7 +87,7 @@ func (curLoop) Render() error {
 	cursor.WriteRune('a')
 	cursor.Position = cursor.Position.Pluss(3, 1)
 	cursor.WriteRune('r')
-	cursor.Position = plane.CR{32, 132}
+	cursor.Position = coord.CR{32, 132}
 	cursor.Write([]byte("Boo\n"))
 	cursor.Write([]byte("Choo"))
 

@@ -4,7 +4,7 @@
 package main
 
 import (
-	"github.com/cozely/cozely/plane"
+	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/x/gl"
 
 	"github.com/cozely/cozely/_examples/match3/ecs"
@@ -38,7 +38,7 @@ func (loop) Render() error {
 			if grid.PositionOf(e) == current || e.Has(ecs.MatchFlag) {
 				p = tilesPict[c].big
 			}
-			screen.Picture(p, 0, plane.CR{x, y})
+			screen.Picture(p, 0, coord.CR{x, y})
 		}
 	}
 

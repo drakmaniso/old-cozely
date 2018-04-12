@@ -2,7 +2,6 @@
 // Licensed under a simplified BSD license (see LICENSE file).
 
 /*
-Package plane implements mathematical objects and operations in the euclidean
-plane.
+Package coord implements mathematical objects and operations in the plane.
 */
-package plane
+package coord

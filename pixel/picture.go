@@ -6,7 +6,7 @@ package pixel
 import (
 	"errors"
 
-	"github.com/cozely/cozely/plane"
+	"github.com/cozely/cozely/coord"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -44,8 +44,8 @@ func Picture(path string) PictureID {
 ////////////////////////////////////////////////////////////////////////////////
 
 // Size returns the width and height of the picture.
-func (p PictureID) Size() plane.CR {
-	return plane.CR{pictureMap[p].w, pictureMap[p].h}
+func (p PictureID) Size() coord.CR {
+	return coord.CR{pictureMap[p].w, pictureMap[p].h}
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -4,7 +4,7 @@
 package input
 
 import (
-	"github.com/cozely/cozely/plane"
+	coordi "github.com/cozely/cozely/coord"
 )
 
 type DeltaID uint32
@@ -21,7 +21,7 @@ var deltas struct {
 
 type delta struct {
 	active bool
-	value  plane.XY
+	value  coordi.XY
 }
 
 func Delta(name string) DeltaID {
@@ -64,6 +64,6 @@ func (a DeltaID) Active(d DeviceID) bool {
 	return devices.deltas[d][a].active
 }
 
-func (a DeltaID) Delta(d DeviceID) plane.XY {
+func (a DeltaID) Delta(d DeviceID) coordi.XY {
 	return devices.deltas[d][a].value
 }

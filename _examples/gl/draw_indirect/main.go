@@ -8,6 +8,7 @@ package main
 import (
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/colour"
+	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/space"
 	"github.com/cozely/cozely/x/gl"
@@ -102,7 +103,7 @@ var draws = []struct {
 
 // Vertex buffer
 type mesh []struct {
-	position space.Coord `layout:"0"`
+	position coord.XYZ `layout:"0"`
 }
 
 // Tranformation matrices
@@ -114,7 +115,7 @@ var (
 
 // Cube state
 var (
-	position   space.Coord
+	position   coord.XYZ
 	yaw, pitch float32
 )
 
@@ -163,7 +164,7 @@ func (loop) Enter() error {
 	vbo := gl.NewVertexBuffer(cube(), 0)
 
 	// Initialize worldFromObject and viewFromWorld matrices
-	position = space.Coord{0, 0, 0}
+	position = coord.XYZ{0, 0, 0}
 	yaw = -0.6
 	pitch = 0.3
 	computeWorldFromObject()
@@ -212,8 +213,8 @@ func (loop) Render() error {
 
 func resize() {
 	s := cozely.WindowSize()
-	gl.Viewport(0, 0, int32(s.X), int32(s.Y))
-	r := float32(s.X) / float32(s.Y)
+	gl.Viewport(0, 0, int32(s.C), int32(s.R))
+	r := float32(s.C) / float32(s.R)
 	screenFromView = space.Perspective(math32.Pi/4, r, 0.001, 1000.0)
 }
 

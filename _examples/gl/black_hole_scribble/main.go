@@ -10,8 +10,8 @@ import (
 
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/colour"
+	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
-	"github.com/cozely/cozely/plane"
 	"github.com/cozely/cozely/x/gl"
 	"github.com/cozely/cozely/x/math32"
 )
@@ -43,13 +43,13 @@ var (
 
 // Uniform buffer
 var perFrame struct {
-	ratio    plane.Coord
+	ratio    coord.XY
 	Rotation float32
 }
 
 // Vertex buffer
 var points [512]struct {
-	Position plane.Coord `layout:"0"`
+	Position coord.XY `layout:"0"`
 }
 
 // Application State
@@ -137,7 +137,7 @@ func (loop) React() error {
 
 func (loop) Update() error {
 	for i, pt := range points {
-		points[i].Position = plane.Coord{
+		points[i].Position = coord.XY{
 			pt.Position.X + speeds[i]*math32.Cos(angles[i]) + jitter*(rand.Float32()-0.5),
 			pt.Position.Y + speeds[i]*math32.Sin(angles[i]) + jitter*(rand.Float32()-0.5),
 		}
@@ -187,10 +187,10 @@ func (loop) Render() error {
 func setupPoints() {
 	n := float32(3 + rand.Intn(13))
 	for i := range points {
-		points[i].Position = plane.Coord{rand.Float32(), rand.Float32()}
+		points[i].Position = coord.XY{rand.Float32(), rand.Float32()}
 		a := math32.Floor(rand.Float32() * n)
 		a = a * (2.0 * math32.Pi) / n
-		points[i].Position = plane.Coord{0.75 * math32.Cos(a), 0.75 * math32.Sin(a)}
+		points[i].Position = coord.XY{0.75 * math32.Cos(a), 0.75 * math32.Sin(a)}
 		angles[i] = a + float32(i)*math32.Pi/float32(len(points)) + math32.Pi/2.0
 		speeds[i] = 0.004 * rand.Float32()
 	}
@@ -204,13 +204,13 @@ func setupPoints() {
 func resize() {
 	setupPoints()
 
-	s := cozely.WindowSize().Cartesian()
+	s := cozely.WindowSize().XY()
 
 	// Compute ratio
 	if s.X > s.Y {
-		perFrame.ratio = plane.Coord{s.Y / s.X, 1.0}
+		perFrame.ratio = coord.XY{s.Y / s.X, 1.0}
 	} else {
-		perFrame.ratio = plane.Coord{1.0, s.X / s.Y}
+		perFrame.ratio = coord.XY{1.0, s.X / s.Y}
 	}
 	gl.Viewport(0, 0, int32(s.X), int32(s.Y))
 }

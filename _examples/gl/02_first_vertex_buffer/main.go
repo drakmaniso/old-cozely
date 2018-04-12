@@ -8,7 +8,7 @@ package main
 import (
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/colour"
-	"github.com/cozely/cozely/plane"
+	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/x/gl"
 )
 
@@ -21,7 +21,7 @@ var (
 
 // Vertex buffer
 type mesh []struct {
-	position plane.Coord `layout:"0"`
+	position coord.XY    `layout:"0"`
 	color    colour.LRGB `layout:"1"`
 }
 
@@ -38,7 +38,7 @@ func main() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-type loop struct {}
+type loop struct{}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -56,9 +56,9 @@ func (loop) Enter() error {
 
 	// Create and fill the vertex buffer
 	triangle = mesh{
-		{plane.Coord{0, 0.65}, colour.LRGB{R: 0.3, G: 0, B: 0.8}},
-		{plane.Coord{-0.65, -0.475}, colour.LRGB{R: 0.8, G: 0.3, B: 0}},
-		{plane.Coord{0.65, -0.475}, colour.LRGB{R: 0, G: 0.6, B: 0.2}},
+		{coord.XY{0, 0.65}, colour.LRGB{R: 0.3, G: 0, B: 0.8}},
+		{coord.XY{-0.65, -0.475}, colour.LRGB{R: 0.8, G: 0.3, B: 0}},
+		{coord.XY{0.65, -0.475}, colour.LRGB{R: 0, G: 0.6, B: 0.2}},
 	}
 	vbo := gl.NewVertexBuffer(triangle, gl.StaticStorage)
 
@@ -102,7 +102,7 @@ func (loop) Render() error {
 
 func resize() {
 	s := cozely.WindowSize()
-	gl.Viewport(0, 0, int32(s.X), int32(s.Y))
+	gl.Viewport(0, 0, int32(s.C), int32(s.R))
 }
 
 ////////////////////////////////////////////////////////////////////////////////

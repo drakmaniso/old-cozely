@@ -7,6 +7,7 @@ package main
 
 import (
 	"github.com/cozely/cozely"
+	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/space"
 	"github.com/cozely/cozely/x/math32"
@@ -19,8 +20,8 @@ func (loop) React() error {
 		cozely.Stop()
 	}
 
-	m := input.Cursor.Delta().Cartesian()
-	s := input.Cursor.Position().Cartesian()
+	m := input.Cursor.Delta().XY()
+	s := input.Cursor.Position().XY()
 
 	if rotate.JustPressed(1) || move.JustPressed(1) || zoom.JustPressed(1) {
 		input.Cursor.Hide()
@@ -67,9 +68,9 @@ func computeWorldFromObject() {
 
 func computeViewFromWorld() {
 	viewFromWorld = space.LookAt(
-		space.Coord{0, 0, 3},
-		space.Coord{0, 0, 0},
-		space.Coord{0, 1, 0},
+		coord.XYZ{0, 0, 3},
+		coord.XYZ{0, 0, 0},
+		coord.XYZ{0, 1, 0},
 	)
 }
 
