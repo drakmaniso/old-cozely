@@ -32,8 +32,6 @@ func Example_interactive() {
 	// Output:
 }
 
-// Game Loop ///////////////////////////////////////////////////////////////////
-
 type interactive struct{}
 
 func (interactive) Enter() error {
@@ -48,6 +46,8 @@ func (interactive) Enter() error {
 func (interactive) Leave() error {
 	return nil
 }
+
+// Game Loop ///////////////////////////////////////////////////////////////////
 
 func (interactive) React() error {
 	if quit.JustPressed(1) {

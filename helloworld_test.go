@@ -15,8 +15,6 @@ func Example_helloWorld() {
 	// Output:
 }
 
-// Game Loop ///////////////////////////////////////////////////////////////////
-
 type loop struct{}
 
 func (loop) Enter() error {
@@ -26,6 +24,8 @@ func (loop) Enter() error {
 }
 
 func (loop) Leave() error { return nil }
+
+// Game Loop ///////////////////////////////////////////////////////////////////
 
 func (loop) React() error { return nil }
 
