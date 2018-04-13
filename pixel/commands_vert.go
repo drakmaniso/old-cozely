@@ -23,6 +23,7 @@ const vec2 corners[4] = vec2[4](
 
 layout(std140, binding = 0) uniform ScreenUBO {
 	vec2 PixelSize;
+	ivec2 CanvasMargin;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -83,7 +84,7 @@ void main(void)
 		UV = vec2(texelFetch(pictureMap, m+1).r, texelFetch(pictureMap, m+2).r);
 		wh = vec2(texelFetch(pictureMap, m+3).r, texelFetch(pictureMap, m+4).r);
 		// Picture quad
-		p = (vec2(x, y) + corners[vertex] * wh) * PixelSize;
+		p = (CanvasMargin + vec2(x, y) + corners[vertex] * wh) * PixelSize;
 		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), floatZ(z), 1);
 		UV += corners[vertex] * wh;
 		break;
@@ -103,7 +104,7 @@ void main(void)
 		UV = vec2(texelFetch(glyphMap, r+1).r, texelFetch(glyphMap, r+2).r);
 		wh = vec2(texelFetch(glyphMap, r+3).r, texelFetch(glyphMap, r+4).r);
 		// Character quad
-		p = (vec2(x, y) + corners[vertex] * wh) * PixelSize;
+		p = (CanvasMargin + vec2(x, y) + corners[vertex] * wh) * PixelSize;
 		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), floatZ(z), 1);
 		UV += corners[vertex] * wh;
 		ColorIndex = uint(c&0xFFFF);
@@ -117,7 +118,7 @@ void main(void)
 		x = texelFetch(parameters, param+2+offset).r;
 		y = texelFetch(parameters, param+3+offset).r;
 		// Position
-		p = (vec2(x, y) + corners[vertex] * vec2(1.5,1.5)) * PixelSize;
+		p = (CanvasMargin + vec2(x, y) + corners[vertex] * vec2(1.5,1.5)) * PixelSize;
 		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), floatZ(z), 1);
 		// Color
 		ColorIndex = uint(c&0xFFFF);
@@ -133,7 +134,7 @@ void main(void)
 		x2 = texelFetch(parameters, param+4+offset).r;
 		y2 = texelFetch(parameters, param+5+offset).r;
 		// Position
-		Box = vec4(x, y, x2, y2);
+		Box = vec4(x+CanvasMargin.x, y+CanvasMargin.y, x2+CanvasMargin.x, y2+CanvasMargin.y);
 		dx = x2-x;
 		dy = y2-y;
 		Flags = uint(abs(dx) < abs(dy)) * steep;
@@ -145,7 +146,7 @@ void main(void)
 			vec2(x2, y2)+n+t,
 			vec2(x2, y2)-n+t
 		);
-		p = (vec2(0.5,0.5) + pts[vertex].xy) * PixelSize;
+		p = (CanvasMargin + vec2(0.5,0.5) + pts[vertex].xy) * PixelSize;
 		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), floatZ(z), 1);
 		if (Flags == steep) {
 			Slope = float(dx)/float(dy);
@@ -163,7 +164,7 @@ void main(void)
 		z = texelFetch(parameters, param+1).r;
 		x = texelFetch(parameters, param+2+offset).r;
 		y = texelFetch(parameters, param+3+offset).r;
-		p = (vec2(0.5,0.5) + vec2(x, y)) * PixelSize;
+		p = (CanvasMargin + vec2(0.5,0.5) + vec2(x, y)) * PixelSize;
 		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), floatZ(z), 1);
 		// Color
 		ColorIndex = uint(c&0xFFFF);
@@ -181,8 +182,8 @@ void main(void)
 		y2 = texelFetch(parameters, param+6+offset).r;
 		wh = vec2(x2 -x+1, y2-y+1);
 		// Position
-		Box = vec4(x, y, x2, y2);
-		p = (vec2(x, y) + corners[vertex] * wh) * PixelSize;
+		Box = vec4(x+CanvasMargin.x, y+CanvasMargin.y, x2+CanvasMargin.x, y2+CanvasMargin.y);
+		p = (CanvasMargin + vec2(x, y) + corners[vertex] * wh) * PixelSize;
 		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), floatZ(z), 1);
 		// Color
 		ColorIndex = uint(c&0xFFFF);

@@ -17,7 +17,8 @@ const (
 ////////////////////////////////////////////////////////////////////////////////
 
 var screenUniforms struct {
-	PixelSize struct{ X, Y float32 }
+	PixelSize    struct{ X, Y float32 }
+	CanvasMargin struct{ X, Y int32 }
 }
 
 var blitUniforms struct {

@@ -21,11 +21,12 @@ type canvas struct {
 	depth         gl.Renderbuffer
 	commandsICBO  gl.IndirectBuffer
 	parametersTBO gl.BufferTexture
-	target        coord.CR
-	autozoom      bool
-	border        coord.CR // the few pixels leftover from window pixels division
+	resolution    coord.CR
+	fixedres      bool
 	size          coord.CR // in canvas pixels
 	pixel         int16    // in window pixels
+	margin        coord.CR // in canvas pixels
+	border        coord.CR // in window pixels (leftover from division by pixel size)
 	commands      []gl.DrawIndirectCommand
 	parameters    []int16
 	cursor        TextCursor
@@ -49,7 +50,7 @@ func Canvas(o ...CanvasOption) CanvasID {
 	canvases = append(canvases, canvas{})
 
 	aa := &canvases[a]
-	aa.target = coord.CR{640, 360}
+	aa.resolution = coord.CR{640, 360}
 	aa.pixel = 2
 	aa.commands = make([]gl.DrawIndirectCommand, 0, maxCommandCount)
 	aa.parameters = make([]int16, 0, maxParamCount)
@@ -86,9 +87,9 @@ func (a CanvasID) autoresize() {
 	aa := &canvases[a]
 	win := coord.CR{internal.Window.Width, internal.Window.Height}
 
-	if aa.autozoom {
+	if aa.fixedres {
 		// Find best fit for pixel size
-		p := win.Slashcw(aa.target)
+		p := win.Slashcw(aa.resolution)
 		if p.C < p.R {
 			aa.pixel = p.C
 		} else {
@@ -103,7 +104,12 @@ func (a CanvasID) autoresize() {
 	aa.size = win.Slash(aa.pixel)
 	a.createTextures()
 
-	// Compute offset
+	// For fixed resolution, compute the margin and fix the size
+	if aa.fixedres {
+		aa.margin = aa.size.Minus(aa.resolution).Slash(2)
+	}
+
+	// Compute outside border
 	sz := aa.size.Times(aa.pixel)
 	aa.border = win.Minus(sz).Slash(2)
 }
@@ -146,6 +152,8 @@ func (a CanvasID) paint() {
 
 	screenUniforms.PixelSize.X = 1.0 / float32(aa.size.C)
 	screenUniforms.PixelSize.Y = 1.0 / float32(aa.size.R)
+	screenUniforms.CanvasMargin.X = int32(aa.margin.C)
+	screenUniforms.CanvasMargin.Y = int32(aa.margin.R)
 	screenUBO.SubData(&screenUniforms, 0)
 
 	aa.buffer.Bind(gl.DrawFramebuffer)
@@ -218,6 +226,9 @@ func (a CanvasID) ClearDepth() {
 
 // Size returns the current dimension of the canvas (in *canvas* pixels).
 func (a CanvasID) Size() coord.CR {
+	if canvases[a].fixedres {
+		return canvases[a].resolution
+	}
 	return canvases[a].size
 }
 
@@ -229,13 +240,21 @@ func (a CanvasID) PixelSize() int16 {
 // FromWindow takes a coordinates in window space and returns it in canvas
 // space.
 func (a CanvasID) FromWindow(p coord.CR) coord.CR {
-	return p.Minus(canvases[a].border).Slash(canvases[a].pixel)
+	aa := &canvases[a]
+	if aa.fixedres {
+		return p.Minus(aa.border).Slash(aa.pixel).Minus(aa.margin)
+	}
+	return p.Minus(aa.border).Slash(aa.pixel)
 }
 
 // ToWindow takes a coordinates in canvas space and returns it in window
 // space.
 func (a CanvasID) ToWindow(p coord.CR) coord.CR {
-	return p.Times(canvases[a].pixel).Plus(canvases[a].border)
+	aa := &canvases[a]
+	if aa.fixedres {
+		return p.Times(aa.pixel).Plus(aa.border)
+	}
+	return p.Plus(aa.margin).Times(aa.pixel).Plus(aa.border)
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -26,8 +26,8 @@ type CanvasOption = func(CanvasID) error
 func Resolution(w, h int16) CanvasOption {
 	return func(cv CanvasID) error {
 		s := &canvases[cv]
-		s.target.C, s.target.R = w, h
-		s.autozoom = true
+		s.resolution.C, s.resolution.R = w, h
+		s.fixedres = true
 		return nil
 	}
 }
@@ -40,7 +40,7 @@ func Zoom(z int16) CanvasOption {
 			return errors.New("pixel zoom null or negative")
 		}
 		s.pixel = z
-		s.autozoom = false
+		s.fixedres = false
 		if internal.Running {
 			CanvasID(0).autoresize()
 		}
