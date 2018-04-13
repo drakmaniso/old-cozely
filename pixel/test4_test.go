@@ -9,7 +9,6 @@ import (
 	"testing"
 
 	"github.com/cozely/cozely"
-	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
 )
@@ -77,9 +76,7 @@ func (loop4) Enter() error {
 		code = append(code, s.Text())
 	}
 	show = text
-	color.Load("C64")
-	bg3 = color.Find("white")
-	fg3 = color.Find("black")
+	palette3.Activate()
 	return nil
 }
 

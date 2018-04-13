@@ -17,13 +17,13 @@ type CanvasOption = func(CanvasID) error
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// TargetResolution defines a target resolution for the automatic resizing of
+// Resolution defines a target resolution for the automatic resizing of
 // the canvas.
 //
 // It guarantees that:
 // - the canvas will never be smaller than the target resolution,
 // - the target resolution will occupy as much screen as possible.
-func TargetResolution(w, h int16) CanvasOption {
+func Resolution(w, h int16) CanvasOption {
 	return func(cv CanvasID) error {
 		s := &canvases[cv]
 		s.target.C, s.target.R = w, h

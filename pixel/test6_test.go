@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/cozely/cozely"
-	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
@@ -37,7 +36,7 @@ type test6 struct{}
 func (test6) Enter() error {
 	input.Load(bindings)
 	context.Activate(1)
-	color.Load("graphics/shape1")
+	palette2.Activate()
 	return nil
 }
 

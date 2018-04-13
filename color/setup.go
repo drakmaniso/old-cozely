@@ -20,20 +20,30 @@ func init() {
 }
 
 func setup() error {
-	Clear()
 	ssbo = gl.NewStorageBuffer(uintptr(256*4*4), gl.DynamicStorage|gl.MapWrite)
+
+	for id, pp := range palettes.path {
+		if len(pp) > 0 {
+			p, ok := palettesTable[pp[0]]
+			if ok {
+				for i := range p {
+					palettes.colours[id][i+1] = p[i].color
+				}
+			} else {
+				PaletteID(id).load(pp[0])
+			}
+			//TODO: load remaing paths
+		}
+	}
+
+	PaletteID(0).Activate()
+
 	return gl.Err()
 }
 
 func cleanup() error {
-	Clear()
-	for n := range palettes {
-		if n != "MSX" &&
-			n != "MSX2" &&
-			n != "C64" &&
-			n != "CPC" {
-			delete(palettes, n)
-		}
+	for id := range palettes.path {
+		palettes.changed[id] = true
 	}
 	ssbo.Delete()
 	return gl.Err()
@@ -46,9 +56,10 @@ func init() {
 }
 
 func upload() error {
-	if changed {
+	if activated || palettes.changed[active] {
 		ssbo.SubData(colours[:], 0)
-		changed = false
+		activated = false
+		palettes.changed[active] = false
 	}
 	ssbo.Bind(0)
 

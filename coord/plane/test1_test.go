@@ -18,7 +18,17 @@ import (
 
 ////////////////////////////////////////////////////////////////////////////////
 
-var canvas1 = pixel.Canvas(pixel.Zoom(2))
+var (
+	canvas1  = pixel.Canvas(pixel.Zoom(2))
+	palette1 = color.Palette()
+	col1     = palette1.Entry(color.LRGB{1, 1, 1})
+	col2     = palette1.Entry(color.LRGB{0.4, 0.05, 0.0})
+	col3     = palette1.Entry(color.LRGB{0.0, 0.4, 0.05})
+	col4     = palette1.Entry(color.LRGB{0.0, 0.05, 0.45})
+	col5     = palette1.Entry(color.LRGB{0.1, 0.0, 0.15})
+	col6     = palette1.Entry(color.LRGB{0.25, 0.25, 0.25})
+	col7     = palette1.Entry(color.LRGB{0.025, 0.025, 0.025})
+)
 
 var (
 	points []coord.XY
@@ -63,14 +73,7 @@ func (loop1) Enter() error {
 	points = make([]coord.XY, 3)
 	newPoints()
 
-	color.Clear()
-	color.Index(1).Set(color.LRGB{1, 1, 1})
-	color.Index(2).Set(color.LRGB{0.4, 0.05, 0.0})
-	color.Index(3).Set(color.LRGB{0.0, 0.4, 0.05})
-	color.Index(4).Set(color.LRGB{0.0, 0.05, 0.45})
-	color.Index(5).Set(color.LRGB{0.1, 0.0, 0.15})
-	color.Index(6).Set(color.LRGB{0.25, 0.25, 0.25})
-	color.Index(7).Set(color.LRGB{0.025, 0.025, 0.025})
+	palette1.Activate()
 	return nil
 }
 
@@ -106,19 +109,27 @@ func (loop1) Render() error {
 	s := coord.CR{5, 5}
 	for i, sd := range points {
 		pt[i] = toScreen(sd)
-		canvas1.Box(2+color.Index(i), 2+color.Index(i), 2, 2,
-			pt[i].Minus(s), pt[i].Plus(s))
+		var c color.Index
+		switch i {
+		case 0:
+			c = col2
+		case 1:
+			c = col3
+		case 2:
+			c = col4
+		}
+		canvas1.Box(c, c, 2, 2, pt[i].Minus(s), pt[i].Plus(s))
 		canvas1.Locate(pt[i].C-2, pt[i].R+3, aboveall)
-		canvas1.Text(0, 0)
+		canvas1.Text(col1-1, 0)
 		canvas1.Print([]string{"A", "B", "C"}[i])
 	}
-	canvas1.Lines(6, 0, pt[0], pt[1], pt[2], pt[0])
-	canvas1.Triangles(7, -5, pt[0], pt[1], pt[2], pt[0])
+	canvas1.Lines(col6, 0, pt[0], pt[1], pt[2], pt[0])
+	canvas1.Triangles(col7, -5, pt[0], pt[1], pt[2], pt[0])
 
 	m := canvas1.Mouse()
 	p := fromScreen(m)
 	canvas1.Locate(2, 8, aboveall)
-	canvas1.Text(0, 0)
+	canvas1.Text(col1-1, 0)
 	canvas1.Printf("A: %.3f, %.3f\n", points[0].X, points[0].Y)
 	canvas1.Printf("B: %.3f, %.3f\n", points[1].X, points[1].Y)
 	canvas1.Printf("C: %.3f, %.3f\n", points[2].X, points[2].Y)
@@ -127,23 +138,23 @@ func (loop1) Render() error {
 	} else {
 		canvas1.Println(" ")
 	}
-	canvas1.Point(1, 1, m)
+	canvas1.Point(col1, 1, m)
 
 	canvas1.Println()
 
 	if plane.IsCCW(points[0], points[1], points[2]) {
-		canvas1.Text(3, 0)
+		canvas1.Text(col4-1, 0)
 		canvas1.Println("IsCCW: TRUE")
 	} else {
-		canvas1.Text(0, 0)
+		canvas1.Text(col1-1, 0)
 		canvas1.Println("IsCCW: false")
 	}
 
 	if plane.InTriangle(points[0], points[1], points[2], p) {
-		canvas1.Text(1, 0)
+		canvas1.Text(col2-1, 0)
 		canvas1.Println("InTriangle: TRUE")
 	} else {
-		canvas1.Text(0, 0)
+		canvas1.Text(col1-1, 0)
 		canvas1.Println("InTriangle: false")
 	}
 
@@ -152,36 +163,36 @@ func (loop1) Render() error {
 		b, c = c, b
 	}
 	if plane.InTriangleCCW(points[a], points[b], points[c], p) {
-		canvas1.Text(1, 0)
+		canvas1.Text(col2-1, 0)
 		canvas1.Println("InTriangleCCW: TRUE")
 	} else {
-		canvas1.Text(0, 0)
+		canvas1.Text(col1-1, 0)
 		canvas1.Println("InTriangleCCW: false")
 	}
 
 	if plane.InCircumcircle(points[a], points[b], points[c], p) {
-		canvas1.Text(2, 0)
+		canvas1.Text(col3-1, 0)
 		canvas1.Println("InCircumcircle: TRUE")
 	} else {
-		canvas1.Text(0, 0)
+		canvas1.Text(col1-1, 0)
 		canvas1.Println("InCircumcircle: false")
 	}
 
 	canvas1.Println(" ")
 
 	d := plane.Circumcenter(points[0], points[1], points[2])
-	canvas1.Text(0, 0)
+	canvas1.Text(col1-1, 0)
 	canvas1.Printf("Circumcenter: %.3f, %.3f\n", d.X, d.Y)
 	dd := toScreen(d)
-	canvas1.Lines(5, -2, dd.Pluss(-2, -2), dd.Pluss(2, 2))
-	canvas1.Lines(5, -2, dd.Pluss(2, -2), dd.Pluss(-2, 2))
+	canvas1.Lines(col5, -2, dd.Pluss(-2, -2), dd.Pluss(2, 2))
+	canvas1.Lines(col5, -2, dd.Pluss(2, -2), dd.Pluss(-2, 2))
 
 	r := d.Minus(points[a]).Length()
 	cir := []coord.CR{}
 	for a := float32(0); a <= 2*math32.Pi+0.01; a += math32.Pi / 32 {
 		cir = append(cir, toScreen(coord.RA{r, a}.XY().Plus(d)))
 	}
-	canvas1.Lines(5, -2, cir...)
+	canvas1.Lines(col5, -2, cir...)
 
 	canvas1.Display()
 	return nil

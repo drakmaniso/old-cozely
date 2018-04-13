@@ -15,7 +15,11 @@ import (
 
 ////////////////////////////////////////////////////////////////////////////////
 
-var canvas1 = pixel.Canvas(pixel.TargetResolution(320, 180))
+var (
+	canvas1   = pixel.Canvas(pixel.Resolution(320, 180))
+	palette1a = color.Palette("graphics/mire")
+	palette1b = color.Palette("graphics/srgb-gray")
+)
 
 var (
 	mire      = pixel.Picture("graphics/mire")
@@ -50,7 +54,7 @@ func (loop1) Enter() error {
 
 	mode = 0
 
-	color.Load("graphics/mire")
+	palette1a.Activate()
 	return nil
 }
 
@@ -70,9 +74,9 @@ func (loop1) React() error {
 		}
 		switch mode {
 		case 0:
-			color.Load("graphics/mire")
+			palette1a.Activate()
 		case 1:
-			color.Load("graphics/srgb-gray")
+			palette1b.Activate()
 		}
 	}
 

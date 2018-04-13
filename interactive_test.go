@@ -13,6 +13,7 @@ import (
 var (
 	quit    = input.Bool("Quit")
 	context = input.Context("Default", quit)
+	c64     = color.Palette("C64")
 )
 
 var bindings = input.Bindings{
@@ -38,7 +39,7 @@ func (interactive) Enter() error {
 	input.Load(bindings)
 	context.Activate(1)
 
-	color.Load("C64")
+	c64.Activate()
 
 	return nil
 }

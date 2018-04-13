@@ -80,7 +80,7 @@ func (a CanvasID) Box(fg, bg color.Index, corner int16, depth int16, p1, p2 coor
 		p1.R, p2.R = p2.R, p1.R
 	}
 	a.command(cmdBox, 4, 1,
-		int16(uint16(fg)<<8|uint16(bg)),
+		int16(uint32(fg)<<8|uint32(bg)),
 		corner,
 		depth,
 		p1.C, p1.R,

@@ -16,7 +16,10 @@ import (
 
 ////////////////////////////////////////////////////////////////////////////////
 
-var context2 = input.Context("TestCanvas", quit)
+var (
+	context2 = input.Context("TestCanvas", quit)
+	palette2 = color.Palette("graphics/shape1")
+)
 
 var bindings2 = input.Bindings{
 	"TestCanvas": {
@@ -67,7 +70,7 @@ type loop2 struct{}
 func (loop2) Enter() error {
 	input.Load(bindings)
 	context.Activate(1)
-	color.Load("graphics/shape1")
+	palette2.Activate()
 	return nil
 }
 

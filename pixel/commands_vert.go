@@ -106,7 +106,7 @@ void main(void)
 		p = (vec2(x, y) + corners[vertex] * wh) * PixelSize;
 		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), floatZ(z), 1);
 		UV += corners[vertex] * wh;
-		ColorIndex = uint(c);
+		ColorIndex = uint(c&0xFFFF);
 		break;
 
 	case cmdPoint:
@@ -120,7 +120,7 @@ void main(void)
 		p = (vec2(x, y) + corners[vertex] * vec2(1.5,1.5)) * PixelSize;
 		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), floatZ(z), 1);
 		// Color
-		ColorIndex = uint(c);
+		ColorIndex = uint(c&0xFFFF);
 		break;
 
 	case cmdLines:
@@ -153,7 +153,7 @@ void main(void)
 			Slope = float(dy)/float(dx);
 		}
 		// Color
-		ColorIndex = uint(c);
+		ColorIndex = uint(c&0xFFFF);
 		break;
 
 	case cmdTriangles:
@@ -166,7 +166,7 @@ void main(void)
 		p = (vec2(0.5,0.5) + vec2(x, y)) * PixelSize;
 		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), floatZ(z), 1);
 		// Color
-		ColorIndex = uint(c);
+		ColorIndex = uint(c&0xFFFF);
 		break;
 
 	case cmdBox:
@@ -185,7 +185,7 @@ void main(void)
 		p = (vec2(x, y) + corners[vertex] * wh) * PixelSize;
 		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), floatZ(z), 1);
 		// Color
-		ColorIndex = uint(c);
+		ColorIndex = uint(c&0xFFFF);
 		break;
 	}
 }

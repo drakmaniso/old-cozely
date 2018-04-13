@@ -15,7 +15,12 @@ import (
 
 ////////////////////////////////////////////////////////////////////////////////
 
-var canvas1 = pixel.Canvas(pixel.Zoom(2))
+var (
+	canvas1  = pixel.Canvas(pixel.Zoom(2))
+	palette1 = color.Palette()
+	col1     = palette1.Entry(color.LRGB{0.1, 0.2, 0.5})
+	col2     = palette1.Entry(color.LRGB{0.5, 0.1, 0.0})
+)
 
 var (
 	points        []coord.XY
@@ -51,9 +56,7 @@ func (loop1) Enter() error {
 	points = make([]coord.XY, 64)
 	newPoints()
 
-	color.Clear()
-	color.Index(1).Set(color.LRGB{0.1, 0.2, 0.5})
-	color.Index(2).Set(color.LRGB{0.5, 0.1, 0.0})
+	palette1.Activate()
 	return nil
 }
 
@@ -151,7 +154,7 @@ func (loop1) Render() error {
 	m := canvas1.Mouse()
 	p := fromScreen(m)
 	canvas1.Locate(2, 8, 0)
-	canvas1.Text(0, 0)
+	canvas1.Text(col1-1, 0)
 	fsr, fso := cozely.RenderStats()
 	canvas1.Printf("Framerate: %.2f (%d)\n", 1000*fsr, fso)
 	if p.X >= 0 && p.X <= 1.0 {
@@ -163,11 +166,11 @@ func (loop1) Render() error {
 	pt := make([]coord.CR, len(points))
 	for i, sd := range points {
 		pt[i] = toScreen(sd)
-		canvas1.Box(2, 2, 1, 0, pt[i].Minuss(2, 2), pt[i].Pluss(2, 2))
+		canvas1.Box(col2, col2, 1, 0, pt[i].Minuss(2, 2), pt[i].Pluss(2, 2))
 	}
 
 	triangulation.Walk(func(e quadedge.Edge) {
-		canvas1.Lines(1, -1, toScreen(points[e.Orig()]), toScreen(points[e.Dest()]))
+		canvas1.Lines(col1, -1, toScreen(points[e.Orig()]), toScreen(points[e.Dest()]))
 	})
 
 	canvas1.Display()

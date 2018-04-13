@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/cozely/cozely"
-	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
@@ -36,7 +35,7 @@ var bindings5 = input.Bindings{
 
 ////////////////////////////////////////////////////////////////////////////////
 
-var canvas5 = pixel.Canvas(pixel.TargetResolution(128, 128))
+var canvas5 = pixel.Canvas(pixel.Resolution(128, 128))
 
 var points = []coord.CR{
 	{4, 4},
@@ -67,7 +66,7 @@ type loop5 struct{}
 func (loop5) Enter() error {
 	input.Load(bindings5)
 	context5.Activate(1)
-	color.Load("graphics/shape1")
+	palette2.Activate()
 	return nil
 }
 

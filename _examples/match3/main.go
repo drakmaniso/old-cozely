@@ -42,7 +42,10 @@ var tilesPict [8]struct {
 
 var current grid.Position
 
-var screen = pixel.Canvas(pixel.TargetResolution(180, 180))
+var (
+	screen = pixel.Canvas(pixel.TargetResolution(180, 180))
+	palette = color.Palette("graphics/blue")
+)
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -96,10 +99,7 @@ func (loop) Enter() error {
 	input.Load(bindings)
 	context.Activate(1)
 
-	err := color.Load("graphics/blue")
-	if err != nil {
-		return err
-	}
+	palette.Activate()
 
 	return nil
 }
@@ -110,11 +110,11 @@ func (loop) Leave() error { return nil }
 
 func newTile() ecs.Entity {
 	e := ecs.New(ecs.Color)
-	c := color(rand.Int31n(7))
+	c := colour(rand.Int31n(7))
 	// if rand.Int31n(16) == 0 {
 	// 	c = 7
 	// }
-	colors[e] = c
+	colours[e] = c
 
 	return e
 }
@@ -167,8 +167,8 @@ func testMatch(e1, e2 ecs.Entity) bool {
 	if !e1.Has(ecs.Color) || !e2.Has(ecs.Color) {
 		return false
 	}
-	c1 := colors[e1]
-	c2 := colors[e2]
+	c1 := colours[e1]
+	c2 := colours[e2]
 	return c1 == c2
 }
 

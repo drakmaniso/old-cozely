@@ -55,7 +55,10 @@ var (
 
 ////////////////////////////////////////////////////////////////////////////////
 
-var canvas1 = pixel.Canvas(pixel.Zoom(3))
+var (
+	canvas1 = pixel.Canvas(pixel.Zoom(3))
+	palette1 = color.Palette("MSX")
+)
 
 const (
 	Transparent color.Index = iota
@@ -102,7 +105,7 @@ func (loop1) Enter() error {
 		return err
 	}
 
-	color.Load("MSX")
+	palette1.Activate()
 	InMenu.Activate(0)
 	return nil
 }

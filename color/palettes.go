@@ -9,7 +9,7 @@ import (
 
 ////////////////////////////////////////////////////////////////////////////////
 
-var palettes = map[string][]struct {
+var palettesTable = map[string][]struct {
 	name  string
 	color Color
 }{
@@ -97,7 +97,7 @@ func init() {
 		pal[i-1].name = strconv.Itoa(g) + strconv.Itoa(r) + strconv.Itoa(b)
 	}
 
-	palettes["MSX2"] = pal
+	palettesTable["MSX2"] = pal
 }
 
 ////////////////////////////////////////////////////////////////////////////////

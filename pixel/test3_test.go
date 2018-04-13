@@ -16,10 +16,11 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 
 var (
-	canvas3 = pixel.Canvas(pixel.Zoom(2))
+	canvas3  = pixel.Canvas(pixel.Zoom(2))
+	palette3 = color.Palette()
+	bg3      = palette3.Entry(color.SRGB8{0xFF, 0xFE, 0xFC})
+	fg3      = palette3.Entry(color.SRGB8{0x07, 0x05, 0x00})
 )
-
-var bg3, fg3 color.Index
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -41,9 +42,8 @@ type loop3 struct{}
 func (loop3) Enter() error {
 	input.Load(bindings)
 	context.Activate(1)
-	color.Load("C64")
-	bg3 = color.Find("white")
-	fg3 = color.Find("black")
+	palette3.Activate()
+	println(bg3, fg3)
 	canvas3.Cursor().Color = fg3 - 1
 	return nil
 }

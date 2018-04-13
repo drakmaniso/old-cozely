@@ -13,9 +13,9 @@ import (
 
 ////////////////////////////////////////////////////////////////////////////////
 
-type color int8
+type colour int8
 
-var colors [ecs.Size]color
+var colours [ecs.Size]colour
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -33,7 +33,7 @@ func (loop) Render() error {
 		// Draw
 		switch {
 		case e.Has(ecs.Color):
-			c := colors[e]
+			c := colours[e]
 			p := tilesPict[c].normal
 			if grid.PositionOf(e) == current || e.Has(ecs.MatchFlag) {
 				p = tilesPict[c].big

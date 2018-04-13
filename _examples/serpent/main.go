@@ -11,6 +11,7 @@ import (
 
 var (
 	canvas = pixel.Canvas(pixel.TargetResolution(resolution.C, resolution.R))
+	palette = color.Palette("C64")
 )
 
 var (
@@ -54,7 +55,7 @@ func main() {
 type loop struct{}
 
 func (loop) Enter() error {
-	color.Load("C64")
+	palette.Activate()
 	return nil
 }
 
