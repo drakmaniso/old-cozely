@@ -8,10 +8,10 @@ import (
 
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/color"
-	"github.com/cozely/cozely/color/msx2"
 	"github.com/cozely/cozely/color/palettes/c64"
 	"github.com/cozely/cozely/color/palettes/cpc"
 	"github.com/cozely/cozely/color/palettes/msx"
+	"github.com/cozely/cozely/color/palettes/msx2"
 	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/pixel"
 )
