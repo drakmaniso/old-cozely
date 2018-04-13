@@ -68,7 +68,7 @@ type loop2 struct{}
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop2) Enter() error {
-	input.Load(bindings)
+	bindings.Load()
 	context.Activate(1)
 	palette2.Activate()
 	return nil

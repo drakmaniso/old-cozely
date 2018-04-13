@@ -22,8 +22,8 @@ type LRGBA struct {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// LRGBAOf converts any color to alpha-premultiplied, linear color space.
-func LRGBAOf(c Color) LRGBA {
+// LRGBAof converts any color to alpha-premultiplied, linear color space.
+func LRGBAof(c Color) LRGBA {
 	r, g, b, a := c.Linear()
 	return LRGBA{r, g, b, a}
 }

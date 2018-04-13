@@ -15,8 +15,8 @@ type LRGB struct {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// LRGBOf converts any color to linear color space with no alpha.
-func LRGBOf(c Color) LRGB {
+// LRGBof converts any color to linear color space with no alpha.
+func LRGBof(c Color) LRGB {
 	r, g, b, _ := c.Linear()
 	return LRGB{r, g, b}
 }

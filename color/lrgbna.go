@@ -19,9 +19,9 @@ type LRGBnA struct {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// LRGBnAOf converts any color to non alpha-premultiplied linear color
+// LRGBnAof converts any color to non alpha-premultiplied linear color
 // space.
-func LRGBnAOf(c Color) LRGBnA {
+func LRGBnAof(c Color) LRGBnA {
 	r, g, b, a := c.Linear()
 	return LRGBnA{r / a, g / a, b / a, a}
 }

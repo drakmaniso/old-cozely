@@ -105,7 +105,7 @@ type loop struct{}
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop) Enter() error {
-	input.Load(bindings)
+	bindings.Load()
 	context.Activate(1)
 
 	txtColor.SetColour(color.SRGB8{0xFF, 0xFF, 0xFF})

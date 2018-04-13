@@ -7,6 +7,7 @@ package main
 
 import (
 	"github.com/cozely/cozely"
+	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/coord/space"
 	"github.com/cozely/cozely/input"
@@ -85,7 +86,7 @@ type loop struct{}
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop) Enter() error {
-	input.Load(bindings)
+	bindings.Load()
 	context.Activate(1)
 
 	// Create and configure the pipeline

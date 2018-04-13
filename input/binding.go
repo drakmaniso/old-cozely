@@ -21,7 +21,7 @@ type Bindings map[string]map[string][]string
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func Load(b Bindings) error {
+func (a Bindings)Load() error {
 	var err error
 
 	// Forget devices (and previous bindings)
@@ -29,7 +29,7 @@ func Load(b Bindings) error {
 
 	lcn := "Loaded input bindings (contexts:"
 
-	for cn, cb := range b {
+	for cn, cb := range a {
 		// Find context by name
 		ctx := noContext
 		for i, n := range contexts.name {

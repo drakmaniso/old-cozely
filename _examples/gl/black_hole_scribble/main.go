@@ -9,6 +9,7 @@ import (
 	"math/rand"
 
 	"github.com/cozely/cozely"
+	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/x/gl"
@@ -84,7 +85,7 @@ type loop struct{}
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop) Enter() error {
-	input.Load(bindings)
+	bindings.Load()
 	context.Activate(1)
 
 	// Create and configure the pipeline

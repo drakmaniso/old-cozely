@@ -36,7 +36,7 @@ func Example_interactive() {
 type interactive struct{}
 
 func (interactive) Enter() error {
-	input.Load(bindings)
+	bindings.Load()
 	context.Activate(1)
 
 	c64.Activate()

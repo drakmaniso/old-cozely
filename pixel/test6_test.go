@@ -8,7 +8,6 @@ import (
 
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/coord"
-	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
 )
 
@@ -34,7 +33,7 @@ type test6 struct{}
 ////////////////////////////////////////////////////////////////////////////////
 
 func (test6) Enter() error {
-	input.Load(bindings)
+	bindings.Load()
 	context.Activate(1)
 	palette2.Activate()
 	return nil

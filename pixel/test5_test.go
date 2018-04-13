@@ -64,7 +64,7 @@ type loop5 struct{}
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop5) Enter() error {
-	input.Load(bindings5)
+	bindings5.Load()
 	context5.Activate(1)
 	palette2.Activate()
 	return nil

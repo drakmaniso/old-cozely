@@ -36,16 +36,16 @@ var bindings = input.Bindings{
 
 ////////////////////////////////////////////////////////////////////////////////
 
+var (
+	canvas  = pixel.Canvas(pixel.Resolution(180, 180))
+	palette = color.Palette("graphics/blue")
+)
+
 var tilesPict [8]struct {
 	normal, big pixel.PictureID
 }
 
 var current grid.Position
-
-var (
-	screen = pixel.Canvas(pixel.TargetResolution(180, 180))
-	palette = color.Palette("graphics/blue")
-)
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -96,7 +96,7 @@ type loop struct{}
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop) Enter() error {
-	input.Load(bindings)
+	bindings.Load()
 	context.Activate(1)
 
 	palette.Activate()
@@ -131,7 +131,7 @@ func (loop) React() error {
 	}
 
 	if selct.JustPressed(1) {
-		m := screen.Mouse()
+		m := canvas.Mouse()
 		current = grid.PositionAt(m)
 		if current != grid.Nowhere() {
 			e := grid.At(current)
@@ -181,7 +181,7 @@ func (loop) Update() error {
 ////////////////////////////////////////////////////////////////////////////////
 
 func resize() {
-	w, h := screen.Size().C, screen.Size().R
+	w, h := canvas.Size().C, canvas.Size().R
 	grid.ScreenResized(w, h)
 }
 

@@ -9,7 +9,6 @@ import (
 	"testing"
 
 	"github.com/cozely/cozely"
-	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
 )
 
@@ -56,7 +55,7 @@ type loop4 struct{}
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop4) Enter() error {
-	input.Load(bindings)
+	bindings.Load()
 	context.Activate(1)
 
 	f, err := os.Open(cozely.Path() + "frankenstein.txt")

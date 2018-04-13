@@ -15,8 +15,8 @@ type SRGB struct {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// SRGBOf converts any color to sRGB color space with no alpha.
-func SRGBOf(c Color) SRGB {
+// SRGBof converts any color to sRGB color space with no alpha.
+func SRGBof(c Color) SRGB {
 	r, g, b, _ := c.Standard()
 	return SRGB{r, g, b}
 }

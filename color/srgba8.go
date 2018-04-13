@@ -22,8 +22,8 @@ type SRGBA8 struct {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// SRGBA8Of converts any color to alpha-premultiplied sRGB color space.
-func SRGBA8Of(c Color) SRGBA8 {
+// SRGBA8of converts any color to alpha-premultiplied sRGB color space.
+func SRGBA8of(c Color) SRGBA8 {
 	cc, ok := c.(SRGBA8)
 	if ok {
 		return cc

@@ -56,7 +56,7 @@ var (
 ////////////////////////////////////////////////////////////////////////////////
 
 var (
-	canvas1 = pixel.Canvas(pixel.Zoom(3))
+	canvas1  = pixel.Canvas(pixel.Zoom(3))
 	palette1 = color.Palette("MSX")
 )
 
@@ -100,7 +100,7 @@ type loop1 struct{}
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop1) Enter() error {
-	err := input.Load(Bindings)
+	err := Bindings.Load()
 	if err != nil {
 		return err
 	}

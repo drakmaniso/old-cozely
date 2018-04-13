@@ -75,7 +75,7 @@ func (a PaletteID) Entry(c Color) Index {
 		if cc == nil {
 			palettes.colours[a][i] = c
 			if active == a {
-				colours[i] = LRGBAOf(c)
+				colours[i] = LRGBAof(c)
 			}
 			return Index(i)
 		}
@@ -89,9 +89,9 @@ func (a PaletteID) Entry(c Color) Index {
 // isn't in the palette, index 0 is returned.
 //TODO: search by color proximity
 func (a PaletteID) Match(v Color) Index {
-	lv := LRGBAOf(v)
+	lv := LRGBAof(v)
 	for c, pv := range palettes.colours[a] {
-		lpv := LRGBAOf(pv)
+		lpv := LRGBAof(pv)
 		if lpv == lv {
 			return Index(c)
 		}

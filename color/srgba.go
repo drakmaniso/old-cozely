@@ -22,8 +22,8 @@ type SRGBA struct {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// SRGBAOf converts any color to sRGB alpha-premultiplied color space.
-func SRGBAOf(c Color) SRGBA {
+// SRGBAof converts any color to sRGB alpha-premultiplied color space.
+func SRGBAof(c Color) SRGBA {
 	r, g, b, a := c.Standard()
 	return SRGBA{r, g, b, a}
 }

@@ -11,7 +11,6 @@ import (
 	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/coord/plane"
-	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
 	"github.com/cozely/cozely/x/math32"
 )
@@ -67,8 +66,8 @@ type loop1 struct{}
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop1) Enter() error {
-	input.Load(testBindings)
-	testContext.Activate(1)
+	bindings.Load()
+	context.Activate(1)
 
 	points = make([]coord.XY, 3)
 	newPoints()

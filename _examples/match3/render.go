@@ -20,7 +20,7 @@ var colours [ecs.Size]colour
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop) Render() error {
-	screen.Clear(1)
+	canvas.Clear(1)
 
 	var x, y int16 // screen coords
 
@@ -38,11 +38,11 @@ func (loop) Render() error {
 			if grid.PositionOf(e) == current || e.Has(ecs.MatchFlag) {
 				p = tilesPict[c].big
 			}
-			screen.Picture(p, 0, coord.CR{x, y})
+			canvas.Picture(p, 0, coord.CR{x, y})
 		}
 	}
 
-	screen.Display()
+	canvas.Display()
 
 	return gl.Err()
 }

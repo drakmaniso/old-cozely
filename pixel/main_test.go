@@ -20,7 +20,7 @@ var (
 
 var context = input.Context("Test", quit, next, previous)
 
-var bindings = map[string]map[string][]string{
+var bindings = input.Bindings{
 	"Test": {
 		"Quit":     {"Escape"},
 		"Next":     {"Mouse Left", "Space"},

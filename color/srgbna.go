@@ -22,8 +22,8 @@ type SRGBnA struct {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// SRGBnAOf converts any color to sRGB non alpha-premultiplied sRGB color space.
-func SRGBnAOf(c Color) SRGBnA {
+// SRGBnAof converts any color to sRGB non alpha-premultiplied sRGB color space.
+func SRGBnAof(c Color) SRGBnA {
 	r, g, b, a := c.Linear()
 	r = standardOf(r / a)
 	g = standardOf(g / a)

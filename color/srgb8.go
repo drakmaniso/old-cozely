@@ -15,8 +15,8 @@ type SRGB8 struct {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// SRGB8Of converts any color to sRGB color space.
-func SRGB8Of(c Color) SRGB8 {
+// SRGB8of converts any color to sRGB color space.
+func SRGB8of(c Color) SRGB8 {
 	cc, ok := c.(SRGB8)
 	if ok {
 		return cc

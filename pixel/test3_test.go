@@ -9,7 +9,6 @@ import (
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/coord"
-	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
 )
 
@@ -40,7 +39,7 @@ type loop3 struct{}
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop3) Enter() error {
-	input.Load(bindings)
+	bindings.Load()
 	context.Activate(1)
 	palette3.Activate()
 	println(bg3, fg3)

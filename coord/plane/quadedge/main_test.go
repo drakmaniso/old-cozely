@@ -28,10 +28,10 @@ var (
 	scene10  = input.Bool("Scene10")
 )
 
-var testContext = input.Context("Test", quit, next, previous,
+var context = input.Context("Test", quit, next, previous,
 	scene1, scene2, scene3, scene4, scene5, scene6, scene7, scene8, scene9)
 
-var testBindings = map[string]map[string][]string{
+var bindings = input.Bindings{
 	"Test": {
 		"Quit":     {"Escape"},
 		"Next":     {"Mouse Left", "Space"},
