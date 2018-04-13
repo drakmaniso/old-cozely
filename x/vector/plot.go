@@ -3,6 +3,8 @@
 
 package vector
 
+import "github.com/cozely/cozely/color"
+
 ////////////////////////////////////////////////////////////////////////////////
 
 // func Point(c color.Colour, x, y int16) {
@@ -31,7 +33,7 @@ package vector
 
 func Line(c color.Color, x1, y1, x2, y2 int16) {
 	appendCommand(cmdLineAA, 4, 1)
-	c8 := color.SRGBA8Of(c)
+	c8 := color.SRGBA8of(c)
 	rg := uint16(c8.R)<<8 | uint16(c8.G)
 	ba := uint16(c8.B)<<8 | uint16(c8.A)
 	parameters = append(parameters, int16(rg), int16(ba), x1, y1, x2, y2)

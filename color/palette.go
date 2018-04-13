@@ -101,6 +101,11 @@ func (a PaletteID) Entry(c Color) Index {
 	return Transparent
 }
 
+func (a PaletteID) Set(i uint8, c Color) Index {
+	palettes.colours[a][i] = c
+	return Index(i)
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 // Match searches for a color by its color.LRGBA values. If this exact color

@@ -25,6 +25,7 @@ func Example_helloWorld() {
 type loop struct{}
 
 func (loop) Enter() error {
+	palette.Activate()
 	return nil
 }
 

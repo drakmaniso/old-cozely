@@ -4,6 +4,7 @@
 package vector
 
 import (
+	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/internal"
 	"github.com/cozely/cozely/x/gl"
 )

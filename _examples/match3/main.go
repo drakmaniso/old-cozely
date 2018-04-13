@@ -38,7 +38,7 @@ var bindings = input.Bindings{
 
 var (
 	canvas  = pixel.Canvas(pixel.Resolution(180, 180))
-	palette = color.Palette("graphics/blue")
+	palette = color.PaletteFrom("graphics/blue")
 )
 
 var tilesPict [8]struct {

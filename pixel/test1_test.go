@@ -8,6 +8,10 @@ import (
 
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/color"
+	"github.com/cozely/cozely/color/msx2"
+	"github.com/cozely/cozely/color/palettes/c64"
+	"github.com/cozely/cozely/color/palettes/cpc"
+	"github.com/cozely/cozely/color/palettes/msx"
 	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/pixel"
 )
@@ -77,6 +81,19 @@ func (loop1) React() error {
 		case 1:
 			palette1b.Activate()
 		}
+	}
+
+	if scene1.JustPressed(1) {
+		c64.Palette.Activate()
+	}
+	if scene2.JustPressed(1) {
+		cpc.Palette.Activate()
+	}
+	if scene3.JustPressed(1) {
+		msx.Palette.Activate()
+	}
+	if scene4.JustPressed(1) {
+		msx2.Palette.Activate()
 	}
 
 	return nil

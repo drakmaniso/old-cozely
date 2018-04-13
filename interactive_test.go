@@ -2,7 +2,7 @@ package cozely_test
 
 import (
 	"github.com/cozely/cozely"
-	"github.com/cozely/cozely/color"
+	"github.com/cozely/cozely/color/palettes/c64"
 	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
@@ -13,7 +13,6 @@ import (
 var (
 	quit    = input.Bool("Quit")
 	context = input.Context("Default", quit)
-	c64     = color.PaletteFrom("C64")
 )
 
 var bindings = input.Bindings{
@@ -39,7 +38,7 @@ func (interactive) Enter() error {
 	bindings.Load()
 	context.Activate(1)
 
-	c64.Activate()
+	c64.Palette.Activate()
 
 	return nil
 }
@@ -62,10 +61,10 @@ func (interactive) Update() error {
 }
 
 func (interactive) Render() error {
-	screen.Clear(0)
+	screen.Clear(c64.Black)
 
 	margin := coord.CR{16, 12}
-	screen.Box(4, 9, 4, 0, margin, screen.Size().Minus(margin))
+	screen.Box(c64.Cyan, c64.Orange, 4, 0, margin, screen.Size().Minus(margin))
 
 	screen.Display()
 	return nil

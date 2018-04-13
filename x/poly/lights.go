@@ -6,6 +6,7 @@ package poly
 import (
 	"math"
 
+	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/x/math32"
 )
 

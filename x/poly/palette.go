@@ -4,6 +4,7 @@
 package poly
 
 import (
+	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/x/gl"
 )
 

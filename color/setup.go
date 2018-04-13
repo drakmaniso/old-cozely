@@ -24,14 +24,7 @@ func setup() error {
 
 	for id, pp := range palettes.path {
 		if len(pp) > 0 {
-			p, ok := palettesTable[pp[0]]
-			if ok {
-				for i := range p {
-					palettes.colours[id][i+1] = p[i].color
-				}
-			} else {
-				PaletteID(id).load(pp[0])
-			}
+			PaletteID(id).load(pp[0])
 			//TODO: load remaing paths
 		}
 	}
