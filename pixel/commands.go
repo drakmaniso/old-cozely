@@ -25,28 +25,27 @@ const (
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// Picture adds a command to show a picture on the canvas.
-func (a CanvasID) Picture(p PictureID, depth int16, pos coord.CR) {
-	a.command(cmdPicture, 4, 1, int16(p), depth, pos.C, pos.R)
+// Picture asks the GPU to show a picture on the canvas.
+func (a CanvasID) Picture(p PictureID, layer int16, pos coord.CR) {
+	a.command(cmdPicture, 4, 1, int16(p), layer, pos.C, pos.R)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// Point adds a command to draw a point on the canvas.
-func (a CanvasID) Point(color color.Index, depth int16, pos coord.CR) {
-	a.command(cmdPoint, 3, 1, int16(color), depth, pos.C, pos.R)
+// Point asks the GPU to draw a point on the canvas.
+func (a CanvasID) Point(color color.Index, layer int16, pos coord.CR) {
+	a.command(cmdPoint, 3, 1, int16(color), layer, pos.C, pos.R)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// Lines adds a command to draw a line strip on the canvas. A line strip is a
-// succession of points connected by lines; all points and lines share the same
-// depth and color.
-func (a CanvasID) Lines(c color.Index, depth int16, strip ...coord.CR) {
+// Lines asks the GPU to draw a line strip on the canvas. A line strip is a
+// succession of connected lines; all lines share the same layer and color.
+func (a CanvasID) Lines(c color.Index, layer int16, strip ...coord.CR) {
 	if len(strip) < 2 {
 		return
 	}
-	prm := []int16{int16(c), depth} //TODO: remove alloc
+	prm := []int16{int16(c), layer} //TODO: remove alloc
 	for _, p := range strip {
 		prm = append(prm, p.C, p.R)
 	}
@@ -55,14 +54,14 @@ func (a CanvasID) Lines(c color.Index, depth int16, strip ...coord.CR) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// Triangles adds a command to draw a triangle strip on the canvas. Triangle
-// strip have the same meaning than in OpenGL. All points and triangles share
-// the same depth and color.
-func (a CanvasID) Triangles(c color.Index, depth int16, strip ...coord.CR) {
+// Triangles asks the GPU to draw a triangle strip on the canvas. Triangle strip
+// have the same meaning than in OpenGL. All triangles share the same layer and
+// color.
+func (a CanvasID) Triangles(c color.Index, layer int16, strip ...coord.CR) {
 	if len(strip) < 3 {
 		return
 	}
-	prm := []int16{int16(c), depth} //TODO: remove alloc
+	prm := []int16{int16(c), layer} //TODO: remove alloc
 	for _, p := range strip {
 		prm = append(prm, p.C, p.R)
 	}
@@ -71,8 +70,8 @@ func (a CanvasID) Triangles(c color.Index, depth int16, strip ...coord.CR) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// Box adds a command to draw a box on the canvas.
-func (a CanvasID) Box(fg, bg color.Index, corner int16, depth int16, p1, p2 coord.CR) {
+// Box asks the GPU to draw a box on the canvas.
+func (a CanvasID) Box(fg, bg color.Index, corner int16, layer int16, p1, p2 coord.CR) {
 	if p2.C < p1.C {
 		p1.C, p2.C = p2.C, p1.C
 	}
@@ -82,7 +81,7 @@ func (a CanvasID) Box(fg, bg color.Index, corner int16, depth int16, p1, p2 coor
 	a.command(cmdBox, 4, 1,
 		int16(uint32(fg)<<8|uint32(bg)),
 		corner,
-		depth,
+		layer,
 		p1.C, p1.R,
 		p2.C, p2.R)
 }

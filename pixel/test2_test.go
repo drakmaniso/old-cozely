@@ -18,7 +18,7 @@ import (
 
 var (
 	context2 = input.Context("TestCanvas", quit)
-	palette2 = color.Palette("graphics/shape1")
+	palette2 = color.PaletteFrom("graphics/shape1")
 )
 
 var bindings2 = input.Bindings{

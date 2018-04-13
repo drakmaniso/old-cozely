@@ -13,7 +13,7 @@ import (
 var (
 	quit    = input.Bool("Quit")
 	context = input.Context("Default", quit)
-	c64     = color.Palette("C64")
+	c64     = color.PaletteFrom("C64")
 )
 
 var bindings = input.Bindings{

@@ -25,16 +25,34 @@ var (
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func Palette(path ...string) PaletteID {
+func PaletteFrom(path string) PaletteID {
 	a := len(palettes.path)
 
 	if a >= 0xFF {
 		//TODO: set error
 	}
 
-	palettes.path = append(palettes.path, path)
+	palettes.path = append(palettes.path, []string{path})
 	palettes.changed = append(palettes.changed, false)
 	palettes.colours = append(palettes.colours, [256]Color{})
+
+	return PaletteID(a)
+}
+
+func Palette(entries ...Color) PaletteID {
+	a := len(palettes.path)
+
+	if a >= 0xFF {
+		//TODO: set error
+	}
+
+	palettes.path = append(palettes.path, []string{})
+	palettes.changed = append(palettes.changed, false)
+	palettes.colours = append(palettes.colours, [256]Color{})
+
+	for i, e := range entries {
+		palettes.colours[a][i+1] = e
+	}
 
 	return PaletteID(a)
 }

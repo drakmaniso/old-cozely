@@ -9,6 +9,6 @@ fixed, resolution.
 
 It does not provide any anti-aliasing, nor alpha-transparency, since the goal is
 to offer an easy way to work within the stricter definition of pixel art
-(limited color color, no mixed-resolution or "mixels", and so on).
+(limited color palette, no mixed-resolution or "mixels", and so on).
 */
 package pixel

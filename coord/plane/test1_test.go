@@ -118,7 +118,7 @@ func (loop1) Render() error {
 			c = col4
 		}
 		canvas1.Box(c, c, 2, 2, pt[i].Minus(s), pt[i].Plus(s))
-		canvas1.Locate(pt[i].C-2, pt[i].R+3, aboveall)
+		canvas1.Locate(aboveall, coord.CR{pt[i].C - 2, pt[i].R + 3})
 		canvas1.Text(col1-1, 0)
 		canvas1.Print([]string{"A", "B", "C"}[i])
 	}
@@ -127,7 +127,7 @@ func (loop1) Render() error {
 
 	m := canvas1.Mouse()
 	p := fromScreen(m)
-	canvas1.Locate(2, 8, aboveall)
+	canvas1.Locate(aboveall, coord.CR{2, 8})
 	canvas1.Text(col1-1, 0)
 	canvas1.Printf("A: %.3f, %.3f\n", points[0].X, points[0].Y)
 	canvas1.Printf("B: %.3f, %.3f\n", points[1].X, points[1].Y)

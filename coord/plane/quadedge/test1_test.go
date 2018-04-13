@@ -152,7 +152,7 @@ func (loop1) Render() error {
 
 	m := canvas1.Mouse()
 	p := fromScreen(m)
-	canvas1.Locate(2, 8, 0)
+	canvas1.Locate(0, coord.CR{2, 8})
 	canvas1.Text(col1-1, 0)
 	fsr, fso := cozely.RenderStats()
 	canvas1.Printf("Framerate: %.2f (%d)\n", 1000*fsr, fso)

@@ -57,7 +57,7 @@ var (
 
 var (
 	canvas1  = pixel.Canvas(pixel.Zoom(3))
-	palette1 = color.Palette("MSX")
+	palette1 = color.PaletteFrom("MSX")
 )
 
 const (
@@ -162,7 +162,7 @@ func (loop1) Update() error { return nil }
 func (loop1) Render() error {
 	canvas1.Clear(0)
 
-	canvas1.Locate(2, 12, 0)
+	canvas1.Locate(0, coord.CR{2, 12})
 	canvas1.Text(DarkBlue-1, pixel.Monozela10)
 
 	canvas1.Printf("screen position:%6d,%6d\n", mousepos.C, mousepos.R)

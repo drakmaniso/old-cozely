@@ -11,7 +11,7 @@ import (
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// A PictureID identifies an image than can be displayed on a Canvas.
+// PictureID is the ID to handle static image assets.
 type PictureID uint16
 
 var picturePaths = []string{""}
@@ -28,8 +28,7 @@ type mapping struct {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// Picture reserves an ID for a picture, that will be loaded from path by
-// cozely.Run.
+// Picture declares a new picture and returns its ID.
 func Picture(path string) PictureID {
 	if len(pictureMap) >= 0xFFFF {
 		setErr("in NewPitcture", errors.New("too many pictures"))

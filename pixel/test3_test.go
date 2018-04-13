@@ -69,14 +69,14 @@ func (loop3) Render() error {
 
 	canvas3.Text(fg3-1, pixel.Monozela10)
 
-	canvas3.Locate(2, 8, 0)
+	canvas3.Locate(0, coord.CR{2, 8})
 	canvas3.Println("a quick brown fox \"jumps\" over the (lazy) dog.")
 	canvas3.Println("A QUICK BROWN FOX \"JUMPS\" OVER THE (LAZY) DOG.")
 	canvas3.Println("0123456789!@#$^&*()-+=_~[]{}|\\;:'\",.<>/?%")
 	canvas3.Println("12+34 56-7.8 90*13 24/35 -5 +2 3*(2+5) 4<5 6>2 2=1+1 *f := &x;")
 	canvas3.Println()
 
-	canvas3.Locate(16, 100, 0)
+	canvas3.Locate(0, coord.CR{16, 100})
 	canvas3.Write([]byte("Foo"))
 	canvas3.Cursor().Position = canvas3.Cursor().Position.Pluss(1, 3, 0)
 	canvas3.WriteRune('B')
@@ -88,7 +88,7 @@ func (loop3) Render() error {
 	canvas3.Write([]byte("Boo\n"))
 	canvas3.Write([]byte("Choo"))
 
-	canvas3.Locate(16, 200, 0)
+	canvas3.Locate(0, coord.CR{16, 200})
 	canvas3.Cursor().Font = tinela9
 	canvas3.Print("Tinela")
 	canvas3.Cursor().Font = simpela10
@@ -102,7 +102,7 @@ func (loop3) Render() error {
 	canvas3.Cursor().Font = chaotela12
 	canvas3.Print("Chaotela12")
 
-	canvas3.Locate(canvas3.Size().C-200, 9, 0)
+	canvas3.Locate(0, coord.CR{canvas3.Size().C - 200, 9})
 	canvas3.Cursor().Font = pixel.FontID(0)
 	canvas3.Printf("Position x=%d, y=%d\n", canvas3.Mouse().C, canvas3.Mouse().R)
 

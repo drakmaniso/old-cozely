@@ -16,8 +16,8 @@ import (
 
 var (
 	canvas1   = pixel.Canvas(pixel.Resolution(320, 180))
-	palette1a = color.Palette("graphics/mire")
-	palette1b = color.Palette("graphics/srgb-gray")
+	palette1a = color.PaletteFrom("graphics/mire")
+	palette1b = color.PaletteFrom("graphics/srgb-gray")
 )
 
 var (

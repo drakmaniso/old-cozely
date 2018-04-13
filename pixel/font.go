@@ -9,12 +9,11 @@ import (
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// A FontID identifies a pixel font that can be used to display text on the
-// canvas.
+// FontID is the ID to handle font assets.
 type FontID uint8
 
-// Monozela10 is the default font. It's a 10 pixel high monospace font that is
-// automatically loaded when the framework starts.
+// Monozela10 is the ID of the default font (a 10 pixel high monospace). This is
+// the only font that is always loaded and doesn't need declaration.
 const Monozela10 = FontID(0)
 
 var fontPaths = []string{"builtin monozela 10"}
@@ -31,8 +30,7 @@ var glyphMap []mapping
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// Font reserves an ID for a new font, that will be loaded from path when the
-// framework starts.
+// Font declares a new font and returns its ID.
 func Font(path string) FontID {
 	if len(fonts) >= 0xFF {
 		setErr("in NewFont", errors.New("too many fonts"))

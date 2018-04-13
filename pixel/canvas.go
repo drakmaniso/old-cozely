@@ -29,18 +29,18 @@ type canvas struct {
 	pixel         int16
 	commands      []gl.DrawIndirectCommand
 	parameters    []int16
-	cursor        Cursor
+	cursor        TextCursor
 }
 
 var canvases []canvas
 
-// A CanvasID identifies a surface that can be used to draw, print text or show
-// pictures.
+// CanvasID is the ID to handle the GPU framebuffer used to display pictures,
+// print text and for various other drawing primitives.
 type CanvasID uint16
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// Canvas reserves an ID for a new canvas, that will be created by cozely.Run.
+// Canvas declares a new canvas and returns its ID.
 func Canvas(o ...CanvasOption) CanvasID {
 	if len(canvases) >= 0xFFFF {
 		setErr("in NewCanvas", errors.New("too many canvases"))
@@ -133,10 +133,10 @@ func (a CanvasID) createTextures() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// Paint executes all pending commands on the canvas. It is automatically called
+// paint executes all pending commands on the canvas. It is automatically called
 // by Display; the only reason to call it manually is to be able to read from it
 // before display.
-func (a CanvasID) Paint() {
+func (a CanvasID) paint() {
 	aa := &canvases[a]
 
 	if len(aa.commands) == 0 {
@@ -171,10 +171,10 @@ func (a CanvasID) Paint() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// Display first execute all pending commands on the canvas (if any), then
-// displays it on the game window.
+// Display tells the GPU to execute all pending drawing commands on the canvas
+// (if any), and then display it on the game window.
 func (a CanvasID) Display() {
-	a.Paint()
+	a.paint()
 
 	aa := &canvases[a]
 
@@ -197,8 +197,8 @@ func (a CanvasID) Display() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// Clear sets both the color and peth of all pixels on the canvas. Only the
-// color is specified, the depth being initialized to the minimum value.
+// Clear sets the color of all pixels on the canvas; it also resets depth
+// information, used to implement layers.
 func (a CanvasID) Clear(color color.Index) {
 	aa := &canvases[a]
 	pipeline.Bind() //TODO: find another way to enable depthWrite
@@ -206,21 +206,30 @@ func (a CanvasID) Clear(color color.Index) {
 	aa.buffer.ClearDepth(-1.0)
 }
 
+// ClearDepth resets depth information, used to implement layers. Call this
+// method if you don't need to clear the color of the canvas, but still want to
+// discard all layer information from the previous frame.
+func (a CanvasID) ClearDepth() {
+	aa := &canvases[a]
+	pipeline.Bind() //TODO: find another way to enable depthWrite
+	aa.buffer.ClearDepth(-1.0)
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
-// Size returns the current dimension of the canvas (in canvas pixels).
+// Size returns the current dimension of the canvas (in *canvas* pixels).
 func (a CanvasID) Size() coord.CR {
 	return canvases[a].size
 }
 
-// PixelSize returns the size of one canvas pixel, in window pixels.
+// PixelSize returns the size of one canvas pixel, in *window* pixels.
 func (a CanvasID) PixelSize() int16 {
 	return canvases[a].pixel
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// Mouse returns the mouse position on the canvas.
+// Mouse returns the mouse position on the canvas (in *canvas* pixels).
 func (a CanvasID) Mouse() coord.CR {
 	m := input.Cursor.Position()
 	return m.Minus(canvases[a].origin).Slash(canvases[a].pixel)

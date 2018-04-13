@@ -13,11 +13,10 @@ import (
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// A Cursor holds the state necessary to write text on a canvas.
-//
-// It maintains the current position, but also the x coordinate used for new
-// lines of text.
-type Cursor struct {
+// TextCursor holds the state necessary to write text on a canvas. Each canvas
+// has its own instance, which can be retrieved and modified with the
+// Canvas.Cursor method.
+type TextCursor struct {
 	Color         color.Index
 	Font          FontID
 	Margin        int16
@@ -30,8 +29,7 @@ type Cursor struct {
 
 // Text configures the color and font used to display text on the canvas.
 //
-// Note that you can also directly change the attributes of the cursor: see
-// Cursor.
+// Note that you can also directly change the TextCursor attributes.
 func (a CanvasID) Text(c color.Index, f FontID) {
 	cu := &canvases[a].cursor
 	cu.Color = c
@@ -41,37 +39,38 @@ func (a CanvasID) Text(c color.Index, f FontID) {
 	}
 }
 
-// Locate moves the text cursor to a specific position. It also defines column c
-// as the starting point for new lines of text.
+// Locate moves the text cursor to a specific position. It also defines column
+// p.C as the cursor margin, i.e. the column to which the cursor returns to
+// start a new line.
 //
-// Note that you can also directly change these attributes: see Cursor.
-func (a CanvasID) Locate(c, r, d int16) {
+// Note that you can also directly change the TextCursor attributes.
+func (a CanvasID) Locate(layer int16, p coord.CR) {
 	cu := &canvases[a].cursor
-	cu.Position = coord.CRD{c, r, d}
+	cu.Position = coord.CRD{p.C, p.R, layer}
 	cu.Margin = cu.Position.C
 }
 
 // Cursor gives access to the attributes used to display text on the canvas.
 // These attributes can be changed at anytime.
-func (a CanvasID) Cursor() *Cursor {
+func (a CanvasID) Cursor() *TextCursor {
 	return &canvases[a].cursor
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// Print displays text on the canvas; it works like fmt.Print.
+// Print asks the GPU to display text on the canvas (works like fmt.Print).
 func (a CanvasID) Print(args ...interface{}) (n int, err error) {
 	n, err = fmt.Fprint(a, args...)
 	return n, err
 }
 
-// Println displays text on the canvas; it works like fmt.Println.
+// Println asks the GPU to display text on the canvas (works like fmt.Println).
 func (a CanvasID) Println(args ...interface{}) (n int, err error) {
 	n, err = fmt.Fprintln(a, args...)
 	return n, err
 }
 
-// Printf displays text on the canvas; it works like fmt.Printf.
+// Printf asks the GPU to display text on the canvas (like fmt.Printf).
 func (a CanvasID) Printf(format string, args ...interface{}) (n int, err error) {
 	n, err = fmt.Fprintf(a, format, args...)
 	return n, err
@@ -79,8 +78,8 @@ func (a CanvasID) Printf(format string, args ...interface{}) (n int, err error) 
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// Write implements the io.Writer interface. It is a low-level method used to
-// display p (interpreted as an UTF8 string) on the canvas.
+// Write asks the GPU to display p (interpreted as an UTF8 string) on the
+// canvas. This method implements the io.Writer interface.
 func (a CanvasID) Write(p []byte) (n int, err error) {
 	n = len(p)
 	for len(p) > 0 {
@@ -91,7 +90,7 @@ func (a CanvasID) Write(p []byte) (n int, err error) {
 	return n, nil
 }
 
-// WriteRune is a low-level method used to display a single rune on the canvas.
+// WriteRune asks the GPU to display a single rune on the canvas.
 func (a CanvasID) WriteRune(r rune) {
 	cu := &canvases[a].cursor
 	if r == '\n' {
