@@ -1,9 +1,10 @@
 package cozely_test
 
 import (
+	"math/rand"
+
 	"github.com/cozely/cozely"
-	"github.com/cozely/cozely/color/palettes/c64"
-	"github.com/cozely/cozely/coord"
+	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
 )
@@ -12,22 +13,30 @@ import (
 
 var (
 	quit    = input.Bool("Quit")
-	context = input.Context("Default", quit)
+	start   = input.Bool("Start")
+	context = input.Context("Default", start, quit)
 )
 
 var bindings = input.Bindings{
 	"Default": {
-		"Quit": {"Escape"},
+		"Start": {"Space", "Mouse Left"},
+		"Quit":  {"Escape"},
 	},
 }
 
 // Initialization //////////////////////////////////////////////////////////////
 
 var (
-	screen = pixel.Canvas(pixel.Zoom(3))
+	canv = pixel.Canvas(pixel.Resolution(160, 100))
+	logo = pixel.Picture("graphics/cozely")
+	pal1 = color.PaletteFrom("graphics/cozely")
+	pal2 = color.Palette()
 )
 
+var started = false
+
 func Example_interactive() {
+	cozely.Configure(cozely.UpdateStep(1.0/3))
 	cozely.Run(interactive{})
 	// Output:
 }
@@ -37,9 +46,8 @@ type interactive struct{}
 func (interactive) Enter() error {
 	bindings.Load()
 	context.Activate(1)
-
-	c64.Palette.Activate()
-
+	pal1.Activate()
+	shufflecolors()
 	return nil
 }
 
@@ -50,6 +58,9 @@ func (interactive) Leave() error {
 // Game Loop ///////////////////////////////////////////////////////////////////
 
 func (interactive) React() error {
+	if start.JustPressed(1) {
+		started = !started
+	}
 	if quit.JustPressed(1) {
 		cozely.Stop()
 	}
@@ -57,15 +68,33 @@ func (interactive) React() error {
 }
 
 func (interactive) Update() error {
+	if started {
+		shufflecolors()
+	}
 	return nil
 }
 
+func shufflecolors() {
+	for i := 2; i < 14; i++ {
+		r := rand.Float32()
+		g := rand.Float32()
+		b := rand.Float32()
+		pal2.Set(uint8(i), color.LRGB{r, g, b})
+	}
+}
+
 func (interactive) Render() error {
-	screen.Clear(c64.Black)
+	canv.Clear(0)
 
-	margin := coord.CR{16, 12}
-	screen.Box(c64.Cyan, c64.Orange, 4, 0, margin, screen.Size().Minus(margin))
+	if started {
+		pal2.Activate()
+	} else {
+		pal1.Activate()
+	}
 
-	screen.Display()
+	o := canv.Size().Minus(logo.Size()).Slash(2)
+	canv.Picture(logo, 0, o)
+
+	canv.Display()
 	return nil
 }
