@@ -9,6 +9,7 @@ import (
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/coord"
+	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
 )
 
@@ -104,7 +105,8 @@ func (loop3) Render() error {
 
 	canvas3.Locate(0, coord.CR{canvas3.Size().C - 200, 9})
 	canvas3.Cursor().Font = pixel.FontID(0)
-	canvas3.Printf("Position x=%d, y=%d\n", canvas3.Mouse().C, canvas3.Mouse().R)
+	m := canvas3.FromWindow(input.Cursor.Position())
+	canvas3.Printf("Position x=%d, y=%d\n", m.C, m.R)
 
 	canvas3.Display()
 	return nil

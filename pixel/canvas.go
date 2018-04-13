@@ -9,7 +9,6 @@ import (
 
 	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/coord"
-	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/internal"
 	"github.com/cozely/cozely/x/gl"
 )
@@ -24,9 +23,9 @@ type canvas struct {
 	parametersTBO gl.BufferTexture
 	target        coord.CR
 	autozoom      bool
-	origin        coord.CR // Offset when there is a border around the screen
-	size          coord.CR
-	pixel         int16
+	border        coord.CR // the few pixels leftover from window pixels division
+	size          coord.CR // in canvas pixels
+	pixel         int16    // in window pixels
 	commands      []gl.DrawIndirectCommand
 	parameters    []int16
 	cursor        TextCursor
@@ -106,7 +105,7 @@ func (a CanvasID) autoresize() {
 
 	// Compute offset
 	sz := aa.size.Times(aa.pixel)
-	aa.origin = win.Minus(sz).Slash(2)
+	aa.border = win.Minus(sz).Slash(2)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -188,8 +187,8 @@ func (a CanvasID) Display() {
 	gl.DefaultFramebuffer.Bind(gl.DrawFramebuffer)
 	gl.Enable(gl.FramebufferSRGB)
 	gl.Disable(gl.Blend)
-	gl.Viewport(int32(aa.origin.C), int32(aa.origin.R),
-		int32(aa.origin.C+sz.C), int32(aa.origin.R+sz.R))
+	gl.Viewport(int32(aa.border.C), int32(aa.border.R),
+		int32(aa.border.C+sz.C), int32(aa.border.R+sz.R))
 	blitUBO.Bind(0)
 	aa.texture.Bind(0)
 	gl.Draw(0, 4)
@@ -227,12 +226,16 @@ func (a CanvasID) PixelSize() int16 {
 	return canvases[a].pixel
 }
 
-////////////////////////////////////////////////////////////////////////////////
+// FromWindow takes a coordinates in window space and returns it in canvas
+// space.
+func (a CanvasID) FromWindow(p coord.CR) coord.CR {
+	return p.Minus(canvases[a].border).Slash(canvases[a].pixel)
+}
 
-// Mouse returns the mouse position on the canvas (in *canvas* pixels).
-func (a CanvasID) Mouse() coord.CR {
-	m := input.Cursor.Position()
-	return m.Minus(canvases[a].origin).Slash(canvases[a].pixel)
+// ToWindow takes a coordinates in canvas space and returns it in window
+// space.
+func (a CanvasID) ToWindow(p coord.CR) coord.CR {
+	return p.Times(canvases[a].pixel).Plus(canvases[a].border)
 }
 
 ////////////////////////////////////////////////////////////////////////////////

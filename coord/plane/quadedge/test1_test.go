@@ -8,6 +8,7 @@ import (
 	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/coord/plane/quadedge"
+	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
 	"github.com/cozely/cozely/x/math32"
 )
@@ -73,7 +74,8 @@ func (loop1) React() error {
 	}
 
 	if previous.JustPressed(1) {
-		p := fromScreen(canvas1.Mouse())
+		m := canvas1.FromWindow(input.Cursor.Position())
+		p := fromScreen(m)
 		points = append(points, p)
 		triangulation = quadedge.Delaunay(points)
 	}
@@ -150,7 +152,7 @@ func (loop1) Render() error {
 		Y: float32(canvas1.Size().R),
 	}
 
-	m := canvas1.Mouse()
+	m := canvas1.FromWindow(input.Cursor.Position())
 	p := fromScreen(m)
 	canvas1.Locate(0, coord.CR{2, 8})
 	canvas1.Text(col1-1, 0)

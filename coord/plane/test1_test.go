@@ -11,6 +11,7 @@ import (
 	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/coord/plane"
+	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
 	"github.com/cozely/cozely/x/math32"
 )
@@ -125,7 +126,7 @@ func (loop1) Render() error {
 	canvas1.Lines(col6, 0, pt[0], pt[1], pt[2], pt[0])
 	canvas1.Triangles(col7, -5, pt[0], pt[1], pt[2], pt[0])
 
-	m := canvas1.Mouse()
+	m := canvas1.FromWindow(input.Cursor.Position())
 	p := fromScreen(m)
 	canvas1.Locate(aboveall, coord.CR{2, 8})
 	canvas1.Text(col1-1, 0)

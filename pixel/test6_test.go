@@ -8,6 +8,7 @@ import (
 
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/coord"
+	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
 )
 
@@ -85,7 +86,7 @@ func (test6) Render() error {
 		canvas6.Box(4, 4, i, 0, o.Plus(dx.Times(i)), o.Plus(dx.Times(i)).Plus(s))
 	}
 
-	m := canvas6.Mouse()
+	m := canvas6.FromWindow(input.Cursor.Position())
 	canvas6.Point(18, 2, m)
 	canvas6.Display()
 	return nil

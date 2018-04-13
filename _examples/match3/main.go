@@ -131,7 +131,7 @@ func (loop) React() error {
 	}
 
 	if selct.JustPressed(1) {
-		m := canvas.Mouse()
+		m := canvas.FromWindow(input.Cursor.Position())
 		current = grid.PositionAt(m)
 		if current != grid.Nowhere() {
 			e := grid.At(current)
