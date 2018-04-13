@@ -55,12 +55,12 @@ var (
 	}
 )
 
-var context = input.Context("Test", quit, next, previous,
+var context = input.Context("Default", quit, next, previous,
 	scenes[1], scenes[2], scenes[3], scenes[4], scenes[5],
 	scenes[6], scenes[7], scenes[8], scenes[9], scenes[0])
 
 var bindings = input.Bindings{
-	"Test": {
+	"Default": {
 		"Quit":     {"Escape"},
 		"Next":     {"Mouse Left", "Space"},
 		"Previous": {"Mouse Right", "U"},
@@ -81,10 +81,7 @@ var bindings = input.Bindings{
 
 var (
 	canvas = pixel.Canvas(pixel.Resolution(160, 160))
-)
-
-var (
-	swatch = pixel.Picture("graphics/paletteswatch")
+	pict   = pixel.Picture("graphics/paletteswatch")
 )
 
 var mode int
@@ -92,30 +89,30 @@ var mode int
 // Initialization //////////////////////////////////////////////////////////////
 
 func Example_paletteSwatch() {
-	err := cozely.Run(loop1{})
+	err := cozely.Run(loop{})
 	if err != nil {
 		cozely.ShowError(err)
 	}
 	//Output:
 }
 
-type loop1 struct{}
+type loop struct{}
 
-func (loop1) Enter() error {
+func (loop) Enter() error {
 	bindings.Load()
 	context.Activate(1)
 
 	mode = 1
-
 	palette.Activate()
+
 	return nil
 }
 
-func (loop1) Leave() error { return nil }
+func (loop) Leave() error { return nil }
 
-// React to Inputs /////////////////////////////////////////////////////////////
+// React to User Inputs ////////////////////////////////////////////////////////
 
-func (loop1) React() error {
+func (loop) React() error {
 	if quit.JustPressed(1) {
 		cozely.Stop()
 	}
@@ -134,6 +131,10 @@ func (loop1) React() error {
 		}
 	}
 
+	return nil
+}
+
+func (loop) Update() error {
 	switch mode {
 	case 1:
 		palette.Activate()
@@ -146,22 +147,19 @@ func (loop1) React() error {
 	case 5:
 		msx2.Palette.Activate()
 	}
-
 	return nil
 }
 
-func (loop1) Update() error { return nil }
-
 // Render //////////////////////////////////////////////////////////////////////
 
-func (loop1) Render() error {
+func (loop) Render() error {
 	canvas.Clear(0)
 
-	sz := canvas.Size()
+	cs := canvas.Size()
 
-	wz := swatch.Size()
-	p := sz.Minus(wz).Slash(2)
-	canvas.Picture(swatch, 0, p)
+	ps := pict.Size()
+	p := cs.Minus(ps).Slash(2)
+	canvas.Picture(pict, 0, p)
 
 	canvas.Text(253, pixel.Monozela10)
 	canvas.Locate(-1, p.Minus(coord.CR{0, 8}))
