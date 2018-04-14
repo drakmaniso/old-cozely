@@ -35,8 +35,10 @@ var (
 
 var started = false
 
+var inv = false
+
 func Example_interactive() {
-	cozely.Configure(cozely.UpdateStep(1.0/3))
+	cozely.Configure(cozely.UpdateStep(1.0 / 3))
 	cozely.Run(interactive{})
 	// Output:
 }
@@ -75,11 +77,20 @@ func (interactive) Update() error {
 }
 
 func shufflecolors() {
+	dark := [12]bool{
+		true, false, true, false, true, false,
+		false, true, false, true, false, true,
+	}
+	inv = !inv
 	for i := 2; i < 14; i++ {
-		r := rand.Float32()
-		g := rand.Float32()
-		b := rand.Float32()
-		pal2.Set(uint8(i), color.LRGB{r, g, b})
+		r := .2+.8*rand.Float32()
+		g := .2+.8*rand.Float32()
+		b := .2+.8*rand.Float32()
+		if dark[i-2] != inv {
+			pal2.Set(uint8(i), color.SRGB{r, g, b})
+		} else {
+			pal2.Set(uint8(i), color.LRGB{r, g, b})
+		}
 	}
 }
 
