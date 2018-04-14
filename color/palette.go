@@ -18,7 +18,7 @@ var palettes struct {
 
 // Active palette
 var (
-	active    PaletteID
+	active    PaletteID = 0xFF
 	activated bool
 	colours   [256]struct{ R, G, B, A float32 }
 )
@@ -52,6 +52,9 @@ func Palette(entries ...Color) PaletteID {
 
 	for i, e := range entries {
 		palettes.colours[a][i+1] = e
+	}
+	if len(entries) > 0 {
+		palettes.changed[a] = true
 	}
 
 	return PaletteID(a)
@@ -118,7 +121,7 @@ func (a PaletteID) Set(i uint8, c Color) Index {
 		} else {
 			colours[i] = LRGBAof(c)
 		}
-}
+	}
 	return Index(i)
 }
 

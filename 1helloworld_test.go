@@ -7,7 +7,7 @@ import (
 	"github.com/cozely/cozely/pixel"
 )
 
-// Initialization //////////////////////////////////////////////////////////////
+// Declarations ////////////////////////////////////////////////////////////////
 
 var (
 	canvas = pixel.Canvas(pixel.Resolution(320, 200))
@@ -17,12 +17,14 @@ var (
 	bg      = palette.Entry(color.SRGB{0.06, 0.18, 0.12})
 )
 
-func Example_helloWorld() {
+type loop struct{}
+
+// Initialization //////////////////////////////////////////////////////////////
+
+func Example_1HelloWorld() {
 	cozely.Run(loop{})
 	// Output:
 }
-
-type loop struct{}
 
 func (loop) Enter() error {
 	palette.Activate()

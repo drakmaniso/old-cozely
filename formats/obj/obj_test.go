@@ -1,28 +1,47 @@
 // Copyright (c) 2013-2018 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
-package main
-
-////////////////////////////////////////////////////////////////////////////////
+package obj_test
 
 import (
 	"fmt"
 	"os"
-	"path/filepath"
 
 	"github.com/cozely/cozely/formats/obj"
 )
 
-////////////////////////////////////////////////////////////////////////////////
-
-func main() {
-	path := filepath.Dir(os.Args[0]) + "/"
-	f, err := os.Open(path + "../../../shared/cube.obj")
+func Example_objParser() {
+	f, err := os.Open("testdata/cube.obj")
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 	obj.Parse(f, builder{})
+	//Output:
+	// # Blender v2.78 (sub 0) OBJ File: ''
+	// # www.blender.org
+	// o cube
+	// v -1.000000 -1.000000 1.000000
+	// v -1.000000 1.000000 1.000000
+	// v -1.000000 -1.000000 -1.000000
+	// v -1.000000 1.000000 -1.000000
+	// v 1.000000 -1.000000 1.000000
+	// v 1.000000 1.000000 1.000000
+	// v 1.000000 -1.000000 -1.000000
+	// v 1.000000 1.000000 -1.000000
+	// usemtl 0
+	// s 0
+	// f 5 6 2 1
+	// usemtl 1
+	// f 3 4 8 7
+	// usemtl 2
+	// f 8 4 2 6
+	// usemtl 3
+	// f 3 7 5 1
+	// usemtl 4
+	// f 1 2 4 3
+	// usemtl 5
+	// f 7 8 6 5
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -172,4 +191,3 @@ func (builder) NotSupported(txt string) error {
 	return nil
 }
 
-////////////////////////////////////////////////////////////////////////////////

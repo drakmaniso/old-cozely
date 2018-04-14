@@ -9,7 +9,7 @@ import (
 	"github.com/cozely/cozely/pixel"
 )
 
-// Input Bindings //////////////////////////////////////////////////////////////
+// Declarations ////////////////////////////////////////////////////////////////
 
 var (
 	quit    = input.Bool("Quit")
@@ -24,8 +24,6 @@ var bindings = input.Bindings{
 	},
 }
 
-// Initialization //////////////////////////////////////////////////////////////
-
 var (
 	canv = pixel.Canvas(pixel.Resolution(160, 100))
 	logo = pixel.Picture("graphics/cozely")
@@ -35,17 +33,19 @@ var (
 
 var started = false
 
-var inv = false
+var reverse = false
 
-func Example_interactive() {
+type loop2 struct{}
+
+// Initialization //////////////////////////////////////////////////////////////
+
+func Example_2Interactive() {
 	cozely.Configure(cozely.UpdateStep(1.0 / 3))
-	cozely.Run(interactive{})
+	cozely.Run(loop2{})
 	// Output:
 }
 
-type interactive struct{}
-
-func (interactive) Enter() error {
+func (loop2) Enter() error {
 	bindings.Load()
 	context.Activate(1)
 	pal1.Activate()
@@ -53,13 +53,13 @@ func (interactive) Enter() error {
 	return nil
 }
 
-func (interactive) Leave() error {
+func (loop2) Leave() error {
 	return nil
 }
 
 // Game Loop ///////////////////////////////////////////////////////////////////
 
-func (interactive) React() error {
+func (loop2) React() error {
 	if start.JustPressed(1) {
 		started = !started
 	}
@@ -69,7 +69,7 @@ func (interactive) React() error {
 	return nil
 }
 
-func (interactive) Update() error {
+func (loop2) Update() error {
 	if started {
 		shufflecolors()
 	}
@@ -81,12 +81,12 @@ func shufflecolors() {
 		true, false, true, false, true, false,
 		false, true, false, true, false, true,
 	}
-	inv = !inv
+	reverse = !reverse
 	for i := 2; i < 14; i++ {
-		r := .2+.8*rand.Float32()
-		g := .2+.8*rand.Float32()
-		b := .2+.8*rand.Float32()
-		if dark[i-2] != inv {
+		r := .2 + .8*rand.Float32()
+		g := .2 + .8*rand.Float32()
+		b := .2 + .8*rand.Float32()
+		if dark[i-2] != reverse {
 			pal2.Set(uint8(i), color.SRGB{r, g, b})
 		} else {
 			pal2.Set(uint8(i), color.LRGB{r, g, b})
@@ -94,7 +94,7 @@ func shufflecolors() {
 	}
 }
 
-func (interactive) Render() error {
+func (loop2) Render() error {
 	canv.Clear(0)
 
 	if started {

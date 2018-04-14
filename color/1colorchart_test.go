@@ -15,7 +15,9 @@ import (
 	"github.com/cozely/cozely/pixel"
 )
 
-// Palette /////////////////////////////////////////////////////////////////////
+// Declarations ////////////////////////////////////////////////////////////////
+
+// Palette
 
 var (
 	palette = color.Palette(
@@ -35,7 +37,7 @@ var (
 	black  = palette.Entry(color.SRGB{0, 0, 0})
 )
 
-// Input Bindings //////////////////////////////////////////////////////////////
+// Input Bindings
 
 var (
 	quit     = input.Bool("Quit")
@@ -77,7 +79,7 @@ var bindings = input.Bindings{
 	},
 }
 
-// Globals /////////////////////////////////////////////////////////////////////
+// Globals
 
 var (
 	canvas = pixel.Canvas(pixel.Resolution(160, 160))
@@ -88,7 +90,7 @@ var mode int
 
 // Initialization //////////////////////////////////////////////////////////////
 
-func Example_paletteSwatch() {
+func Example_1ColorChart() {
 	err := cozely.Run(loop{})
 	if err != nil {
 		cozely.ShowError(err)
@@ -110,7 +112,7 @@ func (loop) Enter() error {
 
 func (loop) Leave() error { return nil }
 
-// React to User Inputs ////////////////////////////////////////////////////////
+// Game Loop ///////////////////////////////////////////////////////////////////
 
 func (loop) React() error {
 	if quit.JustPressed(1) {
@@ -149,8 +151,6 @@ func (loop) Update() error {
 	}
 	return nil
 }
-
-// Render //////////////////////////////////////////////////////////////////////
 
 func (loop) Render() error {
 	canvas.Clear(0)

@@ -10,7 +10,7 @@ import (
 	"testing"
 
 	"github.com/cozely/cozely"
-	"github.com/cozely/cozely/color"
+	"github.com/cozely/cozely/color/palettes/msx"
 	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
@@ -19,6 +19,7 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 
 var (
+	quit                   = input.Bool("Quit")
 	InventoryAction        = input.Bool("Inventory")
 	OptionsAction          = input.Bool("Options")
 	CloseMenuAction        = input.Bool("Close Menu")
@@ -29,23 +30,25 @@ var (
 )
 
 var (
-	InMenu = input.Context("Menu",
+	InMenu = input.Context("Menu", quit,
 		CloseMenuAction, InstantCloseMenuAction, InventoryAction, OptionsAction)
 
-	InGame = input.Context("Game",
+	InGame = input.Context("Game", quit,
 		OpenMenuAction, InstantOpenMenuAction, InventoryAction, JumpAction)
 )
 
 var (
 	Bindings = input.Bindings{
 		"Menu": {
-			"Close Menu":         {"Escape"},
+			"Quit":               {"Escape"},
+			"Close Menu":         {"Space"},
 			"Instant Close Menu": {"Mouse Right", "Enter"},
 			"Inventory":          {"I"},
 			"Options":            {"O", "Mouse Left"},
 		},
 		"Game": {
-			"Open Menu":         {"Escape"},
+			"Quit":              {"Escape"},
+			"Open Menu":         {"Space"},
 			"Instant Open Menu": {"Mouse Right", "Enter"},
 			"Inventory":         {"Tab"},
 			"Jump":              {"Space", "Mouse Left"},
@@ -56,27 +59,7 @@ var (
 ////////////////////////////////////////////////////////////////////////////////
 
 var (
-	canvas1  = pixel.Canvas(pixel.Zoom(3))
-	palette1 = color.PaletteFrom("MSX")
-)
-
-const (
-	Transparent color.Index = iota
-	Black
-	MediumGreen
-	LightGreen
-	DarkBlue
-	LightBlue
-	DarkRed
-	Cyan
-	MediumRed
-	LightRed
-	DarkYellow
-	LightYellow
-	DarkGreen
-	Magenta
-	Gray
-	White
+	canvas1 = pixel.Canvas(pixel.Zoom(3))
 )
 
 var hidden bool
@@ -100,12 +83,12 @@ type loop1 struct{}
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop1) Enter() error {
+	msx.Palette.Activate()
 	err := Bindings.Load()
 	if err != nil {
 		return err
 	}
 
-	palette1.Activate()
 	InMenu.Activate(0)
 	return nil
 }
@@ -150,6 +133,9 @@ func (loop1) React() error {
 	options = OptionsAction.Pressed(1)
 	jump = JumpAction.Pressed(1)
 
+	if quit.JustPressed(1) {
+		cozely.Stop()
+	}
 	return nil
 }
 
@@ -160,10 +146,10 @@ func (loop1) Update() error { return nil }
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop1) Render() error {
-	canvas1.Clear(0)
+	canvas1.Clear(msx.DarkBlue)
 
 	canvas1.Locate(0, coord.CR{2, 12})
-	canvas1.Text(DarkBlue-1, pixel.Monozela10)
+	canvas1.Text(msx.White-1, pixel.Monozela10)
 
 	canvas1.Printf("screen position:%6d,%6d\n", mousepos.C, mousepos.R)
 	canvas1.Printf("   screen delta:%+6d,%+6d\n", mousedelta.C, mousedelta.R)
@@ -210,9 +196,9 @@ func (loop1) Render() error {
 
 func changecolor(p bool) {
 	if p {
-		canvas1.Text(LightGreen-1, pixel.Monozela10)
+		canvas1.Text(msx.LightRed-1, pixel.Monozela10)
 	} else {
-		canvas1.Text(DarkBlue-1, pixel.Monozela10)
+		canvas1.Text(msx.White-1, pixel.Monozela10)
 	}
 }
 
