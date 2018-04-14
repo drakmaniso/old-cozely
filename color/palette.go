@@ -58,13 +58,20 @@ func Palette(entries ...Color) PaletteID {
 }
 
 func (a PaletteID) Activate() {
-	//TODO
-	for i := range palettes.colours[a] {
-		Index(i).Set(palettes.colours[a][i])
-	}
+	if active != a {
+		//TODO: something faster?
+		for i := range palettes.colours[a] {
+			v := palettes.colours[a][i]
+			if v == nil {
+				colours[i] = LRGBA{1, 0, .5, 1}
+			} else {
+				colours[i] = LRGBAof(v)
+			}
+		}
 
-	active = a
-	activated = true
+		active = a
+		activated = true
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -75,6 +82,7 @@ func (a PaletteID) Clear() {
 	for c := range palettes.colours[a] {
 		palettes.colours[a][c] = nil
 	}
+	palettes.changed[a] = true
 	for c := range colours {
 		if active == a {
 			colours[c] = LRGBA{0, 0, 0, 0}
@@ -103,6 +111,14 @@ func (a PaletteID) Entry(c Color) Index {
 
 func (a PaletteID) Set(i uint8, c Color) Index {
 	palettes.colours[a][i] = c
+	palettes.changed[a] = true
+	if active == a {
+		if c == nil {
+			colours[i] = LRGBA{1, 0, .5, 1}
+		} else {
+			colours[i] = LRGBAof(c)
+		}
+}
 	return Index(i)
 }
 

@@ -6,7 +6,7 @@ import (
 	"sort"
 
 	"github.com/cozely/cozely/coord"
-	"github.com/cozely/cozely/coord/plane"
+	"github.com/cozely/cozely/plane"
 )
 
 ////////////////////////////////////////////////////////////////////////////////

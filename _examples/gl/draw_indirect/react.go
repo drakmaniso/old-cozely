@@ -8,8 +8,8 @@ package main
 import (
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/coord"
-	"github.com/cozely/cozely/coord/space"
 	"github.com/cozely/cozely/input"
+	"github.com/cozely/cozely/space"
 	"github.com/cozely/cozely/x/math32"
 )
 

@@ -11,9 +11,9 @@ import (
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/coord"
-	"github.com/cozely/cozely/coord/space"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
+	"github.com/cozely/cozely/space"
 	"github.com/cozely/cozely/x/gl"
 	"github.com/cozely/cozely/x/poly"
 )
@@ -40,13 +40,11 @@ var bindings = input.Bindings{
 
 ////////////////////////////////////////////////////////////////////////////////
 
-var overlay = pixel.Canvas(pixel.Zoom(2))
-
-var cursor = pixel.Cursor{Canvas: overlay}
-
-var font = pixel.FontID(0)
-
-var txtColor = color.Index(1)
+var (
+	overlay  = pixel.Canvas(pixel.Zoom(2))
+	palette = color.Palette()
+	txtColor = palette.Entry(color.SRGB8{0xFF, 0xFF, 0xFF})
+)
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -107,8 +105,7 @@ type loop struct{}
 func (loop) Enter() error {
 	bindings.Load()
 	context.Activate(1)
-
-	txtColor.SetColour(color.SRGB8{0xFF, 0xFF, 0xFF})
+	palette.Activate()
 
 	pipeline = gl.NewPipeline(
 		poly.PipelineSetup(),
@@ -208,11 +205,11 @@ func (loop) Render() error {
 	pipeline.Unbind()
 
 	overlay.Clear(0)
-	cursor.Locate(2, 12)
+	overlay.Locate(0, coord.CR{2, 12})
 	ft, or := cozely.RenderStats()
-	cursor.Printf("% 3.2f", ft*1000)
+	overlay.Printf("% 3.2f", ft*1000)
 	if or > 0 {
-		cursor.Printf(" (%d)", or)
+		overlay.Printf(" (%d)", or)
 	}
 	overlay.Display()
 

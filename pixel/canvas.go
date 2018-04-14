@@ -191,6 +191,8 @@ func (a CanvasID) Display() {
 	blitUniforms.ScreenSize.Y = float32(aa.size.R)
 	blitUBO.SubData(&blitUniforms, 0)
 
+	internal.PaletteUpload()
+
 	blitPipeline.Bind()
 	gl.DefaultFramebuffer.Bind(gl.DrawFramebuffer)
 	gl.Enable(gl.FramebufferSRGB)

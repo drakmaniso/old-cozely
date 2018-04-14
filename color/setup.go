@@ -29,7 +29,7 @@ func setup() error {
 		}
 	}
 
-	PaletteID(0).Activate()
+	//TODO: PaletteID(0).Activate()
 
 	return gl.Err()
 }

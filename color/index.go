@@ -18,15 +18,4 @@ func (c Index) Color() LRGBA {
 	return colours[c]
 }
 
-// Set changes a color in the active palette.
-func (c Index) Set(v Color) {
-	if v == nil {
-		colours[c] = LRGBA{1, 0, .5, 1}
-	} else {
-		colours[c] = LRGBAof(v)
-	}
-	// palcolours[active][c] = LRGBAOf(v)
-	palettes.changed[active] = true
-}
-
 ////////////////////////////////////////////////////////////////////////////////
