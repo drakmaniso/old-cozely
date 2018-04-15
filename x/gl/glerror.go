@@ -3,6 +3,12 @@
 
 package gl
 
+import (
+	"errors"
+
+	"github.com/cozely/cozely/internal"
+)
+
 ////////////////////////////////////////////////////////////////////////////////
 
 /*
@@ -21,9 +27,11 @@ func logGLError(
 	length C.GLsizei,
 	m *C.char,
 ) {
+	highsev := false
 	var sev string
 	switch severity {
 	case C.GL_DEBUG_SEVERITY_HIGH:
+		highsev = true
 		sev = "ERROR"
 	case C.GL_DEBUG_SEVERITY_MEDIUM:
 		sev = "WARNING"
@@ -70,7 +78,10 @@ func logGLError(
 		ty = ""
 	}
 
-	debug.Printf("*** %s in %s%s ***\n%s", sev, sou, ty, C.GoString(m))
+	if highsev {
+		setErr(errors.New("*** " + sev + " in " + sou + ty + " ***\n" + C.GoString(m)))
+	}
+	internal.Debug.Printf("*** %s in %s%s ***\n%s", sev, sou, ty, C.GoString(m))
 }
 
 ////////////////////////////////////////////////////////////////////////////////

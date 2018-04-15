@@ -40,7 +40,7 @@ type CanvasID uint16
 
 const (
 	maxCanvasID = 0xFFFF
-	noCanvas = CanvasID(maxCanvasID)
+	noCanvas    = CanvasID(maxCanvasID)
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -159,7 +159,7 @@ func (a CanvasID) paint() {
 		return
 	}
 
-	internal.PaletteUpload()
+	internal.ColorUpload()
 
 	screenUniforms.PixelSize.X = 1.0 / float32(aa.size.C)
 	screenUniforms.PixelSize.Y = 1.0 / float32(aa.size.R)
@@ -202,7 +202,7 @@ func (a CanvasID) Display() {
 	blitUniforms.ScreenSize.Y = float32(aa.size.R)
 	blitUBO.SubData(&blitUniforms, 0)
 
-	internal.PaletteUpload()
+	internal.ColorUpload()
 
 	blitPipeline.Bind()
 	gl.DefaultFramebuffer.Bind(gl.DrawFramebuffer)

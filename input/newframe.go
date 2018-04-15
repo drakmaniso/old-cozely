@@ -10,7 +10,7 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 
 func init() {
-	internal.ActionNewFrame = newframe
+	internal.InputNewFrame = newframe
 }
 
 func newframe() error {

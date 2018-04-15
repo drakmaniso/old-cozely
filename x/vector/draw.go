@@ -16,7 +16,7 @@ func init() {
 }
 
 func drawHook() error {
-	internal.PaletteUpload()
+	internal.ColorUpload()
 
 	screenUniforms.PixelSize.X = 1.0 / float32(internal.Window.Width)
 	screenUniforms.PixelSize.Y = 1.0 / float32(internal.Window.Height)

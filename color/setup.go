@@ -15,8 +15,8 @@ var ssbo gl.StorageBuffer
 ////////////////////////////////////////////////////////////////////////////////
 
 func init() {
-	internal.PaletteSetup = setup
-	internal.PaletteCleanup = cleanup
+	internal.ColorSetup = setup
+	internal.ColorCleanup = cleanup
 }
 
 func setup() error {
@@ -45,7 +45,7 @@ func cleanup() error {
 ////////////////////////////////////////////////////////////////////////////////
 
 func init() {
-	internal.PaletteUpload = upload
+	internal.ColorUpload = upload
 }
 
 func upload() error {

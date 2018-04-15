@@ -5,8 +5,8 @@ package gl
 
 import (
 	"errors"
-	"log"
-	"os"
+
+	"github.com/cozely/cozely/internal"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -41,31 +41,17 @@ import "C"
 
 ////////////////////////////////////////////////////////////////////////////////
 
-type logger interface {
-	Print(v ...interface{})
-	Println(v ...interface{})
-	Printf(format string, v ...interface{})
+func init() {
+	internal.GLSetup = setup
 }
 
-type nolog struct{}
-
-func (nolog) Print(v ...interface{})                 {}
-func (nolog) Println(v ...interface{})               {}
-func (nolog) Printf(format string, v ...interface{}) {}
-
-var debug logger = nolog{}
-
-////////////////////////////////////////////////////////////////////////////////
-
-// Setup is called by cozely.Run, and should not be called manually.
-func Setup(dbg bool) error {
+func setup() error {
 	var d C.int
-	if dbg {
-		debug = log.New(os.Stderr, "", log.Ltime|log.Lmicroseconds)
+	if internal.Config.Debug {
 		d = 1
 	}
 	if C.InitOpenGL(d) != 0 {
-		return errors.New("impossible to initialize OpenGL")
+		return errors.New("gl setup: impossible to initialize OpenGL")
 	}
 
 	return nil

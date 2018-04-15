@@ -77,28 +77,45 @@ func Run(loop GameLoop) (err error) {
 
 		derr := internal.VectorCleanup()
 		if err == nil && derr != nil {
-			err = internal.Error("in vector cleanup", derr)
+			err = internal.Error("vector cleanup", derr)
+			return
+		}
+
+		derr = internal.PolyCleanup()
+		if err == nil && derr != nil {
+			err = internal.Error("poly cleanup", derr)
 			return
 		}
 
 		derr = internal.PixelCleanup()
 		if err == nil && derr != nil {
-			err = internal.Error("in pixel cleanup", derr)
+			err = internal.Error("pixel cleanup", derr)
 			return
 		}
 
-		derr = internal.PaletteCleanup()
+		derr = internal.ColorCleanup()
 		if err == nil && derr != nil {
-			err = internal.Error("in color cleanup", derr)
+			err = internal.Error("color cleanup", derr)
+			return
+		}
+
+		derr = internal.GLCleanup()
+		if err == nil && derr != nil {
+			err = internal.Error("gl cleanup", derr)
 			return
 		}
 
 		derr = internal.Cleanup()
 		if err == nil && derr != nil {
-			err = internal.Error("in internal cleanup", derr)
+			err = internal.Error("internal cleanup", derr)
 			return
 		}
 	}()
+
+	if internal.Running {
+		//TODO:
+		return nil
+	}
 
 	internal.Loop = loop
 
@@ -106,27 +123,32 @@ func Run(loop GameLoop) (err error) {
 
 	err = internal.Setup()
 	if err != nil {
-		return internal.Error("in internal setup", err)
+		return internal.Error("internal setup", err)
 	}
 
-	err = gl.Setup(internal.Config.Debug)
+	err = internal.GLSetup()
 	if err != nil {
-		return internal.Error("in OpenGL setup", err)
+		return internal.Error("gl setup", err)
 	}
 
-	err = internal.PaletteSetup()
+	err = internal.ColorSetup()
 	if err != nil {
-		return internal.Error("in color setup", err)
+		return internal.Error("color setup", err)
 	}
 
 	err = internal.PixelSetup()
 	if err != nil {
-		return internal.Error("in pixel Setup", err)
+		return internal.Error("pixel setup", err)
+	}
+
+	err = internal.PolySetup()
+	if err != nil {
+		return internal.Error("poly setup", err)
 	}
 
 	err = internal.VectorSetup()
 	if err != nil {
-		return internal.Error("in vector setup", err)
+		return internal.Error("vector setup", err)
 	}
 
 	// First, send a fake resize window event
@@ -166,7 +188,7 @@ func Run(loop GameLoop) (err error) {
 			// Process events even if there is no Update this frame
 			internal.GameTime = now //TODO: check if correct
 			internal.ProcessEvents(Events)
-			internal.ActionNewFrame() //TODO: error handling?
+			internal.InputNewFrame() //TODO: error handling?
 			internal.Loop.React()
 		}
 		for internal.UpdateLag >= internal.UpdateStep {
@@ -176,7 +198,7 @@ func Run(loop GameLoop) (err error) {
 			internal.GameTime = gametime
 			// Events
 			internal.ProcessEvents(Events)
-			internal.ActionNewFrame() //TODO: error handling?
+			internal.InputNewFrame() //TODO: error handling?
 			internal.Loop.React()
 			// Update
 			err = internal.Loop.Update()
@@ -253,6 +275,13 @@ func UpdateLag() float64 {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+// RenderStats returns the average durations of frames; it is updated 4
+// times per second. It also returns the number of overruns (i.e. frame time
+// longer than the threshold) during the last measurment interval.
+func RenderStats() (t float64, overruns int) {
+	return frAverage, xrunPrevious
+}
+
 func countFrames() {
 	frCount++
 	frSum += internal.RenderTime
@@ -267,13 +296,6 @@ func countFrames() {
 		frCount = 0
 		xrunCount = 0
 	}
-}
-
-// RenderStats returns the average durations of frames; it is updated 4
-// times per second. It also returns the number of overruns (i.e. frame time
-// longer than the threshold) during the last measurment interval.
-func RenderStats() (t float64, overruns int) {
-	return frAverage, xrunPrevious
 }
 
 const frInterval = 1.0 / 4.0

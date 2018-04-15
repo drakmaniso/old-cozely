@@ -3,6 +3,10 @@
 
 package gl
 
+import (
+	"github.com/cozely/cozely/internal"
+)
+
 ////////////////////////////////////////////////////////////////////////////////
 
 // Err returns the first unchecked error of the package since last call to the
@@ -22,9 +26,15 @@ func setErr(err error) {
 	if stickyErr == nil {
 		stickyErr = err
 	}
-	debug.Printf("*** ERROR in package gl***\n%s", err)
+	internal.Debug.Printf("*** ERROR in package gl***\n%s", err)
 }
 
 var stickyErr error
+
+func init() {
+	internal.GLErr = func() error {
+		return stickyErr
+	}
+}
 
 ////////////////////////////////////////////////////////////////////////////////
