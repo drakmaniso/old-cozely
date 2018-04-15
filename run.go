@@ -41,9 +41,8 @@ type GameLoop interface {
 
 // Events holds the callbacks for each window events.
 //
-// They can be modified at anytime, but should always contain valid callbacks
-// (i.e., non nil). The change will take effect at the next call to the React
-// method of the game loop.
+// These callbacks can be modified at anytime, but should always contain valid
+// functions (i.e., non nil). The change will take effect at the next frame.
 var Events = struct {
 	Resize  func()
 	Hide    func()
@@ -62,14 +61,11 @@ var Events = struct {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// Run initializes the framework, load the assets and starts the game loop.
+// Run initializes the framework, creates the ressources and loads all assets,
+// and finally starts the game loop. The loop will run until Stop is called.
 //
-// The Update method is called with a fixed time step, while the Render method
-// is tied to the framerate. The React method is called before each Update, but
-// at least once for every frame. The loop runs until Stop() is called.
-//
-// Important: must be called from main.main, or at least from a function that is
-// known to run on the main OS thread.
+// Important: Run must be called from main.main, or at least from a function
+// that is known to run on the main OS thread.
 func Run(loop GameLoop) (err error) {
 	defer func() {
 		internal.Running = false
@@ -158,7 +154,7 @@ func Run(loop GameLoop) (err error) {
 
 	internal.Running = true
 
-	internal.RenderTime = 0.0
+	internal.RenderDelta = 0.0
 	internal.UpdateLag = 0.0
 
 	then := internal.GetSeconds()
@@ -169,16 +165,16 @@ func Run(loop GameLoop) (err error) {
 	internal.Loop.Enter()
 
 	for !internal.QuitRequested {
-		internal.RenderTime = now - then
+		internal.RenderDelta = now - then
 		countFrames()
-		if internal.RenderTime > 4*internal.UpdateStep {
+		if internal.RenderDelta > 4*internal.UpdateStep {
 			// Prevent "spiral of death" when Render can't keep up with Update
-			internal.RenderTime = 4 * internal.UpdateStep
+			internal.RenderDelta = 4 * internal.UpdateStep
 		}
 
 		// Update and Events
 
-		internal.UpdateLag += internal.RenderTime
+		internal.UpdateLag += internal.RenderDelta
 		//TODO: ProcessEvents should always be called with GameTime = now!
 		if internal.UpdateLag < internal.UpdateStep {
 			// Process events even if there is no Update this frame
@@ -232,30 +228,27 @@ func GameTime() float64 {
 	return internal.GameTime
 }
 
-// UpdateTime returns the time between previous update and current one. It is a
+// UpdateDelta returns the time between previous update and current one. It is a
 // fixed value, that only changes when configured with UpdateStep.
 //
 // See also UpdateLag.
-func UpdateTime() float64 {
+func UpdateDelta() float64 {
 	return internal.UpdateStep
 }
 
-// RenderTime returns the time elapsed between the previous frame and the one
+// RenderDelta returns the time elapsed between the previous frame and the one
 // being rendered.
 //
-// See also UpdateTime and UpdateLag.
-func RenderTime() float64 {
-	return internal.RenderTime
+// See also UpdateDelta and UpdateLag.
+func RenderDelta() float64 {
+	return internal.RenderDelta
 }
 
-// UpdateLag returns the time elapsed between the last update and the frame
+// UpdateLag returns the time elapsed between the last Update and the frame
 // being rendered. It should be used during Render to extrapolate (or
 // interpolate) the game state.
 //
-// Note: if called during Update (or an event callback), it returns the time
-// between the current update and the next Render call.
-//
-// See also UpdateTime and RenderTime.
+// See also UpdateTime and RenderDelta.
 func UpdateLag() float64 {
 	return internal.UpdateLag
 }
@@ -271,8 +264,8 @@ func RenderStats() (t float64, overruns int) {
 
 func countFrames() {
 	frCount++
-	frSum += internal.RenderTime
-	if internal.RenderTime > xrunThreshold {
+	frSum += internal.RenderDelta
+	if internal.RenderDelta > xrunThreshold {
 		xrunCount++
 	}
 	if frSum >= frInterval {

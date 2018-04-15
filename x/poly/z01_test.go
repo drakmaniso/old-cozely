@@ -265,7 +265,7 @@ func (loop) Render() {
 }
 
 func prepare() {
-	dt := float32(cozely.RenderTime())
+	dt := float32(cozely.RenderDelta())
 
 	camera.Move(forward*dt, lateral*dt, vertical*dt)
 

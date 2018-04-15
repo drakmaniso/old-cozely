@@ -90,7 +90,7 @@ func (loop03) Update() {
 }
 
 func (l *loop03) Render() {
-	l.angle -= 1.0 * cozely.RenderTime()
+	l.angle -= 1.0 * cozely.RenderDelta()
 
 	l.pipeline.Bind()
 	gl.ClearColorBuffer(color.LRGBA{0.9, 0.9, 0.9, 1.0})

@@ -102,12 +102,12 @@ func (l *loop06) Enter() {
 	l.pipeline.Unbind()
 }
 
-func (loop06) Leave()  {
+func (loop06) Leave() {
 }
 
 // Game Loop ///////////////////////////////////////////////////////////////////
 
-func (l *loop06) React()  {
+func (l *loop06) React() {
 	if randomize.JustPressed(1) {
 		l.randomizeRosesData()
 		l.rosesINBO.SubData(roses[:], 0)
@@ -118,11 +118,11 @@ func (l *loop06) React()  {
 	}
 }
 
-func (loop06) Update()  {
+func (loop06) Update() {
 }
 
-func (l *loop06) Render()  {
-	l.perFrame.time += float32(cozely.UpdateTime())
+func (l *loop06) Render() {
+	l.perFrame.time += float32(cozely.UpdateDelta())
 
 	l.pipeline.Bind()
 	gl.ClearDepthBuffer(1.0)
@@ -167,4 +167,3 @@ func (l *loop06) randomizeRosesData() {
 // 	}
 // 	return m
 // }
-

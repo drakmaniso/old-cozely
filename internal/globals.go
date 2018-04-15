@@ -64,8 +64,8 @@ var GameTime float64
 var UpdateStep = float64(1.0 / 50)
 
 var (
-	// RenderTime is the time elapsed between current and previous frames.
-	RenderTime float64
+	// RenderDelta is the time elapsed between current and previous frames.
+	RenderDelta float64
 	// UpdateLag is the time accumulator used to decorrelate render frames from
 	// updates.
 	UpdateLag float64
