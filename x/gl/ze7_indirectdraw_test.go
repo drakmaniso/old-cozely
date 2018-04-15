@@ -16,34 +16,17 @@ import (
 // Declarations ////////////////////////////////////////////////////////////////
 
 // Input Bindings
+// (same as in FirstCube example)
 
-var (
-	quit   = input.Bool("Quit")
-	rotate = input.Bool("Rotate")
-	move   = input.Bool("Move")
-	zoom   = input.Bool("Zoom")
-)
-
-var context = input.Context("Default", quit, rotate, move, zoom)
-
-var bindings = input.Bindings{
-	"Default": {
-		"Quit":   {"Escape"},
-		"Rotate": {"Mouse Left"},
-		"Move":   {"Mouse Right"},
-		"Zoom":   {"Mouse Middle"},
-	},
-}
-
-type loop04 struct {
+type loop07 struct {
 	// OpenGL objects
 	pipeline    *gl.Pipeline
 	perFrameUBO gl.UniformBuffer
 
-	// Transformation matrices
+	// Tranformation matrices
 	screenFromView  space.Matrix // projection matrix
 	viewFromWorld   space.Matrix // view matrix
-	worldFromObject space.Matrix // model matrix
+	worldFromObject space.Matrix // model matirx
 
 	// Cube state
 	position   coord.XYZ
@@ -51,21 +34,73 @@ type loop04 struct {
 }
 
 // Uniform buffer
-type perObject struct {
-	screenFromObject space.Matrix
+// (same as in FirstCube example)
+// type perObject struct {
+// 	screenFromObject space.Matrix
+// }
+
+// Indirect Command Buffer
+var commands = []gl.DrawIndirectCommand{
+	{
+		VertexCount:   6,
+		InstanceCount: 1,
+		FirstVertex:   0,
+		BaseInstance:  1,
+	},
+	{
+		VertexCount:   6,
+		InstanceCount: 1,
+		FirstVertex:   6,
+		BaseInstance:  1,
+	},
+	{
+		VertexCount:   6,
+		InstanceCount: 1,
+		FirstVertex:   12,
+		BaseInstance:  2,
+	},
+	{
+		VertexCount:   6,
+		InstanceCount: 1,
+		FirstVertex:   18,
+		BaseInstance:  3,
+	},
+	{
+		VertexCount:   6,
+		InstanceCount: 1,
+		FirstVertex:   24,
+		BaseInstance:  4,
+	},
+	{
+		VertexCount:   6,
+		InstanceCount: 1,
+		FirstVertex:   30,
+		BaseInstance:  5,
+	},
+}
+
+// Instance Buffer
+var draws = []struct {
+	color color.LRGB `layout:"1" divisor:"1"`
+}{
+	{color.LRGB{R: 0.2, G: 0, B: 0.6}},
+	{color.LRGB{R: 0.2, G: 0, B: 0.6}},
+	{color.LRGB{R: 0, G: 0.3, B: 0.1}},
+	{color.LRGB{R: 0, G: 0.3, B: 0.1}},
+	{color.LRGB{R: 0.8, G: 0.3, B: 0}},
+	{color.LRGB{R: 0.8, G: 0.3, B: 0}},
 }
 
 // Vertex buffer
-type mesh []struct {
-	position coord.XYZ  `layout:"0"`
-	color    color.LRGB `layout:"1"`
+type simplemesh []struct {
+	position coord.XYZ `layout:"0"`
 }
 
 // Initialization //////////////////////////////////////////////////////////////
 
-func Example_04FirstCube() {
+func Example_indirectDraw() {
 	cozely.Configure(cozely.Multisample(8))
-	l := loop04{}
+	l := loop07{}
 	cozely.Events.Resize = func() {
 		s := cozely.WindowSize()
 		gl.Viewport(0, 0, int32(s.C), int32(s.R))
@@ -80,27 +115,32 @@ func Example_04FirstCube() {
 	//Output:
 }
 
-func (l *loop04) Enter() error {
+func (l *loop07) Enter() error {
 	bindings.Load()
 	context.Activate(1)
 
 	// Create and configure the pipeline
 	l.pipeline = gl.NewPipeline(
-		gl.Shader(cozely.Path()+"shader04.vert"),
-		gl.Shader(cozely.Path()+"shader04.frag"),
-		gl.VertexFormat(0, mesh{}),
+		gl.Shader(cozely.Path()+"shader07.vert"),
+		gl.Shader(cozely.Path()+"shader07.frag"),
+		gl.VertexFormat(0, simplemesh{}),
+		gl.VertexFormat(1, draws),
 		gl.Topology(gl.Triangles),
 		gl.CullFace(false, true),
 		gl.DepthTest(true),
-		gl.DepthComparison(gl.LessOrEqual),
 	)
 	gl.Enable(gl.FramebufferSRGB)
+	//TODO: bug related to depth or face culling when run in test sequence
 
 	// Create the uniform buffer
 	l.perFrameUBO = gl.NewUniformBuffer(&perObject{}, gl.DynamicStorage)
 
+	// Create the Indirect Command Buffer
+	icbo := gl.NewIndirectBuffer(commands, gl.DynamicStorage)
+	ibo := gl.NewVertexBuffer(draws, gl.DynamicStorage)
+
 	// Create and fill the vertex buffer
-	vbo := gl.NewVertexBuffer(coloredcube(), 0)
+	vbo := gl.NewVertexBuffer(simplecube(), 0)
 
 	// Initialize worldFromObject and viewFromWorld matrices
 	l.position = coord.XYZ{0, 0, 0}
@@ -112,18 +152,24 @@ func (l *loop04) Enter() error {
 	// Bind the vertex buffer to the pipeline
 	l.pipeline.Bind()
 	vbo.Bind(0, 0)
+	icbo.Bind()
+	ibo.Bind(1, 0)
 	l.pipeline.Unbind()
 
 	return cozely.Error("gl", gl.Err())
 }
 
-func (loop04) Leave() error {
+func (loop07) Leave() error {
 	return nil
 }
 
 // Game Loop ///////////////////////////////////////////////////////////////////
 
-func (l *loop04) React() error {
+func (loop07) Update() error {
+	return nil
+}
+
+func (l *loop07) React() error {
 	if quit.JustPressed(1) {
 		cozely.Stop()
 	}
@@ -167,12 +213,12 @@ func (l *loop04) React() error {
 	return nil
 }
 
-func (l *loop04) computeWorldFromObject() {
+func (l *loop07) computeWorldFromObject() {
 	rot := space.EulerZXY(l.pitch, l.yaw, 0)
 	l.worldFromObject = space.Translation(l.position).Times(rot)
 }
 
-func (l *loop04) computeViewFromWorld() {
+func (l *loop07) computeViewFromWorld() {
 	l.viewFromWorld = space.LookAt(
 		coord.XYZ{0, 0, 3},
 		coord.XYZ{0, 0, 0},
@@ -180,11 +226,7 @@ func (l *loop04) computeViewFromWorld() {
 	)
 }
 
-func (loop04) Update() error {
-	return nil
-}
-
-func (l *loop04) Render() error {
+func (l *loop07) Render() error {
 	l.pipeline.Bind()
 	gl.ClearDepthBuffer(1.0)
 	gl.ClearColorBuffer(color.LRGBA{0.9, 0.9, 0.9, 1.0})
@@ -197,7 +239,7 @@ func (l *loop04) Render() error {
 	l.perFrameUBO.SubData(&u, 0)
 	l.perFrameUBO.Bind(0)
 
-	gl.Draw(0, 6*2*3)
+	gl.DrawIndirect(0, 6)
 
 	l.pipeline.Unbind()
 
@@ -206,57 +248,49 @@ func (l *loop04) Render() error {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-var (
-	purple = color.LRGB{0.2, 0, 0.6}
-	orange = color.LRGB{0.8, 0.3, 0}
-	green  = color.LRGB{0, 0.3, 0.1}
-)
-
-func coloredcube() mesh {
-	return mesh{
+func simplecube() simplemesh {
+	return simplemesh{
 		// Front Face
-		{coord.XYZ{-0.5, -0.5, +0.5}, purple},
-		{coord.XYZ{+0.5, +0.5, +0.5}, purple},
-		{coord.XYZ{-0.5, +0.5, +0.5}, purple},
-		{coord.XYZ{-0.5, -0.5, +0.5}, purple},
-		{coord.XYZ{+0.5, -0.5, +0.5}, purple},
-		{coord.XYZ{+0.5, +0.5, +0.5}, purple},
+		{coord.XYZ{-0.5, -0.5, +0.5}},
+		{coord.XYZ{+0.5, +0.5, +0.5}},
+		{coord.XYZ{-0.5, +0.5, +0.5}},
+		{coord.XYZ{-0.5, -0.5, +0.5}},
+		{coord.XYZ{+0.5, -0.5, +0.5}},
+		{coord.XYZ{+0.5, +0.5, +0.5}},
 		// Back Face
-		{coord.XYZ{-0.5, -0.5, -0.5}, purple},
-		{coord.XYZ{-0.5, +0.5, -0.5}, purple},
-		{coord.XYZ{+0.5, +0.5, -0.5}, purple},
-		{coord.XYZ{-0.5, -0.5, -0.5}, purple},
-		{coord.XYZ{+0.5, +0.5, -0.5}, purple},
-		{coord.XYZ{+0.5, -0.5, -0.5}, purple},
+		{coord.XYZ{-0.5, -0.5, -0.5}},
+		{coord.XYZ{-0.5, +0.5, -0.5}},
+		{coord.XYZ{+0.5, +0.5, -0.5}},
+		{coord.XYZ{-0.5, -0.5, -0.5}},
+		{coord.XYZ{+0.5, +0.5, -0.5}},
+		{coord.XYZ{+0.5, -0.5, -0.5}},
 		// Right Face
-		{coord.XYZ{+0.5, -0.5, +0.5}, green},
-		{coord.XYZ{+0.5, +0.5, -0.5}, green},
-		{coord.XYZ{+0.5, +0.5, +0.5}, green},
-		{coord.XYZ{+0.5, -0.5, +0.5}, green},
-		{coord.XYZ{+0.5, -0.5, -0.5}, green},
-		{coord.XYZ{+0.5, +0.5, -0.5}, green},
+		{coord.XYZ{+0.5, -0.5, +0.5}},
+		{coord.XYZ{+0.5, +0.5, -0.5}},
+		{coord.XYZ{+0.5, +0.5, +0.5}},
+		{coord.XYZ{+0.5, -0.5, +0.5}},
+		{coord.XYZ{+0.5, -0.5, -0.5}},
+		{coord.XYZ{+0.5, +0.5, -0.5}},
 		// Left Face
-		{coord.XYZ{-0.5, -0.5, +0.5}, green},
-		{coord.XYZ{-0.5, +0.5, +0.5}, green},
-		{coord.XYZ{-0.5, +0.5, -0.5}, green},
-		{coord.XYZ{-0.5, -0.5, +0.5}, green},
-		{coord.XYZ{-0.5, +0.5, -0.5}, green},
-		{coord.XYZ{-0.5, -0.5, -0.5}, green},
+		{coord.XYZ{-0.5, -0.5, +0.5}},
+		{coord.XYZ{-0.5, +0.5, +0.5}},
+		{coord.XYZ{-0.5, +0.5, -0.5}},
+		{coord.XYZ{-0.5, -0.5, +0.5}},
+		{coord.XYZ{-0.5, +0.5, -0.5}},
+		{coord.XYZ{-0.5, -0.5, -0.5}},
 		// Bottom Face
-		{coord.XYZ{-0.5, -0.5, +0.5}, orange},
-		{coord.XYZ{-0.5, -0.5, -0.5}, orange},
-		{coord.XYZ{+0.5, -0.5, +0.5}, orange},
-		{coord.XYZ{-0.5, -0.5, -0.5}, orange},
-		{coord.XYZ{+0.5, -0.5, -0.5}, orange},
-		{coord.XYZ{+0.5, -0.5, +0.5}, orange},
+		{coord.XYZ{-0.5, -0.5, +0.5}},
+		{coord.XYZ{-0.5, -0.5, -0.5}},
+		{coord.XYZ{+0.5, -0.5, +0.5}},
+		{coord.XYZ{-0.5, -0.5, -0.5}},
+		{coord.XYZ{+0.5, -0.5, -0.5}},
+		{coord.XYZ{+0.5, -0.5, +0.5}},
 		// Top Face
-		{coord.XYZ{-0.5, +0.5, +0.5}, orange},
-		{coord.XYZ{+0.5, +0.5, +0.5}, orange},
-		{coord.XYZ{-0.5, +0.5, -0.5}, orange},
-		{coord.XYZ{-0.5, +0.5, -0.5}, orange},
-		{coord.XYZ{+0.5, +0.5, +0.5}, orange},
-		{coord.XYZ{+0.5, +0.5, -0.5}, orange},
+		{coord.XYZ{-0.5, +0.5, +0.5}},
+		{coord.XYZ{+0.5, +0.5, +0.5}},
+		{coord.XYZ{-0.5, +0.5, -0.5}},
+		{coord.XYZ{-0.5, +0.5, -0.5}},
+		{coord.XYZ{+0.5, +0.5, +0.5}},
+		{coord.XYZ{+0.5, +0.5, -0.5}},
 	}
 }
-
-////////////////////////////////////////////////////////////////////////////////

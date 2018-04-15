@@ -39,7 +39,7 @@ type loop2 struct{}
 
 // Initialization //////////////////////////////////////////////////////////////
 
-func Example_2Interactive() {
+func Example_interactive() {
 	cozely.Configure(cozely.UpdateStep(1.0 / 3))
 	cozely.Run(loop2{})
 	// Output:

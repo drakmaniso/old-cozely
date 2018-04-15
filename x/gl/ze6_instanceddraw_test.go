@@ -59,7 +59,7 @@ type perFrame06 struct {
 
 // Initialization //////////////////////////////////////////////////////////////
 
-func Example_06InstancedDraw() {
+func Example_instancedDraw() {
 	cozely.Configure(cozely.Multisample(8))
 	l := loop06{}
 	cozely.Events.Resize = func() {

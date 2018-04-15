@@ -90,7 +90,7 @@ var mode int
 
 // Initialization //////////////////////////////////////////////////////////////
 
-func Example_1ColorChart() {
+func Example_colorChart() {
 	err := cozely.Run(loop{})
 	if err != nil {
 		cozely.ShowError(err)

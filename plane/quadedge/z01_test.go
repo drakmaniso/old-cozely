@@ -82,7 +82,7 @@ func (loop1) React() error {
 
 	if scene1.JustPressed(1) {
 		points = points[:0]
-		const st = 1.0 / 16
+		const st = 1.0 / 8
 		for x := float32(st); x < 1.0; x += st {
 			for y := float32(st); y < 1.0; y += st {
 				points = append(points, coord.XY{x, y})

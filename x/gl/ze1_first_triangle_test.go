@@ -18,7 +18,7 @@ type loop01 struct {
 
 // Initialization //////////////////////////////////////////////////////////////
 
-func Example_01FirstTriangle() {
+func Example_firstTriangle() {
 	cozely.Events.Resize = func() {
 		s := cozely.WindowSize()
 		gl.Viewport(0, 0, int32(s.C), int32(s.R))

@@ -16,7 +16,7 @@ import (
 // Declarations ////////////////////////////////////////////////////////////////
 
 // Input Bindings
-// (same as in example 06)
+// (same as in InstancedDraw example)
 
 type loop08 struct {
 	// OpenGL objects
@@ -48,7 +48,7 @@ var points [512]struct {
 
 // Initialization //////////////////////////////////////////////////////////////
 
-func Example_08Streaming() {
+func Example_streaming() {
 	l := loop08{
 		bgColor:  color.LRGBA{0.9, 0.87, 0.85, 1.0},
 		rotSpeed: float32(0.003),

@@ -21,7 +21,7 @@ type loop struct{}
 
 // Initialization //////////////////////////////////////////////////////////////
 
-func Example_1HelloWorld() {
+func Example_helloWorld() {
 	cozely.Run(loop{})
 	// Output:
 }

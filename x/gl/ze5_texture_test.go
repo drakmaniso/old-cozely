@@ -4,6 +4,10 @@
 package gl_test
 
 import (
+	"image"
+	_ "image/png"
+	"os"
+
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/coord"
@@ -18,15 +22,19 @@ import (
 // Input Bindings
 // (same as in example 04)
 
-type loop07 struct {
+// OpenGL Objects
+
+type loop05 struct {
 	// OpenGL objects
 	pipeline    *gl.Pipeline
 	perFrameUBO gl.UniformBuffer
+	sampler     gl.Sampler
+	diffuse     gl.Texture2D
 
-	// Tranformation matrices
+	// Transformation matrices
 	screenFromView  space.Matrix // projection matrix
 	viewFromWorld   space.Matrix // view matrix
-	worldFromObject space.Matrix // model matirx
+	worldFromObject space.Matrix // model matrix
 
 	// Cube state
 	position   coord.XYZ
@@ -39,68 +47,17 @@ type loop07 struct {
 // 	screenFromObject space.Matrix
 // }
 
-// Indirect Command Buffer
-var commands = []gl.DrawIndirectCommand{
-	{
-		VertexCount:   6,
-		InstanceCount: 1,
-		FirstVertex:   0,
-		BaseInstance:  1,
-	},
-	{
-		VertexCount:   6,
-		InstanceCount: 1,
-		FirstVertex:   6,
-		BaseInstance:  1,
-	},
-	{
-		VertexCount:   6,
-		InstanceCount: 1,
-		FirstVertex:   12,
-		BaseInstance:  2,
-	},
-	{
-		VertexCount:   6,
-		InstanceCount: 1,
-		FirstVertex:   18,
-		BaseInstance:  3,
-	},
-	{
-		VertexCount:   6,
-		InstanceCount: 1,
-		FirstVertex:   24,
-		BaseInstance:  4,
-	},
-	{
-		VertexCount:   6,
-		InstanceCount: 1,
-		FirstVertex:   30,
-		BaseInstance:  5,
-	},
-}
-
-// Instance Buffer
-var draws = []struct {
-	color color.LRGB `layout:"1" divisor:"1"`
-}{
-	{color.LRGB{R: 0.2, G: 0, B: 0.6}},
-	{color.LRGB{R: 0.2, G: 0, B: 0.6}},
-	{color.LRGB{R: 0, G: 0.3, B: 0.1}},
-	{color.LRGB{R: 0, G: 0.3, B: 0.1}},
-	{color.LRGB{R: 0.8, G: 0.3, B: 0}},
-	{color.LRGB{R: 0.8, G: 0.3, B: 0}},
-}
-
 // Vertex buffer
-type simplemesh []struct {
+type uvmesh []struct {
 	position coord.XYZ `layout:"0"`
+	uv       coord.XY  `layout:"1"`
 }
 
 // Initialization //////////////////////////////////////////////////////////////
 
-func Example_07IndirectDraw() {
+func Example_texture() {
 	cozely.Configure(cozely.Multisample(8))
-	l := loop07{}
+	l := loop05{}
 	cozely.Events.Resize = func() {
 		s := cozely.WindowSize()
 		gl.Viewport(0, 0, int32(s.C), int32(s.R))
@@ -115,32 +72,48 @@ func Example_07IndirectDraw() {
 	//Output:
 }
 
-func (l *loop07) Enter() error {
+func (l *loop05) Enter() error {
 	bindings.Load()
 	context.Activate(1)
 
 	// Create and configure the pipeline
 	l.pipeline = gl.NewPipeline(
-		gl.Shader(cozely.Path()+"shader07.vert"),
-		gl.Shader(cozely.Path()+"shader07.frag"),
-		gl.VertexFormat(0, simplemesh{}),
-		gl.VertexFormat(1, draws),
+		gl.Shader(cozely.Path()+"shader05.vert"),
+		gl.Shader(cozely.Path()+"shader05.frag"),
+		gl.VertexFormat(0, uvmesh{}),
 		gl.Topology(gl.Triangles),
 		gl.CullFace(false, true),
 		gl.DepthTest(true),
+		gl.DepthComparison(gl.LessOrEqual),
+		gl.DepthWrite(true),
 	)
 	gl.Enable(gl.FramebufferSRGB)
-	//TODO: bug related to depth or face culling when run in test sequence
 
 	// Create the uniform buffer
 	l.perFrameUBO = gl.NewUniformBuffer(&perObject{}, gl.DynamicStorage)
 
-	// Create the Indirect Command Buffer
-	icbo := gl.NewIndirectBuffer(commands, gl.DynamicStorage)
-	ibo := gl.NewVertexBuffer(draws, gl.DynamicStorage)
-
 	// Create and fill the vertex buffer
-	vbo := gl.NewVertexBuffer(simplecube(), 0)
+	vbo := gl.NewVertexBuffer(uvcube(), gl.StaticStorage)
+
+	// Create and bind the sampler
+	l.sampler = gl.NewSampler(
+		gl.Minification(gl.LinearMipmapLinear),
+		gl.Anisotropy(16.0),
+	)
+
+	// Create and load the textures
+	l.diffuse = gl.NewTexture2D(8, gl.SRGBA8, 512, 512)
+	r, err := os.Open(cozely.Path() + "testpattern.png")
+	if err != nil {
+		return cozely.Error("opening texture", err)
+	}
+	defer r.Close()
+	img, _, err := image.Decode(r)
+	if err != nil {
+		return cozely.Error("decoding texture", err)
+	}
+	l.diffuse.SubImage(0, 0, 0, img)
+	l.diffuse.GenerateMipmap()
 
 	// Initialize worldFromObject and viewFromWorld matrices
 	l.position = coord.XYZ{0, 0, 0}
@@ -152,24 +125,18 @@ func (l *loop07) Enter() error {
 	// Bind the vertex buffer to the pipeline
 	l.pipeline.Bind()
 	vbo.Bind(0, 0)
-	icbo.Bind()
-	ibo.Bind(1, 0)
 	l.pipeline.Unbind()
 
 	return cozely.Error("gl", gl.Err())
 }
 
-func (loop07) Leave() error {
+func (loop05) Leave() error {
 	return nil
 }
 
 // Game Loop ///////////////////////////////////////////////////////////////////
 
-func (loop07) Update() error {
-	return nil
-}
-
-func (l *loop07) React() error {
+func (l *loop05) React() error {
 	if quit.JustPressed(1) {
 		cozely.Stop()
 	}
@@ -213,12 +180,12 @@ func (l *loop07) React() error {
 	return nil
 }
 
-func (l *loop07) computeWorldFromObject() {
+func (l *loop05) computeWorldFromObject() {
 	rot := space.EulerZXY(l.pitch, l.yaw, 0)
 	l.worldFromObject = space.Translation(l.position).Times(rot)
 }
 
-func (l *loop07) computeViewFromWorld() {
+func (l *loop05) computeViewFromWorld() {
 	l.viewFromWorld = space.LookAt(
 		coord.XYZ{0, 0, 3},
 		coord.XYZ{0, 0, 0},
@@ -226,10 +193,15 @@ func (l *loop07) computeViewFromWorld() {
 	)
 }
 
-func (l *loop07) Render() error {
+func (loop05) Update() error {
+	return nil
+}
+
+func (l *loop05) Render() error {
 	l.pipeline.Bind()
 	gl.ClearDepthBuffer(1.0)
 	gl.ClearColorBuffer(color.LRGBA{0.9, 0.9, 0.9, 1.0})
+	gl.Enable(gl.FramebufferSRGB)
 
 	u := perObject{
 		screenFromObject: l.screenFromView.
@@ -239,7 +211,9 @@ func (l *loop07) Render() error {
 	l.perFrameUBO.SubData(&u, 0)
 	l.perFrameUBO.Bind(0)
 
-	gl.DrawIndirect(0, 6)
+	l.diffuse.Bind(0)
+	l.sampler.Bind(0)
+	gl.Draw(0, 6*2*3)
 
 	l.pipeline.Unbind()
 
@@ -248,49 +222,49 @@ func (l *loop07) Render() error {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func simplecube() simplemesh {
-	return simplemesh{
+func uvcube() uvmesh {
+	return uvmesh{
 		// Front Face
-		{coord.XYZ{-0.5, -0.5, +0.5}},
-		{coord.XYZ{+0.5, +0.5, +0.5}},
-		{coord.XYZ{-0.5, +0.5, +0.5}},
-		{coord.XYZ{-0.5, -0.5, +0.5}},
-		{coord.XYZ{+0.5, -0.5, +0.5}},
-		{coord.XYZ{+0.5, +0.5, +0.5}},
+		{coord.XYZ{-0.5, -0.5, +0.5}, coord.XY{0, 1}},
+		{coord.XYZ{+0.5, -0.5, +0.5}, coord.XY{1, 1}},
+		{coord.XYZ{+0.5, +0.5, +0.5}, coord.XY{1, 0}},
+		{coord.XYZ{-0.5, -0.5, +0.5}, coord.XY{0, 1}},
+		{coord.XYZ{+0.5, +0.5, +0.5}, coord.XY{1, 0}},
+		{coord.XYZ{-0.5, +0.5, +0.5}, coord.XY{0, 0}},
 		// Back Face
-		{coord.XYZ{-0.5, -0.5, -0.5}},
-		{coord.XYZ{-0.5, +0.5, -0.5}},
-		{coord.XYZ{+0.5, +0.5, -0.5}},
-		{coord.XYZ{-0.5, -0.5, -0.5}},
-		{coord.XYZ{+0.5, +0.5, -0.5}},
-		{coord.XYZ{+0.5, -0.5, -0.5}},
+		{coord.XYZ{+0.5, -0.5, -0.5}, coord.XY{0, 1}},
+		{coord.XYZ{-0.5, -0.5, -0.5}, coord.XY{1, 1}},
+		{coord.XYZ{-0.5, +0.5, -0.5}, coord.XY{1, 0}},
+		{coord.XYZ{+0.5, -0.5, -0.5}, coord.XY{0, 1}},
+		{coord.XYZ{-0.5, +0.5, -0.5}, coord.XY{1, 0}},
+		{coord.XYZ{+0.5, +0.5, -0.5}, coord.XY{0, 0}},
 		// Right Face
-		{coord.XYZ{+0.5, -0.5, +0.5}},
-		{coord.XYZ{+0.5, +0.5, -0.5}},
-		{coord.XYZ{+0.5, +0.5, +0.5}},
-		{coord.XYZ{+0.5, -0.5, +0.5}},
-		{coord.XYZ{+0.5, -0.5, -0.5}},
-		{coord.XYZ{+0.5, +0.5, -0.5}},
+		{coord.XYZ{+0.5, -0.5, +0.5}, coord.XY{0, 1}},
+		{coord.XYZ{+0.5, -0.5, -0.5}, coord.XY{1, 1}},
+		{coord.XYZ{+0.5, +0.5, -0.5}, coord.XY{1, 0}},
+		{coord.XYZ{+0.5, -0.5, +0.5}, coord.XY{0, 1}},
+		{coord.XYZ{+0.5, +0.5, -0.5}, coord.XY{1, 0}},
+		{coord.XYZ{+0.5, +0.5, +0.5}, coord.XY{0, 0}},
 		// Left Face
-		{coord.XYZ{-0.5, -0.5, +0.5}},
-		{coord.XYZ{-0.5, +0.5, +0.5}},
-		{coord.XYZ{-0.5, +0.5, -0.5}},
-		{coord.XYZ{-0.5, -0.5, +0.5}},
-		{coord.XYZ{-0.5, +0.5, -0.5}},
-		{coord.XYZ{-0.5, -0.5, -0.5}},
+		{coord.XYZ{-0.5, -0.5, -0.5}, coord.XY{0, 1}},
+		{coord.XYZ{-0.5, -0.5, +0.5}, coord.XY{1, 1}},
+		{coord.XYZ{-0.5, +0.5, +0.5}, coord.XY{1, 0}},
+		{coord.XYZ{-0.5, -0.5, -0.5}, coord.XY{0, 1}},
+		{coord.XYZ{-0.5, +0.5, +0.5}, coord.XY{1, 0}},
+		{coord.XYZ{-0.5, +0.5, -0.5}, coord.XY{0, 0}},
 		// Bottom Face
-		{coord.XYZ{-0.5, -0.5, +0.5}},
-		{coord.XYZ{-0.5, -0.5, -0.5}},
-		{coord.XYZ{+0.5, -0.5, +0.5}},
-		{coord.XYZ{-0.5, -0.5, -0.5}},
-		{coord.XYZ{+0.5, -0.5, -0.5}},
-		{coord.XYZ{+0.5, -0.5, +0.5}},
+		{coord.XYZ{-0.5, -0.5, -0.5}, coord.XY{0, 1}},
+		{coord.XYZ{+0.5, -0.5, -0.5}, coord.XY{1, 1}},
+		{coord.XYZ{+0.5, -0.5, +0.5}, coord.XY{1, 0}},
+		{coord.XYZ{-0.5, -0.5, -0.5}, coord.XY{0, 1}},
+		{coord.XYZ{+0.5, -0.5, +0.5}, coord.XY{1, 0}},
+		{coord.XYZ{-0.5, -0.5, +0.5}, coord.XY{0, 0}},
 		// Top Face
-		{coord.XYZ{-0.5, +0.5, +0.5}},
-		{coord.XYZ{+0.5, +0.5, +0.5}},
-		{coord.XYZ{-0.5, +0.5, -0.5}},
-		{coord.XYZ{-0.5, +0.5, -0.5}},
-		{coord.XYZ{+0.5, +0.5, +0.5}},
-		{coord.XYZ{+0.5, +0.5, -0.5}},
+		{coord.XYZ{-0.5, +0.5, +0.5}, coord.XY{0, 1}},
+		{coord.XYZ{+0.5, +0.5, +0.5}, coord.XY{1, 1}},
+		{coord.XYZ{+0.5, +0.5, -0.5}, coord.XY{1, 0}},
+		{coord.XYZ{-0.5, +0.5, +0.5}, coord.XY{0, 1}},
+		{coord.XYZ{+0.5, +0.5, -0.5}, coord.XY{1, 0}},
+		{coord.XYZ{-0.5, +0.5, -0.5}, coord.XY{0, 0}},
 	}
 }
