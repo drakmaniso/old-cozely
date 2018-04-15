@@ -72,7 +72,9 @@ func setup() error {
 
 	// Create the pictures texture array
 	w, h := pictAtlas.BinSize()
-	picturesTA = gl.NewTextureArray2D(1, gl.R8UI, int32(w), int32(h), int32(pictAtlas.BinCount()))
+	if pictAtlas.BinCount() > 0 {
+		picturesTA = gl.NewTextureArray2D(1, gl.R8UI, int32(w), int32(h), int32(pictAtlas.BinCount()))
+	}
 	for i := int16(0); i < pictAtlas.BinCount(); i++ {
 		m := image.NewPaletted(image.Rectangle{
 			Min: image.Point{0, 0},

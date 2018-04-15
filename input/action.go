@@ -3,6 +3,11 @@
 
 package input
 
+////////////////////////////////////////////////////////////////////////////////
+
+// An Action represents something the player can do in the game. Actions can be
+// bound to hardware input (by the player). During the game loop, actions can be
+// queried and reacted upon.
 type Action interface {
 	Active(d DeviceID) bool
 	deactivate(d DeviceID)

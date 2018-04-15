@@ -11,7 +11,7 @@ import (
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// GameLoop methods are called in a loop to React to user inputs, Update the
+// GameLoop methods are called in a loop to React to player actions, Update the
 // game state, and Render it.
 type GameLoop interface {
 	// Enter is called once, after the framework initialization, but before the
@@ -21,8 +21,9 @@ type GameLoop interface {
 	// Leave is called when the loop is stopped.
 	Leave() error
 
-	// Enter is called once, after the framework initialization, and before the
-	// loop.
+	// React is called as often as possible, before Update and Render, to react to
+	// the player's actions. This is the only method that is guaranteed to run at
+	// least once per frame.
 	React() error
 
 	// Update is called at fixed intervals, to update the game state (e.g. logic,
@@ -32,7 +33,7 @@ type GameLoop interface {
 	// Render is called to display the game state to the player.
 	//
 	// Note that the framerate of Update and Render is independent, so the game
-	// state might need to be interpolated.
+	// state might need to be interpolated (see UpdateLag).
 	Render() error
 }
 

@@ -10,7 +10,8 @@ import (
 
 type cursor struct{}
 
-// Cursor is special action linked to the position of the mouse cursor.
+// Cursor is a special action automatically created by the framework, and linked
+// to the position of the system mouse cursor.
 var Cursor cursor
 
 var (

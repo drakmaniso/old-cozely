@@ -5,6 +5,11 @@ package input
 
 ////////////////////////////////////////////////////////////////////////////////
 
+// DeviceID identifies an input device, i.e. any kind of hardware that can be
+// bound to a game action.
+//
+// Note: for convenience, the mouse and keyboard are considered to be the same
+// device, and share the same ID.
 type DeviceID uint32
 
 const noDevice = DeviceID(maxID)

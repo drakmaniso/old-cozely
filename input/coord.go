@@ -4,9 +4,16 @@
 package input
 
 import (
-	coordi "github.com/cozely/cozely/coord"
+	"errors"
+
+	"github.com/cozely/cozely/coord"
+	"github.com/cozely/cozely/internal"
 )
 
+// CoordID identifies an absolute two-dimensional analog action, i.e. any action
+// that can be represented by a pair of X and Y coordinates, and whose most
+// important characteristic is the position. The values of the coordinates are
+// normalized between -1 and 1.
 type CoordID uint32
 
 const noCoord = CoordID(maxID)
@@ -21,19 +28,25 @@ var coords struct {
 
 type coordinates struct {
 	active bool
-	value  coordi.XY
+	value  coord.XY
 }
 
+// Coord declares a new coord action, and returns its ID.
 func Coord(name string) CoordID {
+	if internal.Running {
+		setErr(errors.New("input coord declaration: declarations must happen before starting the framework"))
+		return noCoord
+	}
+
 	_, ok := actions.names[name]
 	if ok {
-		//TODO: set error
+		setErr(errors.New("input coord declaration: name already taken by another action"))
 		return noCoord
 	}
 
 	a := len(coords.name)
 	if a >= maxID {
-		//TODO: set error
+		setErr(errors.New("input coord declaration: too many coord actions"))
 		return noCoord
 	}
 
@@ -43,9 +56,27 @@ func Coord(name string) CoordID {
 	return CoordID(a)
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
+// Name of the action.
 func (a CoordID) Name() string {
 	return bools.name[a]
 }
+
+// Active returns true if the action is currently active on a specific device
+// (i.e. if it is listed in the context currently active on the device).
+func (a CoordID) Active(d DeviceID) bool {
+	return devices.coords[d][a].active
+}
+
+// Coord returns the current status of the action on a specific device. The
+// coordinates are the current absolute position; the values of X and Y are
+// normalized between -1 and 1.
+func (a CoordID) Coord(d DeviceID) coord.XY {
+	return devices.coords[d][a].value
+}
+
+////////////////////////////////////////////////////////////////////////////////
 
 func (a CoordID) activate(d DeviceID, b binding) {
 	devices.coords[d][a].active = true
@@ -58,12 +89,4 @@ func (a CoordID) newframe(d DeviceID) {
 func (a CoordID) deactivate(d DeviceID) {
 	devices.coordbinds[d][a] = devices.coordbinds[d][a][:0]
 	devices.coords[d][a].active = false
-}
-
-func (a CoordID) Active(d DeviceID) bool {
-	return devices.coords[d][a].active
-}
-
-func (a CoordID) Coord(d DeviceID) coordi.XY {
-	return devices.coords[d][a].value
 }

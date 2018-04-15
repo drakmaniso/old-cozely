@@ -20,11 +20,11 @@ func Error(context string, err error) error {
 // ShowError shows an error to the user. In debug mode, it only prints to the
 // standard error output, otherwise it also brings a dialog box.
 func ShowError(e error) {
-	internal.Log.Printf("ERROR: %s", e)
+	internal.Log.Printf("*** ERROR ***\n%s", e)
 	if !internal.Config.Debug {
-		err2 := internal.ErrorDialog("ERROR: %s", e)
+		err2 := internal.ErrorDialog("*** ERROR ***\n%s", e)
 		if err2 != nil {
-			internal.Log.Printf("ERROR opening dialog:\n%s", err2)
+			internal.Log.Printf("*** ERROR opening dialog ***\n%s", err2)
 		}
 	}
 }

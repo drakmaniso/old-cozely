@@ -31,11 +31,12 @@ func Err() error {
 	return err
 }
 
+//TODO: remove context
 func setErr(context string, err error) {
 	if stickyErr == nil {
 		stickyErr = makeError(context, err)
 	}
-	debug.Printf("gfx error: %s", makeError(context, err))
+	debug.Printf("*** ERROR in package gl***\n%s", makeError(context, err))
 }
 
 var stickyErr error

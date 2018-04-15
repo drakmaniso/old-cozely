@@ -84,13 +84,10 @@ type loop1 struct{}
 
 func (loop1) Enter() error {
 	msx.Palette.Activate()
-	err := Bindings.Load()
-	if err != nil {
-		return err
-	}
+	Bindings.Load()
 
 	InMenu.Activate(0)
-	return nil
+	return input.Err()
 }
 
 func (loop1) Leave() error { return nil }

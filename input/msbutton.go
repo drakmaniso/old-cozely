@@ -3,7 +3,11 @@
 
 package input
 
-import "github.com/cozely/cozely/internal"
+import (
+	"github.com/cozely/cozely/internal"
+)
+
+////////////////////////////////////////////////////////////////////////////////
 
 type msButton struct {
 	button        mouseButton
@@ -16,15 +20,17 @@ type mouseButton uint32
 
 // mouseButton constants
 const (
-	MouseLeft mouseButton = 1 << iota
-	MouseMiddle
-	MouseRight
-	MouseBack
-	MouseForward
-	Mouse6
-	Mouse7
-	Mouse8
+	mouseLeft mouseButton = 1 << iota
+	mouseMiddle
+	mouseRight
+	mouseBack
+	mouseForward
+	mouse6
+	mouse7
+	mouse8
 )
+
+////////////////////////////////////////////////////////////////////////////////
 
 func (a *msButton) bind(c ContextID, target Action) {
 	aa := *a

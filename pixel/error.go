@@ -19,11 +19,12 @@ func Err() error {
 	return err
 }
 
+//TODO: remove context
 func setErr(context string, err error) {
 	if stickyErr == nil {
 		stickyErr = internal.Error(context, err)
 	}
-	internal.Debug.Printf("pixel error: %s", internal.Error(context, err))
+	internal.Debug.Printf("*** ERROR in package pixel ***\n%s", internal.Error(context, err))
 }
 
 ////////////////////////////////////////////////////////////////////////////////

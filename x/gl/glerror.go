@@ -51,7 +51,7 @@ func logGLError(
 	var ty string
 	switch typ {
 	case C.GL_DEBUG_TYPE_ERROR:
-		ty = " (error)"
+		ty = "" // " (error)"
 	case C.GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR:
 		ty = " (deprecated behavior)"
 	case C.GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:
@@ -70,7 +70,7 @@ func logGLError(
 		ty = ""
 	}
 
-	debug.Printf("%s %s%s: %s\n", sou, sev, ty, C.GoString(m))
+	debug.Printf("*** %s in %s%s ***\n%s", sev, sou, ty, C.GoString(m))
 }
 
 ////////////////////////////////////////////////////////////////////////////////

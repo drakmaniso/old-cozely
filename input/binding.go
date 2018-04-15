@@ -17,12 +17,19 @@ type binding interface {
 	asBool() (just bool, value bool)
 }
 
+// Bindings is a list of bindings for each context/action combination. The first
+// map level associates each context name to a sub-map; this sub map then
+// associates each action name to a slice of strings (the actual bindings).
 type Bindings map[string]map[string][]string
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (a Bindings)Load() error {
-	var err error
+// Load associates each context/action combination found in the bindings map to
+// the requested bindings.
+func (a Bindings) Load() {
+	if ! internal.Running {
+		setErr(errors.New("bindings must be loaded while the framework is running"))
+	}
 
 	// Forget devices (and previous bindings)
 	clearDevices()
@@ -39,9 +46,7 @@ func (a Bindings)Load() error {
 			}
 		}
 		if ctx == noContext {
-			if err == nil {
-				err = errors.New("unknown context: " + cn)
-			}
+				setErr(errors.New("unknown context: " + cn))
 			continue
 		}
 		lcn = lcn + " " + cn
@@ -50,18 +55,14 @@ func (a Bindings)Load() error {
 			// Find action by name
 			act, ok := actions.names[an]
 			if !ok {
-				if err == nil {
-					err = errors.New("unknown action: " + an)
-				}
+				setErr(errors.New("unknown action: " + an))
 				continue
 			}
 
 			for _, n := range ab {
 				bnd, ok := binders[n]
 				if !ok {
-					if err == nil {
-						err = errors.New("unknown binding: " + n)
-					}
+					setErr(errors.New("unknown binding: " + n))
 					continue
 				}
 				bnd.bind(ctx, act)
@@ -78,7 +79,8 @@ func (a Bindings)Load() error {
 		if internal.IsGameController(j) {
 			c := internal.GameControllerOpen(j)
 			if c == nil {
-				return errors.New("unable to open joystick as gamepad")
+				setErr(errors.New("unable to open joystick as gamepad"))
+				continue
 			}
 			// nm := c.Name()
 			nm := internal.JoystickNameForIndex(j)
@@ -88,8 +90,4 @@ func (a Bindings)Load() error {
 			internal.Debug.Printf("Controller %d is a joystick (%s)", j, nm)
 		}
 	}
-
-	return err
 }
-
-////////////////////////////////////////////////////////////////////////////////
