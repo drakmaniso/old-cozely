@@ -256,7 +256,7 @@ func NewPipeline(o ...PipelineConfig) *Pipeline {
 	C.PipelineLinkProgram(p.object)
 	if errm := C.PipelineLinkError(p.object); errm != nil {
 		defer C.free(unsafe.Pointer(errm))
-		setErr("linking shaders", errors.New(C.GoString(errm)))
+		setErr(errors.New("gl shaders linking" + C.GoString(errm)))
 	}
 	//TODO: unlink shaders
 	// A bit inelegant, but makes the API easier

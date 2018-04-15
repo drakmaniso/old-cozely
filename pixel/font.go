@@ -5,12 +5,19 @@ package pixel
 
 import (
 	"errors"
+
+	"github.com/cozely/cozely/internal"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
 
 // FontID is the ID to handle font assets.
 type FontID uint8
+
+const (
+	maxFontID = 0xFF
+	noFont    = FontID(maxFontID)
+)
 
 // Monozela10 is the ID of the default font (a 10 pixel high monospace). This is
 // the only font that is always loaded and doesn't need declaration.
@@ -32,9 +39,14 @@ var glyphMap []mapping
 
 // Font declares a new font and returns its ID.
 func Font(path string) FontID {
-	if len(fonts) >= 0xFF {
-		setErr("in NewFont", errors.New("too many fonts"))
-		return FontID(0)
+	if internal.Running {
+		setErr(errors.New("pixel font declaration: declarations must happen before starting the framework"))
+		return noFont
+	}
+
+	if len(fonts) >= maxFontID {
+		setErr(errors.New("pixel font declaration: too many fonts"))
+		return noFont
 	}
 
 	fonts = append(fonts, font{})

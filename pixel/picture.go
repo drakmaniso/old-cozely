@@ -7,12 +7,18 @@ import (
 	"errors"
 
 	"github.com/cozely/cozely/coord"
+	"github.com/cozely/cozely/internal"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
 
 // PictureID is the ID to handle static image assets.
 type PictureID uint16
+
+const (
+	maxPictureID = 0xFFFF
+	noPicture = PictureID(0)
+)
 
 var picturePaths = []string{""}
 
@@ -30,9 +36,14 @@ type mapping struct {
 
 // Picture declares a new picture and returns its ID.
 func Picture(path string) PictureID {
-	if len(pictureMap) >= 0xFFFF {
-		setErr("in NewPitcture", errors.New("too many pictures"))
-		return PictureID(0)
+	if internal.Running {
+		setErr(errors.New("pixel picture declaration: declarations must happen before starting the framework"))
+		return noPicture
+	}
+
+	if len(pictureMap) >= maxPictureID {
+		setErr(errors.New("pixel picture declaration: too many pictures"))
+		return noPicture
 	}
 
 	picturePaths = append(picturePaths, path)

@@ -5,26 +5,12 @@ package gl
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// makeError returns nil if err is nil, or a wrapped error otherwise.
-func makeError(context string, err error) error {
-	if err == nil {
-		return nil
-	}
-	return wrappedError{context, err}
-}
-
-type wrappedError struct {
-	Context string
-	Err     error
-}
-
-func (e wrappedError) Error() string {
-	return e.Context + ": " + e.Err.Error()
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-// Err returns the first OpenGL error since the previous call to Err().
+// Err returns the first unchecked error of the package since last call to the
+// function. The error is then considered checked, and further calls to Err will
+// return nil until the next error occurs.
+//
+// Note: errors occuring while there already is an unchecked error will not be
+// recorded. However, if the debug mode is active, all errors will be logged.
 func Err() error {
 	err := stickyErr
 	stickyErr = nil
@@ -32,11 +18,11 @@ func Err() error {
 }
 
 //TODO: remove context
-func setErr(context string, err error) {
+func setErr(err error) {
 	if stickyErr == nil {
-		stickyErr = makeError(context, err)
+		stickyErr = err
 	}
-	debug.Printf("*** ERROR in package gl***\n%s", makeError(context, err))
+	debug.Printf("*** ERROR in package gl***\n%s", err)
 }
 
 var stickyErr error

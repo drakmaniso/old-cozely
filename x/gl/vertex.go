@@ -50,12 +50,12 @@ func VertexFormat(binding uint32, format interface{}) PipelineConfig {
 func (p *Pipeline) setVertexFormat(binding uint32, format interface{}) {
 	t := reflect.TypeOf(format)
 	if t.Kind() != reflect.Slice {
-		setErr("configuring vertext format", errors.New("invalid type: "+t.Kind().String()))
+		setErr(errors.New("gl vertext format configuration: invalid type: "+t.Kind().String()))
 		return
 	}
 	t = t.Elem()
 	if t.Kind() != reflect.Struct {
-		setErr("configuring vertext format", errors.New("invalid slice type: slice of "+t.Kind().String()))
+		setErr(errors.New("gl vertext format configuration: invalid slice type: slice of "+t.Kind().String()))
 		return
 	}
 
@@ -69,7 +69,7 @@ func (p *Pipeline) setVertexFormat(binding uint32, format interface{}) {
 		}
 		lay, err := strconv.Atoi(layStr)
 		if err != nil {
-			setErr("configuring vertext format", errors.New("invalid layout tag: "+layStr))
+			setErr(errors.New("gl vertext format configuration: invalid layout tag: "+layStr))
 			return
 		}
 		//TODO: check that lay is in range
@@ -124,7 +124,7 @@ func (p *Pipeline) setVertexFormat(binding uint32, format interface{}) {
 			var div = 0
 			div, err = strconv.Atoi(divStr)
 			if err != nil {
-				setErr("configuring vertex format", errors.New("invalid divisor tag: "+divStr))
+				setErr(errors.New("gl vertext format configuration: invalid divisor tag: "+divStr))
 				return
 			}
 			C.VertexArrayBindingDivisor(p.vao, C.GLuint(binding), C.GLuint(div))

@@ -45,7 +45,7 @@ var bindings = input.Bindings{
 		"Scene7":   {"7"},
 		"Scene8":   {"8"},
 		"Scene9":   {"9"},
-		"Scene10":  {"10"},
+		"Scene10":  {"0"},
 	},
 }
 

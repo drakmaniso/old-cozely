@@ -7,6 +7,8 @@ import (
 	"fmt"
 	"reflect"
 	"unsafe"
+
+	"github.com/cozely/cozely/internal"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -79,7 +81,7 @@ type UniformBuffer struct {
 func NewUniformBuffer(data interface{}, f BufferFlags) UniformBuffer {
 	p, s, err := pointerAndSizeOf(data)
 	if err != nil {
-		setErr("creating uniform buffer", err)
+		setErr(internal.Error("gl uniform buffer creation", err))
 		return UniformBuffer{}
 	}
 	var ub UniformBuffer
@@ -95,7 +97,7 @@ func NewUniformBuffer(data interface{}, f BufferFlags) UniformBuffer {
 func (ub *UniformBuffer) SubData(data interface{}, atOffset uintptr) {
 	p, s, err := pointerAndSizeOf(data)
 	if err != nil {
-		setErr("updating uniform buffer", err)
+		setErr(internal.Error("gl uniform buffer update", err))
 		return
 	}
 	C.BufferSubData(ub.object, C.GLintptr(atOffset), C.GLsizei(s), p)
@@ -130,7 +132,7 @@ type StorageBuffer struct {
 func NewStorageBuffer(data interface{}, f BufferFlags) StorageBuffer {
 	p, s, err := pointerAndSizeOf(data)
 	if err != nil {
-		setErr("creating storage buffer", err)
+		setErr(internal.Error("gl storage buffer creation", err))
 		return StorageBuffer{}
 	}
 	var sb StorageBuffer
@@ -146,7 +148,7 @@ func NewStorageBuffer(data interface{}, f BufferFlags) StorageBuffer {
 func (sb *StorageBuffer) SubData(data interface{}, atOffset uintptr) {
 	p, s, err := pointerAndSizeOf(data)
 	if err != nil {
-		setErr("updating storage buffer", err)
+		setErr(internal.Error("gl storage buffer update", err))
 		return
 	}
 	C.BufferSubData(sb.object, C.GLintptr(atOffset), C.GLsizei(s), p)
@@ -182,7 +184,7 @@ type VertexBuffer struct {
 func NewVertexBuffer(data interface{}, f BufferFlags) VertexBuffer {
 	p, s, st, err := pointerSizeAndStrideOf(data)
 	if err != nil {
-		setErr("creating vertex buffer", err)
+		setErr(internal.Error("gl vertex buffer creation", err))
 		return VertexBuffer{}
 	}
 	var vb VertexBuffer
@@ -199,7 +201,7 @@ func NewVertexBuffer(data interface{}, f BufferFlags) VertexBuffer {
 func (vb *VertexBuffer) SubData(data interface{}, atOffset uintptr) {
 	p, s, st, err := pointerSizeAndStrideOf(data)
 	if err != nil {
-		setErr("updating vertex buffer", err)
+		setErr(internal.Error("gl vertex buffer update", err))
 		return
 	}
 	if st != 0 {
@@ -230,6 +232,8 @@ type IndexBuffer struct {
 	gltype C.GLenum
 }
 
+var boundElement IndexBuffer
+
 // NewIndexBuffer asks the GPU to allocate a new block of memory.
 //
 // If data is a uinptr, it is interpreted as the desired size for the buffer (in
@@ -239,7 +243,7 @@ type IndexBuffer struct {
 func NewIndexBuffer(data interface{}, f BufferFlags) IndexBuffer {
 	p, s, t, err := pointerSizeAndUintTypeOf(data)
 	if err != nil {
-		setErr("creating index buffer", err)
+		setErr(internal.Error("gl index buffer creation", err))
 		return IndexBuffer{}
 	}
 	var eb IndexBuffer
@@ -256,7 +260,7 @@ func NewIndexBuffer(data interface{}, f BufferFlags) IndexBuffer {
 func (eb *IndexBuffer) SubData(data interface{}, atOffset uintptr) {
 	p, s, t, err := pointerSizeAndUintTypeOf(data)
 	if err != nil {
-		setErr("updating index buffer", err)
+		setErr(internal.Error("gl index buffer update", err))
 		return
 	}
 	if t != 0 {
@@ -264,6 +268,131 @@ func (eb *IndexBuffer) SubData(data interface{}, atOffset uintptr) {
 	}
 	C.BufferSubData(eb.object, C.GLintptr(atOffset), C.GLsizei(s), p)
 }
+
+// Bind the element buffer.
+func (eb *IndexBuffer) Bind() {
+	C.BindElement(eb.object)
+	boundElement = *eb
+}
+
+// Delete frees the buffer.
+func (eb *IndexBuffer) Delete() {
+	C.DeleteBuffer(C.GLuint(eb.object))
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+// An IndirectBuffer is a block of memory owned by the GPU.
+type IndirectBuffer struct {
+	object C.GLuint
+}
+
+// NewIndirectBuffer asks the GPU to allocate a new block of memory.
+//
+// If data is a
+//
+// In all cases the size of the buffer is
+// fixed at creation.
+func NewIndirectBuffer(data interface{}, f BufferFlags) IndirectBuffer {
+	p, s, err := pointerAndSizeOf(data)
+	if err != nil {
+		setErr(internal.Error("gl indirect buffer creation", err))
+		return IndirectBuffer{}
+	}
+	var ib IndirectBuffer
+	ib.object = C.NewBuffer(C.GLsizeiptr(s), p, C.GLbitfield(f))
+	//TODO: error handling
+	return ib
+}
+
+// SubData updates the buffer with data, starting at a specified offset.
+//
+// It is your responsibility to ensure that the size of data plus the offset
+// does not exceed the buffer size.
+func (ib *IndirectBuffer) SubData(data interface{}, atOffset uintptr) {
+	p, s, err := pointerAndSizeOf(data)
+	if err != nil {
+		setErr(internal.Error("gl indirect buffer update", err))
+		return
+	}
+	C.BufferSubData(ib.object, C.GLintptr(atOffset), C.GLsizei(s), p)
+}
+
+// Bind the indirect buffer.
+//
+// The buffer should use the same struct type than the one used in the
+// corresponding call to Pipeline.IndirectFormat.
+func (ib *IndirectBuffer) Bind() {
+	C.BindIndirect(ib.object)
+}
+
+// Delete frees the buffer.
+func (ib *IndirectBuffer) Delete() {
+	C.DeleteBuffer(C.GLuint(ib.object))
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+type BufferTexture struct {
+	object  C.GLuint
+	texture C.GLuint
+}
+
+func NewBufferTexture(data interface{}, fmt TextureFormat, f BufferFlags) BufferTexture {
+	p, s, err := pointerAndSizeOf(data)
+	if err != nil {
+		setErr(internal.Error("gl storage buffer creation", err))
+		return BufferTexture{}
+	}
+	var bt BufferTexture
+	bt.object = C.NewBuffer(C.GLsizeiptr(s), p, C.GLbitfield(f))
+	bt.texture = C.NewBufferTexture(bt.object, C.GLenum(fmt))
+	//TODO: error handling
+	return bt
+}
+
+// Bind the buffer texture.
+func (bt BufferTexture) Bind(index uint32) {
+	C.BindTextureUnit(C.GLuint(index), bt.texture)
+}
+
+// SubData updates the buffer with data, starting at a specified offset.
+//
+// It is your responsibility to ensure that the size of data plus the offset
+// does not exceed the buffer size.
+func (bt *BufferTexture) SubData(data interface{}, atOffset uintptr) {
+	p, s, err := pointerAndSizeOf(data)
+	if err != nil {
+		setErr(internal.Error("gl buffer texture update", err))
+		return
+	}
+	C.BufferSubData(bt.object, C.GLintptr(atOffset), C.GLsizei(s), p)
+}
+
+// Delete frees the buffer.
+func (tb *BufferTexture) Delete() {
+	C.DeleteBuffer(C.GLuint(tb.object))
+	//TODO: delete texture
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+// BufferFlags specify which settings to use when creating a new buffer. Values
+// can be ORed together.
+type BufferFlags C.GLbitfield
+
+// Used in `NewUniformBuffer` and `NewVertexBuffer`.
+const (
+	StaticStorage  BufferFlags = C.GL_NONE                // Content will not be updated
+	MapRead        BufferFlags = C.GL_MAP_READ_BIT        // Data store will be mapped for reading
+	MapWrite       BufferFlags = C.GL_MAP_WRITE_BIT       // Data store will be mapped for writing
+	MapPersistent  BufferFlags = C.GL_MAP_PERSISTENT_BIT  // Data store will be accessed by both application and GPU while mapped
+	MapCoherent    BufferFlags = C.GL_MAP_COHERENT_BIT    // No synchronization needed when persistently mapped
+	DynamicStorage BufferFlags = C.GL_DYNAMIC_STORAGE_BIT // Content will be updated
+	ClientStorage  BufferFlags = C.GL_CLIENT_STORAGE_BIT  // Prefer storage on application side
+)
+
+////////////////////////////////////////////////////////////////////////////////
 
 func pointerSizeAndUintTypeOf(data interface{}) (ptr unsafe.Pointer, size uintptr, gltype C.GLenum, err error) {
 	var p unsafe.Pointer
@@ -300,133 +429,6 @@ func pointerSizeAndUintTypeOf(data interface{}) (ptr unsafe.Pointer, size uintpt
 	}
 	return p, s, t, nil
 }
-
-// Bind the element buffer.
-func (eb *IndexBuffer) Bind() {
-	C.BindElement(eb.object)
-	boundElement = *eb
-}
-
-var boundElement IndexBuffer
-
-// Delete frees the buffer.
-func (eb *IndexBuffer) Delete() {
-	C.DeleteBuffer(C.GLuint(eb.object))
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-// An IndirectBuffer is a block of memory owned by the GPU.
-type IndirectBuffer struct {
-	object C.GLuint
-}
-
-// NewIndirectBuffer asks the GPU to allocate a new block of memory.
-//
-// If data is a
-//
-// In all cases the size of the buffer is
-// fixed at creation.
-func NewIndirectBuffer(data interface{}, f BufferFlags) IndirectBuffer {
-	p, s, err := pointerAndSizeOf(data)
-	if err != nil {
-		setErr("creating indirect buffer", err)
-		return IndirectBuffer{}
-	}
-	var ib IndirectBuffer
-	ib.object = C.NewBuffer(C.GLsizeiptr(s), p, C.GLbitfield(f))
-	//TODO: error handling
-	return ib
-}
-
-// SubData updates the buffer with data, starting at a specified offset.
-//
-// It is your responsibility to ensure that the size of data plus the offset
-// does not exceed the buffer size.
-func (ib *IndirectBuffer) SubData(data interface{}, atOffset uintptr) {
-	p, s, err := pointerAndSizeOf(data)
-	if err != nil {
-		setErr("updating indirect buffer", err)
-		return
-	}
-	C.BufferSubData(ib.object, C.GLintptr(atOffset), C.GLsizei(s), p)
-}
-
-// Bind the indirect buffer.
-//
-// The buffer should use the same struct type than the one used in the
-// corresponding call to Pipeline.IndirectFormat.
-func (ib *IndirectBuffer) Bind() {
-	C.BindIndirect(ib.object)
-}
-
-// Delete frees the buffer.
-func (ib *IndirectBuffer) Delete() {
-	C.DeleteBuffer(C.GLuint(ib.object))
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-type BufferTexture struct {
-	object  C.GLuint
-	texture C.GLuint
-}
-
-func NewBufferTexture(data interface{}, fmt TextureFormat, f BufferFlags) BufferTexture {
-	p, s, err := pointerAndSizeOf(data)
-	if err != nil {
-		setErr("creating storage buffer", err)
-		return BufferTexture{}
-	}
-	var bt BufferTexture
-	bt.object = C.NewBuffer(C.GLsizeiptr(s), p, C.GLbitfield(f))
-	bt.texture = C.NewBufferTexture(bt.object, C.GLenum(fmt))
-	//TODO: error handling
-	return bt
-}
-
-// Bind the buffer texture.
-func (bt BufferTexture) Bind(index uint32) {
-	C.BindTextureUnit(C.GLuint(index), bt.texture)
-}
-
-// SubData updates the buffer with data, starting at a specified offset.
-//
-// It is your responsibility to ensure that the size of data plus the offset
-// does not exceed the buffer size.
-func (bt *BufferTexture) SubData(data interface{}, atOffset uintptr) {
-	p, s, err := pointerAndSizeOf(data)
-	if err != nil {
-		setErr("updating buffer texture", err)
-		return
-	}
-	C.BufferSubData(bt.object, C.GLintptr(atOffset), C.GLsizei(s), p)
-}
-
-// Delete frees the buffer.
-func (tb *BufferTexture) Delete() {
-	C.DeleteBuffer(C.GLuint(tb.object))
-	//TODO: delete texture
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-// BufferFlags specify which settings to use when creating a new buffer. Values
-// can be ORed together.
-type BufferFlags C.GLbitfield
-
-// Used in `NewUniformBuffer` and `NewVertexBuffer`.
-const (
-	StaticStorage  BufferFlags = C.GL_NONE                // Content will not be updated
-	MapRead        BufferFlags = C.GL_MAP_READ_BIT        // Data store will be mapped for reading
-	MapWrite       BufferFlags = C.GL_MAP_WRITE_BIT       // Data store will be mapped for writing
-	MapPersistent  BufferFlags = C.GL_MAP_PERSISTENT_BIT  // Data store will be accessed by both application and GPU while mapped
-	MapCoherent    BufferFlags = C.GL_MAP_COHERENT_BIT    // No synchronization needed when persistently mapped
-	DynamicStorage BufferFlags = C.GL_DYNAMIC_STORAGE_BIT // Content will be updated
-	ClientStorage  BufferFlags = C.GL_CLIENT_STORAGE_BIT  // Prefer storage on application side
-)
-
-////////////////////////////////////////////////////////////////////////////////
 
 func pointerAndSizeOf(data interface{}) (ptr unsafe.Pointer, size uintptr, err error) {
 	var p unsafe.Pointer

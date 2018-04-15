@@ -38,12 +38,23 @@ var canvases []canvas
 // print text and for various other drawing primitives.
 type CanvasID uint16
 
+const (
+	maxCanvasID = 0xFFFF
+	noCanvas = CanvasID(maxCanvasID)
+)
+
 ////////////////////////////////////////////////////////////////////////////////
 
 // Canvas declares a new canvas and returns its ID.
 func Canvas(o ...CanvasOption) CanvasID {
-	if len(canvases) >= 0xFFFF {
-		setErr("in NewCanvas", errors.New("too many canvases"))
+	if internal.Running {
+		setErr(errors.New("pixel canvas declaration: declarations must happen before starting the framework"))
+		return noCanvas
+	}
+
+	if len(canvases) >= maxCanvasID {
+		setErr(errors.New("pixel canvas declaration: too many canvases"))
+		return noCanvas
 	}
 
 	a := CanvasID(len(canvases))
@@ -132,7 +143,7 @@ func (a CanvasID) createTextures() {
 
 	st := aa.buffer.CheckStatus(gl.DrawReadFramebuffer)
 	if st != gl.FramebufferComplete {
-		setErr("while creating screen textures", errors.New(st.String()))
+		setErr(errors.New("pixel canvas texture creation: " + st.String()))
 	}
 }
 
