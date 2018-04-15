@@ -32,10 +32,14 @@ var (
 	orig  coord.XY
 )
 
+type loop1 struct{}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 func TestTest1(t *testing.T) {
 	do(func() {
+		defer cozely.Recover()
+
 		err := cozely.Run(loop1{})
 		if err != nil {
 			t.Error(err)
@@ -43,13 +47,7 @@ func TestTest1(t *testing.T) {
 	})
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
-type loop1 struct{}
-
-////////////////////////////////////////////////////////////////////////////////
-
-func (loop1) Enter() error {
+func (loop1) Enter() {
 	bindings.Load()
 	context.Activate(1)
 
@@ -57,18 +55,17 @@ func (loop1) Enter() error {
 	newPoints()
 
 	palette1.Activate()
-	return nil
 }
 
-func (loop1) Leave() error { return nil }
+func (loop1) Leave() {
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (loop1) React() error {
+func (loop1) React() {
 	if quit.JustPressed(1) {
-		cozely.Stop()
+		cozely.Stop(nil)
 	}
-
 	if next.JustPressed(1) {
 		newPoints()
 	}
@@ -135,16 +132,15 @@ func (loop1) React() error {
 		triangulation = quadedge.Delaunay(points)
 	}
 
-	return nil
+	if quit.JustPressed(1) {
+		cozely.Stop(nil)
+	}
 }
 
-////////////////////////////////////////////////////////////////////////////////
+func (loop1) Update() {
+}
 
-func (loop1) Update() error { return nil }
-
-////////////////////////////////////////////////////////////////////////////////
-
-func (loop1) Render() error {
+func (loop1) Render() {
 	canvas1.Clear(0)
 	ratio = float32(canvas1.Size().R)
 	orig = coord.XY{
@@ -175,10 +171,7 @@ func (loop1) Render() error {
 	})
 
 	canvas1.Display()
-	return nil
 }
-
-////////////////////////////////////////////////////////////////////////////////
 
 func toScreen(p coord.XY) coord.CR {
 	return orig.Plus(p.FlipY().Times(ratio)).CR()
@@ -188,13 +181,9 @@ func fromScreen(p coord.CR) coord.XY {
 	return (p.XY().FlipY().Minus(orig.FlipY())).Slash(ratio)
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
 func newPoints() {
 	for i := range points {
 		points[i] = coord.XY{rand.Float32(), rand.Float32()}
 	}
 	triangulation = quadedge.Delaunay(points)
 }
-
-////////////////////////////////////////////////////////////////////////////////

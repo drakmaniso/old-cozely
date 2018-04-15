@@ -29,12 +29,12 @@ import "C"
 
 // GameLoop (identic to cozely.GameLoop).
 type GameLoop interface {
-	Leave() error
-	Enter() error
+	Enter()
+	Leave()
 
-	React() error
-	Update() error
-	Render() error
+	React()
+	Update()
+	Render()
 }
 
 ////////////////////////////////////////////////////////////////////////////////

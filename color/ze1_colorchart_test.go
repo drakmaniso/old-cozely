@@ -91,32 +91,33 @@ var mode int
 // Initialization //////////////////////////////////////////////////////////////
 
 func Example_colorChart() {
+	defer cozely.Recover()
+
 	err := cozely.Run(loop{})
 	if err != nil {
-		cozely.ShowError(err)
+		panic(err)
 	}
 	//Output:
 }
 
 type loop struct{}
 
-func (loop) Enter() error {
+func (loop) Enter() {
 	bindings.Load()
 	context.Activate(1)
 
 	mode = 1
 	palette.Activate()
-
-	return nil
 }
 
-func (loop) Leave() error { return nil }
+func (loop) Leave() {
+}
 
 // Game Loop ///////////////////////////////////////////////////////////////////
 
-func (loop) React() error {
+func (loop) React() {
 	if quit.JustPressed(1) {
-		cozely.Stop()
+		cozely.Stop(nil)
 	}
 
 	if next.JustPressed(1) {
@@ -132,11 +133,9 @@ func (loop) React() error {
 			mode = i + 1
 		}
 	}
-
-	return nil
 }
 
-func (loop) Update() error {
+func (loop) Update() {
 	switch mode {
 	case 1:
 		palette.Activate()
@@ -149,10 +148,9 @@ func (loop) Update() error {
 	case 5:
 		msx2.Palette.Activate()
 	}
-	return nil
 }
 
-func (loop) Render() error {
+func (loop) Render() {
 	canvas.Clear(0)
 
 	cs := canvas.Size()
@@ -177,5 +175,4 @@ func (loop) Render() error {
 	}
 
 	canvas.Display()
-	return pixel.Err()
 }

@@ -46,10 +46,14 @@ var points = []coord.CR{
 
 var pointshidden, lineshidden bool
 
+type loop5 struct{}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 func TestTest5(t *testing.T) {
 	do(func() {
+		defer cozely.Recover()
+
 		err := cozely.Run(loop5{})
 		if err != nil {
 			t.Error(err)
@@ -57,22 +61,20 @@ func TestTest5(t *testing.T) {
 	})
 }
 
-type loop5 struct{}
-
-func (loop5) Enter() error {
+func (loop5) Enter() {
 	bindings5.Load()
 	context5.Activate(1)
 	palette2.Activate()
-	return nil
 }
 
-func (loop5) Leave() error { return nil }
+func (loop5) Leave() {
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (loop5) React() error {
+func (loop5) React() {
 	if quit.JustPressed(1) {
-		cozely.Stop()
+		cozely.Stop(nil)
 	}
 
 	if newPoint.JustPressed(1) {
@@ -88,15 +90,12 @@ func (loop5) React() error {
 
 	pointshidden = hidePoints.Pressed(1)
 	lineshidden = hideLines.Pressed(1)
-
-	return nil
 }
 
-func (loop5) Update() error { return nil }
+func (loop5) Update() {
+}
 
-////////////////////////////////////////////////////////////////////////////////
-
-func (loop5) Render() error {
+func (loop5) Render() {
 	canvas5.Clear(1)
 	m := canvas5.FromWindow(input.Cursor.Position())
 	canvas5.Triangles(2, -2, points...)
@@ -111,7 +110,4 @@ func (loop5) Render() error {
 		canvas5.Point(18, 2, m)
 	}
 	canvas5.Display()
-	return nil
 }
-
-////////////////////////////////////////////////////////////////////////////////

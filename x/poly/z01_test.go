@@ -3,8 +3,6 @@
 
 package poly_test
 
-////////////////////////////////////////////////////////////////////////////////
-
 import (
 	"testing"
 
@@ -97,10 +95,14 @@ var previous struct {
 
 var meshes poly.Meshes
 
+type loop struct{}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 func TestTest1(t *testing.T) {
 	do(func() {
+		defer cozely.Recover()
+
 		cozely.Configure(
 			cozely.UpdateStep(1.0/50),
 			cozely.Multisample(8),
@@ -108,19 +110,12 @@ func TestTest1(t *testing.T) {
 		cozely.Events.Resize = resize
 		err := cozely.Run(loop{})
 		if err != nil {
-			cozely.ShowError(err)
-			return
+			panic(err)
 		}
 	})
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
-type loop struct{}
-
-////////////////////////////////////////////////////////////////////////////////
-
-func (loop) Enter() error {
+func (loop) Enter() {
 	bindings1.Load()
 	context1.Activate(1)
 	palette.Activate()
@@ -156,17 +151,22 @@ func (loop) Enter() error {
 
 	// Setup light
 	misc.SunIlluminance = poly.DirectionalLightSpectralIlluminance(116400.0, 5400.0)
-
-	return cozely.Error("gl", gl.Err())
 }
 
-func (loop) Leave() error {
-	return nil
+func (loop) Leave() {
+}
+
+func resize() {
+	s := cozely.WindowSize()
+	gl.Viewport(0, 0, int32(s.C), int32(s.R))
+	if camera != nil {
+		camera.WindowResized()
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (loop) React() error {
+func (loop) React() {
 	if move.JustPressed(1) {
 		dragStart = misc.worldFromObject
 		current.dragDelta = coord.XY{0, 0}
@@ -224,20 +224,14 @@ func (loop) React() error {
 	}
 
 	if quit.JustPressed(1) {
-		cozely.Stop()
+		cozely.Stop(nil)
 	}
-	return nil
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
-func (loop) Update() error {
-	return nil
+func (loop) Update() {
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
-func (loop) Render() error {
+func (loop) Render() {
 	prepare()
 
 	gl.DefaultFramebuffer.Bind(gl.DrawFramebuffer)
@@ -268,11 +262,7 @@ func (loop) Render() error {
 		overlay.Printf(" (%d)", or)
 	}
 	overlay.Display()
-
-	return gl.Err()
 }
-
-////////////////////////////////////////////////////////////////////////////////
 
 func prepare() {
 	dt := float32(cozely.RenderTime())
@@ -295,15 +285,3 @@ func prepare() {
 		misc.worldFromObject = r.Times(dragStart)
 	}
 }
-
-////////////////////////////////////////////////////////////////////////////////
-
-func resize() {
-	s := cozely.WindowSize()
-	gl.Viewport(0, 0, int32(s.C), int32(s.R))
-	if camera != nil {
-		camera.WindowResized()
-	}
-}
-
-////////////////////////////////////////////////////////////////////////////////

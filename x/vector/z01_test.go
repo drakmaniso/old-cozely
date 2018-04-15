@@ -21,36 +21,33 @@ type loop struct{}
 
 func TestTest1(t *testing.T) {
 	do(func() {
+		defer cozely.Recover()
+
 		err := cozely.Run(loop{})
 		if err != nil {
-			cozely.ShowError(err)
+			panic(err)
 		}
 	})
 }
 
-func (loop) Enter() error {
+func (loop) Enter() {
 	msx2.Palette.Activate()
-	return nil
 }
 
-func (loop) Leave() error {
-	return nil
+func (loop) Leave() {
 }
 
 // Game Loop ///////////////////////////////////////////////////////////////////
 
-func (loop) Update() error {
-	return nil
+func (loop) Update() {
 }
 
-func (loop) React() error {
-	return nil
+func (loop) React() {
 }
 
-func (loop) Render() error {
+func (loop) Render() {
 	vector.Line(color.SRGB{1, 0.5, 0}, 10, 10, 100, 100)
 	w := cozely.WindowSize()
 	m := input.Cursor.Position()
 	vector.Line(color.SRGB{1, 1, 1}, w.C/2, w.R/2, m.C, m.R)
-	return nil
 }

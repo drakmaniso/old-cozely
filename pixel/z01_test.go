@@ -32,12 +32,16 @@ var (
 	srgbBlue  = pixel.Picture("graphics/srgb-blue")
 )
 
+type loop1 struct{}
+
 var mode int
 
 ////////////////////////////////////////////////////////////////////////////////
 
 func TestTest1(t *testing.T) {
 	do(func() {
+		defer cozely.Recover()
+
 		err := cozely.Run(loop1{})
 		if err != nil {
 			t.Error(err)
@@ -45,29 +49,23 @@ func TestTest1(t *testing.T) {
 	})
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
-type loop1 struct{}
-
-////////////////////////////////////////////////////////////////////////////////
-
-func (loop1) Enter() error {
+func (loop1) Enter() {
 	bindings.Load()
 	context.Activate(1)
 
 	mode = 0
 
 	palette1a.Activate()
-	return nil
 }
 
-func (loop1) Leave() error { return nil }
+func (loop1) Leave() {
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (loop1) React() error {
+func (loop1) React() {
 	if quit.JustPressed(1) {
-		cozely.Stop()
+		cozely.Stop(nil)
 	}
 
 	if next.JustPressed(1) {
@@ -95,17 +93,12 @@ func (loop1) React() error {
 	if scene4.JustPressed(1) {
 		msx2.Palette.Activate()
 	}
-
-	return nil
 }
 
-////////////////////////////////////////////////////////////////////////////////
+func (loop1) Update() {
+}
 
-func (loop1) Update() error { return nil }
-
-////////////////////////////////////////////////////////////////////////////////
-
-func (loop1) Render() error {
+func (loop1) Render() {
 	canvas1.Clear(0)
 	sz := canvas1.Size()
 	switch mode {
@@ -123,7 +116,4 @@ func (loop1) Render() error {
 		canvas1.Picture(srgbBlue, 0, coord.CR{3*sz.C/4 - pz.C/2, 96})
 	}
 	canvas1.Display()
-	return pixel.Err()
 }
-
-////////////////////////////////////////////////////////////////////////////////

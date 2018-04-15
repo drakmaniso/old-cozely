@@ -16,25 +16,25 @@ import (
 type GameLoop interface {
 	// Enter is called once, after the framework initialization, but before the
 	// loop is started.
-	Enter() error
+	Enter()
 
 	// Leave is called when the loop is stopped.
-	Leave() error
+	Leave()
 
 	// React is called as often as possible, before Update and Render, to react to
 	// the player's actions. This is the only method that is guaranteed to run at
 	// least once per frame.
-	React() error
+	React()
 
 	// Update is called at fixed intervals, to update the game state (e.g. logic,
 	// physics, AI...).
-	Update() error
+	Update()
 
 	// Render is called to display the game state to the player.
 	//
 	// Note that the framerate of Update and Render is independent, so the game
 	// state might need to be interpolated (see UpdateLag).
-	Render() error
+	Render()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -57,7 +57,7 @@ var Events = struct {
 	Show:    func() {},
 	Focus:   func() {},
 	Unfocus: func() {},
-	Quit:    func() { Stop() },
+	Quit:    func() { Stop(nil) },
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -80,31 +80,31 @@ func Run(loop GameLoop) (err error) {
 			err = internal.Error("vector cleanup", derr)
 			return
 		}
-
 		derr = internal.PolyCleanup()
 		if err == nil && derr != nil {
 			err = internal.Error("poly cleanup", derr)
 			return
 		}
-
 		derr = internal.PixelCleanup()
 		if err == nil && derr != nil {
 			err = internal.Error("pixel cleanup", derr)
 			return
 		}
-
 		derr = internal.ColorCleanup()
 		if err == nil && derr != nil {
 			err = internal.Error("color cleanup", derr)
 			return
 		}
-
+		derr = internal.InputCleanup()
+		if err == nil && derr != nil {
+			err = internal.Error("input cleanup", derr)
+			return
+		}
 		derr = internal.GLCleanup()
 		if err == nil && derr != nil {
 			err = internal.Error("gl cleanup", derr)
 			return
 		}
-
 		derr = internal.Cleanup()
 		if err == nil && derr != nil {
 			err = internal.Error("internal cleanup", derr)
@@ -125,27 +125,26 @@ func Run(loop GameLoop) (err error) {
 	if err != nil {
 		return internal.Error("internal setup", err)
 	}
-
 	err = internal.GLSetup()
 	if err != nil {
 		return internal.Error("gl setup", err)
 	}
-
+	err = internal.InputSetup()
+	if err != nil {
+		return internal.Error("input setup", err)
+	}
 	err = internal.ColorSetup()
 	if err != nil {
 		return internal.Error("color setup", err)
 	}
-
 	err = internal.PixelSetup()
 	if err != nil {
 		return internal.Error("pixel setup", err)
 	}
-
 	err = internal.PolySetup()
 	if err != nil {
 		return internal.Error("poly setup", err)
 	}
-
 	err = internal.VectorSetup()
 	if err != nil {
 		return internal.Error("vector setup", err)
@@ -167,10 +166,7 @@ func Run(loop GameLoop) (err error) {
 	gametime := 0.0
 	internal.GameTime = gametime
 
-	err = internal.Loop.Enter()
-	if err != nil {
-		return err
-	}
+	internal.Loop.Enter()
 
 	for !internal.QuitRequested {
 		internal.RenderTime = now - then
@@ -188,7 +184,7 @@ func Run(loop GameLoop) (err error) {
 			// Process events even if there is no Update this frame
 			internal.GameTime = now //TODO: check if correct
 			internal.ProcessEvents(Events)
-			internal.InputNewFrame() //TODO: error handling?
+			internal.InputNewFrame()
 			internal.Loop.React()
 		}
 		for internal.UpdateLag >= internal.UpdateStep {
@@ -198,13 +194,10 @@ func Run(loop GameLoop) (err error) {
 			internal.GameTime = gametime
 			// Events
 			internal.ProcessEvents(Events)
-			internal.InputNewFrame() //TODO: error handling?
+			internal.InputNewFrame()
 			internal.Loop.React()
 			// Update
-			err = internal.Loop.Update()
-			if err != nil {
-				return internal.Error("in Update callback", err)
-			}
+			internal.Loop.Update()
 		}
 
 		// Render
@@ -213,14 +206,12 @@ func Run(loop GameLoop) (err error) {
 		gl.ClearColorBuffer(color.LRGBA{0, 0, 0, 0}) //TODO: ...
 
 		internal.GameTime = gametime + internal.UpdateLag //TODO: check if correct
-		err = internal.Loop.Render()
-		if err != nil {
-			return internal.Error("in Render callback", err)
-		}
+		internal.Loop.Render()
 
 		err = internal.VectorDraw()
+		//TODO:
 		if err != nil {
-			return internal.Error("in vector draw", err)
+			return internal.Error("vector draw", err)
 		}
 
 		internal.SwapWindow()
@@ -229,12 +220,8 @@ func Run(loop GameLoop) (err error) {
 		now = internal.GetSeconds()
 	}
 
-	err = internal.Loop.Leave()
-	if err != nil {
-		return err
-	}
-
-	return nil
+	internal.Loop.Leave()
+	return stopErr
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -307,13 +294,6 @@ var frCount int
 const xrunThreshold float64 = 17 / 1000.0
 
 var xrunCount, xrunPrevious int
-
-////////////////////////////////////////////////////////////////////////////////
-
-// Stop request the game loop to stop.
-func Stop() {
-	internal.QuitRequested = true
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 

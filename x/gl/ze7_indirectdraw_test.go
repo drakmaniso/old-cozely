@@ -99,6 +99,8 @@ type simplemesh []struct {
 // Initialization //////////////////////////////////////////////////////////////
 
 func Example_indirectDraw() {
+	defer cozely.Recover()
+
 	cozely.Configure(cozely.Multisample(8))
 	l := loop07{}
 	cozely.Events.Resize = func() {
@@ -109,13 +111,12 @@ func Example_indirectDraw() {
 	}
 	err := cozely.Run(&l)
 	if err != nil {
-		cozely.ShowError(err)
-		return
+		panic(err)
 	}
 	//Output:
 }
 
-func (l *loop07) Enter() error {
+func (l *loop07) Enter() {
 	bindings.Load()
 	context.Activate(1)
 
@@ -155,25 +156,17 @@ func (l *loop07) Enter() error {
 	icbo.Bind()
 	ibo.Bind(1, 0)
 	l.pipeline.Unbind()
-
-	return cozely.Error("gl", gl.Err())
 }
 
-func (loop07) Leave() error {
-	return nil
+func (loop07) Leave() {
 }
 
 // Game Loop ///////////////////////////////////////////////////////////////////
 
-func (loop07) Update() error {
-	return nil
+func (loop07) Update() {
 }
 
-func (l *loop07) React() error {
-	if quit.JustPressed(1) {
-		cozely.Stop()
-	}
-
+func (l *loop07) React() {
 	m := input.Cursor.Delta().XY()
 	s := input.Cursor.Position().XY()
 
@@ -210,23 +203,12 @@ func (l *loop07) React() error {
 		l.computeWorldFromObject()
 	}
 
-	return nil
+	if quit.JustPressed(1) {
+		cozely.Stop(nil)
+	}
 }
 
-func (l *loop07) computeWorldFromObject() {
-	rot := space.EulerZXY(l.pitch, l.yaw, 0)
-	l.worldFromObject = space.Translation(l.position).Times(rot)
-}
-
-func (l *loop07) computeViewFromWorld() {
-	l.viewFromWorld = space.LookAt(
-		coord.XYZ{0, 0, 3},
-		coord.XYZ{0, 0, 0},
-		coord.XYZ{0, 1, 0},
-	)
-}
-
-func (l *loop07) Render() error {
+func (l *loop07) Render() {
 	l.pipeline.Bind()
 	gl.ClearDepthBuffer(1.0)
 	gl.ClearColorBuffer(color.LRGBA{0.9, 0.9, 0.9, 1.0})
@@ -242,8 +224,19 @@ func (l *loop07) Render() error {
 	gl.DrawIndirect(0, 6)
 
 	l.pipeline.Unbind()
+}
 
-	return gl.Err()
+func (l *loop07) computeWorldFromObject() {
+	rot := space.EulerZXY(l.pitch, l.yaw, 0)
+	l.worldFromObject = space.Translation(l.position).Times(rot)
+}
+
+func (l *loop07) computeViewFromWorld() {
+	l.viewFromWorld = space.LookAt(
+		coord.XYZ{0, 0, 3},
+		coord.XYZ{0, 0, 0},
+		coord.XYZ{0, 1, 0},
+	)
 }
 
 ////////////////////////////////////////////////////////////////////////////////

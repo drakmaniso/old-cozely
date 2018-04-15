@@ -16,10 +16,14 @@ import (
 
 var canvas6 = pixel.Canvas(pixel.Zoom(3))
 
+type test6 struct{}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 func TestTest6(t *testing.T) {
 	do(func() {
+		defer cozely.Recover()
+
 		err := cozely.Run(test6{})
 		if err != nil {
 			t.Error(err)
@@ -27,37 +31,27 @@ func TestTest6(t *testing.T) {
 	})
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
-type test6 struct{}
-
-////////////////////////////////////////////////////////////////////////////////
-
-func (test6) Enter() error {
+func (test6) Enter() {
 	bindings.Load()
 	context.Activate(1)
 	palette2.Activate()
-	return nil
 }
 
-func (test6) Leave() error { return nil }
+func (test6) Leave() {
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (test6) React() error {
+func (test6) React() {
 	if quit.JustPressed(1) {
-		cozely.Stop()
+		cozely.Stop(nil)
 	}
-	return nil
 }
 
-////////////////////////////////////////////////////////////////////////////////
+func (test6) Update() {
+}
 
-func (test6) Update() error { return nil }
-
-////////////////////////////////////////////////////////////////////////////////
-
-func (test6) Render() error {
+func (test6) Render() {
 	canvas6.Clear(0)
 
 	const corner = 3
@@ -89,7 +83,6 @@ func (test6) Render() error {
 	m := canvas6.FromWindow(input.Cursor.Position())
 	canvas6.Point(18, 2, m)
 	canvas6.Display()
-	return nil
 }
 
 ////////////////////////////////////////////////////////////////////////////////

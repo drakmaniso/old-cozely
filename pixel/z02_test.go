@@ -44,12 +44,16 @@ type shape struct {
 	depth int16
 }
 
+type loop2 struct{}
+
 var shapes [2048]shape
 
 ////////////////////////////////////////////////////////////////////////////////
 
 func TestTest2(t *testing.T) {
 	do(func() {
+		defer cozely.Recover()
+
 		cozely.Configure(
 			cozely.UpdateStep(1 / 60.0),
 		)
@@ -61,49 +65,14 @@ func TestTest2(t *testing.T) {
 	})
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
-type loop2 struct{}
-
-////////////////////////////////////////////////////////////////////////////////
-
-func (loop2) Enter() error {
+func (loop2) Enter() {
 	bindings.Load()
 	context.Activate(1)
 	palette2.Activate()
-	return nil
 }
 
-func (loop2) Leave() error { return nil }
-
-////////////////////////////////////////////////////////////////////////////////
-
-func (loop2) React() error {
-	if quit.JustPressed(1) {
-		cozely.Stop()
-	}
-	return nil
+func (loop2) Leave() {
 }
-
-////////////////////////////////////////////////////////////////////////////////
-
-func (loop2) Update() error { return nil }
-
-////////////////////////////////////////////////////////////////////////////////
-
-func (loop2) Render() error {
-	canvas2.Clear(0)
-	for i, o := range shapes {
-		if float64(i)/32 > cozely.GameTime() {
-			break
-		}
-		canvas2.Picture(o.pict, o.depth, o.pos)
-	}
-	canvas2.Display()
-	return nil
-}
-
-////////////////////////////////////////////////////////////////////////////////
 
 func resize() {
 	s := canvas2.Size()
@@ -118,3 +87,24 @@ func resize() {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
+
+func (loop2) React() {
+	if quit.JustPressed(1) {
+		cozely.Stop(nil)
+	}
+}
+
+func (loop2) Update() {
+
+}
+
+func (loop2) Render() {
+	canvas2.Clear(0)
+	for i, o := range shapes {
+		if float64(i)/32 > cozely.GameTime() {
+			break
+		}
+		canvas2.Picture(o.pict, o.depth, o.pos)
+	}
+	canvas2.Display()
+}

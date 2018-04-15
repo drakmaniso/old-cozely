@@ -19,6 +19,8 @@ type loop01 struct {
 // Initialization //////////////////////////////////////////////////////////////
 
 func Example_firstTriangle() {
+	defer cozely.Recover()
+
 	cozely.Events.Resize = func() {
 		s := cozely.WindowSize()
 		gl.Viewport(0, 0, int32(s.C), int32(s.R))
@@ -26,43 +28,35 @@ func Example_firstTriangle() {
 	l := loop01{}
 	err := cozely.Run(&l)
 	if err != nil {
-		cozely.ShowError(err)
-		return
+		panic(err)
 	}
 	//Output:
 }
 
-func (l *loop01) Enter() error {
+func (l *loop01) Enter() {
 	// Create and configure the pipeline
 	l.pipeline = gl.NewPipeline(
 		gl.Shader(cozely.Path()+"shader01.vert"),
 		gl.Shader(cozely.Path()+"shader01.frag"),
 		gl.Topology(gl.Triangles),
 	)
-
-	return cozely.Error("gfx", gl.Err())
 }
 
-func (loop01) Leave() error {
-	return nil
+func (loop01) Leave() {
 }
 
 // Game Loop ///////////////////////////////////////////////////////////////////
 
-func (loop01) React() error {
-	return nil
+func (loop01) React() {
 }
 
-func (loop01) Update() error {
-	return nil
+func (loop01) Update() {
 }
 
-func (l *loop01) Render() error {
+func (l *loop01) Render() {
 	l.pipeline.Bind()
 	gl.ClearColorBuffer(color.LRGBA{0.9, 0.9, 0.9, 1.0})
 
 	gl.Draw(0, 3)
 	l.pipeline.Unbind()
-
-	return gl.Err()
 }

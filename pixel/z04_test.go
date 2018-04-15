@@ -38,10 +38,14 @@ var (
 	line int
 )
 
+type loop4 struct{}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 func TestTest4(t *testing.T) {
 	do(func() {
+		defer cozely.Recover()
+
 		err := cozely.Run(loop4{})
 		if err != nil {
 			t.Error(err)
@@ -49,19 +53,13 @@ func TestTest4(t *testing.T) {
 	})
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
-type loop4 struct{}
-
-////////////////////////////////////////////////////////////////////////////////
-
-func (loop4) Enter() error {
+func (loop4) Enter() {
 	bindings.Load()
 	context.Activate(1)
 
 	f, err := os.Open(cozely.Path() + "frankenstein.txt")
 	if err != nil {
-		return err
+		panic(err)
 	}
 	s := bufio.NewScanner(f)
 	for s.Scan() {
@@ -69,7 +67,7 @@ func (loop4) Enter() error {
 	}
 	f, err = os.Open(cozely.Path() + "sourcecode.txt")
 	if err != nil {
-		return err
+		panic(err)
 	}
 	s = bufio.NewScanner(f)
 	for s.Scan() {
@@ -77,27 +75,23 @@ func (loop4) Enter() error {
 	}
 	show = text
 	palette3.Activate()
-	return nil
 }
 
-func (loop4) Leave() error { return nil }
+func (loop4) Leave() {
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (loop4) React() error {
+func (loop4) React() {
 	if quit.JustPressed(1) {
-		cozely.Stop()
+		cozely.Stop(nil)
 	}
-	return nil
 }
 
-////////////////////////////////////////////////////////////////////////////////
+func (loop4) Update() {
+}
 
-func (loop4) Update() error { return nil }
-
-////////////////////////////////////////////////////////////////////////////////
-
-func (loop4) Render() error {
+func (loop4) Render() {
 	canvas3.Clear(bg3)
 
 	canvas3.Cursor().Color = fg3 - 1
@@ -118,10 +112,7 @@ func (loop4) Render() error {
 	canvas3.Printf("Line %d", line)
 
 	canvas3.Display()
-	return nil
 }
-
-////////////////////////////////////////////////////////////////////////////////
 
 //TODO:
 // func (fl fntLoop) KeyDown(l key.Keyabel, p key.Position) {
@@ -185,5 +176,3 @@ func (loop4) Render() error {
 // 		fntLine = len(fntShow) - 1
 // 	}
 // }
-
-////////////////////////////////////////////////////////////////////////////////

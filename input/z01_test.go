@@ -69,10 +69,11 @@ var openmenu, closemenu, instopenmenu, instclosemenu, inventory, options, jump b
 ////////////////////////////////////////////////////////////////////////////////
 
 func TestTest1(t *testing.T) {
+	defer cozely.Recover()
+
 	err := cozely.Run(loop1{})
 	if err != nil {
-		cozely.ShowError(err)
-		return
+		panic(err)
 	}
 }
 
@@ -82,19 +83,19 @@ type loop1 struct{}
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (loop1) Enter() error {
+func (loop1) Enter() {
 	msx.Palette.Activate()
 	Bindings.Load()
 
 	InMenu.Activate(0)
-	return input.Err()
 }
 
-func (loop1) Leave() error { return nil }
+func (loop1) Leave() {
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (loop1) React() error {
+func (loop1) React() {
 	mousepos = input.Cursor.Position()
 	mousedelta = input.Cursor.Delta()
 
@@ -131,18 +132,18 @@ func (loop1) React() error {
 	jump = JumpAction.Pressed(1)
 
 	if quit.JustPressed(1) {
-		cozely.Stop()
+		cozely.Stop(nil)
 	}
-	return nil
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (loop1) Update() error { return nil }
+func (loop1) Update() {
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (loop1) Render() error {
+func (loop1) Render() {
 	canvas1.Clear(msx.DarkBlue)
 
 	canvas1.Locate(0, coord.CR{2, 12})
@@ -188,7 +189,6 @@ func (loop1) Render() error {
 	canvas1.Print("Inventory(I/TAB) ")
 
 	canvas1.Display()
-	return nil
 }
 
 func changecolor(p bool) {
@@ -224,7 +224,7 @@ func (loop1) Unfocus() {
 
 func (loop1) Quit() {
 	fmt.Printf("%v: quit\n", cozely.GameTime())
-	cozely.Stop()
+	cozely.Stop(nil)
 }
 
 ////////////////////////////////////////////////////////////////////////////////

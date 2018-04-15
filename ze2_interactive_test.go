@@ -40,40 +40,41 @@ type loop2 struct{}
 // Initialization //////////////////////////////////////////////////////////////
 
 func Example_interactive() {
+	defer cozely.Recover()
+
 	cozely.Configure(cozely.UpdateStep(1.0 / 3))
-	cozely.Run(loop2{})
+	err := cozely.Run(loop2{})
+	if err != nil {
+		panic(err)
+	}
 	// Output:
 }
 
-func (loop2) Enter() error {
+func (loop2) Enter() {
 	bindings.Load()
 	context.Activate(1)
 	pal1.Activate()
 	shufflecolors()
-	return nil
 }
 
-func (loop2) Leave() error {
-	return nil
+func (loop2) Leave() {
 }
 
 // Game Loop ///////////////////////////////////////////////////////////////////
 
-func (loop2) React() error {
+func (loop2) React() {
 	if start.JustPressed(1) {
 		started = !started
 	}
 	if quit.JustPressed(1) {
-		cozely.Stop()
+		cozely.Stop(nil)
 	}
-	return nil
 }
 
-func (loop2) Update() error {
+func (loop2) Update() {
 	if started {
 		shufflecolors()
 	}
-	return nil
 }
 
 func shufflecolors() {
@@ -94,7 +95,7 @@ func shufflecolors() {
 	}
 }
 
-func (loop2) Render() error {
+func (loop2) Render() {
 	canv.Clear(0)
 
 	if started {
@@ -107,5 +108,4 @@ func (loop2) Render() error {
 	canv.Picture(logo, 0, o)
 
 	canv.Display()
-	return nil
 }

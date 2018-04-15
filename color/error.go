@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2018 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
-package input
+package color
 
 import (
 	"github.com/cozely/cozely/internal"
@@ -12,7 +12,7 @@ import (
 var stickyErr error
 
 func init() {
-	internal.InputErr = func() error {
+	internal.ColorErr = func() error {
 		return stickyErr
 	}
 }
@@ -35,6 +35,6 @@ func setErr(err error) {
 	if stickyErr == nil {
 		stickyErr = err
 	}
-	internal.Debug.Printf("*** ERROR in package input ***\n%s", err)
+	internal.Debug.Printf("*** ERROR in package color ***\n%s", err)
 }
 

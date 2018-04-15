@@ -22,30 +22,31 @@ type loop struct{}
 // Initialization //////////////////////////////////////////////////////////////
 
 func Example_helloWorld() {
-	cozely.Run(loop{})
+	defer cozely.Recover()
+
+	err := cozely.Run(loop{})
+	if err != nil {
+		panic(err)
+	}
 	// Output:
 }
 
-func (loop) Enter() error {
+func (loop) Enter() {
 	palette.Activate()
-	return nil
 }
 
-func (loop) Leave() error {
-	return nil
+func (loop) Leave() {
 }
 
 // Game Loop ///////////////////////////////////////////////////////////////////
 
-func (loop) React() error {
-	return nil
+func (loop) React() {
 }
 
-func (loop) Update() error {
-	return nil
+func (loop) Update() {
 }
 
-func (loop) Render() error {
+func (loop) Render() {
 	canvas.Clear(bg)
 
 	canvas.Text(fg-1, pixel.Monozela10)
@@ -53,5 +54,4 @@ func (loop) Render() error {
 	canvas.Print("Hello, World!")
 
 	canvas.Display()
-	return nil
 }

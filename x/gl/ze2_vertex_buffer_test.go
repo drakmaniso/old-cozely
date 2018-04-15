@@ -25,6 +25,8 @@ type mesh2d []struct {
 // Initialization //////////////////////////////////////////////////////////////
 
 func Example_vertexBuffer() {
+	defer cozely.Recover()
+
 	cozely.Events.Resize = func() {
 		s := cozely.WindowSize()
 		gl.Viewport(0, 0, int32(s.C), int32(s.R))
@@ -32,13 +34,12 @@ func Example_vertexBuffer() {
 	l := loop02{}
 	err := cozely.Run(&l)
 	if err != nil {
-		cozely.ShowError(err)
-		return
+		panic(err)
 	}
 	//Output:
 }
 
-func (l *loop02) Enter() error {
+func (l *loop02) Enter() {
 	var triangle mesh2d
 
 	// Create and configure the pipeline
@@ -62,30 +63,23 @@ func (l *loop02) Enter() error {
 	l.pipeline.Bind()
 	vbo.Bind(0, 0)
 	l.pipeline.Unbind()
-
-	return cozely.Error("gl", gl.Err())
 }
 
-func (loop02) Leave() error {
-	return nil
+func (loop02) Leave() {
 }
 
 // Game Loop ///////////////////////////////////////////////////////////////////
 
-func (loop02) React() error {
-	return nil
+func (loop02) React() {
 }
 
-func (loop02) Update() error {
-	return nil
+func (loop02) Update() {
 }
 
-func (l *loop02) Render() error {
+func (l *loop02) Render() {
 	l.pipeline.Bind()
 	gl.ClearColorBuffer(color.LRGBA{0.9, 0.9, 0.9, 1.0})
 
 	gl.Draw(0, 3)
 	l.pipeline.Unbind()
-
-	return gl.Err()
 }

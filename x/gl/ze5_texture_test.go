@@ -56,6 +56,8 @@ type uvmesh []struct {
 // Initialization //////////////////////////////////////////////////////////////
 
 func Example_texture() {
+	defer cozely.Recover()
+
 	cozely.Configure(cozely.Multisample(8))
 	l := loop05{}
 	cozely.Events.Resize = func() {
@@ -66,13 +68,12 @@ func Example_texture() {
 	}
 	err := cozely.Run(&l)
 	if err != nil {
-		cozely.ShowError(err)
-		return
+		panic(err)
 	}
 	//Output:
 }
 
-func (l *loop05) Enter() error {
+func (l *loop05) Enter()  {
 	bindings.Load()
 	context.Activate(1)
 
@@ -105,12 +106,12 @@ func (l *loop05) Enter() error {
 	l.diffuse = gl.NewTexture2D(8, gl.SRGBA8, 512, 512)
 	r, err := os.Open(cozely.Path() + "testpattern.png")
 	if err != nil {
-		return cozely.Error("opening texture", err)
+		panic(cozely.Error("opening texture", err))
 	}
 	defer r.Close()
 	img, _, err := image.Decode(r)
 	if err != nil {
-		return cozely.Error("decoding texture", err)
+		panic(cozely.Error("decoding texture", err))
 	}
 	l.diffuse.SubImage(0, 0, 0, img)
 	l.diffuse.GenerateMipmap()
@@ -126,21 +127,14 @@ func (l *loop05) Enter() error {
 	l.pipeline.Bind()
 	vbo.Bind(0, 0)
 	l.pipeline.Unbind()
-
-	return cozely.Error("gl", gl.Err())
 }
 
-func (loop05) Leave() error {
-	return nil
+func (loop05) Leave() {
 }
 
 // Game Loop ///////////////////////////////////////////////////////////////////
 
-func (l *loop05) React() error {
-	if quit.JustPressed(1) {
-		cozely.Stop()
-	}
-
+func (l *loop05) React()  {
 	m := input.Cursor.Delta().XY()
 	s := input.Cursor.Position().XY()
 
@@ -177,7 +171,9 @@ func (l *loop05) React() error {
 		l.computeWorldFromObject()
 	}
 
-	return nil
+	if quit.JustPressed(1) {
+		cozely.Stop(nil)
+	}
 }
 
 func (l *loop05) computeWorldFromObject() {
@@ -193,11 +189,10 @@ func (l *loop05) computeViewFromWorld() {
 	)
 }
 
-func (loop05) Update() error {
-	return nil
+func (loop05) Update()  {
 }
 
-func (l *loop05) Render() error {
+func (l *loop05) Render()  {
 	l.pipeline.Bind()
 	gl.ClearDepthBuffer(1.0)
 	gl.ClearColorBuffer(color.LRGBA{0.9, 0.9, 0.9, 1.0})
@@ -216,8 +211,6 @@ func (l *loop05) Render() error {
 	gl.Draw(0, 6*2*3)
 
 	l.pipeline.Unbind()
-
-	return gl.Err()
 }
 
 ////////////////////////////////////////////////////////////////////////////////

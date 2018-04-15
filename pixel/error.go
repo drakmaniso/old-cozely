@@ -11,6 +11,14 @@ import (
 
 var stickyErr error
 
+func init() {
+	internal.PixelErr = func() error {
+		return stickyErr
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 // Err returns the first unchecked error of the package since last call to the
 // function. The error is then considered checked, and further calls to Err will
 // return nil until the next error occurs.
@@ -30,4 +38,3 @@ func setErr(err error) {
 	internal.Debug.Printf("*** ERROR in package pixel ***\n%s", err)
 }
 
-////////////////////////////////////////////////////////////////////////////////

@@ -9,6 +9,16 @@ import (
 
 ////////////////////////////////////////////////////////////////////////////////
 
+var stickyErr error
+
+func init() {
+	internal.GLErr = func() error {
+		return stickyErr
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 // Err returns the first unchecked error of the package since last call to the
 // function. The error is then considered checked, and further calls to Err will
 // return nil until the next error occurs.
@@ -21,20 +31,9 @@ func Err() error {
 	return err
 }
 
-//TODO: remove context
 func setErr(err error) {
 	if stickyErr == nil {
 		stickyErr = err
 	}
 	internal.Debug.Printf("*** ERROR in package gl***\n%s", err)
 }
-
-var stickyErr error
-
-func init() {
-	internal.GLErr = func() error {
-		return stickyErr
-	}
-}
-
-////////////////////////////////////////////////////////////////////////////////

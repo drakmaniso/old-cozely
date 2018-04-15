@@ -22,10 +22,14 @@ var (
 	fg3      = palette3.Entry(color.SRGB8{0x07, 0x05, 0x00})
 )
 
+type loop3 struct{}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 func TestTest3(t *testing.T) {
 	do(func() {
+		defer cozely.Recover()
+
 		err := cozely.Run(loop3{})
 		if err != nil {
 			t.Error(err)
@@ -33,39 +37,29 @@ func TestTest3(t *testing.T) {
 	})
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
-type loop3 struct{}
-
-////////////////////////////////////////////////////////////////////////////////
-
-func (loop3) Enter() error {
+func (loop3) Enter() {
 	bindings.Load()
 	context.Activate(1)
 	palette3.Activate()
 	println(bg3, fg3)
 	canvas3.Cursor().Color = fg3 - 1
-	return nil
 }
 
-func (loop3) Leave() error { return nil }
+func (loop3) Leave() {
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (loop3) React() error {
+func (loop3) React() {
 	if quit.JustPressed(1) {
-		cozely.Stop()
+		cozely.Stop(nil)
 	}
-	return nil
 }
 
-////////////////////////////////////////////////////////////////////////////////
+func (loop3) Update() {
+}
 
-func (loop3) Update() error { return nil }
-
-////////////////////////////////////////////////////////////////////////////////
-
-func (loop3) Render() error {
+func (loop3) Render() {
 	canvas3.Clear(bg3)
 
 	canvas3.Text(fg3-1, pixel.Monozela10)
@@ -109,7 +103,4 @@ func (loop3) Render() error {
 	canvas3.Printf("Position x=%d, y=%d\n", m.C, m.R)
 
 	canvas3.Display()
-	return nil
 }
-
-////////////////////////////////////////////////////////////////////////////////

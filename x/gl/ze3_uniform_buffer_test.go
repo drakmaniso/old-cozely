@@ -35,6 +35,8 @@ type coloredmesh2d []struct {
 // Initialization //////////////////////////////////////////////////////////////
 
 func Example_uniformBuffer() {
+	defer cozely.Recover()
+
 	cozely.Events.Resize = func() {
 		s := cozely.WindowSize()
 		gl.Viewport(0, 0, int32(s.C), int32(s.R))
@@ -42,13 +44,12 @@ func Example_uniformBuffer() {
 	l := loop03{}
 	err := cozely.Run(&l)
 	if err != nil {
-		cozely.ShowError(err)
-		return
+		panic(err)
 	}
 	//Output:
 }
 
-func (l *loop03) Enter() error {
+func (l *loop03) Enter() {
 	var triangle coloredmesh2d
 
 	// Create and configure the pipeline
@@ -75,25 +76,20 @@ func (l *loop03) Enter() error {
 	l.pipeline.Bind()
 	vbo.Bind(0, 0)
 	l.pipeline.Unbind()
-
-	return cozely.Error("gl", gl.Err())
 }
 
-func (loop03) Leave() error {
-	return nil
+func (loop03) Leave() {
 }
 
 // Game Loop ///////////////////////////////////////////////////////////////////
 
-func (loop03) React() error {
-	return nil
+func (loop03) React() {
 }
 
-func (loop03) Update() error {
-	return nil
+func (loop03) Update() {
 }
 
-func (l *loop03) Render() error {
+func (l *loop03) Render() {
 	l.angle -= 1.0 * cozely.RenderTime()
 
 	l.pipeline.Bind()
@@ -107,6 +103,4 @@ func (l *loop03) Render() error {
 
 	gl.Draw(0, 3)
 	l.pipeline.Unbind()
-
-	return gl.Err()
 }

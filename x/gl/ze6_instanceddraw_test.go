@@ -60,6 +60,8 @@ type perFrame06 struct {
 // Initialization //////////////////////////////////////////////////////////////
 
 func Example_instancedDraw() {
+	defer cozely.Recover()
+
 	cozely.Configure(cozely.Multisample(8))
 	l := loop06{}
 	cozely.Events.Resize = func() {
@@ -69,13 +71,12 @@ func Example_instancedDraw() {
 	}
 	err := cozely.Run(&l)
 	if err != nil {
-		cozely.ShowError(err)
-		return
+		panic(err)
 	}
 	//Output:
 }
 
-func (l *loop06) Enter() error {
+func (l *loop06) Enter() {
 	bindings06.Load()
 	context06.Activate(1)
 
@@ -99,25 +100,43 @@ func (l *loop06) Enter() error {
 	l.pipeline.Bind()
 	l.rosesINBO.Bind(1, 0)
 	l.pipeline.Unbind()
-
-	return cozely.Error("gl", gl.Err())
 }
 
-func (loop06) Leave() error {
-	return nil
+func (loop06) Leave()  {
 }
 
 // Game Loop ///////////////////////////////////////////////////////////////////
 
-func (l *loop06) React() error {
-	if quit.JustPressed(1) {
-		cozely.Stop()
-	}
+func (l *loop06) React()  {
 	if randomize.JustPressed(1) {
 		l.randomizeRosesData()
 		l.rosesINBO.SubData(roses[:], 0)
 	}
-	return nil
+
+	if quit.JustPressed(1) {
+		cozely.Stop(nil)
+	}
+}
+
+func (loop06) Update()  {
+}
+
+func (l *loop06) Render()  {
+	l.perFrame.time += float32(cozely.UpdateTime())
+
+	l.pipeline.Bind()
+	gl.ClearDepthBuffer(1.0)
+	gl.ClearColorBuffer(color.LRGBA{0.9, 0.85, 0.80, 1.0})
+	gl.Enable(gl.LineSmooth)
+	gl.Enable(gl.Blend)
+	gl.Blending(gl.SrcAlpha, gl.OneMinusSrcAlpha)
+
+	u := l.perFrame
+	l.perFrameUBO.Bind(0)
+	l.perFrameUBO.SubData(&u, 0)
+	gl.DrawInstanced(0, nbPoints, int32(len(roses)))
+
+	l.pipeline.Unbind()
 }
 
 func (l *loop06) randomizeRosesData() {
@@ -135,30 +154,6 @@ func (l *loop06) randomizeRosesData() {
 	}
 }
 
-func (loop06) Update() error {
-	return nil
-}
-
-func (l *loop06) Render() error {
-	l.perFrame.time += float32(cozely.UpdateTime())
-
-	l.pipeline.Bind()
-	gl.ClearDepthBuffer(1.0)
-	gl.ClearColorBuffer(color.LRGBA{0.9, 0.85, 0.80, 1.0})
-	gl.Enable(gl.LineSmooth)
-	gl.Enable(gl.Blend)
-	gl.Blending(gl.SrcAlpha, gl.OneMinusSrcAlpha)
-
-	u := l.perFrame
-	l.perFrameUBO.Bind(0)
-	l.perFrameUBO.SubData(&u, 0)
-	gl.DrawInstanced(0, nbPoints, int32(len(roses)))
-
-	l.pipeline.Unbind()
-
-	return gl.Err()
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 
 // func rose(nbPoints int, num int, den int, offset float32) []perVertex {
@@ -173,4 +168,3 @@ func (l *loop06) Render() error {
 // 	return m
 // }
 
-////////////////////////////////////////////////////////////////////////////////

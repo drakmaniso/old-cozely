@@ -49,6 +49,8 @@ var points [512]struct {
 // Initialization //////////////////////////////////////////////////////////////
 
 func Example_streaming() {
+	defer cozely.Recover()
+
 	l := loop08{
 		bgColor:  color.LRGBA{0.9, 0.87, 0.85, 1.0},
 		rotSpeed: float32(0.003),
@@ -61,13 +63,12 @@ func Example_streaming() {
 	cozely.Events.Resize = l.resize
 	err := cozely.Run(&l)
 	if err != nil {
-		cozely.ShowError(err)
-		return
+		panic(err)
 	}
 	//Output:
 }
 
-func (l *loop08) Enter() error {
+func (l *loop08) Enter() {
 	bindings06.Load()
 	context06.Activate(1)
 
@@ -94,29 +95,24 @@ func (l *loop08) Enter() error {
 	l.pipeline.Bind()
 	l.pointsVBO.Bind(0, 0)
 	l.pipeline.Unbind()
-
-	return cozely.Error("gl", gl.Err())
 }
 
-func (loop08) Leave() error {
-	return nil
+func (loop08) Leave() {
 }
 
 // Game Loop ///////////////////////////////////////////////////////////////////
 
-func (l *loop08) React() error {
-	if quit.JustPressed(1) {
-		cozely.Stop()
-	}
-
+func (l *loop08) React() {
 	if randomize.JustPressed(1) {
 		l.setupPoints()
 	}
 
-	return nil
+	if quit.JustPressed(1) {
+		cozely.Stop(nil)
+	}
 }
 
-func (l *loop08) Update() error {
+func (l *loop08) Update() {
 	for i, pt := range points {
 		points[i].Position = coord.XY{
 			pt.Position.X +
@@ -135,11 +131,9 @@ func (l *loop08) Update() error {
 	l.perFrame.Rotation += l.rotSpeed
 
 	l.updated = true
-
-	return nil
 }
 
-func (l *loop08) Render() error {
+func (l *loop08) Render() {
 	if !l.cleared {
 		gl.ClearColorBuffer(l.bgColor)
 		l.cleared = true
@@ -160,8 +154,6 @@ func (l *loop08) Render() error {
 		l.pipeline.Unbind()
 		l.updated = false
 	}
-
-	return nil
 }
 
 func (l *loop08) setupPoints() {
@@ -192,5 +184,3 @@ func (l *loop08) resize() {
 	}
 	gl.Viewport(0, 0, int32(s.X), int32(s.Y))
 }
-
-////////////////////////////////////////////////////////////////////////////////
