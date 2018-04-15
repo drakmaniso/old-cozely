@@ -74,7 +74,7 @@ type shader struct {
 func Shader(path string) PipelineConfig {
 	f, err := os.Open(filepath.FromSlash(path))
 	if err != nil {
-		setErr(internal.Error("gl shader file opening", err))
+		setErr(internal.Wrap("gl shader file opening", err))
 	}
 	defer f.Close()
 	switch {
@@ -104,7 +104,7 @@ func VertexShader(r io.Reader) PipelineConfig {
 	s.stages = C.GL_VERTEX_SHADER_BIT
 	s.shader, err = newShader(C.GL_VERTEX_SHADER, r)
 	if err != nil {
-		setErr(internal.Error("gl vertex shader compiling", err))
+		setErr(internal.Wrap("gl vertex shader compiling", err))
 	}
 	return func(p *Pipeline) {
 		p.attachShader(s)
@@ -118,7 +118,7 @@ func FragmentShader(r io.Reader) PipelineConfig {
 	s.stages = C.GL_FRAGMENT_SHADER_BIT
 	s.shader, err = newShader(C.GL_FRAGMENT_SHADER, r)
 	if err != nil {
-		setErr(internal.Error("gl fragment shader compiling", err))
+		setErr(internal.Wrap("gl fragment shader compiling", err))
 	}
 	return func(p *Pipeline) {
 		p.attachShader(s)
@@ -132,7 +132,7 @@ func GeometryShader(r io.Reader) PipelineConfig {
 	s.stages = C.GL_GEOMETRY_SHADER_BIT
 	s.shader, err = newShader(C.GL_GEOMETRY_SHADER, r)
 	if err != nil {
-		setErr(internal.Error("gl geometry shader compiling", err))
+		setErr(internal.Wrap("gl geometry shader compiling", err))
 	}
 	return func(p *Pipeline) {
 		p.attachShader(s)
@@ -146,7 +146,7 @@ func TessControlShader(r io.Reader) PipelineConfig {
 	s.stages = C.GL_TESS_CONTROL_SHADER_BIT
 	s.shader, err = newShader(C.GL_TESS_CONTROL_SHADER, r)
 	if err != nil {
-		setErr(internal.Error("gl tesselation control shader compiling", err))
+		setErr(internal.Wrap("gl tesselation control shader compiling", err))
 	}
 	return func(p *Pipeline) {
 		p.attachShader(s)
@@ -160,7 +160,7 @@ func TessEvaluationShader(r io.Reader) PipelineConfig {
 	s.stages = C.GL_TESS_EVALUATION_SHADER_BIT
 	s.shader, err = newShader(C.GL_TESS_EVALUATION_SHADER, r)
 	if err != nil {
-		setErr(internal.Error("gl tesselation evaluation shader compiling", err))
+		setErr(internal.Wrap("gl tesselation evaluation shader compiling", err))
 	}
 	return func(p *Pipeline) {
 		p.attachShader(s)
@@ -174,7 +174,7 @@ func ComputeShader(r io.Reader) PipelineConfig {
 	s.stages = C.GL_COMPUTE_SHADER_BIT
 	s.shader, err = newShader(C.GL_COMPUTE_SHADER, r)
 	if err != nil {
-		setErr(internal.Error("gl compute shader compiling", err))
+		setErr(internal.Wrap("gl compute shader compiling", err))
 	}
 	return func(p *Pipeline) {
 		p.attachShader(s)

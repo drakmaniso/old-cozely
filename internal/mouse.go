@@ -33,7 +33,7 @@ func MouseSetRelative(enabled bool) error {
 	}
 	if C.SDL_SetRelativeMouseMode(m) != 0 {
 		C.SDL_ShowCursor(C.SDL_ENABLE)
-		return Error("setting relative mouse mode", GetSDLError())
+		return Wrap("setting relative mouse mode", GetSDLError())
 	}
 	C.SDL_ShowCursor(C.SDL_ENABLE)
 	return nil

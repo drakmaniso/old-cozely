@@ -77,37 +77,37 @@ func Run(loop GameLoop) (err error) {
 
 		derr := internal.VectorCleanup()
 		if err == nil && derr != nil {
-			err = internal.Error("vector cleanup", derr)
+			err = internal.Wrap("vector cleanup", derr)
 			return
 		}
 		derr = internal.PolyCleanup()
 		if err == nil && derr != nil {
-			err = internal.Error("poly cleanup", derr)
+			err = internal.Wrap("poly cleanup", derr)
 			return
 		}
 		derr = internal.PixelCleanup()
 		if err == nil && derr != nil {
-			err = internal.Error("pixel cleanup", derr)
+			err = internal.Wrap("pixel cleanup", derr)
 			return
 		}
 		derr = internal.ColorCleanup()
 		if err == nil && derr != nil {
-			err = internal.Error("color cleanup", derr)
+			err = internal.Wrap("color cleanup", derr)
 			return
 		}
 		derr = internal.InputCleanup()
 		if err == nil && derr != nil {
-			err = internal.Error("input cleanup", derr)
+			err = internal.Wrap("input cleanup", derr)
 			return
 		}
 		derr = internal.GLCleanup()
 		if err == nil && derr != nil {
-			err = internal.Error("gl cleanup", derr)
+			err = internal.Wrap("gl cleanup", derr)
 			return
 		}
 		derr = internal.Cleanup()
 		if err == nil && derr != nil {
-			err = internal.Error("internal cleanup", derr)
+			err = internal.Wrap("internal cleanup", derr)
 			return
 		}
 	}()
@@ -123,31 +123,31 @@ func Run(loop GameLoop) (err error) {
 
 	err = internal.Setup()
 	if err != nil {
-		return internal.Error("internal setup", err)
+		return internal.Wrap("internal setup", err)
 	}
 	err = internal.GLSetup()
 	if err != nil {
-		return internal.Error("gl setup", err)
+		return internal.Wrap("gl setup", err)
 	}
 	err = internal.InputSetup()
 	if err != nil {
-		return internal.Error("input setup", err)
+		return internal.Wrap("input setup", err)
 	}
 	err = internal.ColorSetup()
 	if err != nil {
-		return internal.Error("color setup", err)
+		return internal.Wrap("color setup", err)
 	}
 	err = internal.PixelSetup()
 	if err != nil {
-		return internal.Error("pixel setup", err)
+		return internal.Wrap("pixel setup", err)
 	}
 	err = internal.PolySetup()
 	if err != nil {
-		return internal.Error("poly setup", err)
+		return internal.Wrap("poly setup", err)
 	}
 	err = internal.VectorSetup()
 	if err != nil {
-		return internal.Error("vector setup", err)
+		return internal.Wrap("vector setup", err)
 	}
 
 	// First, send a fake resize window event
@@ -211,7 +211,7 @@ func Run(loop GameLoop) (err error) {
 		err = internal.VectorDraw()
 		//TODO:
 		if err != nil {
-			return internal.Error("vector draw", err)
+			return internal.Wrap("vector draw", err)
 		}
 
 		internal.SwapWindow()

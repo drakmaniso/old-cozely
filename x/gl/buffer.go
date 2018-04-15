@@ -81,7 +81,7 @@ type UniformBuffer struct {
 func NewUniformBuffer(data interface{}, f BufferFlags) UniformBuffer {
 	p, s, err := pointerAndSizeOf(data)
 	if err != nil {
-		setErr(internal.Error("gl uniform buffer creation", err))
+		setErr(internal.Wrap("gl uniform buffer creation", err))
 		return UniformBuffer{}
 	}
 	var ub UniformBuffer
@@ -97,7 +97,7 @@ func NewUniformBuffer(data interface{}, f BufferFlags) UniformBuffer {
 func (ub *UniformBuffer) SubData(data interface{}, atOffset uintptr) {
 	p, s, err := pointerAndSizeOf(data)
 	if err != nil {
-		setErr(internal.Error("gl uniform buffer update", err))
+		setErr(internal.Wrap("gl uniform buffer update", err))
 		return
 	}
 	C.BufferSubData(ub.object, C.GLintptr(atOffset), C.GLsizei(s), p)
@@ -132,7 +132,7 @@ type StorageBuffer struct {
 func NewStorageBuffer(data interface{}, f BufferFlags) StorageBuffer {
 	p, s, err := pointerAndSizeOf(data)
 	if err != nil {
-		setErr(internal.Error("gl storage buffer creation", err))
+		setErr(internal.Wrap("gl storage buffer creation", err))
 		return StorageBuffer{}
 	}
 	var sb StorageBuffer
@@ -148,7 +148,7 @@ func NewStorageBuffer(data interface{}, f BufferFlags) StorageBuffer {
 func (sb *StorageBuffer) SubData(data interface{}, atOffset uintptr) {
 	p, s, err := pointerAndSizeOf(data)
 	if err != nil {
-		setErr(internal.Error("gl storage buffer update", err))
+		setErr(internal.Wrap("gl storage buffer update", err))
 		return
 	}
 	C.BufferSubData(sb.object, C.GLintptr(atOffset), C.GLsizei(s), p)
@@ -184,7 +184,7 @@ type VertexBuffer struct {
 func NewVertexBuffer(data interface{}, f BufferFlags) VertexBuffer {
 	p, s, st, err := pointerSizeAndStrideOf(data)
 	if err != nil {
-		setErr(internal.Error("gl vertex buffer creation", err))
+		setErr(internal.Wrap("gl vertex buffer creation", err))
 		return VertexBuffer{}
 	}
 	var vb VertexBuffer
@@ -201,7 +201,7 @@ func NewVertexBuffer(data interface{}, f BufferFlags) VertexBuffer {
 func (vb *VertexBuffer) SubData(data interface{}, atOffset uintptr) {
 	p, s, st, err := pointerSizeAndStrideOf(data)
 	if err != nil {
-		setErr(internal.Error("gl vertex buffer update", err))
+		setErr(internal.Wrap("gl vertex buffer update", err))
 		return
 	}
 	if st != 0 {
@@ -243,7 +243,7 @@ var boundElement IndexBuffer
 func NewIndexBuffer(data interface{}, f BufferFlags) IndexBuffer {
 	p, s, t, err := pointerSizeAndUintTypeOf(data)
 	if err != nil {
-		setErr(internal.Error("gl index buffer creation", err))
+		setErr(internal.Wrap("gl index buffer creation", err))
 		return IndexBuffer{}
 	}
 	var eb IndexBuffer
@@ -260,7 +260,7 @@ func NewIndexBuffer(data interface{}, f BufferFlags) IndexBuffer {
 func (eb *IndexBuffer) SubData(data interface{}, atOffset uintptr) {
 	p, s, t, err := pointerSizeAndUintTypeOf(data)
 	if err != nil {
-		setErr(internal.Error("gl index buffer update", err))
+		setErr(internal.Wrap("gl index buffer update", err))
 		return
 	}
 	if t != 0 {
@@ -296,7 +296,7 @@ type IndirectBuffer struct {
 func NewIndirectBuffer(data interface{}, f BufferFlags) IndirectBuffer {
 	p, s, err := pointerAndSizeOf(data)
 	if err != nil {
-		setErr(internal.Error("gl indirect buffer creation", err))
+		setErr(internal.Wrap("gl indirect buffer creation", err))
 		return IndirectBuffer{}
 	}
 	var ib IndirectBuffer
@@ -312,7 +312,7 @@ func NewIndirectBuffer(data interface{}, f BufferFlags) IndirectBuffer {
 func (ib *IndirectBuffer) SubData(data interface{}, atOffset uintptr) {
 	p, s, err := pointerAndSizeOf(data)
 	if err != nil {
-		setErr(internal.Error("gl indirect buffer update", err))
+		setErr(internal.Wrap("gl indirect buffer update", err))
 		return
 	}
 	C.BufferSubData(ib.object, C.GLintptr(atOffset), C.GLsizei(s), p)
@@ -341,7 +341,7 @@ type BufferTexture struct {
 func NewBufferTexture(data interface{}, fmt TextureFormat, f BufferFlags) BufferTexture {
 	p, s, err := pointerAndSizeOf(data)
 	if err != nil {
-		setErr(internal.Error("gl storage buffer creation", err))
+		setErr(internal.Wrap("gl storage buffer creation", err))
 		return BufferTexture{}
 	}
 	var bt BufferTexture
@@ -363,7 +363,7 @@ func (bt BufferTexture) Bind(index uint32) {
 func (bt *BufferTexture) SubData(data interface{}, atOffset uintptr) {
 	p, s, err := pointerAndSizeOf(data)
 	if err != nil {
-		setErr(internal.Error("gl buffer texture update", err))
+		setErr(internal.Wrap("gl buffer texture update", err))
 		return
 	}
 	C.BufferSubData(bt.object, C.GLintptr(atOffset), C.GLsizei(s), p)

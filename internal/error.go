@@ -19,8 +19,8 @@ func (nolog) Printf(format string, v ...interface{}) {}
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// Error returns nil if err is nil, or a wrapped error otherwise.
-func Error(context string, err error) error {
+// Wrap returns nil if err is nil, or a wrapped error otherwise.
+func Wrap(context string, err error) error {
 	if err == nil {
 		return nil
 	}

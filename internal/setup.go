@@ -51,11 +51,11 @@ func Setup() error {
 	f, err := os.Open(Path + "init.json")
 	if !os.IsNotExist(err) {
 		if err != nil {
-			return Error(`in configuration file "init.json" opening`, err)
+			return Wrap(`in configuration file "init.json" opening`, err)
 		}
 		d := json.NewDecoder(f)
 		if err := d.Decode(&Config); err != nil {
-			return Error(`in configuration file "init.json" parsing`, err)
+			return Wrap(`in configuration file "init.json" parsing`, err)
 		}
 	}
 
@@ -68,7 +68,7 @@ func Setup() error {
 	// Initialize SDL
 
 	if errcode := C.SDL_Init(C.SDL_INIT_VIDEO | C.SDL_INIT_JOYSTICK); errcode != 0 {
-		return Error("in SDL initialization", GetSDLError())
+		return Wrap("in SDL initialization", GetSDLError())
 	}
 
 	C.SDL_EventState(C.SDL_MOUSEMOTION, C.SDL_IGNORE)
@@ -95,7 +95,7 @@ func Setup() error {
 		Config.Debug,
 	)
 	if err != nil {
-		return Error("in window opening", err)
+		return Wrap("in window opening", err)
 	}
 
 	return nil

@@ -34,12 +34,12 @@ func (f FontID) load(frects *[]uint32) error {
 		path := filepath.FromSlash(internal.Path + n + ".png")
 		path, err := filepath.EvalSymlinks(path)
 		if err != nil {
-			return internal.Error("in path while loading font", err)
+			return internal.Wrap("in path while loading font", err)
 		}
 
 		fl, err := os.Open(path)
 		if err != nil {
-			return internal.Error(`while opening font file "`+path+`"`, err)
+			return internal.Wrap(`while opening font file "`+path+`"`, err)
 		}
 		defer fl.Close() //TODO: error handling
 
@@ -49,7 +49,7 @@ func (f FontID) load(frects *[]uint32) error {
 		case image.ErrFormat:
 			return nil
 		default:
-			return internal.Error("decoding font file", err)
+			return internal.Wrap("decoding font file", err)
 		}
 
 		var ok bool

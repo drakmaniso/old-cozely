@@ -88,12 +88,12 @@ func (p PictureID) scan(prects *[]uint32) error {
 	path := filepath.FromSlash(internal.Path + n + ".png")
 	path, err := filepath.EvalSymlinks(path)
 	if err != nil {
-		return internal.Error("in path while scanning picture", err)
+		return internal.Wrap("in path while scanning picture", err)
 	}
 
 	f, err := os.Open(path)
 	if err != nil {
-		return internal.Error(`while opening image "`+path+`"`, err)
+		return internal.Wrap(`while opening image "`+path+`"`, err)
 	}
 	defer f.Close() //TODO: error handling
 
@@ -103,7 +103,7 @@ func (p PictureID) scan(prects *[]uint32) error {
 	case image.ErrFormat:
 		return nil
 	default:
-		return internal.Error("decoding picture file", err)
+		return internal.Wrap("decoding picture file", err)
 	}
 
 	//TODO: check for width and height overflow

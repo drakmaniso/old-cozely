@@ -23,9 +23,9 @@ func Stop(err error) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// HasError returns true if there is an unchecked error in one of Cozely's
+// Error returns true if there is an unchecked error in one of Cozely's
 // packages.
-func HasError() bool {
+func Error() bool {
 	return internal.GLErr() != nil ||
 		internal.InputErr() != nil ||
 		internal.ColorErr() != nil ||
@@ -75,8 +75,8 @@ func Recover() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// Error returns nil if err is nil, or a wrapped error otherwise.
-func Error(context string, err error) error {
+// Wrap returns nil if err is nil, or a wrapped error otherwise.
+func Wrap(context string, err error) error {
 	if err == nil {
 		return nil
 	}

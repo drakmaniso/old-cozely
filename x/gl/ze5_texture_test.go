@@ -73,7 +73,7 @@ func Example_texture() {
 	//Output:
 }
 
-func (l *loop05) Enter()  {
+func (l *loop05) Enter() {
 	bindings.Load()
 	context.Activate(1)
 
@@ -106,12 +106,12 @@ func (l *loop05) Enter()  {
 	l.diffuse = gl.NewTexture2D(8, gl.SRGBA8, 512, 512)
 	r, err := os.Open(cozely.Path() + "testpattern.png")
 	if err != nil {
-		panic(cozely.Error("opening texture", err))
+		panic(cozely.Wrap("opening texture", err))
 	}
 	defer r.Close()
 	img, _, err := image.Decode(r)
 	if err != nil {
-		panic(cozely.Error("decoding texture", err))
+		panic(cozely.Wrap("decoding texture", err))
 	}
 	l.diffuse.SubImage(0, 0, 0, img)
 	l.diffuse.GenerateMipmap()
@@ -134,7 +134,7 @@ func (loop05) Leave() {
 
 // Game Loop ///////////////////////////////////////////////////////////////////
 
-func (l *loop05) React()  {
+func (l *loop05) React() {
 	m := input.Cursor.Delta().XY()
 	s := input.Cursor.Position().XY()
 
@@ -189,10 +189,10 @@ func (l *loop05) computeViewFromWorld() {
 	)
 }
 
-func (loop05) Update()  {
+func (loop05) Update() {
 }
 
-func (l *loop05) Render()  {
+func (l *loop05) Render() {
 	l.pipeline.Bind()
 	gl.ClearDepthBuffer(1.0)
 	gl.ClearColorBuffer(color.LRGBA{0.9, 0.9, 0.9, 1.0})
