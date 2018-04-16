@@ -335,11 +335,13 @@ func (ib *IndirectBuffer) Delete() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+// BufferTexture is a block of memory own by the GPU.
 type BufferTexture struct {
 	object  C.GLuint
 	texture C.GLuint
 }
 
+// NewBufferTexture asks the GPU to allocate a new block of memory.
 func NewBufferTexture(data interface{}, fmt TextureFormat, f BufferFlags) BufferTexture {
 	p, s, err := pointerAndSizeOf(data)
 	if err != nil {
@@ -372,8 +374,8 @@ func (bt *BufferTexture) SubData(data interface{}, atOffset uintptr) {
 }
 
 // Delete frees the buffer.
-func (tb *BufferTexture) Delete() {
-	C.DeleteBuffer(C.GLuint(tb.object))
+func (bt *BufferTexture) Delete() {
+	C.DeleteBuffer(C.GLuint(bt.object))
 	//TODO: delete texture
 }
 

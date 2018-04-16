@@ -13,6 +13,8 @@ var noclear = false
 
 ////////////////////////////////////////////////////////////////////////////////
 
+// NoClear prevents the default behavior of clearing the default framebuffer at
+// the start of each frame.
 func NoClear() Option {
 	return func() error {
 		noclear = true
