@@ -16,7 +16,14 @@ func init() {
 func newframe() error {
 	Cursor.newframe(1)
 
+	for a := range devices.bools[0] {
+		devices.bools[0][a].just = false
+	}
+
 	for d := range devices.name {
+		if d == 0 {
+			continue
+		}
 		// Activate this device context if necessary
 		c := devices.context[d]
 		if c != devices.newcontext[d] {

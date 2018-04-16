@@ -113,6 +113,7 @@ func (a BoolID) activate(d DeviceID, b binding) {
 	_, v := b.asBool()
 	if v {
 		devices.bools[d][a].pressed = true
+		devices.bools[0][a].pressed = true
 	}
 }
 
@@ -121,8 +122,11 @@ func (a BoolID) newframe(d DeviceID) {
 	for _, b := range devices.boolbinds[d][a] {
 		j, v := b.asBool()
 		if j {
+			//TODO: what if several press on same frame?
 			devices.bools[d][a].just = (v != devices.bools[d][a].pressed)
 			devices.bools[d][a].pressed = v
+			devices.bools[0][a].just = (v != devices.bools[0][a].pressed)
+			devices.bools[0][a].pressed = v
 		}
 	}
 }
@@ -132,4 +136,7 @@ func (a BoolID) deactivate(d DeviceID) {
 	devices.bools[d][a].active = false
 	devices.bools[d][a].just = false
 	devices.bools[d][a].pressed = false
+	devices.bools[0][a].active = false
+	devices.bools[0][a].just = false
+	devices.bools[0][a].pressed = false
 }

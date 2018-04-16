@@ -67,7 +67,9 @@ func Setup() error {
 
 	// Initialize SDL
 
-	if errcode := C.SDL_Init(C.SDL_INIT_VIDEO | C.SDL_INIT_JOYSTICK); errcode != 0 {
+	if errcode := C.SDL_Init(C.SDL_INIT_VIDEO |
+		C.SDL_INIT_JOYSTICK |
+		C.SDL_INIT_GAMECONTROLLER); errcode != 0 {
 		return Wrap("in SDL initialization", GetSDLError())
 	}
 

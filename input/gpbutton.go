@@ -3,8 +3,35 @@
 
 package input
 
-type gpButton struct{}
+import "github.com/cozely/cozely/internal"
 
-func (a gpButton) bind(c ContextID, target Action) {}
-func (a gpButton) activate(d DeviceID)             {}
-func (a gpButton) asBool() (just bool, value bool) { return false, false }
+type gpButton struct {
+	gamepad       *internal.Gamepad
+	button        internal.GamepadButton
+	target        Action
+	just, pressed bool
+}
+
+func (a *gpButton) bind(c ContextID, target Action) {
+	for j := range joysticks.name {
+		if joysticks.isgamepad[j] {
+			aa := *a
+			aa.target = target
+			d := joysticks.device[j]
+			aa.gamepad = joysticks.gamepad[j]
+			devices.bindings[d][c] =
+				append(devices.bindings[d][c], &aa)
+		}
+	}
+}
+
+func (a *gpButton) activate(d DeviceID) {
+	a.target.activate(d, a)
+}
+
+func (a *gpButton) asBool() (just bool, value bool) {
+	v := a.gamepad.Button(a.button)
+	a.just = (v != a.pressed) //TODO: no need to store?
+	a.pressed = v
+	return a.just, a.pressed
+}

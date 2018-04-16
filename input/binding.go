@@ -38,6 +38,8 @@ func Bind(b Bindings) {
 func load() {
 	// Forget devices (and previous bindings)
 	clearDevices()
+	// Add gamepad devices
+	scanJoysticks()
 
 	lcn := "Loaded input bindings (contexts:"
 
@@ -74,25 +76,5 @@ func load() {
 			}
 		}
 		internal.Debug.Printf(lcn + ")")
-	}
-
-	// Add gamepad devices
-
-	n := internal.NumJoysticks()
-	internal.Debug.Printf("Detected %d controllers:", n)
-	for j := 0; j < n; j++ {
-		if internal.IsGameController(j) {
-			c := internal.GameControllerOpen(j)
-			if c == nil {
-				setErr(errors.New("unable to open joystick as gamepad"))
-				continue
-			}
-			// nm := c.Name()
-			nm := internal.JoystickNameForIndex(j)
-			internal.Debug.Printf("Controller %d is a gamepad (%s)", j, nm)
-		} else {
-			nm := internal.JoystickNameForIndex(j)
-			internal.Debug.Printf("Controller %d is a joystick (%s)", j, nm)
-		}
 	}
 }

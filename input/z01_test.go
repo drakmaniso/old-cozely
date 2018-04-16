@@ -40,18 +40,18 @@ var (
 var (
 	Bindings = input.Bindings{
 		"Menu": {
-			"Quit":               {"Escape"},
-			"Close Menu":         {"Space"},
-			"Instant Close Menu": {"Mouse Right", "Enter"},
-			"Inventory":          {"I"},
+			"Quit":               {"Escape", "Button Back"},
+			"Close Menu":         {"Enter", "Button Start"},
+			"Instant Close Menu": {"Mouse Right", "Button B"},
+			"Inventory":          {"I", "Button Y"},
 			"Options":            {"O", "Mouse Left"},
 		},
 		"Game": {
-			"Quit":              {"Escape"},
-			"Open Menu":         {"Space"},
-			"Instant Open Menu": {"Mouse Right", "Enter"},
-			"Inventory":         {"Tab"},
-			"Jump":              {"Space", "Mouse Left"},
+			"Quit":              {"Escape", "Button Back"},
+			"Open Menu":         {"Enter", "Button Start"},
+			"Instant Open Menu": {"Mouse Right", "Button B"},
+			"Inventory":         {"Tab", "Button Y"},
+			"Jump":              {"Space", "Mouse Left", "Button A"},
 		},
 	}
 )
@@ -98,39 +98,41 @@ func (loop1) React() {
 	mousepos = input.Cursor.Position()
 	mousedelta = input.Cursor.Delta()
 
-	if JumpAction.JustPressed(1) {
+	if JumpAction.JustPressed(0) {
 		println(" Just Pressed: *JUMP*")
 	}
-	if JumpAction.JustReleased(1) {
+	if JumpAction.JustReleased(0) {
 		println("Just Released: (jump)")
 	}
 
-	if CloseMenuAction.JustReleased(1) {
-		InGame.Activate(1)
+	if CloseMenuAction.JustReleased(0) {
+		InGame.Activate(0)
 		input.Cursor.Hide()
 	}
-	if OpenMenuAction.JustReleased(1) {
-		InMenu.Activate(1)
+	if OpenMenuAction.JustReleased(0) {
+		InMenu.Activate(0)
 		input.Cursor.Show()
 	}
 
-	if InstantCloseMenuAction.JustPressed(1) {
-		InGame.Activate(1)
+	if InstantCloseMenuAction.JustPressed(0) {
+		InGame.Activate(0)
+		input.Cursor.Hide()
 	}
-	if InstantOpenMenuAction.JustPressed(1) {
-		InMenu.Activate(1)
+	if InstantOpenMenuAction.JustPressed(0) {
+		InMenu.Activate(0)
+		input.Cursor.Show()
 	}
 	hidden = input.Cursor.Hidden()
 
-	openmenu = OpenMenuAction.Pressed(1)
-	closemenu = CloseMenuAction.Pressed(1)
-	instopenmenu = InstantOpenMenuAction.Pressed(1)
-	instclosemenu = InstantCloseMenuAction.Pressed(1)
-	inventory = InventoryAction.Pressed(1)
-	options = OptionsAction.Pressed(1)
-	jump = JumpAction.Pressed(1)
+	openmenu = OpenMenuAction.Pressed(0)
+	closemenu = CloseMenuAction.Pressed(0)
+	instopenmenu = InstantOpenMenuAction.Pressed(0)
+	instclosemenu = InstantCloseMenuAction.Pressed(0)
+	inventory = InventoryAction.Pressed(0)
+	options = OptionsAction.Pressed(0)
+	jump = JumpAction.Pressed(0)
 
-	if quit.JustPressed(1) {
+	if quit.JustPressed(0) {
 		cozely.Stop(nil)
 	}
 }
@@ -167,9 +169,9 @@ func (loop1) Render() {
 	changecolor(options)
 	canvas1.Print("Options(O/L.C.) ")
 	changecolor(closemenu)
-	canvas1.Print("CloseMenu(ESC) ")
+	canvas1.Print("CloseMenu(ENTER) ")
 	changecolor(instclosemenu)
-	canvas1.Print("InstantCloseMenu(ENTER/R.C.) ")
+	canvas1.Print("InstantCloseMenu(MOUSE RIGHT) ")
 	canvas1.Println(" ")
 
 	changecolor(InGame.Active(1))
@@ -177,9 +179,9 @@ func (loop1) Render() {
 	changecolor(jump)
 	canvas1.Print("Jump(SPACE/L.C.) ")
 	changecolor(openmenu)
-	canvas1.Print("OpenMenu(ESC) ")
+	canvas1.Print("OpenMenu(ENTER) ")
 	changecolor(instopenmenu)
-	canvas1.Print("InstantOpenMenu(ENTER/R.C.) ")
+	canvas1.Print("InstantOpenMenu(MOUSE RIGHT) ")
 	canvas1.Println(" ")
 
 	changecolor(false)

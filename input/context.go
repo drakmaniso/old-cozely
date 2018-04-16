@@ -54,11 +54,20 @@ func Context(name string, list ...Action) ContextID {
 
 // Activate makes the context active on a specific device.
 func (a ContextID) Activate(d DeviceID) {
-	devices.newcontext[d] = a
+	if d == 0 {
+		for d := range devices.name {
+			if d == 0 {
+				continue
+			}
+			devices.newcontext[d] = a
+		}
+	} else {
+		devices.newcontext[d] = a
+	}
 }
 
 // Active returns true if the context is currently active on a specific device.
 func (a ContextID) Active(d DeviceID) bool {
+	//TODO: device 0
 	return a == devices.context[d]
 }
-
