@@ -71,6 +71,7 @@ var openmenu, closemenu, instopenmenu, instclosemenu, inventory, options, jump b
 func TestTest1(t *testing.T) {
 	defer cozely.Recover()
 
+	input.Bind(Bindings)
 	err := cozely.Run(loop1{})
 	if err != nil {
 		panic(err)
@@ -85,8 +86,6 @@ type loop1 struct{}
 
 func (loop1) Enter() {
 	msx.Palette.Activate()
-	Bindings.Load()
-
 	InMenu.Activate(0)
 }
 

@@ -9,6 +9,7 @@ import (
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/coord"
+	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/x/gl"
 	"github.com/cozely/cozely/x/math32"
 )
@@ -69,7 +70,7 @@ func Example_streaming() {
 }
 
 func (l *loop08) Enter() {
-	bindings06.Load()
+	input.Bind(bindings06)
 	context06.Activate(1)
 
 	// Create and configure the pipeline

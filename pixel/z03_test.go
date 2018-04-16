@@ -38,7 +38,7 @@ func TestTest3(t *testing.T) {
 }
 
 func (loop3) Enter() {
-	bindings.Load()
+	input.Bind(bindings)
 	context.Activate(1)
 	palette3.Activate()
 	println(bg3, fg3)

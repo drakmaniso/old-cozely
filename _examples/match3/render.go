@@ -5,7 +5,6 @@ package main
 
 import (
 	"github.com/cozely/cozely/coord"
-	"github.com/cozely/cozely/x/gl"
 
 	"github.com/cozely/cozely/_examples/match3/ecs"
 	"github.com/cozely/cozely/_examples/match3/grid"
@@ -19,7 +18,7 @@ var colours [ecs.Size]colour
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (loop) Render() error {
+func (loop) Render() {
 	canvas.Clear(1)
 
 	var x, y int16 // screen coords
@@ -43,8 +42,6 @@ func (loop) Render() error {
 	}
 
 	canvas.Display()
-
-	return gl.Err()
 }
 
 ////////////////////////////////////////////////////////////////////////////////

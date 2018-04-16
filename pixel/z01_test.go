@@ -13,6 +13,7 @@ import (
 	"github.com/cozely/cozely/color/palettes/msx"
 	"github.com/cozely/cozely/color/palettes/msx2"
 	"github.com/cozely/cozely/coord"
+	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
 )
 
@@ -50,7 +51,7 @@ func TestTest1(t *testing.T) {
 }
 
 func (loop1) Enter() {
-	bindings.Load()
+	input.Bind(bindings)
 	context.Activate(1)
 
 	mode = 0

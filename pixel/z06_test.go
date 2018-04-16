@@ -32,7 +32,7 @@ func TestTest6(t *testing.T) {
 }
 
 func (test6) Enter() {
-	bindings.Load()
+	input.Bind(bindings)
 	context.Activate(1)
 	palette2.Activate()
 }

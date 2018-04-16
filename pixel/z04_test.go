@@ -10,6 +10,7 @@ import (
 
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/coord"
+	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
 )
 
@@ -54,7 +55,7 @@ func TestTest4(t *testing.T) {
 }
 
 func (loop4) Enter() {
-	bindings.Load()
+	input.Bind(bindings)
 	context.Activate(1)
 
 	f, err := os.Open(cozely.Path() + "frankenstein.txt")

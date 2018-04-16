@@ -22,21 +22,26 @@ type binding interface {
 // associates each action name to a slice of strings (the actual bindings).
 type Bindings map[string]map[string][]string
 
+var bindings = Bindings{}
+
 ////////////////////////////////////////////////////////////////////////////////
+
+func Bind(b Bindings) {
+	bindings = b
+	if internal.Running {
+		load()
+	}
+}
 
 // Load associates each context/action combination found in the bindings map to
 // the requested bindings.
-func (a Bindings) Load() {
-	if ! internal.Running {
-		setErr(errors.New("bindings must be loaded while the framework is running"))
-	}
-
+func load() {
 	// Forget devices (and previous bindings)
 	clearDevices()
 
 	lcn := "Loaded input bindings (contexts:"
 
-	for cn, cb := range a {
+	for cn, cb := range bindings {
 		// Find context by name
 		ctx := noContext
 		for i, n := range contexts.name {
@@ -46,7 +51,7 @@ func (a Bindings) Load() {
 			}
 		}
 		if ctx == noContext {
-				setErr(errors.New("unknown context: " + cn))
+			setErr(errors.New("unknown context: " + cn))
 			continue
 		}
 		lcn = lcn + " " + cn

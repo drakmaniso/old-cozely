@@ -77,7 +77,7 @@ func Example_instancedDraw() {
 }
 
 func (l *loop06) Enter() {
-	bindings06.Load()
+	input.Bind(bindings06)
 	context06.Activate(1)
 
 	// Setup the pipeline

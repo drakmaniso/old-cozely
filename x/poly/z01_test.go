@@ -116,7 +116,7 @@ func TestTest1(t *testing.T) {
 }
 
 func (loop) Enter() {
-	bindings1.Load()
+	input.Bind(bindings1)
 	context1.Activate(1)
 	palette.Activate()
 

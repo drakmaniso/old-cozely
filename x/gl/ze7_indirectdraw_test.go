@@ -117,7 +117,7 @@ func Example_indirectDraw() {
 }
 
 func (l *loop07) Enter() {
-	bindings.Load()
+	input.Bind(bindings)
 	context.Activate(1)
 
 	// Create and configure the pipeline

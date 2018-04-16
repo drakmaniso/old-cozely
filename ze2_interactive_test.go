@@ -42,6 +42,7 @@ type loop2 struct{}
 func Example_interactive() {
 	defer cozely.Recover()
 
+	input.Bind(bindings)
 	cozely.Configure(cozely.UpdateStep(1.0 / 3))
 	err := cozely.Run(loop2{})
 	if err != nil {
@@ -51,7 +52,6 @@ func Example_interactive() {
 }
 
 func (loop2) Enter() {
-	bindings.Load()
 	context.Activate(1)
 	pal1.Activate()
 	shufflecolors()

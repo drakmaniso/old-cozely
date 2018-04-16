@@ -93,6 +93,7 @@ var mode int
 func Example_colorChart() {
 	defer cozely.Recover()
 
+	input.Bind(bindings)
 	err := cozely.Run(loop{})
 	if err != nil {
 		panic(err)
@@ -103,7 +104,6 @@ func Example_colorChart() {
 type loop struct{}
 
 func (loop) Enter() {
-	bindings.Load()
 	context.Activate(1)
 
 	mode = 1

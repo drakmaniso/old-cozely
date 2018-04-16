@@ -82,7 +82,7 @@ func Example_firstCube() {
 }
 
 func (l *loop04) Enter() {
-	bindings.Load()
+	input.Bind(bindings)
 	context.Activate(1)
 
 	// Create and configure the pipeline

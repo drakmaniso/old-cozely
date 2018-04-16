@@ -47,10 +47,14 @@ var tilesPict [8]struct {
 
 var current grid.Position
 
+type loop struct{}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 func main() {
 	setup()
+
+	input.Bind(bindings)
 
 	cozely.Configure(
 		cozely.Title("Match 3"),
@@ -58,11 +62,17 @@ func main() {
 
 	err := cozely.Run(loop{})
 	if err != nil {
-		cozely.ShowError(err)
+		panic(err)
 	}
 }
 
-////////////////////////////////////////////////////////////////////////////////
+func (loop) Enter() {
+	context.Activate(1)
+	palette.Activate()
+}
+
+func (loop) Leave() {
+}
 
 func setup() error {
 	cozely.Events.Resize = resize
@@ -89,24 +99,10 @@ func setup() error {
 	return nil
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
-type loop struct{}
-
-////////////////////////////////////////////////////////////////////////////////
-
-func (loop) Enter() error {
-	bindings.Load()
-	context.Activate(1)
-
-	palette.Activate()
-
-	return nil
+func resize() {
+	w, h := canvas.Size().C, canvas.Size().R
+	grid.ScreenResized(w, h)
 }
-
-func (loop) Leave() error { return nil }
-
-////////////////////////////////////////////////////////////////////////////////
 
 func newTile() ecs.Entity {
 	e := ecs.New(ecs.Color)
@@ -125,11 +121,7 @@ func init() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (loop) React() error {
-	if quit.JustPressed(1) {
-		cozely.Stop()
-	}
-
+func (loop) React() {
 	if selct.JustPressed(1) {
 		m := canvas.FromWindow(input.Cursor.Position())
 		current = grid.PositionAt(m)
@@ -160,7 +152,9 @@ func (loop) React() error {
 		println()
 	}
 
-	return nil
+	if quit.JustPressed(1) {
+		cozely.Stop(nil)
+	}
 }
 
 func testMatch(e1, e2 ecs.Entity) bool {
@@ -172,17 +166,5 @@ func testMatch(e1, e2 ecs.Entity) bool {
 	return c1 == c2
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
-func (loop) Update() error {
-	return nil
+func (loop) Update() {
 }
-
-////////////////////////////////////////////////////////////////////////////////
-
-func resize() {
-	w, h := canvas.Size().C, canvas.Size().R
-	grid.ScreenResized(w, h)
-}
-
-////////////////////////////////////////////////////////////////////////////////
