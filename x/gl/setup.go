@@ -61,6 +61,14 @@ func setup() error {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+func prerender() error {
+	DefaultFramebuffer.Bind(DrawFramebuffer)
+	ClearColorBuffer(struct{ R, G, B, A float32 }{0, 0, 0, 0}) //TODO: ...
+	return nil
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 func init() {
 	internal.GLCleanup = cleanup
 }

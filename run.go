@@ -4,9 +4,7 @@
 package cozely
 
 import (
-	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/internal"
-	"github.com/cozely/cozely/x/gl"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -198,9 +196,10 @@ func Run(loop GameLoop) (err error) {
 
 		// Render
 
-		gl.DefaultFramebuffer.Bind(gl.DrawFramebuffer)
-		gl.ClearColorBuffer(color.LRGBA{0, 0, 0, 0}) //TODO: ...
-
+		err = internal.GLPrerender()
+		if err != nil {
+			return err
+		}
 		internal.GameTime = gametime + internal.UpdateLag //TODO: check if correct
 		internal.Loop.Render()
 

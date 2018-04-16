@@ -8,6 +8,9 @@ package internal
 // GLSetup hook
 var GLSetup = func() error { return nil }
 
+// GLPrerender hook
+var GLPrerender = func() error { return nil }
+
 // GLCleanup hook
 var GLCleanup = func() error { return nil }
 
