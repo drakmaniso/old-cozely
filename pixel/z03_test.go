@@ -73,13 +73,13 @@ func (loop3) Render() {
 
 	canvas3.Locate(0, coord.CR{16, 100})
 	canvas3.Write([]byte("Foo"))
-	canvas3.Cursor().Position = canvas3.Cursor().Position.Pluss(1, 3, 0)
+	canvas3.Cursor().Position = canvas3.Cursor().Position.Plus(coord.CR{1, 3})
 	canvas3.WriteRune('B')
-	canvas3.Cursor().Position = canvas3.Cursor().Position.Pluss(2, 2, 0)
+	canvas3.Cursor().Position = canvas3.Cursor().Position.Plus(coord.CR{2, 2})
 	canvas3.WriteRune('a')
-	canvas3.Cursor().Position = canvas3.Cursor().Position.Pluss(3, 1, 0)
+	canvas3.Cursor().Position = canvas3.Cursor().Position.Plus(coord.CR{3, 1})
 	canvas3.WriteRune('r')
-	canvas3.Cursor().Position = coord.CRD{32, 132, 0}
+	canvas3.Cursor().Position = coord.CR{32, 132}
 	canvas3.Write([]byte("Boo\n"))
 	canvas3.Write([]byte("Choo"))
 

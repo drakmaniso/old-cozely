@@ -22,7 +22,8 @@ type TextCursor struct {
 	Margin        int16
 	LetterSpacing int16
 	Interline     int16
-	Position      coord.CRD
+	Layer         int16
+	Position      coord.CR
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -46,7 +47,8 @@ func (a CanvasID) Text(c color.Index, f FontID) {
 // Note that you can also directly change the TextCursor attributes.
 func (a CanvasID) Locate(layer int16, p coord.CR) {
 	cu := &canvases[a].cursor
-	cu.Position = coord.CRD{p.C, p.R, layer}
+	cu.Layer = layer
+	cu.Position = coord.CR{p.C, p.R}
 	cu.Margin = cu.Position.C
 }
 
@@ -105,7 +107,7 @@ func (a CanvasID) WriteRune(r rune) {
 
 	g := cu.Font.glyph(r)
 	a.command(cmdText, 4, 1,
-		int16(cu.Color), cu.Position.D, cu.Position.R-fonts[cu.Font].baseline,
+		int16(cu.Color), cu.Layer, cu.Position.R-fonts[cu.Font].baseline,
 		int16(g), cu.Position.C)
 	cu.Position.C += glyphMap[g].w + cu.LetterSpacing
 }
