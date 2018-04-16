@@ -61,6 +61,10 @@ func setup() error {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+func init() {
+	internal.GLPrerender = prerender
+}
+
 func prerender() error {
 	DefaultFramebuffer.Bind(DrawFramebuffer)
 	ClearColorBuffer(struct{ R, G, B, A float32 }{0, 0, 0, 0}) //TODO: ...
