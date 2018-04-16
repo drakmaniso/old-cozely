@@ -54,6 +54,18 @@ func setup() error {
 		return errors.New("gl setup: impossible to initialize OpenGL")
 	}
 
+	clearPipelineCurrentState()
+
+	return nil
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+func init() {
+	internal.GLCleanup = cleanup
+}
+
+func cleanup() error {
 	return nil
 }
 

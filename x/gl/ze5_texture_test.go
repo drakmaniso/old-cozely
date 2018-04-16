@@ -85,8 +85,8 @@ func (l *loop05) Enter() {
 		gl.Topology(gl.Triangles),
 		gl.CullFace(false, true),
 		gl.DepthTest(true),
-		gl.DepthComparison(gl.LessOrEqual),
 		gl.DepthWrite(true),
+		gl.DepthComparison(gl.LessOrEqual),
 	)
 	gl.Enable(gl.FramebufferSRGB)
 
@@ -196,7 +196,6 @@ func (l *loop05) Render() {
 	l.pipeline.Bind()
 	gl.ClearDepthBuffer(1.0)
 	gl.ClearColorBuffer(color.LRGBA{0.9, 0.9, 0.9, 1.0})
-	gl.Enable(gl.FramebufferSRGB)
 
 	u := perObject{
 		screenFromObject: l.screenFromView.

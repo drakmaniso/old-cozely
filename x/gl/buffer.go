@@ -164,7 +164,9 @@ func (sb *StorageBuffer) Bind(binding uint32) {
 
 // Delete frees the buffer.
 func (sb *StorageBuffer) Delete() {
-	C.DeleteBuffer(C.GLuint(sb.object))
+	if sb != nil {
+		C.DeleteBuffer(C.GLuint(sb.object))
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////

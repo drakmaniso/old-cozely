@@ -198,7 +198,8 @@ import "C"
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func init() {
+
+func clearPipelineCurrentState() {
 	// VkPipelineInputAssemblyStateCreateInfo
 	C.currentState.topology = C.GL_TRIANGLES
 	C.currentState.primitiveRestart = C.GL_FALSE
@@ -209,6 +210,7 @@ func init() {
 	C.currentState.frontFace = C.GL_CCW
 	// VkPipelineDepthStencilStateCreateInfo
 	C.currentState.depthTest = C.GL_FALSE
+	C.currentState.depthWrite = C.GL_FALSE
 	C.currentState.depthComparison = C.GL_LESS
 	C.currentState.stencilTest = C.GL_FALSE
 }
@@ -244,6 +246,7 @@ func NewPipeline(o ...PipelineConfig) *Pipeline {
 	p.state.frontFace = C.GL_CCW
 	// DepthStencil State
 	p.state.depthTest = C.GL_FALSE
+	p.state.depthWrite = C.GL_FALSE
 	p.state.depthComparison = C.GL_LESS
 	p.state.stencilTest = C.GL_FALSE
 

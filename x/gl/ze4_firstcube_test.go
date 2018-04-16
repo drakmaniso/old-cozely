@@ -93,6 +93,7 @@ func (l *loop04) Enter() {
 		gl.Topology(gl.Triangles),
 		gl.CullFace(false, true),
 		gl.DepthTest(true),
+		gl.DepthWrite(true),
 		gl.DepthComparison(gl.LessOrEqual),
 	)
 	gl.Enable(gl.FramebufferSRGB)
