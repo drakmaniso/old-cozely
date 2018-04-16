@@ -100,7 +100,7 @@ func (a CanvasID) autoresize() {
 
 	if aa.fixedres {
 		// Find best fit for pixel size
-		p := win.Slashcw(aa.resolution)
+		p := win.Slashcr(aa.resolution)
 		if p.C < p.R {
 			aa.pixel = p.C
 		} else {

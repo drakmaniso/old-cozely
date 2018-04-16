@@ -158,14 +158,14 @@ func (l *loop05) React() {
 	}
 
 	if move.Pressed(1) {
-		d := m.Times(2).Slashcw(s)
+		d := m.Times(2).Slashxy(s)
 		l.position.X += d.X
 		l.position.Y -= d.Y
 		l.computeWorldFromObject()
 	}
 
 	if zoom.Pressed(1) {
-		d := m.Times(2).Slashcw(s)
+		d := m.Times(2).Slashxy(s)
 		l.position.X += d.X
 		l.position.Z += d.Y
 		l.computeWorldFromObject()

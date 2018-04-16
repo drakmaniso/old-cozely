@@ -38,9 +38,9 @@ func (a XY64) Plus(b XY64) XY64 {
 	return XY64{a.X + b.X, a.Y + b.Y}
 }
 
-// Pluss returns the component-wise sum with two scalars.
-func (a XY64) Pluss(x, y float64) XY64 {
-	return XY64{a.X + x, a.Y + y}
+// Pluss returns the sum with a scalar.
+func (a XY64) Pluss(s float64) XY64 {
+	return XY64{a.X + s, a.Y + s}
 }
 
 // Minus returns the difference with another vector.
@@ -48,9 +48,9 @@ func (a XY64) Minus(b XY64) XY64 {
 	return XY64{a.X - b.X, a.Y - b.Y}
 }
 
-// Minuss returns the component-wise difference with two scalars.
-func (a XY64) Minuss(x, y float64) XY64 {
-	return XY64{a.X - x, a.Y - y}
+// Minuss returns the difference with a scalar.
+func (a XY64) Minuss(s float64) XY64 {
+	return XY64{a.X - s, a.Y - s}
 }
 
 // Opposite returns the opposite of the vector.
@@ -63,13 +63,8 @@ func (a XY64) Times(s float64) XY64 {
 	return XY64{a.X * s, a.Y * s}
 }
 
-// Timess returns the component-wise product with two scalars.
-func (a XY64) Timess(x, y float64) XY64 {
-	return XY64{a.X * x, a.Y * y}
-}
-
-// Timescw returns the component-wise product with another vector.
-func (a XY64) Timescw(b XY64) XY64 {
+// Timesxy returns the component-wise product with another vector.
+func (a XY64) Timesxy(b XY64) XY64 {
 	return XY64{a.X * b.X, a.Y * b.Y}
 }
 
@@ -78,15 +73,9 @@ func (a XY64) Slash(s float64) XY64 {
 	return XY64{a.X / s, a.Y / s}
 }
 
-// Slashs returns the component-wise division by two scalars (which must be
-// non-zero).
-func (a XY64) Slashs(x, y float64) XY64 {
-	return XY64{a.X / x, a.Y / y}
-}
-
-// Slashcw returns the component-wise division by another vector (of which both
+// Slashxy returns the component-wise division by another vector (of which both
 // X and Y must be non-zero).
-func (a XY64) Slashcw(b XY64) XY64 {
+func (a XY64) Slashxy(b XY64) XY64 {
 	return XY64{a.X / b.X, a.Y / b.Y}
 }
 
@@ -96,15 +85,9 @@ func (a XY64) Mod(s float64) XY64 {
 	return XY64{math.Mod(a.X, s), math.Mod(a.Y, s)}
 }
 
-// Mods returns the remainder (modulus) of the component-wise division by two
-// scalars (which must be non-zero).
-func (a XY64) Mods(x, y float64) XY64 {
-	return XY64{math.Mod(a.X, x), math.Mod(a.Y, y)}
-}
-
-// Modcw returns the remainders (modulus) of the component-wise division by
+// Modxy returns the remainders (modulus) of the component-wise division by
 // another vector (of which both X and Y must be non-zero).
-func (a XY64) Modcw(b XY64) XY64 {
+func (a XY64) Modxy(b XY64) XY64 {
 	return XY64{math.Mod(a.X, b.X), math.Mod(a.Y, b.Y)}
 }
 
@@ -214,7 +197,7 @@ func (a XYZ64) Cartesian() (x, y float32) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// XYZ64 represents a two-dimensional vector, defined by its homogeneous
+// XYZW64 represents a two-dimensional vector, defined by its homogeneous
 // coordinates.
 type XYZW64 struct {
 	X float64

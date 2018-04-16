@@ -116,12 +116,12 @@ func (l *loop04) Enter() {
 	l.pipeline.Unbind()
 }
 
-func (loop04) Leave()  {
+func (loop04) Leave() {
 }
 
 // Game Loop ///////////////////////////////////////////////////////////////////
 
-func (l *loop04) React()  {
+func (l *loop04) React() {
 	m := input.Cursor.Delta().XY()
 	s := input.Cursor.Position().XY()
 
@@ -145,14 +145,14 @@ func (l *loop04) React()  {
 	}
 
 	if move.Pressed(1) {
-		d := m.Times(2).Slashcw(s)
+		d := m.Times(2).Slashxy(s)
 		l.position.X += d.X
 		l.position.Y -= d.Y
 		l.computeWorldFromObject()
 	}
 
 	if zoom.Pressed(1) {
-		d := m.Times(2).Slashcw(s)
+		d := m.Times(2).Slashxy(s)
 		l.position.X += d.X
 		l.position.Z += d.Y
 		l.computeWorldFromObject()
@@ -176,10 +176,10 @@ func (l *loop04) computeViewFromWorld() {
 	)
 }
 
-func (loop04) Update()  {
+func (loop04) Update() {
 }
 
-func (l *loop04) Render()  {
+func (l *loop04) Render() {
 	l.pipeline.Bind()
 	gl.ClearDepthBuffer(1.0)
 	gl.ClearColorBuffer(color.LRGBA{0.9, 0.9, 0.9, 1.0})
@@ -251,4 +251,3 @@ func coloredcube() mesh {
 		{coord.XYZ{+0.5, +0.5, -0.5}, orange},
 	}
 }
-

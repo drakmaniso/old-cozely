@@ -80,12 +80,12 @@ func (loop) Update() error {
 func (loop) Render() error {
 	canvas.Clear(0)
 	origin = canvas.Size().Minus(resolution).Slash(2)
-	canvas.Box(c64.Red, c64.Transparent, 3, 0, origin.Pluss(4, 4), origin.Plus(resolution).Minuss(4, 4))
+	canvas.Box(c64.Red, c64.Transparent, 3, 0, origin.Pluss(4), origin.Plus(resolution).Minuss(4, 4))
 	for c := int16(0); c < gridsize.C; c++ {
 		for r := int16(0); r < gridsize.R; r++ {
 			offset := resolution.Minus(gridsize.Times(16)).Slash(2)
 			p := coord.CR{c, r}.Timescw(cellsize).Plus(offset)
-			canvas.Box(c64.Yellow, c64.Transparent, 2, 0, origin.Plus(p), origin.Plus(p).Pluss(15, 15))
+			canvas.Box(c64.Yellow, c64.Transparent, 2, 0, origin.Plus(p), origin.Plus(p).Pluss(15))
 		}
 	}
 	canvas.Display()

@@ -170,8 +170,8 @@ func (loop1) Render() {
 	canvas1.Text(col1-1, 0)
 	canvas1.Printf("Circumcenter: %.3f, %.3f\n", d.X, d.Y)
 	dd := toScreen(d)
-	canvas1.Lines(col5, -2, dd.Pluss(-2, -2), dd.Pluss(2, 2))
-	canvas1.Lines(col5, -2, dd.Pluss(2, -2), dd.Pluss(-2, 2))
+	canvas1.Lines(col5, -2, dd.Minuss(2), dd.Pluss(2))
+	canvas1.Lines(col5, -2, dd.Minuss(2).Perp(), dd.Pluss(2).Perp())
 
 	r := d.Minus(points[a]).Length()
 	cir := []coord.CR{}

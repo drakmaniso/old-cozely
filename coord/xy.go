@@ -53,9 +53,9 @@ func (a XY) Plus(b XY) XY {
 	return XY{a.X + b.X, a.Y + b.Y}
 }
 
-// Pluss returns the component-wise sum with two scalars.
-func (a XY) Pluss(x, y float32) XY {
-	return XY{a.X + x, a.Y + y}
+// Pluss returns the sum with a scalar.
+func (a XY) Pluss(s float32) XY {
+	return XY{a.X + s, a.Y + s}
 }
 
 // Minus returns the difference with another vector.
@@ -63,9 +63,9 @@ func (a XY) Minus(b XY) XY {
 	return XY{a.X - b.X, a.Y - b.Y}
 }
 
-// Minuss returns the component-wise difference with two scalars.
-func (a XY) Minuss(x, y float32) XY {
-	return XY{a.X - x, a.Y - y}
+// Minuss returns the difference with a scalar.
+func (a XY) Minuss(s float32) XY {
+	return XY{a.X - s, a.Y - s}
 }
 
 // Opposite returns the opposite of the vector.
@@ -78,13 +78,8 @@ func (a XY) Times(s float32) XY {
 	return XY{a.X * s, a.Y * s}
 }
 
-// Timess returns the component-wise product with two scalars.
-func (a XY) Timess(x, y float32) XY {
-	return XY{a.X * x, a.Y * y}
-}
-
-// Timescw returns the component-wise product with another vector.
-func (a XY) Timescw(b XY) XY {
+// Timesxy returns the component-wise product with another vector.
+func (a XY) Timesxy(b XY) XY {
 	return XY{a.X * b.X, a.Y * b.Y}
 }
 
@@ -93,15 +88,9 @@ func (a XY) Slash(s float32) XY {
 	return XY{a.X / s, a.Y / s}
 }
 
-// Slashs returns the component-wise division by two scalars (which must be
-// non-zero).
-func (a XY) Slashs(x, y float32) XY {
-	return XY{a.X / x, a.Y / y}
-}
-
-// Slashcw returns the component-wise division by another vector (of which both
+// Slashxy returns the component-wise division by another vector (of which both
 // X and Y must be non-zero).
-func (a XY) Slashcw(b XY) XY {
+func (a XY) Slashxy(b XY) XY {
 	return XY{a.X / b.X, a.Y / b.Y}
 }
 
@@ -111,15 +100,9 @@ func (a XY) Mod(s float32) XY {
 	return XY{math32.Mod(a.X, s), math32.Mod(a.Y, s)}
 }
 
-// Mods returns the remainder (modulus) of the division by two scalars (which
-// must be non-zero).
-func (a XY) Mods(x, y float32) XY {
-	return XY{math32.Mod(a.X, x), math32.Mod(a.Y, y)}
-}
-
-// Modcw returns the remainders (modulus) of the component-wise division by
+// Modxy returns the remainders (modulus) of the component-wise division by
 // another vector (of which both X and Y must be non-zero).
-func (a XY) Modcw(b XY) XY {
+func (a XY) Modxy(b XY) XY {
 	return XY{math32.Mod(a.X, b.X), math32.Mod(a.Y, b.Y)}
 }
 
@@ -210,10 +193,12 @@ func (a XY) IsRoughlyEqual(b XY, epsilon float32) bool {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+// FlipX returns the coordinates with the signe of X flipped.
 func (a XY) FlipX() XY {
 	return XY{-a.X, a.Y}
 }
 
+// FlipY returns the coordinates with the signe of Y flipped.
 func (a XY) FlipY() XY {
 	return XY{a.X, -a.Y}
 }

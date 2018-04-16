@@ -33,9 +33,9 @@ func (a CR) Plus(b CR) CR {
 	return CR{a.C + b.C, a.R + b.R}
 }
 
-// Pluss returns the sum with another pair of coordinates.
-func (a CR) Pluss(c, r int16) CR {
-	return CR{a.C + c, a.R + r}
+// Pluss returns the sum with a scalar.
+func (a CR) Pluss(s int16) CR {
+	return CR{a.C + s, a.R + s}
 }
 
 // Minus returns the difference with another pair of coordinates.
@@ -43,9 +43,9 @@ func (a CR) Minus(b CR) CR {
 	return CR{a.C - b.C, a.R - b.R}
 }
 
-// Minuss returns the difference with another pair of coordinates.
-func (a CR) Minuss(c, r int16) CR {
-	return CR{a.C - c, a.R - r}
+// Minuss returns the difference with a scalar.
+func (a CR) Minuss(s int16) CR {
+	return CR{a.C - s, a.R - s}
 }
 
 // Opposite returns the opposite pair of coordinates.
@@ -58,13 +58,8 @@ func (a CR) Times(s int16) CR {
 	return CR{a.C * s, a.R * s}
 }
 
-// Timess returns the component-wise product with two scalars.
-func (a CR) Timess(c, r int16) CR {
-	return CR{a.C * c, a.R * r}
-}
-
-// Timescw returns the component-wise product with another pair of coordinates.
-func (a CR) Timescw(b CR) CR {
+// Timescr returns the component-wise product with another pair of coordinates.
+func (a CR) Timescr(b CR) CR {
 	return CR{a.C * b.C, a.R * b.R}
 }
 
@@ -74,15 +69,9 @@ func (a CR) Slash(s int16) CR {
 	return CR{a.C / s, a.R / s}
 }
 
-// Slashs returns the component-wise integer quotient of the division by two
-// scalars (which must be non-zero).
-func (a CR) Slashs(c, r int16) CR {
-	return CR{a.C / c, a.R / r}
-}
-
-// Slashcw returns the integer quotients of the component-wise division by
+// Slashcr returns the integer quotients of the component-wise division by
 // another pair of coordinates (of which both C and R must be non-zero).
-func (a CR) Slashcw(b CR) CR {
+func (a CR) Slashcr(b CR) CR {
 	return CR{a.C / b.C, a.R / b.R}
 }
 
@@ -92,15 +81,9 @@ func (a CR) Mod(s int16) CR {
 	return CR{a.C % s, a.R % s}
 }
 
-// Mods returns the remainders (modulus) of the component-wise division by two
-// scalars (which must be non-zero).
-func (a CR) Mods(c, r int16) CR {
-	return CR{a.C % c, a.R % r}
-}
-
-// Modcw returns the remainder (modulus) of the component-wise division by
+// Modcr returns the remainder (modulus) of the component-wise division by
 // another pair of coordinates (of which both C and R must be non-zero).
-func (a CR) Modcw(b CR) CR {
+func (a CR) Modcr(b CR) CR {
 	return CR{a.C % b.C, a.R % b.R}
 }
 

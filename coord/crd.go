@@ -5,7 +5,7 @@ package coord
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// CR represents the position of a cell on a cubic grid, defined by column C,
+// CRD represents the position of a cell on a cubic grid, defined by column C,
 // row R and depth D (i.e., three integer coordinates).
 type CRD struct {
 	C, R, D int16
@@ -19,13 +19,6 @@ func (a CRD) Cartesian() (x, y, z float32) {
 // CR returns the square grid cell (C, R).
 func (a CRD) CR() CR {
 	return CR{a.C, a.R}
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-// Pluss returns the sum with another pair of coordinates.
-func (a CRD) Pluss(c, r, d int16) CRD {
-	return CRD{a.C + c, a.R + r, a.D +d}
 }
 
 ////////////////////////////////////////////////////////////////////////////////

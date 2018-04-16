@@ -163,7 +163,7 @@ func (loop1) Render() {
 	pt := make([]coord.CR, len(points))
 	for i, sd := range points {
 		pt[i] = toScreen(sd)
-		canvas1.Box(col2, col2, 1, 0, pt[i].Minuss(2, 2), pt[i].Pluss(2, 2))
+		canvas1.Box(col2, col2, 1, 0, pt[i].Minuss(2), pt[i].Pluss(2))
 	}
 
 	triangulation.Walk(func(e quadedge.Edge) {
