@@ -60,7 +60,7 @@ func Example_streaming() {
 		speeds:   make([]float32, len(points)),
 	}
 
-	cozely.Configure(cozely.Multisample(8))
+	cozely.Configure(cozely.Multisample(8), gl.NoClear())
 	cozely.Events.Resize = l.resize
 	err := cozely.Run(&l)
 	if err != nil {

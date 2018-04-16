@@ -67,7 +67,9 @@ func init() {
 
 func prerender() error {
 	DefaultFramebuffer.Bind(DrawFramebuffer)
-	ClearColorBuffer(struct{ R, G, B, A float32 }{0, 0, 0, 0}) //TODO: ...
+	if !noclear {
+		ClearColorBuffer(struct{ R, G, B, A float32 }{0, 0, 0, 0})
+	}
 	return nil
 }
 
