@@ -60,7 +60,7 @@ func load() {
 
 		for an, ab := range cb {
 			// Find action by name
-			act, ok := actions.names[an]
+			act, ok := actions.name[an]
 			if !ok {
 				setErr(errors.New("unknown action: " + an))
 				continue

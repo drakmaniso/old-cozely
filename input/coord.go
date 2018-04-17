@@ -35,7 +35,7 @@ func Coord(name string) CoordID {
 		return noCoord
 	}
 
-	_, ok := actions.names[name]
+	_, ok := actions.name[name]
 	if ok {
 		setErr(errors.New("input coord declaration: name already taken by another action"))
 		return noCoord
@@ -47,7 +47,8 @@ func Coord(name string) CoordID {
 		return noCoord
 	}
 
-	actions.names[name] = CoordID(a)
+	actions.name[name] = CoordID(a)
+	actions.list = append(actions.list, CoordID(a))
 	coords.name = append(coords.name, name)
 
 	return CoordID(a)

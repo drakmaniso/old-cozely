@@ -16,7 +16,7 @@ func init() {
 func newframe() error {
 	Cursor.newframe(1)
 
-	for _, t := range actions.names {
+	for _, t := range actions.list {
 		for d := range devices.name {
 			t.newframe(DeviceID(d))
 		}

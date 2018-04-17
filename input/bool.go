@@ -38,7 +38,7 @@ func Bool(name string) BoolID {
 		return noBool
 	}
 
-	_, ok := actions.names[name]
+	_, ok := actions.name[name]
 	if ok {
 		setErr(errors.New("input bool declaration: name already taken by another action"))
 		return noBool
@@ -50,7 +50,8 @@ func Bool(name string) BoolID {
 		return noBool
 	}
 
-	actions.names[name] = BoolID(a)
+	actions.name[name] = BoolID(a)
+	actions.list = append(actions.list, BoolID(a))
 	bools.name = append(bools.name, name)
 
 	return BoolID(a)

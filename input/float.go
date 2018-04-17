@@ -37,7 +37,7 @@ func Float(name string) FloatID {
 		return noFloat
 	}
 
-	_, ok := actions.names[name]
+	_, ok := actions.name[name]
 	if ok {
 		setErr(errors.New("input float declaration: name already taken by another action"))
 		return noFloat
@@ -49,7 +49,8 @@ func Float(name string) FloatID {
 		return noFloat
 	}
 
-	actions.names[name] = FloatID(a)
+	actions.name[name] = FloatID(a)
+	actions.list = append(actions.list,FloatID(a))
 	floats.name = append(floats.name, name)
 
 	return FloatID(a)

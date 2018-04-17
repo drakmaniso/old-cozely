@@ -39,7 +39,7 @@ func Delta(name string) DeltaID {
 		return noDelta
 	}
 
-	_, ok := actions.names[name]
+	_, ok := actions.name[name]
 	if ok {
 		setErr(errors.New("input delta declaration: name already taken by another action"))
 		return noDelta
@@ -51,7 +51,8 @@ func Delta(name string) DeltaID {
 		return noDelta
 	}
 
-	actions.names[name] = DeltaID(a)
+	actions.name[name] = DeltaID(a)
+	actions.list = append(actions.list, DeltaID(a))
 	deltas.name = append(deltas.name, name)
 
 	return DeltaID(a)

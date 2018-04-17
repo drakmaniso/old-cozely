@@ -17,9 +17,12 @@ type Action interface {
 }
 
 var actions = struct {
-	names map[string]Action
+	name map[string]Action
+	// For fast iteration, the same list in a slice:
+	list []Action
 }{
-	names: map[string]Action{},
+	name: map[string]Action{},
+	list: []Action{},
 }
 
 const maxID = 0xFFFFFFFF
