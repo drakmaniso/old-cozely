@@ -4,14 +4,15 @@
 package input
 
 import (
+	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/internal"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
 
 type msButton struct {
-	button  mouseButton
 	target  Action
+	button  mouseButton
 	pressed bool
 }
 
@@ -67,5 +68,15 @@ func (a *msButton) asBipolar() (just bool, value float32) {
 	if v {
 		return j, 1
 	}
-	return j, -1
+	return j, 0
+}
+
+func (a *msButton) asCoord() (just bool, value coord.XY) {
+	v := (mouseButton(internal.MouseButtons) & a.button) != 0
+	j := (v != a.pressed)
+	a.pressed = v
+	if v {
+		return j, coord.XY{1, 0}
+	}
+	return j, coord.XY{0, 0}
 }

@@ -4,14 +4,19 @@
 package input
 
 import (
+	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/internal"
 )
 
+////////////////////////////////////////////////////////////////////////////////
+
 type kbKey struct {
-	keycode keyCode
 	target  Action
+	keycode keyCode
 	pressed bool
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 func (a *kbKey) bind(c ContextID, target Action) {
 	aa := *a
@@ -56,5 +61,15 @@ func (a *kbKey) asBipolar() (just bool, value float32) {
 	if v {
 		return j, +1
 	}
-	return j, -1
+	return j, 0
+}
+
+func (a *kbKey) asCoord() (just bool, value coord.XY) {
+	v := internal.Key(a.keycode)
+	j := (v != a.pressed)
+	a.pressed = v
+	if v {
+		return j, coord.XY{1,0}
+	}
+	return j, coord.XY{0,0}
 }

@@ -4,15 +4,16 @@
 package input
 
 import (
+	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/internal"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
 
 type gpButton struct {
+	target  Action
 	gamepad *internal.Gamepad
 	button  internal.GamepadButton
-	target  Action
 	pressed bool
 }
 
@@ -59,5 +60,15 @@ func (a *gpButton) asBipolar() (just bool, value float32) {
 	if v {
 		return j, +1
 	}
-	return j, -1
+	return j, 0
+}
+
+func (a *gpButton) asCoord() (just bool, value coord.XY) {
+	v := a.gamepad.Button(a.button)
+	j := (v != a.pressed)
+	a.pressed = v
+	if v {
+		return j, coord.XY{1, 0}
+	}
+	return j, coord.XY{0, 0}
 }

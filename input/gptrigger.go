@@ -4,15 +4,16 @@
 package input
 
 import (
+	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/internal"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
 
 type gpTrigger struct {
+	target  Action
 	gamepad *internal.Gamepad
 	axis    internal.GamepadAxis
-	target  Action
 	value   int16
 }
 
@@ -36,7 +37,7 @@ func (a *gpTrigger) activate(d DeviceID) {
 }
 
 func (a *gpTrigger) asBool() (just bool, value bool) {
-	return false, false
+	return false, false //TODO:
 }
 
 func (a *gpTrigger) asUnipolar() (just bool, value float32) {
@@ -50,5 +51,13 @@ func (a *gpTrigger) asBipolar() (just bool, value float32) {
 	v := a.gamepad.Axis(a.axis)
 	j := v != a.value
 	a.value = v
-	return j, 2*float32(v) / float32(0x7FFF) - 1
+	return j, float32(v) / float32(0x7FFF)
+	// return j, 2*float32(v) / float32(0x7FFF) - 1
+}
+
+func (a *gpTrigger) asCoord() (just bool, value coord.XY) {
+	v := a.gamepad.Axis(a.axis)
+	j := v != a.value
+	a.value = v
+	return j, coord.XY{float32(v) / float32(0x7FFF), 0}
 }

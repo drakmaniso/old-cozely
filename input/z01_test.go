@@ -28,14 +28,17 @@ var (
 	OpenMenuAction         = input.Bool("Open Menu")
 	InstantOpenMenuAction  = input.Bool("Instant Open Menu")
 	trigger                = input.Unipolar("Trigger")
+	position               = input.Coord("Position")
 )
 
 var (
 	InMenu = input.Context("Menu", quit,
-		CloseMenuAction, InstantCloseMenuAction, InventoryAction, OptionsAction, trigger)
+		CloseMenuAction, InstantCloseMenuAction, InventoryAction, OptionsAction,
+		trigger, position)
 
 	InGame = input.Context("Game", quit,
-		OpenMenuAction, InstantOpenMenuAction, InventoryAction, JumpAction, trigger)
+		OpenMenuAction, InstantOpenMenuAction, InventoryAction, JumpAction,
+		trigger, position)
 )
 
 var (
@@ -47,6 +50,7 @@ var (
 			"Inventory":          {"I", "Button Y"},
 			"Options":            {"O", "Mouse Left"},
 			"Trigger":            {"Left Trigger", "T", "Button X"},
+			"Position":           {"Left Stick"},
 		},
 		"Game": {
 			"Quit":              {"Escape", "Button Back"},
@@ -54,7 +58,8 @@ var (
 			"Instant Open Menu": {"Mouse Right", "Button B"},
 			"Inventory":         {"Tab", "Button Y"},
 			"Jump":              {"Space", "Mouse Left", "Button A"},
-			"Trigger":           {"Left Trigger"},
+			"Trigger":           {"Right Trigger"},
+			"Position":          {"Right Stick"},
 		},
 	}
 )
@@ -70,6 +75,7 @@ var mousepos, mousedelta coord.CR
 var openmenu, closemenu, instopenmenu, instclosemenu, inventory, options, jump bool
 
 var triggerval float32
+var positionval coord.XY
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -138,6 +144,7 @@ func (loop1) React() {
 	jump = JumpAction.Pressed(0)
 
 	triggerval = trigger.Value(0)
+	positionval = position.Coord(0)
 
 	if quit.JustPressed(0) {
 		cozely.Stop(nil)
@@ -197,7 +204,8 @@ func (loop1) Render() {
 	canvas1.Println("Inventory(I/TAB) ")
 
 	canvas1.Println()
-	canvas1.Printf("Trigger = %f\n", triggerval)
+	canvas1.Printf(" Trigger = %f\n", triggerval)
+	canvas1.Printf("Position = %+f, %+f\n", positionval.X, positionval.Y)
 
 	canvas1.Display()
 }

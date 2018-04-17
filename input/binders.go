@@ -7,10 +7,10 @@ import "github.com/cozely/cozely/internal"
 
 var binders = map[string]binding{
 	// Gamepad
-	"Left Stick":         gpStick{},
+	"Left Stick":         &gpStick{xaxis: internal.GamepadLeftX, yaxis: internal.GamepadLeftY},
 	"Left Stick X":       &gpAxis{axis: internal.GamepadLeftX},
 	"Left Stick Y":       &gpAxis{axis: internal.GamepadLeftY},
-	"Right Stick":        gpStick{},
+	"Right Stick":        &gpStick{xaxis: internal.GamepadRightX, yaxis: internal.GamepadRightY},
 	"Right Stick X":      &gpAxis{axis: internal.GamepadRightX},
 	"Right Stick Y":      &gpAxis{axis: internal.GamepadRightY},
 	"Left Trigger":       &gpTrigger{axis: internal.GamepadLeftTrigger},

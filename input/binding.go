@@ -6,6 +6,7 @@ package input
 import (
 	"errors"
 
+	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/internal"
 )
 
@@ -17,6 +18,7 @@ type binding interface {
 	asBool() (just bool, value bool)
 	asUnipolar() (just bool, value float32)
 	asBipolar() (just bool, value float32)
+	asCoord() (just bool, value coord.XY)
 }
 
 // Bindings is a list of bindings for each context/action combination. The first

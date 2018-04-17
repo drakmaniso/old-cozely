@@ -24,8 +24,9 @@ var coords struct {
 }
 
 type coordinates struct {
-	active bool
-	value  coord.XY
+	active   bool
+	value    coord.XY
+	previous coord.XY
 }
 
 // Coord declares a new coord action, and returns its ID.
@@ -81,10 +82,18 @@ func (a CoordID) activate(d DeviceID, b binding) {
 	devices.coordbinds[d][a] = append(devices.coordbinds[d][a], b)
 }
 
-func (a CoordID) update(d DeviceID) {
+func (a CoordID) newframe(d DeviceID) {
+	devices.coords[d][a].previous = devices.coords[d][a].value
 }
 
-func (a CoordID) newframe(d DeviceID) {
+func (a CoordID) update(d DeviceID) {
+	for _, b := range devices.coordbinds[d][a] {
+		j, v := b.asCoord()
+		if j {
+			devices.coords[d][a].value = v
+			devices.coords[0][a].value = v
+		}
+	}
 }
 
 func (a CoordID) deactivate(d DeviceID) {
