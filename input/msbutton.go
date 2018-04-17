@@ -45,7 +45,17 @@ func (a *msButton) activate(d DeviceID) {
 
 func (a *msButton) asBool() (just bool, value bool) {
 	v := (mouseButton(internal.MouseButtons) & a.button) != 0
-	j := (v != a.pressed) //TODO: no need to store?
+	j := (v != a.pressed)
 	a.pressed = v
 	return j, a.pressed
+}
+
+func (a *msButton) asFloat() (just bool, value float32) {
+	v := (mouseButton(internal.MouseButtons) & a.button) != 0
+	j := (v != a.pressed)
+	a.pressed = v
+	if v {
+		return j, 1
+	}
+	return j, 0
 }

@@ -8,3 +8,4 @@ type gpStick struct{}
 func (a gpStick) bind(c ContextID, target Action) {}
 func (a gpStick) activate(d DeviceID)             {}
 func (a gpStick) asBool() (just bool, value bool) { return false, false }
+func (a gpStick) asFloat() (just bool, value float32) { return false, 0}

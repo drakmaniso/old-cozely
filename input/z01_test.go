@@ -27,14 +27,15 @@ var (
 	JumpAction             = input.Bool("Jump")
 	OpenMenuAction         = input.Bool("Open Menu")
 	InstantOpenMenuAction  = input.Bool("Instant Open Menu")
+	trigger                = input.Float("Trigger")
 )
 
 var (
 	InMenu = input.Context("Menu", quit,
-		CloseMenuAction, InstantCloseMenuAction, InventoryAction, OptionsAction)
+		CloseMenuAction, InstantCloseMenuAction, InventoryAction, OptionsAction, trigger)
 
 	InGame = input.Context("Game", quit,
-		OpenMenuAction, InstantOpenMenuAction, InventoryAction, JumpAction)
+		OpenMenuAction, InstantOpenMenuAction, InventoryAction, JumpAction, trigger)
 )
 
 var (
@@ -45,6 +46,7 @@ var (
 			"Instant Close Menu": {"Mouse Right", "Button B"},
 			"Inventory":          {"I", "Button Y"},
 			"Options":            {"O", "Mouse Left"},
+			"Trigger":            {"Left Trigger", "T"},
 		},
 		"Game": {
 			"Quit":              {"Escape", "Button Back"},
@@ -52,6 +54,7 @@ var (
 			"Instant Open Menu": {"Mouse Right", "Button B"},
 			"Inventory":         {"Tab", "Button Y"},
 			"Jump":              {"Space", "Mouse Left", "Button A"},
+			"Trigger":           {"Left Trigger"},
 		},
 	}
 )
@@ -65,6 +68,8 @@ var (
 var hidden bool
 var mousepos, mousedelta coord.CR
 var openmenu, closemenu, instopenmenu, instclosemenu, inventory, options, jump bool
+
+var triggerval float32
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -132,6 +137,8 @@ func (loop1) React() {
 	options = OptionsAction.Pressed(0)
 	jump = JumpAction.Pressed(0)
 
+	triggerval = trigger.Float(0)
+
 	if quit.JustPressed(0) {
 		cozely.Stop(nil)
 	}
@@ -187,7 +194,10 @@ func (loop1) Render() {
 	changecolor(false)
 	canvas1.Printf("  Both: ")
 	changecolor(inventory)
-	canvas1.Print("Inventory(I/TAB) ")
+	canvas1.Println("Inventory(I/TAB) ")
+
+	canvas1.Println()
+	canvas1.Printf("Trigger = %f\n", triggerval)
 
 	canvas1.Display()
 }

@@ -15,6 +15,7 @@ type binding interface {
 	bind(c ContextID, a Action)
 	activate(d DeviceID)
 	asBool() (just bool, value bool)
+	asFloat() (just bool, value float32)
 }
 
 // Bindings is a list of bindings for each context/action combination. The first
@@ -26,6 +27,8 @@ var bindings = Bindings{}
 
 ////////////////////////////////////////////////////////////////////////////////
 
+// Bind associates each context/action combination found in the bindings map to
+// the requested bindings.
 func Bind(b Bindings) {
 	bindings = b
 	if internal.Running {
@@ -33,8 +36,6 @@ func Bind(b Bindings) {
 	}
 }
 
-// Load associates each context/action combination found in the bindings map to
-// the requested bindings.
 func load() {
 	// Forget devices (and previous bindings)
 	clearDevices()

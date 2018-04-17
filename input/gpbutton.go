@@ -3,7 +3,11 @@
 
 package input
 
-import "github.com/cozely/cozely/internal"
+import (
+	"github.com/cozely/cozely/internal"
+)
+
+////////////////////////////////////////////////////////////////////////////////
 
 type gpButton struct {
 	gamepad       *internal.Gamepad
@@ -11,6 +15,8 @@ type gpButton struct {
 	target        Action
 	pressed bool
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 func (a *gpButton) bind(c ContextID, target Action) {
 	for j := range joysticks.name {
@@ -31,7 +37,17 @@ func (a *gpButton) activate(d DeviceID) {
 
 func (a *gpButton) asBool() (just bool, value bool) {
 	v := a.gamepad.Button(a.button)
-	j := (v != a.pressed) //TODO: no need to store?
+	j := (v != a.pressed)
 	a.pressed = v
 	return j, a.pressed
+}
+
+func (a *gpButton) asFloat() (just bool, value float32) {
+	v := a.gamepad.Button(a.button)
+	j := (v != a.pressed)
+	a.pressed = v
+	if v {
+		return j, 1
+	}
+	return j, 0
 }

@@ -9,3 +9,4 @@ type msPosition struct {
 func (a msPosition) bind(c ContextID, target Action) {}
 func (a msPosition) activate(d DeviceID)             {}
 func (a msPosition) asBool() (just bool, value bool) { return false, false }
+func (a msPosition) asFloat() (just bool, value float32) { return false, 0}

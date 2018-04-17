@@ -24,8 +24,9 @@ var floats struct {
 }
 
 type float struct {
-	active bool
-	value  float32
+	active   bool
+	value    float32
+	previous float32
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -50,7 +51,7 @@ func Float(name string) FloatID {
 	}
 
 	actions.name[name] = FloatID(a)
-	actions.list = append(actions.list,FloatID(a))
+	actions.list = append(actions.list, FloatID(a))
 	floats.name = append(floats.name, name)
 
 	return FloatID(a)
@@ -83,9 +84,17 @@ func (a FloatID) activate(d DeviceID, b binding) {
 }
 
 func (a FloatID) newframe(d DeviceID) {
+	devices.floats[d][a].previous = devices.floats[d][a].value
 }
 
 func (a FloatID) update(d DeviceID) {
+	for _, b := range devices.floatbinds[d][a] {
+		j, v := b.asFloat()
+		if j {
+			devices.floats[d][a].value = v
+			devices.floats[0][a].value = v
+		}
+	}
 }
 
 func (a FloatID) deactivate(d DeviceID) {

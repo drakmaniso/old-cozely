@@ -24,23 +24,36 @@ type Gamepad C.SDL_GameController
 type GamepadButton C.SDL_GameControllerButton
 
 const (
-	GamepadButtonInvalid     = GamepadButton(C.SDL_CONTROLLER_BUTTON_INVALID)
-	GamepadButtonA           = GamepadButton(C.SDL_CONTROLLER_BUTTON_A)
-	GamepadButtonB           = GamepadButton(C.SDL_CONTROLLER_BUTTON_B)
-	GamepadButtonX           = GamepadButton(C.SDL_CONTROLLER_BUTTON_X)
-	GamepadButtonY           = GamepadButton(C.SDL_CONTROLLER_BUTTON_Y)
-	GamepadButtonBack        = GamepadButton(C.SDL_CONTROLLER_BUTTON_BACK)
-	GamepadButtonGuide       = GamepadButton(C.SDL_CONTROLLER_BUTTON_GUIDE)
-	GamepadButtonStart       = GamepadButton(C.SDL_CONTROLLER_BUTTON_START)
-	GamepadButtonLeftStick   = GamepadButton(C.SDL_CONTROLLER_BUTTON_LEFTSTICK)
-	GamepadButtonRightStick  = GamepadButton(C.SDL_CONTROLLER_BUTTON_RIGHTSTICK)
-	GamepadButtonLeftBumper  = GamepadButton(C.SDL_CONTROLLER_BUTTON_LEFTSHOULDER)
-	GamepadButtonRightBumper = GamepadButton(C.SDL_CONTROLLER_BUTTON_RIGHTSHOULDER)
-	GamepadButtonDpadUp      = GamepadButton(C.SDL_CONTROLLER_BUTTON_DPAD_UP)
-	GamepadButtonDpadDown    = GamepadButton(C.SDL_CONTROLLER_BUTTON_DPAD_DOWN)
-	GamepadButtonDpadLeft    = GamepadButton(C.SDL_CONTROLLER_BUTTON_DPAD_LEFT)
-	GamepadButtonDpadRight   = GamepadButton(C.SDL_CONTROLLER_BUTTON_DPAD_RIGHT)
-	GamepadButtonMax         = GamepadButton(C.SDL_CONTROLLER_BUTTON_MAX)
+	GamepadButtonInvalid = GamepadButton(C.SDL_CONTROLLER_BUTTON_INVALID)
+	GamepadA             = GamepadButton(C.SDL_CONTROLLER_BUTTON_A)
+	GamepadB             = GamepadButton(C.SDL_CONTROLLER_BUTTON_B)
+	GamepadX             = GamepadButton(C.SDL_CONTROLLER_BUTTON_X)
+	GamepadY             = GamepadButton(C.SDL_CONTROLLER_BUTTON_Y)
+	GamepadBack          = GamepadButton(C.SDL_CONTROLLER_BUTTON_BACK)
+	GamepadGuide         = GamepadButton(C.SDL_CONTROLLER_BUTTON_GUIDE)
+	GamepadStart         = GamepadButton(C.SDL_CONTROLLER_BUTTON_START)
+	GamepadLeftClick     = GamepadButton(C.SDL_CONTROLLER_BUTTON_LEFTSTICK)
+	GamepadRightClick    = GamepadButton(C.SDL_CONTROLLER_BUTTON_RIGHTSTICK)
+	GamepadLeftBumper    = GamepadButton(C.SDL_CONTROLLER_BUTTON_LEFTSHOULDER)
+	GamepadRightBumper   = GamepadButton(C.SDL_CONTROLLER_BUTTON_RIGHTSHOULDER)
+	GamepadDpadUp        = GamepadButton(C.SDL_CONTROLLER_BUTTON_DPAD_UP)
+	GamepadDpadDown      = GamepadButton(C.SDL_CONTROLLER_BUTTON_DPAD_DOWN)
+	GamepadDpadLeft      = GamepadButton(C.SDL_CONTROLLER_BUTTON_DPAD_LEFT)
+	GamepadDpadRight     = GamepadButton(C.SDL_CONTROLLER_BUTTON_DPAD_RIGHT)
+	GamepadButtonMax     = GamepadButton(C.SDL_CONTROLLER_BUTTON_MAX)
+)
+
+type GamepadAxis = C.SDL_GameControllerAxis
+
+const (
+	GamepadInvalidAxis  = GamepadAxis(C.SDL_CONTROLLER_AXIS_INVALID)
+	GamepadLeftX        = GamepadAxis(C.SDL_CONTROLLER_AXIS_LEFTX)
+	GamepadLeftY        = GamepadAxis(C.SDL_CONTROLLER_AXIS_LEFTY)
+	GamepadRightX       = GamepadAxis(C.SDL_CONTROLLER_AXIS_RIGHTX)
+	GamepadRightY       = GamepadAxis(C.SDL_CONTROLLER_AXIS_RIGHTY)
+	GamepadLeftTrigger  = GamepadAxis(C.SDL_CONTROLLER_AXIS_TRIGGERLEFT)
+	GamepadRightTrigger = GamepadAxis(C.SDL_CONTROLLER_AXIS_TRIGGERRIGHT)
+	GamepadMaxAxis      = GamepadAxis(C.SDL_CONTROLLER_AXIS_MAX)
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -90,6 +103,12 @@ func (a *Gamepad) Button(b GamepadButton) bool {
 	v := C.SDL_GameControllerGetButton((*C.SDL_GameController)(a),
 		C.SDL_GameControllerButton(b))
 	return v == 1
+}
+
+func (a *Gamepad) Axis(x GamepadAxis) int16 {
+	v := C.SDL_GameControllerGetAxis((*C.SDL_GameController)(a),
+		C.SDL_GameControllerAxis(x))
+	return int16(v)
 }
 
 ////////////////////////////////////////////////////////////////////////////////

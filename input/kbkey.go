@@ -34,7 +34,17 @@ func (a *kbKey) activate(d DeviceID) {
 
 func (a *kbKey) asBool() (just bool, value bool) {
 	v := internal.Key(a.keycode)
-	j := (v != a.pressed) //TODO: no need to store?
+	j := (v != a.pressed)
 	a.pressed = v
 	return j, a.pressed
+}
+
+func (a *kbKey) asFloat() (just bool, value float32) {
+	v := internal.Key(a.keycode)
+	j := (v != a.pressed)
+	a.pressed = v
+	if v {
+		return j, 1
+	}
+	return j, 0
 }
