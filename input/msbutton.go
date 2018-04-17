@@ -10,8 +10,8 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 
 type msButton struct {
-	button        mouseButton
-	target        Action
+	button  mouseButton
+	target  Action
 	pressed bool
 }
 
@@ -50,7 +50,7 @@ func (a *msButton) asBool() (just bool, value bool) {
 	return j, a.pressed
 }
 
-func (a *msButton) asFloat() (just bool, value float32) {
+func (a *msButton) asUnipolar() (just bool, value float32) {
 	v := (mouseButton(internal.MouseButtons) & a.button) != 0
 	j := (v != a.pressed)
 	a.pressed = v
@@ -58,4 +58,14 @@ func (a *msButton) asFloat() (just bool, value float32) {
 		return j, 1
 	}
 	return j, 0
+}
+
+func (a *msButton) asBipolar() (just bool, value float32) {
+	v := (mouseButton(internal.MouseButtons) & a.button) != 0
+	j := (v != a.pressed)
+	a.pressed = v
+	if v {
+		return j, 1
+	}
+	return j, -1
 }

@@ -28,19 +28,21 @@ var devices struct {
 	newcontext []ContextID
 
 	// For each device/action combination
-	bools  [][]boolean
-	floats [][]float
-	coords [][]coordinates
-	deltas [][]delta
+	bools     [][]boolean
+	unipolars [][]unipolar
+	bipolars  [][]bipolar
+	coords    [][]coordinates
+	deltas    [][]delta
 
 	// For each device/context combination, the list of bindings
 	bindings [][][]binding
 
 	// For each device/action combination, the list of *current* bindings
-	boolbinds  [][][]binding
-	floatbinds [][][]binding
-	coordbinds [][][]binding
-	deltabinds [][][]binding
+	boolbinds     [][][]binding
+	unipolarbinds [][][]binding
+	bipolarbinds  [][][]binding
+	coordbinds    [][][]binding
+	deltabinds    [][][]binding
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -61,9 +63,13 @@ func addDevice(name string) DeviceID {
 	devices.bools = append(devices.bools, make([]boolean, n))
 	devices.boolbinds = append(devices.boolbinds, make([][]binding, n))
 
-	n = len(floats.name)
-	devices.floats = append(devices.floats, make([]float, n))
-	devices.floatbinds = append(devices.floatbinds, make([][]binding, n))
+	n = len(unipolars.name)
+	devices.unipolars = append(devices.unipolars, make([]unipolar, n))
+	devices.unipolarbinds = append(devices.unipolarbinds, make([][]binding, n))
+
+	n = len(bipolars.name)
+	devices.bipolars = append(devices.bipolars, make([]bipolar, n))
+	devices.bipolarbinds = append(devices.bipolarbinds, make([][]binding, n))
 
 	n = len(coords.name)
 	devices.coords = append(devices.coords, make([]coordinates, n))
@@ -87,8 +93,10 @@ func clearDevices() {
 	devices.newcontext = nil
 	devices.bools = nil
 	devices.boolbinds = nil
-	devices.floats = nil
-	devices.floatbinds = nil
+	devices.unipolars = nil
+	devices.unipolarbinds = nil
+	devices.bipolars = nil
+	devices.bipolarbinds = nil
 	devices.coords = nil
 	devices.coordbinds = nil
 	devices.deltas = nil

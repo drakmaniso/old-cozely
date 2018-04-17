@@ -10,9 +10,9 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 
 type gpButton struct {
-	gamepad       *internal.Gamepad
-	button        internal.GamepadButton
-	target        Action
+	gamepad *internal.Gamepad
+	button  internal.GamepadButton
+	target  Action
 	pressed bool
 }
 
@@ -42,7 +42,7 @@ func (a *gpButton) asBool() (just bool, value bool) {
 	return j, a.pressed
 }
 
-func (a *gpButton) asFloat() (just bool, value float32) {
+func (a *gpButton) asUnipolar() (just bool, value float32) {
 	v := a.gamepad.Button(a.button)
 	j := (v != a.pressed)
 	a.pressed = v
@@ -50,4 +50,14 @@ func (a *gpButton) asFloat() (just bool, value float32) {
 		return j, 1
 	}
 	return j, 0
+}
+
+func (a *gpButton) asBipolar() (just bool, value float32) {
+	v := a.gamepad.Button(a.button)
+	j := (v != a.pressed)
+	a.pressed = v
+	if v {
+		return j, +1
+	}
+	return j, -1
 }

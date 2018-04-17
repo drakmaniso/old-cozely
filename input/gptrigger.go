@@ -39,9 +39,16 @@ func (a *gpTrigger) asBool() (just bool, value bool) {
 	return false, false
 }
 
-func (a *gpTrigger) asFloat() (just bool, value float32) {
+func (a *gpTrigger) asUnipolar() (just bool, value float32) {
 	v := a.gamepad.Axis(a.axis)
 	j := v != a.value
 	a.value = v
-	return j, float32(v)/float32(0x7FFF)
+	return j, float32(v) / float32(0x7FFF)
+}
+
+func (a *gpTrigger) asBipolar() (just bool, value float32) {
+	v := a.gamepad.Axis(a.axis)
+	j := v != a.value
+	a.value = v
+	return j, 2*float32(v) / float32(0x7FFF) - 1
 }

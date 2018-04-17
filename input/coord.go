@@ -11,9 +11,9 @@ import (
 )
 
 // CoordID identifies an absolute two-dimensional analog action, i.e. any action
-// that can be represented by a pair of X and Y coordinates, and whose most
-// important characteristic is the position. The values of the coordinates are
-// normalized between -1 and 1.
+// that is best represented by a pair of X and Y coordinates, and whose most
+// important characteristic is the current position. The values of the
+// coordinates are normalized between -1 and 1.
 type CoordID uint32
 
 const noCoord = CoordID(maxID)

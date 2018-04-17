@@ -27,7 +27,7 @@ var (
 	JumpAction             = input.Bool("Jump")
 	OpenMenuAction         = input.Bool("Open Menu")
 	InstantOpenMenuAction  = input.Bool("Instant Open Menu")
-	trigger                = input.Float("Trigger")
+	trigger                = input.Unipolar("Trigger")
 )
 
 var (
@@ -46,7 +46,7 @@ var (
 			"Instant Close Menu": {"Mouse Right", "Button B"},
 			"Inventory":          {"I", "Button Y"},
 			"Options":            {"O", "Mouse Left"},
-			"Trigger":            {"Left Trigger", "T"},
+			"Trigger":            {"Left Trigger", "T", "Button X"},
 		},
 		"Game": {
 			"Quit":              {"Escape", "Button Back"},
@@ -137,7 +137,7 @@ func (loop1) React() {
 	options = OptionsAction.Pressed(0)
 	jump = JumpAction.Pressed(0)
 
-	triggerval = trigger.Float(0)
+	triggerval = trigger.Value(0)
 
 	if quit.JustPressed(0) {
 		cozely.Stop(nil)

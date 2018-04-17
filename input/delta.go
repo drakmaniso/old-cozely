@@ -13,7 +13,7 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 
 // DeltaID identifes a relative two-dimensional analog input, i.e. any action
-// that can be represented by a pair of X and Y coordinates, and whose most
+// that is best represented by a pair of X and Y coordinates, and whose most
 // important characteristic is the change in position. The values of the
 // coordinates are normalized between -1 and 1.
 type DeltaID uint32

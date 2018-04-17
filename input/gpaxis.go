@@ -14,7 +14,8 @@ type gpAxis struct {
 	value   float32
 }
 
-func (a *gpAxis) bind(c ContextID, target Action) {}
-func (a *gpAxis) activate(d DeviceID)             {}
-func (a *gpAxis) asBool() (just bool, value bool) { return false, false }
-func (a *gpAxis) asFloat() (just bool, value float32) { return false, 0 }
+func (a *gpAxis) bind(c ContextID, target Action)        {}
+func (a *gpAxis) activate(d DeviceID)                    {}
+func (a *gpAxis) asBool() (just bool, value bool)        { return false, false }
+func (a *gpAxis) asUnipolar() (just bool, value float32) { return false, 0 }
+func (a *gpAxis) asBipolar() (just bool, value float32)  { return false, 0 }

@@ -15,7 +15,8 @@ type binding interface {
 	bind(c ContextID, a Action)
 	activate(d DeviceID)
 	asBool() (just bool, value bool)
-	asFloat() (just bool, value float32)
+	asUnipolar() (just bool, value float32)
+	asBipolar() (just bool, value float32)
 }
 
 // Bindings is a list of bindings for each context/action combination. The first

@@ -8,8 +8,8 @@ import (
 )
 
 type kbKey struct {
-	keycode       keyCode
-	target        Action
+	keycode keyCode
+	target  Action
 	pressed bool
 }
 
@@ -39,7 +39,7 @@ func (a *kbKey) asBool() (just bool, value bool) {
 	return j, a.pressed
 }
 
-func (a *kbKey) asFloat() (just bool, value float32) {
+func (a *kbKey) asUnipolar() (just bool, value float32) {
 	v := internal.Key(a.keycode)
 	j := (v != a.pressed)
 	a.pressed = v
@@ -47,4 +47,14 @@ func (a *kbKey) asFloat() (just bool, value float32) {
 		return j, 1
 	}
 	return j, 0
+}
+
+func (a *kbKey) asBipolar() (just bool, value float32) {
+	v := internal.Key(a.keycode)
+	j := (v != a.pressed)
+	a.pressed = v
+	if v {
+		return j, +1
+	}
+	return j, -1
 }
