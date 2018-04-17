@@ -12,7 +12,7 @@ import (
 type msButton struct {
 	button        mouseButton
 	target        Action
-	just, pressed bool
+	pressed bool
 }
 
 // mouseButton identifies a mouse button
@@ -45,7 +45,7 @@ func (a *msButton) activate(d DeviceID) {
 
 func (a *msButton) asBool() (just bool, value bool) {
 	v := (mouseButton(internal.MouseButtons) & a.button) != 0
-	a.just = (v != a.pressed) //TODO: no need to store?
+	j := (v != a.pressed) //TODO: no need to store?
 	a.pressed = v
-	return a.just, a.pressed
+	return j, a.pressed
 }

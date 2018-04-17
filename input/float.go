@@ -21,9 +21,6 @@ const noFloat = FloatID(maxID)
 var floats struct {
 	// For each float
 	name []string
-
-	// For each device, a list of floats
-	byDevice [][]float
 }
 
 type float struct {
@@ -85,6 +82,9 @@ func (a FloatID) activate(d DeviceID, b binding) {
 }
 
 func (a FloatID) newframe(d DeviceID) {
+}
+
+func (a FloatID) update(d DeviceID) {
 }
 
 func (a FloatID) deactivate(d DeviceID) {

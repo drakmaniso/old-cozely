@@ -16,31 +16,35 @@ func init() {
 func newframe() error {
 	Cursor.newframe(1)
 
-	for a := range devices.bools[0] {
-		devices.bools[0][a].just = false
+	for _, t := range actions.names {
+		for d := range devices.name {
+			t.newframe(DeviceID(d))
+		}
 	}
 
 	for d := range devices.name {
 		if d == 0 {
+			// Pseudo-device 0 has no context and no binds
 			continue
 		}
-		// Activate this device context if necessary
+
 		c := devices.context[d]
+		// Activate this device context if necessary
 		if c != devices.newcontext[d] {
 			if c != noContext {
 				for _, t := range contexts.actions[c] {
 					t.deactivate(DeviceID(d))
 				}
 			}
-			devices.context[d] = devices.newcontext[d]
-			c = devices.context[d]
+			c = devices.newcontext[d]
+			devices.context[d] = c
 			for _, b := range devices.bindings[d][c] {
 				b.activate(DeviceID(d))
 			}
 		}
 
 		for _, t := range contexts.actions[c] {
-			t.newframe(DeviceID(d))
+			t.update(DeviceID(d))
 		}
 	}
 

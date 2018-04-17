@@ -23,9 +23,6 @@ const noDelta = DeltaID(maxID)
 var deltas struct {
 	// For each delta
 	name []string
-
-	// For each device, a list of deltas
-	byDevice [][]delta
 }
 
 type delta struct {
@@ -88,6 +85,9 @@ func (a DeltaID) activate(d DeviceID, b binding) {
 }
 
 func (a DeltaID) newframe(d DeviceID) {
+}
+
+func (a DeltaID) update(d DeviceID) {
 }
 
 func (a DeltaID) deactivate(d DeviceID) {

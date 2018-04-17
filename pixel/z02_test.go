@@ -67,7 +67,7 @@ func TestTest2(t *testing.T) {
 
 func (loop2) Enter() {
 	input.Bind(bindings2)
-	context.Activate(1)
+	context2.Activate(1)
 	palette2.Activate()
 }
 

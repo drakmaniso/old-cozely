@@ -21,15 +21,12 @@ const noBool = BoolID(maxID)
 var bools struct {
 	// For each bool
 	name []string
-
-	// For each device, a list of bools
-	byDevice [][]boolean
 }
 
 type boolean struct {
-	active  bool
-	just    bool
-	pressed bool
+	active   bool
+	previous bool
+	pressed  bool
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -84,7 +81,7 @@ func (a BoolID) Pressed(d DeviceID) bool {
 // Note: this must be queried in the React method of the game loop, as this is
 // the only method that is guaranteed to run at least once each frame.
 func (a BoolID) JustChanged(d DeviceID) bool {
-	return devices.bools[d][a].just
+	return devices.bools[d][a].previous != devices.bools[d][a].pressed
 }
 
 // JustPressed returns true if the action has just been pressed this very frame
@@ -93,7 +90,7 @@ func (a BoolID) JustChanged(d DeviceID) bool {
 // Note: this must be queried in the React method of the game loop, as this is
 // the only method that is guaranteed to run at least once each frame.
 func (a BoolID) JustPressed(d DeviceID) bool {
-	return devices.bools[d][a].just && devices.bools[d][a].pressed
+	return devices.bools[d][a].pressed && !devices.bools[d][a].previous
 }
 
 // JustReleased returns true if the action has just been released this very
@@ -102,7 +99,7 @@ func (a BoolID) JustPressed(d DeviceID) bool {
 // Note: this must be queried in the React method of the game loop, as this is
 // the only method that is guaranteed to run at least once each frame.
 func (a BoolID) JustReleased(d DeviceID) bool {
-	return devices.bools[d][a].just && !devices.bools[d][a].pressed
+	return devices.bools[d][a].previous && !devices.bools[d][a].pressed
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -113,19 +110,21 @@ func (a BoolID) activate(d DeviceID, b binding) {
 	_, v := b.asBool()
 	if v {
 		devices.bools[d][a].pressed = true
+		devices.bools[d][a].previous = true
 		devices.bools[0][a].pressed = true
+		devices.bools[0][a].previous = true
 	}
 }
 
 func (a BoolID) newframe(d DeviceID) {
-	devices.bools[d][a].just = false
+	devices.bools[d][a].previous = devices.bools[d][a].pressed
+}
+
+func (a BoolID) update(d DeviceID) {
 	for _, b := range devices.boolbinds[d][a] {
 		j, v := b.asBool()
 		if j {
-			//TODO: what if several press on same frame?
-			devices.bools[d][a].just = (v != devices.bools[d][a].pressed)
 			devices.bools[d][a].pressed = v
-			devices.bools[0][a].just = (v != devices.bools[0][a].pressed)
 			devices.bools[0][a].pressed = v
 		}
 	}
@@ -134,9 +133,7 @@ func (a BoolID) newframe(d DeviceID) {
 func (a BoolID) deactivate(d DeviceID) {
 	devices.boolbinds[d][a] = devices.boolbinds[d][a][:0]
 	devices.bools[d][a].active = false
-	devices.bools[d][a].just = false
 	devices.bools[d][a].pressed = false
 	devices.bools[0][a].active = false
-	devices.bools[0][a].just = false
 	devices.bools[0][a].pressed = false
 }

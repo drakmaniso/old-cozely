@@ -13,6 +13,7 @@ type Action interface {
 	deactivate(d DeviceID)
 	activate(d DeviceID, b binding)
 	newframe(d DeviceID)
+	update(d DeviceID)
 }
 
 var actions = struct {

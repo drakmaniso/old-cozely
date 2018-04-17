@@ -21,9 +21,6 @@ const noCoord = CoordID(maxID)
 var coords struct {
 	// For each coord
 	name []string
-
-	// For each device, a list of coords
-	byDevice [][]coordinates
 }
 
 type coordinates struct {
@@ -81,6 +78,9 @@ func (a CoordID) Coord(d DeviceID) coord.XY {
 func (a CoordID) activate(d DeviceID, b binding) {
 	devices.coords[d][a].active = true
 	devices.coordbinds[d][a] = append(devices.coordbinds[d][a], b)
+}
+
+func (a CoordID) update(d DeviceID) {
 }
 
 func (a CoordID) newframe(d DeviceID) {

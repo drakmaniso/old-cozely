@@ -10,7 +10,7 @@ import (
 type kbKey struct {
 	keycode       keyCode
 	target        Action
-	just, pressed bool
+	pressed bool
 }
 
 func (a *kbKey) bind(c ContextID, target Action) {
@@ -34,7 +34,7 @@ func (a *kbKey) activate(d DeviceID) {
 
 func (a *kbKey) asBool() (just bool, value bool) {
 	v := internal.Key(a.keycode)
-	a.just = (v != a.pressed) //TODO: no need to store?
+	j := (v != a.pressed) //TODO: no need to store?
 	a.pressed = v
-	return a.just, a.pressed
+	return j, a.pressed
 }
