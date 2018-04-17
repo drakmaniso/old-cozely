@@ -78,7 +78,7 @@ func (a UnipolarID) Value(d DeviceID) float32 {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (a UnipolarID) activate(d DeviceID, b binding) {
+func (a UnipolarID) activate(d DeviceID, b source) {
 	devices.unipolars[d][a].active = true
 	devices.unipolarbinds[d][a] = append(devices.unipolarbinds[d][a], b)
 }

@@ -73,3 +73,12 @@ func (a *kbKey) asCoord() (just bool, value coord.XY) {
 	}
 	return j, coord.XY{0,0}
 }
+
+func (a *kbKey) asDelta() coord.XY {
+	v := internal.Key(a.keycode)
+	a.pressed = v
+	if v {
+		return coord.XY{1,0}
+	}
+	return coord.XY{0,0}
+}

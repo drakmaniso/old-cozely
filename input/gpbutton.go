@@ -72,3 +72,12 @@ func (a *gpButton) asCoord() (just bool, value coord.XY) {
 	}
 	return j, coord.XY{0, 0}
 }
+
+func (a *gpButton) asDelta() coord.XY {
+	v := a.gamepad.Button(a.button)
+	a.pressed = v
+	if v {
+		return coord.XY{1, 0}
+	}
+	return coord.XY{0, 0}
+}

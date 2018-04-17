@@ -26,8 +26,9 @@ var deltas struct {
 }
 
 type delta struct {
-	active bool
-	value  coordi.XY
+	active   bool
+	value    coordi.XY
+	previous coordi.XY
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -80,15 +81,23 @@ func (a DeltaID) Delta(d DeviceID) coordi.XY {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (a DeltaID) activate(d DeviceID, b binding) {
+func (a DeltaID) activate(d DeviceID, b source) {
 	devices.deltas[d][a].active = true
 	devices.deltabinds[d][a] = append(devices.deltabinds[d][a], b)
 }
 
 func (a DeltaID) newframe(d DeviceID) {
+	devices.deltas[d][a].previous = devices.deltas[d][a].value
+	devices.deltas[d][a].value = coordi.XY{}
 }
 
 func (a DeltaID) update(d DeviceID) {
+	v := coordi.XY{}
+	for _, b := range devices.deltabinds[d][a] {
+		v = b.asDelta()
+		devices.deltas[d][a].value = devices.deltas[d][a].value.Plus(v)
+		devices.deltas[0][a].value = devices.deltas[0][a].value.Plus(v)
+	}
 }
 
 func (a DeltaID) deactivate(d DeviceID) {

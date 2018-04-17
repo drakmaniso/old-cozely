@@ -66,3 +66,12 @@ func (a *gpAxis) asCoord() (just bool, value coord.XY) {
 	}
 	return j, coord.XY{float32(v) / float32(0x7FFF), 0}
 }
+
+func (a *gpAxis) asDelta() coord.XY {
+	v := a.gamepad.Axis(a.axis)
+	a.value = v
+	if v < 0 {
+		return coord.XY{float32(v) / float32(0x8000), 0}
+	}
+	return coord.XY{float32(v) / float32(0x7FFF), 0}
+}

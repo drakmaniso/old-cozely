@@ -65,3 +65,20 @@ func (a *gpStick) asCoord() (just bool, value coord.XY) {
 	}
 	return j, c
 }
+
+func (a *gpStick) asDelta() coord.XY {
+	vx, vy := a.gamepad.Axis(a.xaxis), a.gamepad.Axis(a.yaxis)
+	a.x, a.y = vx, vy
+	var c coord.XY
+	if vx < 0 {
+		c.X = float32(vx) / float32(0x8000)
+	} else {
+		c.X = float32(vx) / float32(0x7FFF)
+	}
+	if vy < 0 {
+		c.Y = float32(vy) / float32(0x8000)
+	} else {
+		c.Y = float32(vy) / float32(0x7FFF)
+	}
+	return c
+}

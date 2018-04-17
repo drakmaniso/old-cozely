@@ -5,7 +5,7 @@ package input
 
 import "github.com/cozely/cozely/internal"
 
-var binders = map[string]binding{
+var binders = map[string]source{
 	// Gamepad
 	"Left Stick":         &gpStick{xaxis: internal.GamepadLeftX, yaxis: internal.GamepadLeftY},
 	"Left Stick X":       &gpAxis{axis: internal.GamepadLeftX},
@@ -31,9 +31,9 @@ var binders = map[string]binding{
 	"Button Start":       &gpButton{button: internal.GamepadStart},
 	"Button Guide":       &gpButton{button: internal.GamepadGuide},
 	// Mouse
-	"Mouse":             msPosition{},
-	"Mouse X":           msPosition{},
-	"Mouse Y":           msPosition{},
+	"Mouse":             &msCoord{},
+	"Mouse X":           &msAxis{},
+	"Mouse Y":           &msAxis{},
 	"Mouse Left":        &msButton{button: mouseLeft},
 	"Mouse Middle":      &msButton{button: mouseMiddle},
 	"Mouse Right":       &msButton{button: mouseRight},

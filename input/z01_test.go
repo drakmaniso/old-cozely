@@ -29,16 +29,17 @@ var (
 	InstantOpenMenuAction  = input.Bool("Instant Open Menu")
 	trigger                = input.Unipolar("Trigger")
 	position               = input.Coord("Position")
+	delta                  = input.Delta("Delta")
 )
 
 var (
 	InMenu = input.Context("Menu", quit,
 		CloseMenuAction, InstantCloseMenuAction, InventoryAction, OptionsAction,
-		trigger, position)
+		trigger, position, delta)
 
 	InGame = input.Context("Game", quit,
 		OpenMenuAction, InstantOpenMenuAction, InventoryAction, JumpAction,
-		trigger, position)
+		trigger, position, delta)
 )
 
 var (
@@ -50,7 +51,8 @@ var (
 			"Inventory":          {"I", "Button Y"},
 			"Options":            {"O", "Mouse Left"},
 			"Trigger":            {"Left Trigger", "T", "Button X"},
-			"Position":           {"Left Stick"},
+			"Position":           {"Left Stick", "Mouse"},
+			"Delta":              {"Mouse", "Left Stick"},
 		},
 		"Game": {
 			"Quit":              {"Escape", "Button Back"},
@@ -60,6 +62,7 @@ var (
 			"Jump":              {"Space", "Mouse Left", "Button A"},
 			"Trigger":           {"Right Trigger"},
 			"Position":          {"Right Stick"},
+			"Delta":             {"Mouse", "Left Stick", "Right Stick"},
 		},
 	}
 )
@@ -75,7 +78,7 @@ var mousepos, mousedelta coord.CR
 var openmenu, closemenu, instopenmenu, instclosemenu, inventory, options, jump bool
 
 var triggerval float32
-var positionval coord.XY
+var positionval, deltaval coord.XY
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -145,6 +148,7 @@ func (loop1) React() {
 
 	triggerval = trigger.Value(0)
 	positionval = position.Coord(0)
+	deltaval = delta.Delta(0)
 
 	if quit.JustPressed(0) {
 		cozely.Stop(nil)
@@ -206,6 +210,7 @@ func (loop1) Render() {
 	canvas1.Println()
 	canvas1.Printf(" Trigger = %f\n", triggerval)
 	canvas1.Printf("Position = %+f, %+f\n", positionval.X, positionval.Y)
+	canvas1.Printf("   Delta = %+f, %+f\n", deltaval.X, deltaval.Y)
 
 	canvas1.Display()
 }

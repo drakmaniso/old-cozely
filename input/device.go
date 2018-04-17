@@ -35,14 +35,14 @@ var devices struct {
 	deltas    [][]delta
 
 	// For each device/context combination, the list of bindings
-	bindings [][][]binding
+	bindings [][][]source
 
 	// For each device/action combination, the list of *current* bindings
-	boolbinds     [][][]binding
-	unipolarbinds [][][]binding
-	bipolarbinds  [][][]binding
-	coordbinds    [][][]binding
-	deltabinds    [][][]binding
+	boolbinds     [][][]source
+	unipolarbinds [][][]source
+	bipolarbinds  [][][]source
+	coordbinds    [][][]source
+	deltabinds    [][][]source
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -61,26 +61,26 @@ func addDevice(name string) DeviceID {
 
 	n := len(bools.name)
 	devices.bools = append(devices.bools, make([]boolean, n))
-	devices.boolbinds = append(devices.boolbinds, make([][]binding, n))
+	devices.boolbinds = append(devices.boolbinds, make([][]source, n))
 
 	n = len(unipolars.name)
 	devices.unipolars = append(devices.unipolars, make([]unipolar, n))
-	devices.unipolarbinds = append(devices.unipolarbinds, make([][]binding, n))
+	devices.unipolarbinds = append(devices.unipolarbinds, make([][]source, n))
 
 	n = len(bipolars.name)
 	devices.bipolars = append(devices.bipolars, make([]bipolar, n))
-	devices.bipolarbinds = append(devices.bipolarbinds, make([][]binding, n))
+	devices.bipolarbinds = append(devices.bipolarbinds, make([][]source, n))
 
 	n = len(coords.name)
 	devices.coords = append(devices.coords, make([]coordinates, n))
-	devices.coordbinds = append(devices.coordbinds, make([][]binding, n))
+	devices.coordbinds = append(devices.coordbinds, make([][]source, n))
 
 	n = len(deltas.name)
 	devices.deltas = append(devices.deltas, make([]delta, n))
-	devices.deltabinds = append(devices.deltabinds, make([][]binding, n))
+	devices.deltabinds = append(devices.deltabinds, make([][]source, n))
 
 	n = len(contexts.name)
-	devices.bindings = append(devices.bindings, make([][]binding, n))
+	devices.bindings = append(devices.bindings, make([][]source, n))
 
 	return a
 }

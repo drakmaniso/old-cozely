@@ -61,3 +61,9 @@ func (a *gpTrigger) asCoord() (just bool, value coord.XY) {
 	a.value = v
 	return j, coord.XY{float32(v) / float32(0x7FFF), 0}
 }
+
+func (a *gpTrigger) asDelta() coord.XY {
+	v := a.gamepad.Axis(a.axis)
+	a.value = v
+	return coord.XY{float32(v) / float32(0x7FFF), 0}
+}

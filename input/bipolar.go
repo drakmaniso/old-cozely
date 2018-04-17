@@ -78,7 +78,7 @@ func (a BipolarID) Value(d DeviceID) float32 {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (a BipolarID) activate(d DeviceID, b binding) {
+func (a BipolarID) activate(d DeviceID, b source) {
 	devices.bipolars[d][a].active = true
 	devices.bipolarbinds[d][a] = append(devices.bipolarbinds[d][a], b)
 }

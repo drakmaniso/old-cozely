@@ -105,7 +105,7 @@ func (a BoolID) JustReleased(d DeviceID) bool {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (a BoolID) activate(d DeviceID, b binding) {
+func (a BoolID) activate(d DeviceID, b source) {
 	devices.bools[d][a].active = true
 	devices.boolbinds[d][a] = append(devices.boolbinds[d][a], b)
 	_, v := b.asBool()

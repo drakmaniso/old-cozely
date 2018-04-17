@@ -11,7 +11,7 @@ package input
 type Action interface {
 	Active(d DeviceID) bool
 	deactivate(d DeviceID)
-	activate(d DeviceID, b binding)
+	activate(d DeviceID, b source)
 	newframe(d DeviceID)
 	update(d DeviceID)
 }

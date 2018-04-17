@@ -25,7 +25,7 @@ func (cursor) Active(DeviceID) bool {
 
 func (cursor) deactivate(DeviceID) {}
 
-func (cursor) activate(DeviceID, binding) {}
+func (cursor) activate(DeviceID, source) {}
 
 func (cursor) newframe(DeviceID) {
 	cursordelta = coordi.CR{

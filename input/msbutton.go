@@ -80,3 +80,12 @@ func (a *msButton) asCoord() (just bool, value coord.XY) {
 	}
 	return j, coord.XY{0, 0}
 }
+
+func (a *msButton) asDelta() coord.XY {
+	v := (mouseButton(internal.MouseButtons) & a.button) != 0
+	a.pressed = v
+	if v {
+		return coord.XY{1, 0}
+	}
+	return coord.XY{0, 0}
+}
