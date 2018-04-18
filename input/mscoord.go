@@ -40,7 +40,7 @@ func (a *msCoord) asBipolar() (just bool, value float32) {
 }
 
 func (a *msCoord) asCoord() (just bool, value coord.XY) {
-	j := cursordelta.C != 0 || cursordelta.R != 0
+	j := Cursor.delta.C != 0 || Cursor.delta.R != 0
 	c := coord.XY{
 		X: float32(internal.MousePositionX) / float32(internal.Window.Width),
 		Y: float32(internal.MousePositionY) / float32(internal.Window.Height),
@@ -49,5 +49,5 @@ func (a *msCoord) asCoord() (just bool, value coord.XY) {
 }
 
 func (a *msCoord) asDelta() coord.XY {
-	return cursordelta.XY()
+	return Cursor.delta.XY()
 }

@@ -31,9 +31,10 @@ var (
 	rollright = input.Bool("Roll Right")
 	resetview = input.Bool("Reset View")
 	resetobj  = input.Bool("Reset Object")
+	rotation  = input.Delta("Rotation")
 )
 
-var context1 = input.Context("Default", quit, rotate, move,
+var context1 = input.Context("Default", quit, rotate, move, rotation,
 	onward, back, left, right, up, down, rollleft, rollright, resetview, resetobj)
 
 var bindings1 = input.Bindings{
@@ -41,6 +42,7 @@ var bindings1 = input.Bindings{
 		"Quit":         {"Escape"},
 		"Rotate":       {"Mouse Right"},
 		"Move":         {"Mouse Left"},
+		"Rotation":     {"Mouse", "Right Stick"},
 		"Onward":       {"W", "Up"},
 		"Left":         {"A", "Left"},
 		"Back":         {"S", "Down"},
@@ -269,7 +271,8 @@ func prepare() {
 
 	camera.Move(forward*dt, lateral*dt, vertical*dt)
 
-	m := input.Cursor.Delta().XY()
+	// m := input.Cursor.Delta().XY()
+	m := rotation.Delta(0)
 
 	s := cozely.WindowSize().XY()
 	switch {

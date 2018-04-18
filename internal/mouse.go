@@ -21,6 +21,8 @@ var MousePositionX, MousePositionY int16
 // MouseButtons holds the state of the mouse buttons.
 var MouseButtons uint32
 
+var MouseWheelX, MouseWheelY int16
+
 ////////////////////////////////////////////////////////////////////////////////
 
 // MouseSetRelative enables or disables the relative mode, where the mouse is

@@ -125,15 +125,12 @@ func dispatch(e unsafe.Pointer, win struct {
 	// Mouse Events
 	case C.SDL_MOUSEWHEEL:
 		e := (*C.SDL_MouseWheelEvent)(e)
-		var d int32 = 1
+		var d int16 = 1
 		if e.direction == C.SDL_MOUSEWHEEL_FLIPPED {
 			d = -1
 		}
-		//TODO:
-		_ = d
-		// Loop.MouseWheel(
-		// 	int32(e.x)*d, int32(e.y)*d,
-		// )
+		MouseWheelX += int16(e.x) * d
+		MouseWheelY += int16(e.y) * d
 	//TODO: Joystick Events
 	case C.SDL_JOYAXISMOTION:
 	case C.SDL_JOYBALLMOTION:

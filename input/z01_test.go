@@ -33,7 +33,7 @@ var (
 )
 
 var (
-	InMenu = input.Context("Menu", quit,
+	InMenu = input.Context("Menu", quit, input.Cursor,
 		CloseMenuAction, InstantCloseMenuAction, InventoryAction, OptionsAction,
 		trigger, position, delta)
 
@@ -48,11 +48,12 @@ var (
 			"Quit":               {"Escape", "Button Back"},
 			"Close Menu":         {"Enter", "Button Start"},
 			"Instant Close Menu": {"Mouse Right", "Button B"},
-			"Inventory":          {"I", "Button Y"},
+			"Inventory":          {"I", "Button Y", "Mouse Scroll Up"},
 			"Options":            {"O", "Mouse Left"},
 			"Trigger":            {"Left Trigger", "T", "Button X"},
 			"Position":           {"Left Stick", "Mouse"},
-			"Delta":              {"Mouse", "Left Stick"},
+			"Delta":              {"Mouse"},
+			"cursor":             {"Right Stick"},
 		},
 		"Game": {
 			"Quit":              {"Escape", "Button Back"},
@@ -62,7 +63,7 @@ var (
 			"Jump":              {"Space", "Mouse Left", "Button A"},
 			"Trigger":           {"Right Trigger"},
 			"Position":          {"Right Stick"},
-			"Delta":             {"Mouse", "Left Stick", "Right Stick"},
+			"Delta":             {"Mouse"},
 		},
 	}
 )
@@ -207,6 +208,7 @@ func (loop1) Render() {
 	changecolor(inventory)
 	canvas1.Println("Inventory(I/TAB) ")
 
+	changecolor(false)
 	canvas1.Println()
 	canvas1.Printf(" Trigger = %f\n", triggerval)
 	canvas1.Printf("Position = %+f, %+f\n", positionval.X, positionval.Y)
