@@ -55,7 +55,7 @@ var binders = map[string]source{
 	"Mouse Button 19":    &msButton{button: 19},
 	"Mouse Button 20":    &msButton{button: 20},
 	"Mouse Scroll Up":    &msWheel{direction: mouseScrollUp},
-	"Mouse Scroll down":  &msWheel{direction: mouseScrollDown},
+	"Mouse Scroll Down":  &msWheel{direction: mouseScrollDown},
 	"Mouse Scroll Left":  &msWheel{direction: mouseScrollLeft},
 	"Mouse Scroll Right": &msWheel{direction: mouseScrollRight},
 	// keyboard

@@ -6,6 +6,7 @@ package pixel
 import (
 	"errors"
 
+	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/internal"
 )
 
@@ -28,9 +29,10 @@ var fontPaths = []string{"builtin monozela 10"}
 var fonts = []font{{}}
 
 type font struct {
-	height   int16
-	baseline int16
-	first    uint16 // index of the first glyph
+	height    int16
+	baseline  int16
+	basecolor color.Index
+	first     uint16 // index of the first glyph
 }
 
 var glyphMap []mapping

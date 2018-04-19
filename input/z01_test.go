@@ -167,7 +167,7 @@ func (loop1) Render() {
 	canvas1.Clear(msx.DarkBlue)
 
 	canvas1.Locate(0, coord.CR{2, 12})
-	canvas1.Text(msx.White-1, pixel.Monozela10)
+	canvas1.Text(msx.White, pixel.Monozela10)
 
 	canvas1.Printf("screen position:%6d,%6d\n", mousepos.C, mousepos.R)
 	canvas1.Printf("   screen delta:%+6d,%+6d\n", mousedelta.C, mousedelta.R)
@@ -219,9 +219,9 @@ func (loop1) Render() {
 
 func changecolor(p bool) {
 	if p {
-		canvas1.Text(msx.LightRed-1, pixel.Monozela10)
+		canvas1.Text(msx.LightRed, pixel.Monozela10)
 	} else {
-		canvas1.Text(msx.White-1, pixel.Monozela10)
+		canvas1.Text(msx.White, pixel.Monozela10)
 	}
 }
 

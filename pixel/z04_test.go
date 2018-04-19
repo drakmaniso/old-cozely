@@ -84,7 +84,26 @@ func (loop4) Leave() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop4) React() {
-	if quit.JustPressed(1) {
+	if scrollup.JustPressed(0) {
+		line--
+		if line < 0 {
+			line = 0
+		}
+	}
+	if scrolldown.JustPressed(0) {
+		line++
+		if line > len(show)-1 {
+			line = len(show)-1
+		}
+	}
+// 	fntLine -= int(dy)
+// 	if fntLine < 0 {
+// 		fntLine = 0
+// 	} else if fntLine > len(fntShow)-1 {
+// 		fntLine = len(fntShow) - 1
+// 	}
+
+if quit.JustPressed(1) {
 		cozely.Stop(nil)
 	}
 }
@@ -95,7 +114,7 @@ func (loop4) Update() {
 func (loop4) Render() {
 	canvas3.Clear(bg3)
 
-	canvas3.Cursor().Color = fg3 - 1
+	canvas3.Cursor().Color = fg3
 	canvas3.Locate(0, coord.CR{16, font.Height() + 2})
 
 	canvas3.Cursor().Font = font
@@ -170,10 +189,4 @@ func (loop4) Render() {
 // }
 
 // func (fntLoop) MouseWheel(_, dy int32) {
-// 	fntLine -= int(dy)
-// 	if fntLine < 0 {
-// 		fntLine = 0
-// 	} else if fntLine > len(fntShow)-1 {
-// 		fntLine = len(fntShow) - 1
-// 	}
 // }

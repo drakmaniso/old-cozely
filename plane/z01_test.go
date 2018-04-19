@@ -106,7 +106,7 @@ func (loop1) Render() {
 		}
 		canvas1.Box(c, c, 2, 2, pt[i].Minus(s), pt[i].Plus(s))
 		canvas1.Locate(aboveall, coord.CR{pt[i].C - 2, pt[i].R + 3})
-		canvas1.Text(col1-1, 0)
+		canvas1.Text(col1, 0)
 		canvas1.Print([]string{"A", "B", "C"}[i])
 	}
 	canvas1.Lines(col6, 0, pt[0], pt[1], pt[2], pt[0])
@@ -115,7 +115,7 @@ func (loop1) Render() {
 	m := canvas1.FromWindow(input.Cursor.Position())
 	p := fromScreen(m)
 	canvas1.Locate(aboveall, coord.CR{2, 8})
-	canvas1.Text(col1-1, 0)
+	canvas1.Text(col1, 0)
 	canvas1.Printf("A: %.3f, %.3f\n", points[0].X, points[0].Y)
 	canvas1.Printf("B: %.3f, %.3f\n", points[1].X, points[1].Y)
 	canvas1.Printf("C: %.3f, %.3f\n", points[2].X, points[2].Y)
@@ -129,18 +129,18 @@ func (loop1) Render() {
 	canvas1.Println()
 
 	if plane.IsCCW(points[0], points[1], points[2]) {
-		canvas1.Text(col4-1, 0)
+		canvas1.Text(col4, 0)
 		canvas1.Println("IsCCW: TRUE")
 	} else {
-		canvas1.Text(col1-1, 0)
+		canvas1.Text(col1, 0)
 		canvas1.Println("IsCCW: false")
 	}
 
 	if plane.InTriangle(points[0], points[1], points[2], p) {
-		canvas1.Text(col2-1, 0)
+		canvas1.Text(col2, 0)
 		canvas1.Println("InTriangle: TRUE")
 	} else {
-		canvas1.Text(col1-1, 0)
+		canvas1.Text(col1, 0)
 		canvas1.Println("InTriangle: false")
 	}
 
@@ -149,25 +149,25 @@ func (loop1) Render() {
 		b, c = c, b
 	}
 	if plane.InTriangleCCW(points[a], points[b], points[c], p) {
-		canvas1.Text(col2-1, 0)
+		canvas1.Text(col2, 0)
 		canvas1.Println("InTriangleCCW: TRUE")
 	} else {
-		canvas1.Text(col1-1, 0)
+		canvas1.Text(col1, 0)
 		canvas1.Println("InTriangleCCW: false")
 	}
 
 	if plane.InCircumcircle(points[a], points[b], points[c], p) {
-		canvas1.Text(col3-1, 0)
+		canvas1.Text(col3, 0)
 		canvas1.Println("InCircumcircle: TRUE")
 	} else {
-		canvas1.Text(col1-1, 0)
+		canvas1.Text(col1, 0)
 		canvas1.Println("InCircumcircle: false")
 	}
 
 	canvas1.Println(" ")
 
 	d := plane.Circumcenter(points[0], points[1], points[2])
-	canvas1.Text(col1-1, 0)
+	canvas1.Text(col1, 0)
 	canvas1.Printf("Circumcenter: %.3f, %.3f\n", d.X, d.Y)
 	dd := toScreen(d)
 	canvas1.Lines(col5, -2, dd.Minuss(2), dd.Pluss(2))

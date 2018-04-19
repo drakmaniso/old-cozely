@@ -10,6 +10,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/internal"
 	"github.com/cozely/cozely/x/atlas"
 )
@@ -69,6 +70,13 @@ func (f FontID) load(frects *[]uint32) error {
 		if p.Pix[0+y*p.Stride] != 0 {
 			fonts[f].baseline = int16(y)
 			break
+		}
+	}
+
+	fonts[f].basecolor = 255
+	for _, c := range p.Pix {
+		if c != 0 && color.Index(c) < fonts[f].basecolor {
+			fonts[f].basecolor = color.Index(c)
 		}
 	}
 

@@ -151,7 +151,7 @@ func (loop1) Render() {
 	m := canvas1.FromWindow(input.Cursor.Position())
 	p := fromScreen(m)
 	canvas1.Locate(0, coord.CR{2, 8})
-	canvas1.Text(col1-1, 0)
+	canvas1.Text(col1, 0)
 	fsr, fso := cozely.RenderStats()
 	canvas1.Printf("Framerate: %.2f (%d)\n", 1000*fsr, fso)
 	if p.X >= 0 && p.X <= 1.0 {

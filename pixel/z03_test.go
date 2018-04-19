@@ -62,7 +62,7 @@ func (loop3) Update() {
 func (loop3) Render() {
 	canvas3.Clear(bg3)
 
-	canvas3.Text(fg3-1, pixel.Monozela10)
+	canvas3.Text(fg3, pixel.Monozela10)
 
 	canvas3.Locate(0, coord.CR{2, 8})
 	canvas3.Println("a quick brown fox \"jumps\" over the (lazy) dog.")

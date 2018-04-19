@@ -13,39 +13,43 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 
 var (
-	quit     = input.Bool("Quit")
-	next     = input.Bool("Next")
-	previous = input.Bool("Previous")
-	scene1   = input.Bool("Scene1")
-	scene2   = input.Bool("Scene2")
-	scene3   = input.Bool("Scene3")
-	scene4   = input.Bool("Scene4")
-	scene5   = input.Bool("Scene5")
-	scene6   = input.Bool("Scene6")
-	scene7   = input.Bool("Scene7")
-	scene8   = input.Bool("Scene8")
-	scene9   = input.Bool("Scene9")
-	scene10  = input.Bool("Scene10")
+	quit       = input.Bool("Quit")
+	next       = input.Bool("Next")
+	previous   = input.Bool("Previous")
+	scene1     = input.Bool("Scene1")
+	scene2     = input.Bool("Scene2")
+	scene3     = input.Bool("Scene3")
+	scene4     = input.Bool("Scene4")
+	scene5     = input.Bool("Scene5")
+	scene6     = input.Bool("Scene6")
+	scene7     = input.Bool("Scene7")
+	scene8     = input.Bool("Scene8")
+	scene9     = input.Bool("Scene9")
+	scene10    = input.Bool("Scene10")
+	scrollup   = input.Bool("ScrollUp")
+	scrolldown = input.Bool("ScrollDown")
 )
 
-var context = input.Context("Test", quit, next, previous,
+var context = input.Context("Test", quit, next, previous, scrollup, scrolldown,
 	scene1, scene2, scene3, scene4, scene5, scene6, scene7, scene8, scene9)
 
 var bindings = input.Bindings{
 	"Test": {
-		"Quit":     {"Escape"},
-		"Next":     {"Mouse Left", "Space"},
-		"Previous": {"Mouse Right", "U"},
-		"Scene1":   {"1"},
-		"Scene2":   {"2"},
-		"Scene3":   {"3"},
-		"Scene4":   {"4"},
-		"Scene5":   {"5"},
-		"Scene6":   {"6"},
-		"Scene7":   {"7"},
-		"Scene8":   {"8"},
-		"Scene9":   {"9"},
-		"Scene10":  {"0"},
+		"Quit":       {"Escape"},
+		"Next":       {"Mouse Left", "Space"},
+		"Previous":   {"Mouse Right", "U"},
+		"Scene1":     {"1"},
+		"Scene2":     {"2"},
+		"Scene3":     {"3"},
+		"Scene4":     {"4"},
+		"Scene5":     {"5"},
+		"Scene6":     {"6"},
+		"Scene7":     {"7"},
+		"Scene8":     {"8"},
+		"Scene9":     {"9"},
+		"Scene10":    {"0"},
+		"ScrollUp":   {"Mouse Scroll Up"},
+		"ScrollDown": {"Mouse Scroll Down"},
 	},
 }
 
