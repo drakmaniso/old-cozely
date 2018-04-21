@@ -46,8 +46,6 @@ func (cursor) specialnewframe() {
 	internal.MouseDeltaX = 0
 	internal.MouseDeltaY = 0
 
-	//TODO: Implementation of wheel is both overkill and flawed
-	// (multiple scrolls in same frame wont generate separate just pressed events)
 	if Cursor.wheel.C > 0 {
 		Cursor.wheel.C--
 	} else if Cursor.wheel.C < 0 {
@@ -58,8 +56,10 @@ func (cursor) specialnewframe() {
 	} else if Cursor.wheel.R < 0 {
 		Cursor.wheel.R++
 	}
+	// Wheel delta multiplied by 2 to generate on/off events
 	Cursor.wheel = Cursor.wheel.Plus(
-		coord.CR{internal.MouseWheelX, internal.MouseWheelY})
+		coord.CR{internal.MouseWheelX, internal.MouseWheelY}.
+			Times(2))
 	internal.MouseWheelX = 0
 	internal.MouseWheelY = 0
 }
