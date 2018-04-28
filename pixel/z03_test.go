@@ -99,7 +99,7 @@ func (loop3) Render() {
 
 	canvas3.Locate(0, coord.CR{canvas3.Size().C - 200, 9})
 	canvas3.Cursor().Font = pixel.FontID(0)
-	m := canvas3.FromWindow(input.Mouse.CR())
+	m := canvas3.FromWindow(cursor.XY(0).CR())
 	canvas3.Printf("Position x=%d, y=%d\n", m.C, m.R)
 
 	canvas3.Display()

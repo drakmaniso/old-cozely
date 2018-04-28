@@ -67,8 +67,8 @@ func (a *gpStick) asCoord() (just bool, value coord.XY) {
 }
 
 func (a *gpStick) asDelta() coord.XY {
-	vx, vy := a.gamepad.Axis(a.xaxis), a.gamepad.Axis(a.yaxis)
-	a.x, a.y = vx, vy
+	a.x, a.y = a.gamepad.Axis(a.xaxis), a.gamepad.Axis(a.yaxis)
+	vx, vy := a.x, a.y
 	var c coord.XY
 	if vx < 0 {
 		c.X = float32(vx) / float32(0x8000)
@@ -80,5 +80,14 @@ func (a *gpStick) asDelta() coord.XY {
 	} else {
 		c.Y = float32(vy) / float32(0x7FFF)
 	}
+	if c.X > -0.1 && c.X < 0.1 {
+		c.X = 0
+	}
+	if c.Y > -0.1 && c.Y < 0.1 {
+		c.Y = 0
+	}
+	s := coord.XY{float32(internal.Window.Width), float32(internal.Window.Height)}
+	c = c.Times(s.Y / 256)
+
 	return c
 }

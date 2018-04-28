@@ -32,9 +32,10 @@ var (
 	resetview = input.Bool("Reset View")
 	resetobj  = input.Bool("Reset Object")
 	rotation  = input.Delta("Rotation")
+	cursor    = input.Cursor("Cursor")
 )
 
-var context1 = input.Context("Default", quit, rotate, move, rotation,
+var context1 = input.Context("Default", quit, rotate, move, rotation, cursor,
 	onward, back, left, right, up, down, rollleft, rollright, resetview, resetobj)
 
 var bindings1 = input.Bindings{
@@ -53,6 +54,7 @@ var bindings1 = input.Bindings{
 		"Roll Right":   {"E"},
 		"Reset View":   {"Mouse Back"},
 		"Reset Object": {"Mouse Forward"},
+		"Cursor":       {"Mouse"},
 	},
 }
 
@@ -172,10 +174,10 @@ func (loop) React() {
 	if move.JustPressed(1) {
 		dragStart = misc.worldFromObject
 		current.dragDelta = coord.XY{0, 0}
-		input.Mouse.Hide()
+		input.GrabMouse(true)
 	}
 	if rotate.JustPressed(1) {
-		input.Mouse.Hide()
+		input.GrabMouse(true)
 	}
 
 	const s = 2.0
@@ -222,7 +224,7 @@ func (loop) React() {
 	}
 
 	if move.JustReleased(1) || rotate.JustReleased(1) {
-		input.Mouse.Show()
+		input.GrabMouse(false)
 	}
 
 	if quit.JustPressed(1) {
@@ -241,7 +243,7 @@ func (loop) Render() {
 	gl.Viewport(0, 0, int32(s.C), int32(s.R))
 	pipeline.Bind()
 	gl.ClearDepthBuffer(1.0)
-	gl.ClearColorBuffer(color.LRGBA{0.0, 0.0, 0.0, 1.0})
+	gl.ClearColorBuffer(color.LRGBA{0.025, 0.025, 0.025, 1.0})
 	// gl.ClearColorBuffer(color.LRGBA{0.4, 0.45, 0.5, 1.0})
 	gl.Disable(gl.Blend)
 	gl.Enable(gl.FramebufferSRGB)
@@ -263,6 +265,7 @@ func (loop) Render() {
 	if or > 0 {
 		overlay.Printf(" (%d)", or)
 	}
+	overlay.Picture(pixel.MouseCursor, 10, overlay.FromWindow(cursor.XY(0).CR()))
 	overlay.Display()
 }
 

@@ -31,13 +31,10 @@ func MouseSetRelative(enabled bool) error {
 	var m C.SDL_bool
 	if enabled {
 		m = 1
-		C.SDL_ShowCursor(C.SDL_DISABLE)
 	}
 	if C.SDL_SetRelativeMouseMode(m) != 0 {
-		C.SDL_ShowCursor(C.SDL_ENABLE)
 		return Wrap("setting relative mouse mode", GetSDLError())
 	}
-	C.SDL_ShowCursor(C.SDL_ENABLE)
 	return nil
 }
 
@@ -45,5 +42,10 @@ func MouseSetRelative(enabled bool) error {
 func MouseRelative() bool {
 	return C.SDL_GetRelativeMouseMode() == C.SDL_TRUE
 }
+
+func MouseWarp(x,y int16) {
+	C.SDL_WarpMouseInWindow(Window.window, C.int(x), C.int(y))
+}
+
 
 ////////////////////////////////////////////////////////////////////////////////

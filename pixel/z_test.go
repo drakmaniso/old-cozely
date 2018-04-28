@@ -28,10 +28,11 @@ var (
 	scene10    = input.Bool("Scene10")
 	scrollup   = input.Bool("ScrollUp")
 	scrolldown = input.Bool("ScrollDown")
+	cursor     = input.Cursor("Cursor")
 )
 
 var context = input.Context("Test", quit, next, previous, scrollup, scrolldown,
-	scene1, scene2, scene3, scene4, scene5, scene6, scene7, scene8, scene9)
+	scene1, scene2, scene3, scene4, scene5, scene6, scene7, scene8, scene9, cursor)
 
 var bindings = input.Bindings{
 	"Test": {
@@ -50,6 +51,7 @@ var bindings = input.Bindings{
 		"Scene10":    {"0"},
 		"ScrollUp":   {"Mouse Scroll Up"},
 		"ScrollDown": {"Mouse Scroll Down"},
+		"Cursor":     {"Mouse"},
 	},
 }
 

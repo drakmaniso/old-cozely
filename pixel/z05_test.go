@@ -20,7 +20,7 @@ var (
 	hideLines  = input.Bool("HideLines")
 )
 
-var context5 = input.Context("TestCommands",
+var context5 = input.Context("TestCommands", cursor,
 	quit, newPoint, previous, hidePoints, hideLines)
 
 var bindings5 = input.Bindings{
@@ -30,6 +30,7 @@ var bindings5 = input.Bindings{
 		"Previous":   {"Mouse Right", "U"},
 		"HidePoints": {"P"},
 		"HideLines":  {"L"},
+		"Cursor":     {"Mouse"},
 	},
 }
 
@@ -78,7 +79,7 @@ func (loop5) React() {
 	}
 
 	if newPoint.JustPressed(1) {
-		m := canvas5.FromWindow(input.Mouse.CR())
+		m := canvas5.FromWindow(cursor.XY(0).CR())
 		points = append(points, m)
 	}
 
@@ -97,7 +98,7 @@ func (loop5) Update() {
 
 func (loop5) Render() {
 	canvas5.Clear(1)
-	m := canvas5.FromWindow(input.Mouse.CR())
+	m := canvas5.FromWindow(cursor.XY(0).CR())
 	canvas5.Triangles(2, -2, points...)
 	if !lineshidden {
 		canvas5.Lines(5, 0, points...)

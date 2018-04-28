@@ -18,11 +18,13 @@ type PictureID uint16
 const (
 	maxPictureID = 0xFFFF
 	noPicture = PictureID(0)
+	MouseCursor = PictureID(1)
 )
 
-var picturePaths = []string{""}
+var picturePaths = []string{"", ""}
 
 var pictureMap = []mapping{
+	mapping{},
 	mapping{},
 }
 

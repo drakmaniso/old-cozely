@@ -72,7 +72,7 @@ func (a DeltaID) Active(d DeviceID) bool {
 	return devices.deltas[d][a].active
 }
 
-// Delta returns the current status of the action on a specific device. The
+// XY returns the current status of the action on a specific device. The
 // coordinates correspond to the change in position since the last frame; the
 // values of X and Y are normalized between -1 and 1.
 func (a DeltaID) XY(d DeviceID) coordi.XY {

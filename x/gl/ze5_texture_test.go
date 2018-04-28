@@ -139,10 +139,10 @@ func (l *loop05) React() {
 	s := cozely.WindowSize().XY()
 
 	if rotate.JustPressed(1) || move.JustPressed(1) || zoom.JustPressed(1) {
-		input.Mouse.Hide()
+		input.GrabMouse(true)
 	}
 	if rotate.JustReleased(1) || move.JustReleased(1) || zoom.JustReleased(1) {
-		input.Mouse.Show()
+		input.GrabMouse(false)
 	}
 
 	if rotate.Pressed(1) {

@@ -109,8 +109,10 @@ func dispatch(e unsafe.Pointer, win struct {
 			//TODO: check that Show is enough
 		case C.SDL_WINDOWEVENT_ENTER:
 			HasMouseFocus = true
+			C.SDL_ShowCursor(C.SDL_DISABLE)
 		case C.SDL_WINDOWEVENT_LEAVE:
 			HasMouseFocus = false
+			C.SDL_ShowCursor(C.SDL_ENABLE)
 		case C.SDL_WINDOWEVENT_FOCUS_GAINED:
 			HasFocus = true
 			win.Focus()

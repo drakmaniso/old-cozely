@@ -80,7 +80,7 @@ func (test6) Render() {
 		canvas6.Box(4, 4, i, 0, o.Plus(dx.Times(i)), o.Plus(dx.Times(i)).Plus(s))
 	}
 
-	m := canvas6.FromWindow(input.Mouse.CR())
+	m := canvas6.FromWindow(cursor.XY(0).CR())
 	canvas6.Point(18, 2, m)
 	canvas6.Display()
 }

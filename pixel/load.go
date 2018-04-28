@@ -79,7 +79,13 @@ func loadAssets() error {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (p PictureID) scan(prects *[]uint32) error {
-	if p == 0 {
+	switch p {
+	case noPicture:
+		return nil
+	case MouseCursor:
+		w, h := int16(mousecursor.Bounds().Dx()), int16(mousecursor.Bounds().Dy())
+		pictureMap[p].w, pictureMap[p].h = w, h
+		*prects = append(*prects, uint32(p))
 		return nil
 	}
 
@@ -136,15 +142,20 @@ func pictPaint(rect uint32, dest interface{}) error {
 	px, py := pictureMap[PictureID(rect)].x, pictureMap[PictureID(rect)].y
 	pw, ph := pictureMap[PictureID(rect)].w, pictureMap[PictureID(rect)].h
 
-	fp := filepath.FromSlash(internal.Path + picturePaths[PictureID(rect)] + ".png")
-	f, err := os.Open(fp)
-	if err != nil {
-		return err
-	}
-	defer f.Close()
-	src, _, err := image.Decode(f)
-	if err != nil {
-		return err
+	var src image.Image
+	if PictureID(rect) == MouseCursor {
+		src = &mousecursor
+	} else {
+		fp := filepath.FromSlash(internal.Path + picturePaths[PictureID(rect)] + ".png")
+		f, err := os.Open(fp)
+		if err != nil {
+			return err
+		}
+		defer f.Close()
+		src, _, err = image.Decode(f)
+		if err != nil {
+			return err
+		}
 	}
 
 	sm, ok := src.(*image.Paletted)

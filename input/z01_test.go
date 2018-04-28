@@ -29,17 +29,18 @@ var (
 	InstantOpenMenuAction  = input.Bool("Instant Open Menu")
 	trigger                = input.Unipolar("Trigger")
 	position               = input.Coord("Position")
+	cursor                 = input.Cursor("Cursor")
 	delta                  = input.Delta("Delta")
 )
 
 var (
-	InMenu = input.Context("Menu", quit, input.Mouse,
+	InMenu = input.Context("Menu", quit,
 		CloseMenuAction, InstantCloseMenuAction, InventoryAction, OptionsAction,
-		trigger, position, delta)
+		trigger, position, cursor, delta)
 
-	InGame = input.Context("Game", quit, input.Mouse,
+	InGame = input.Context("Game", quit,
 		OpenMenuAction, InstantOpenMenuAction, InventoryAction, JumpAction,
-		trigger, position, delta)
+		trigger, position, cursor, delta)
 )
 
 var (
@@ -50,10 +51,10 @@ var (
 			"Instant Close Menu": {"Mouse Right", "Button B"},
 			"Inventory":          {"I", "Button Y", "Mouse Scroll Up"},
 			"Options":            {"O", "Mouse Left"},
-			"Trigger":            {"Left Trigger", "T", "Button X"},
-			"Position":           {"Mouse", "Right Stick"},
-			"Delta":              {"Mouse", "Right Stick"},
-			"cursor":             {"Mouse", "Right Stick"},
+			"Trigger":            {"Left Trigger", "Right Trigger", "T", "Button X"},
+			"Position":           {"Mouse", "Left Stick", "Right Stick"},
+			"Cursor":             {"Mouse", "Left Stick", "Right Stick"},
+			"Delta":              {"Mouse", "Left Stick", "Right Stick"},
 		},
 		"Game": {
 			"Quit":              {"Escape", "Button Back"},
@@ -62,8 +63,9 @@ var (
 			"Inventory":         {"Tab", "Button Y"},
 			"Jump":              {"Space", "Mouse Left", "Button A"},
 			"Trigger":           {"Right Trigger"},
-			"Position":          {"Right Stick"},
-			"Delta":             {"Mouse"},
+			"Position":          {"Mouse", "Right Stick"},
+			"Cursor":            {"Mouse", "Right Stick"},
+			"Delta":             {"Mouse", "Right Stick"},
 		},
 	}
 )
@@ -75,11 +77,10 @@ var (
 )
 
 var hidden bool
-var mousepos, mousedelta coord.CR
 var openmenu, closemenu, instopenmenu, instclosemenu, inventory, options, jump bool
 
 var triggerval float32
-var positionval, deltaval coord.XY
+var positionval, cursorval, deltaval coord.XY
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -110,8 +111,6 @@ func (loop1) Leave() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop1) React() {
-	mousepos = input.Mouse.CR()
-
 	if JumpAction.JustPressed(0) {
 		println(" Just Pressed: *JUMP*")
 	}
@@ -121,20 +120,20 @@ func (loop1) React() {
 
 	if CloseMenuAction.JustReleased(0) {
 		InGame.Activate(0)
-		input.Mouse.Hide()
+		input.GrabMouse(true)
 	}
 	if OpenMenuAction.JustReleased(0) {
 		InMenu.Activate(0)
-		input.Mouse.Show()
+		input.GrabMouse(false)
 	}
 
 	if InstantCloseMenuAction.JustPressed(0) {
 		InGame.Activate(0)
-		input.Mouse.Hide()
+		input.GrabMouse(true)
 	}
 	if InstantOpenMenuAction.JustPressed(0) {
 		InMenu.Activate(0)
-		input.Mouse.Show()
+		input.GrabMouse(false)
 	}
 
 	openmenu = OpenMenuAction.Pressed(0)
@@ -147,6 +146,7 @@ func (loop1) React() {
 
 	triggerval = trigger.Value(0)
 	positionval = position.Coord(0)
+	cursorval = cursor.XY(0)
 	deltaval = delta.XY(0)
 
 	if quit.JustPressed(0) {
@@ -166,16 +166,6 @@ func (loop1) Render() {
 
 	canvas1.Locate(0, coord.CR{2, 12})
 	canvas1.Text(msx.White, pixel.Monozela10)
-
-	canvas1.Printf("  mouse position:%6d,%6d\n", mousepos.C, mousepos.R)
-	canvas1.Printf("mouse visibility:   ")
-	if input.Mouse.Visible() {
-		changecolor(false)
-		canvas1.Printf("visible\n")
-	} else {
-		changecolor(true)
-		canvas1.Printf("HIDDEN\n")
-	}
 
 	canvas1.Println()
 	changecolor(false)
@@ -207,9 +197,19 @@ func (loop1) Render() {
 
 	changecolor(false)
 	canvas1.Println()
-	canvas1.Printf(" Trigger = %f\n", triggerval)
-	canvas1.Printf("Position = %+f, %+f\n", positionval.X, positionval.Y)
-	canvas1.Printf("   Delta = %+f, %+f\n", deltaval.X, deltaval.Y)
+	canvas1.Printf(" Trigger = % 12.6f\n", triggerval)
+	canvas1.Printf("Position = % 12.6f, % 12.6f\n", positionval.X, positionval.Y)
+	canvas1.Printf("  Cursor = % 12.6f, % 12.6f", cursorval.X, cursorval.Y)
+	if input.MouseGrabbed() {
+		changecolor(true)
+		canvas1.Printf(" (mouse GRABBED)\n")
+	} else {
+		changecolor(false)
+		canvas1.Printf(" (mouse not grabbed)\n")
+	}
+	canvas1.Printf("   Delta = %+12.6f, %+12.6f\n", deltaval.X, deltaval.Y)
+
+	canvas1.Picture(pixel.MouseCursor, 10, canvas1.FromWindow(cursorval.CR()))
 
 	canvas1.Display()
 }

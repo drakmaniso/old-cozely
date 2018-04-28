@@ -32,6 +32,7 @@ var devices struct {
 	unipolars [][]unipolar
 	bipolars  [][]bipolar
 	coords    [][]coordinates
+	cursors   [][]cursor
 	deltas    [][]delta
 
 	// For each device/context combination, the list of bindings
@@ -42,6 +43,7 @@ var devices struct {
 	unipolarbinds [][][]source
 	bipolarbinds  [][][]source
 	coordbinds    [][][]source
+	cursorbinds   [][][]source
 	deltabinds    [][][]source
 }
 
@@ -75,6 +77,10 @@ func addDevice(name string) DeviceID {
 	devices.coords = append(devices.coords, make([]coordinates, n))
 	devices.coordbinds = append(devices.coordbinds, make([][]source, n))
 
+	n = len(cursors.name)
+	devices.cursors = append(devices.cursors, make([]cursor, n))
+	devices.cursorbinds = append(devices.cursorbinds, make([][]source, n))
+
 	n = len(deltas.name)
 	devices.deltas = append(devices.deltas, make([]delta, n))
 	devices.deltabinds = append(devices.deltabinds, make([][]source, n))
@@ -99,6 +105,8 @@ func clearDevices() {
 	devices.bipolarbinds = nil
 	devices.coords = nil
 	devices.coordbinds = nil
+	devices.cursors = nil
+	devices.cursorbinds = nil
 	devices.deltas = nil
 	devices.deltabinds = nil
 	devices.bindings = nil
