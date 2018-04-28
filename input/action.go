@@ -21,8 +21,8 @@ var actions = struct {
 	// For fast iteration, the same list in a slice:
 	list []Action
 }{
-	name: map[string]Action{"cursor": Cursor},
-	list: []Action{Cursor},
+	name: map[string]Action{"Mouse": Mouse},
+	list: []Action{Mouse},
 }
 
 const maxID = 0xFFFFFFFF

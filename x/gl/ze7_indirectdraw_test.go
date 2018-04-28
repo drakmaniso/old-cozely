@@ -167,14 +167,14 @@ func (loop07) Update() {
 }
 
 func (l *loop07) React() {
-	m := input.Cursor.Delta().XY()
-	s := input.Cursor.Position().XY()
+	m := delta.XY(0)
+	s := cozely.WindowSize().XY()
 
 	if rotate.JustPressed(1) || move.JustPressed(1) || zoom.JustPressed(1) {
-		input.Cursor.Hide()
+		input.Mouse.Hide()
 	}
 	if rotate.JustReleased(1) || move.JustReleased(1) || zoom.JustReleased(1) {
-		input.Cursor.Show()
+		input.Mouse.Show()
 	}
 
 	if rotate.Pressed(1) {

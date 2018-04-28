@@ -33,11 +33,11 @@ var (
 )
 
 var (
-	InMenu = input.Context("Menu", quit, input.Cursor,
+	InMenu = input.Context("Menu", quit, input.Mouse,
 		CloseMenuAction, InstantCloseMenuAction, InventoryAction, OptionsAction,
 		trigger, position, delta)
 
-	InGame = input.Context("Game", quit,
+	InGame = input.Context("Game", quit, input.Mouse,
 		OpenMenuAction, InstantOpenMenuAction, InventoryAction, JumpAction,
 		trigger, position, delta)
 )
@@ -51,9 +51,9 @@ var (
 			"Inventory":          {"I", "Button Y", "Mouse Scroll Up"},
 			"Options":            {"O", "Mouse Left"},
 			"Trigger":            {"Left Trigger", "T", "Button X"},
-			"Position":           {"Left Stick", "Mouse"},
-			"Delta":              {"Mouse"},
-			"cursor":             {"Right Stick"},
+			"Position":           {"Mouse", "Right Stick"},
+			"Delta":              {"Mouse", "Right Stick"},
+			"cursor":             {"Mouse", "Right Stick"},
 		},
 		"Game": {
 			"Quit":              {"Escape", "Button Back"},
@@ -110,8 +110,7 @@ func (loop1) Leave() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop1) React() {
-	mousepos = input.Cursor.Position()
-	mousedelta = input.Cursor.Delta()
+	mousepos = input.Mouse.CR()
 
 	if JumpAction.JustPressed(0) {
 		println(" Just Pressed: *JUMP*")
@@ -122,22 +121,21 @@ func (loop1) React() {
 
 	if CloseMenuAction.JustReleased(0) {
 		InGame.Activate(0)
-		input.Cursor.Hide()
+		input.Mouse.Hide()
 	}
 	if OpenMenuAction.JustReleased(0) {
 		InMenu.Activate(0)
-		input.Cursor.Show()
+		input.Mouse.Show()
 	}
 
 	if InstantCloseMenuAction.JustPressed(0) {
 		InGame.Activate(0)
-		input.Cursor.Hide()
+		input.Mouse.Hide()
 	}
 	if InstantOpenMenuAction.JustPressed(0) {
 		InMenu.Activate(0)
-		input.Cursor.Show()
+		input.Mouse.Show()
 	}
-	hidden = input.Cursor.Hidden()
 
 	openmenu = OpenMenuAction.Pressed(0)
 	closemenu = CloseMenuAction.Pressed(0)
@@ -149,7 +147,7 @@ func (loop1) React() {
 
 	triggerval = trigger.Value(0)
 	positionval = position.Coord(0)
-	deltaval = delta.Delta(0)
+	deltaval = delta.XY(0)
 
 	if quit.JustPressed(0) {
 		cozely.Stop(nil)
@@ -169,15 +167,14 @@ func (loop1) Render() {
 	canvas1.Locate(0, coord.CR{2, 12})
 	canvas1.Text(msx.White, pixel.Monozela10)
 
-	canvas1.Printf("screen position:%6d,%6d\n", mousepos.C, mousepos.R)
-	canvas1.Printf("   screen delta:%+6d,%+6d\n", mousedelta.C, mousedelta.R)
-	canvas1.Printf("     visibility:   ")
-	if hidden {
+	canvas1.Printf("  mouse position:%6d,%6d\n", mousepos.C, mousepos.R)
+	canvas1.Printf("mouse visibility:   ")
+	if input.Mouse.Visible() {
+		changecolor(false)
+		canvas1.Printf("visible\n")
+	} else {
 		changecolor(true)
 		canvas1.Printf("HIDDEN\n")
-	} else {
-		changecolor(false)
-		canvas1.Printf("shown\n")
 	}
 
 	canvas1.Println()

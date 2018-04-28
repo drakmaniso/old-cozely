@@ -112,7 +112,7 @@ func (loop1) Render() {
 	canvas1.Lines(col6, 0, pt[0], pt[1], pt[2], pt[0])
 	canvas1.Triangles(col7, -5, pt[0], pt[1], pt[2], pt[0])
 
-	m := canvas1.FromWindow(input.Cursor.Position())
+	m := canvas1.FromWindow(input.Mouse.CR())
 	p := fromScreen(m)
 	canvas1.Locate(aboveall, coord.CR{2, 8})
 	canvas1.Text(col1, 0)
@@ -171,7 +171,7 @@ func (loop1) Render() {
 	canvas1.Printf("Circumcenter: %.3f, %.3f\n", d.X, d.Y)
 	dd := toScreen(d)
 	canvas1.Lines(col5, -2, dd.Minuss(2), dd.Pluss(2))
-	canvas1.Lines(col5, -2, dd.Minus(coord.CR{-2,2}), dd.Plus(coord.CR{-2,2}))
+	canvas1.Lines(col5, -2, dd.Minus(coord.CR{-2, 2}), dd.Plus(coord.CR{-2, 2}))
 
 	r := d.Minus(points[a]).Length()
 	cir := []coord.CR{}

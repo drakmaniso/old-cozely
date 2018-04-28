@@ -59,7 +59,7 @@ func Coord(name string) CoordID {
 
 // Name of the action.
 func (a CoordID) Name() string {
-	return bools.name[a]
+	return coords.name[a]
 }
 
 // Active returns true if the action is currently active on a specific device

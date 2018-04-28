@@ -48,6 +48,6 @@ func (loop) React() {
 func (loop) Render() {
 	vector.Line(color.SRGB{1, 0.5, 0}, 10, 10, 100, 100)
 	w := cozely.WindowSize()
-	m := input.Cursor.Position()
+	m := input.Mouse.CR()
 	vector.Line(color.SRGB{1, 1, 1}, w.C/2, w.R/2, m.C, m.R)
 }

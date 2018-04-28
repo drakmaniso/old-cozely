@@ -63,7 +63,7 @@ func Delta(name string) DeltaID {
 
 // Name of the action.
 func (a DeltaID) Name() string {
-	return bools.name[a]
+	return coords.name[a]
 }
 
 // Active returns true if the action is currently active on a specific device
@@ -75,7 +75,7 @@ func (a DeltaID) Active(d DeviceID) bool {
 // Delta returns the current status of the action on a specific device. The
 // coordinates correspond to the change in position since the last frame; the
 // values of X and Y are normalized between -1 and 1.
-func (a DeltaID) Delta(d DeviceID) coordi.XY {
+func (a DeltaID) XY(d DeviceID) coordi.XY {
 	return devices.deltas[d][a].value
 }
 

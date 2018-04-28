@@ -14,7 +14,7 @@ func init() {
 }
 
 func newframe() error {
-	Cursor.specialnewframe()
+	Mouse.updateMouse()
 
 	for _, t := range actions.list {
 		for d := range devices.name {

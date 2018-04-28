@@ -71,7 +71,7 @@ func (loop1) React() {
 	}
 
 	if previous.JustPressed(1) {
-		m := canvas1.FromWindow(input.Cursor.Position())
+		m := canvas1.FromWindow(input.Mouse.CR())
 		p := fromScreen(m)
 		points = append(points, p)
 		triangulation = quadedge.Delaunay(points)
@@ -148,7 +148,7 @@ func (loop1) Render() {
 		Y: float32(canvas1.Size().R),
 	}
 
-	m := canvas1.FromWindow(input.Cursor.Position())
+	m := canvas1.FromWindow(input.Mouse.CR())
 	p := fromScreen(m)
 	canvas1.Locate(0, coord.CR{2, 8})
 	canvas1.Text(col1, 0)

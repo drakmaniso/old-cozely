@@ -78,7 +78,7 @@ func (loop5) React() {
 	}
 
 	if newPoint.JustPressed(1) {
-		m := canvas5.FromWindow(input.Cursor.Position())
+		m := canvas5.FromWindow(input.Mouse.CR())
 		points = append(points, m)
 	}
 
@@ -97,7 +97,7 @@ func (loop5) Update() {
 
 func (loop5) Render() {
 	canvas5.Clear(1)
-	m := canvas5.FromWindow(input.Cursor.Position())
+	m := canvas5.FromWindow(input.Mouse.CR())
 	canvas5.Triangles(2, -2, points...)
 	if !lineshidden {
 		canvas5.Lines(5, 0, points...)

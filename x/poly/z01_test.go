@@ -172,10 +172,10 @@ func (loop) React() {
 	if move.JustPressed(1) {
 		dragStart = misc.worldFromObject
 		current.dragDelta = coord.XY{0, 0}
-		input.Cursor.Hide()
+		input.Mouse.Hide()
 	}
 	if rotate.JustPressed(1) {
-		input.Cursor.Hide()
+		input.Mouse.Hide()
 	}
 
 	const s = 2.0
@@ -222,7 +222,7 @@ func (loop) React() {
 	}
 
 	if move.JustReleased(1) || rotate.JustReleased(1) {
-		input.Cursor.Show()
+		input.Mouse.Show()
 	}
 
 	if quit.JustPressed(1) {
@@ -272,7 +272,7 @@ func prepare() {
 	camera.Move(forward*dt, lateral*dt, vertical*dt)
 
 	// m := input.Cursor.Delta().XY()
-	m := rotation.Delta(0)
+	m := rotation.XY(0)
 
 	s := cozely.WindowSize().XY()
 	switch {

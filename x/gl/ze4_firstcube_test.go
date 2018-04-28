@@ -22,9 +22,10 @@ var (
 	rotate = input.Bool("Rotate")
 	move   = input.Bool("Move")
 	zoom   = input.Bool("Zoom")
+	delta  = input.Delta("Delta")
 )
 
-var context = input.Context("Default", quit, rotate, move, zoom)
+var context = input.Context("Default", quit, rotate, move, zoom, delta)
 
 var bindings = input.Bindings{
 	"Default": {
@@ -32,6 +33,7 @@ var bindings = input.Bindings{
 		"Rotate": {"Mouse Left"},
 		"Move":   {"Mouse Right"},
 		"Zoom":   {"Mouse Middle"},
+		"Delta":  {"Mouse"},
 	},
 }
 
@@ -123,14 +125,14 @@ func (loop04) Leave() {
 // Game Loop ///////////////////////////////////////////////////////////////////
 
 func (l *loop04) React() {
-	m := input.Cursor.Delta().XY()
-	s := input.Cursor.Position().XY()
+	m := delta.XY(0)
+	s := cozely.WindowSize().XY()
 
 	if rotate.JustPressed(1) || move.JustPressed(1) || zoom.JustPressed(1) {
-		input.Cursor.Hide()
+		input.Mouse.Hide()
 	}
 	if rotate.JustReleased(1) || move.JustReleased(1) || zoom.JustReleased(1) {
-		input.Cursor.Show()
+		input.Mouse.Show()
 	}
 
 	if rotate.Pressed(1) {
