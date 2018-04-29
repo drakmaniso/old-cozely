@@ -69,17 +69,3 @@ var PolyCleanup = func() error { return nil }
 
 // PolyErr hook
 var PolyErr = func() error { return nil }
-
-////////////////////////////////////////////////////////////////////////////////
-
-// VectorSetup hook
-var VectorSetup = func() error { return nil }
-
-// VectorDraw hook
-var VectorDraw = func() error { return nil }
-
-// VectorCleanup hook
-var VectorCleanup = func() error { return nil }
-
-// VectorErr hook
-var VectorErr = func() error { return nil }

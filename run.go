@@ -69,12 +69,7 @@ func Run(loop GameLoop) (err error) {
 		internal.Running = false
 		internal.QuitRequested = false
 
-		derr := internal.VectorCleanup()
-		if err == nil && derr != nil {
-			err = internal.Wrap("vector cleanup", derr)
-			return
-		}
-		derr = internal.PolyCleanup()
+		derr := internal.PolyCleanup()
 		if err == nil && derr != nil {
 			err = internal.Wrap("poly cleanup", derr)
 			return
@@ -139,10 +134,6 @@ func Run(loop GameLoop) (err error) {
 	if err != nil {
 		return internal.Wrap("poly setup", err)
 	}
-	err = internal.VectorSetup()
-	if err != nil {
-		return internal.Wrap("vector setup", err)
-	}
 
 	// First, send a fake resize window event
 	internal.PixelResize()
@@ -204,12 +195,6 @@ func Run(loop GameLoop) (err error) {
 		}
 		internal.GameTime = gametime + internal.UpdateLag //TODO: check if correct
 		internal.Loop.Render()
-
-		err = internal.VectorDraw()
-		//TODO:
-		if err != nil {
-			return internal.Wrap("vector draw", err)
-		}
 
 		internal.SwapWindow()
 

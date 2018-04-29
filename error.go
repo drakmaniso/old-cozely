@@ -30,8 +30,7 @@ func Error() bool {
 		internal.InputErr() != nil ||
 		internal.ColorErr() != nil ||
 		internal.PixelErr() != nil ||
-		internal.PolyErr() != nil ||
-		internal.VectorErr() != nil
+		internal.PolyErr() != nil
 }
 
 // Recover is a convenience function.  When called with defer at the start of
@@ -65,10 +64,6 @@ func Recover() {
 		err = internal.PolyErr()
 		if err != nil {
 			internal.Log.Printf("*** panic: POLY unchecked ERROR ***\n%s", err)
-		}
-		err = internal.VectorErr()
-		if err != nil {
-			internal.Log.Printf("*** panic: VECTOR unchecked ERROR ***\n%s", err)
 		}
 	}
 }
