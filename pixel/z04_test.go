@@ -47,6 +47,7 @@ func TestTest4(t *testing.T) {
 	do(func() {
 		defer cozely.Recover()
 
+		input.Load(bindings)
 		err := cozely.Run(loop4{})
 		if err != nil {
 			t.Error(err)
@@ -55,8 +56,6 @@ func TestTest4(t *testing.T) {
 }
 
 func (loop4) Enter() {
-	input.Load(bindings)
-
 	f, err := os.Open(cozely.Path() + "frankenstein.txt")
 	if err != nil {
 		panic(err)

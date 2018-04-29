@@ -10,6 +10,7 @@ import (
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/coord"
+	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
 )
 
@@ -50,6 +51,7 @@ func TestTest2(t *testing.T) {
 			cozely.UpdateStep(1 / 60.0),
 		)
 		cozely.Events.Resize = resize
+		input.Load(bindings)
 		err := cozely.Run(loop2{})
 		if err != nil {
 			t.Error(err)

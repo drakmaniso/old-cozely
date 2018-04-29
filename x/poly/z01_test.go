@@ -61,9 +61,8 @@ var bindings1 = input.Bindings{
 ////////////////////////////////////////////////////////////////////////////////
 
 var (
-	overlay  = pixel.Canvas(pixel.Zoom(2))
-	palette  = color.Palette()
-	txtColor = palette.Entry(color.SRGB8{0xFF, 0xFF, 0xFF})
+	overlay = pixel.Canvas(pixel.Zoom(2))
+	palette = color.Palette(color.SRGB8{0xFF, 0xFF, 0xFF})
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -120,6 +119,7 @@ func TestTest1(t *testing.T) {
 }
 
 func (loop) Enter() {
+	input.ShowMouse(false)
 	input.Load(bindings1)
 	context1.Activate(1)
 	palette.Activate()
@@ -171,63 +171,63 @@ func resize() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop) React() {
-	if move.Started(1) {
+	if move.Started(0) {
 		dragStart = misc.worldFromObject
 		current.dragDelta = coord.XY{0, 0}
 		input.GrabMouse(true)
 	}
-	if rotate.Started(1) {
+	if rotate.Started(0) {
 		input.GrabMouse(true)
 	}
 
 	const s = 2.0
 	switch {
-	case onward.Ongoing(1):
+	case onward.Ongoing(0):
 		forward = -s
-	case back.Ongoing(1):
+	case back.Ongoing(0):
 		forward = s
 	default:
 		forward = 0
 	}
 	switch {
-	case left.Ongoing(1):
+	case left.Ongoing(0):
 		lateral = -s
-	case right.Ongoing(1):
+	case right.Ongoing(0):
 		lateral = s
 	default:
 		lateral = 0
 	}
 	switch {
-	case up.Ongoing(1):
+	case up.Ongoing(0):
 		vertical = s
-	case down.Ongoing(1):
+	case down.Ongoing(0):
 		vertical = -s
 	default:
 		vertical = 0
 	}
 	switch {
-	case rollleft.Ongoing(1):
+	case rollleft.Ongoing(0):
 		rolling = -s
-	case rollright.Ongoing(1):
+	case rollright.Ongoing(0):
 		rolling = s
 	default:
 		rolling = 0
 	}
 
-	if resetview.Started(1) {
+	if resetview.Started(0) {
 		camera.SetFocus(coord.XYZ{0, 0, 0})
 		camera.SetDistance(4)
 		camera.SetOrientation(0, 0, 0)
 	}
-	if resetobj.Started(1) {
+	if resetobj.Started(0) {
 		misc.worldFromObject = space.Identity()
 	}
 
-	if move.Stopped(1) || rotate.Stopped(1) {
+	if move.Stopped(0) || rotate.Stopped(0) {
 		input.GrabMouse(false)
 	}
 
-	if quit.Started(1) {
+	if quit.Started(0) {
 		cozely.Stop(nil)
 	}
 }
@@ -265,7 +265,9 @@ func (loop) Render() {
 	if or > 0 {
 		overlay.Printf(" (%d)", or)
 	}
-	overlay.Picture(pixel.MouseCursor, 10, overlay.FromWindow(cursor.XY(0).CR()))
+	if cozely.HasMouseFocus() {
+		overlay.Picture(pixel.MouseCursor, 10, overlay.FromWindow(cursor.XY(0).CR()))
+	}
 	overlay.Display()
 }
 
@@ -274,7 +276,6 @@ func prepare() {
 
 	camera.Move(forward*dt, lateral*dt, vertical*dt)
 
-	// m := input.Cursor.Delta().XY()
 	m := rotation.XY(0)
 
 	s := cozely.WindowSize().XY()

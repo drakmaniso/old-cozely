@@ -10,11 +10,11 @@ import (
 
 ////////////////////////////////////////////////////////////////////////////////
 
-var mouse  struct {
-	hidden bool
-	delta  coord.CR
-	moved  bool
-	wheel  coord.CR
+var mouse struct {
+	grabbed bool
+	delta   coord.CR
+	moved   bool
+	wheel   coord.CR
 }
 
 // The cursor is unique action shared by several devices, it needs a special
@@ -50,11 +50,16 @@ func updateMouse() {
 // the game window, but the mouse movements (delta) are continuously reported,
 // without constraints.
 func GrabMouse(grab bool) {
-	mouse.hidden = grab
+	mouse.grabbed = grab
 	_ = internal.MouseSetRelative(grab)
 }
 
 // MouseGrabbed returns true if the relative mode is enabled.
 func MouseGrabbed() bool {
-	return mouse.hidden
+	return mouse.grabbed
+}
+
+// ShowMouse shows or hides the (system) mouse cursor.
+func ShowMouse(show bool) {
+	internal.MouseShow(show)
 }

@@ -8,6 +8,7 @@ import (
 
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/coord"
+	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
 )
 
@@ -32,6 +33,7 @@ func TestTest5(t *testing.T) {
 	do(func() {
 		defer cozely.Recover()
 
+		input.Load(bindings)
 		err := cozely.Run(loop5{})
 		if err != nil {
 			t.Error(err)
@@ -40,6 +42,7 @@ func TestTest5(t *testing.T) {
 }
 
 func (loop5) Enter() {
+	input.ShowMouse(false)
 	palette2.Activate()
 }
 

@@ -17,7 +17,7 @@ import (
 
 var (
 	canvas1  = pixel.Canvas(pixel.Zoom(2))
-	palette1 = color.Palette()
+	palette1 = color.Palette(color.LRGB{1, 1, 1})
 	col1     = palette1.Entry(color.LRGB{0.1, 0.2, 0.5})
 	col2     = palette1.Entry(color.LRGB{0.5, 0.1, 0.0})
 )
@@ -40,6 +40,7 @@ func TestTest1(t *testing.T) {
 	do(func() {
 		defer cozely.Recover()
 
+		input.Load(bindings)
 		err := cozely.Run(loop1{})
 		if err != nil {
 			t.Error(err)
@@ -48,7 +49,7 @@ func TestTest1(t *testing.T) {
 }
 
 func (loop1) Enter() {
-	input.Load(bindings)
+	input.ShowMouse(false)
 
 	points = make([]coord.XY, 64)
 	newPoints()
@@ -169,7 +170,9 @@ func (loop1) Render() {
 		canvas1.Lines(col1, -1, toScreen(points[e.Orig()]), toScreen(points[e.Dest()]))
 	})
 
-	canvas1.Picture(pixel.MouseCursor, 100, m)
+	if cozely.HasMouseFocus() {
+		canvas1.Picture(pixel.MouseCursor, 100, m)
+	}
 
 	canvas1.Display()
 }

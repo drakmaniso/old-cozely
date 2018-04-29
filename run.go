@@ -141,7 +141,6 @@ func Run(loop GameLoop) (err error) {
 
 	// Main Loop
 
-	internal.MouseShow(false)
 	internal.Running = true
 
 	internal.RenderDelta = 0.0

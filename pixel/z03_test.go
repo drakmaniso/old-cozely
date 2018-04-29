@@ -30,6 +30,7 @@ func TestTest3(t *testing.T) {
 	do(func() {
 		defer cozely.Recover()
 
+		input.Load(bindings)
 		err := cozely.Run(loop3{})
 		if err != nil {
 			t.Error(err)
@@ -38,7 +39,6 @@ func TestTest3(t *testing.T) {
 }
 
 func (loop3) Enter() {
-	input.Load(bindings)
 	palette3.Activate()
 	println(bg3, fg3)
 	canvas3.Cursor().Color = fg3 - 1

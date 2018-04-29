@@ -24,6 +24,7 @@ func TestTest6(t *testing.T) {
 	do(func() {
 		defer cozely.Recover()
 
+		input.Load(bindings)
 		err := cozely.Run(test6{})
 		if err != nil {
 			t.Error(err)
@@ -32,7 +33,7 @@ func TestTest6(t *testing.T) {
 }
 
 func (test6) Enter() {
-	input.Load(bindings)
+	input.ShowMouse(false)
 	palette2.Activate()
 }
 
