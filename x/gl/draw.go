@@ -25,6 +25,10 @@ static inline void DrawIndirect(GLenum m, GLsizeiptr f, GLsizei dc, GLsizei s) {
 	glMultiDrawArraysIndirect(m, (void*)(f*16), dc, s);
 }
 
+static inline void MemoryBarrier() {
+	glMemoryBarrier( GL_ALL_BARRIER_BITS);
+}
+
 */
 import "C"
 
@@ -74,7 +78,11 @@ type DrawIndirectCommand struct {
 // DrawIndirect asks the GPU to read the Indirect Buffer starting at firstdraw,
 // and make drawcount draw calls.
 func DrawIndirect(firstdraw uintptr, drawcount int32) {
-	C.DrawIndirect(currentPipeline.state.topology, C.GLsizeiptr(firstdraw), C.GLsizei(drawcount), C.GLsizei(0))
+	for i := int32(0); i < drawcount; i++ {
+		C.MemoryBarrier()
+		C.DrawIndirect(currentPipeline.state.topology, C.GLsizeiptr(firstdraw+uintptr(i)), C.GLsizei(1), C.GLsizei(0))
+	}
+	// C.DrawIndirect(currentPipeline.state.topology, C.GLsizeiptr(firstdraw), C.GLsizei(drawcount), C.GLsizei(0))
 }
 
 ////////////////////////////////////////////////////////////////////////////////

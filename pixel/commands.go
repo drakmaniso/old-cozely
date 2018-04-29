@@ -96,7 +96,7 @@ func (a CanvasID) command(c uint32, v uint32, n uint32, params ...int16) {
 
 	switch {
 
-	case l > 0 && c == (s.commands[l-1].BaseInstance>>24) &&
+	case false && l > 0 && c == (s.commands[l-1].BaseInstance>>24) &&
 		c != cmdLines && c != cmdTriangles:
 
 		if c != cmdText {

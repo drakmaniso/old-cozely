@@ -131,15 +131,18 @@ func (a CanvasID) createTextures() {
 	aa := &canvases[a]
 
 	aa.texture.Delete()
-	aa.texture = gl.NewTexture2D(1, gl.R8UI, int32(aa.size.C), int32(aa.size.R))
-	aa.buffer.Texture(gl.ColorAttachment0, aa.texture, 0)
+	aa.texture = gl.NewTexture2D(1, gl.R32UI, int32(aa.size.C), int32(aa.size.R))
+	// aa.buffer.Texture(gl.ColorAttachment0, aa.texture, 0)
 
-	aa.depth.Delete()
-	aa.depth = gl.NewRenderbuffer(gl.Depth32F, int32(aa.size.C), int32(aa.size.R))
-	aa.buffer.Renderbuffer(gl.DepthAttachment, aa.depth)
+	// aa.depth.Delete()
+	// aa.depth = gl.NewRenderbuffer(gl.Depth32F, int32(aa.size.C), int32(aa.size.R))
+	// aa.buffer.Renderbuffer(gl.DepthAttachment, aa.depth)
 
-	aa.buffer.DrawBuffer(gl.ColorAttachment0)
+	// aa.buffer.DrawBuffer(gl.ColorAttachment0)
+	aa.buffer.DrawBuffer(gl.NoAttachment)
 	aa.buffer.ReadBuffer(gl.NoAttachment)
+
+	aa.buffer.SetEmptySize(aa.size.C, aa.size.R)
 
 	st := aa.buffer.CheckStatus(gl.DrawReadFramebuffer)
 	if st != gl.FramebufferComplete {
@@ -179,6 +182,7 @@ func (a CanvasID) paint() {
 	glyphMapTBO.Bind(layoutGlyphMap)
 	picturesTA.Bind(layoutPictures)
 	glyphsTA.Bind(layoutGlyphs)
+	aa.texture.BindImage(7, 0, gl.ReadWrite, gl.R32UI)
 
 	aa.commandsICBO.SubData(aa.commands, 0)
 	aa.parametersTBO.SubData(aa.parameters, 0)
@@ -222,8 +226,9 @@ func (a CanvasID) Display() {
 func (a CanvasID) Clear(color color.Index) {
 	aa := &canvases[a]
 	pipeline.Bind() //TODO: find another way to enable depthWrite
-	aa.buffer.ClearColorUint(uint32(color), 0, 0, 0)
-	aa.buffer.ClearDepth(-1.0)
+	// aa.buffer.ClearColorUint(uint32(color), 0, 0, 0)
+	aa.texture.ClearByte(0, uint8(color))
+	// aa.buffer.ClearDepth(-1.0)
 }
 
 // ClearDepth resets depth information, used to implement layers. Call this
