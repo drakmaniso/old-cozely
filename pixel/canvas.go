@@ -18,6 +18,7 @@ import (
 type canvas struct {
 	buffer        gl.Framebuffer
 	texture       gl.Texture2D
+	filter        gl.Texture2D
 	depth         gl.Renderbuffer
 	commandsICBO  gl.IndirectBuffer
 	parametersTBO gl.BufferTexture
@@ -131,14 +132,19 @@ func (a CanvasID) createTextures() {
 	aa := &canvases[a]
 
 	aa.texture.Delete()
-	aa.texture = gl.NewTexture2D(1, gl.R8UI, int32(aa.size.C), int32(aa.size.R))
+	aa.texture = gl.NewTexture2D(1, gl.R8, int32(aa.size.C), int32(aa.size.R))
 	aa.buffer.Texture(gl.ColorAttachment0, aa.texture, 0)
+
+	aa.filter.Delete()
+	aa.filter = gl.NewTexture2D(1, gl.R8, int32(aa.size.C), int32(aa.size.R))
+	aa.buffer.Texture(gl.ColorAttachment1, aa.filter, 0)
 
 	aa.depth.Delete()
 	aa.depth = gl.NewRenderbuffer(gl.Depth32F, int32(aa.size.C), int32(aa.size.R))
 	aa.buffer.Renderbuffer(gl.DepthAttachment, aa.depth)
 
-	aa.buffer.DrawBuffer(gl.ColorAttachment0)
+	// aa.buffer.DrawBuffer(gl.ColorAttachment0)
+	aa.buffer.DrawBuffers([]gl.FramebufferAttachment{gl.ColorAttachment0, gl.ColorAttachment1})
 	aa.buffer.ReadBuffer(gl.NoAttachment)
 
 	st := aa.buffer.CheckStatus(gl.DrawReadFramebuffer)
@@ -170,7 +176,8 @@ func (a CanvasID) paint() {
 	aa.buffer.Bind(gl.DrawFramebuffer)
 	gl.Viewport(0, 0, int32(aa.size.C), int32(aa.size.R))
 	pipeline.Bind()
-	gl.Disable(gl.Blend)
+	gl.Enable(gl.Blend)
+	gl.Blending(gl.SrcAlpha, gl.OneMinusSrcAlpha)
 
 	screenUBO.Bind(layoutScreen)
 	aa.commandsICBO.Bind()
@@ -212,6 +219,7 @@ func (a CanvasID) Display() {
 		int32(aa.border.C+sz.C), int32(aa.border.R+sz.R))
 	blitUBO.Bind(0)
 	aa.texture.Bind(0)
+	aa.filter.Bind(1)
 	gl.Draw(0, 4)
 }
 

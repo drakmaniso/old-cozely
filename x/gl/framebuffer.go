@@ -43,6 +43,10 @@ static inline void FramebufferDrawBuffer(GLuint fbo, GLenum a) {
 	glNamedFramebufferDrawBuffer(fbo, a);
 }
 
+static inline void FramebufferDrawBuffers(GLuint fbo, GLsizei n, GLenum *a) {
+	glNamedFramebufferDrawBuffers(fbo, n, a);
+}
+
 static inline GLenum FramebufferCheckStatus(GLuint fbo, GLenum t) {
 	return glCheckNamedFramebufferStatus(fbo, t);
 }
@@ -125,6 +129,10 @@ func (fb Framebuffer) ReadBuffer(a FramebufferAttachment) {
 
 func (fb Framebuffer) DrawBuffer(a FramebufferAttachment) {
 	C.FramebufferDrawBuffer(fb.object, C.GLenum(a))
+}
+
+func (fb Framebuffer) DrawBuffers(a []FramebufferAttachment) {
+	C.FramebufferDrawBuffers(fb.object, C.GLsizei(len(a)), (*C.GLenum)(&a[0]))
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -35,7 +35,8 @@ layout(binding = 6) uniform usampler2DArray Glyphs;
 
 ////////////////////////////////////////////////////////////////////////////////
 
-out uint out_color;
+layout(location = 0) out vec4 out_color;
+layout(location = 1) out vec4 out_filter;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -108,7 +109,13 @@ void main(void)
 		discard;
 	}
 
-	out_color = c;
+	if (c != 5) {
+		out_color = vec4(float(c)/255.0, 0, 0, 1);
+		out_filter = vec4(0, 0, 0, 1);
+	} else {
+		out_color = vec4(float(c)/255.0, 0, 0, 0);
+		out_filter = vec4(1, 0, 0, 1);
+	}
 }
 `
 
