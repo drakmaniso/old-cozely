@@ -8,31 +8,8 @@ import (
 
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/coord"
-	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
 )
-
-////////////////////////////////////////////////////////////////////////////////
-
-var (
-	newPoint   = input.Digital("NewPoint")
-	hidePoints = input.Digital("HidePoints")
-	hideLines  = input.Digital("HideLines")
-)
-
-var context5 = input.Context("TestCommands", cursor,
-	quit, newPoint, previous, hidePoints, hideLines)
-
-var bindings5 = input.Bindings{
-	"TestCommands": {
-		"Quit":       {"Escape"},
-		"NewPoint":   {"Mouse Left"},
-		"Previous":   {"Mouse Right", "U"},
-		"HidePoints": {"P"},
-		"HideLines":  {"L"},
-		"Cursor":     {"Mouse"},
-	},
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -63,8 +40,6 @@ func TestTest5(t *testing.T) {
 }
 
 func (loop5) Enter() {
-	input.Load(bindings5)
-	context5.Activate(0)
 	palette2.Activate()
 }
 
@@ -78,7 +53,7 @@ func (loop5) React() {
 		cozely.Stop(nil)
 	}
 
-	if newPoint.Started(0) {
+	if next.Started(0) {
 		m := canvas5.FromWindow(cursor.XY(0).CR())
 		points = append(points, m)
 	}
@@ -89,8 +64,8 @@ func (loop5) React() {
 		}
 	}
 
-	pointshidden = hidePoints.Ongoing(0)
-	lineshidden = hideLines.Ongoing(0)
+	pointshidden = scene1.Ongoing(0)
+	lineshidden = scene2.Ongoing(0)
 }
 
 func (loop5) Update() {

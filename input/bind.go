@@ -69,6 +69,6 @@ func load() {
 				bnd.bind(ctx, act)
 			}
 		}
-		internal.Debug.Printf(lcn + ")")
 	}
+	internal.Debug.Printf(lcn + ")")
 }

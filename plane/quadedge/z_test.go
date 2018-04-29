@@ -28,12 +28,8 @@ var (
 	scene9   = input.Digital("Scene9")
 	scene10  = input.Digital("Scene10")
 )
-
-var context = input.Context("Test", quit, cursor, next, previous,
-	scene1, scene2, scene3, scene4, scene5, scene6, scene7, scene8, scene9)
-
 var bindings = input.Bindings{
-	"Test": {
+	"Default": {
 		"Quit":     {"Escape"},
 		"Cursor":   {"Mouse"},
 		"Next":     {"Mouse Left", "Space"},

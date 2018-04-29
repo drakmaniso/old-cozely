@@ -56,7 +56,6 @@ func TestTest4(t *testing.T) {
 
 func (loop4) Enter() {
 	input.Load(bindings)
-	context.Activate(0)
 
 	f, err := os.Open(cozely.Path() + "frankenstein.txt")
 	if err != nil {

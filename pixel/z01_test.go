@@ -52,7 +52,6 @@ func TestTest1(t *testing.T) {
 
 func (loop1) Enter() {
 	input.Load(bindings)
-	context.Activate(1)
 
 	mode = 0
 

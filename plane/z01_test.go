@@ -58,7 +58,6 @@ func TestTest1(t *testing.T) {
 
 func (loop1) Enter() {
 	input.Load(bindings)
-	context.Activate(0)
 
 	points = make([]coord.XY, 3)
 	newPoints()

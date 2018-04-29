@@ -19,10 +19,8 @@ var (
 	cursor   = input.Cursor("Cursor")
 )
 
-var context = input.Context("Test", quit, next, previous, cursor)
-
 var bindings = input.Bindings{
-	"Test": {
+	"Default": {
 		"Quit":     {"Escape"},
 		"Next":     {"Mouse Left", "Space"},
 		"Previous": {"Mouse Right", "U"},

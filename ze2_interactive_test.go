@@ -12,23 +12,22 @@ import (
 // Declarations ////////////////////////////////////////////////////////////////
 
 var (
-	quit    = input.Digital("Quit")
-	start   = input.Digital("Start")
-	context = input.Context("Default", start, quit)
+	quit  = input.Digital("Quit")
+	start = input.Digital("Start")
 )
 
 var bindings = input.Bindings{
 	"Default": {
-		"Start": {"Space", "Mouse Left"},
-		"Quit":  {"Escape"},
+		"Start": {"Space", "Mouse Left", "Button A"},
+		"Quit":  {"Escape", "Button Back"},
 	},
 }
 
 var (
-	canv = pixel.Canvas(pixel.Resolution(160, 100))
-	logo = pixel.Picture("graphics/cozely")
-	pal1 = color.PaletteFrom("graphics/cozely")
-	pal2 = color.Palette()
+	canv       = pixel.Canvas(pixel.Resolution(160, 100))
+	logo       = pixel.Picture("graphics/cozely")
+	monochrome = color.PaletteFrom("graphics/cozely")
+	colorful   = color.Palette()
 )
 
 var started = false
@@ -52,8 +51,7 @@ func Example_interactive() {
 }
 
 func (loop2) Enter() {
-	context.Activate(1)
-	pal1.Activate()
+	monochrome.Activate()
 	shufflecolors()
 }
 
@@ -63,10 +61,10 @@ func (loop2) Leave() {
 // Game Loop ///////////////////////////////////////////////////////////////////
 
 func (loop2) React() {
-	if start.Started(1) {
+	if start.Started(input.Any) {
 		started = !started
 	}
-	if quit.Started(1) {
+	if quit.Started(input.Any) {
 		cozely.Stop(nil)
 	}
 }
@@ -84,13 +82,13 @@ func shufflecolors() {
 	}
 	reverse = !reverse
 	for i := 2; i < 14; i++ {
-		r := .2 + .8*rand.Float32()
-		g := .2 + .8*rand.Float32()
-		b := .2 + .8*rand.Float32()
+		g := 0.2 + 0.8*rand.Float32()
+		r := 0.2 + 0.8*rand.Float32()
+		b := 0.2 + 0.8*rand.Float32()
 		if dark[i-2] != reverse {
-			pal2.Set(uint8(i), color.SRGB{r, g, b})
+			colorful.Set(uint8(i), color.SRGB{r, g, b})
 		} else {
-			pal2.Set(uint8(i), color.LRGB{r, g, b})
+			colorful.Set(uint8(i), color.LRGB{r, g, b})
 		}
 	}
 }
@@ -99,9 +97,9 @@ func (loop2) Render() {
 	canv.Clear(0)
 
 	if started {
-		pal2.Activate()
+		colorful.Activate()
 	} else {
-		pal1.Activate()
+		monochrome.Activate()
 	}
 
 	o := canv.Size().Minus(logo.Size()).Slash(2)

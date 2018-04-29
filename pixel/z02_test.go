@@ -10,22 +10,14 @@ import (
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/coord"
-	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
 
 var (
-	context2 = input.Context("TestCanvas", quit)
 	palette2 = color.PaletteFrom("graphics/shape1")
 )
-
-var bindings2 = input.Bindings{
-	"TestCanvas": {
-		"Quit": {"Escape"},
-	},
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -66,8 +58,6 @@ func TestTest2(t *testing.T) {
 }
 
 func (loop2) Enter() {
-	input.Load(bindings2)
-	context2.Activate(0)
 	palette2.Activate()
 }
 

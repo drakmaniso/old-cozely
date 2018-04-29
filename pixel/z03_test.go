@@ -39,7 +39,6 @@ func TestTest3(t *testing.T) {
 
 func (loop3) Enter() {
 	input.Load(bindings)
-	context.Activate(0)
 	palette3.Activate()
 	println(bg3, fg3)
 	canvas3.Cursor().Color = fg3 - 1
