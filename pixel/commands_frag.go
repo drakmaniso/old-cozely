@@ -33,8 +33,6 @@ layout(origin_upper_left, pixel_center_integer) in vec4 gl_FragCoord;
 layout(binding = 4) uniform usampler2DArray Pictures;
 layout(binding = 6) uniform usampler2DArray Glyphs;
 
-layout(binding = 7, r32ui) uniform restrict uimage2D canvas;
-
 ////////////////////////////////////////////////////////////////////////////////
 
 out uint out_color;
@@ -110,11 +108,7 @@ void main(void)
 		discard;
 	}
 
-	// out_color = c;
-	// memoryBarrier();
-	imageStore(canvas, ivec2(gl_FragCoord.xy), ivec4(c,0,0,0));
-	// imageAtomicExchange(canvas, ivec2(gl_FragCoord.xy), c);
-	// memoryBarrier();
+	out_color = c;
 }
 `
 

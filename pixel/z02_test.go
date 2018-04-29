@@ -40,7 +40,7 @@ type shape struct {
 
 type loop2 struct{}
 
-var shapes = make([]shape, 2200)
+var shapes = make([]shape, 350000)
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -72,7 +72,7 @@ func resize() {
 	s := canvas2.Size()
 	for i := range shapes {
 		j := rand.Intn(len(shapePictures))
-		shapes[i].depth = int16(j)
+		shapes[i].depth = int16(i)
 		p := shapePictures[j]
 		shapes[i].pict = p
 		shapes[i].pos.C = int16(rand.Intn(int(s.C - p.Size().C)))
