@@ -17,6 +17,18 @@ import "C"
 
 ////////////////////////////////////////////////////////////////////////////////
 
+// A Access specifies...
+type Access C.GLenum
+
+// Used in ...
+const (
+	ReadOnly  Access = C.GL_READ_ONLY
+	WriteOnly Access = C.GL_WRITE_ONLY
+	ReadWrite Access = C.GL_READ_WRITE
+)
+
+////////////////////////////////////////////////////////////////////////////////
+
 // A TextureFormat specifies the format used to store textures in memory.
 type TextureFormat C.GLenum
 

@@ -5,6 +5,7 @@ package gl
 
 import (
 	"image"
+	"unsafe"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -39,6 +40,14 @@ static inline void TextureGenerateMipmap(GLuint texture) {
 
 static inline void BindTextureUnit(GLuint unit, GLuint texture) {
 	glBindTextureUnit(unit, texture);
+}
+
+static inline void BindImageUnit(GLuint unit, GLuint texture, GLint level, GLboolean layered, GLint layer, GLenum access, GLenum format) {
+	glBindImageTexture(unit, texture, level, layered, layer, access, format);
+}
+
+static inline void ClearTextureImage(GLuint texture, GLint level, GLenum format, GLenum type, const void *data) {
+	glClearTexImage(texture, level, format, type, data);
 }
 
 static inline void DeleteTexture(GLuint texture) {
@@ -80,6 +89,17 @@ func (t *Texture2D) GenerateMipmap() {
 // Bind to a texture unit.
 func (t *Texture2D) Bind(index uint32) {
 	C.BindTextureUnit(C.GLuint(index), t.object)
+}
+
+// BindImage to an image unit.
+func (t *Texture2D) BindImage(index uint32, level int32, a Access, f TextureFormat) {
+	C.BindImageUnit(C.GLuint(index), t.object, C.GLint(level), C.GL_FALSE, C.GLint(0), C.GLenum(a), C.GLenum(f))
+}
+
+func (t *Texture2D) ClearByte(level int32, r uint8) {
+	var c struct{ R uint8 }
+	c.R = r
+	C.ClearTextureImage(t.object, C.GLint(level), C.GL_RED_INTEGER, C.GL_UNSIGNED_BYTE, unsafe.Pointer(&c))
 }
 
 // Delete frees the texture

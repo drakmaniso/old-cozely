@@ -19,6 +19,14 @@ static inline GLuint NewFramebuffer() {
 	return fbo;
 }
 
+static inline void FramebufferSetEmptySize(GLuint fbo, GLint width, GLint height) {
+	glNamedFramebufferParameteri(fbo, GL_FRAMEBUFFER_DEFAULT_WIDTH, width);
+	glNamedFramebufferParameteri(fbo, GL_FRAMEBUFFER_DEFAULT_HEIGHT, height);
+	glNamedFramebufferParameteri(fbo, GL_FRAMEBUFFER_DEFAULT_LAYERS, 0);
+	glNamedFramebufferParameteri(fbo, GL_FRAMEBUFFER_DEFAULT_SAMPLES, 0);
+	glNamedFramebufferParameteri(fbo, GL_FRAMEBUFFER_DEFAULT_FIXED_SAMPLE_LOCATIONS, 0);
+}
+
 static inline void FramebufferTexture(GLuint fbo, GLenum a, GLuint t, GLint l) {
 	glNamedFramebufferTexture(fbo, a, t, l);
 }
@@ -80,6 +88,10 @@ func NewFramebuffer() Framebuffer {
 	var f Framebuffer
 	f.object = C.NewFramebuffer()
 	return f
+}
+
+func (fb Framebuffer) SetEmptySize(w, h int16) {
+	C.FramebufferSetEmptySize(fb.object, C.GLint(w), C.GLint(h))
 }
 
 ////////////////////////////////////////////////////////////////////////////////
