@@ -52,21 +52,21 @@ func ProcessEvents(win struct {
 	for more && !QuitRequested {
 		n := peepEvents()
 
-		var mx, my C.int
-		C.SDL_GetRelativeMouseState(&mx, &my)
-		MouseDeltaX += int16(mx)
-		MouseDeltaY += int16(my)
-		btn := C.SDL_GetMouseState(&mx, &my)
-		MousePositionX = int16(mx)
-		MousePositionY = int16(my)
-		MouseButtons = uint32(btn)
-
 		for i := 0; i < n && !QuitRequested; i++ {
 			e := eventAt(i)
 			dispatch(e, win)
 		}
 		more = n >= C.PEEP_SIZE
 	}
+
+	var mx, my C.int
+	C.SDL_GetRelativeMouseState(&mx, &my)
+	MouseDeltaX += int16(mx)
+	MouseDeltaY += int16(my)
+	btn := C.SDL_GetMouseState(&mx, &my)
+	MousePositionX = int16(mx)
+	MousePositionY = int16(my)
+	MouseButtons = uint32(btn)
 }
 
 func dispatch(e unsafe.Pointer, win struct {
@@ -109,10 +109,10 @@ func dispatch(e unsafe.Pointer, win struct {
 			//TODO: check that Show is enough
 		case C.SDL_WINDOWEVENT_ENTER:
 			HasMouseFocus = true
-			C.SDL_ShowCursor(C.SDL_DISABLE)
+			// C.SDL_ShowCursor(C.SDL_DISABLE)
 		case C.SDL_WINDOWEVENT_LEAVE:
 			HasMouseFocus = false
-			C.SDL_ShowCursor(C.SDL_ENABLE)
+			// C.SDL_ShowCursor(C.SDL_ENABLE)
 		case C.SDL_WINDOWEVENT_FOCUS_GAINED:
 			HasFocus = true
 			win.Focus()

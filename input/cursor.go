@@ -85,7 +85,7 @@ func (a CursorID) newframe(d DeviceID) {
 }
 
 func (a CursorID) update(d DeviceID) {
-	if d == kbmouse && Mouse.moved {
+	if d == kbmouse && mouse.moved {
 		v := coord.CR{internal.MousePositionX, internal.MousePositionY}.XY()
 		devices.cursors[d][a].value = v
 		devices.cursors[0][a].value = v //TODO
@@ -96,9 +96,9 @@ func (a CursorID) update(d DeviceID) {
 		v = v.Plus(b.asDelta())
 	}
 	if v.X != 0 || v.Y != 0 {
-		Mouse.moved = false
+		mouse.moved = false
 	}
-	if !Mouse.moved {
+	if !mouse.moved {
 		s := coord.XY{float32(internal.Window.Width), float32(internal.Window.Height)}
 		v = v.Times(s.Y / 128)
 
@@ -106,24 +106,24 @@ func (a CursorID) update(d DeviceID) {
 		if devices.cursors[d][a].value.X < 0 {
 			devices.cursors[d][a].value.X = 0
 		} else if devices.cursors[d][a].value.X > s.X-1 {
-			devices.cursors[d][a].value.X = s.X-1
+			devices.cursors[d][a].value.X = s.X - 1
 		}
 		if devices.cursors[d][a].value.Y < 0 {
 			devices.cursors[d][a].value.Y = 0
 		} else if devices.cursors[d][a].value.Y > s.Y-1 {
-			devices.cursors[d][a].value.Y = s.Y-1
+			devices.cursors[d][a].value.Y = s.Y - 1
 		}
 
 		devices.cursors[0][a].value = devices.cursors[0][a].value.Plus(v)
 		if devices.cursors[0][a].value.X < 0 {
 			devices.cursors[0][a].value.X = 0
 		} else if devices.cursors[0][a].value.X >= s.X-1 {
-			devices.cursors[0][a].value.X = s.X-1
+			devices.cursors[0][a].value.X = s.X - 1
 		}
 		if devices.cursors[0][a].value.Y < 0 {
 			devices.cursors[0][a].value.Y = 0
 		} else if devices.cursors[0][a].value.Y >= s.Y-1 {
-			devices.cursors[0][a].value.Y = s.Y-1
+			devices.cursors[0][a].value.Y = s.Y - 1
 		}
 	}
 }

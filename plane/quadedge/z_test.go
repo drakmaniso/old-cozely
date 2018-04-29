@@ -13,27 +13,29 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 
 var (
-	quit     = input.Bool("Quit")
-	next     = input.Bool("Next")
-	previous = input.Bool("Previous")
-	scene1   = input.Bool("Scene1")
-	scene2   = input.Bool("Scene2")
-	scene3   = input.Bool("Scene3")
-	scene4   = input.Bool("Scene4")
-	scene5   = input.Bool("Scene5")
-	scene6   = input.Bool("Scene6")
-	scene7   = input.Bool("Scene7")
-	scene8   = input.Bool("Scene8")
-	scene9   = input.Bool("Scene9")
-	scene10  = input.Bool("Scene10")
+	quit     = input.Digital("Quit")
+	cursor   = input.Cursor("Cursor")
+	next     = input.Digital("Next")
+	previous = input.Digital("Previous")
+	scene1   = input.Digital("Scene1")
+	scene2   = input.Digital("Scene2")
+	scene3   = input.Digital("Scene3")
+	scene4   = input.Digital("Scene4")
+	scene5   = input.Digital("Scene5")
+	scene6   = input.Digital("Scene6")
+	scene7   = input.Digital("Scene7")
+	scene8   = input.Digital("Scene8")
+	scene9   = input.Digital("Scene9")
+	scene10  = input.Digital("Scene10")
 )
 
-var context = input.Context("Test", quit, next, previous,
+var context = input.Context("Test", quit, cursor, next, previous,
 	scene1, scene2, scene3, scene4, scene5, scene6, scene7, scene8, scene9)
 
 var bindings = input.Bindings{
 	"Test": {
 		"Quit":     {"Escape"},
+		"Cursor":   {"Mouse"},
 		"Next":     {"Mouse Left", "Space"},
 		"Previous": {"Mouse Right", "U"},
 		"Scene1":   {"1"},

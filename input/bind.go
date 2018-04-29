@@ -20,9 +20,9 @@ var bindings = Bindings{}
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// Bind associates each context/action combination found in the bindings map to
+// Load associates each context/action combination found in the bindings map to
 // the requested bindings.
-func Bind(b Bindings) {
+func Load(b Bindings) {
 	bindings = b
 	if internal.Running {
 		load()

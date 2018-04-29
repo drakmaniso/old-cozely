@@ -15,9 +15,9 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 
 var (
-	newPoint   = input.Bool("NewPoint")
-	hidePoints = input.Bool("HidePoints")
-	hideLines  = input.Bool("HideLines")
+	newPoint   = input.Digital("NewPoint")
+	hidePoints = input.Digital("HidePoints")
+	hideLines  = input.Digital("HideLines")
 )
 
 var context5 = input.Context("TestCommands", cursor,
@@ -63,8 +63,8 @@ func TestTest5(t *testing.T) {
 }
 
 func (loop5) Enter() {
-	input.Bind(bindings5)
-	context5.Activate(1)
+	input.Load(bindings5)
+	context5.Activate(0)
 	palette2.Activate()
 }
 
@@ -74,23 +74,23 @@ func (loop5) Leave() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop5) React() {
-	if quit.JustPressed(1) {
+	if quit.Started(0) {
 		cozely.Stop(nil)
 	}
 
-	if newPoint.JustPressed(1) {
+	if newPoint.Started(0) {
 		m := canvas5.FromWindow(cursor.XY(0).CR())
 		points = append(points, m)
 	}
 
-	if previous.JustPressed(1) {
+	if previous.Started(0) {
 		if len(points) > 0 {
 			points = points[:len(points)-1]
 		}
 	}
 
-	pointshidden = hidePoints.Pressed(1)
-	lineshidden = hideLines.Pressed(1)
+	pointshidden = hidePoints.Ongoing(0)
+	lineshidden = hideLines.Ongoing(0)
 }
 
 func (loop5) Update() {

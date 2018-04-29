@@ -6,7 +6,7 @@ package input
 import (
 	"errors"
 
-	coordi "github.com/cozely/cozely/coord"
+	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/internal"
 )
 
@@ -27,8 +27,8 @@ var deltas struct {
 
 type delta struct {
 	active   bool
-	value    coordi.XY
-	previous coordi.XY
+	value    coord.XY
+	previous coord.XY
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -63,7 +63,7 @@ func Delta(name string) DeltaID {
 
 // Name of the action.
 func (a DeltaID) Name() string {
-	return coords.name[a]
+	return analogs.name[a]
 }
 
 // Active returns true if the action is currently active on a specific device
@@ -75,7 +75,7 @@ func (a DeltaID) Active(d DeviceID) bool {
 // XY returns the current status of the action on a specific device. The
 // coordinates correspond to the change in position since the last frame; the
 // values of X and Y are normalized between -1 and 1.
-func (a DeltaID) XY(d DeviceID) coordi.XY {
+func (a DeltaID) XY(d DeviceID) coord.XY {
 	return devices.deltas[d][a].value
 }
 
@@ -88,11 +88,11 @@ func (a DeltaID) activate(d DeviceID, b source) {
 
 func (a DeltaID) newframe(d DeviceID) {
 	devices.deltas[d][a].previous = devices.deltas[d][a].value
-	devices.deltas[d][a].value = coordi.XY{}
+	devices.deltas[d][a].value = coord.XY{}
 }
 
 func (a DeltaID) update(d DeviceID) {
-	v := coordi.XY{}
+	v := coord.XY{}
 	for _, b := range devices.deltabinds[d][a] {
 		v = b.asDelta()
 		devices.deltas[d][a].value = devices.deltas[d][a].value.Plus(v)

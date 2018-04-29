@@ -19,16 +19,16 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 
 var (
-	quit                   = input.Bool("Quit")
-	InventoryAction        = input.Bool("Inventory")
-	OptionsAction          = input.Bool("Options")
-	CloseMenuAction        = input.Bool("Close Menu")
-	InstantCloseMenuAction = input.Bool("Instant Close Menu")
-	JumpAction             = input.Bool("Jump")
-	OpenMenuAction         = input.Bool("Open Menu")
-	InstantOpenMenuAction  = input.Bool("Instant Open Menu")
+	quit                   = input.Digital("Quit")
+	InventoryAction        = input.Digital("Inventory")
+	OptionsAction          = input.Digital("Options")
+	CloseMenuAction        = input.Digital("Close Menu")
+	InstantCloseMenuAction = input.Digital("Instant Close Menu")
+	JumpAction             = input.Digital("Jump")
+	OpenMenuAction         = input.Digital("Open Menu")
+	InstantOpenMenuAction  = input.Digital("Instant Open Menu")
 	trigger                = input.Unipolar("Trigger")
-	position               = input.Coord("Position")
+	position               = input.Analog("Position")
 	cursor                 = input.Cursor("Cursor")
 	delta                  = input.Delta("Delta")
 )
@@ -87,7 +87,7 @@ var positionval, cursorval, deltaval coord.XY
 func TestTest1(t *testing.T) {
 	defer cozely.Recover()
 
-	input.Bind(Bindings)
+	input.Load(Bindings)
 	err := cozely.Run(loop1{})
 	if err != nil {
 		panic(err)
@@ -111,45 +111,45 @@ func (loop1) Leave() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop1) React() {
-	if JumpAction.JustPressed(0) {
+	if JumpAction.Started(0) {
 		println(" Just Pressed: *JUMP*")
 	}
-	if JumpAction.JustReleased(0) {
+	if JumpAction.Stopped(0) {
 		println("Just Released: (jump)")
 	}
 
-	if CloseMenuAction.JustReleased(0) {
+	if CloseMenuAction.Stopped(0) {
 		InGame.Activate(0)
 		input.GrabMouse(true)
 	}
-	if OpenMenuAction.JustReleased(0) {
+	if OpenMenuAction.Stopped(0) {
 		InMenu.Activate(0)
 		input.GrabMouse(false)
 	}
 
-	if InstantCloseMenuAction.JustPressed(0) {
+	if InstantCloseMenuAction.Started(0) {
 		InGame.Activate(0)
 		input.GrabMouse(true)
 	}
-	if InstantOpenMenuAction.JustPressed(0) {
+	if InstantOpenMenuAction.Started(0) {
 		InMenu.Activate(0)
 		input.GrabMouse(false)
 	}
 
-	openmenu = OpenMenuAction.Pressed(0)
-	closemenu = CloseMenuAction.Pressed(0)
-	instopenmenu = InstantOpenMenuAction.Pressed(0)
-	instclosemenu = InstantCloseMenuAction.Pressed(0)
-	inventory = InventoryAction.Pressed(0)
-	options = OptionsAction.Pressed(0)
-	jump = JumpAction.Pressed(0)
+	openmenu = OpenMenuAction.Ongoing(0)
+	closemenu = CloseMenuAction.Ongoing(0)
+	instopenmenu = InstantOpenMenuAction.Ongoing(0)
+	instclosemenu = InstantCloseMenuAction.Ongoing(0)
+	inventory = InventoryAction.Ongoing(0)
+	options = OptionsAction.Ongoing(0)
+	jump = JumpAction.Ongoing(0)
 
 	triggerval = trigger.Value(0)
-	positionval = position.Coord(0)
+	positionval = position.XY(0)
 	cursorval = cursor.XY(0)
 	deltaval = delta.XY(0)
 
-	if quit.JustPressed(0) {
+	if quit.Started(0) {
 		cozely.Stop(nil)
 	}
 }

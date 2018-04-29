@@ -150,6 +150,7 @@ func Run(loop GameLoop) (err error) {
 
 	// Main Loop
 
+	internal.MouseShow(false)
 	internal.Running = true
 
 	internal.RenderDelta = 0.0
@@ -196,6 +197,7 @@ func Run(loop GameLoop) (err error) {
 
 		// Render
 
+		//TODO: render before react and update?
 		err = internal.GLPrerender()
 		if err != nil {
 			return err

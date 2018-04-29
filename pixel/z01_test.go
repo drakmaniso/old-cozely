@@ -51,7 +51,7 @@ func TestTest1(t *testing.T) {
 }
 
 func (loop1) Enter() {
-	input.Bind(bindings)
+	input.Load(bindings)
 	context.Activate(1)
 
 	mode = 0
@@ -65,11 +65,11 @@ func (loop1) Leave() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop1) React() {
-	if quit.JustPressed(1) {
+	if quit.Started(0) {
 		cozely.Stop(nil)
 	}
 
-	if next.JustPressed(1) {
+	if next.Started(0) {
 		mode++
 		if mode > 1 {
 			mode = 0
@@ -82,16 +82,16 @@ func (loop1) React() {
 		}
 	}
 
-	if scene1.JustPressed(1) {
+	if scene1.Started(0) {
 		c64.Palette.Activate()
 	}
-	if scene2.JustPressed(1) {
+	if scene2.Started(0) {
 		cpc.Palette.Activate()
 	}
-	if scene3.JustPressed(1) {
+	if scene3.Started(0) {
 		msx.Palette.Activate()
 	}
-	if scene4.JustPressed(1) {
+	if scene4.Started(0) {
 		msx2.Palette.Activate()
 	}
 }

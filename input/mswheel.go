@@ -41,19 +41,19 @@ func (a *msWheel) asBool() (just bool, value bool) {
 	var j, v bool
 	switch a.direction {
 	case mouseScrollUp:
-		v = Mouse.wheel.R > 0 && Mouse.wheel.R%2 == 0
+		v = mouse.wheel.R > 0 && mouse.wheel.R%2 == 0
 		j = (v != a.up)
 		a.up = v
 	case mouseScrollDown:
-		v = Mouse.wheel.R < 0 && Mouse.wheel.R%2 == 0
+		v = mouse.wheel.R < 0 && mouse.wheel.R%2 == 0
 		j = (v != a.down)
 		a.down = v
 	case mouseScrollLeft:
-		v = Mouse.wheel.C < 0 && Mouse.wheel.C%2 == 0
+		v = mouse.wheel.C < 0 && mouse.wheel.C%2 == 0
 		j = (v != a.left)
 		a.left = v
 	case mouseScrollRight:
-		v = Mouse.wheel.C > 0 && Mouse.wheel.C%2 == 0
+		v = mouse.wheel.C > 0 && mouse.wheel.C%2 == 0
 		j = (v != a.right)
 		a.right = v
 	}
@@ -64,19 +64,19 @@ func (a *msWheel) asUnipolar() (just bool, value float32) {
 	var j, v bool
 	switch a.direction {
 	case mouseScrollUp:
-		v = Mouse.wheel.R > 0 && Mouse.wheel.R%2 == 0
+		v = mouse.wheel.R > 0 && mouse.wheel.R%2 == 0
 		j = (v != a.up)
 		a.up = v
 	case mouseScrollDown:
-		v = Mouse.wheel.R < 0 && Mouse.wheel.R%2 == 0
+		v = mouse.wheel.R < 0 && mouse.wheel.R%2 == 0
 		j = (v != a.down)
 		a.down = v
 	case mouseScrollLeft:
-		v = Mouse.wheel.C < 0 && Mouse.wheel.C%2 == 0
+		v = mouse.wheel.C < 0 && mouse.wheel.C%2 == 0
 		j = (v != a.left)
 		a.left = v
 	case mouseScrollRight:
-		v = Mouse.wheel.C > 0 && Mouse.wheel.C%2 == 0
+		v = mouse.wheel.C > 0 && mouse.wheel.C%2 == 0
 		j = (v != a.right)
 		a.right = v
 	}
@@ -90,19 +90,19 @@ func (a *msWheel) asBipolar() (just bool, value float32) {
 	var j, v bool
 	switch a.direction {
 	case mouseScrollUp:
-		v = Mouse.wheel.R > 0 && Mouse.wheel.R%2 == 0
+		v = mouse.wheel.R > 0 && mouse.wheel.R%2 == 0
 		j = (v != a.up)
 		a.up = v
 	case mouseScrollDown:
-		v = Mouse.wheel.R < 0 && Mouse.wheel.R%2 == 0
+		v = mouse.wheel.R < 0 && mouse.wheel.R%2 == 0
 		j = (v != a.down)
 		a.down = v
 	case mouseScrollLeft:
-		v = Mouse.wheel.C < 0 && Mouse.wheel.C%2 == 0
+		v = mouse.wheel.C < 0 && mouse.wheel.C%2 == 0
 		j = (v != a.left)
 		a.left = v
 	case mouseScrollRight:
-		v = Mouse.wheel.C > 0 && Mouse.wheel.C%2 == 0
+		v = mouse.wheel.C > 0 && mouse.wheel.C%2 == 0
 		j = (v != a.right)
 		a.right = v
 	}
@@ -116,19 +116,19 @@ func (a *msWheel) asCoord() (just bool, value coord.XY) {
 	var j, v bool
 	switch a.direction {
 	case mouseScrollUp:
-		v = Mouse.wheel.R > 0 && Mouse.wheel.R%2 == 0
+		v = mouse.wheel.R > 0 && mouse.wheel.R%2 == 0
 		j = (v != a.up)
 		a.up = v
 	case mouseScrollDown:
-		v = Mouse.wheel.R < 0 && Mouse.wheel.R%2 == 0
+		v = mouse.wheel.R < 0 && mouse.wheel.R%2 == 0
 		j = (v != a.down)
 		a.down = v
 	case mouseScrollLeft:
-		v = Mouse.wheel.C < 0 && Mouse.wheel.C%2 == 0
+		v = mouse.wheel.C < 0 && mouse.wheel.C%2 == 0
 		j = (v != a.left)
 		a.left = v
 	case mouseScrollRight:
-		v = Mouse.wheel.C > 0 && Mouse.wheel.C%2 == 0
+		v = mouse.wheel.C > 0 && mouse.wheel.C%2 == 0
 		j = (v != a.right)
 		a.right = v
 	}
@@ -142,16 +142,16 @@ func (a *msWheel) asDelta() coord.XY {
 	var v bool
 	switch a.direction {
 	case mouseScrollUp:
-		v = Mouse.wheel.R > 0 && Mouse.wheel.R%2 == 0
+		v = mouse.wheel.R > 0 && mouse.wheel.R%2 == 0
 		a.up = v
 	case mouseScrollDown:
-		v = Mouse.wheel.R < 0 && Mouse.wheel.R%2 == 0
+		v = mouse.wheel.R < 0 && mouse.wheel.R%2 == 0
 		a.down = v
 	case mouseScrollLeft:
-		v = Mouse.wheel.C < 0 && Mouse.wheel.C%2 == 0
+		v = mouse.wheel.C < 0 && mouse.wheel.C%2 == 0
 		a.left = v
 	case mouseScrollRight:
-		v = Mouse.wheel.C > 0 && Mouse.wheel.C%2 == 0
+		v = mouse.wheel.C > 0 && mouse.wheel.C%2 == 0
 		a.right = v
 	}
 	if v {

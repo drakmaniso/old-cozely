@@ -13,18 +13,20 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 
 var (
-	quit     = input.Bool("Quit")
-	next     = input.Bool("Next")
-	previous = input.Bool("Previous")
+	quit     = input.Digital("Quit")
+	next     = input.Digital("Next")
+	previous = input.Digital("Previous")
+	cursor   = input.Cursor("Cursor")
 )
 
-var context = input.Context("Test", quit, next, previous)
+var context = input.Context("Test", quit, next, previous, cursor)
 
 var bindings = input.Bindings{
 	"Test": {
 		"Quit":     {"Escape"},
 		"Next":     {"Mouse Left", "Space"},
 		"Previous": {"Mouse Right", "U"},
+		"Cursor":   {"Mouse"},
 	},
 }
 

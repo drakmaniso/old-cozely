@@ -32,8 +32,8 @@ func TestTest6(t *testing.T) {
 }
 
 func (test6) Enter() {
-	input.Bind(bindings)
-	context.Activate(1)
+	input.Load(bindings)
+	context.Activate(0)
 	palette2.Activate()
 }
 
@@ -43,7 +43,7 @@ func (test6) Leave() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (test6) React() {
-	if quit.JustPressed(1) {
+	if quit.Started(0) {
 		cozely.Stop(nil)
 	}
 }

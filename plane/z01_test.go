@@ -57,8 +57,8 @@ func TestTest1(t *testing.T) {
 }
 
 func (loop1) Enter() {
-	input.Bind(bindings)
-	context.Activate(1)
+	input.Load(bindings)
+	context.Activate(0)
 
 	points = make([]coord.XY, 3)
 	newPoints()
@@ -72,11 +72,11 @@ func (loop1) Leave() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop1) React() {
-	if next.JustPressed(1) {
+	if next.Started(0) {
 		newPoints()
 	}
 
-	if quit.JustPressed(1) {
+	if quit.Started(0) {
 		cozely.Stop(nil)
 	}
 }
@@ -112,7 +112,7 @@ func (loop1) Render() {
 	canvas1.Lines(col6, 0, pt[0], pt[1], pt[2], pt[0])
 	canvas1.Triangles(col7, -5, pt[0], pt[1], pt[2], pt[0])
 
-	m := canvas1.FromWindow(input.Mouse.CR())
+	m := canvas1.FromWindow(cursor.XY(0).CR())
 	p := fromScreen(m)
 	canvas1.Locate(aboveall, coord.CR{2, 8})
 	canvas1.Text(col1, 0)

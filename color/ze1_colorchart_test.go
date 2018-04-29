@@ -40,20 +40,20 @@ var (
 // Input Bindings
 
 var (
-	quit     = input.Bool("Quit")
-	next     = input.Bool("Next")
-	previous = input.Bool("Previous")
-	scenes   = []input.BoolID{
-		input.Bool("Scene1"),
-		input.Bool("Scene2"),
-		input.Bool("Scene3"),
-		input.Bool("Scene4"),
-		input.Bool("Scene5"),
-		input.Bool("Scene6"),
-		input.Bool("Scene7"),
-		input.Bool("Scene8"),
-		input.Bool("Scene9"),
-		input.Bool("Scene10"),
+	quit     = input.Digital("Quit")
+	next     = input.Digital("Next")
+	previous = input.Digital("Previous")
+	scenes   = []input.DigitalID{
+		input.Digital("Scene1"),
+		input.Digital("Scene2"),
+		input.Digital("Scene3"),
+		input.Digital("Scene4"),
+		input.Digital("Scene5"),
+		input.Digital("Scene6"),
+		input.Digital("Scene7"),
+		input.Digital("Scene8"),
+		input.Digital("Scene9"),
+		input.Digital("Scene10"),
 	}
 )
 
@@ -93,7 +93,7 @@ var mode int
 func Example_colorChart() {
 	defer cozely.Recover()
 
-	input.Bind(bindings)
+	input.Load(bindings)
 	err := cozely.Run(loop{})
 	if err != nil {
 		panic(err)
@@ -116,11 +116,11 @@ func (loop) Leave() {
 // Game Loop ///////////////////////////////////////////////////////////////////
 
 func (loop) React() {
-	if quit.JustPressed(1) {
+	if quit.Started(1) {
 		cozely.Stop(nil)
 	}
 
-	if next.JustPressed(1) {
+	if next.Started(1) {
 		mode++
 		if mode > 5 {
 			mode = 1
@@ -129,7 +129,7 @@ func (loop) React() {
 	}
 
 	for i := range scenes {
-		if scenes[i].JustPressed(1) {
+		if scenes[i].Started(1) {
 			mode = i + 1
 		}
 	}

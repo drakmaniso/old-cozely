@@ -43,9 +43,18 @@ func MouseRelative() bool {
 	return C.SDL_GetRelativeMouseMode() == C.SDL_TRUE
 }
 
-func MouseWarp(x,y int16) {
-	C.SDL_WarpMouseInWindow(Window.window, C.int(x), C.int(y))
+// MouseShow shows or hides the (system) mouse cursor
+func MouseShow(show bool) {
+	if show {
+		C.SDL_ShowCursor(C.SDL_ENABLE)
+	} else {
+		C.SDL_ShowCursor(C.SDL_DISABLE)
+	}
 }
 
+// MouseWarp moves the (system) mouse cursor in the window
+func MouseWarp(x, y int16) {
+	C.SDL_WarpMouseInWindow(Window.window, C.int(x), C.int(y))
+}
 
 ////////////////////////////////////////////////////////////////////////////////

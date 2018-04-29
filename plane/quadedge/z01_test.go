@@ -48,8 +48,8 @@ func TestTest1(t *testing.T) {
 }
 
 func (loop1) Enter() {
-	input.Bind(bindings)
-	context.Activate(1)
+	input.Load(bindings)
+	context.Activate(0)
 
 	points = make([]coord.XY, 64)
 	newPoints()
@@ -63,21 +63,21 @@ func (loop1) Leave() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop1) React() {
-	if quit.JustPressed(1) {
+	if quit.Started(0) {
 		cozely.Stop(nil)
 	}
-	if next.JustPressed(1) {
+	if next.Started(0) {
 		newPoints()
 	}
 
-	if previous.JustPressed(1) {
-		m := canvas1.FromWindow(input.Mouse.CR())
+	if previous.Started(0) {
+		m := canvas1.FromWindow(cursor.XY(0).CR())
 		p := fromScreen(m)
 		points = append(points, p)
 		triangulation = quadedge.Delaunay(points)
 	}
 
-	if scene1.JustPressed(1) {
+	if scene1.Started(0) {
 		points = points[:0]
 		const st = 1.0 / 8
 		for x := float32(st); x < 1.0; x += st {
@@ -87,7 +87,7 @@ func (loop1) React() {
 		}
 		triangulation = quadedge.Delaunay(points)
 	}
-	if scene2.JustPressed(1) {
+	if scene2.Started(0) {
 		points = points[:0]
 		for a := float32(0); a < 2*math32.Pi; a += math32.Pi / 8 {
 			points = append(points, coord.XY{
@@ -97,7 +97,7 @@ func (loop1) React() {
 		}
 		triangulation = quadedge.Delaunay(points)
 	}
-	if scene3.JustPressed(1) {
+	if scene3.Started(0) {
 		points = points[:0]
 		const n = 26
 		for a := float32(0); a < n*2*math32.Pi; a += math32.Pi / 26 {
@@ -108,7 +108,7 @@ func (loop1) React() {
 		}
 		triangulation = quadedge.Delaunay(points)
 	}
-	if scene4.JustPressed(1) {
+	if scene4.Started(0) {
 		points = points[:0]
 		const st = 1.0 / 6
 		for x := float32(st); x < 1.0; x += st {
@@ -116,11 +116,11 @@ func (loop1) React() {
 		}
 		triangulation = quadedge.Delaunay(points)
 	}
-	if scene5.JustPressed(1) {
+	if scene5.Started(0) {
 		points = make([]coord.XY, 25000)
 		newPoints()
 	}
-	if scene6.JustPressed(1) {
+	if scene6.Started(0) {
 		points = points[:0]
 		const st = 1.0 / 27
 		const h = 0.5 * 1.732050807568877 * st
@@ -132,7 +132,7 @@ func (loop1) React() {
 		triangulation = quadedge.Delaunay(points)
 	}
 
-	if quit.JustPressed(1) {
+	if quit.Started(0) {
 		cozely.Stop(nil)
 	}
 }
@@ -148,7 +148,7 @@ func (loop1) Render() {
 		Y: float32(canvas1.Size().R),
 	}
 
-	m := canvas1.FromWindow(input.Mouse.CR())
+	m := canvas1.FromWindow(cursor.XY(0).CR())
 	p := fromScreen(m)
 	canvas1.Locate(0, coord.CR{2, 8})
 	canvas1.Text(col1, 0)
@@ -169,6 +169,8 @@ func (loop1) Render() {
 	triangulation.Walk(func(e quadedge.Edge) {
 		canvas1.Lines(col1, -1, toScreen(points[e.Orig()]), toScreen(points[e.Dest()]))
 	})
+
+	canvas1.Picture(pixel.MouseCursor, 100, m)
 
 	canvas1.Display()
 }

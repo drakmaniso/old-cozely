@@ -9,7 +9,7 @@ import (
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/color/palettes/msx2"
-	"github.com/cozely/cozely/input"
+	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/x/vector"
 )
 
@@ -48,6 +48,6 @@ func (loop) React() {
 func (loop) Render() {
 	vector.Line(color.SRGB{1, 0.5, 0}, 10, 10, 100, 100)
 	w := cozely.WindowSize()
-	m := input.Mouse.CR()
+	m := coord.CR{} //input.Mouse.CR()
 	vector.Line(color.SRGB{1, 1, 1}, w.C/2, w.R/2, m.C, m.R)
 }

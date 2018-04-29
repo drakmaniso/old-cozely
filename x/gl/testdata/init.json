@@ -3,5 +3,6 @@
 		720,
 		720
 	],
-	"Debug": false
+	"Debug": false,
+	"VSync": false
 }

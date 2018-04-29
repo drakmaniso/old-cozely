@@ -55,8 +55,8 @@ func TestTest4(t *testing.T) {
 }
 
 func (loop4) Enter() {
-	input.Bind(bindings)
-	context.Activate(1)
+	input.Load(bindings)
+	context.Activate(0)
 
 	f, err := os.Open(cozely.Path() + "frankenstein.txt")
 	if err != nil {
@@ -84,26 +84,20 @@ func (loop4) Leave() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop4) React() {
-	if scrollup.JustPressed(0) {
+	if scrollup.Started(0) {
 		line--
 		if line < 0 {
 			line = 0
 		}
 	}
-	if scrolldown.JustPressed(0) {
+	if scrolldown.Started(0) {
 		line++
 		if line > len(show)-1 {
-			line = len(show)-1
+			line = len(show) - 1
 		}
 	}
-// 	fntLine -= int(dy)
-// 	if fntLine < 0 {
-// 		fntLine = 0
-// 	} else if fntLine > len(fntShow)-1 {
-// 		fntLine = len(fntShow) - 1
-// 	}
 
-if quit.JustPressed(1) {
+	if quit.Started(0) {
 		cozely.Stop(nil)
 	}
 }

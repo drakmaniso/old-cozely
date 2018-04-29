@@ -19,18 +19,18 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 
 var (
-	rotate    = input.Bool("Rotate")
-	move      = input.Bool("Move")
-	onward    = input.Bool("Onward")
-	left      = input.Bool("Left")
-	back      = input.Bool("Back")
-	right     = input.Bool("Right")
-	up        = input.Bool("Up")
-	down      = input.Bool("Down")
-	rollleft  = input.Bool("Roll Left")
-	rollright = input.Bool("Roll Right")
-	resetview = input.Bool("Reset View")
-	resetobj  = input.Bool("Reset Object")
+	rotate    = input.Digital("Rotate")
+	move      = input.Digital("Move")
+	onward    = input.Digital("Onward")
+	left      = input.Digital("Left")
+	back      = input.Digital("Back")
+	right     = input.Digital("Right")
+	up        = input.Digital("Up")
+	down      = input.Digital("Down")
+	rollleft  = input.Digital("Roll Left")
+	rollright = input.Digital("Roll Right")
+	resetview = input.Digital("Reset View")
+	resetobj  = input.Digital("Reset Object")
 	rotation  = input.Delta("Rotation")
 	cursor    = input.Cursor("Cursor")
 )
@@ -120,7 +120,7 @@ func TestTest1(t *testing.T) {
 }
 
 func (loop) Enter() {
-	input.Bind(bindings1)
+	input.Load(bindings1)
 	context1.Activate(1)
 	palette.Activate()
 
@@ -171,63 +171,63 @@ func resize() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop) React() {
-	if move.JustPressed(1) {
+	if move.Started(1) {
 		dragStart = misc.worldFromObject
 		current.dragDelta = coord.XY{0, 0}
 		input.GrabMouse(true)
 	}
-	if rotate.JustPressed(1) {
+	if rotate.Started(1) {
 		input.GrabMouse(true)
 	}
 
 	const s = 2.0
 	switch {
-	case onward.Pressed(1):
+	case onward.Ongoing(1):
 		forward = -s
-	case back.Pressed(1):
+	case back.Ongoing(1):
 		forward = s
 	default:
 		forward = 0
 	}
 	switch {
-	case left.Pressed(1):
+	case left.Ongoing(1):
 		lateral = -s
-	case right.Pressed(1):
+	case right.Ongoing(1):
 		lateral = s
 	default:
 		lateral = 0
 	}
 	switch {
-	case up.Pressed(1):
+	case up.Ongoing(1):
 		vertical = s
-	case down.Pressed(1):
+	case down.Ongoing(1):
 		vertical = -s
 	default:
 		vertical = 0
 	}
 	switch {
-	case rollleft.Pressed(1):
+	case rollleft.Ongoing(1):
 		rolling = -s
-	case rollright.Pressed(1):
+	case rollright.Ongoing(1):
 		rolling = s
 	default:
 		rolling = 0
 	}
 
-	if resetview.JustPressed(1) {
+	if resetview.Started(1) {
 		camera.SetFocus(coord.XYZ{0, 0, 0})
 		camera.SetDistance(4)
 		camera.SetOrientation(0, 0, 0)
 	}
-	if resetobj.JustPressed(1) {
+	if resetobj.Started(1) {
 		misc.worldFromObject = space.Identity()
 	}
 
-	if move.JustReleased(1) || rotate.JustReleased(1) {
+	if move.Stopped(1) || rotate.Stopped(1) {
 		input.GrabMouse(false)
 	}
 
-	if quit.JustPressed(1) {
+	if quit.Started(1) {
 		cozely.Stop(nil)
 	}
 }
@@ -279,11 +279,11 @@ func prepare() {
 
 	s := cozely.WindowSize().XY()
 	switch {
-	case rollleft.Pressed(1) || rollright.Pressed(1):
+	case rollleft.Ongoing(1) || rollright.Ongoing(1):
 		camera.Rotate(0, 0, rolling*dt)
-	case rotate.Pressed(1):
+	case rotate.Ongoing(1):
 		camera.Rotate(2*m.X/s.X, 2*m.Y/s.Y, rolling*dt)
-	case move.Pressed(1):
+	case move.Ongoing(1):
 		current.dragDelta = current.dragDelta.Plus(coord.XY{2 * m.Y / s.Y, 2 * m.X / s.X})
 		r := space.EulerXYZ(current.dragDelta.X, current.dragDelta.Y, 0)
 		vr := camera.View().WithoutTranslation()

@@ -31,7 +31,7 @@ type unipolar struct {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// Unipolar declares a new unipolar action, and returns its ID.
+// Unipolar declares a new unipolar analog action, and returns its ID.
 func Unipolar(name string) UnipolarID {
 	if internal.Running {
 		setErr(errors.New("input unipolar declaration: declarations must happen before starting the framework"))

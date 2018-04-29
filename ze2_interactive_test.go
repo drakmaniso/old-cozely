@@ -12,8 +12,8 @@ import (
 // Declarations ////////////////////////////////////////////////////////////////
 
 var (
-	quit    = input.Bool("Quit")
-	start   = input.Bool("Start")
+	quit    = input.Digital("Quit")
+	start   = input.Digital("Start")
 	context = input.Context("Default", start, quit)
 )
 
@@ -42,7 +42,7 @@ type loop2 struct{}
 func Example_interactive() {
 	defer cozely.Recover()
 
-	input.Bind(bindings)
+	input.Load(bindings)
 	cozely.Configure(cozely.UpdateStep(1.0 / 3))
 	err := cozely.Run(loop2{})
 	if err != nil {
@@ -63,10 +63,10 @@ func (loop2) Leave() {
 // Game Loop ///////////////////////////////////////////////////////////////////
 
 func (loop2) React() {
-	if start.JustPressed(1) {
+	if start.Started(1) {
 		started = !started
 	}
-	if quit.JustPressed(1) {
+	if quit.Started(1) {
 		cozely.Stop(nil)
 	}
 }

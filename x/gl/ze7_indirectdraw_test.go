@@ -117,7 +117,7 @@ func Example_indirectDraw() {
 }
 
 func (l *loop07) Enter() {
-	input.Bind(bindings)
+	input.Load(bindings)
 	context.Activate(1)
 
 	// Create and configure the pipeline
@@ -170,14 +170,14 @@ func (l *loop07) React() {
 	m := delta.XY(0)
 	s := cozely.WindowSize().XY()
 
-	if rotate.JustPressed(1) || move.JustPressed(1) || zoom.JustPressed(1) {
+	if rotate.Started(1) || move.Started(1) || zoom.Started(1) {
 		input.GrabMouse(true)
 	}
-	if rotate.JustReleased(1) || move.JustReleased(1) || zoom.JustReleased(1) {
+	if rotate.Stopped(1) || move.Stopped(1) || zoom.Stopped(1) {
 		input.GrabMouse(false)
 	}
 
-	if rotate.Pressed(1) {
+	if rotate.Ongoing(1) {
 		l.yaw += 4 * m.X / s.X
 		l.pitch += 4 * m.Y / s.Y
 		switch {
@@ -189,21 +189,21 @@ func (l *loop07) React() {
 		l.computeWorldFromObject()
 	}
 
-	if move.Pressed(1) {
+	if move.Ongoing(1) {
 		d := m.Times(2).Slashxy(s)
 		l.position.X += d.X
 		l.position.Y -= d.Y
 		l.computeWorldFromObject()
 	}
 
-	if zoom.Pressed(1) {
+	if zoom.Ongoing(1) {
 		d := m.Times(2).Slashxy(s)
 		l.position.X += d.X
 		l.position.Z += d.Y
 		l.computeWorldFromObject()
 	}
 
-	if quit.JustPressed(1) {
+	if quit.Started(1) {
 		cozely.Stop(nil)
 	}
 }

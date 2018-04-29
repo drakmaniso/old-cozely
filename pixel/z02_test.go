@@ -66,8 +66,8 @@ func TestTest2(t *testing.T) {
 }
 
 func (loop2) Enter() {
-	input.Bind(bindings2)
-	context2.Activate(1)
+	input.Load(bindings2)
+	context2.Activate(0)
 	palette2.Activate()
 }
 
@@ -89,7 +89,7 @@ func resize() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop2) React() {
-	if quit.JustPressed(1) {
+	if quit.Started(0) {
 		cozely.Stop(nil)
 	}
 }
