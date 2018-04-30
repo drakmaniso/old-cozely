@@ -160,15 +160,15 @@ func (loop1) Render() {
 		canvas1.Println(" ")
 	}
 
+	triangulation.Walk(func(e quadedge.Edge) {
+		canvas1.Lines(col1, -1, toScreen(points[e.Orig()]), toScreen(points[e.Dest()]))
+	})
+
 	pt := make([]coord.CR, len(points))
 	for i, sd := range points {
 		pt[i] = toScreen(sd)
 		canvas1.Box(col2, col2, 1, 0, pt[i].Minuss(2), pt[i].Pluss(2))
 	}
-
-	triangulation.Walk(func(e quadedge.Edge) {
-		canvas1.Lines(col1, -1, toScreen(points[e.Orig()]), toScreen(points[e.Dest()]))
-	})
 
 	if cozely.HasMouseFocus() {
 		canvas1.Picture(pixel.MouseCursor, 100, m)

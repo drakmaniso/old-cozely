@@ -19,7 +19,6 @@ type canvas struct {
 	buffer        gl.Framebuffer
 	texture       gl.Texture2D
 	filter        gl.Texture2D
-	depth         gl.Renderbuffer
 	commandsICBO  gl.IndirectBuffer
 	parametersTBO gl.BufferTexture
 	resolution    coord.CR
@@ -139,11 +138,6 @@ func (a CanvasID) createTextures() {
 	aa.filter = gl.NewTexture2D(1, gl.R8, int32(aa.size.C), int32(aa.size.R))
 	aa.buffer.Texture(gl.ColorAttachment1, aa.filter, 0)
 
-	aa.depth.Delete()
-	aa.depth = gl.NewRenderbuffer(gl.Depth32F, int32(aa.size.C), int32(aa.size.R))
-	aa.buffer.Renderbuffer(gl.DepthAttachment, aa.depth)
-
-	// aa.buffer.DrawBuffer(gl.ColorAttachment0)
 	aa.buffer.DrawBuffers([]gl.FramebufferAttachment{gl.ColorAttachment0, gl.ColorAttachment1})
 	aa.buffer.ReadBuffer(gl.NoAttachment)
 
@@ -230,17 +224,8 @@ func (a CanvasID) Display() {
 func (a CanvasID) Clear(color color.Index) {
 	aa := &canvases[a]
 	pipeline.Bind() //TODO: find another way to enable depthWrite
-	aa.buffer.ClearColorUint(uint32(color), 0, 0, 0)
-	aa.buffer.ClearDepth(-1.0)
-}
-
-// ClearDepth resets depth information, used to implement layers. Call this
-// method if you don't need to clear the color of the canvas, but still want to
-// discard all layer information from the previous frame.
-func (a CanvasID) ClearDepth() {
-	aa := &canvases[a]
-	pipeline.Bind() //TODO: find another way to enable depthWrite
-	aa.buffer.ClearDepth(-1.0)
+	aa.buffer.ClearColor(0, float32(color)/255, 0, 0, 0)
+	aa.buffer.ClearColor(1, 0, 0, 0, 0)
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -27,14 +27,14 @@ const (
 
 // Picture asks the GPU to show a picture on the canvas.
 func (a CanvasID) Picture(p PictureID, layer int16, pos coord.CR) {
-	a.command(cmdPicture, 4, 1, int16(p), layer, pos.C, pos.R)
+	a.command(cmdPicture, 4, 1, int16(p), pos.C, pos.R)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 // Point asks the GPU to draw a point on the canvas.
 func (a CanvasID) Point(color color.Index, layer int16, pos coord.CR) {
-	a.command(cmdPoint, 3, 1, int16(color), layer, pos.C, pos.R)
+	a.command(cmdPoint, 3, 1, int16(color), pos.C, pos.R)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -45,7 +45,7 @@ func (a CanvasID) Lines(c color.Index, layer int16, strip ...coord.CR) {
 	if len(strip) < 2 {
 		return
 	}
-	prm := []int16{int16(c), layer} //TODO: remove alloc
+	prm := []int16{int16(c)} //TODO: remove alloc
 	for _, p := range strip {
 		prm = append(prm, p.C, p.R)
 	}
@@ -61,7 +61,7 @@ func (a CanvasID) Triangles(c color.Index, layer int16, strip ...coord.CR) {
 	if len(strip) < 3 {
 		return
 	}
-	prm := []int16{int16(c), layer} //TODO: remove alloc
+	prm := []int16{int16(c)} //TODO: remove alloc
 	for _, p := range strip {
 		prm = append(prm, p.C, p.R)
 	}
@@ -81,7 +81,6 @@ func (a CanvasID) Box(fg, bg color.Index, corner int16, layer int16, p1, p2 coor
 	a.command(cmdBox, 4, 1,
 		int16(uint32(fg)<<8|uint32(bg)),
 		corner,
-		layer,
 		p1.C, p1.R,
 		p2.C, p2.R)
 }
@@ -106,13 +105,12 @@ func (a CanvasID) command(c uint32, v uint32, n uint32, params ...int16) {
 			break
 
 		} else {
-			// Check if same color, depth and y
+			// Check if same color and y
 			pi := s.commands[l-1].BaseInstance & 0xFFFFFF
-			if s.parameters[pi] == params[0] && s.parameters[pi+1] == params[1] &&
-				s.parameters[pi+2] == params[2] {
+			if s.parameters[pi] == params[0] && s.parameters[pi+1] == params[1] {
 				// Collapse with previous draw command
 				s.commands[l-1].InstanceCount += n
-				s.parameters = append(s.parameters, params[3:]...)
+				s.parameters = append(s.parameters, params[2:]...)
 				break
 			}
 		}

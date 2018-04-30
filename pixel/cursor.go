@@ -108,7 +108,6 @@ func (a CanvasID) WriteRune(r rune) {
 	g := cu.Font.glyph(r)
 	a.command(cmdText, 4, 1,
 		int16(cu.Color-fonts[cu.Font].basecolor),
-		cu.Layer,
 		cu.Position.R-fonts[cu.Font].baseline,
 		int16(g), cu.Position.C)
 	cu.Position.C += glyphMap[g].w + cu.LetterSpacing

@@ -95,6 +95,18 @@ func (loop1) Render() {
 	s := coord.CR{5, 5}
 	for i, sd := range points {
 		pt[i] = toScreen(sd)
+	}
+
+	d := plane.Circumcenter(points[0], points[1], points[2])
+	r := d.Minus(points[0]).Length()
+	cir := []coord.CR{}
+	for a := float32(0); a <= 2*math32.Pi+0.01; a += math32.Pi / 32 {
+		cir = append(cir, toScreen(coord.RA{r, a}.XY().Plus(d)))
+	}
+	canvas1.Lines(col5, -2, cir...)
+	canvas1.Triangles(col7, -5, pt[0], pt[1], pt[2], pt[0])
+	canvas1.Lines(col6, 0, pt[0], pt[1], pt[2], pt[0])
+	for i := range points {
 		var c color.Index
 		switch i {
 		case 0:
@@ -109,8 +121,6 @@ func (loop1) Render() {
 		canvas1.Text(col1, 0)
 		canvas1.Print([]string{"A", "B", "C"}[i])
 	}
-	canvas1.Lines(col6, 0, pt[0], pt[1], pt[2], pt[0])
-	canvas1.Triangles(col7, -5, pt[0], pt[1], pt[2], pt[0])
 
 	m := canvas1.FromWindow(cursor.XY(0).CR())
 	p := fromScreen(m)
@@ -166,19 +176,11 @@ func (loop1) Render() {
 
 	canvas1.Println(" ")
 
-	d := plane.Circumcenter(points[0], points[1], points[2])
 	canvas1.Text(col1, 0)
 	canvas1.Printf("Circumcenter: %.3f, %.3f\n", d.X, d.Y)
 	dd := toScreen(d)
 	canvas1.Lines(col5, -2, dd.Minuss(2), dd.Pluss(2))
 	canvas1.Lines(col5, -2, dd.Minus(coord.CR{-2, 2}), dd.Plus(coord.CR{-2, 2}))
-
-	r := d.Minus(points[a]).Length()
-	cir := []coord.CR{}
-	for a := float32(0); a <= 2*math32.Pi+0.01; a += math32.Pi / 32 {
-		cir = append(cir, toScreen(coord.RA{r, a}.XY().Plus(d)))
-	}
-	canvas1.Lines(col5, -2, cir...)
 
 	canvas1.Display()
 }

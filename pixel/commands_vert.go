@@ -73,11 +73,10 @@ void main(void)
 	switch (Command) {
 	case cmdPicture:
 		// Parameters
-		offset = 4*instance;
+		offset = 3*instance;
 		int m = texelFetch(parameters, param+0+offset).r;
-		z = texelFetch(parameters, param+1+offset).r;
-		x = texelFetch(parameters, param+2+offset).r;
-		y = texelFetch(parameters, param+3+offset).r;
+		x = texelFetch(parameters, param+1+offset).r;
+		y = texelFetch(parameters, param+2+offset).r;
 		// Mapping of the picture
 		m *= 5;
 		Bin = texelFetch(pictureMap, m+0).r;
@@ -85,19 +84,18 @@ void main(void)
 		wh = vec2(texelFetch(pictureMap, m+3).r, texelFetch(pictureMap, m+4).r);
 		// Picture quad
 		p = (CanvasMargin + vec2(x, y) + corners[vertex] * wh) * PixelSize;
-		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), floatZ(z), 1);
+		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), 0, 1);
 		UV += corners[vertex] * wh;
 		break;
 
 	case cmdText:
 	  // Parameters of the whole Print command
 		c = texelFetch(parameters, param+0).r;
-		z = texelFetch(parameters, param+1).r;
-		y = texelFetch(parameters, param+2).r;
+		y = texelFetch(parameters, param+1).r;
 		// Parameter for the current character
 		offset = 2*instance;
-		int r = texelFetch(parameters, param+3+offset).r;
-		x = texelFetch(parameters, param+4+offset).r;
+		int r = texelFetch(parameters, param+2+offset).r;
+		x = texelFetch(parameters, param+3+offset).r;
 		// Mapping of the current character
 		r *= 5;
 		Bin = texelFetch(glyphMap, r+0).r;
@@ -105,21 +103,20 @@ void main(void)
 		wh = vec2(texelFetch(glyphMap, r+3).r, texelFetch(glyphMap, r+4).r);
 		// Character quad
 		p = (CanvasMargin + vec2(x, y) + corners[vertex] * wh) * PixelSize;
-		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), floatZ(z), 1);
+		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), 0, 1);
 		UV += corners[vertex] * wh;
 		ColorIndex = uint(c&0xFFFF);
 		break;
 
 	case cmdPoint:
-		offset = 4*instance;
+		offset = 3*instance;
 		// Parameters
 		c = texelFetch(parameters, param+0+offset).r;
-		z = texelFetch(parameters, param+1+offset).r;
-		x = texelFetch(parameters, param+2+offset).r;
-		y = texelFetch(parameters, param+3+offset).r;
+		x = texelFetch(parameters, param+1+offset).r;
+		y = texelFetch(parameters, param+2+offset).r;
 		// Position
 		p = (CanvasMargin + vec2(x, y) + corners[vertex] * vec2(1.5,1.5)) * PixelSize;
-		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), floatZ(z), 1);
+		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), 0, 1);
 		// Color
 		ColorIndex = uint(c&0xFFFF);
 		break;
@@ -128,11 +125,10 @@ void main(void)
 		offset = 2*instance;
 		// Parameters
 		c = texelFetch(parameters, param+0).r;
-		z = texelFetch(parameters, param+1).r;
-		x = texelFetch(parameters, param+2+offset).r;
-		y = texelFetch(parameters, param+3+offset).r;
-		x2 = texelFetch(parameters, param+4+offset).r;
-		y2 = texelFetch(parameters, param+5+offset).r;
+		x = texelFetch(parameters, param+1+offset).r;
+		y = texelFetch(parameters, param+2+offset).r;
+		x2 = texelFetch(parameters, param+3+offset).r;
+		y2 = texelFetch(parameters, param+4+offset).r;
 		// Position
 		Box = vec4(x+CanvasMargin.x, y+CanvasMargin.y, x2+CanvasMargin.x, y2+CanvasMargin.y);
 		dx = x2-x;
@@ -147,7 +143,7 @@ void main(void)
 			vec2(x2, y2)-n+t
 		);
 		p = (CanvasMargin + vec2(0.5,0.5) + pts[vertex].xy) * PixelSize;
-		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), floatZ(z), 1);
+		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), 0, 1);
 		if (Flags == steep) {
 			Slope = float(dx)/float(dy);
 		} else {
@@ -161,30 +157,28 @@ void main(void)
 		offset = 2*gl_VertexID;
 		// Parameters
 		c = texelFetch(parameters, param+0).r;
-		z = texelFetch(parameters, param+1).r;
-		x = texelFetch(parameters, param+2+offset).r;
-		y = texelFetch(parameters, param+3+offset).r;
+		x = texelFetch(parameters, param+1+offset).r;
+		y = texelFetch(parameters, param+2+offset).r;
 		p = (CanvasMargin + vec2(0.5,0.5) + vec2(x, y)) * PixelSize;
-		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), floatZ(z), 1);
+		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), 0, 1);
 		// Color
 		ColorIndex = uint(c&0xFFFF);
 		break;
 
 	case cmdBox:
-		offset = 7*instance;
+		offset = 6*instance;
 		// Parameters
 		c = texelFetch(parameters, param+0+offset).r;
 		Flags = texelFetch(parameters, param+1+offset).r;
-		z = texelFetch(parameters, param+2+offset).r;
-		x = texelFetch(parameters, param+3+offset).r;
-		y = texelFetch(parameters, param+4+offset).r;
-		x2 = texelFetch(parameters, param+5+offset).r;
-		y2 = texelFetch(parameters, param+6+offset).r;
+		x = texelFetch(parameters, param+2+offset).r;
+		y = texelFetch(parameters, param+3+offset).r;
+		x2 = texelFetch(parameters, param+4+offset).r;
+		y2 = texelFetch(parameters, param+5+offset).r;
 		wh = vec2(x2 -x+1, y2-y+1);
 		// Position
 		Box = vec4(x+CanvasMargin.x, y+CanvasMargin.y, x2+CanvasMargin.x, y2+CanvasMargin.y);
 		p = (CanvasMargin + vec2(x, y) + corners[vertex] * wh) * PixelSize;
-		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), floatZ(z), 1);
+		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), 0, 1);
 		// Color
 		ColorIndex = uint(c&0xFFFF);
 		break;

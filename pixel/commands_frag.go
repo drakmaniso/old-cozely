@@ -109,7 +109,7 @@ void main(void)
 		discard;
 	}
 
-	if (c != 5) {
+	if (c != 999) {
 		out_color = vec4(float(c)/255.0, 0, 0, 1);
 		out_filter = vec4(0, 0, 0, 1);
 	} else {
