@@ -66,7 +66,7 @@ void main(void)
 	int instance = gl_InstanceID;
 	int vertex = gl_VertexID;
 
-	int x, y, z, x2, y2, x3, y3, dx, dy;
+	int m, x, y, z, x2, y2, x3, y3, dx, dy;
 	uint c;
 	vec2 p, wh;
 	vec2 t, n, pts[4];
@@ -74,7 +74,7 @@ void main(void)
 	case cmdPicture:
 		// Parameters
 		offset = 3*instance;
-		int m = texelFetch(parameters, param+0+offset).r;
+		m = texelFetch(parameters, param+0+offset).r;
 		x = texelFetch(parameters, param+1+offset).r;
 		y = texelFetch(parameters, param+2+offset).r;
 		// Mapping of the picture
@@ -89,18 +89,17 @@ void main(void)
 		break;
 
 	case cmdText:
-	  // Parameters of the whole Print command
+	  // Parameters
+		offset = 2*instance;
 		c = texelFetch(parameters, param+0).r;
 		y = texelFetch(parameters, param+1).r;
-		// Parameter for the current character
-		offset = 2*instance;
-		int r = texelFetch(parameters, param+2+offset).r;
+		m = texelFetch(parameters, param+2+offset).r;
 		x = texelFetch(parameters, param+3+offset).r;
 		// Mapping of the current character
-		r *= 5;
-		Bin = texelFetch(glyphMap, r+0).r;
-		UV = vec2(texelFetch(glyphMap, r+1).r, texelFetch(glyphMap, r+2).r);
-		wh = vec2(texelFetch(glyphMap, r+3).r, texelFetch(glyphMap, r+4).r);
+		m *= 5;
+		Bin = texelFetch(glyphMap, m+0).r;
+		UV = vec2(texelFetch(glyphMap, m+1).r, texelFetch(glyphMap, m+2).r);
+		wh = vec2(texelFetch(glyphMap, m+3).r, texelFetch(glyphMap, m+4).r);
 		// Character quad
 		p = (CanvasMargin + vec2(x, y) + corners[vertex] * wh) * PixelSize;
 		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), 0, 1);
