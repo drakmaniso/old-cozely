@@ -259,14 +259,14 @@ func (loop) Render() {
 	pipeline.Unbind()
 
 	overlay.Clear(0)
-	overlay.Locate(0, coord.CR{2, 12})
+	overlay.Locate(coord.CR{2, 12})
 	ft, or := cozely.RenderStats()
 	overlay.Printf("% 3.2f", ft*1000)
 	if or > 0 {
 		overlay.Printf(" (%d)", or)
 	}
 	if cozely.HasMouseFocus() {
-		overlay.Picture(pixel.MouseCursor, 10, overlay.FromWindow(cursor.XY(0).CR()))
+		overlay.Picture(pixel.MouseCursor, overlay.FromWindow(cursor.XY(0).CR()))
 	}
 	overlay.Display()
 }

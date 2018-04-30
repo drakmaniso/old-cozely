@@ -62,26 +62,26 @@ func (test6) Render() {
 	dy := coord.CR{0, 32}
 
 	for i := int16(0); i < 13; i++ {
-		canvas6.Box(6, 0, i, 0, o.Plus(dx.Times(i)), o.Plus(dx.Times(i)).Plus(s))
+		canvas6.Box(6, 0, i, o.Plus(dx.Times(i)), o.Plus(dx.Times(i)).Plus(s))
 	}
 
 	o = o.Plus(dy)
 	for i := int16(0); i < 13; i++ {
-		canvas6.Box(0, 4, i, 0, o.Plus(dx.Times(i)), o.Plus(dx.Times(i)).Plus(s))
+		canvas6.Box(0, 4, i, o.Plus(dx.Times(i)), o.Plus(dx.Times(i)).Plus(s))
 	}
 
 	o = o.Plus(dy)
 	for i := int16(0); i < 13; i++ {
-		canvas6.Box(6, 4, i, 0, o.Plus(dx.Times(i)), o.Plus(dx.Times(i)).Plus(s))
+		canvas6.Box(6, 4, i, o.Plus(dx.Times(i)), o.Plus(dx.Times(i)).Plus(s))
 	}
 
 	o = o.Plus(dy)
 	for i := int16(0); i < 13; i++ {
-		canvas6.Box(4, 4, i, 0, o.Plus(dx.Times(i)), o.Plus(dx.Times(i)).Plus(s))
+		canvas6.Box(4, 4, i, o.Plus(dx.Times(i)), o.Plus(dx.Times(i)).Plus(s))
 	}
 
 	m := canvas6.FromWindow(cursor.XY(0).CR())
-	canvas6.Point(18, 2, m)
+	canvas6.Point(18, m)
 	canvas6.Display()
 }
 

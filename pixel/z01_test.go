@@ -43,7 +43,7 @@ func TestTest1(t *testing.T) {
 	do(func() {
 		defer cozely.Recover()
 
-	input.Load(bindings)
+		input.Load(bindings)
 		err := cozely.Run(loop1{})
 		if err != nil {
 			t.Error(err)
@@ -103,16 +103,16 @@ func (loop1) Render() {
 	switch mode {
 	case 0:
 		pz := mire.Size()
-		canvas1.Picture(mire, 0, coord.CR{0, 0})
-		canvas1.Picture(mire, 0, coord.CR{0, sz.R - pz.R})
-		canvas1.Picture(mire, 0, coord.CR{sz.C - pz.C, 0})
-		canvas1.Picture(mire, 0, sz.Minus(pz))
+		canvas1.Picture(mire, coord.CR{0, 0})
+		canvas1.Picture(mire, coord.CR{0, sz.R - pz.R})
+		canvas1.Picture(mire, coord.CR{sz.C - pz.C, 0})
+		canvas1.Picture(mire, sz.Minus(pz))
 	case 1:
 		pz := srgbGray.Size()
-		canvas1.Picture(srgbGray, 0, coord.CR{sz.C/2 - pz.C/2, 32})
-		canvas1.Picture(srgbRed, 0, coord.CR{sz.C/4 - pz.C/2, 96})
-		canvas1.Picture(srgbGreen, 0, coord.CR{sz.C/2 - pz.C/2, 96})
-		canvas1.Picture(srgbBlue, 0, coord.CR{3*sz.C/4 - pz.C/2, 96})
+		canvas1.Picture(srgbGray, coord.CR{sz.C/2 - pz.C/2, 32})
+		canvas1.Picture(srgbRed, coord.CR{sz.C/4 - pz.C/2, 96})
+		canvas1.Picture(srgbGreen, coord.CR{sz.C/2 - pz.C/2, 96})
+		canvas1.Picture(srgbBlue, coord.CR{3*sz.C/4 - pz.C/2, 96})
 	}
 	canvas1.Display()
 }

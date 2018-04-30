@@ -12,6 +12,9 @@ import (
 
 ////////////////////////////////////////////////////////////////////////////////
 
+// CursorID identifes an absolute two-dimensional analog input, i.e. any action
+// that is best represented by a pair of X and Y coordinates, and whose most
+// important characteristic is the position in the game window.
 type CursorID uint32
 
 const noCursor = CursorID(maxID)

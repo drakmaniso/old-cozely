@@ -37,7 +37,7 @@ func (loop) Render() {
 			if grid.PositionOf(e) == current || e.Has(ecs.MatchFlag) {
 				p = tilesPict[c].big
 			}
-			canvas.Picture(p, 0, coord.CR{x, y})
+			canvas.Picture(p, coord.CR{x, y})
 		}
 	}
 

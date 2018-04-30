@@ -26,22 +26,22 @@ const (
 ////////////////////////////////////////////////////////////////////////////////
 
 // Picture asks the GPU to show a picture on the canvas.
-func (a CanvasID) Picture(p PictureID, layer int16, pos coord.CR) {
+func (a CanvasID) Picture(p PictureID, pos coord.CR) {
 	a.command(cmdPicture, 4, 1, int16(p), pos.C, pos.R)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 // Point asks the GPU to draw a point on the canvas.
-func (a CanvasID) Point(color color.Index, layer int16, pos coord.CR) {
+func (a CanvasID) Point(color color.Index, pos coord.CR) {
 	a.command(cmdPoint, 3, 1, int16(color), pos.C, pos.R)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 // Lines asks the GPU to draw a line strip on the canvas. A line strip is a
-// succession of connected lines; all lines share the same layer and color.
-func (a CanvasID) Lines(c color.Index, layer int16, strip ...coord.CR) {
+// succession of connected lines; all lines share the same color.
+func (a CanvasID) Lines(c color.Index, strip ...coord.CR) {
 	if len(strip) < 2 {
 		return
 	}
@@ -55,9 +55,8 @@ func (a CanvasID) Lines(c color.Index, layer int16, strip ...coord.CR) {
 ////////////////////////////////////////////////////////////////////////////////
 
 // Triangles asks the GPU to draw a triangle strip on the canvas. Triangle strip
-// have the same meaning than in OpenGL. All triangles share the same layer and
-// color.
-func (a CanvasID) Triangles(c color.Index, layer int16, strip ...coord.CR) {
+// have the same meaning than in OpenGL. All triangles share the same color.
+func (a CanvasID) Triangles(c color.Index, strip ...coord.CR) {
 	if len(strip) < 3 {
 		return
 	}
@@ -71,7 +70,7 @@ func (a CanvasID) Triangles(c color.Index, layer int16, strip ...coord.CR) {
 ////////////////////////////////////////////////////////////////////////////////
 
 // Box asks the GPU to draw a box on the canvas.
-func (a CanvasID) Box(fg, bg color.Index, corner int16, layer int16, p1, p2 coord.CR) {
+func (a CanvasID) Box(fg, bg color.Index, corner int16, p1, p2 coord.CR) {
 	if p2.C < p1.C {
 		p1.C, p2.C = p2.C, p1.C
 	}

@@ -92,7 +92,7 @@ func (l *loop2) Render() {
 	}
 
 	o := canvas2.Size().Minus(logo.Size()).Slash(2)
-	canvas2.Picture(logo, 0, o)
+	canvas2.Picture(logo, o)
 
 	canvas2.Display()
 }

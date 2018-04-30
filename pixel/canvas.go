@@ -219,8 +219,8 @@ func (a CanvasID) Display() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// Clear sets the color of all pixels on the canvas; it also resets depth
-// information, used to implement layers.
+// Clear sets the color of all pixels on the canvas; it also resets the filter
+// of all pixels.
 func (a CanvasID) Clear(color color.Index) {
 	aa := &canvases[a]
 	pipeline.Bind() //TODO: find another way to enable depthWrite

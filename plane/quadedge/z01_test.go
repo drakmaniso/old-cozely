@@ -150,7 +150,7 @@ func (loop1) Render() {
 
 	m := canvas1.FromWindow(cursor.XY(0).CR())
 	p := fromScreen(m)
-	canvas1.Locate(0, coord.CR{2, 8})
+	canvas1.Locate(coord.CR{2, 8})
 	canvas1.Text(col1, 0)
 	fsr, fso := cozely.RenderStats()
 	canvas1.Printf("Framerate: %.2f (%d)\n", 1000*fsr, fso)
@@ -161,17 +161,17 @@ func (loop1) Render() {
 	}
 
 	triangulation.Walk(func(e quadedge.Edge) {
-		canvas1.Lines(col1, -1, toScreen(points[e.Orig()]), toScreen(points[e.Dest()]))
+		canvas1.Lines(col1, toScreen(points[e.Orig()]), toScreen(points[e.Dest()]))
 	})
 
 	pt := make([]coord.CR, len(points))
 	for i, sd := range points {
 		pt[i] = toScreen(sd)
-		canvas1.Box(col2, col2, 1, 0, pt[i].Minuss(2), pt[i].Pluss(2))
+		canvas1.Box(col2, col2, 1, pt[i].Minuss(2), pt[i].Pluss(2))
 	}
 
 	if cozely.HasMouseFocus() {
-		canvas1.Picture(pixel.MouseCursor, 100, m)
+		canvas1.Picture(pixel.MouseCursor, m)
 	}
 
 	canvas1.Display()

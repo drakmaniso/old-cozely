@@ -77,16 +77,16 @@ func (loop5) Update() {
 func (loop5) Render() {
 	canvas5.Clear(1)
 	m := canvas5.FromWindow(cursor.XY(0).CR())
-	canvas5.Triangles(2, -2, points...)
+	canvas5.Triangles(2, points...)
 	if !lineshidden {
-		canvas5.Lines(5, 0, points...)
-		canvas5.Lines(13, -1, points[len(points)-1], m)
+		canvas5.Lines(5, points...)
+		canvas5.Lines(13, points[len(points)-1], m)
 	}
 	if !pointshidden {
 		for _, p := range points {
-			canvas5.Point(8, 1, p)
+			canvas5.Point(8, p)
 		}
-		canvas5.Point(18, 2, m)
+		canvas5.Point(18, m)
 	}
 	canvas5.Display()
 }

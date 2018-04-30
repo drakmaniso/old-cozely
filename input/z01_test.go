@@ -164,7 +164,7 @@ func (loop1) Update() {
 func (loop1) Render() {
 	canvas1.Clear(msx.DarkBlue)
 
-	canvas1.Locate(0, coord.CR{2, 12})
+	canvas1.Locate(coord.CR{2, 12})
 	canvas1.Text(msx.White, pixel.Monozela10)
 
 	canvas1.Println()
@@ -209,7 +209,7 @@ func (loop1) Render() {
 	}
 	canvas1.Printf("   Delta = %+12.6f, %+12.6f\n", deltaval.X, deltaval.Y)
 
-	canvas1.Picture(pixel.MouseCursor, 10, canvas1.FromWindow(cursorval.CR()))
+	canvas1.Picture(pixel.MouseCursor, canvas1.FromWindow(cursorval.CR()))
 
 	canvas1.Display()
 }

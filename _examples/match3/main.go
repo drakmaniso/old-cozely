@@ -19,16 +19,16 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 
 var (
-	quit  = input.Bool("Quit")
-	selct = input.Bool("Select")
-	test  = input.Bool("Test")
+	quit  = input.Digital("Quit")
+	selct = input.Digital("Select")
+	test  = input.Digital("Test")
+	cursor = input.Cursor("Cursor")
 )
-
-var context = input.Context("Default", quit, selct, test)
 
 var bindings = input.Bindings{
 	"Default": {
 		"Quit":   {"Escape"},
+		"Cursor" : {"Mouse"},
 		"Select": {"Mouse Left"},
 		"Test":   {"Space"},
 	},
@@ -54,7 +54,7 @@ type loop struct{}
 func main() {
 	setup()
 
-	input.Bind(bindings)
+	input.Load(bindings)
 
 	cozely.Configure(
 		cozely.Title("Match 3"),
@@ -67,7 +67,6 @@ func main() {
 }
 
 func (loop) Enter() {
-	context.Activate(1)
 	palette.Activate()
 }
 
@@ -122,8 +121,8 @@ func init() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop) React() {
-	if selct.JustPressed(1) {
-		m := canvas.FromWindow(input.Cursor.Position())
+	if selct.Started(1) {
+		m := canvas.FromWindow(cursor.XY(0).CR())
 		current = grid.PositionAt(m)
 		if current != grid.Nowhere() {
 			e := grid.At(current)
@@ -137,11 +136,11 @@ func (loop) React() {
 		}
 	}
 
-	if selct.JustReleased(1) {
+	if selct.Stopped(1) {
 		current = grid.Nowhere()
 	}
 
-	if test.JustPressed(1) {
+	if test.Started(1) {
 		f := func(e ecs.Entity) {
 			if !e.Has(ecs.MatchFlag) {
 				print(grid.PositionOf(e).String(), " ")
@@ -152,7 +151,7 @@ func (loop) React() {
 		println()
 	}
 
-	if quit.JustPressed(1) {
+	if quit.Started(1) {
 		cozely.Stop(nil)
 	}
 }

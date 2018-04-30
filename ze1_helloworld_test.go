@@ -50,7 +50,7 @@ func (loop) Render() {
 	canvas.Clear(bg)
 
 	canvas.Text(fg, pixel.Monozela10)
-	canvas.Locate(0, coord.CR{16, 32})
+	canvas.Locate(coord.CR{16, 32})
 	canvas.Print("Hello, World!")
 
 	canvas.Display()

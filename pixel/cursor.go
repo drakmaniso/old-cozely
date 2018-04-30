@@ -22,7 +22,6 @@ type TextCursor struct {
 	Margin        int16
 	LetterSpacing int16
 	Interline     int16
-	Layer         int16
 	Position      coord.CR
 }
 
@@ -45,9 +44,8 @@ func (a CanvasID) Text(c color.Index, f FontID) {
 // start a new line.
 //
 // Note that you can also directly change the TextCursor attributes.
-func (a CanvasID) Locate(layer int16, p coord.CR) {
+func (a CanvasID) Locate(p coord.CR) {
 	cu := &canvases[a].cursor
-	cu.Layer = layer
 	cu.Position = coord.CR{p.C, p.R}
 	cu.Margin = cu.Position.C
 }

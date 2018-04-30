@@ -77,13 +77,13 @@ func (loop) Update() {
 func (loop) Render() {
 	canvas.Clear(0)
 	origin = canvas.Size().Minus(resolution).Slash(2)
-	canvas.Box(c64.Red, c64.Transparent, 3, 0,
+	canvas.Box(c64.Red, c64.Transparent, 3,
 		origin.Pluss(4), origin.Plus(resolution).Minuss(4))
 	for c := int16(0); c < gridsize.C; c++ {
 		for r := int16(0); r < gridsize.R; r++ {
 			offset := resolution.Minus(gridsize.Times(16)).Slash(2)
 			p := coord.CR{c, r}.Timescr(cellsize).Plus(offset)
-			canvas.Box(c64.Yellow, c64.Transparent, 2, 0,
+			canvas.Box(c64.Yellow, c64.Transparent, 2,
 				origin.Plus(p), origin.Plus(p).Pluss(15))
 		}
 	}

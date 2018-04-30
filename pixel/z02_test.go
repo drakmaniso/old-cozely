@@ -35,7 +35,6 @@ var shapePictures = []pixel.PictureID{
 type shape struct {
 	pict  pixel.PictureID
 	pos   coord.CR
-	depth int16
 }
 
 type loop2 struct{}
@@ -72,11 +71,6 @@ func resize() {
 	s := canvas2.Size()
 	for i := range shapes {
 		j := rand.Intn(len(shapePictures))
-		if i < 0x7FFF {
-		shapes[i].depth = int16(i)
-		} else {
-			shapes[i].depth = 0x7FFF
-		}
 		p := shapePictures[j]
 		shapes[i].pict = p
 		shapes[i].pos.C = int16(rand.Intn(int(s.C - p.Size().C)))
@@ -131,11 +125,6 @@ func (loop2) React() {
 		shapes = append(shapes, shape{})
 		i := len(shapes) - 1
 		j := rand.Intn(len(shapePictures))
-		if i < 0x7FFF {
-			shapes[i].depth = int16(i)
-			} else {
-				shapes[i].depth = 0x7FFF
-			}
 			p := shapePictures[j]
 		shapes[i].pict = p
 		shapes[i].pos = canvas2.FromWindow(cursor.XY(0).CR()).Minus(p.Size().Slash(2))
@@ -155,9 +144,9 @@ func (loop2) Update() {
 func (loop2) Render() {
 	canvas2.Clear(0)
 	for _, o := range shapes {
-		canvas2.Picture(o.pict, o.depth, o.pos)
+		canvas2.Picture(o.pict, o.pos)
 	}
-	canvas2.Locate(0x7FFF, coord.CR{8, 16})
+	canvas2.Locate(coord.CR{8, 16})
 	ft, ov := cozely.RenderStats()
 	canvas2.Printf("%dk pictures: %6.2f", len(shapes)/1000, ft*1000)
 	if ov > 0 {

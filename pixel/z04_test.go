@@ -107,7 +107,7 @@ func (loop4) Render() {
 	canvas3.Clear(bg3)
 
 	canvas3.Cursor().Color = fg3
-	canvas3.Locate(0, coord.CR{16, font.Height() + 2})
+	canvas3.Locate(coord.CR{16, font.Height() + 2})
 
 	canvas3.Cursor().Font = font
 	canvas3.Cursor().LetterSpacing = letterspacing
@@ -120,7 +120,7 @@ func (loop4) Render() {
 		y = canvas3.Cursor().Position.R
 	}
 
-	canvas3.Locate(0, coord.CR{canvas3.Size().C - 96, 16})
+	canvas3.Locate(coord.CR{canvas3.Size().C - 96, 16})
 	canvas3.Printf("Line %d", line)
 
 	canvas3.Display()
