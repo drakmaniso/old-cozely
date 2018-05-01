@@ -1,0 +1,6 @@
+Debug: true
+Window: (1280, 720)
+Display: 1
+Fullscreen: false
+FullscreenMode: Desktop
+vsync: true
