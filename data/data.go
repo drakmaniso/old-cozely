@@ -1,36 +1,29 @@
 package data
 
-import "io"
+import (
+	"io"
+)
 
 ////////////////////////////////////////////////////////////////////////////////
 
 type Data interface {
-	Interpret(p ...InterpretFunc) interface{}
 }
-
-type InterpretFunc func(a Data, f ...InterpretFunc) interface{}
 
 ////////////////////////////////////////////////////////////////////////////////
 
 type String []byte
 
-func (a String) Interpret(f ...InterpretFunc) interface{} {
-	for _, ff := range f {
-		r := ff(a, f...)
-		if r != nil {
-			return r
-		}
-	}
-	return nil
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 
 type List struct {
-	Items    []Data
-	Pairs    map[string]Data
-	itemsPos []struct{ line, col int }
-	pairsPos map[string]struct{ line, col int }
+	items []struct {
+		Data
+		line, col uint32
+	}
+	pairs map[string]struct {
+		Data
+		line, col uint32
+	}
 }
 
 func Parse(source io.Reader) *List {
@@ -38,12 +31,18 @@ func Parse(source io.Reader) *List {
 	return nil
 }
 
-func (a *List) Interpret(f ...InterpretFunc) interface{} {
-	for _, ff := range f {
-		r := ff(a, f...)
-		if r != nil {
-			return r
-		}
-	}
-	return nil
+func (a *List) At(index int) Data {
+	return a.items[index].Data
+}
+
+func (a *List) With(key string) Data {
+	return a.pairs[key].Data
+}
+
+func (a *List) LocationAt(index int) (line, col int) {
+	return int(a.items[index].line), int(a.items[index].col)
+}
+
+func (a *List) LocationWith(key string) (line, col int) {
+	return int(a.pairs[key].line), int(a.pairs[key].col)
 }
