@@ -195,80 +195,58 @@ this is left to the application:
   (first, first, first)                        ;; Correct: items don't need to be unique
 
 
-Macros
+Shortcuts
 
-Any list written with angle brackets is parsed as a macro or an expression. By
-default, they will simply be ignored; if they have a label, it is also ignored.
-An option in the parser has to be turned on in order to use their functionality.
-
-  <pi=3.14159>  ;; Defines a variable (evaluates to nothing)
+  <pi=3.14159>  ;; Discarded: defines a string variable
   <pi>          ;; Evaluates to "3.14157"
 
-  <vowels=(a, e, i, o, u, y)>  ;; Defines a list constant (evaluates to nothing)
-  <vowels>                     ;; Evaluates to the list (a, e, i, o, u, y)
+  <vowels=(a, e, i, o, u, y)>  ;; Discarded: defines a list variable
+  <vowels>                     ;; (a, e, i, o, u, y)
 
-  <$foo>     ;; Defines a named anchor (evaluates to nothing)
+  <foo=$>     ;; Discarded: defines an anchor for the current string
+  <foo=$$>    ;; Discarded: defines an anchor for the current list
+  <foo=$$$>   ;; Discarded: defines an anchor for the parent list
+  <foo=$...>  ;; Discarded: defines an anchor for the top-level ancestor list
+  <foo=$$...> ;; Discarded: defines an anchor for the current item of the top-level ancestor list
+  <foo>       ;; Copy of the anchored string or list
 
-  /0         ;; The first top-level item
-  /1         ;; The second top-level item
-  /0/0       ;; The first item in the first top-level item (which must be a list)
-  .          ;; The current list
-  ./.        ;; The current item
-  ..         ;; The parent list
-  ../..      ;; The parent of the parent list
-  ...        ;; The top-level ancestor list
-  .../.      ;; The current item in the top-level ancestor list
-  ./0        ;; The first item in the current list
-  ./+1       ;; The next item in the current list
-  ./-1       ;; The previous item in the current list
-  ../0       ;; The first item in the parent list
-  ../+1      ;; The item following the current list
-  foo        ;; The item containing the anchor foo
-  foo/..     ;; The list containing the anchor foo
+  <#> <#> <#> <#>                   ;; "0 1 2 3"
+  (<#>, <#>, <#>, <#>)              ;; (0, 1, 2, 3)
+  (<#>, <#>, [<#>, <#>])            ;; (0, 1, [2, 3])
 
-  <#.>       ;; Index of the current list (position in the parent list)
-  <#..>      ;; Index of the parent list (position in the grand-parent list)
-  <#../+1>   ;; Index of the item following the current list
-  <#...>     ;; Index of the top-level parent list
-  <#.../.>   ;; Index of the current item of the top-level parent list
-  <#foo>     ;; Index of the string containing anchor foo
-  <#foo/..>  ;; Index of the list containing anchor foo
+  (<#>, <##>, <#>, <##>, <#>, <##>) ;; (0, 0, 1, 1, 2, 2)
+  (<#>, <##>, <##>, <##>, <#>)      ;; (0, 0, 1, 2, 0, 1)
 
-  <@/0/0>    ;; Copy of the first item of the first top-level item
-  <@./0>     ;; Copy of the first item of the current list
-  <@./0/0>   ;; Copy of the first item of the first item of the current list
-  <@./+1>    ;; Copy of the following item
-  <@../+1>   ;; Copy of the item following the current list
-  <@.../+1>  ;; Copy of the next top-level item
-  <@foo>     ;; Copy of the item following anchor foo
-  <@foo/..>  ;; Copy of the list containing anchor foo
+  (<#=1>, <#>, <#>, <#>)            ;; (1, 2, 3, 4)
+  (<#>, <#=10>, <#>, <#=100>)       ;; (0, 10, 11, 100)
+  <#=1><#><#><#=1><#><#>            ;; "123123"
+  (<#="a">, <#>, <#>, <#>)          ;; (a, b, c, d)
+  (<#=foo>, <#>, <#>, <#>)          ;; (<value of foo>, <value of foo+1>, ...)
+  (<#=0xf0>, <#>, <#>, <#>)         ;; (0xf0, 0xf1, 0xf2)
+  {
+    (color <#=1>, pink)             ;; (color 1, pink)
+    (color <#>, yellow)             ;; (color 2, yellow)
+    (color <#>, blue)               ;; (color 3, blue)
+  }
+  <#=0+3> <#> <#> <#> <#> <#> <#>   ;; "0 3 6 9 12 15 18"
+  <#=0-1> <#> <#> <#> <#>           ;; "0 -1 -2 -3 -4"
+  <#=0*2> <#> <#> <#> <#> <#> <#>   ;; "0 1 2 4 8 16 32"
+  <#=1/2> <#> <#> <#>               ;; "1 0.5 0.25 0.125"
+  <#=5//2> <#> <#> <#>              ;; "5 2 1 0"
+  <#=0%3> <#> <#> <#> <#> <#> <#>   ;; "0 1 2 0 1 2 0"
+  <#=2%3> <#> <#> <#> <#> <#> <#>   ;; "2 0 1 2 0 1 2"
+  <#=0%3+2> <#> <#> <#> <#> <#> <#> ;; "2 3 4 2 3 4 2"
 
+  <?:foo>33                          ;; "33" if foo is defined, string is discarded othewise
+  (1, <?:foo>33, 2)                  ;; (1, 33, 2) if foo is defined, (1, 2) otherwise
+  <?:foo>(1, 33, 2)                  ;; (1, 33, 2) if foo is defined, list is discarded otherwise
+  <!:foo>33                          ;; "44" if foo is *not* defined
+  <!:"">33                           ;; Always discarded
 
-Expressions
-
-  <1 2 +>         ;; "3"
-  <a=2 a>       ;; "2"
-  <1 1 a=+ a>   ;; "2"
-  <a=2 a ++>    ;; "11"
-  <1 2 3 +>       ;; Error! (the stack contains 2 items at the end of the expression)
-  <1 2 3 + !>     ;; Two items: "1", "5"
-  <pi 2 *>       ;; "6.28318"
-  <"foo" "bar" ~>     ;; "foobar"
-  <"foo" 33 ~>      ;; "foo33"
-  <111 33 ~>      ;; "11133"
-  <# 1 +>         ;; Index of the current item plus one
-  <1 # +>         ;; Same as above
-  <# 1 + 2 *>     ;; Double of the index of the current item
-
-  <pi 3.14159 ?eq>  ;; "true"
-  <3 44 ?gt>         ;; "false"
-
-  <true then:"foo">              ;; "foo"
-  <false then:"foo">             ;; Nothing
-  <false then:"foo" else:"bar">  ;; "bar"
-
-  <0 for:3 do:<10 +>>                   ;; "30"
-  <"" i=2 for:<i 5 ?lt> do:<i ~ i ++>>   ;; "234"
+  <*:4>hop                           ;; "hophophophop"
+  <*:3>(1, 2)                        ;; (1, 2), (1, 2), (1, 2)
+  <*:8><#>                           ;; "01234567"
+  <*:8><#=1>                         ;; "12345678"
 
 */
 package data
