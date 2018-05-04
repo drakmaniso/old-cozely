@@ -18,50 +18,39 @@ can even contain nested square brackets:
 
   [
     this is a [single, long] comment,
-    spanning multiple lines!
+    spanning multiple lines.
   ]
 
-Note that the only character that cannot appear in a comment is a closing square
-bracket without an opening one (as this would simply end the comment). Note also
-that forgetting to close a square bracket is an error, as this would will extend
-the comment until the end of the file.
+Note that the only thing that cannot appear in a comment is a closing square
+bracket without an opening one (as this would simply end the comment).
 
 
 Strings
 
-A basic string is a sequence of any non-special characters; they always ends
-with the first newline or special character. For example, the following example
-contain 8 strings:
+A string is a sequence characters terminated by a coma or a newline, or both.
+The following example contains 6 strings:
 
-  First string, Second string;
-  3.14159
-  4/04/2004
-  50 x 50
-  6, 7, 8th
+  First string, 2nd string, 3.14159
+  4/4/04, 50 x 50, 600
 
-The three correct way to terminate basic strings is the newline, the coma and
-the semi-colon. All other special characters will also act as separators, but
-will either have special meaning or issue a warning.
+Some characters have special meaning, and cannot appear in basic strings:
 
-Note that white spaces (e.g. space characters, tabs) are stripped at the
+  " , : ( ) [ ] < >
+
+Outside of these 9 special characters and the newline, every unicode character
+is allowed. For example, since the backslash is not a special character, the
+following is a valid string:
+
+  C:\Program Files\Cozely
+
+Note also that white space (i.e. space characters and tabs) is discarded at the
 beginning and the end of basic strings, but not inside:
 
   foo,foo  ,   foo   [three times the same string "foo"]
   foo          bar   [a single string of 16 characters "foo          bar"]
 
-There is 13 special characters:
-
-  " ; ,
-  : =
-  ( ) { }
-  [ ] < >
-
-Note that backslash is not a special character. The following is a valid string:
-
-  C:\Program Files\Cozely
-
 A quoted string is a character sequence between double quotes; any character is
-allowed including newlines:
+allowed, including newlines:
 
   "This (quoted) string: contains several special characters."
   "This is a
@@ -70,171 +59,146 @@ allowed including newlines:
 To insert a double quote character inside a quoted string, use two in
 succession:
 
-  "Here is a ""quote"" inside a string."  [= Here is a "quote" inside a string.]
+  """A lot of "" in this string """    ["A lot of " in this string"]
 
 If a quoted string immediately starts and ends with a newline character, those
-are stripped:
+are discarded:
 
   "
-  This is a
-  two-line string
+  This string has
+  only two lines
   "
 
 Lists
 
-A list is a sequence of items surrounded by round or curly brackets, and
-separated by comas or semi-colon. All the following examples are equivalent:
+A list is a sequence of items separated by comas:
 
-  (first, second, third)
-  {first, second, third}
-  (first; second; third)
-  {first, second; third}      [Warning: mixing comas and semi-colon in the same list]
-  (first, second, third}      [Warning: mismatched closing bracket]
+  first item, second item, third item
 
 Lists can be nested:
 
-  (first is a string, (second, is, a, list))
-  (first is a string; {second, is, a, list})
-  {first is a string; ({s;e;c;o;n;d}, is, a, list, of, {l;i;s;t;s})}
+  first item is a string, (second, is, a, list)
 
 Lists can contain newlines, which are ignored:
 
-  (first, second,
-  third)
-  (
-    first,
-    second,
-    third
-  )
+  first, second,
+  third
 
-Comas and semi-colons are optional at end of lines:
+Comas are optional when all items are on a separate line:
 
-  (first, second
-  third)
-  (
-    first
-    second
-    third
-  )
+  first
+  second
+  third
 
-Note that a coma always insert a new item:
+Which is is equivalent to:
 
-  (,,)        [a list of three empty strings: ("", "", "")]
-  (
-    ,
-    second,
-  )           [a list of three strings: ("", "second", "")]
+  first,
+  second,
+  third
 
-On the other hand, multiple newlines in a row do not create multiple items (in
-other words, a newline only creates a new item if it also terminates the
-previous one):
+It's even possible to mix coma-separated and newline-separated items in the same
+list:
 
-  (
-    first
+  first, second
+  third
+
+Note that a coma always insert a new item. For example, the following is a list
+of *four* items (the second and the fourth are empty strings):
+
+  first,, third,
+
+On the other hand, newlines can only separate non-empty strings; which means
+multiple newlines in a row do not create empty items. The following is a list
+of two items:
+
+  first
 
 
-    second
-    third
-  )            [a list of three strings: ("first", "second", "third")]
+  second
 
 
 Labels
 
-Both strings and lists can, optionally, be prefixed with a label. The label and
-its value are separated by either a colon ":" or an equal sign "=":
+A label is a character sequence terminated by a colon ":", and placed in front
+of a string or a list.
 
-  label: in front of a string
-  (and, this, is, also, a, labeled=string, inside, a, list)
+  a label: in front of a string
   label: (in, front, of, a, list)
+  (and, this, is, a labeled: string, inside, a, list)
 
-  {this, is (ambiguous)}     [Warning: "is" could be a string or a label; assuming string]
+  (this, is (ambiguous))     [Warning: "is" could be a string or a label; assuming string]
 
-  this is: correct
+It's possible to add one or more newline after the colon (but not before):
+
+  a label:
+  (for, this, list)
 
 Labels follow exactly the same rules as strings; i.e., basic labels can contain
 any non-special characters except newlines, while quoted labels can contain
 anything:
 
-  "this is": correct
+  this *is*: correct
 
-  "this: is (also)" = correct
+  "this: is (also)": correct
 
   "
   and this is a
   multi-line label!
-  " : unusual
+  ":
+  (correct, but probably not very useful)
 
-The empty (quoted) string can also be used as a label, but is equivalent to an
-unlabeled value:
+Labels cannot be empty:
 
-  value
-  ""=value    [Same as above]
-
-If a colon or an equal sign is present, the label is mandatory:
-
-  =incorrect  [Warning: no label; assuming empty label ""]
-
-Basic labels are case-insensitive.
+  unlabeled string
+  :unlabeled string       [Warning: empty label]
+  "": unlabeled string
 
 In a given list, the same label can occur multiple times. The correctness of
 this is left to the application:
 
-  (first, second, lang=british, lang=american) [Correct, depending on the application]
-  (first, _, third, count=2, count=3)          [Ambiguous, depending on the application]
-  (first, first, first)                        [Correct: items don't need to be unique]
+  (first, second, lang:british, lang:american)  [Correct, depending on the application]
+
+  (first, , third, count:2, count:3)            [Ambiguous, depending on the application]
 
 
-Shortcuts
+Variables
 
-  <pi=3.14159>        [Discarded: defines a string constant]
+  <pi=3.14159>        [Discarded: defines a variable]
   <pi>                [Evaluates to "3.14157"]
 
-  <foo:>33            [Discarded: defines a string anchor]
-  <foo>               ["33"]
-  <vowels:>(1, 2, 3)  [Discarded: defines a list anchor]
-  <vowels>            [(1, 2, 3)]
 
-  <#> <#> <#> <#>                    ;; "0 1 2 3"
-  (<#>, <#>, <#>, <#>)               ;; (0, 1, 2, 3)
-  (<#>, <#>, {<#>, <#>})             ;; (0, 1, {2, 3})
+Counters
 
-  (<#>, <##>, <#>, <##>, <#>, <##>)  ;; (0, 0, 1, 1, 2, 2)
-  (<#>, <##>, <##>, <##>, <#>)       ;; (0, 0, 1, 2, 0, 1)
+  <#>, <#>, <#>, <#>                [1, 2, 3, 4]
 
-  (<#=1>, <#>, <#>, <#>)            ;; (1, 2, 3, 4)
-  (<#>, <#=10>, <#>, <#=100>)       ;; (0, 10, 11, 100)
-  <#=1><#><#><#=1><#><#>            ;; "123123"
-  (<#="a">, <#>, <#>, <#>)          ;; (a, b, c, d)
-  (<#=foo>, <#>, <#>, <#>)          ;; (<value of foo>, <value of foo+1>, ...)
-  (<#=0xf0>, <#>, <#>, <#>)         ;; (0xf0, 0xf1, 0xf2)
-  {
-    (color <#=1>, pink)             ;; (color 1, pink)
-    (color <#>, yellow)             ;; (color 2, yellow)
-    (color <#>, blue)               ;; (color 3, blue)
-  }
-  <#+3> <#> <#> <#> <#> <#> <#>     ;; "0 3 6 9 12 15 18"
-  <#=3-1> <#> <#> <#>               ;; "3 2 1 0"
-  <#=3-1> <#> <#> <#> <#> <#>       ;; Ambiguous! Interpreted as: "3 2 1 0 0 0"
-  <#=$> <#> <#> <#>                 ;; "3 2 1"
-  <#=$> <#> <#> <#> <#> <#>         ;; "5 4 3 2 1 0"
-  <#*2> <#> <#> <#> <#> <#> <#>     ;; "0 1 2 4 8 16 32"
-  <#=8/2> <#> <#> <#> <#>           ;; "8 4 2 1 0"
-  <#=5/2> <#> <#> <#>               ;; "5 2 1 0"
-  <#%3> <#> <#> <#> <#> <#> <#>     ;; "0 1 2 0 1 2 0"
-  <#=2%3> <#> <#> <#> <#> <#> <#>   ;; "2 0 1 2 0 1 2"
-  <#%3+2> <#> <#> <#> <#> <#> <#>   ;; "2 3 4 2 3 4 2"
+  item <#>, item <#>, item <#>      [item 1, item 2, item 3]
 
-  <foo?>33                          ;; "33" if foo is defined, string is discarded othewise
-  (1, <foo?>33, 2)                  ;; (1, 33, 2) if foo is defined, (1, 2) otherwise
-  <foo?>(1, 33, 2)                  ;; (1, 33, 2) if foo is defined, list is discarded otherwise
-  <foo!>33                          ;; "44" if foo is *not* defined
-  <!>33                             ;; Always discarded
+  (<#>, <#>, <#>, <#>)              [(1, 1, 1, 1)]
 
-  <*4>hop                           ;; "hophophophop"
-  <*3>(1, 2)                        ;; (1, 2), (1, 2), (1, 2)
-  <*8><#>                           ;; "01234567"
-  <*8><#=1>                         ;; "12345678"
+  (<#>, <#>), (<#>, <#>)            [(1, 1), (2, 2)]
 
+  (<#>), (<#>), (<#>), (<#>)        [(1), (2), (3), (4)]
+
+  <#=0>
+  <#>, <#>, <#>, <#>                [0, 1, 2, 3]
+
+  <#>, <#=10><#>, <#>, <#=100><#>   [1, 10, 11, 100]
+
+  <#=foo>
+  <#>, <#>                          [<value of foo>, <value of foo+1>]
+
+
+Sub-List Counter
+
+  (<##>, <##>, <##>, <##>)          [(1, 2, 3, 4)]
+
+  (<##>, <##>), (<##>, <##>)        [(1, 2), (1, 2)]
+
+  (<##>), (<##>), (<##>), (<##>)    [(1), (1), (1), (1)]
+
+  ((<##>, <##>, <##>, <##>))        [((1, 1, 1, 1))]
+
+  ((<###>, <###>, <###>, <###>))    [((1, 2, 3, 4))]
 
 */
 package data
