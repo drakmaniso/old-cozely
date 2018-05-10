@@ -21,14 +21,14 @@ newline).
   simply double it. All other unicode characters can
   be included as is."
 
-White space is stripped at the beginning and the end of unquoted strings. And if
-a quoted string immediately starts or ends with a newline, it is also discarded.
+In basic, unquoted strings, leading and trailing white space is removed. The
+only thing removed from quoted strings is a single newline character, if it is
+immediately at the start of the string.
 
   hop, hop   ,    hop             [three times the same string "hop"]
 
   "
-  A single line.
-  "
+  A single line."
 
 Tables are made of sections; each section associates a label to a coma-separated
 list of data:
@@ -80,14 +80,14 @@ variables and counters.
 
 Ambiguities //TODO
 
-Note that a coma always insert a new item. For example, the following is a list
-of *four* items (the second and the fourth are empty strings):
+Note that a coma always insert a new item, even if that mean creating an empty
+one. For example, the following is a list of *four* items (the second and the
+fourth are empty strings):
 
   first,, third,
 
-On the other hand, newlines can only separate non-empty strings; which means
-multiple newlines in a row do not create empty items. The following is a list
-of two items:
+On the other hand, newlines can only creates non-empty items. The following is a
+list of two items:
 
   first
 

@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"errors"
 	"io"
+	"strconv"
 	"strings"
 )
 
@@ -61,12 +62,57 @@ func (a Table) Section(label string) []Data {
 ////////////////////////////////////////////////////////////////////////////////
 
 func Parse(source io.Reader) Table {
-	d := decoder{
-		src: bufio.NewReader(source),
+	s := state{
+		src:  bufio.NewReader(source),
+		line: 1, col: 1,
 	}
-	d.ancestors = append(d.ancestors, &d.top)
-	d.scan = (*decoder).scanStart
-	d.doScan()
+	s.ancestors = append(s.ancestors, &s.top)
+loop:
+	for {
+		l, c := s.line, s.col
+		t := s.scan()
+		switch t {
+		case invalid:
+			println(l, ".", c, ": ", "invalid")
+
+		case newline:
+			println(l, ".", c, ": ", "newline")
+
+		case whitespace:
+			println(l, ".", c, ": ", "whitespace")
+
+		case basic:
+			println(l, ".", c, ": ", "basic")
+
+		case quote:
+			println(l, ".", c, ": ", "quote")
+
+		case open:
+			println(l, ".", c, ": ", "open")
+
+		case colon:
+			println(l, ".", c, ": ", "colon")
+
+		case coma:
+			println(l, ".", c, ": ", "coma")
+
+		case close:
+			println(l, ".", c, ": ", "close")
+
+		case shortcut:
+			println(l, ".", c, ": ", "shortcut")
+
+		case comment:
+			println(l, ".", c, ": ", "comment")
+
+		case eof:
+			println(l, ".", c, ": ", "eof")
+			break loop
+
+		default:
+			println("*** what? ***")
+		}
+	}
 	//TODO
 	return Table{}
 }
@@ -77,166 +123,125 @@ const (
 	specials = "\",:[]()<>"
 )
 
-type decoder struct {
+type state struct {
 	src       *bufio.Reader
 	top       Table
 	ancestors []*Table
 	table     *Table
 	section   string
 	builder   strings.Builder
-	scan      scanner
 	line, col uint32
 	err       error
 }
 
-type scanner func(*decoder) scanner
+type token int
 
-func (a *decoder) doScan() {
-	for a.scan != nil {
-		a.scan = a.scan(a)
-	}
-}
+const (
+	invalid token = iota
+	newline
+	whitespace
+	basic
+	quote
+	open
+	colon
+	coma
+	close
+	shortcut
+	comment
+	eof
+)
 
-func (a *decoder) scanStart() scanner {
+func (a *state) scan() token {
 	r, _, err := a.src.ReadRune()
 	if err != nil {
 		a.err = err
-		return nil
+		return eof
 	}
-	a.col++
 	switch r {
 	case '\n':
 		a.line++
 		a.col = 1
-		return (*decoder).scanStart
+		return newline
+
 	case ' ', '\t':
-		return (*decoder).scanStart
+	spaceloop:
+		for {
+			switch r {
+			case ' ', '\t':
+				a.col++
+			default:
+				a.src.UnreadRune()
+				break spaceloop
+			}
+			r, _, err = a.src.ReadRune()
+			if err != nil {
+				break spaceloop
+			}
+		}
+		return whitespace
+
 	case '"':
-		//TODO: start a quote
-		return (*decoder).scanQuote
+		//TODO
+		return quote
+
 	case '(':
-		//TODO: start a new table
-		return (*decoder).scanStart
+		a.col++
+		return open
+
 	case ')':
-		l := len(a.ancestors)
-		if l > 0 {
-			a.table = a.ancestors[l-1]
-			a.ancestors = a.ancestors[:l-1]
-			return (*decoder).scanAfterTable
-		}
-		if a.err == nil {
-			//TODO: add position
-			a.err = errors.New("unexpected ')' in top-level table")
-		}
-		return nil
+		a.col++
+		return close
+
 	case ',':
-		a.table.header = append(a.table.header, String{
-			line: a.line,
-			col:  a.col,
-		})
-		return (*decoder).scanStart
+		a.col++
+		return coma
+
 	case ':':
-		if a.err == nil {
-			//TODO: add position
-			a.err = errors.New("unexpected ':' with no label")
-		}
-		return (*decoder).scanStart
+		a.col++
+		return colon
+
 	case '<':
-		//TODO: start a shortcut
-		return (*decoder).scanShortcut
+		//TODO
+		return shortcut
+
 	case '>':
-		if a.err == nil {
-			//TODO: add position
-			a.err = errors.New("unexpected '>' outside shortcut")
-		}
-		return (*decoder).scanStart
+		a.errmsg(a.line, a.col, "unexpected '>' outside shortcut")
+		a.col++
+		return invalid
+
 	case '[':
-		return (*decoder).scanComment
+		//TODO
+		return comment
+
 	case ']':
-		if a.err == nil {
-			//TODO: add position
-			a.err = errors.New("unexpected ']' outside comment")
-		}
-		return (*decoder).scanStart
+		a.errmsg(a.line, a.col, "unexpected ']' outside comment")
+		a.col++
+		return invalid
+
 	default:
-		a.builder.WriteRune(r)
-		return (*decoder).scanBasic
+	basicloop:
+		for {
+			switch r {
+			case '\n', '(', ')', ',', ':', '<', '>', '[', ']':
+				a.src.UnreadRune()
+				break basicloop
+			default:
+				a.col++
+				a.builder.WriteRune(r)
+			}
+			r, _, err = a.src.ReadRune()
+			if err != nil {
+				break basicloop
+			}
+		}
+		return basic
 	}
 }
 
-func (a *decoder) scanBasic() scanner {
-	r, _, err := a.src.ReadRune()
-	if err != nil {
-		a.err = err
-		return nil
+func (a *state) errmsg(l, c uint32, msg string) {
+	if a.err == nil {
+		a.err = errors.New(
+			strconv.Itoa(int(l)) + "." + strconv.Itoa(int(c)) + ": " + msg,
+		)
 	}
-	a.col++
-	switch r {
-	case '\n':
-		a.line++
-		a.col = 1
-		fallthrough
-	case ',':
-		// It's a basic string
-		s := String{
-			string: a.builder.String(),
-		}
-		if a.section == "" {
-			a.table.header = append(a.table.header, s)
-		} else {
-			a.table.sections[a.section] = append(a.table.sections[a.section], s)
-		}
-		a.builder.Reset()
-		return (*decoder).scanStart
-	case '(':
-	case ')':
-		// It's a basic string
-		s := String{
-			string: a.builder.String(),
-		}
-		if a.section == "" {
-			a.table.header = append(a.table.header, s)
-		} else {
-			a.table.sections[a.section] = append(a.table.sections[a.section], s)
-		}
-		a.builder.Reset()
-	case ':':
-	case '<':
-	case '>':
-	case '[':
-	case ']':
-	case '"':
-	case ' ', '\t':
-		fallthrough
-	default:
-	}
-	return nil
 }
-
-func (a *decoder) scanComment() scanner {
-	r, _, err := a.src.ReadRune()
-	if err != nil {
-		a.err = err
-		return nil
-	}
-	a.col++
-	switch r {
-	case '\n':
-	case ' ', '\t':
-	case '"':
-	case '(':
-	case ')':
-	case ',':
-	case ':':
-	case '<':
-	case '>':
-	case '[':
-	case ']':
-	default:
-	}
-	return nil
-}
-
-func (a *decoder) scanQuote() scanner      { return nil }
-func (a *decoder) scanShortcut() scanner   { return nil }
-func (a *decoder) scanAfterTable() scanner { return nil }
