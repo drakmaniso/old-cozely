@@ -54,8 +54,7 @@ func setup() error {
 
 	// Create texture atlases for pictures and fonts
 
-	pictAtlas = atlas.New(1024, 1024)
-	fntAtlas = atlas.New(128, 128)
+	pictures.atlas = atlas.New(1024, 1024)
 
 	err := loadAssets()
 	if err != nil {
@@ -64,17 +63,14 @@ func setup() error {
 	//TODO: handle the case when there is no pictures
 
 	// Mappings Buffer
-	pictureMapTBO = gl.NewBufferTexture(pictureMap, gl.R16I, gl.StaticStorage)
-	if len(glyphMap) > 0 {
-		glyphMapTBO = gl.NewBufferTexture(glyphMap, gl.R16I, gl.StaticStorage)
-	}
+	pictureMapTBO = gl.NewBufferTexture(pictures.mapping, gl.R16I, gl.StaticStorage)
 
 	// Create the pictures texture array
-	w, h := pictAtlas.BinSize()
-	if pictAtlas.BinCount() > 0 {
-		picturesTA = gl.NewTextureArray2D(1, gl.R8UI, int32(w), int32(h), int32(pictAtlas.BinCount()))
+	w, h := pictures.atlas.BinSize()
+	if pictures.atlas.BinCount() > 0 {
+		picturesTA = gl.NewTextureArray2D(1, gl.R8UI, int32(w), int32(h), int32(pictures.atlas.BinCount()))
 	}
-	for i := int16(0); i < pictAtlas.BinCount(); i++ {
+	for i := int16(0); i < pictures.atlas.BinCount(); i++ {
 		m := image.NewPaletted(image.Rectangle{
 			Min: image.Point{0, 0},
 			Max: image.Point{int(w), int(h)},
@@ -82,49 +78,64 @@ func setup() error {
 			stdcolor.Palette{},
 		)
 
-		err := pictAtlas.Paint(i, m, pictPaint)
+		err := pictures.atlas.Paint(i, m, pictPaint)
 		if err != nil {
 			return err
 		}
 
-		picturesTA.SubImage(0, 0, 0, int32(i), m)
-	}
-
-	// Create the font texture array
-	w, h = fntAtlas.BinSize()
-	glyphsTA = gl.NewTextureArray2D(1, gl.R8UI, int32(w), int32(h), int32(fntAtlas.BinCount()))
-	for i := int16(0); i < fntAtlas.BinCount(); i++ {
-		m := image.NewPaletted(image.Rectangle{
-			Min: image.Point{0, 0},
-			Max: image.Point{int(w), int(h)},
-		},
-			stdcolor.Palette{},
-		)
-
-		err := fntAtlas.Paint(i, m, fntPaint)
-		if err != nil {
-			return err
-		}
-
-		glyphsTA.SubImage(0, 0, 0, int32(i), m)
-
-		// of, err := os.Create("testdata/fnt" + string('0'+i) + ".png")
+		// of, err := os.Create("testdata/atlas" + string('0'+i) + ".png")
 		// if err != nil {
 		// 	panic(err)
 		// }
-		// m.Palette = color.Palette{
-		// 	color.RGBA{0, 0, 0, 255},
-		// 	color.RGBA{255, 255, 255, 255},
-		// 	color.RGBA{255, 0, 255, 255},
+		// m.Palette = stdcolor.Palette{
+		// 	stdcolor.RGBA{0, 0, 0, 255},
+		// 	stdcolor.RGBA{255, 255, 255, 255},
+		// 	stdcolor.RGBA{255, 0, 255, 255},
 		// }
 		// err = png.Encode(of, m)
 		// if err != nil {
 		// 	panic(err)
 		// }
 		// of.Close()
+
+		picturesTA.SubImage(0, 0, 0, int32(i), m)
 	}
 
-	fntImages = fntImages[:0]
+	// Create the font texture array
+	// w, h = pictAtlas.BinSize()
+	// glyphsTA = gl.NewTextureArray2D(1, gl.R8UI, int32(w), int32(h), int32(pictAtlas.BinCount()))
+	// for i := int16(0); i < pictAtlas.BinCount(); i++ {
+	// 	m := image.NewPaletted(image.Rectangle{
+	// 		Min: image.Point{0, 0},
+	// 		Max: image.Point{int(w), int(h)},
+	// 	},
+	// 		stdcolor.Palette{},
+	// 	)
+
+	// 	err := pictAtlas.Paint(i, m, fntPaint)
+	// 	if err != nil {
+	// 		return err
+	// 	}
+
+	// 	glyphsTA.SubImage(0, 0, 0, int32(i), m)
+
+	// 	// of, err := os.Create("testdata/fnt" + string('0'+i) + ".png")
+	// 	// if err != nil {
+	// 	// 	panic(err)
+	// 	// }
+	// 	// m.Palette = color.Palette{
+	// 	// 	color.RGBA{0, 0, 0, 255},
+	// 	// 	color.RGBA{255, 255, 255, 255},
+	// 	// 	color.RGBA{255, 0, 255, 255},
+	// 	// }
+	// 	// err = png.Encode(of, m)
+	// 	// if err != nil {
+	// 	// 	panic(err)
+	// 	// }
+	// 	// of.Close()
+	// }
+
+	pictures.image = pictures.image[:0]
 
 	return gl.Err()
 }
@@ -143,15 +154,11 @@ func cleanup() error {
 	screenUBO.Delete()
 
 	// Pictures
-	pictAtlas = nil
+	pictures.atlas = nil
 	pictureMapTBO.Delete()
 	picturesTA.Delete()
 
 	// Fonts
-	fntAtlas = nil
-	glyphMap = glyphMap[:0]
-	glyphMapTBO.Delete()
-	glyphsTA.Delete()
 
 	return gl.Err()
 }

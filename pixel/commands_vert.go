@@ -30,7 +30,6 @@ layout(std140, binding = 0) uniform ScreenUBO {
 
 layout(binding = 0) uniform isamplerBuffer parameters;
 layout(binding = 1) uniform isamplerBuffer pictureMap;
-layout(binding = 3) uniform isamplerBuffer glyphMap;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -97,9 +96,9 @@ void main(void)
 		x = texelFetch(parameters, param+3+offset).r;
 		// Mapping of the current character
 		m *= 5;
-		Bin = texelFetch(glyphMap, m+0).r;
-		UV = vec2(texelFetch(glyphMap, m+1).r, texelFetch(glyphMap, m+2).r);
-		wh = vec2(texelFetch(glyphMap, m+3).r, texelFetch(glyphMap, m+4).r);
+		Bin = texelFetch(pictureMap, m+0).r;
+		UV = vec2(texelFetch(pictureMap, m+1).r, texelFetch(pictureMap, m+2).r);
+		wh = vec2(texelFetch(pictureMap, m+3).r, texelFetch(pictureMap, m+4).r);
 		// Character quad
 		p = (CanvasMargin + vec2(x, y) + corners[vertex] * wh) * PixelSize;
 		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), 0, 1);

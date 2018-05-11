@@ -31,9 +31,7 @@ var (
 	pipeline      *gl.Pipeline
 	screenUBO     gl.UniformBuffer
 	pictureMapTBO gl.BufferTexture
-	glyphMapTBO   gl.BufferTexture
 	picturesTA    gl.TextureArray2D
-	glyphsTA      gl.TextureArray2D
 )
 
 var (

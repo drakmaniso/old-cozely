@@ -108,7 +108,7 @@ func (a CanvasID) WriteRune(r rune) {
 		int16(cu.Color-fonts[cu.Font].basecolor),
 		cu.Position.R-fonts[cu.Font].baseline,
 		int16(g), cu.Position.C)
-	cu.Position.C += glyphMap[g].w + cu.LetterSpacing
+	cu.Position.C += pictures.mapping[g].w + cu.LetterSpacing
 }
 
 ////////////////////////////////////////////////////////////////////////////////

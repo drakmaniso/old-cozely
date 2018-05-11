@@ -177,9 +177,7 @@ func (a CanvasID) paint() {
 	aa.commandsICBO.Bind()
 	aa.parametersTBO.Bind(layoutParameters)
 	pictureMapTBO.Bind(layoutPictureMap)
-	glyphMapTBO.Bind(layoutGlyphMap)
 	picturesTA.Bind(layoutPictures)
-	glyphsTA.Bind(layoutGlyphs)
 
 	aa.commandsICBO.SubData(aa.commands, 0)
 	aa.parametersTBO.SubData(aa.parameters, 0)

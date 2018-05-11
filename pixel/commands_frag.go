@@ -31,7 +31,6 @@ layout(origin_upper_left, pixel_center_integer) in vec4 gl_FragCoord;
 ////////////////////////////////////////////////////////////////////////////////
 
 layout(binding = 4) uniform usampler2DArray Pictures;
-layout(binding = 6) uniform usampler2DArray Glyphs;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -58,7 +57,7 @@ void main(void)
 		break;
 
 	case cmdText:
-		p = texelFetch(Glyphs, ivec3(UV.x, UV.y, Bin), 0).x;
+		p = texelFetch(Pictures, ivec3(UV.x, UV.y, Bin), 0).x;
 		if (p == 0) {
 			c = 0;
 		} else {
