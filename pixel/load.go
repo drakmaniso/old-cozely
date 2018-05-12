@@ -22,7 +22,6 @@ func loadAssets() error {
 
 	// Load all fonts
 
-
 	c := len(pictures.path)
 
 	for i := range fonts {
@@ -36,7 +35,7 @@ func loadAssets() error {
 	internal.Debug.Printf(
 		"Loaded %d fonts (%d glyphs)\n",
 		len(fonts),
-		len(pictures.path) - c,
+		len(pictures.path)-c,
 	)
 
 	// Load all pictures
@@ -59,17 +58,6 @@ func loadAssets() error {
 		pictures.atlas.BinCount(),
 		float64(pictures.atlas.Unused())/1024.0,
 	)
-
-	// Pack them into the atlas
-
-	// pictures.atlas.Pack(frects, fntSize, fntPut)
-
-	// internal.Debug.Printf(
-	// 	"Packed %d fonts in %d bins (%.1fkB unused)\n",
-	// 	len(fonts),
-	// 	pictures.atlas.BinCount(),
-	// 	float64(pictures.atlas.Unused())/1024.0,
-	// )
 
 	return gl.Err()
 }

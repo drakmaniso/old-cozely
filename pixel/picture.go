@@ -168,26 +168,6 @@ func pictPaint(rect uint32, dest interface{}) error {
 	px, py := pictures.mapping[PictureID(rect)].x, pictures.mapping[PictureID(rect)].y
 	pw, ph := pictures.mapping[PictureID(rect)].w, pictures.mapping[PictureID(rect)].h
 
-	// var src image.Image
-	// if PictureID(rect) == MouseCursor {
-	// 	src = &mousecursor
-	// } else {
-	// 	fp := filepath.FromSlash(internal.Path + pictures.path[PictureID(rect)] + ".png")
-	// 	f, err := os.Open(fp)
-	// 	if err != nil {
-	// 		return err
-	// 	}
-	// 	defer f.Close()
-	// 	src, _, err = image.Decode(f)
-	// 	if err != nil {
-	// 		return err
-	// 	}
-	// }
-
-	// sm, ok := src.(*image.Paletted)
-	// if !ok {
-	// 	return errors.New("unexpected src argument to imgfile paint method")
-	// }
 	sm := pictures.image[PictureID(rect)]
 	dm, ok := dest.(*image.Paletted)
 	if !ok {

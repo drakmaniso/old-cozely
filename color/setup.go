@@ -35,9 +35,14 @@ func setup() error {
 }
 
 func cleanup() error {
-	for id := range palettes.path {
-		palettes.changed[id] = true
-	}
+	palettes.path = palettes.path[:0]
+	palettes.colours = palettes.colours[:0]
+	palettes.changed = palettes.changed[:0]
+	// for id := range palettes.path {
+	// 	palettes.changed[id] = true
+	// }
+	active = 0xFF
+	activated = false
 	ssbo.Delete()
 	return gl.Err()
 }

@@ -23,14 +23,12 @@ var bindings = input.Bindings{
 	},
 }
 
-var (
-	canvas2    = pixel.Canvas(pixel.Resolution(160, 100))
-	logo       = pixel.Picture("graphics/cozely")
-	monochrome = color.PaletteFrom("graphics/cozely")
-	colorful   = color.Palette()
-)
-
 type loop2 struct {
+	canvas     pixel.CanvasID
+	logo       pixel.PictureID
+	monochrome color.PaletteID
+	colorful   color.PaletteID
+
 	playing bool
 }
 
@@ -39,17 +37,27 @@ type loop2 struct {
 func Example_interactive() {
 	defer cozely.Recover()
 
+	l := loop2{}
+	l.setup()
+
 	input.Load(bindings)
 	cozely.Configure(cozely.UpdateStep(1.0 / 3))
-	err := cozely.Run(&loop2{})
+	err := cozely.Run(&l)
 	if err != nil {
 		panic(err)
 	}
 	// Output:
 }
 
+func (l *loop2) setup() {
+	l.canvas = pixel.Canvas(pixel.Resolution(160, 100))
+	l.logo = pixel.Picture("graphics/cozely")
+	l.monochrome = color.PaletteFrom("graphics/cozely")
+	l.colorful = color.Palette()
+}
+
 func (l *loop2) Enter() {
-	monochrome.Activate()
+	l.monochrome.Activate()
 	l.shufflecolors()
 }
 
@@ -78,21 +86,21 @@ func (l *loop2) shufflecolors() {
 		g := 0.2 + 0.7*rand.Float32()
 		r := 0.2 + 0.7*rand.Float32()
 		b := 0.2 + 0.7*rand.Float32()
-		colorful.Set(uint8(i), color.SRGB{r, g, b})
+		l.colorful.Set(uint8(i), color.SRGB{r, g, b})
 	}
 }
 
 func (l *loop2) Render() {
-	canvas2.Clear(0)
+	l.canvas.Clear(0)
 
 	if l.playing {
-		colorful.Activate()
+		l.colorful.Activate()
 	} else {
-		monochrome.Activate()
+		l.monochrome.Activate()
 	}
 
-	o := canvas2.Size().Minus(logo.Size()).Slash(2)
-	canvas2.Picture(logo, o)
+	o := l.canvas.Size().Minus(l.logo.Size()).Slash(2)
+	l.canvas.Picture(l.logo, o)
 
-	canvas2.Display()
+	l.canvas.Display()
 }

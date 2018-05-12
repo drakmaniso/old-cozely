@@ -19,42 +19,47 @@ import (
 
 ////////////////////////////////////////////////////////////////////////////////
 
-var (
-	canvas1   = pixel.Canvas(pixel.Resolution(320, 180))
-	palette1a = color.PaletteFrom("graphics/mire")
-	palette1b = color.PaletteFrom("graphics/srgb-gray")
-)
+var ()
 
-var (
-	mire      = pixel.Picture("graphics/mire")
-	srgbGray  = pixel.Picture("graphics/srgb-gray")
-	srgbRed   = pixel.Picture("graphics/srgb-red")
-	srgbGreen = pixel.Picture("graphics/srgb-green")
-	srgbBlue  = pixel.Picture("graphics/srgb-blue")
-)
-
-type loop1 struct{}
-
-var mode int
+type loop1 struct {
+	canvas                                 pixel.CanvasID
+	palmire, palsrgb                       color.PaletteID
+	mire                                   pixel.PictureID
+	srgbGray, srgbRed, srgbGreen, srgbBlue pixel.PictureID
+	mode                                   int
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
 func TestTest1(t *testing.T) {
 	do(func() {
 		defer cozely.Recover()
-
+		l := loop1{}
+		l.declare()
 		input.Load(bindings)
-		err := cozely.Run(loop1{})
+		err := cozely.Run(&l)
 		if err != nil {
 			t.Error(err)
 		}
 	})
 }
 
-func (loop1) Enter() {
-	mode = 0
+func (a *loop1) declare() {
+	a.canvas = pixel.Canvas(pixel.Resolution(320, 180))
+	a.palmire = color.PaletteFrom("graphics/mire")
+	a.palsrgb = color.PaletteFrom("graphics/srgb-gray")
 
-	palette1a.Activate()
+	a.mire = pixel.Picture("graphics/mire")
+	a.srgbGray = pixel.Picture("graphics/srgb-gray")
+	a.srgbRed = pixel.Picture("graphics/srgb-red")
+	a.srgbGreen = pixel.Picture("graphics/srgb-green")
+	a.srgbBlue = pixel.Picture("graphics/srgb-blue")
+}
+
+func (a *loop1) Enter() {
+	a.mode = 0
+
+	a.palmire.Activate()
 }
 
 func (loop1) Leave() {
@@ -62,21 +67,21 @@ func (loop1) Leave() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (loop1) React() {
+func (a *loop1) React() {
 	if quit.Started(0) {
 		cozely.Stop(nil)
 	}
 
 	if next.Started(0) {
-		mode++
-		if mode > 1 {
-			mode = 0
+		a.mode++
+		if a.mode > 1 {
+			a.mode = 0
 		}
-		switch mode {
+		switch a.mode {
 		case 0:
-			palette1a.Activate()
+			a.palmire.Activate()
 		case 1:
-			palette1b.Activate()
+			a.palsrgb.Activate()
 		}
 	}
 
@@ -97,22 +102,22 @@ func (loop1) React() {
 func (loop1) Update() {
 }
 
-func (loop1) Render() {
-	canvas1.Clear(0)
-	sz := canvas1.Size()
-	switch mode {
+func (a *loop1) Render() {
+	a.canvas.Clear(0)
+	sz := a.canvas.Size()
+	switch a.mode {
 	case 0:
-		pz := mire.Size()
-		canvas1.Picture(mire, coord.CR{0, 0})
-		canvas1.Picture(mire, coord.CR{0, sz.R - pz.R})
-		canvas1.Picture(mire, coord.CR{sz.C - pz.C, 0})
-		canvas1.Picture(mire, sz.Minus(pz))
+		pz := a.mire.Size()
+		a.canvas.Picture(a.mire, coord.CR{0, 0})
+		a.canvas.Picture(a.mire, coord.CR{0, sz.R - pz.R})
+		a.canvas.Picture(a.mire, coord.CR{sz.C - pz.C, 0})
+		a.canvas.Picture(a.mire, sz.Minus(pz))
 	case 1:
-		pz := srgbGray.Size()
-		canvas1.Picture(srgbGray, coord.CR{sz.C/2 - pz.C/2, 32})
-		canvas1.Picture(srgbRed, coord.CR{sz.C/4 - pz.C/2, 96})
-		canvas1.Picture(srgbGreen, coord.CR{sz.C/2 - pz.C/2, 96})
-		canvas1.Picture(srgbBlue, coord.CR{3*sz.C/4 - pz.C/2, 96})
+		pz := a.srgbGray.Size()
+		a.canvas.Picture(a.srgbGray, coord.CR{sz.C/2 - pz.C/2, 32})
+		a.canvas.Picture(a.srgbRed, coord.CR{sz.C/4 - pz.C/2, 96})
+		a.canvas.Picture(a.srgbGreen, coord.CR{sz.C/2 - pz.C/2, 96})
+		a.canvas.Picture(a.srgbBlue, coord.CR{3*sz.C/4 - pz.C/2, 96})
 	}
-	canvas1.Display()
+	a.canvas.Display()
 }

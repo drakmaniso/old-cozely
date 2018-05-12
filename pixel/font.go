@@ -160,9 +160,6 @@ func (f FontID) load(frects *[]uint32) error {
 		if gg != PictureID(g) {
 			//TODO:
 		}
-		// pictures.mapping = append(pictures.mapping, mapping{w: int16(w), h: int16(h)})
-		// *frects = append(*frects, uint32(g))
-		// pictures.image[uint32(g)] = mm
 		x += w
 		for x < p.Bounds().Dx() && p.Pix[x+h*p.Stride] == 0 {
 			x++
@@ -176,38 +173,6 @@ func (f FontID) load(frects *[]uint32) error {
 		maxw,
 		fonts[f].height,
 	)
-
-	return nil
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-func fntSize(rect uint32) (width, height int16) {
-	w, h := pictures.image[rect].Bounds().Dx(), pictures.image[rect].Bounds().Dy()
-	return int16(w), int16(h)
-}
-
-func fntPut(rect uint32, bin int16, x, y int16) {
-	pictures.mapping[rect].bin = bin
-	pictures.mapping[rect].x = x
-	pictures.mapping[rect].y = y
-}
-
-func fntPaint(rect uint32, dest interface{}) error {
-	fx, fy := pictures.mapping[rect].x, pictures.mapping[rect].y
-	fw, fh := pictures.mapping[rect].w, pictures.mapping[rect].h
-
-	dm, ok := dest.(*image.Paletted)
-	if !ok {
-		return errors.New("unexpected dest argument to fntrune paint method")
-	}
-	for y := 0; y < int(fh); y++ {
-		for x := 0; x < int(fw); x++ {
-			w := dm.Bounds().Dx()
-			ci := pictures.image[rect].Pix[x+y*pictures.image[rect].Stride]
-			dm.Pix[int(fx)+x+w*(int(fy)+y)] = uint8(ci)
-		}
-	}
 
 	return nil
 }

@@ -157,10 +157,10 @@ func (loop) Render() {
 
 	ps := pict.Size()
 	p := cs.Minus(ps).Slash(2)
-	canvas.Picture(pict, 0, p)
+	canvas.Picture(pict, p)
 
 	canvas.Text(253, pixel.Monozela10)
-	canvas.Locate(-1, p.Minus(coord.CR{0, 8}))
+	canvas.Locate(p.Minus(coord.CR{0, 8}))
 	switch mode {
 	case 1:
 		canvas.Print("Custom Palette")

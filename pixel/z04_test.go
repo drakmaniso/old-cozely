@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/cozely/cozely"
+	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
@@ -16,30 +17,22 @@ import (
 
 ////////////////////////////////////////////////////////////////////////////////
 
-var (
-	tinela9    = pixel.Font("fonts/tinela9")
-	monozela10 = pixel.Font("fonts/monozela10")
-	simpela10  = pixel.Font("fonts/simpela10")
-	simpela12  = pixel.Font("fonts/simpela12")
-	cozela10   = pixel.Font("fonts/cozela10")
-	cozela12   = pixel.Font("fonts/cozela12")
-	chaotela12 = pixel.Font("fonts/chaotela12")
-	font       = monozela10
-)
+type loop4 struct {
+	canvas  pixel.CanvasID
+	palette color.PaletteID
+	fg, bg  color.Index
 
-var (
-	interline     = int16(18)
-	letterspacing = int16(0)
-)
+	tinela9, monozela10, simpela10, simpela12,
+	cozela10, cozela12, chaotela12, font pixel.FontID
 
-var (
+	interline     int16
+	letterspacing int16
+
 	text []string
 	code []string
 	show []string
 	line int
-)
-
-type loop4 struct{}
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -47,22 +40,44 @@ func TestTest4(t *testing.T) {
 	do(func() {
 		defer cozely.Recover()
 
+		l := loop4{}
+		l.declare()
+
 		input.Load(bindings)
-		err := cozely.Run(loop4{})
+		err := cozely.Run(&l)
 		if err != nil {
 			t.Error(err)
 		}
 	})
 }
 
-func (loop4) Enter() {
+func (a *loop4) declare() {
+	a.canvas = pixel.Canvas(pixel.Zoom(2))
+	a.palette = color.Palette()
+	a.bg = a.palette.Entry(color.SRGB8{0xFF, 0xFE, 0xFC})
+	a.fg = a.palette.Entry(color.SRGB8{0x07, 0x05, 0x00})
+
+	a.tinela9 = pixel.Font("fonts/tinela9")
+	a.monozela10 = pixel.Font("fonts/monozela10")
+	a.simpela10 = pixel.Font("fonts/simpela10")
+	a.simpela12 = pixel.Font("fonts/simpela12")
+	a.cozela10 = pixel.Font("fonts/cozela10")
+	a.cozela12 = pixel.Font("fonts/cozela12")
+	a.chaotela12 = pixel.Font("fonts/chaotela12")
+	a.font = a.monozela10
+
+	a.interline = int16(18)
+	a.letterspacing = int16(0)
+}
+
+func (a *loop4) Enter() {
 	f, err := os.Open(cozely.Path() + "frankenstein.txt")
 	if err != nil {
 		panic(err)
 	}
 	s := bufio.NewScanner(f)
 	for s.Scan() {
-		text = append(text, s.Text())
+		a.text = append(a.text, s.Text())
 	}
 	f, err = os.Open(cozely.Path() + "sourcecode.txt")
 	if err != nil {
@@ -70,10 +85,10 @@ func (loop4) Enter() {
 	}
 	s = bufio.NewScanner(f)
 	for s.Scan() {
-		code = append(code, s.Text())
+		a.code = append(a.code, s.Text())
 	}
-	show = text
-	palette3.Activate()
+	a.show = a.text
+	a.palette.Activate()
 }
 
 func (loop4) Leave() {
@@ -81,17 +96,17 @@ func (loop4) Leave() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (loop4) React() {
+func (a *loop4) React() {
 	if scrollup.Started(0) {
-		line--
-		if line < 0 {
-			line = 0
+		a.line--
+		if a.line < 0 {
+			a.line = 0
 		}
 	}
 	if scrolldown.Started(0) {
-		line++
-		if line > len(show)-1 {
-			line = len(show) - 1
+		a.line++
+		if a.line > len(a.show)-1 {
+			a.line = len(a.show) - 1
 		}
 	}
 
@@ -103,27 +118,27 @@ func (loop4) React() {
 func (loop4) Update() {
 }
 
-func (loop4) Render() {
-	canvas3.Clear(bg3)
+func (a *loop4) Render() {
+	a.canvas.Clear(a.bg)
 
-	canvas3.Cursor().Color = fg3
-	canvas3.Locate(coord.CR{16, font.Height() + 2})
+	a.canvas.Cursor().Color = a.fg
+	a.canvas.Locate(coord.CR{16, a.font.Height() + 2})
 
-	canvas3.Cursor().Font = font
-	canvas3.Cursor().LetterSpacing = letterspacing
+	a.canvas.Cursor().Font = a.font
+	a.canvas.Cursor().LetterSpacing = a.letterspacing
 	// curScreen.Interline = fntInterline
 
-	y := canvas3.Cursor().Position.R
+	y := a.canvas.Cursor().Position.R
 
-	for l := line; l < len(show) && y < canvas3.Size().R; l++ {
-		canvas3.Println(show[l])
-		y = canvas3.Cursor().Position.R
+	for l := a.line; l < len(a.show) && y < a.canvas.Size().R; l++ {
+		a.canvas.Println(a.show[l])
+		y = a.canvas.Cursor().Position.R
 	}
 
-	canvas3.Locate(coord.CR{canvas3.Size().C - 96, 16})
-	canvas3.Printf("Line %d", line)
+	a.canvas.Locate(coord.CR{a.canvas.Size().C - 96, 16})
+	a.canvas.Printf("Line %d", a.line)
 
-	canvas3.Display()
+	a.canvas.Display()
 }
 
 //TODO:

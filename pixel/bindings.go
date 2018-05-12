@@ -17,9 +17,7 @@ const ()
 const (
 	layoutParameters = 0
 	layoutPictureMap = 1
-	layoutGlyphMap   = 3
-	layoutPictures   = 4
-	layoutGlyphs     = 6
+	layoutPictures   = 3
 )
 
 ////////////////////////////////////////////////////////////////////////////////
