@@ -33,6 +33,7 @@ type canvas struct {
 	pixel      int16    // in window pixels
 	margin     coord.CR // in canvas pixels
 	border     coord.CR // in window pixels (leftover from division by pixel size)
+
 }
 
 var canvases []canvas
@@ -161,14 +162,11 @@ func (a CanvasID) Paint(s SceneID) {
 	pictureMapTBO.Bind(layoutPictureMap)
 	picturesTA.Bind(layoutPictures)
 
-	if scenes.changed[s] {
-		scenes.commandsICBO[s].SubData(scenes.commands[s], 0)
-		scenes.parametersTBO[s].SubData(scenes.parameters[s], 0)
-		scenes.changed[s] = false
-	}
+	scenes.commandsICBO[s].SubData(scenes.commands[s], 0)
+	scenes.parametersTBO[s].SubData(scenes.parameters[s], 0)
 	gl.DrawIndirect(0, int32(len(scenes.commands[s])))
-	// scenes.commands[s] = scenes.commands[s][:0]
-	// scenes.parameters[s] = scenes.parameters[s][:0]
+	scenes.commands[s] = scenes.commands[s][:0]
+	scenes.parameters[s] = scenes.parameters[s][:0]
 }
 
 ////////////////////////////////////////////////////////////////////////////////

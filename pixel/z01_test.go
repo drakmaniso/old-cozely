@@ -106,7 +106,6 @@ func (loop1) Update() {
 
 func (a *loop1) Render() {
 	a.canvas.Clear(0)
-	a.scene.Clear()
 	sz := a.canvas.Size()
 	switch a.mode {
 	case 0:

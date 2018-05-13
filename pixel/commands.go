@@ -126,8 +126,6 @@ func (a SceneID) command(c uint32, v uint32, n uint32, params ...int16) {
 		scenes.parameters[a] = append(scenes.parameters[a], params...)
 	}
 
-	scenes.changed[a] = true
-
 	if ccap < cap(scenes.commands[a]) {
 		scenes.commandsICBO[a].Delete()
 		scenes.commandsICBO[a] = gl.NewIndirectBuffer(

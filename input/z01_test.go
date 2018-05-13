@@ -164,7 +164,6 @@ func (loop1) Update() {
 
 func (loop1) Render() {
 	canvas.Clear(msx.DarkBlue)
-	scene.Clear()
 
 	scene.Locate(coord.CR{2, 12})
 	scene.Text(msx.White, pixel.Monozela10)

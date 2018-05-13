@@ -89,7 +89,6 @@ func (loop5) Update() {
 
 func (a *loop5) Render() {
 	a.canvas.Clear(1)
-	a.scene.Clear()
 	m := a.canvas.FromWindow(cursor.XY(0).CR())
 	a.scene.Triangles(2, a.points...)
 	if !a.lineshidden {

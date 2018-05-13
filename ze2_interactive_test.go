@@ -94,7 +94,6 @@ func (l *loop2) shufflecolors() {
 
 func (l *loop2) Render() {
 	l.canvas.Clear(0)
-	l.scene.Clear()
 
 	if l.playing {
 		l.colorful.Activate()

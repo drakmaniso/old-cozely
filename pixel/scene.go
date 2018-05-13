@@ -27,7 +27,6 @@ var scenes struct {
 	cursor        []TextCursor
 	commands      [][]gl.DrawIndirectCommand
 	parameters    [][]int16
-	changed []bool
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -52,7 +51,6 @@ func Scene() SceneID {
 		make([]gl.DrawIndirectCommand, 0, maxCommandCount))
 	scenes.parameters = append(scenes.parameters,
 		make([]int16, 0, maxParamCount))
-	scenes.changed = append(scenes.changed, false)
 
 	return a
 }
@@ -69,9 +67,4 @@ func (a SceneID) setup() {
 		gl.R16I,
 		gl.DynamicStorage,
 	)
-}
-
-func (a SceneID) Clear() {
-	scenes.commands[a] = scenes.commands[a][:0]
-	scenes.parameters[a] = scenes.parameters[a][:0]
 }
