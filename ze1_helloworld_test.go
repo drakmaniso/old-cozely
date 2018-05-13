@@ -11,7 +11,6 @@ import (
 
 var (
 	canvas = pixel.Canvas(pixel.Resolution(320, 200))
-	scene = pixel.Scene()
 
 	palette = color.Palette()
 	fg      = palette.Entry(color.SRGB{0.75, 0.98, 0.52})
@@ -50,9 +49,9 @@ func (loop) Update() {
 func (loop) Render() {
 	canvas.Clear(bg)
 
-	scene.Text(fg, pixel.Monozela10)
-	scene.Locate(coord.CR{16, 32})
-	scene.Print("Hello, World!")
+	canvas.Text(fg, pixel.Monozela10)
+	canvas.Locate(coord.CR{16, 32})
+	canvas.Print("Hello, World!")
 
-	canvas.Display(scene)
+	canvas.Display()
 }

@@ -16,11 +16,10 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 
 var (
-	canvas  = pixel.Canvas(pixel.Zoom(2))
-	scene   = pixel.Scene()
-	palette = color.Palette(color.LRGB{1, 1, 1})
-	col1    = palette.Entry(color.LRGB{0.1, 0.2, 0.5})
-	col2    = palette.Entry(color.LRGB{0.5, 0.1, 0.0})
+	canvas1  = pixel.Canvas(pixel.Zoom(2))
+	palette1 = color.Palette(color.LRGB{1, 1, 1})
+	col1     = palette1.Entry(color.LRGB{0.1, 0.2, 0.5})
+	col2     = palette1.Entry(color.LRGB{0.5, 0.1, 0.0})
 )
 
 var (
@@ -55,7 +54,7 @@ func (loop1) Enter() {
 	points = make([]coord.XY, 64)
 	newPoints()
 
-	palette.Activate()
+	palette1.Activate()
 }
 
 func (loop1) Leave() {
@@ -72,7 +71,7 @@ func (loop1) React() {
 	}
 
 	if previous.Started(0) {
-		m := canvas.FromWindow(cursor.XY(0).CR())
+		m := canvas1.FromWindow(cursor.XY(0).CR())
 		p := fromScreen(m)
 		points = append(points, p)
 		triangulation = quadedge.Delaunay(points)
@@ -142,40 +141,40 @@ func (loop1) Update() {
 }
 
 func (loop1) Render() {
-	canvas.Clear(0)
-	ratio = float32(canvas.Size().R)
+	canvas1.Clear(0)
+	ratio = float32(canvas1.Size().R)
 	orig = coord.XY{
-		X: (float32(canvas.Size().C) - ratio) / 2,
-		Y: float32(canvas.Size().R),
+		X: (float32(canvas1.Size().C) - ratio) / 2,
+		Y: float32(canvas1.Size().R),
 	}
 
-	m := canvas.FromWindow(cursor.XY(0).CR())
+	m := canvas1.FromWindow(cursor.XY(0).CR())
 	p := fromScreen(m)
-	scene.Locate(coord.CR{2, 8})
-	scene.Text(col1, 0)
+	canvas1.Locate(coord.CR{2, 8})
+	canvas1.Text(col1, 0)
 	fsr, fso := cozely.RenderStats()
-	scene.Printf("Framerate: %.2f (%d)\n", 1000*fsr, fso)
+	canvas1.Printf("Framerate: %.2f (%d)\n", 1000*fsr, fso)
 	if p.X >= 0 && p.X <= 1.0 {
-		scene.Printf("Position: %.3f, %.3f\n", p.X, p.Y)
+		canvas1.Printf("Position: %.3f, %.3f\n", p.X, p.Y)
 	} else {
-		scene.Println(" ")
+		canvas1.Println(" ")
 	}
 
 	triangulation.Walk(func(e quadedge.Edge) {
-		scene.Lines(col1, toScreen(points[e.Orig()]), toScreen(points[e.Dest()]))
+		canvas1.Lines(col1, toScreen(points[e.Orig()]), toScreen(points[e.Dest()]))
 	})
 
 	pt := make([]coord.CR, len(points))
 	for i, sd := range points {
 		pt[i] = toScreen(sd)
-		scene.Box(col2, col2, 1, pt[i].Minuss(2), pt[i].Pluss(2))
+		canvas1.Box(col2, col2, 1, pt[i].Minuss(2), pt[i].Pluss(2))
 	}
 
 	if cozely.HasMouseFocus() {
-		scene.Picture(pixel.MouseCursor, m)
+		canvas1.Picture(pixel.MouseCursor, m)
 	}
 
-	canvas.Display(scene)
+	canvas1.Display()
 }
 
 func toScreen(p coord.XY) coord.CR {

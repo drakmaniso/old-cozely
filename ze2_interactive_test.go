@@ -25,7 +25,6 @@ var bindings = input.Bindings{
 
 type loop2 struct {
 	canvas     pixel.CanvasID
-	scene      pixel.SceneID
 	logo       pixel.PictureID
 	monochrome color.PaletteID
 	colorful   color.PaletteID
@@ -52,7 +51,6 @@ func Example_interactive() {
 
 func (l *loop2) setup() {
 	l.canvas = pixel.Canvas(pixel.Resolution(160, 100))
-	l.scene = pixel.Scene()
 	l.logo = pixel.Picture("graphics/cozely")
 	l.monochrome = color.PaletteFrom("graphics/cozely")
 	l.colorful = color.Palette()
@@ -102,7 +100,7 @@ func (l *loop2) Render() {
 	}
 
 	o := l.canvas.Size().Minus(l.logo.Size()).Slash(2)
-	l.scene.Picture(l.logo, o)
+	l.canvas.Picture(l.logo, o)
 
-	l.canvas.Display(l.scene)
+	l.canvas.Display()
 }

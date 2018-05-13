@@ -21,14 +21,10 @@ func init() {
 }
 
 func setup() error {
-	// Create canvases and scenes
+	// Create the canvases
 
 	for i := range canvases {
-		CanvasID(i).setup()
-	}
-
-	for i := range scenes.commandsICBO {
-		SceneID(i).setup()
+		CanvasID(i).createBuffer()
 	}
 
 	// Create the paint pipeline
@@ -118,7 +114,7 @@ func cleanup() error {
 		s.texture.Delete()
 		s.buffer.Delete()
 	}
-	canvases = canvases[:0]
+	canvases= canvases[:0]
 
 	// Display pipeline
 	pipeline.Delete()

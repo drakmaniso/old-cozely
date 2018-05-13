@@ -18,7 +18,6 @@ import (
 
 type loop2 struct {
 	canvas  pixel.CanvasID
-	scene   pixel.SceneID
 	palette color.PaletteID
 	txtcol  color.Index
 	picts   []pixel.PictureID
@@ -53,7 +52,6 @@ func TestTest2(t *testing.T) {
 
 func (a *loop2) declare() {
 	a.canvas = pixel.Canvas(pixel.Zoom(2))
-	a.scene = pixel.Scene()
 
 	a.palette = color.PaletteFrom("graphics/shape1")
 	a.txtcol = a.palette.Entry(color.LRGB{1, 1, 1})
@@ -69,7 +67,7 @@ func (a *loop2) declare() {
 
 func (a *loop2) Enter() {
 	a.palette.Activate()
-	a.scene.Text(a.txtcol, pixel.Monozela10)
+	a.canvas.Text(a.txtcol, pixel.Monozela10)
 }
 
 func (loop2) Leave() {
@@ -152,13 +150,13 @@ func (loop2) Update() {
 func (a *loop2) Render() {
 	a.canvas.Clear(0)
 	for _, o := range a.shapes {
-		a.scene.Picture(o.pict, o.pos)
+		a.canvas.Picture(o.pict, o.pos)
 	}
-	a.scene.Locate(coord.CR{8, 16})
+	a.canvas.Locate(coord.CR{8, 16})
 	ft, ov := cozely.RenderStats()
-	a.scene.Printf("%dk pictures: %6.2f", len(a.shapes)/1000, ft*1000)
+	a.canvas.Printf("%dk pictures: %6.2f", len(a.shapes)/1000, ft*1000)
 	if ov > 0 {
-		a.scene.Printf(" (%d)", ov)
+		a.canvas.Printf(" (%d)", ov)
 	}
-	a.canvas.Display(a.scene)
+	a.canvas.Display()
 }

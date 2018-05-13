@@ -30,8 +30,8 @@ type TextCursor struct {
 // Text configures the color and font used to display text on the canvas.
 //
 // Note that you can also directly change the TextCursor attributes.
-func (a SceneID) Text(c color.Index, f FontID) {
-	cu := &scenes.cursor[a]
+func (a CanvasID) Text(c color.Index, f FontID) {
+	cu := &canvases[a].cursor
 	cu.Color = c
 	cu.Font = f
 	if cu.Interline == 0 {
@@ -44,34 +44,34 @@ func (a SceneID) Text(c color.Index, f FontID) {
 // start a new line.
 //
 // Note that you can also directly change the TextCursor attributes.
-func (a SceneID) Locate(p coord.CR) {
-	cu := &scenes.cursor[a]
+func (a CanvasID) Locate(p coord.CR) {
+	cu := &canvases[a].cursor
 	cu.Position = coord.CR{p.C, p.R}
 	cu.Margin = cu.Position.C
 }
 
 // Cursor gives access to the attributes used to display text on the canvas.
 // These attributes can be changed at anytime.
-func (a SceneID) Cursor() *TextCursor {
-	return &scenes.cursor[a]
+func (a CanvasID) Cursor() *TextCursor {
+	return &canvases[a].cursor
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 // Print asks the GPU to display text on the canvas (works like fmt.Print).
-func (a SceneID) Print(args ...interface{}) (n int, err error) {
+func (a CanvasID) Print(args ...interface{}) (n int, err error) {
 	n, err = fmt.Fprint(a, args...)
 	return n, err
 }
 
 // Println asks the GPU to display text on the canvas (works like fmt.Println).
-func (a SceneID) Println(args ...interface{}) (n int, err error) {
+func (a CanvasID) Println(args ...interface{}) (n int, err error) {
 	n, err = fmt.Fprintln(a, args...)
 	return n, err
 }
 
 // Printf asks the GPU to display text on the canvas (like fmt.Printf).
-func (a SceneID) Printf(format string, args ...interface{}) (n int, err error) {
+func (a CanvasID) Printf(format string, args ...interface{}) (n int, err error) {
 	n, err = fmt.Fprintf(a, format, args...)
 	return n, err
 }
@@ -80,7 +80,7 @@ func (a SceneID) Printf(format string, args ...interface{}) (n int, err error) {
 
 // Write asks the GPU to display p (interpreted as an UTF8 string) on the
 // canvas. This method implements the io.Writer interface.
-func (a SceneID) Write(p []byte) (n int, err error) {
+func (a CanvasID) Write(p []byte) (n int, err error) {
 	n = len(p)
 	for len(p) > 0 {
 		r, s := utf8.DecodeRune(p)
@@ -91,8 +91,8 @@ func (a SceneID) Write(p []byte) (n int, err error) {
 }
 
 // WriteRune asks the GPU to display a single rune on the canvas.
-func (a SceneID) WriteRune(r rune) {
-	cu := &scenes.cursor[a]
+func (a CanvasID) WriteRune(r rune) {
+	cu := &canvases[a].cursor
 	if r == '\n' {
 		if cu.Interline == 0 {
 			cu.Position.R += int16(float32(cu.Font.Height()) * 1.25)
