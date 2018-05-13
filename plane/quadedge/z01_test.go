@@ -143,6 +143,8 @@ func (loop1) Update() {
 
 func (loop1) Render() {
 	canvas.Clear(0)
+	scene.Clear()
+
 	ratio = float32(canvas.Size().R)
 	orig = coord.XY{
 		X: (float32(canvas.Size().C) - ratio) / 2,

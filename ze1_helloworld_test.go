@@ -11,7 +11,7 @@ import (
 
 var (
 	canvas = pixel.Canvas(pixel.Resolution(320, 200))
-	scene = pixel.Scene()
+	scene  = pixel.Scene()
 
 	palette = color.Palette()
 	fg      = palette.Entry(color.SRGB{0.75, 0.98, 0.52})
@@ -49,6 +49,7 @@ func (loop) Update() {
 
 func (loop) Render() {
 	canvas.Clear(bg)
+	scene.Clear()
 
 	scene.Text(fg, pixel.Monozela10)
 	scene.Locate(coord.CR{16, 32})

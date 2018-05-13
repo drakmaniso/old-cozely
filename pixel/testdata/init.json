@@ -1,3 +1,6 @@
 {
-	"Debug": true
+	"Debug": true,
+	"Fullscreen": true,
+	"FullscreenMode": "Full",
+	"WindowSize": [1680, 1050]
 }

@@ -260,6 +260,7 @@ func (loop) Render() {
 	pipeline.Unbind()
 
 	overlay.Clear(0)
+	overscene.Clear()
 	overscene.Locate(coord.CR{2, 12})
 	ft, or := cozely.RenderStats()
 	overscene.Printf("% 3.2f", ft*1000)

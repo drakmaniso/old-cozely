@@ -19,10 +19,12 @@ import (
 type loop2 struct {
 	canvas  pixel.CanvasID
 	scene   pixel.SceneID
+	oscene  pixel.SceneID
 	palette color.PaletteID
 	txtcol  color.Index
 	picts   []pixel.PictureID
 	shapes  []shape
+	changed bool
 }
 
 type shape struct {
@@ -54,6 +56,7 @@ func TestTest2(t *testing.T) {
 func (a *loop2) declare() {
 	a.canvas = pixel.Canvas(pixel.Zoom(2))
 	a.scene = pixel.Scene()
+	a.oscene = pixel.Scene()
 
 	a.palette = color.PaletteFrom("graphics/shape1")
 	a.txtcol = a.palette.Entry(color.LRGB{1, 1, 1})
@@ -64,12 +67,12 @@ func (a *loop2) declare() {
 		pixel.Picture("graphics/shape3"),
 		pixel.Picture("graphics/shape4"),
 	}
-	a.shapes = make([]shape, 350000)
+	a.shapes = make([]shape, 175000)
 }
 
 func (a *loop2) Enter() {
 	a.palette.Activate()
-	a.scene.Text(a.txtcol, pixel.Monozela10)
+	a.oscene.Text(a.txtcol, pixel.Monozela10)
 }
 
 func (loop2) Leave() {
@@ -84,6 +87,7 @@ func (a *loop2) resize() {
 		a.shapes[i].pos.C = int16(rand.Intn(int(s.C - p.Size().C)))
 		a.shapes[i].pos.R = int16(rand.Intn(int(s.R - p.Size().R)))
 	}
+	a.changed = true
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -102,27 +106,27 @@ func (a *loop2) React() {
 		a.resize()
 	}
 	if scene4.Started(0) {
-		a.shapes = make([]shape, 200000)
+		a.shapes = make([]shape, 15000)
 		a.resize()
 	}
 	if scene5.Started(0) {
-		a.shapes = make([]shape, 300000)
+		a.shapes = make([]shape, 175000)
 		a.resize()
 	}
 	if scene6.Started(0) {
-		a.shapes = make([]shape, 350000)
+		a.shapes = make([]shape, 200000)
 		a.resize()
 	}
 	if scene7.Started(0) {
-		a.shapes = make([]shape, 400000)
+		a.shapes = make([]shape, 225000)
 		a.resize()
 	}
 	if scene8.Started(0) {
-		a.shapes = make([]shape, 450000)
+		a.shapes = make([]shape, 300000)
 		a.resize()
 	}
 	if scene9.Started(0) {
-		a.shapes = make([]shape, 500000)
+		a.shapes = make([]shape, 400000)
 		a.resize()
 	}
 	if scene10.Started(0) {
@@ -151,14 +155,19 @@ func (loop2) Update() {
 
 func (a *loop2) Render() {
 	a.canvas.Clear(0)
-	for _, o := range a.shapes {
-		a.scene.Picture(o.pict, o.pos)
+	if a.changed {
+		a.scene.Clear()
+		for _, o := range a.shapes {
+			a.scene.Picture(o.pict, o.pos)
+		}
+		a.changed = false
 	}
-	a.scene.Locate(coord.CR{8, 16})
+	a.oscene.Clear()
+	a.oscene.Locate(coord.CR{8, 16})
 	ft, ov := cozely.RenderStats()
-	a.scene.Printf("%dk pictures: %6.2f", len(a.shapes)/1000, ft*1000)
+	a.oscene.Printf("%dk pictures: %6.2f", len(a.shapes)/1000, ft*1000)
 	if ov > 0 {
-		a.scene.Printf(" (%d)", ov)
+		a.oscene.Printf(" (%d)", ov)
 	}
-	a.canvas.Display(a.scene)
+	a.canvas.Display(a.scene, a.oscene)
 }

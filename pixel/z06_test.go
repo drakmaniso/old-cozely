@@ -65,6 +65,7 @@ func (loop6) Update() {
 
 func (a *loop6) Render() {
 	a.canvas.Clear(0)
+	a.scene.Clear()
 
 	const corner = 3
 

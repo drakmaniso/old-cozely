@@ -153,6 +153,7 @@ func (loop) Update() {
 
 func (loop) Render() {
 	canvas.Clear(0)
+	scene.Clear()
 
 	cs := canvas.Size()
 

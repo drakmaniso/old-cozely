@@ -83,6 +83,7 @@ func (loop3) Update() {
 
 func (a *loop3) Render() {
 	a.canvas.Clear(a.bg)
+	a.scene.Clear()
 
 	a.scene.Text(a.fg, pixel.Monozela10)
 

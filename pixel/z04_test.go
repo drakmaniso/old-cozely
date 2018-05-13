@@ -122,6 +122,7 @@ func (loop4) Update() {
 
 func (a *loop4) Render() {
 	a.canvas.Clear(a.bg)
+	a.scene.Clear()
 
 	a.scene.Cursor().Color = a.fg
 	a.scene.Locate(coord.CR{16, a.font.Height() + 2})
