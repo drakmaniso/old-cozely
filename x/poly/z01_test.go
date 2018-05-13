@@ -61,8 +61,9 @@ var bindings1 = input.Bindings{
 ////////////////////////////////////////////////////////////////////////////////
 
 var (
-	overlay = pixel.Canvas(pixel.Zoom(2))
-	palette = color.Palette(color.SRGB8{0xFF, 0xFF, 0xFF})
+	overlay   = pixel.Canvas(pixel.Zoom(2))
+	overscene = pixel.Scene()
+	palette   = color.Palette(color.SRGB8{0xFF, 0xFF, 0xFF})
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -259,16 +260,16 @@ func (loop) Render() {
 	pipeline.Unbind()
 
 	overlay.Clear(0)
-	overlay.Locate(coord.CR{2, 12})
+	overscene.Locate(coord.CR{2, 12})
 	ft, or := cozely.RenderStats()
-	overlay.Printf("% 3.2f", ft*1000)
+	overscene.Printf("% 3.2f", ft*1000)
 	if or > 0 {
-		overlay.Printf(" (%d)", or)
+		overscene.Printf(" (%d)", or)
 	}
 	if cozely.HasMouseFocus() {
-		overlay.Picture(pixel.MouseCursor, overlay.FromWindow(cursor.XY(0).CR()))
+		overscene.Picture(pixel.MouseCursor, overlay.FromWindow(cursor.XY(0).CR()))
 	}
-	overlay.Display()
+	overlay.Display(overscene)
 }
 
 func prepare() {

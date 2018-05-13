@@ -17,6 +17,7 @@ import (
 
 type loop5 struct {
 	canvas  pixel.CanvasID
+	scene pixel.SceneID
 	palette color.PaletteID
 
 	points                    []coord.CR
@@ -42,6 +43,7 @@ func TestTest5(t *testing.T) {
 
 func (a *loop5) declare() {
 	a.canvas = pixel.Canvas(pixel.Resolution(128, 128))
+	a.scene = pixel.Scene()
 	a.palette = color.PaletteFrom("graphics/shape1")
 
 	a.points = []coord.CR{
@@ -88,16 +90,16 @@ func (loop5) Update() {
 func (a *loop5) Render() {
 	a.canvas.Clear(1)
 	m := a.canvas.FromWindow(cursor.XY(0).CR())
-	a.canvas.Triangles(2, a.points...)
+	a.scene.Triangles(2, a.points...)
 	if !a.lineshidden {
-		a.canvas.Lines(5, a.points...)
-		a.canvas.Lines(13, a.points[len(a.points)-1], m)
+		a.scene.Lines(5, a.points...)
+		a.scene.Lines(13, a.points[len(a.points)-1], m)
 	}
 	if !a.pointshidden {
 		for _, p := range a.points {
-			a.canvas.Point(8, p)
+			a.scene.Point(8, p)
 		}
-		a.canvas.Point(18, m)
+		a.scene.Point(18, m)
 	}
-	a.canvas.Display()
+	a.canvas.Display(a.scene)
 }

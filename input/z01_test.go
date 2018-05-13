@@ -73,7 +73,8 @@ var (
 ////////////////////////////////////////////////////////////////////////////////
 
 var (
-	canvas1 = pixel.Canvas(pixel.Zoom(3))
+	canvas = pixel.Canvas(pixel.Zoom(3))
+	scene  = pixel.Scene()
 )
 
 var hidden bool
@@ -162,63 +163,63 @@ func (loop1) Update() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop1) Render() {
-	canvas1.Clear(msx.DarkBlue)
+	canvas.Clear(msx.DarkBlue)
 
-	canvas1.Locate(coord.CR{2, 12})
-	canvas1.Text(msx.White, pixel.Monozela10)
+	scene.Locate(coord.CR{2, 12})
+	scene.Text(msx.White, pixel.Monozela10)
 
-	canvas1.Println()
+	scene.Println()
 	changecolor(false)
 
 	changecolor(InMenu.Active(1))
-	canvas1.Printf("  Menu: ")
+	scene.Printf("  Menu: ")
 	changecolor(options)
-	canvas1.Print("Options(O/L.C.) ")
+	scene.Print("Options(O/L.C.) ")
 	changecolor(closemenu)
-	canvas1.Print("CloseMenu(ENTER) ")
+	scene.Print("CloseMenu(ENTER) ")
 	changecolor(instclosemenu)
-	canvas1.Print("InstantCloseMenu(MOUSE RIGHT) ")
-	canvas1.Println(" ")
+	scene.Print("InstantCloseMenu(MOUSE RIGHT) ")
+	scene.Println(" ")
 
 	changecolor(InGame.Active(1))
-	canvas1.Printf("  Game: ")
+	scene.Printf("  Game: ")
 	changecolor(jump)
-	canvas1.Print("Jump(SPACE/L.C.) ")
+	scene.Print("Jump(SPACE/L.C.) ")
 	changecolor(openmenu)
-	canvas1.Print("OpenMenu(ENTER) ")
+	scene.Print("OpenMenu(ENTER) ")
 	changecolor(instopenmenu)
-	canvas1.Print("InstantOpenMenu(MOUSE RIGHT) ")
-	canvas1.Println(" ")
+	scene.Print("InstantOpenMenu(MOUSE RIGHT) ")
+	scene.Println(" ")
 
 	changecolor(false)
-	canvas1.Printf("  Both: ")
+	scene.Printf("  Both: ")
 	changecolor(inventory)
-	canvas1.Println("Inventory(I/TAB) ")
+	scene.Println("Inventory(I/TAB) ")
 
 	changecolor(false)
-	canvas1.Println()
-	canvas1.Printf(" Trigger = % 12.6f\n", triggerval)
-	canvas1.Printf("Position = % 12.6f, % 12.6f\n", positionval.X, positionval.Y)
-	canvas1.Printf("  Cursor = % 12.6f, % 12.6f", cursorval.X, cursorval.Y)
+	scene.Println()
+	scene.Printf(" Trigger = % 12.6f\n", triggerval)
+	scene.Printf("Position = % 12.6f, % 12.6f\n", positionval.X, positionval.Y)
+	scene.Printf("  Cursor = % 12.6f, % 12.6f", cursorval.X, cursorval.Y)
 	if input.MouseGrabbed() {
 		changecolor(true)
-		canvas1.Printf(" (mouse GRABBED)\n")
+		scene.Printf(" (mouse GRABBED)\n")
 	} else {
 		changecolor(false)
-		canvas1.Printf(" (mouse not grabbed)\n")
+		scene.Printf(" (mouse not grabbed)\n")
 	}
-	canvas1.Printf("   Delta = %+12.6f, %+12.6f\n", deltaval.X, deltaval.Y)
+	scene.Printf("   Delta = %+12.6f, %+12.6f\n", deltaval.X, deltaval.Y)
 
-	canvas1.Picture(pixel.MouseCursor, canvas1.FromWindow(cursorval.CR()))
+	scene.Picture(pixel.MouseCursor, canvas.FromWindow(cursorval.CR()))
 
-	canvas1.Display()
+	canvas.Display(scene)
 }
 
 func changecolor(p bool) {
 	if p {
-		canvas1.Text(msx.LightRed, pixel.Monozela10)
+		scene.Text(msx.LightRed, pixel.Monozela10)
 	} else {
-		canvas1.Text(msx.White, pixel.Monozela10)
+		scene.Text(msx.White, pixel.Monozela10)
 	}
 }
 

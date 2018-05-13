@@ -19,6 +19,7 @@ import (
 
 type loop4 struct {
 	canvas  pixel.CanvasID
+	scene   pixel.SceneID
 	palette color.PaletteID
 	fg, bg  color.Index
 
@@ -53,6 +54,7 @@ func TestTest4(t *testing.T) {
 
 func (a *loop4) declare() {
 	a.canvas = pixel.Canvas(pixel.Zoom(2))
+	a.scene = pixel.Scene()
 	a.palette = color.Palette()
 	a.bg = a.palette.Entry(color.SRGB8{0xFF, 0xFE, 0xFC})
 	a.fg = a.palette.Entry(color.SRGB8{0x07, 0x05, 0x00})
@@ -121,24 +123,24 @@ func (loop4) Update() {
 func (a *loop4) Render() {
 	a.canvas.Clear(a.bg)
 
-	a.canvas.Cursor().Color = a.fg
-	a.canvas.Locate(coord.CR{16, a.font.Height() + 2})
+	a.scene.Cursor().Color = a.fg
+	a.scene.Locate(coord.CR{16, a.font.Height() + 2})
 
-	a.canvas.Cursor().Font = a.font
-	a.canvas.Cursor().LetterSpacing = a.letterspacing
+	a.scene.Cursor().Font = a.font
+	a.scene.Cursor().LetterSpacing = a.letterspacing
 	// curScreen.Interline = fntInterline
 
-	y := a.canvas.Cursor().Position.R
+	y := a.scene.Cursor().Position.R
 
 	for l := a.line; l < len(a.show) && y < a.canvas.Size().R; l++ {
-		a.canvas.Println(a.show[l])
-		y = a.canvas.Cursor().Position.R
+		a.scene.Println(a.show[l])
+		y = a.scene.Cursor().Position.R
 	}
 
-	a.canvas.Locate(coord.CR{a.canvas.Size().C - 96, 16})
-	a.canvas.Printf("Line %d", a.line)
+	a.scene.Locate(coord.CR{a.canvas.Size().C - 96, 16})
+	a.scene.Printf("Line %d", a.line)
 
-	a.canvas.Display()
+	a.canvas.Display(a.scene)
 }
 
 //TODO:

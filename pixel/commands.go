@@ -26,14 +26,14 @@ const (
 ////////////////////////////////////////////////////////////////////////////////
 
 // Picture asks the GPU to show a picture on the canvas.
-func (a CanvasID) Picture(p PictureID, pos coord.CR) {
+func (a SceneID) Picture(p PictureID, pos coord.CR) {
 	a.command(cmdPicture, 4, 1, int16(p), pos.C, pos.R)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 // Point asks the GPU to draw a point on the canvas.
-func (a CanvasID) Point(color color.Index, pos coord.CR) {
+func (a SceneID) Point(color color.Index, pos coord.CR) {
 	a.command(cmdPoint, 3, 1, int16(color), pos.C, pos.R)
 }
 
@@ -41,7 +41,7 @@ func (a CanvasID) Point(color color.Index, pos coord.CR) {
 
 // Lines asks the GPU to draw a line strip on the canvas. A line strip is a
 // succession of connected lines; all lines share the same color.
-func (a CanvasID) Lines(c color.Index, strip ...coord.CR) {
+func (a SceneID) Lines(c color.Index, strip ...coord.CR) {
 	if len(strip) < 2 {
 		return
 	}
@@ -56,7 +56,7 @@ func (a CanvasID) Lines(c color.Index, strip ...coord.CR) {
 
 // Triangles asks the GPU to draw a triangle strip on the canvas. Triangle strip
 // have the same meaning than in OpenGL. All triangles share the same color.
-func (a CanvasID) Triangles(c color.Index, strip ...coord.CR) {
+func (a SceneID) Triangles(c color.Index, strip ...coord.CR) {
 	if len(strip) < 3 {
 		return
 	}
@@ -70,7 +70,7 @@ func (a CanvasID) Triangles(c color.Index, strip ...coord.CR) {
 ////////////////////////////////////////////////////////////////////////////////
 
 // Box asks the GPU to draw a box on the canvas.
-func (a CanvasID) Box(fg, bg color.Index, corner int16, p1, p2 coord.CR) {
+func (a SceneID) Box(fg, bg color.Index, corner int16, p1, p2 coord.CR) {
 	if p2.C < p1.C {
 		p1.C, p2.C = p2.C, p1.C
 	}
@@ -86,30 +86,29 @@ func (a CanvasID) Box(fg, bg color.Index, corner int16, p1, p2 coord.CR) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (a CanvasID) command(c uint32, v uint32, n uint32, params ...int16) {
-	s := &canvases[a]
-	ccap, pcap := cap(s.commands), cap(s.parameters)
+func (a SceneID) command(c uint32, v uint32, n uint32, params ...int16) {
+	ccap, pcap := cap(scenes.commands[a]), cap(scenes.parameters[a])
 
-	l := len(s.commands)
+	l := len(scenes.commands[a])
 
 	switch {
 
-	case l > 0 && c == (s.commands[l-1].BaseInstance>>24) &&
+	case l > 0 && c == (scenes.commands[a][l-1].BaseInstance>>24) &&
 		c != cmdLines && c != cmdTriangles:
 
 		if c != cmdText {
 			// Collapse with previous draw command
-			s.commands[l-1].InstanceCount += n
-			s.parameters = append(s.parameters, params...)
+			scenes.commands[a][l-1].InstanceCount += n
+			scenes.parameters[a] = append(scenes.parameters[a], params...)
 			break
 
 		} else {
 			// Check if same color and y
-			pi := s.commands[l-1].BaseInstance & 0xFFFFFF
-			if s.parameters[pi] == params[0] && s.parameters[pi+1] == params[1] {
+			pi := scenes.commands[a][l-1].BaseInstance & 0xFFFFFF
+			if scenes.parameters[a][pi] == params[0] && scenes.parameters[a][pi+1] == params[1] {
 				// Collapse with previous draw command
-				s.commands[l-1].InstanceCount += n
-				s.parameters = append(s.parameters, params[2:]...)
+				scenes.commands[a][l-1].InstanceCount += n
+				scenes.parameters[a] = append(scenes.parameters[a], params[2:]...)
 				break
 			}
 		}
@@ -118,27 +117,27 @@ func (a CanvasID) command(c uint32, v uint32, n uint32, params ...int16) {
 
 	default:
 		// Create new draw command
-		s.commands = append(s.commands, gl.DrawIndirectCommand{
+		scenes.commands[a] = append(scenes.commands[a], gl.DrawIndirectCommand{
 			VertexCount:   v,
 			InstanceCount: n,
 			FirstVertex:   0,
-			BaseInstance:  uint32(c<<24 | uint32(len(s.parameters)&0xFFFFFF)),
+			BaseInstance:  uint32(c<<24 | uint32(len(scenes.parameters[a])&0xFFFFFF)),
 		})
-		s.parameters = append(s.parameters, params...)
+		scenes.parameters[a] = append(scenes.parameters[a], params...)
 	}
 
-	if ccap < cap(s.commands) {
-		s.commandsICBO.Delete()
-		s.commandsICBO = gl.NewIndirectBuffer(
-			uintptr(cap(s.commands))*unsafe.Sizeof(s.commands[0]),
+	if ccap < cap(scenes.commands[a]) {
+		scenes.commandsICBO[a].Delete()
+		scenes.commandsICBO[a] = gl.NewIndirectBuffer(
+			uintptr(cap(scenes.commands[a]))*unsafe.Sizeof(scenes.commands[a][0]),
 			gl.DynamicStorage,
 		)
 	}
 
-	if pcap < cap(s.parameters) {
-		s.parametersTBO.Delete()
-		s.parametersTBO = gl.NewBufferTexture(
-			uintptr(cap(s.parameters))*unsafe.Sizeof(s.parameters[0]),
+	if pcap < cap(scenes.parameters[a]) {
+		scenes.parametersTBO[a].Delete()
+		scenes.parametersTBO[a] = gl.NewBufferTexture(
+			uintptr(cap(scenes.parameters[a]))*unsafe.Sizeof(scenes.parameters[a][0]),
 			gl.R16I,
 			gl.DynamicStorage,
 		)

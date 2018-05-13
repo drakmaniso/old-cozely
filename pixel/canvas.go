@@ -5,7 +5,6 @@ package pixel
 
 import (
 	"errors"
-	"unsafe"
 
 	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/coord"
@@ -15,25 +14,6 @@ import (
 
 ////////////////////////////////////////////////////////////////////////////////
 
-type canvas struct {
-	buffer        gl.Framebuffer
-	texture       gl.Texture2D
-	filter        gl.Texture2D
-	commandsICBO  gl.IndirectBuffer
-	parametersTBO gl.BufferTexture
-	resolution    coord.CR
-	fixedres      bool
-	size          coord.CR // in canvas pixels
-	pixel         int16    // in window pixels
-	margin        coord.CR // in canvas pixels
-	border        coord.CR // in window pixels (leftover from division by pixel size)
-	commands      []gl.DrawIndirectCommand
-	parameters    []int16
-	cursor        TextCursor
-}
-
-var canvases []canvas
-
 // CanvasID is the ID to handle the GPU framebuffer used to display pictures,
 // print text and for various other drawing primitives.
 type CanvasID uint16
@@ -42,6 +22,21 @@ const (
 	maxCanvasID = 0xFFFF
 	noCanvas    = CanvasID(maxCanvasID)
 )
+
+type canvas struct {
+	buffer     gl.Framebuffer
+	texture    gl.Texture2D
+	filter     gl.Texture2D
+	resolution coord.CR // in canvas pixels
+	fixedres   bool
+	size       coord.CR // in canvas pixels
+	pixel      int16    // in window pixels
+	margin     coord.CR // in canvas pixels
+	border     coord.CR // in window pixels (leftover from division by pixel size)
+
+}
+
+var canvases []canvas
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -63,8 +58,6 @@ func Canvas(o ...CanvasOption) CanvasID {
 	aa := &canvases[a]
 	aa.resolution = coord.CR{640, 360}
 	aa.pixel = 2
-	aa.commands = make([]gl.DrawIndirectCommand, 0, maxCommandCount)
-	aa.parameters = make([]int16, 0, maxParamCount)
 
 	for i := range o {
 		o[i](a)
@@ -77,19 +70,10 @@ func Canvas(o ...CanvasOption) CanvasID {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (a CanvasID) createBuffer() {
+func (a CanvasID) setup() {
 	aa := &canvases[a]
 	aa.buffer = gl.NewFramebuffer()
 
-	aa.commandsICBO = gl.NewIndirectBuffer(
-		uintptr(cap(aa.commands))*unsafe.Sizeof(aa.commands[0]),
-		gl.DynamicStorage,
-	)
-	aa.parametersTBO = gl.NewBufferTexture(
-		uintptr(cap(aa.parameters))*unsafe.Sizeof(aa.parameters[0]),
-		gl.R16I,
-		gl.DynamicStorage,
-	)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -149,13 +133,12 @@ func (a CanvasID) createTextures() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// paint executes all pending commands on the canvas. It is automatically called
-// by Display; the only reason to call it manually is to be able to read from it
-// before display.
-func (a CanvasID) paint() {
+// Paint executes all pending commands in scene s on the canvas. It can also by
+// called by Display.
+func (a CanvasID) Paint(s SceneID) {
 	aa := &canvases[a]
 
-	if len(aa.commands) == 0 {
+	if len(scenes.commands[s]) == 0 {
 		return
 	}
 
@@ -174,25 +157,26 @@ func (a CanvasID) paint() {
 	gl.Blending(gl.SrcAlpha, gl.OneMinusSrcAlpha)
 
 	screenUBO.Bind(layoutScreen)
-	aa.commandsICBO.Bind()
-	aa.parametersTBO.Bind(layoutParameters)
+	scenes.commandsICBO[s].Bind()
+	scenes.parametersTBO[s].Bind(layoutParameters)
 	pictureMapTBO.Bind(layoutPictureMap)
 	picturesTA.Bind(layoutPictures)
 
-	aa.commandsICBO.SubData(aa.commands, 0)
-	aa.parametersTBO.SubData(aa.parameters, 0)
-	gl.DrawIndirect(0, int32(len(aa.commands)))
-	aa.commands = aa.commands[:0]
-	aa.parameters = aa.parameters[:0]
+	scenes.commandsICBO[s].SubData(scenes.commands[s], 0)
+	scenes.parametersTBO[s].SubData(scenes.parameters[s], 0)
+	gl.DrawIndirect(0, int32(len(scenes.commands[s])))
+	scenes.commands[s] = scenes.commands[s][:0]
+	scenes.parameters[s] = scenes.parameters[s][:0]
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// Display tells the GPU to execute all pending drawing commands on the canvas
-// (if any), and then display it on the game window.
-func (a CanvasID) Display() {
-	a.paint()
-
+// Display tells the GPU to execute all pending drawing commands on the scenes
+// provided (if any), and then display the canvas on the game window.
+func (a CanvasID) Display(s ...SceneID) {
+	for _, ss := range s {
+		a.Paint(ss)
+	}
 	aa := &canvases[a]
 
 	sz := aa.size.Times(aa.pixel)

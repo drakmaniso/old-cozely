@@ -83,6 +83,7 @@ var bindings = input.Bindings{
 
 var (
 	canvas = pixel.Canvas(pixel.Resolution(160, 160))
+	scene  = pixel.Scene()
 	pict   = pixel.Picture("graphics/paletteswatch")
 )
 
@@ -157,22 +158,22 @@ func (loop) Render() {
 
 	ps := pict.Size()
 	p := cs.Minus(ps).Slash(2)
-	canvas.Picture(pict, p)
+	scene.Picture(pict, p)
 
-	canvas.Text(253, pixel.Monozela10)
-	canvas.Locate(p.Minus(coord.CR{0, 8}))
+	scene.Text(253, pixel.Monozela10)
+	scene.Locate(p.Minus(coord.CR{0, 8}))
 	switch mode {
 	case 1:
-		canvas.Print("Custom Palette")
+		scene.Print("Custom Palette")
 	case 2:
-		canvas.Print("C64 Palette")
+		scene.Print("C64 Palette")
 	case 3:
-		canvas.Print("CPC Palette")
+		scene.Print("CPC Palette")
 	case 4:
-		canvas.Print("MSX Palette")
+		scene.Print("MSX Palette")
 	case 5:
-		canvas.Print("MSX2 Palette")
+		scene.Print("MSX2 Palette")
 	}
 
-	canvas.Display()
+	canvas.Display(scene)
 }

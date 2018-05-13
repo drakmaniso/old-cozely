@@ -17,6 +17,7 @@ import (
 
 type loop6 struct {
 	canvas  pixel.CanvasID
+	scene pixel.SceneID
 	palette color.PaletteID
 }
 
@@ -39,6 +40,7 @@ func TestTest6(t *testing.T) {
 
 func (a *loop6) declare() {
 	a.canvas = pixel.Canvas(pixel.Zoom(3))
+	a.scene = pixel.Scene()
 	a.palette = color.PaletteFrom("graphics/shape1")
 }
 
@@ -72,27 +74,28 @@ func (a *loop6) Render() {
 	dy := coord.CR{0, 32}
 
 	for i := int16(0); i < 13; i++ {
-		a.canvas.Box(6, 0, i, o.Plus(dx.Times(i)), o.Plus(dx.Times(i)).Plus(s))
+		a.scene.Box(6, 0, i, o.Plus(dx.Times(i)), o.Plus(dx.Times(i)).Plus(s))
 	}
 
 	o = o.Plus(dy)
 	for i := int16(0); i < 13; i++ {
-		a.canvas.Box(0, 4, i, o.Plus(dx.Times(i)), o.Plus(dx.Times(i)).Plus(s))
+		a.scene.Box(0, 4, i, o.Plus(dx.Times(i)), o.Plus(dx.Times(i)).Plus(s))
 	}
 
 	o = o.Plus(dy)
 	for i := int16(0); i < 13; i++ {
-		a.canvas.Box(6, 4, i, o.Plus(dx.Times(i)), o.Plus(dx.Times(i)).Plus(s))
+		a.scene.Box(6, 4, i, o.Plus(dx.Times(i)), o.Plus(dx.Times(i)).Plus(s))
 	}
 
 	o = o.Plus(dy)
 	for i := int16(0); i < 13; i++ {
-		a.canvas.Box(4, 4, i, o.Plus(dx.Times(i)), o.Plus(dx.Times(i)).Plus(s))
+		a.scene.Box(4, 4, i, o.Plus(dx.Times(i)), o.Plus(dx.Times(i)).Plus(s))
 	}
 
 	m := a.canvas.FromWindow(cursor.XY(0).CR())
-	a.canvas.Point(18, m)
-	a.canvas.Display()
+	a.scene.Point(18, m)
+
+	a.canvas.Display(a.scene)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
