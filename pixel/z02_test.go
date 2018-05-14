@@ -62,7 +62,7 @@ func (a *loop2) declare() {
 		pixel.Picture("graphics/shape3"),
 		pixel.Picture("graphics/shape4"),
 	}
-	a.shapes = make([]shape, 350000)
+	a.shapes = make([]shape, 200000)
 }
 
 func (a *loop2) Enter() {
@@ -125,6 +125,14 @@ func (a *loop2) React() {
 	}
 	if scene10.Started(0) {
 		a.shapes = make([]shape, 10)
+		a.resize()
+	}
+	if scrollup.Started(0) {
+		a.shapes = make([]shape, len(a.shapes) + 1000)
+		a.resize()
+	}
+	if scrolldown.Started(0) && len(a.shapes) > 1000 {
+		a.shapes = make([]shape, len(a.shapes) - 1000)
 		a.resize()
 	}
 	if next.Started(0) {

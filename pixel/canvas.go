@@ -15,25 +15,6 @@ import (
 
 ////////////////////////////////////////////////////////////////////////////////
 
-type canvas struct {
-	buffer        gl.Framebuffer
-	texture       gl.Texture2D
-	filter        gl.Texture2D
-	commandsICBO  gl.IndirectBuffer
-	parametersTBO gl.BufferTexture
-	resolution    coord.CR
-	fixedres      bool
-	size          coord.CR // in canvas pixels
-	pixel         int16    // in window pixels
-	margin        coord.CR // in canvas pixels
-	border        coord.CR // in window pixels (leftover from division by pixel size)
-	commands      []gl.DrawIndirectCommand
-	parameters    []int16
-	cursor        TextCursor
-}
-
-var canvases []canvas
-
 // CanvasID is the ID to handle the GPU framebuffer used to display pictures,
 // print text and for various other drawing primitives.
 type CanvasID uint16
@@ -42,6 +23,26 @@ const (
 	maxCanvasID = 0xFFFF
 	noCanvas    = CanvasID(maxCanvasID)
 )
+
+type canvas struct {
+	resolution coord.CR
+	fixedres   bool
+	size       coord.CR // in canvas pixels
+	pixel      int16    // in window pixels
+	margin     coord.CR // in canvas pixels
+	border     coord.CR // in window pixels (leftover from division by pixel size)
+	buffer     gl.Framebuffer
+	texture    gl.Texture2D
+	filter     gl.Texture2D
+
+	commands      []gl.DrawIndirectCommand
+	parameters    []int16
+	cursor        TextCursor
+	commandsICBO  gl.IndirectBuffer
+	parametersTBO gl.BufferTexture
+}
+
+var canvases []canvas
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -77,7 +78,7 @@ func Canvas(o ...CanvasOption) CanvasID {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (a CanvasID) createBuffer() {
+func (a CanvasID) setup() {
 	aa := &canvases[a]
 	aa.buffer = gl.NewFramebuffer()
 

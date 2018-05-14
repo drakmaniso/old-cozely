@@ -24,7 +24,7 @@ func setup() error {
 	// Create the canvases
 
 	for i := range canvases {
-		CanvasID(i).createBuffer()
+		CanvasID(i).setup()
 	}
 
 	// Create the paint pipeline
@@ -114,7 +114,7 @@ func cleanup() error {
 		s.texture.Delete()
 		s.buffer.Delete()
 	}
-	canvases= canvases[:0]
+	canvases = canvases[:0]
 
 	// Display pipeline
 	pipeline.Delete()
