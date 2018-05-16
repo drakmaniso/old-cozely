@@ -46,6 +46,14 @@ static inline void BindStorage(GLuint binding, GLuint buffer) {
 	glBindBufferBase(GL_SHADER_STORAGE_BUFFER, binding, buffer);
 }
 
+static inline void ClearBuffer(GLuint buffer, GLenum ifo, GLenum fo, GLenum t, const void *data) {
+	glClearNamedBufferData(buffer, ifo, fo, t, data);
+}
+
+static inline void BindCounter(GLuint binding, GLuint buffer) {
+	glBindBufferBase(GL_ATOMIC_COUNTER_BUFFER, binding, buffer);
+}
+
 static inline void BindVertex(GLuint binding, GLuint buffer, GLintptr offset, GLsizei stride) {
 	glBindVertexBuffer(binding, buffer, offset, stride);
 }
@@ -154,6 +162,10 @@ func (sb *StorageBuffer) SubData(data interface{}, atOffset uintptr) {
 	C.BufferSubData(sb.object, C.GLintptr(atOffset), C.GLsizei(s), p)
 }
 
+func (sb *StorageBuffer) ClearUint32(data uint32) {
+	C.ClearBuffer(C.GLuint(sb.object), C.GL_R32UI, C.GL_RED, C.GL_UNSIGNED_INT, unsafe.Pointer(&data))
+}
+
 // Bind to a storage binding index.
 //
 // This index should correspond to one indicated by a layout qualifier in the
@@ -164,6 +176,44 @@ func (sb *StorageBuffer) Bind(binding uint32) {
 
 // Delete frees the buffer.
 func (sb *StorageBuffer) Delete() {
+	if sb != nil {
+		C.DeleteBuffer(C.GLuint(sb.object))
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+// A CounterBuffer is a block of memory owned by the GPU.
+type CounterBuffer struct {
+	object C.GLuint
+}
+
+// NewCounterBuffer asks the GPU to allocate a new block of memory.
+func NewCounterBuffer(nb int, f BufferFlags) CounterBuffer {
+	var sb CounterBuffer
+	sb.object = C.NewBuffer(C.GLsizeiptr(4*nb), nil, C.GLbitfield(f))
+	//TODO: error handling
+	return sb
+}
+
+// SubData updates the buffer with data, starting at a specified offset.
+//
+// It is your responsibility to ensure that the size of data plus the offset
+// does not exceed the buffer size.
+func (sb *CounterBuffer) SubData(data []uint32, atOffset uintptr) {
+	C.BufferSubData(sb.object, C.GLintptr(atOffset), C.GLsizei(4*len(data)), unsafe.Pointer(&data[0]))
+}
+
+// Bind to a storage binding index.
+//
+// This index should correspond to one indicated by a layout qualifier in the
+// shaders.
+func (sb *CounterBuffer) Bind(binding uint32) {
+	C.BindCounter(C.GLuint(binding), sb.object)
+}
+
+// Delete frees the buffer.
+func (sb *CounterBuffer) Delete() {
 	if sb != nil {
 		C.DeleteBuffer(C.GLuint(sb.object))
 	}
