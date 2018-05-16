@@ -9,10 +9,10 @@ layout(std140, binding = 0) uniform BlitUniforms {
 };
 
 const vec2 srcCorners[4] = vec2[4](
-	vec2(0, 0),
-	vec2(1, 0),
 	vec2(0, 1),
-	vec2(1, 1)
+	vec2(1, 1),
+	vec2(0, 0),
+	vec2(1, 0)
 );
 
 const vec2 winCorners[4] = vec2[4](

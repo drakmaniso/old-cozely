@@ -34,9 +34,10 @@ func setup() error {
 		gl.FragmentShader(strings.NewReader(fragmentShader)),
 		gl.CullFace(false, false),
 		gl.Topology(gl.TriangleStrip),
-		gl.DepthTest(false),
-		gl.DepthWrite(false),
-	)
+		gl.DepthTest(true),
+		gl.DepthWrite(true),
+		gl.DepthComparison(gl.GreaterOrEqual),
+		)
 
 	screenUBO = gl.NewUniformBuffer(&screenUniforms, gl.DynamicStorage|gl.MapWrite)
 
@@ -111,8 +112,12 @@ func cleanup() error {
 	// Canvases
 	for i := range canvases {
 		s := &canvases[i]
-		s.texture.Delete()
+		s.canvas.Delete()
+		s.depth.Delete()
+		s.filter.Delete()
 		s.buffer.Delete()
+		s.commandsICBO.Delete()
+		s.parametersTBO.Delete()
 	}
 	canvases = canvases[:0]
 
