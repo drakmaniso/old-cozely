@@ -52,6 +52,4 @@ func (loop) Render() {
 	pixel.Text(fg, pixel.Monozela10)
 	pixel.Locate(coord.CR{16, 32})
 	pixel.Print("Hello, World!")
-
-	pixel.Display()
 }

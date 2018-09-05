@@ -133,13 +133,19 @@ func createCanvasTextures() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// paint executes all pending commands on the canvas. It is automatically called
+func init() {
+	internal.PixelRender = render
+}
+
+// render executes all pending commands on the canvas. It is automatically called
 // by Display; the only reason to call it manually is to be able to read from it
 // before display.
-func paint() {
+func render() error {
 	if len(canvas.commands) == 0 {
-		return
+		goto display
 	}
+
+	// Execute all pending commands
 
 	internal.ColorUpload()
 
@@ -166,15 +172,10 @@ func paint() {
 	gl.DrawIndirect(0, int32(len(canvas.commands)))
 	canvas.commands = canvas.commands[:0]
 	canvas.parameters = canvas.parameters[:0]
-}
 
-////////////////////////////////////////////////////////////////////////////////
+	// Display the canvas on the game window.
 
-// Display tells the GPU to execute all pending drawing commands on the canvas
-// (if any), and then display it on the game window.
-func Display() {
-	paint()
-
+display:
 	sz := canvas.size.Times(canvas.zoom)
 
 	blitUniforms.ScreenSize.X = float32(canvas.size.C)
@@ -193,6 +194,8 @@ func Display() {
 	canvas.texture.Bind(0)
 	canvas.filter.Bind(1)
 	gl.Draw(0, 4)
+
+	return gl.Err()
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -119,5 +119,4 @@ func (a *loop1) Render() {
 		pixel.Paint(a.srgbGreen, coord.CR{sz.C/2 - pz.C/2, 96})
 		pixel.Paint(a.srgbBlue, coord.CR{3*sz.C/4 - pz.C/2, 96})
 	}
-	pixel.Display()
 }

@@ -136,8 +136,6 @@ func (a *loop4) Render() {
 
 	pixel.Locate(coord.CR{pixel.Resolution().C - 96, 16})
 	pixel.Printf("Line %d", a.line)
-
-	pixel.Display()
 }
 
 //TODO:

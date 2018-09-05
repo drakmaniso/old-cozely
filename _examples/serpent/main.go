@@ -84,7 +84,6 @@ func (loop) Render() {
 				origin.Plus(p), origin.Plus(p).Pluss(15))
 		}
 	}
-	pixel.Display()
 }
 
 ////////////////////////////////////////////////////////////////////////////////

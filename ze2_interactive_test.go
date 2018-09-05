@@ -100,6 +100,4 @@ func (l *loop2) Render() {
 
 	o := pixel.Resolution().Minus(l.logo.Size()).Slash(2)
 	pixel.Paint(l.logo, o)
-
-	pixel.Display()
 }

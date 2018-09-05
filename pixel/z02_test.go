@@ -165,5 +165,4 @@ func (a *loop2) Render() {
 	if ov > 0 {
 		pixel.Printf(" (%d)", ov)
 	}
-	pixel.Display()
 }

@@ -194,6 +194,10 @@ func Run(loop GameLoop) (err error) {
 		}
 		internal.GameTime = gametime + internal.UpdateLag //TODO: check if correct
 		internal.Loop.Render()
+		err = internal.PixelRender()
+		if err != nil {
+			return err
+		}
 
 		internal.SwapWindow()
 

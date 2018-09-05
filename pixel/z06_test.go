@@ -91,7 +91,6 @@ func (a *loop6) Render() {
 
 	m := pixel.ToCanvas(cursor.XY(0).CR())
 	pixel.Point(18, m)
-	pixel.Display()
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -172,8 +172,6 @@ func (loop1) Render() {
 	if cozely.HasMouseFocus() {
 		pixel.Paint(pixel.MouseCursor, m)
 	}
-
-	pixel.Display()
 }
 
 func toScreen(p coord.XY) coord.CR {

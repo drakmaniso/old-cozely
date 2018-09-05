@@ -267,7 +267,6 @@ func (loop) Render() {
 	if cozely.HasMouseFocus() {
 		pixel.Paint(pixel.MouseCursor, pixel.ToCanvas(cursor.XY(0).CR()))
 	}
-	pixel.Display()
 }
 
 func prepare() {

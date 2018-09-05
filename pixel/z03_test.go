@@ -120,6 +120,4 @@ func (a *loop3) Render() {
 	pixel.Cursor.Font = pixel.FontID(0)
 	m := pixel.ToCanvas(cursor.XY(0).CR())
 	pixel.Printf("Position x=%d, y=%d\n", m.C, m.R)
-
-	pixel.Display()
 }

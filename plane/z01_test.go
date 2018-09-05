@@ -180,8 +180,6 @@ func (loop1) Render() {
 	dd := toScreen(d)
 	pixel.Lines(col5, dd.Minuss(2), dd.Pluss(2))
 	pixel.Lines(col5, dd.Minus(coord.CR{-2, 2}), dd.Plus(coord.CR{-2, 2}))
-
-	pixel.Display()
 }
 
 func toScreen(p coord.XY) coord.CR {

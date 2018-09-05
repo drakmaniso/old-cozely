@@ -174,6 +174,4 @@ func (loop) Render() {
 	case 5:
 		pixel.Print("MSX2 Palette")
 	}
-
-	pixel.Display()
 }

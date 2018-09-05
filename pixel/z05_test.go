@@ -98,5 +98,4 @@ func (a *loop5) Render() {
 		}
 		pixel.Point(18, m)
 	}
-	pixel.Display()
 }

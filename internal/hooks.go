@@ -53,6 +53,9 @@ var PixelSetup = func() error { return nil }
 // PixelResize hook
 var PixelResize = func() {}
 
+// PixelRender hook
+var PixelRender = func () error { return nil }
+
 // PixelCleanup hook
 var PixelCleanup = func() error { return nil }
 
