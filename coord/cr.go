@@ -143,3 +143,10 @@ func (a CR) RC() CR {
 func (a CR) Perp() CR {
 	return CR{-a.R, a.C}
 }
+
+////////////////////////////////////////////////////////////////////////////////
+
+// Null returns true if both coordinates are null.
+func (a CR) Null() bool {
+	return a.C == 0 && a.R == 0
+}

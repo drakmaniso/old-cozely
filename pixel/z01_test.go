@@ -22,7 +22,6 @@ import (
 var ()
 
 type loop1 struct {
-	canvas                                 pixel.CanvasID
 	palmire, palsrgb                       color.PaletteID
 	mire                                   pixel.PictureID
 	srgbGray, srgbRed, srgbGreen, srgbBlue pixel.PictureID
@@ -45,7 +44,8 @@ func TestTest1(t *testing.T) {
 }
 
 func (a *loop1) declare() {
-	a.canvas = pixel.Canvas(pixel.Resolution(320, 180))
+	pixel.SetResolution(320, 180)
+
 	a.palmire = color.PaletteFrom("graphics/mire")
 	a.palsrgb = color.PaletteFrom("graphics/srgb-gray")
 
@@ -103,21 +103,21 @@ func (loop1) Update() {
 }
 
 func (a *loop1) Render() {
-	a.canvas.Clear(0)
-	sz := a.canvas.Size()
+	pixel.Clear(0)
+	sz := pixel.Resolution()
 	switch a.mode {
 	case 0:
 		pz := a.mire.Size()
-		a.canvas.Picture(a.mire, coord.CR{0, 0})
-		a.canvas.Picture(a.mire, coord.CR{0, sz.R - pz.R})
-		a.canvas.Picture(a.mire, coord.CR{sz.C - pz.C, 0})
-		a.canvas.Picture(a.mire, sz.Minus(pz))
+		pixel.Paint(a.mire, coord.CR{0, 0})
+		pixel.Paint(a.mire, coord.CR{0, sz.R - pz.R})
+		pixel.Paint(a.mire, coord.CR{sz.C - pz.C, 0})
+		pixel.Paint(a.mire, sz.Minus(pz))
 	case 1:
 		pz := a.srgbGray.Size()
-		a.canvas.Picture(a.srgbGray, coord.CR{sz.C/2 - pz.C/2, 32})
-		a.canvas.Picture(a.srgbRed, coord.CR{sz.C/4 - pz.C/2, 96})
-		a.canvas.Picture(a.srgbGreen, coord.CR{sz.C/2 - pz.C/2, 96})
-		a.canvas.Picture(a.srgbBlue, coord.CR{3*sz.C/4 - pz.C/2, 96})
+		pixel.Paint(a.srgbGray, coord.CR{sz.C/2 - pz.C/2, 32})
+		pixel.Paint(a.srgbRed, coord.CR{sz.C/4 - pz.C/2, 96})
+		pixel.Paint(a.srgbGreen, coord.CR{sz.C/2 - pz.C/2, 96})
+		pixel.Paint(a.srgbBlue, coord.CR{3*sz.C/4 - pz.C/2, 96})
 	}
-	a.canvas.Display()
+	pixel.Display()
 }

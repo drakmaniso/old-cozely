@@ -82,7 +82,6 @@ var bindings = input.Bindings{
 // Globals
 
 var (
-	canvas = pixel.Canvas(pixel.Resolution(160, 160))
 	pict   = pixel.Picture("graphics/paletteswatch")
 )
 
@@ -92,6 +91,8 @@ var mode int
 
 func Example_colorChart() {
 	defer cozely.Recover()
+
+	pixel.SetResolution(160, 160)
 
 	input.Load(bindings)
 	err := cozely.Run(loop{})
@@ -151,28 +152,28 @@ func (loop) Update() {
 }
 
 func (loop) Render() {
-	canvas.Clear(0)
+	pixel.Clear(0)
 
-	cs := canvas.Size()
+	cs := pixel.Resolution()
 
 	ps := pict.Size()
 	p := cs.Minus(ps).Slash(2)
-	canvas.Picture(pict, p)
+	pixel.Paint(pict, p)
 
-	canvas.Text(253, pixel.Monozela10)
-	canvas.Locate(p.Minus(coord.CR{0, 8}))
+	pixel.Text(253, pixel.Monozela10)
+	pixel.Locate(p.Minus(coord.CR{0, 8}))
 	switch mode {
 	case 1:
-		canvas.Print("Custom Palette")
+		pixel.Print("Custom Palette")
 	case 2:
-		canvas.Print("C64 Palette")
+		pixel.Print("C64 Palette")
 	case 3:
-		canvas.Print("CPC Palette")
+		pixel.Print("CPC Palette")
 	case 4:
-		canvas.Print("MSX Palette")
+		pixel.Print("MSX Palette")
 	case 5:
-		canvas.Print("MSX2 Palette")
+		pixel.Print("MSX2 Palette")
 	}
 
-	canvas.Display()
+	pixel.Display()
 }

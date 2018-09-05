@@ -17,7 +17,6 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 
 type loop2 struct {
-	canvas  pixel.CanvasID
 	palette color.PaletteID
 	txtcol  color.Index
 	picts   []pixel.PictureID
@@ -51,7 +50,7 @@ func TestTest2(t *testing.T) {
 }
 
 func (a *loop2) declare() {
-	a.canvas = pixel.Canvas(pixel.Zoom(2))
+	pixel.SetZoom(2)
 
 	a.palette = color.PaletteFrom("graphics/shape1")
 	a.txtcol = a.palette.Entry(color.LRGB{1, 1, 1})
@@ -67,14 +66,14 @@ func (a *loop2) declare() {
 
 func (a *loop2) Enter() {
 	a.palette.Activate()
-	a.canvas.Text(a.txtcol, pixel.Monozela10)
+	pixel.Text(a.txtcol, pixel.Monozela10)
 }
 
 func (loop2) Leave() {
 }
 
 func (a *loop2) resize() {
-	s := a.canvas.Size()
+	s := pixel.Resolution()
 	for i := range a.shapes {
 		j := rand.Intn(len(a.picts))
 		p := a.picts[j]
@@ -141,7 +140,7 @@ func (a *loop2) React() {
 		j := rand.Intn(len(a.picts))
 		p := a.picts[j]
 		a.shapes[i].pict = p
-		a.shapes[i].pos = a.canvas.FromWindow(cursor.XY(0).CR()).Minus(p.Size().Slash(2))
+		a.shapes[i].pos = pixel.ToCanvas(cursor.XY(0).CR()).Minus(p.Size().Slash(2))
 	}
 	if previous.Started(0) && len(a.shapes) > 0 {
 		a.shapes = a.shapes[:len(a.shapes)-1]
@@ -156,15 +155,15 @@ func (loop2) Update() {
 }
 
 func (a *loop2) Render() {
-	a.canvas.Clear(0)
+	pixel.Clear(0)
 	for _, o := range a.shapes {
-		a.canvas.Picture(o.pict, o.pos)
+		pixel.Paint(o.pict, o.pos)
 	}
-	a.canvas.Locate(coord.CR{8, 16})
+	pixel.Locate(coord.CR{8, 16})
 	ft, ov := cozely.RenderStats()
-	a.canvas.Printf("%dk pictures: %6.2f", len(a.shapes)/1000, ft*1000)
+	pixel.Printf("%dk pictures: %6.2f", len(a.shapes)/1000, ft*1000)
 	if ov > 0 {
-		a.canvas.Printf(" (%d)", ov)
+		pixel.Printf(" (%d)", ov)
 	}
-	a.canvas.Display()
+	pixel.Display()
 }

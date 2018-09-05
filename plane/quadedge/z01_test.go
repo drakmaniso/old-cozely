@@ -16,7 +16,6 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 
 var (
-	canvas1  = pixel.Canvas(pixel.Zoom(2))
 	palette1 = color.Palette(color.LRGB{1, 1, 1})
 	col1     = palette1.Entry(color.LRGB{0.1, 0.2, 0.5})
 	col2     = palette1.Entry(color.LRGB{0.5, 0.1, 0.0})
@@ -71,7 +70,7 @@ func (loop1) React() {
 	}
 
 	if previous.Started(0) {
-		m := canvas1.FromWindow(cursor.XY(0).CR())
+		m := pixel.ToCanvas(cursor.XY(0).CR())
 		p := fromScreen(m)
 		points = append(points, p)
 		triangulation = quadedge.Delaunay(points)
@@ -141,40 +140,40 @@ func (loop1) Update() {
 }
 
 func (loop1) Render() {
-	canvas1.Clear(0)
-	ratio = float32(canvas1.Size().R)
+	pixel.Clear(0)
+	ratio = float32(pixel.Resolution().R)
 	orig = coord.XY{
-		X: (float32(canvas1.Size().C) - ratio) / 2,
-		Y: float32(canvas1.Size().R),
+		X: (float32(pixel.Resolution().C) - ratio) / 2,
+		Y: float32(pixel.Resolution().R),
 	}
 
-	m := canvas1.FromWindow(cursor.XY(0).CR())
+	m := pixel.ToCanvas(cursor.XY(0).CR())
 	p := fromScreen(m)
-	canvas1.Locate(coord.CR{2, 8})
-	canvas1.Text(col1, 0)
+	pixel.Locate(coord.CR{2, 8})
+	pixel.Text(col1, 0)
 	fsr, fso := cozely.RenderStats()
-	canvas1.Printf("Framerate: %.2f (%d)\n", 1000*fsr, fso)
+	pixel.Printf("Framerate: %.2f (%d)\n", 1000*fsr, fso)
 	if p.X >= 0 && p.X <= 1.0 {
-		canvas1.Printf("Position: %.3f, %.3f\n", p.X, p.Y)
+		pixel.Printf("Position: %.3f, %.3f\n", p.X, p.Y)
 	} else {
-		canvas1.Println(" ")
+		pixel.Println(" ")
 	}
 
 	triangulation.Walk(func(e quadedge.Edge) {
-		canvas1.Lines(col1, toScreen(points[e.Orig()]), toScreen(points[e.Dest()]))
+		pixel.Lines(col1, toScreen(points[e.Orig()]), toScreen(points[e.Dest()]))
 	})
 
 	pt := make([]coord.CR, len(points))
 	for i, sd := range points {
 		pt[i] = toScreen(sd)
-		canvas1.Box(col2, col2, 1, pt[i].Minuss(2), pt[i].Pluss(2))
+		pixel.Box(col2, col2, 1, pt[i].Minuss(2), pt[i].Pluss(2))
 	}
 
 	if cozely.HasMouseFocus() {
-		canvas1.Picture(pixel.MouseCursor, m)
+		pixel.Paint(pixel.MouseCursor, m)
 	}
 
-	canvas1.Display()
+	pixel.Display()
 }
 
 func toScreen(p coord.XY) coord.CR {

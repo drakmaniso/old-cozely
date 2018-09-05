@@ -13,10 +13,8 @@ import (
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// TextCursor holds the state necessary to write text on a canvas. Each canvas
-// has its own instance, which can be retrieved and modified with the
-// Canvas.Cursor method.
-type TextCursor struct {
+// Cursor holds the state used to write text on the canvas.
+type cursor struct {
 	Color         color.Index
 	Font          FontID
 	Margin        int16
@@ -25,17 +23,19 @@ type TextCursor struct {
 	Position      coord.CR
 }
 
+// Cursor holds the state used to write text on the canvas.
+var Cursor cursor
+
 ////////////////////////////////////////////////////////////////////////////////
 
 // Text configures the color and font used to display text on the canvas.
 //
-// Note that you can also directly change the TextCursor attributes.
-func (a CanvasID) Text(c color.Index, f FontID) {
-	cu := &canvases[a].cursor
-	cu.Color = c
-	cu.Font = f
-	if cu.Interline == 0 {
-		cu.Interline = int16(float32(cu.Font.Height()) * 1.25)
+// Note that you can also directly change the Cursor attributes.
+func Text(c color.Index, f FontID) {
+	Cursor.Color = c
+	Cursor.Font = f
+	if Cursor.Interline == 0 {
+		Cursor.Interline = int16(float32(Cursor.Font.Height()) * 1.25)
 	}
 }
 
@@ -44,35 +44,31 @@ func (a CanvasID) Text(c color.Index, f FontID) {
 // start a new line.
 //
 // Note that you can also directly change the TextCursor attributes.
-func (a CanvasID) Locate(p coord.CR) {
-	cu := &canvases[a].cursor
-	cu.Position = coord.CR{p.C, p.R}
-	cu.Margin = cu.Position.C
-}
-
-// Cursor gives access to the attributes used to display text on the canvas.
-// These attributes can be changed at anytime.
-func (a CanvasID) Cursor() *TextCursor {
-	return &canvases[a].cursor
+func Locate(p coord.CR) {
+	Cursor.Position = coord.CR{p.C, p.R}
+	Cursor.Margin = Cursor.Position.C
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// Print asks the GPU to display text on the canvas (works like fmt.Print).
-func (a CanvasID) Print(args ...interface{}) (n int, err error) {
-	n, err = fmt.Fprint(a, args...)
+// Print queues a command on the GPU to display text on the canvas (works like
+// fmt.Print).
+func Print(args ...interface{}) (n int, err error) {
+	n, err = fmt.Fprint(&canvas, args...)
 	return n, err
 }
 
-// Println asks the GPU to display text on the canvas (works like fmt.Println).
-func (a CanvasID) Println(args ...interface{}) (n int, err error) {
-	n, err = fmt.Fprintln(a, args...)
+// Println queues a command on the GPU to display text on the canvas (works like
+// fmt.Println).
+func Println(args ...interface{}) (n int, err error) {
+	n, err = fmt.Fprintln(&canvas, args...)
 	return n, err
 }
 
-// Printf asks the GPU to display text on the canvas (like fmt.Printf).
-func (a CanvasID) Printf(format string, args ...interface{}) (n int, err error) {
-	n, err = fmt.Fprintf(a, format, args...)
+// Printf queues a command on the GPU to display text on the canvas (works like
+// fmt.Printf).
+func Printf(format string, args ...interface{}) (n int, err error) {
+	n, err = fmt.Fprintf(&canvas, format, args...)
 	return n, err
 }
 
@@ -80,7 +76,13 @@ func (a CanvasID) Printf(format string, args ...interface{}) (n int, err error) 
 
 // Write asks the GPU to display p (interpreted as an UTF8 string) on the
 // canvas. This method implements the io.Writer interface.
-func (a CanvasID) Write(p []byte) (n int, err error) {
+func (a cursor)Write(p []byte) (n int, err error) {
+	return canvas.Write(p)
+}
+
+// Write asks the GPU to display p (interpreted as an UTF8 string) on the
+// canvas. This method implements the io.Writer interface.
+func (a *cmdQueue) Write(p []byte) (n int, err error) {
 	n = len(p)
 	for len(p) > 0 {
 		r, s := utf8.DecodeRune(p)
@@ -90,25 +92,30 @@ func (a CanvasID) Write(p []byte) (n int, err error) {
 	return n, nil
 }
 
+
 // WriteRune asks the GPU to display a single rune on the canvas.
-func (a CanvasID) WriteRune(r rune) {
-	cu := &canvases[a].cursor
+func (a cursor) WriteRune(r rune) {
+	canvas.WriteRune(r)
+}
+
+// WriteRune asks the GPU to display a single rune on the canvas.
+func (a *cmdQueue) WriteRune(r rune) {
 	if r == '\n' {
-		if cu.Interline == 0 {
-			cu.Position.R += int16(float32(cu.Font.Height()) * 1.25)
+		if Cursor.Interline == 0 {
+			Cursor.Position.R += int16(float32(Cursor.Font.Height()) * 1.25)
 		} else {
-			cu.Position.R += cu.Interline
+			Cursor.Position.R += Cursor.Interline
 		}
-		cu.Position.C = cu.Margin
+		Cursor.Position.C = Cursor.Margin
 		return
 	}
 
-	g := cu.Font.glyph(r)
+	g := Cursor.Font.glyph(r)
 	a.command(cmdText, 4, 1,
-		int16(cu.Color-fonts[cu.Font].basecolor),
-		cu.Position.R-fonts[cu.Font].baseline,
-		int16(g), cu.Position.C)
-	cu.Position.C += pictures.mapping[g].w + cu.LetterSpacing
+		int16(Cursor.Color-fonts[Cursor.Font].basecolor),
+		Cursor.Position.R-fonts[Cursor.Font].baseline,
+		int16(g), Cursor.Position.C)
+	Cursor.Position.C += pictures.mapping[g].w + Cursor.LetterSpacing
 }
 
 ////////////////////////////////////////////////////////////////////////////////

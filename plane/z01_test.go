@@ -19,7 +19,6 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 
 var (
-	canvas1  = pixel.Canvas(pixel.Zoom(2))
 	palette1 = color.Palette()
 	col1     = palette1.Entry(color.LRGB{1, 1, 1})
 	col2     = palette1.Entry(color.LRGB{0.4, 0.05, 0.0})
@@ -46,6 +45,8 @@ type loop1 struct{}
 func TestTest1(t *testing.T) {
 	do(func() {
 		defer cozely.Recover()
+
+		pixel.SetZoom(3)
 
 		input.Load(bindings)
 		err := cozely.Run(loop1{})
@@ -83,11 +84,11 @@ func (loop1) Update() {
 }
 
 func (loop1) Render() {
-	canvas1.Clear(0)
-	ratio = float32(canvas1.Size().R)
+	pixel.Clear(0)
+	ratio = float32(pixel.Resolution().R)
 	offset = coord.XY{
-		X: (float32(canvas1.Size().C) - ratio),
-		Y: float32(canvas1.Size().R),
+		X: (float32(pixel.Resolution().C) - ratio),
+		Y: float32(pixel.Resolution().R),
 	}
 	pt := make([]coord.CR, len(points))
 	s := coord.CR{5, 5}
@@ -101,9 +102,9 @@ func (loop1) Render() {
 	for a := float32(0); a <= 2*math32.Pi+0.01; a += math32.Pi / 32 {
 		cir = append(cir, toScreen(coord.RA{r, a}.XY().Plus(d)))
 	}
-	canvas1.Lines(col5, cir...)
-	canvas1.Triangles(col7, pt[0], pt[1], pt[2], pt[0])
-	canvas1.Lines(col6, pt[0], pt[1], pt[2], pt[0])
+	pixel.Lines(col5, cir...)
+	pixel.Triangles(col7, pt[0], pt[1], pt[2], pt[0])
+	pixel.Lines(col6, pt[0], pt[1], pt[2], pt[0])
 	for i := range points {
 		var c color.Index
 		switch i {
@@ -114,42 +115,42 @@ func (loop1) Render() {
 		case 2:
 			c = col4
 		}
-		canvas1.Box(c, c, 2, pt[i].Minus(s), pt[i].Plus(s))
-		canvas1.Locate(coord.CR{pt[i].C - 2, pt[i].R + 3})
-		canvas1.Text(col1, 0)
-		canvas1.Print([]string{"A", "B", "C"}[i])
+		pixel.Box(c, c, 2, pt[i].Minus(s), pt[i].Plus(s))
+		pixel.Locate(coord.CR{pt[i].C - 2, pt[i].R + 3})
+		pixel.Text(col1, 0)
+		pixel.Print([]string{"A", "B", "C"}[i])
 	}
 
-	m := canvas1.FromWindow(cursor.XY(0).CR())
+	m := pixel.ToCanvas(cursor.XY(0).CR())
 	p := fromScreen(m)
-	canvas1.Locate(coord.CR{2, 8})
-	canvas1.Text(col1, 0)
-	canvas1.Printf("A: %.3f, %.3f\n", points[0].X, points[0].Y)
-	canvas1.Printf("B: %.3f, %.3f\n", points[1].X, points[1].Y)
-	canvas1.Printf("C: %.3f, %.3f\n", points[2].X, points[2].Y)
+	pixel.Locate(coord.CR{2, 8})
+	pixel.Text(col1, 0)
+	pixel.Printf("A: %.3f, %.3f\n", points[0].X, points[0].Y)
+	pixel.Printf("B: %.3f, %.3f\n", points[1].X, points[1].Y)
+	pixel.Printf("C: %.3f, %.3f\n", points[2].X, points[2].Y)
 	if p.X >= 0 {
-		canvas1.Printf("   %.3f, %.3f\n", p.X, p.Y)
+		pixel.Printf("   %.3f, %.3f\n", p.X, p.Y)
 	} else {
-		canvas1.Println(" ")
+		pixel.Println(" ")
 	}
-	canvas1.Point(col1, m)
+	pixel.Point(col1, m)
 
-	canvas1.Println()
+	pixel.Println()
 
 	if plane.IsCCW(points[0], points[1], points[2]) {
-		canvas1.Text(col4, 0)
-		canvas1.Println("IsCCW: TRUE")
+		pixel.Text(col4, 0)
+		pixel.Println("IsCCW: TRUE")
 	} else {
-		canvas1.Text(col1, 0)
-		canvas1.Println("IsCCW: false")
+		pixel.Text(col1, 0)
+		pixel.Println("IsCCW: false")
 	}
 
 	if plane.InTriangle(points[0], points[1], points[2], p) {
-		canvas1.Text(col2, 0)
-		canvas1.Println("InTriangle: TRUE")
+		pixel.Text(col2, 0)
+		pixel.Println("InTriangle: TRUE")
 	} else {
-		canvas1.Text(col1, 0)
-		canvas1.Println("InTriangle: false")
+		pixel.Text(col1, 0)
+		pixel.Println("InTriangle: false")
 	}
 
 	a, b, c := 0, 1, 2
@@ -157,30 +158,30 @@ func (loop1) Render() {
 		b, c = c, b
 	}
 	if plane.InTriangleCCW(points[a], points[b], points[c], p) {
-		canvas1.Text(col2, 0)
-		canvas1.Println("InTriangleCCW: TRUE")
+		pixel.Text(col2, 0)
+		pixel.Println("InTriangleCCW: TRUE")
 	} else {
-		canvas1.Text(col1, 0)
-		canvas1.Println("InTriangleCCW: false")
+		pixel.Text(col1, 0)
+		pixel.Println("InTriangleCCW: false")
 	}
 
 	if plane.InCircumcircle(points[a], points[b], points[c], p) {
-		canvas1.Text(col3, 0)
-		canvas1.Println("InCircumcircle: TRUE")
+		pixel.Text(col3, 0)
+		pixel.Println("InCircumcircle: TRUE")
 	} else {
-		canvas1.Text(col1, 0)
-		canvas1.Println("InCircumcircle: false")
+		pixel.Text(col1, 0)
+		pixel.Println("InCircumcircle: false")
 	}
 
-	canvas1.Println(" ")
+	pixel.Println(" ")
 
-	canvas1.Text(col1, 0)
-	canvas1.Printf("Circumcenter: %.3f, %.3f\n", d.X, d.Y)
+	pixel.Text(col1, 0)
+	pixel.Printf("Circumcenter: %.3f, %.3f\n", d.X, d.Y)
 	dd := toScreen(d)
-	canvas1.Lines(col5, dd.Minuss(2), dd.Pluss(2))
-	canvas1.Lines(col5, dd.Minus(coord.CR{-2, 2}), dd.Plus(coord.CR{-2, 2}))
+	pixel.Lines(col5, dd.Minuss(2), dd.Pluss(2))
+	pixel.Lines(col5, dd.Minus(coord.CR{-2, 2}), dd.Plus(coord.CR{-2, 2}))
 
-	canvas1.Display()
+	pixel.Display()
 }
 
 func toScreen(p coord.XY) coord.CR {

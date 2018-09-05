@@ -37,7 +37,6 @@ var bindings = input.Bindings{
 ////////////////////////////////////////////////////////////////////////////////
 
 var (
-	canvas  = pixel.Canvas(pixel.Resolution(180, 180))
 	palette = color.PaletteFrom("graphics/blue")
 )
 
@@ -76,6 +75,8 @@ func (loop) Leave() {
 func setup() error {
 	cozely.Events.Resize = resize
 
+	pixel.SetResolution(180, 180)
+
 	for i, n := range []string{
 		"red",
 		"yellow",
@@ -99,7 +100,7 @@ func setup() error {
 }
 
 func resize() {
-	w, h := canvas.Size().C, canvas.Size().R
+	w, h := pixel.Resolution().C, pixel.Resolution().R
 	grid.ScreenResized(w, h)
 }
 
@@ -122,7 +123,7 @@ func init() {
 
 func (loop) React() {
 	if selct.Started(1) {
-		m := canvas.FromWindow(cursor.XY(0).CR())
+		m := pixel.ToCanvas(cursor.XY(0).CR())
 		current = grid.PositionAt(m)
 		if current != grid.Nowhere() {
 			e := grid.At(current)

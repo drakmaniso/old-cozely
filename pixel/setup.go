@@ -7,6 +7,7 @@ import (
 	"image"
 	stdcolor "image/color"
 	"strings"
+	"unsafe"
 
 	"github.com/cozely/cozely/internal"
 	"github.com/cozely/cozely/x/atlas"
@@ -21,11 +22,24 @@ func init() {
 }
 
 func setup() error {
-	// Create the canvases
+	// Prepare the canvas
 
-	for i := range canvases {
-		CanvasID(i).setup()
-	}
+	canvas.commands = make([]gl.DrawIndirectCommand, 0, maxCommandCount)
+	canvas.parameters = make([]int16, 0, maxParamCount)
+
+	canvas.buffer = gl.NewFramebuffer()
+
+	canvas.commandsICBO = gl.NewIndirectBuffer(
+		uintptr(cap(canvas.commands))*unsafe.Sizeof(canvas.commands[0]),
+		gl.DynamicStorage,
+	)
+	canvas.parametersTBO = gl.NewBufferTexture(
+		uintptr(cap(canvas.parameters))*unsafe.Sizeof(canvas.parameters[0]),
+		gl.R16I,
+		gl.DynamicStorage,
+	)
+
+	//TODO: create textures if not autoresize
 
 	// Create the paint pipeline
 
@@ -109,12 +123,8 @@ func setup() error {
 
 func cleanup() error {
 	// Canvases
-	for i := range canvases {
-		s := &canvases[i]
-		s.texture.Delete()
-		s.buffer.Delete()
-	}
-	canvases = canvases[:0]
+	canvas.texture.Delete()
+	canvas.buffer.Delete()
 
 	// Display pipeline
 	pipeline.Delete()
@@ -132,16 +142,6 @@ func cleanup() error {
 	fontPaths = fontPaths[:1]
 
 	return gl.Err()
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-func init() {
-	internal.PixelResize = func() {
-		for i := range canvases {
-			CanvasID(i).autoresize()
-		}
-	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
