@@ -11,16 +11,13 @@ import (
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// XY represents a two-dimensional vector, defined by its cartesian
-// coordinates.
+// XY represents 2D cartesian coordinates.
 type XY struct {
 	X float32
 	Y float32
 }
 
-// Cartesian returns the cartesian coordinates of the vector.
-//
-// This function implements the Vector interface.
+// Cartesian returns the two coordinates; z is always 0.
 func (a XY) Cartesian() (x, y, z float32) {
 	return a.X, a.Y, 0
 }

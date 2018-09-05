@@ -4,7 +4,7 @@
 /*
 Package coord provides vector types for various coordinates systems.
 
-Floating-point Vectors
+Floating-point Coordinates
 
 Three structs with float32 fields give access to geometric transformations, and
 other useful mathematical operations (see subpackages plane and space):
@@ -18,7 +18,7 @@ other useful mathematical operations (see subpackages plane and space):
   // 3D projective coordinates
   var c = XYZW{1.0, 2.0, 3.0, 4.0}
 
-Integer Vectors
+Integer Coordinates
 
 Two structs with int16 fields are used both for on-screen coordinates and
 in-game grids:
@@ -40,7 +40,7 @@ Various structs for hexagonal and triangular grids:
 	var b = AL{1.0, 2.0}
 
 	// triangular grid coordinates
-	var c = QRT{1, 2, 3}
+	var c = QRT{1, 2, 0}
 
 And finally structs to manipulate angles:
 

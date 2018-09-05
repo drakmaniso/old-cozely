@@ -5,8 +5,7 @@ package coord
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// XYZW represents a three-dimensional vector, defined by its homogeneous
-// coordinates.
+// XYZW represents 3D projective (homogeneous) coordinates.
 type XYZW struct {
 	X float32
 	Y float32

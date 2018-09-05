@@ -11,25 +11,15 @@ import (
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// Vector represents any three-dimensional vector.
-type Vector interface {
-	// Cartesian returns the cartesian coordinates of the vector.
-	Cartesian() (x, y, z float32)
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-// XYZ represents a three-dimensional vector, defined by its cartesian
-// coordinates.
+// XYZ represents either 3D cartesian coordinates, or 2D projective
+// (homogeneous) coordinates.
 type XYZ struct {
 	X float32
 	Y float32
 	Z float32
 }
 
-// Cartesian returns the cartesian coordinates of the vector.
-//
-// This implements the Vector interface.
+// Cartesian returns the three coordinates.
 func (a XYZ) Cartesian() (x, y, z float32) {
 	return a.X, a.Y, a.Z
 }

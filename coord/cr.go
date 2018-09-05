@@ -5,28 +5,25 @@ package coord
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// CR is a vector of 2D integer coordinates. C stands for "column" and
-// corresponds to the x-coordinate, while R stands for "row" and corresponds to
-// the y-coordinate.
+// CR represents 2D integer coordinates. C stands for "column" and corresponds
+// to the x-coordinate, while R stands for "row" and corresponds to the
+// y-coordinate.
 //
-// This vector is used throughout the framework for pixel coordinates (both in
-// window space and in canvas space); it can also be used in-game for square
-// grids.
+// This is used throughout the framework for pixel coordinates (both in window
+// space and in canvas space); it can also be used in-game for square grids.
 type CR struct {
 	C, R int16
 }
 
 // CRof returns an integer vector corresponding to the first two coordinates of
 // v.
-func CRof(v Vector) CR {
+func CRof(v Coordinates) CR {
 	x, y, _ := v.Cartesian()
 	return CR{int16(x), int16(y)}
 }
 
 // Cartesian returns the coordinates of the vector in 3D space. C and R are
 // casted to float32, and the third coordinate is always 0.
-//
-// This method implements the Vector interface.
 func (a CR) Cartesian() (x, y, z float32) {
 	return float32(a.C), float32(a.R), 0
 }

@@ -9,8 +9,7 @@ import (
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// XY64 represents a two-dimensional vector, defined by its cartesian
-// coordinates in 64-bit float.
+// XY64 represents 64-bit 2D cartesian coordinates.
 type XY64 struct {
 	X float64
 	Y float64
