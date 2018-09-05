@@ -32,13 +32,9 @@ type canvas struct {
 	margin     coord.CR // in canvas pixels
 	border     coord.CR // in window pixels (leftover from division by pixel size)
 	buffer     gl.Framebuffer
-	canvas     gl.Texture2D
-	depth      gl.Texture2D
+	texture    gl.Texture2D
 	filter     gl.Texture2D
-	counter    gl.CounterBuffer
-	heap       gl.StorageBuffer
 
-	cmdcount      uint32
 	commands      []gl.DrawIndirectCommand
 	parameters    []int16
 	cursor        TextCursor
@@ -85,7 +81,6 @@ func Canvas(o ...CanvasOption) CanvasID {
 func (a CanvasID) setup() {
 	aa := &canvases[a]
 	aa.buffer = gl.NewFramebuffer()
-	aa.counter = gl.NewCounterBuffer(1, gl.DynamicStorage)
 
 	aa.commandsICBO = gl.NewIndirectBuffer(
 		uintptr(cap(aa.commands))*unsafe.Sizeof(aa.commands[0]),
@@ -136,23 +131,15 @@ func (a CanvasID) autoresize() {
 func (a CanvasID) createTextures() {
 	aa := &canvases[a]
 
-	aa.canvas.Delete()
-	aa.canvas = gl.NewTexture2D(1, gl.R8UI, int32(aa.size.C), int32(aa.size.R))
-	aa.buffer.Texture(gl.ColorAttachment0, aa.canvas, 0)
-
-	aa.depth.Delete()
-	aa.depth = gl.NewTexture2D(1, gl.Depth32F, int32(aa.size.C), int32(aa.size.R))
-	aa.buffer.Texture(gl.DepthAttachment, aa.depth, 0)
+	aa.texture.Delete()
+	aa.texture = gl.NewTexture2D(1, gl.R8, int32(aa.size.C), int32(aa.size.R))
+	aa.buffer.Texture(gl.ColorAttachment0, aa.texture, 0)
 
 	aa.filter.Delete()
-	aa.filter = gl.NewTexture2D(1, gl.R32UI, int32(aa.size.C), int32(aa.size.R))
+	aa.filter = gl.NewTexture2D(1, gl.R8, int32(aa.size.C), int32(aa.size.R))
+	aa.buffer.Texture(gl.ColorAttachment1, aa.filter, 0)
 
-	aa.heap.Delete()
-	aa.heap = gl.NewStorageBuffer(uintptr(64*4*uint(aa.size.C)*uint(aa.size.R)), gl.StaticStorage)
-
-	aa.buffer.DrawBuffer(gl.ColorAttachment0)
-	// aa.buffer.SetEmptySize(aa.size.C, aa.size.R)
-	// aa.buffer.DrawBuffer(gl.NoAttachment)
+	aa.buffer.DrawBuffers([]gl.FramebufferAttachment{gl.ColorAttachment0, gl.ColorAttachment1})
 	aa.buffer.ReadBuffer(gl.NoAttachment)
 
 	st := aa.buffer.CheckStatus(gl.DrawReadFramebuffer)
@@ -184,24 +171,20 @@ func (a CanvasID) paint() {
 	aa.buffer.Bind(gl.DrawFramebuffer)
 	gl.Viewport(0, 0, int32(aa.size.C), int32(aa.size.R))
 	pipeline.Bind()
-	gl.Disable(gl.Blend)
+	gl.Enable(gl.Blend)
+	gl.Blending(gl.SrcAlpha, gl.OneMinusSrcAlpha)
 
 	screenUBO.Bind(layoutScreen)
 	aa.commandsICBO.Bind()
 	aa.parametersTBO.Bind(layoutParameters)
 	pictureMapTBO.Bind(layoutPictureMap)
 	picturesTA.Bind(layoutPictures)
-	aa.filter.BindImage(7, 0, gl.ReadWrite, gl.R32UI)
-	aa.counter.Bind(0)
-	aa.counter.SubData([]uint32{1}, 0)
-	aa.heap.Bind(1)
 
 	aa.commandsICBO.SubData(aa.commands, 0)
 	aa.parametersTBO.SubData(aa.parameters, 0)
 	gl.DrawIndirect(0, int32(len(aa.commands)))
 	aa.commands = aa.commands[:0]
 	aa.parameters = aa.parameters[:0]
-	aa.cmdcount = 1
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -228,11 +211,8 @@ func (a CanvasID) Display() {
 	gl.Viewport(int32(aa.border.C), int32(aa.border.R),
 		int32(aa.border.C+sz.C), int32(aa.border.R+sz.R))
 	blitUBO.Bind(0)
-	aa.canvas.Bind(0)
-	aa.depth.Bind(1)
-	aa.filter.BindImage(7, 0, gl.ReadWrite, gl.R32UI)
-	aa.heap.Bind(1)
-	gl.MemoryBarrier()
+	aa.texture.Bind(0)
+	aa.filter.Bind(1)
 	gl.Draw(0, 4)
 }
 
@@ -243,10 +223,8 @@ func (a CanvasID) Display() {
 func (a CanvasID) Clear(color color.Index) {
 	aa := &canvases[a]
 	pipeline.Bind() //TODO: find another way to enable depthWrite
-	// aa.buffer.ClearColorUint(uint32(color), 0, 0, 0)
-	aa.buffer.ClearDepth(-1.0)
-	aa.canvas.ClearByte(0, uint8(color))
-	aa.filter.ClearByte(0, 0)
+	aa.buffer.ClearColor(0, float32(color)/255, 0, 0, 0)
+	aa.buffer.ClearColor(1, 0, 0, 0, 0)
 }
 
 ////////////////////////////////////////////////////////////////////////////////

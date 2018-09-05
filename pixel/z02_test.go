@@ -22,7 +22,6 @@ type loop2 struct {
 	txtcol  color.Index
 	picts   []pixel.PictureID
 	shapes  []shape
-	nxtshp  int
 }
 
 type shape struct {
@@ -62,19 +61,13 @@ func (a *loop2) declare() {
 		pixel.Picture("graphics/shape2"),
 		pixel.Picture("graphics/shape3"),
 		pixel.Picture("graphics/shape4"),
-		pixel.Picture("graphics/shape5"),
-		pixel.Picture("graphics/shape6"),
-		pixel.Picture("graphics/shape7"),
-		pixel.Picture("graphics/shape8"),
 	}
-	a.shapes = make([]shape, 200)
+	a.shapes = make([]shape, 200000)
 }
 
 func (a *loop2) Enter() {
 	a.palette.Activate()
-	// msx2.Palette.Activate()
 	a.canvas.Text(a.txtcol, pixel.Monozela10)
-	a.canvas.Clear(0)
 }
 
 func (loop2) Leave() {
@@ -135,18 +128,18 @@ func (a *loop2) React() {
 		a.resize()
 	}
 	if scrollup.Started(0) {
-		a.shapes = make([]shape, len(a.shapes)+1000)
+		a.shapes = make([]shape, len(a.shapes) + 1000)
 		a.resize()
 	}
 	if scrolldown.Started(0) && len(a.shapes) > 1000 {
-		a.shapes = make([]shape, len(a.shapes)-1000)
+		a.shapes = make([]shape, len(a.shapes) - 1000)
 		a.resize()
 	}
 	if next.Started(0) {
 		a.shapes = append(a.shapes, shape{})
 		i := len(a.shapes) - 1
-		p := a.picts[a.nxtshp]
-		a.nxtshp = (a.nxtshp + 1) % len(a.picts)
+		j := rand.Intn(len(a.picts))
+		p := a.picts[j]
 		a.shapes[i].pict = p
 		a.shapes[i].pos = a.canvas.FromWindow(cursor.XY(0).CR()).Minus(p.Size().Slash(2))
 	}

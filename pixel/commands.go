@@ -100,7 +100,6 @@ func (a CanvasID) command(c uint32, v uint32, n uint32, params ...int16) {
 		if c != cmdText {
 			// Collapse with previous draw command
 			s.commands[l-1].InstanceCount += n
-			s.cmdcount += uint32(n)
 			s.parameters = append(s.parameters, params...)
 			break
 
@@ -110,7 +109,6 @@ func (a CanvasID) command(c uint32, v uint32, n uint32, params ...int16) {
 			if s.parameters[pi] == params[0] && s.parameters[pi+1] == params[1] {
 				// Collapse with previous draw command
 				s.commands[l-1].InstanceCount += n
-				s.cmdcount += uint32(n)
 				s.parameters = append(s.parameters, params[2:]...)
 				break
 			}
@@ -126,8 +124,6 @@ func (a CanvasID) command(c uint32, v uint32, n uint32, params ...int16) {
 			FirstVertex:   0,
 			BaseInstance:  uint32(c<<24 | uint32(len(s.parameters)&0xFFFFFF)),
 		})
-		s.parameters = append(s.parameters, int16(s.cmdcount&0xFFFF), int16(s.cmdcount>>16))
-		s.cmdcount += uint32(n)
 		s.parameters = append(s.parameters, params...)
 	}
 

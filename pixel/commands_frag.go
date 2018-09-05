@@ -22,7 +22,6 @@ in PerVertex {
 	layout(location=4) flat vec4 Box;
 	layout(location=5) flat float Slope;
 	layout(location=6) flat uint Flags;
-	layout(location=7) flat uint Order;
 };
 
 const uint steep = 0x01;
@@ -32,17 +31,11 @@ layout(origin_upper_left, pixel_center_integer) in vec4 gl_FragCoord;
 ////////////////////////////////////////////////////////////////////////////////
 
 layout(binding = 3) uniform usampler2DArray Pictures;
-layout(binding = 7, r32ui) uniform uimage2D canvas;
-
-layout(binding = 0) uniform atomic_uint counter;
-
-layout(std430, binding = 1) buffer Heap {
-	uint data[];
-} heap;
 
 ////////////////////////////////////////////////////////////////////////////////
 
-layout(location = 0) out uint out_color;
+layout(location = 0) out vec4 out_color;
+layout(location = 1) out vec4 out_filter;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -115,29 +108,13 @@ void main(void)
 		discard;
 	}
 
-	// imageStore(canvas, ivec2(gl_FragCoord.xy), ivec4(c,0,0,0));
-	// imageAtomicExchange(canvas, ivec2(gl_FragCoord.xy), c);
-	// imageAtomicMax(canvas, ivec2(gl_FragCoord.xy), c);
-	// out_color = c;
-
-	// uint p = imageAtomicCompSwap(canvas, ivec2(gl_FragCoord.xy), 0, c);
-	// if (p != 0) {
-	// 	uint n = atomicCounterIncrement(counter);
-	// 	uint v = (n << 8) | (c & 0xFF);
-	// 	heap.data[n] = p;
-	// 	imageAtomicExchange(canvas, ivec2(gl_FragCoord.xy), v);
-	// }
-
-	if (c < 8) {
-		uint n = atomicCounterIncrement(counter);
-		memoryBarrier();
-		uint p = imageAtomicExchange(canvas, ivec2(gl_FragCoord.xy), n);
-		heap.data[2*n] = (p << 8) | (c & 0xFF);
-		heap.data[2*n+1] = Order;
-		discard;
+	if (c != 999) {
+		out_color = vec4(float(c)/255.0, 0, 0, 1);
+		out_filter = vec4(0, 0, 0, 1);
+	} else {
+		out_color = vec4(float(c)/255.0, 0, 0, 0);
+		out_filter = vec4(1, 0, 0, 1);
 	}
-
-	out_color = c;
 }
 `
 
