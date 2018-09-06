@@ -22,6 +22,12 @@ func (a XY) Cartesian() (x, y, z float32) {
 	return a.X, a.Y, 0
 }
 
+// XYof return the XY of the coordinates
+func XYof(c Coordinates) XY {
+	x, y, _ := c.Cartesian()
+	return XY{x, y}
+}
+
 // CR return the interger coordinates of the vector.
 func (a XY) CR() CR {
 	return CR{int16(a.X), int16(a.Y)}

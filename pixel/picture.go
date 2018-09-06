@@ -9,7 +9,6 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/internal"
 	"github.com/cozely/cozely/x/atlas"
 )
@@ -22,8 +21,10 @@ type PictureID uint16
 const (
 	maxPictureID = 0xFFFF
 	noPicture    = PictureID(0)
-	MouseCursor  = PictureID(1)
 )
+
+// MouseCursor is a small picture that can be used as mouse cursor.
+const MouseCursor = PictureID(1)
 
 var pictures = struct {
 	atlas   *atlas.Atlas
@@ -33,7 +34,7 @@ var pictures = struct {
 }{
 	path:    []string{"", ""},
 	mapping: []mapping{{}, {}},
-	image: []*image.Paletted{nil, nil},
+	image:   []*image.Paletted{nil, nil},
 }
 
 type mapping struct {
@@ -83,8 +84,8 @@ func picture(img *image.Paletted) PictureID {
 ////////////////////////////////////////////////////////////////////////////////
 
 // Size returns the width and height of the picture.
-func (p PictureID) Size() coord.CR {
-	return coord.CR{pictures.mapping[p].w, pictures.mapping[p].h}
+func (p PictureID) Size() XY {
+	return XY{pictures.mapping[p].w, pictures.mapping[p].h}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -156,7 +157,7 @@ func (p PictureID) load(prects *[]uint32) error {
 
 func pictSize(rect uint32) (width, height int16) {
 	s := PictureID(rect).Size()
-	return s.C, s.R
+	return s.X, s.Y
 }
 
 func pictPut(rect uint32, bin int16, x, y int16) {

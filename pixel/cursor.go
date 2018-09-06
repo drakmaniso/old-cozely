@@ -8,7 +8,6 @@ import (
 	"unicode/utf8"
 
 	"github.com/cozely/cozely/color"
-	"github.com/cozely/cozely/coord"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -20,7 +19,7 @@ type cursor struct {
 	Margin        int16
 	LetterSpacing int16
 	Interline     int16
-	Position      coord.CR
+	Position      XY
 }
 
 // Cursor holds the state used to write text on the canvas.
@@ -44,9 +43,9 @@ func Text(c color.Index, f FontID) {
 // start a new line.
 //
 // Note that you can also directly change the TextCursor attributes.
-func Locate(p coord.CR) {
-	Cursor.Position = coord.CR{p.C, p.R}
-	Cursor.Margin = Cursor.Position.C
+func Locate(p XY) {
+	Cursor.Position = XY{p.X, p.Y}
+	Cursor.Margin = Cursor.Position.X
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -76,7 +75,7 @@ func Printf(format string, args ...interface{}) (n int, err error) {
 
 // Write asks the GPU to display p (interpreted as an UTF8 string) on the
 // canvas. This method implements the io.Writer interface.
-func (a cursor)Write(p []byte) (n int, err error) {
+func (a cursor) Write(p []byte) (n int, err error) {
 	return canvas.Write(p)
 }
 
@@ -92,7 +91,6 @@ func (a *cmdQueue) Write(p []byte) (n int, err error) {
 	return n, nil
 }
 
-
 // WriteRune asks the GPU to display a single rune on the canvas.
 func (a cursor) WriteRune(r rune) {
 	canvas.WriteRune(r)
@@ -102,20 +100,20 @@ func (a cursor) WriteRune(r rune) {
 func (a *cmdQueue) WriteRune(r rune) {
 	if r == '\n' {
 		if Cursor.Interline == 0 {
-			Cursor.Position.R += int16(float32(Cursor.Font.Height()) * 1.25)
+			Cursor.Position.Y += int16(float32(Cursor.Font.Height()) * 1.25)
 		} else {
-			Cursor.Position.R += Cursor.Interline
+			Cursor.Position.Y += Cursor.Interline
 		}
-		Cursor.Position.C = Cursor.Margin
+		Cursor.Position.X = Cursor.Margin
 		return
 	}
 
 	g := Cursor.Font.glyph(r)
 	a.command(cmdText, 4, 1,
 		int16(Cursor.Color-fonts[Cursor.Font].basecolor),
-		Cursor.Position.R-fonts[Cursor.Font].baseline,
-		int16(g), Cursor.Position.C)
-	Cursor.Position.C += pictures.mapping[g].w + Cursor.LetterSpacing
+		Cursor.Position.Y-fonts[Cursor.Font].baseline,
+		int16(g), Cursor.Position.X)
+	Cursor.Position.X += pictures.mapping[g].w + Cursor.LetterSpacing
 }
 
 ////////////////////////////////////////////////////////////////////////////////

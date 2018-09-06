@@ -10,7 +10,6 @@ import (
 	"github.com/cozely/cozely/color/palettes/cpc"
 	"github.com/cozely/cozely/color/palettes/msx"
 	"github.com/cozely/cozely/color/palettes/msx2"
-	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
 )
@@ -82,7 +81,7 @@ var bindings = input.Bindings{
 // Globals
 
 var (
-	pict   = pixel.Picture("graphics/paletteswatch")
+	pict = pixel.Picture("graphics/paletteswatch")
 )
 
 var mode int
@@ -161,7 +160,7 @@ func (loop) Render() {
 	pixel.Paint(pict, p)
 
 	pixel.Text(253, pixel.Monozela10)
-	pixel.Locate(p.Minus(coord.CR{0, 8}))
+	pixel.Locate(p.Minus(pixel.XY{0, 8}))
 	switch mode {
 	case 1:
 		pixel.Print("Custom Palette")

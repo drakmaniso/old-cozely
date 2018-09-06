@@ -14,6 +14,7 @@ import (
 	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
+	"github.com/cozely/cozely/window"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -162,7 +163,7 @@ func (loop1) Update() {
 func (loop1) Render() {
 	pixel.Clear(msx.DarkBlue)
 
-	pixel.Locate(coord.CR{2, 12})
+	pixel.Locate(pixel.XY{2, 12})
 	pixel.Text(msx.White, pixel.Monozela10)
 
 	pixel.Println()
@@ -207,7 +208,8 @@ func (loop1) Render() {
 	}
 	pixel.Printf("   Delta = %+12.6f, %+12.6f\n", deltaval.X, deltaval.Y)
 
-	pixel.Paint(pixel.MouseCursor, pixel.ToCanvas(cursorval.CR()))
+	//TODO:
+	pixel.Paint(pixel.MouseCursor, pixel.ToCanvas(window.XYof(cursorval)))
 }
 
 func changecolor(p bool) {
@@ -230,7 +232,7 @@ func (loop1) Hide() {
 
 func (loop1) Resize() {
 	s := cozely.WindowSize()
-	fmt.Printf("%v: resize %dx%d\n", cozely.GameTime(), s.C, s.R)
+	fmt.Printf("%v: resize %dx%d\n", cozely.GameTime(), s.X, s.Y)
 }
 
 func (loop1) Focus() {

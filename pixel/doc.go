@@ -2,10 +2,10 @@
 // Licensed under a simplified BSD license (see LICENSE file).
 
 /*
-Package pixel provides types and drawing functions specialized for pixel art.
+Package pixel provides a drwaing canvas specialized for pixel art.
 
-It implements a GPU pipeline that work entirely in indexed colors at a chosen,
-fixed, resolution.
+It implements a GPU pipeline that works entirely in indexed colors at a chosen,
+fixed, resolution (usually lower than the screen resolution).
 
 It does not provide any anti-aliasing, nor alpha-transparency, since the goal is
 to offer an easy way to work within the stricter definition of pixel art

@@ -10,7 +10,6 @@ import (
 
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/color"
-	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
 )
@@ -121,20 +120,20 @@ func (a *loop4) Render() {
 	pixel.Clear(a.bg)
 
 	pixel.Cursor.Color = a.fg
-	pixel.Locate(coord.CR{16, a.font.Height() + 2})
+	pixel.Locate(pixel.XY{16, a.font.Height() + 2})
 
 	pixel.Cursor.Font = a.font
 	pixel.Cursor.LetterSpacing = a.letterspacing
 	// curScreen.Interline = fntInterline
 
-	y := pixel.Cursor.Position.R
+	y := pixel.Cursor.Position.Y
 
-	for l := a.line; l < len(a.show) && y < pixel.Resolution().R; l++ {
+	for l := a.line; l < len(a.show) && y < pixel.Resolution().Y; l++ {
 		pixel.Println(a.show[l])
-		y = pixel.Cursor.Position.R
+		y = pixel.Cursor.Position.Y
 	}
 
-	pixel.Locate(coord.CR{pixel.Resolution().C - 96, 16})
+	pixel.Locate(pixel.XY{pixel.Resolution().X - 96, 16})
 	pixel.Printf("Line %d", a.line)
 }
 

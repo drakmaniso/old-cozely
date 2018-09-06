@@ -12,6 +12,7 @@ import (
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
 	"github.com/cozely/cozely/space"
+	"github.com/cozely/cozely/window"
 	"github.com/cozely/cozely/x/gl"
 	"github.com/cozely/cozely/x/poly"
 )
@@ -161,7 +162,7 @@ func (loop) Leave() {
 
 func resize() {
 	s := cozely.WindowSize()
-	gl.Viewport(0, 0, int32(s.C), int32(s.R))
+	gl.Viewport(0, 0, int32(s.X), int32(s.Y))
 	if camera != nil {
 		camera.WindowResized()
 	}
@@ -239,7 +240,7 @@ func (loop) Render() {
 
 	gl.DefaultFramebuffer.Bind(gl.DrawFramebuffer)
 	s := cozely.WindowSize()
-	gl.Viewport(0, 0, int32(s.C), int32(s.R))
+	gl.Viewport(0, 0, int32(s.X), int32(s.Y))
 	pipeline.Bind()
 	gl.ClearDepthBuffer(1.0)
 	gl.ClearColorBuffer(color.LRGBA{0.025, 0.025, 0.025, 1.0})
@@ -258,14 +259,14 @@ func (loop) Render() {
 	pipeline.Unbind()
 
 	pixel.Clear(0)
-	pixel.Locate(coord.CR{2, 12})
+	pixel.Locate(pixel.XY{2, 12})
 	ft, or := cozely.RenderStats()
 	pixel.Printf("% 3.2f", ft*1000)
 	if or > 0 {
 		pixel.Printf(" (%d)", or)
 	}
 	if cozely.HasMouseFocus() {
-		pixel.Paint(pixel.MouseCursor, pixel.ToCanvas(cursor.XY(0).CR()))
+		pixel.Paint(pixel.MouseCursor, pixel.ToCanvas(window.XYof(cursor.XY(0))))
 	}
 }
 
@@ -276,7 +277,7 @@ func prepare() {
 
 	m := rotation.XY(0)
 
-	s := cozely.WindowSize().XY()
+	s := coord.XYof(cozely.WindowSize())
 	switch {
 	case rollleft.Ongoing(1) || rollright.Ongoing(1):
 		camera.Rotate(0, 0, rolling*dt)

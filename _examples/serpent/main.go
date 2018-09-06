@@ -4,17 +4,16 @@ import (
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/color/palettes/c64"
-	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/pixel"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
 
 var (
-	resolution = coord.CR{640, 360}
-	gridsize   = coord.CR{35, 21}
-	cellsize   = coord.CR{16, 16}
-	origin     coord.CR
+	resolution = pixel.XY{640, 360}
+	gridsize   = pixel.XY{35, 21}
+	cellsize   = pixel.XY{16, 16}
+	origin     pixel.XY
 )
 
 const (
@@ -41,7 +40,7 @@ const (
 
 func main() {
 	defer cozely.Recover()
-	pixel.SetResolution(resolution.C, resolution.R)
+	pixel.SetResolution(resolution.X, resolution.Y)
 	err := cozely.Run(loop{})
 	if err != nil {
 		panic(err)
@@ -76,10 +75,10 @@ func (loop) Render() {
 	origin = pixel.Resolution().Minus(resolution).Slash(2)
 	pixel.Box(c64.Red, c64.Transparent, 3,
 		origin.Pluss(4), origin.Plus(resolution).Minuss(4))
-	for c := int16(0); c < gridsize.C; c++ {
-		for r := int16(0); r < gridsize.R; r++ {
+	for x := int16(0); x < gridsize.X; x++ {
+		for y := int16(0); y < gridsize.Y; y++ {
 			offset := resolution.Minus(gridsize.Times(16)).Slash(2)
-			p := coord.CR{c, r}.Timescr(cellsize).Plus(offset)
+			p := pixel.XY{x, y}.Timescr(cellsize).Plus(offset)
 			pixel.Box(c64.Yellow, c64.Transparent, 2,
 				origin.Plus(p), origin.Plus(p).Pluss(15))
 		}

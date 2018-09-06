@@ -66,8 +66,8 @@ func Example_instancedDraw() {
 	l := loop06{}
 	cozely.Events.Resize = func() {
 		s := cozely.WindowSize()
-		l.perFrame.ratio = float32(s.C) / float32(s.R)
-		gl.Viewport(0, 0, int32(s.C), int32(s.R))
+		l.perFrame.ratio = float32(s.X) / float32(s.Y)
+		gl.Viewport(0, 0, int32(s.X), int32(s.Y))
 	}
 	err := cozely.Run(&l)
 	if err != nil {

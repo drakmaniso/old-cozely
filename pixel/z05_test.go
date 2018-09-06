@@ -8,9 +8,9 @@ import (
 
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/color"
-	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
+	"github.com/cozely/cozely/window"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@ import (
 type loop5 struct {
 	palette color.PaletteID
 
-	points                    []coord.CR
+	points                    []pixel.XY
 	pointshidden, lineshidden bool
 }
 
@@ -43,7 +43,7 @@ func (a *loop5) declare() {
 	pixel.SetResolution(128, 128)
 	a.palette = color.PaletteFrom("graphics/shape1")
 
-	a.points = []coord.CR{
+	a.points = []pixel.XY{
 		{4, 4},
 		{4 + 1, 4 + 20},
 		{4 + 1 + 20, 4 + 20 - 1},
@@ -67,7 +67,7 @@ func (a *loop5) React() {
 	}
 
 	if next.Started(0) {
-		m := pixel.ToCanvas(cursor.XY(0).CR())
+		m := pixel.ToCanvas(window.XYof(cursor.XY(0)))
 		a.points = append(a.points, m)
 	}
 
@@ -86,7 +86,7 @@ func (loop5) Update() {
 
 func (a *loop5) Render() {
 	pixel.Clear(1)
-	m := pixel.ToCanvas(cursor.XY(0).CR())
+	m := pixel.ToCanvas(window.XYof(cursor.XY(0)))
 	pixel.Triangles(2, a.points...)
 	if !a.lineshidden {
 		pixel.Lines(5, a.points...)

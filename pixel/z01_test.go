@@ -12,7 +12,6 @@ import (
 	"github.com/cozely/cozely/color/palettes/cpc"
 	"github.com/cozely/cozely/color/palettes/msx"
 	"github.com/cozely/cozely/color/palettes/msx2"
-	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
 )
@@ -108,15 +107,15 @@ func (a *loop1) Render() {
 	switch a.mode {
 	case 0:
 		pz := a.mire.Size()
-		pixel.Paint(a.mire, coord.CR{0, 0})
-		pixel.Paint(a.mire, coord.CR{0, sz.R - pz.R})
-		pixel.Paint(a.mire, coord.CR{sz.C - pz.C, 0})
+		pixel.Paint(a.mire, pixel.XY{0, 0})
+		pixel.Paint(a.mire, pixel.XY{0, sz.Y - pz.Y})
+		pixel.Paint(a.mire, pixel.XY{sz.X - pz.X, 0})
 		pixel.Paint(a.mire, sz.Minus(pz))
 	case 1:
 		pz := a.srgbGray.Size()
-		pixel.Paint(a.srgbGray, coord.CR{sz.C/2 - pz.C/2, 32})
-		pixel.Paint(a.srgbRed, coord.CR{sz.C/4 - pz.C/2, 96})
-		pixel.Paint(a.srgbGreen, coord.CR{sz.C/2 - pz.C/2, 96})
-		pixel.Paint(a.srgbBlue, coord.CR{3*sz.C/4 - pz.C/2, 96})
+		pixel.Paint(a.srgbGray, pixel.XY{sz.X/2 - pz.X/2, 32})
+		pixel.Paint(a.srgbRed, pixel.XY{sz.X/4 - pz.X/2, 96})
+		pixel.Paint(a.srgbGreen, pixel.XY{sz.X/2 - pz.X/2, 96})
+		pixel.Paint(a.srgbBlue, pixel.XY{3*sz.X/4 - pz.X/2, 96})
 	}
 }

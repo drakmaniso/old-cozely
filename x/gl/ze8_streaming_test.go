@@ -175,7 +175,7 @@ func (l *loop08) setupPoints() {
 func (l *loop08) resize() {
 	l.setupPoints()
 
-	s := cozely.WindowSize().XY()
+	s := cozely.WindowSize().Coord()
 
 	// Compute ratio
 	if s.X > s.Y {

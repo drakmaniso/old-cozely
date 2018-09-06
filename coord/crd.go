@@ -24,11 +24,11 @@ func (a CRD) Cartesian() (x, y, z float32) {
 	return float32(a.C), float32(a.R), float32(a.D)
 }
 
-// CR returns the 2D integer vector corresponding to the first two dimensions of
-// the vector.
-func (a CRD) CR() CR {
-	return CR{a.C, a.R}
-}
+// // CR returns the 2D integer vector corresponding to the first two dimensions of
+// // the vector.
+// func (a CRD) CR() CR {
+// 	return CR{a.C, a.R}
+// }
 
 // XY returns the 3D floating-point vector corresponding to the first two
 // dimensions of the vector.

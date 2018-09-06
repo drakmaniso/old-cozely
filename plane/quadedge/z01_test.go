@@ -10,6 +10,7 @@ import (
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
 	"github.com/cozely/cozely/plane/quadedge"
+	"github.com/cozely/cozely/window"
 	"github.com/cozely/cozely/x/math32"
 )
 
@@ -70,7 +71,7 @@ func (loop1) React() {
 	}
 
 	if previous.Started(0) {
-		m := pixel.ToCanvas(cursor.XY(0).CR())
+		m := pixel.ToCanvas(window.XYof(cursor.XY(0)))
 		p := fromScreen(m)
 		points = append(points, p)
 		triangulation = quadedge.Delaunay(points)
@@ -141,15 +142,15 @@ func (loop1) Update() {
 
 func (loop1) Render() {
 	pixel.Clear(0)
-	ratio = float32(pixel.Resolution().R)
+	ratio = float32(pixel.Resolution().Y)
 	orig = coord.XY{
-		X: (float32(pixel.Resolution().C) - ratio) / 2,
-		Y: float32(pixel.Resolution().R),
+		X: (float32(pixel.Resolution().X) - ratio) / 2,
+		Y: float32(pixel.Resolution().Y),
 	}
 
-	m := pixel.ToCanvas(cursor.XY(0).CR())
+	m := pixel.ToCanvas(window.XYof(cursor.XY(0)))
 	p := fromScreen(m)
-	pixel.Locate(coord.CR{2, 8})
+	pixel.Locate(pixel.XY{2, 8})
 	pixel.Text(col1, 0)
 	fsr, fso := cozely.RenderStats()
 	pixel.Printf("Framerate: %.2f (%d)\n", 1000*fsr, fso)
@@ -163,7 +164,7 @@ func (loop1) Render() {
 		pixel.Lines(col1, toScreen(points[e.Orig()]), toScreen(points[e.Dest()]))
 	})
 
-	pt := make([]coord.CR, len(points))
+	pt := make([]pixel.XY, len(points))
 	for i, sd := range points {
 		pt[i] = toScreen(sd)
 		pixel.Box(col2, col2, 1, pt[i].Minuss(2), pt[i].Pluss(2))
@@ -174,12 +175,12 @@ func (loop1) Render() {
 	}
 }
 
-func toScreen(p coord.XY) coord.CR {
-	return orig.Plus(p.FlipY().Times(ratio)).CR()
+func toScreen(p coord.XY) pixel.XY {
+	return pixel.XYof(orig.Plus(p.FlipY().Times(ratio)))
 }
 
-func fromScreen(p coord.CR) coord.XY {
-	return (p.XY().FlipY().Minus(orig.FlipY())).Slash(ratio)
+func fromScreen(p pixel.XY) coord.XY {
+	return (p.Coord().FlipY().Minus(orig.FlipY())).Slash(ratio)
 }
 
 func newPoints() {

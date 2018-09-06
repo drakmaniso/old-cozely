@@ -3,7 +3,6 @@ package cozely_test
 import (
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/color"
-	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/pixel"
 )
 
@@ -50,6 +49,6 @@ func (loop) Render() {
 	pixel.Clear(bg)
 
 	pixel.Text(fg, pixel.Monozela10)
-	pixel.Locate(coord.CR{16, 32})
+	pixel.Locate(pixel.XY{16, 32})
 	pixel.Print("Hello, World!")
 }

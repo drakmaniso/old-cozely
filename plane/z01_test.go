@@ -7,6 +7,8 @@ import (
 	"math/rand"
 	"testing"
 
+	"github.com/cozely/cozely/window"
+
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/coord"
@@ -85,20 +87,20 @@ func (loop1) Update() {
 
 func (loop1) Render() {
 	pixel.Clear(0)
-	ratio = float32(pixel.Resolution().R)
+	ratio = float32(pixel.Resolution().Y)
 	offset = coord.XY{
-		X: (float32(pixel.Resolution().C) - ratio),
-		Y: float32(pixel.Resolution().R),
+		X: (float32(pixel.Resolution().X) - ratio),
+		Y: float32(pixel.Resolution().Y),
 	}
-	pt := make([]coord.CR, len(points))
-	s := coord.CR{5, 5}
+	pt := make([]pixel.XY, len(points))
+	s := pixel.XY{5, 5}
 	for i, sd := range points {
 		pt[i] = toScreen(sd)
 	}
 
 	d := plane.Circumcenter(points[0], points[1], points[2])
 	r := d.Minus(points[0]).Length()
-	cir := []coord.CR{}
+	cir := []pixel.XY{}
 	for a := float32(0); a <= 2*math32.Pi+0.01; a += math32.Pi / 32 {
 		cir = append(cir, toScreen(coord.RA{r, a}.XY().Plus(d)))
 	}
@@ -116,14 +118,14 @@ func (loop1) Render() {
 			c = col4
 		}
 		pixel.Box(c, c, 2, pt[i].Minus(s), pt[i].Plus(s))
-		pixel.Locate(coord.CR{pt[i].C - 2, pt[i].R + 3})
+		pixel.Locate(pixel.XY{pt[i].X - 2, pt[i].Y + 3})
 		pixel.Text(col1, 0)
 		pixel.Print([]string{"A", "B", "C"}[i])
 	}
 
-	m := pixel.ToCanvas(cursor.XY(0).CR())
+	m := pixel.ToCanvas(window.XYof(cursor.XY(0)))
 	p := fromScreen(m)
-	pixel.Locate(coord.CR{2, 8})
+	pixel.Locate(pixel.XY{2, 8})
 	pixel.Text(col1, 0)
 	pixel.Printf("A: %.3f, %.3f\n", points[0].X, points[0].Y)
 	pixel.Printf("B: %.3f, %.3f\n", points[1].X, points[1].Y)
@@ -179,18 +181,18 @@ func (loop1) Render() {
 	pixel.Printf("Circumcenter: %.3f, %.3f\n", d.X, d.Y)
 	dd := toScreen(d)
 	pixel.Lines(col5, dd.Minuss(2), dd.Pluss(2))
-	pixel.Lines(col5, dd.Minus(coord.CR{-2, 2}), dd.Plus(coord.CR{-2, 2}))
+	pixel.Lines(col5, dd.Minus(pixel.XY{-2, 2}), dd.Plus(pixel.XY{-2, 2}))
 }
 
-func toScreen(p coord.XY) coord.CR {
-	return coord.CR{
-		C: int16(offset.X + p.X*ratio),
-		R: int16(offset.Y - p.Y*ratio),
+func toScreen(p coord.XY) pixel.XY {
+	return pixel.XY{
+		int16(offset.X + p.X*ratio),
+		int16(offset.Y - p.Y*ratio),
 	}
 }
 
-func fromScreen(p coord.CR) coord.XY {
-	return (p.XY().FlipY().Minus(offset.FlipY())).Slash(ratio)
+func fromScreen(p pixel.XY) coord.XY {
+	return coord.XYof(p.Coord().FlipY().Minus(offset.FlipY())).Slash(ratio)
 }
 
 func newPoints() {

@@ -8,9 +8,9 @@ import (
 
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/color"
-	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
+	"github.com/cozely/cozely/window"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -65,10 +65,10 @@ func (a *loop6) Render() {
 
 	const corner = 3
 
-	o := coord.CR{8, 8}
-	s := coord.CR{24, 24}
-	dx := coord.CR{32, 0}
-	dy := coord.CR{0, 32}
+	o := pixel.XY{8, 8}
+	s := pixel.XY{24, 24}
+	dx := pixel.XY{32, 0}
+	dy := pixel.XY{0, 32}
 
 	for i := int16(0); i < 13; i++ {
 		pixel.Box(6, 0, i, o.Plus(dx.Times(i)), o.Plus(dx.Times(i)).Plus(s))
@@ -89,7 +89,7 @@ func (a *loop6) Render() {
 		pixel.Box(4, 4, i, o.Plus(dx.Times(i)), o.Plus(dx.Times(i)).Plus(s))
 	}
 
-	m := pixel.ToCanvas(cursor.XY(0).CR())
+	m := pixel.ToCanvas(window.XYof(cursor.XY(0)))
 	pixel.Point(18, m)
 }
 

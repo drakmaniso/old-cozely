@@ -72,8 +72,8 @@ func Example_firstCube() {
 	l := loop04{}
 	cozely.Events.Resize = func() {
 		s := cozely.WindowSize()
-		gl.Viewport(0, 0, int32(s.C), int32(s.R))
-		r := float32(s.C) / float32(s.R)
+		gl.Viewport(0, 0, int32(s.X), int32(s.Y))
+		r := float32(s.X) / float32(s.Y)
 		l.screenFromView = space.Perspective(math32.Pi/4, r, 0.001, 1000.0)
 	}
 	err := cozely.Run(&l)
@@ -126,7 +126,7 @@ func (loop04) Leave() {
 
 func (l *loop04) React() {
 	m := delta.XY(0)
-	s := cozely.WindowSize().XY()
+	s := cozely.WindowSize().Coord()
 
 	if rotate.Started(1) || move.Started(1) || zoom.Started(1) {
 		input.GrabMouse(true)

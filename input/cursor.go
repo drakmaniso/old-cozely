@@ -89,7 +89,10 @@ func (a CursorID) newframe(d DeviceID) {
 
 func (a CursorID) update(d DeviceID) {
 	if d == kbmouse && mouse.moved {
-		v := coord.CR{internal.MousePositionX, internal.MousePositionY}.XY()
+		v := coord.XY{
+			float32(internal.MousePositionX),
+			float32(internal.MousePositionY),
+		}
 		devices.cursors[d][a].value = v
 		devices.cursors[0][a].value = v //TODO
 		return

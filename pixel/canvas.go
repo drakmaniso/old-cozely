@@ -7,20 +7,20 @@ import (
 	"errors"
 
 	"github.com/cozely/cozely/color"
-	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/internal"
+	"github.com/cozely/cozely/window"
 	"github.com/cozely/cozely/x/gl"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
 
 var canvas = struct {
-	resolution coord.CR // target size for the canvas (in canvas pixels)
-	zoom       int16    // in window pixels
+	resolution XY    // fixed resolution, or {0, 0} for fixed zoom
+	zoom       int16 // in window pixels
 
-	size   coord.CR // in canvas pixels
-	margin coord.CR // in canvas pixels
-	border coord.CR // in window pixels (leftover from division by pixel size)
+	size   XY        // size of the canvas
+	margin XY        // for fixed resolution only, = size - resolution
+	border window.XY // leftover from division by pixel size
 
 	buffer  gl.Framebuffer
 	texture gl.Texture2D
@@ -28,7 +28,7 @@ var canvas = struct {
 
 	cmdQueue
 }{
-	resolution: coord.CR{640, 360},
+	resolution: XY{640, 360},
 	zoom:       2,
 }
 
@@ -52,7 +52,7 @@ func SetResolution(w, h int16) {
 		setErr(errors.New("Resolution must be called before starting the framework"))
 		return
 	}
-	canvas.resolution = coord.CR{w, h}
+	canvas.resolution = XY{w, h}
 	// if internal.Running {
 	// 	CanvasID(0).autoresize()
 	// }
@@ -68,8 +68,8 @@ func SetZoom(z int16) {
 		z = 1
 	}
 	canvas.zoom = z
-	canvas.resolution = coord.CR{}
-	canvas.margin = coord.CR{}
+	canvas.resolution = XY{}
+	canvas.margin = XY{}
 	// if internal.Running {
 	// 	CanvasID(0).autoresize()
 	// }
@@ -82,15 +82,16 @@ func init() {
 }
 
 func resize() {
-	win := coord.CR{internal.Window.Width, internal.Window.Height}
+	//TODO: use window.XY
+	win := window.XY{internal.Window.Width, internal.Window.Height}
 
 	if !canvas.resolution.Null() {
 		// Find best fit for pixel size
-		p := win.Slashcr(canvas.resolution)
-		if p.C < p.R {
-			canvas.zoom = p.C
+		p := win.Slashcr(window.XYof(canvas.resolution))
+		if p.X < p.Y {
+			canvas.zoom = p.X
 		} else {
-			canvas.zoom = p.R
+			canvas.zoom = p.Y
 		}
 		if canvas.zoom < 1 {
 			canvas.zoom = 1
@@ -98,7 +99,7 @@ func resize() {
 	}
 
 	// Extend the screen to cover the window
-	canvas.size = win.Slash(canvas.zoom)
+	canvas.size = XYof(win.Slash(canvas.zoom))
 	createCanvasTextures()
 
 	// For fixed resolution, compute the margin and fix the size
@@ -107,7 +108,7 @@ func resize() {
 	}
 
 	// Compute outside border
-	sz := canvas.size.Times(canvas.zoom)
+	sz := window.XYof(canvas.size.Times(canvas.zoom))
 	canvas.border = win.Minus(sz).Slash(2)
 }
 
@@ -115,11 +116,11 @@ func resize() {
 
 func createCanvasTextures() {
 	canvas.texture.Delete()
-	canvas.texture = gl.NewTexture2D(1, gl.R8, int32(canvas.size.C), int32(canvas.size.R))
+	canvas.texture = gl.NewTexture2D(1, gl.R8, int32(canvas.size.X), int32(canvas.size.Y))
 	canvas.buffer.Texture(gl.ColorAttachment0, canvas.texture, 0)
 
 	canvas.filter.Delete()
-	canvas.filter = gl.NewTexture2D(1, gl.R8, int32(canvas.size.C), int32(canvas.size.R))
+	canvas.filter = gl.NewTexture2D(1, gl.R8, int32(canvas.size.X), int32(canvas.size.Y))
 	canvas.buffer.Texture(gl.ColorAttachment1, canvas.filter, 0)
 
 	canvas.buffer.DrawBuffers([]gl.FramebufferAttachment{gl.ColorAttachment0, gl.ColorAttachment1})
@@ -149,14 +150,14 @@ func render() error {
 
 	internal.ColorUpload()
 
-	screenUniforms.PixelSize.X = 1.0 / float32(canvas.size.C)
-	screenUniforms.PixelSize.Y = 1.0 / float32(canvas.size.R)
-	screenUniforms.CanvasMargin.X = int32(canvas.margin.C)
-	screenUniforms.CanvasMargin.Y = int32(canvas.margin.R)
+	screenUniforms.PixelSize.X = 1.0 / float32(canvas.size.X)
+	screenUniforms.PixelSize.Y = 1.0 / float32(canvas.size.Y)
+	screenUniforms.CanvasMargin.X = int32(canvas.margin.X)
+	screenUniforms.CanvasMargin.Y = int32(canvas.margin.Y)
 	screenUBO.SubData(&screenUniforms, 0)
 
 	canvas.buffer.Bind(gl.DrawFramebuffer)
-	gl.Viewport(0, 0, int32(canvas.size.C), int32(canvas.size.R))
+	gl.Viewport(0, 0, int32(canvas.size.X), int32(canvas.size.Y))
 	pipeline.Bind()
 	gl.Enable(gl.Blend)
 	gl.Blending(gl.SrcAlpha, gl.OneMinusSrcAlpha)
@@ -178,8 +179,8 @@ func render() error {
 display:
 	sz := canvas.size.Times(canvas.zoom)
 
-	blitUniforms.ScreenSize.X = float32(canvas.size.C)
-	blitUniforms.ScreenSize.Y = float32(canvas.size.R)
+	blitUniforms.ScreenSize.X = float32(canvas.size.X)
+	blitUniforms.ScreenSize.Y = float32(canvas.size.Y)
 	blitUBO.SubData(&blitUniforms, 0)
 
 	internal.ColorUpload()
@@ -188,8 +189,8 @@ display:
 	gl.DefaultFramebuffer.Bind(gl.DrawFramebuffer)
 	gl.Enable(gl.FramebufferSRGB)
 	gl.Disable(gl.Blend)
-	gl.Viewport(int32(canvas.border.C), int32(canvas.border.R),
-		int32(canvas.border.C+sz.C), int32(canvas.border.R+sz.R))
+	gl.Viewport(int32(canvas.border.X), int32(canvas.border.Y),
+		int32(canvas.border.X+sz.X), int32(canvas.border.Y+sz.Y))
 	blitUBO.Bind(0)
 	canvas.texture.Bind(0)
 	canvas.filter.Bind(1)
@@ -211,7 +212,7 @@ func Clear(color color.Index) {
 ////////////////////////////////////////////////////////////////////////////////
 
 // Resolution returns the current dimension of the canvas (in *canvas* pixels).
-func Resolution() coord.CR {
+func Resolution() XY {
 	if !canvas.resolution.Null() {
 		return canvas.resolution
 	}
@@ -225,19 +226,21 @@ func Zoom() int16 {
 
 // ToCanvas takes coordinates in window space and returns them in canvas
 // space.
-func ToCanvas(p coord.CR) coord.CR {
+func ToCanvas(p window.XY) XY {
+	//TODO:
 	if !canvas.resolution.Null() {
-		return p.Minus(canvas.border).Slash(canvas.zoom).Minus(canvas.margin)
+		return XYof(p.Minus(canvas.border).Slash(canvas.zoom)).Minus(canvas.margin)
 	}
-	return p.Minus(canvas.border).Slash(canvas.zoom)
+	return XYof(p.Minus(canvas.border).Slash(canvas.zoom))
 }
 
 // ToWindow takes coordinates in canvas space and returns them in window space.
-func ToWindow(p coord.CR) coord.CR {
+func ToWindow(p XY) window.XY {
+	//TODO:
 	if !canvas.resolution.Null() {
-		return p.Times(canvas.zoom).Plus(canvas.border)
+		return window.XYof(p.Times(canvas.zoom)).Plus(canvas.border)
 	}
-	return p.Plus(canvas.margin).Times(canvas.zoom).Plus(canvas.border)
+	return window.XY(p.Plus(canvas.margin).Times(canvas.zoom)).Plus(canvas.border)
 }
 
 ////////////////////////////////////////////////////////////////////////////////

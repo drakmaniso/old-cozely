@@ -29,7 +29,7 @@ func Example_vertexBuffer() {
 
 	cozely.Events.Resize = func() {
 		s := cozely.WindowSize()
-		gl.Viewport(0, 0, int32(s.C), int32(s.R))
+		gl.Viewport(0, 0, int32(s.X), int32(s.Y))
 	}
 	l := loop02{}
 	err := cozely.Run(&l)

@@ -24,8 +24,8 @@ const (
 	noFont    = FontID(maxFontID)
 )
 
-// Monozela10 is the ID of the default font (a 10 pixel high monospace). This is
-// the only font that is always loaded and doesn't need declaration.
+// Monozela10 is the default font (10 pixel high, monospace). This is the only
+// font that is always loaded and doesn't need declaration.
 const Monozela10 = FontID(0)
 
 var fontPaths = []string{"builtin monozela 10"}

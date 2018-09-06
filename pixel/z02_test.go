@@ -9,9 +9,9 @@ import (
 
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/color"
-	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
+	"github.com/cozely/cozely/window"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -25,7 +25,7 @@ type loop2 struct {
 
 type shape struct {
 	pict pixel.PictureID
-	pos  coord.CR
+	pos  pixel.XY
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -78,8 +78,8 @@ func (a *loop2) resize() {
 		j := rand.Intn(len(a.picts))
 		p := a.picts[j]
 		a.shapes[i].pict = p
-		a.shapes[i].pos.C = int16(rand.Intn(int(s.C - p.Size().C)))
-		a.shapes[i].pos.R = int16(rand.Intn(int(s.R - p.Size().R)))
+		a.shapes[i].pos.X = int16(rand.Intn(int(s.X - p.Size().X)))
+		a.shapes[i].pos.Y = int16(rand.Intn(int(s.Y - p.Size().Y)))
 	}
 }
 
@@ -127,11 +127,11 @@ func (a *loop2) React() {
 		a.resize()
 	}
 	if scrollup.Started(0) {
-		a.shapes = make([]shape, len(a.shapes) + 1000)
+		a.shapes = make([]shape, len(a.shapes)+1000)
 		a.resize()
 	}
 	if scrolldown.Started(0) && len(a.shapes) > 1000 {
-		a.shapes = make([]shape, len(a.shapes) - 1000)
+		a.shapes = make([]shape, len(a.shapes)-1000)
 		a.resize()
 	}
 	if next.Started(0) {
@@ -140,7 +140,8 @@ func (a *loop2) React() {
 		j := rand.Intn(len(a.picts))
 		p := a.picts[j]
 		a.shapes[i].pict = p
-		a.shapes[i].pos = pixel.ToCanvas(cursor.XY(0).CR()).Minus(p.Size().Slash(2))
+		//TODO:
+		a.shapes[i].pos = pixel.ToCanvas(window.XYof(cursor.XY(0))).Minus(p.Size().Slash(2))
 	}
 	if previous.Started(0) && len(a.shapes) > 0 {
 		a.shapes = a.shapes[:len(a.shapes)-1]
@@ -159,7 +160,7 @@ func (a *loop2) Render() {
 	for _, o := range a.shapes {
 		pixel.Paint(o.pict, o.pos)
 	}
-	pixel.Locate(coord.CR{8, 16})
+	pixel.Locate(pixel.XY{8, 16})
 	ft, ov := cozely.RenderStats()
 	pixel.Printf("%dk pictures: %6.2f", len(a.shapes)/1000, ft*1000)
 	if ov > 0 {
