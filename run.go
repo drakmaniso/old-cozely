@@ -5,6 +5,7 @@ package cozely
 
 import (
 	"github.com/cozely/cozely/internal"
+	"github.com/cozely/cozely/window"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -33,28 +34,6 @@ type GameLoop interface {
 	// Note that the framerate of Update and Render is independent, so the game
 	// state might need to be interpolated (see UpdateLag).
 	Render()
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-// Events holds the callbacks for each window events.
-//
-// These callbacks can be modified at anytime, but should always contain valid
-// functions (i.e., non nil). The change will take effect at the next frame.
-var Events = struct {
-	Resize  func()
-	Hide    func()
-	Show    func()
-	Focus   func()
-	Unfocus func()
-	Quit    func()
-}{
-	Resize:  func() {},
-	Hide:    func() {},
-	Show:    func() {},
-	Focus:   func() {},
-	Unfocus: func() {},
-	Quit:    func() { Stop(nil) },
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -137,7 +116,7 @@ func Run(loop GameLoop) (err error) {
 
 	// First, send a fake resize window event
 	internal.PixelResize()
-	Events.Resize()
+	window.Events.Resize()
 
 	// Main Loop
 
@@ -168,7 +147,7 @@ func Run(loop GameLoop) (err error) {
 		if internal.UpdateLag < internal.UpdateStep {
 			// Process events even if there is no Update this frame
 			internal.GameTime = now //TODO: check if correct
-			internal.ProcessEvents(Events)
+			internal.ProcessEvents(window.Events)
 			internal.InputNewFrame()
 			internal.Loop.React()
 		}
@@ -178,7 +157,7 @@ func Run(loop GameLoop) (err error) {
 			gametime += internal.UpdateStep
 			internal.GameTime = gametime
 			// Events
-			internal.ProcessEvents(Events)
+			internal.ProcessEvents(window.Events)
 			internal.InputNewFrame()
 			internal.Loop.React()
 			// Update

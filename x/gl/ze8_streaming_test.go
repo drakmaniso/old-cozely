@@ -62,7 +62,7 @@ func Example_streaming() {
 	}
 
 	cozely.Configure(cozely.Multisample(8), gl.NoClear())
-	cozely.Events.Resize = l.resize
+	window.Events.Resize = l.resize
 	err := cozely.Run(&l)
 	if err != nil {
 		panic(err)

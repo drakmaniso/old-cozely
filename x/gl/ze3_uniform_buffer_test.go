@@ -38,7 +38,7 @@ type coloredmesh2d []struct {
 func Example_uniformBuffer() {
 	defer cozely.Recover()
 
-	cozely.Events.Resize = func() {
+	window.Events.Resize = func() {
 		s := window.Size()
 		gl.Viewport(0, 0, int32(s.X), int32(s.Y))
 	}

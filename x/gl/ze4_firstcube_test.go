@@ -71,7 +71,7 @@ func Example_firstCube() {
 
 	cozely.Configure(cozely.Multisample(8))
 	l := loop04{}
-	cozely.Events.Resize = func() {
+	window.Events.Resize = func() {
 		s := window.Size()
 		gl.Viewport(0, 0, int32(s.X), int32(s.Y))
 		r := float32(s.X) / float32(s.Y)

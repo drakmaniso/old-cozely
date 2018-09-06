@@ -40,7 +40,7 @@ func TestTest2(t *testing.T) {
 		cozely.Configure(
 			cozely.UpdateStep(1 / 60.0),
 		)
-		cozely.Events.Resize = l.resize
+		window.Events.Resize = l.resize
 		input.Load(bindings)
 		err := cozely.Run(&l)
 		if err != nil {
