@@ -167,7 +167,7 @@ func (loop1) Render() {
 	pt := make([]pixel.XY, len(points))
 	for i, sd := range points {
 		pt[i] = toScreen(sd)
-		pixel.Box(col2, col2, 1, pt[i].Minuss(2), pt[i].Pluss(2))
+		pixel.Box(col2, col2, 1, pt[i].MinusS(2), pt[i].PlusS(2))
 	}
 
 	if cozely.HasMouseFocus() {

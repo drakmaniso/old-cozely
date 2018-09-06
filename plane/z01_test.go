@@ -180,7 +180,7 @@ func (loop1) Render() {
 	pixel.Text(col1, 0)
 	pixel.Printf("Circumcenter: %.3f, %.3f\n", d.X, d.Y)
 	dd := toScreen(d)
-	pixel.Lines(col5, dd.Minuss(2), dd.Pluss(2))
+	pixel.Lines(col5, dd.MinusS(2), dd.PlusS(2))
 	pixel.Lines(col5, dd.Minus(pixel.XY{-2, 2}), dd.Plus(pixel.XY{-2, 2}))
 }
 

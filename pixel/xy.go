@@ -11,12 +11,7 @@ import (
 
 //// Defintion /////////////////////////////////////////////////////////////////
 
-// XY represents 2D integer coordinates. X stands for "column" and corresponds
-// to the x-coordinate, while Y stands for "row" and corresponds to the
-// y-coordinate.
-//
-// This is used throughout the framework for pixel coordinates (both in window
-// space and in canvas space); it can also be used in-game for square grids.
+// XY represents the coordinates of a pixel on the canvas.
 type XY struct {
 	X, Y int16
 }
@@ -56,8 +51,8 @@ func (a XY) Plus(b XY) XY {
 	return XY{a.X + b.X, a.Y + b.Y}
 }
 
-// Pluss returns the sum with the vector (s, s).
-func (a XY) Pluss(s int16) XY {
+// PlusS returns the sum with the vector (s, s).
+func (a XY) PlusS(s int16) XY {
 	return XY{a.X + s, a.Y + s}
 }
 
@@ -66,8 +61,8 @@ func (a XY) Minus(b XY) XY {
 	return XY{a.X - b.X, a.Y - b.Y}
 }
 
-// Minuss returns the difference with the vector (s, s).
-func (a XY) Minuss(s int16) XY {
+// MinusS returns the difference with the vector (s, s).
+func (a XY) MinusS(s int16) XY {
 	return XY{a.X - s, a.Y - s}
 }
 
@@ -81,8 +76,8 @@ func (a XY) Times(s int16) XY {
 	return XY{a.X * s, a.Y * s}
 }
 
-// Timescr returns the component-wise product with another vector.
-func (a XY) Timescr(b XY) XY {
+// TimesXY returns the component-wise product with another vector.
+func (a XY) TimesXY(b XY) XY {
 	return XY{a.X * b.X, a.Y * b.Y}
 }
 
@@ -92,9 +87,9 @@ func (a XY) Slash(s int16) XY {
 	return XY{a.X / s, a.Y / s}
 }
 
-// Slashcr returns the integer quotients of the component-wise division by
+// SlashXY returns the integer quotients of the component-wise division by
 // another vector (of which both X and Y must be non-zero).
-func (a XY) Slashcr(b XY) XY {
+func (a XY) SlashXY(b XY) XY {
 	return XY{a.X / b.X, a.Y / b.Y}
 }
 
@@ -104,9 +99,9 @@ func (a XY) Mod(s int16) XY {
 	return XY{a.X % s, a.Y % s}
 }
 
-// Modcr returns the remainder (modulus) of the component-wise division by
+// ModXY returns the remainder (modulus) of the component-wise division by
 // another vector (of which both X and Y must be non-zero).
-func (a XY) Modcr(b XY) XY {
+func (a XY) ModXY(b XY) XY {
 	return XY{a.X % b.X, a.Y % b.Y}
 }
 

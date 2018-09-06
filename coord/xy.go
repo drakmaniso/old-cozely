@@ -22,19 +22,19 @@ func (a XY) Cartesian() (x, y, z float32) {
 	return a.X, a.Y, 0
 }
 
-// XYof return the XY of the coordinates
+// XYof converts the first two coordinates of c to XY.
 func XYof(c Coordinates) XY {
 	x, y, _ := c.Cartesian()
 	return XY{x, y}
 }
 
-// CR return the interger coordinates of the vector.
+// CR return the integer coordinates of the vector.
 func (a XY) CR() CR {
 	return CR{int16(a.X), int16(a.Y)}
 }
 
-// CRound return the rounded interger coordinates of the vector.
-func (a XY) CRound() CR {
+// RoundCR return the rounded interger coordinates of the vector.
+func (a XY) RoundCR() CR {
 	return CR{
 		int16(math.Round(float64(a.X))),
 		int16(math.Round(float64(a.Y))),

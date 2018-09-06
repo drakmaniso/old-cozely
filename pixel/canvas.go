@@ -87,7 +87,7 @@ func resize() {
 
 	if !canvas.resolution.Null() {
 		// Find best fit for pixel size
-		p := win.Slashcr(window.XYof(canvas.resolution))
+		p := win.SlashXY(window.XYof(canvas.resolution))
 		if p.X < p.Y {
 			canvas.zoom = p.X
 		} else {

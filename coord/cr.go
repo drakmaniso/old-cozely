@@ -8,9 +8,6 @@ package coord
 // CR represents 2D integer coordinates. C stands for "column" and corresponds
 // to the x-coordinate, while R stands for "row" and corresponds to the
 // y-coordinate.
-//
-// This is used throughout the framework for pixel coordinates (both in window
-// space and in canvas space); it can also be used in-game for square grids.
 type CR struct {
 	C, R int16
 }
@@ -58,8 +55,8 @@ func (a CR) Plus(b CR) CR {
 	return CR{a.C + b.C, a.R + b.R}
 }
 
-// Pluss returns the sum with the vector (s, s).
-func (a CR) Pluss(s int16) CR {
+// PlusS returns the sum with the vector (s, s).
+func (a CR) PlusS(s int16) CR {
 	return CR{a.C + s, a.R + s}
 }
 
@@ -68,8 +65,8 @@ func (a CR) Minus(b CR) CR {
 	return CR{a.C - b.C, a.R - b.R}
 }
 
-// Minuss returns the difference with the vector (s, s).
-func (a CR) Minuss(s int16) CR {
+// MinusS returns the difference with the vector (s, s).
+func (a CR) MinusS(s int16) CR {
 	return CR{a.C - s, a.R - s}
 }
 
@@ -83,8 +80,8 @@ func (a CR) Times(s int16) CR {
 	return CR{a.C * s, a.R * s}
 }
 
-// Timescr returns the component-wise product with another vector.
-func (a CR) Timescr(b CR) CR {
+// TimesCR returns the component-wise product with another vector.
+func (a CR) TimesCR(b CR) CR {
 	return CR{a.C * b.C, a.R * b.R}
 }
 
@@ -94,9 +91,9 @@ func (a CR) Slash(s int16) CR {
 	return CR{a.C / s, a.R / s}
 }
 
-// Slashcr returns the integer quotients of the component-wise division by
+// SlashCR returns the integer quotients of the component-wise division by
 // another vector (of which both C and R must be non-zero).
-func (a CR) Slashcr(b CR) CR {
+func (a CR) SlashCR(b CR) CR {
 	return CR{a.C / b.C, a.R / b.R}
 }
 
@@ -106,9 +103,9 @@ func (a CR) Mod(s int16) CR {
 	return CR{a.C % s, a.R % s}
 }
 
-// Modcr returns the remainder (modulus) of the component-wise division by
+// ModCR returns the remainder (modulus) of the component-wise division by
 // another vector (of which both C and R must be non-zero).
-func (a CR) Modcr(b CR) CR {
+func (a CR) ModCR(b CR) CR {
 	return CR{a.C % b.C, a.R % b.R}
 }
 
