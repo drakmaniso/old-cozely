@@ -1,11 +1,10 @@
 // Copyright (c) 2013-2018 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
-package cozely
+package window
 
 import (
 	"github.com/cozely/cozely/internal"
-	"github.com/cozely/cozely/window"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -20,10 +19,10 @@ func HasMouseFocus() bool {
 	return internal.HasMouseFocus
 }
 
-// WindowSize returns the size of the window in (screen) pixels.
-func WindowSize() window.XY {
+// Size returns the size of the window in (screen) pixels.
+func Size() XY {
 	//TODO: move to package window
-	return window.XY{internal.Window.Width, internal.Window.Height}
+	return XY{internal.Window.Width, internal.Window.Height}
 }
 
 ////////////////////////////////////////////////////////////////////////////////

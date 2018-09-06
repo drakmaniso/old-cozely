@@ -10,6 +10,7 @@ import (
 	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
+	"github.com/cozely/cozely/window"
 	"github.com/cozely/cozely/x/gl"
 	"github.com/cozely/cozely/x/math32"
 )
@@ -175,7 +176,7 @@ func (l *loop08) setupPoints() {
 func (l *loop08) resize() {
 	l.setupPoints()
 
-	s := cozely.WindowSize().Coord()
+	s := window.Size().Coord()
 
 	// Compute ratio
 	if s.X > s.Y {

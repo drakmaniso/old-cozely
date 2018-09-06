@@ -9,6 +9,7 @@ import (
 	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
+	"github.com/cozely/cozely/window"
 
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/x/gl"
@@ -65,7 +66,7 @@ func Example_instancedDraw() {
 	cozely.Configure(cozely.Multisample(8))
 	l := loop06{}
 	cozely.Events.Resize = func() {
-		s := cozely.WindowSize()
+		s := window.Size()
 		l.perFrame.ratio = float32(s.X) / float32(s.Y)
 		gl.Viewport(0, 0, int32(s.X), int32(s.Y))
 	}

@@ -170,7 +170,7 @@ func (loop1) Render() {
 		pixel.Box(col2, col2, 1, pt[i].MinusS(2), pt[i].PlusS(2))
 	}
 
-	if cozely.HasMouseFocus() {
+	if window.HasMouseFocus() {
 		pixel.Paint(pixel.MouseCursor, m)
 	}
 }

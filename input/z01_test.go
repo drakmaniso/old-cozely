@@ -231,7 +231,7 @@ func (loop1) Hide() {
 }
 
 func (loop1) Resize() {
-	s := cozely.WindowSize()
+	s := window.Size()
 	fmt.Printf("%v: resize %dx%d\n", cozely.GameTime(), s.X, s.Y)
 }
 
