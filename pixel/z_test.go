@@ -17,6 +17,7 @@ var (
 	next     = input.Digital("Next")
 	previous = input.Digital("Previous")
 	scenes   = []input.DigitalID{
+		input.Digital("Scene0"),
 		input.Digital("Scene1"),
 		input.Digital("Scene2"),
 		input.Digital("Scene3"),
@@ -26,7 +27,6 @@ var (
 		input.Digital("Scene7"),
 		input.Digital("Scene8"),
 		input.Digital("Scene9"),
-		input.Digital("Scene10"),
 	}
 	scrollup   = input.Digital("ScrollUp")
 	scrolldown = input.Digital("ScrollDown")
@@ -47,7 +47,7 @@ var bindings = input.Bindings{
 		"Scene7":     {"7"},
 		"Scene8":     {"8"},
 		"Scene9":     {"9"},
-		"Scene10":    {"0"},
+		"Scene0":     {"0"},
 		"ScrollUp":   {"Mouse Scroll Up"},
 		"ScrollDown": {"Mouse Scroll Down"},
 		"Cursor":     {"Mouse"},

@@ -15,7 +15,6 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 
 type loop6 struct {
-	palette pixel.PaletteID
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -37,12 +36,10 @@ func TestTest6(t *testing.T) {
 
 func (a *loop6) declare() {
 	pixel.SetZoom(3)
-	a.palette = pixel.Palette("graphics/shape1")
 }
 
 func (a *loop6) Enter() {
 	input.ShowMouse(false)
-	a.palette.Use()
 }
 
 func (loop6) Leave() {
@@ -70,26 +67,26 @@ func (a *loop6) Render() {
 	dy := pixel.XY{0, 32}
 
 	for i := int16(0); i < 13; i++ {
-		pixel.Box(6, 0, i, o.Plus(dx.Times(i)), o.Plus(dx.Times(i)).Plus(s))
+		pixel.Box(10, 0, i, o.Plus(dx.Times(i)), o.Plus(dx.Times(i)).Plus(s))
 	}
 
 	o = o.Plus(dy)
 	for i := int16(0); i < 13; i++ {
-		pixel.Box(0, 4, i, o.Plus(dx.Times(i)), o.Plus(dx.Times(i)).Plus(s))
+		pixel.Box(0, 9, i, o.Plus(dx.Times(i)), o.Plus(dx.Times(i)).Plus(s))
 	}
 
 	o = o.Plus(dy)
 	for i := int16(0); i < 13; i++ {
-		pixel.Box(6, 4, i, o.Plus(dx.Times(i)), o.Plus(dx.Times(i)).Plus(s))
+		pixel.Box(10, 9, i, o.Plus(dx.Times(i)), o.Plus(dx.Times(i)).Plus(s))
 	}
 
 	o = o.Plus(dy)
 	for i := int16(0); i < 13; i++ {
-		pixel.Box(4, 4, i, o.Plus(dx.Times(i)), o.Plus(dx.Times(i)).Plus(s))
+		pixel.Box(10, 10, i, o.Plus(dx.Times(i)), o.Plus(dx.Times(i)).Plus(s))
 	}
 
 	m := pixel.ToCanvas(window.XYof(cursor.XY(0)))
-	pixel.Point(18, m)
+	pixel.Point(8, m)
 }
 
 ////////////////////////////////////////////////////////////////////////////////

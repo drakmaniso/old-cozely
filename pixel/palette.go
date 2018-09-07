@@ -20,6 +20,9 @@ import (
 // A PaletteID identifies a declared palette
 type PaletteID uint8
 
+// DefaultPalette is a palette that is always loaded.
+const DefaultPalette = PaletteID(0)
+
 var palettes struct {
 	current PaletteID
 	ssbo    gl.StorageBuffer
@@ -36,12 +39,35 @@ var palettes struct {
 func init() {
 	palettes.changed = append(palettes.changed, true)
 	palettes.path = append(palettes.path, "")
-	palettes.colors = append(palettes.colors, [256]color.Color{})
+	palettes.colors = append(palettes.colors, [256]color.Color{
+		color.SRGBA{0, 0, 0, 0},
+		color.SRGB8{0x00, 0x00, 0x00},
+		color.SRGB8{0x28, 0x22, 0x53},
+		color.SRGB8{0x7E, 0x25, 0x53},
+		color.SRGB8{0x00, 0x87, 0x51},
+		color.SRGB8{0xAB, 0x52, 0x36},
+		color.SRGB8{0x5F, 0x57, 0x4F},
+		color.SRGB8{0xC2, 0xC3, 0xC7},
+		color.SRGB8{0xFF, 0xF1, 0xE8},
+		color.SRGB8{0xFF, 0x00, 0x4D},
+		color.SRGB8{0xFF, 0xA3, 0x00},
+		color.SRGB8{0xFF, 0xEC, 0x27},
+		color.SRGB8{0x00, 0xE4, 0x36},
+		color.SRGB8{0x29, 0xAD, 0xFF},
+		color.SRGB8{0x83, 0x76, 0x9C},
+		color.SRGB8{0xFF, 0x77, 0xA8},
+		color.SRGB8{0xFF, 0xCC, 0xAA},
+	})
 	palettes.stdcolors = append(palettes.stdcolors, [256]color.LRGBA{})
 
-	for c := range palettes.stdcolors {
-		palettes.colors[0][c] = debugColor
-		palettes.stdcolors[0][c] = debugColor
+	for c := range palettes.colors[0] {
+		cc := palettes.colors[0][c]
+		if cc == nil {
+			palettes.colors[0][c] = debugColor
+			palettes.stdcolors[0][c] = debugColor
+			continue
+		}
+		palettes.stdcolors[0][c] = color.LRGBAof(cc)
 	}
 }
 

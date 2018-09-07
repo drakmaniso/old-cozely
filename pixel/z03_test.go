@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/cozely/cozely"
-	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
 	"github.com/cozely/cozely/window"
@@ -18,7 +17,6 @@ import (
 var ()
 
 type loop3 struct {
-	palette pixel.PaletteID
 	bg, fg  pixel.Color
 
 	tinela9, monozela10, simpela10, simpela12,
@@ -45,9 +43,8 @@ func TestTest3(t *testing.T) {
 func (a *loop3) declare() {
 	pixel.SetZoom(2)
 	//TODO:
-	a.palette = pixel.Palette("")
-	a.bg = a.palette.Set(1, color.SRGB8{0xFF, 0xFE, 0xFC})
-	a.fg = a.palette.Set(2, color.SRGB8{0x07, 0x05, 0x00})
+	a.bg = 8
+	a.fg = 1
 
 	a.tinela9 = pixel.Font("fonts/tinela9")
 	a.monozela10 = pixel.Font("fonts/monozela10")
@@ -60,7 +57,6 @@ func (a *loop3) declare() {
 }
 
 func (a *loop3) Enter() {
-	a.palette.Use()
 	println(a.bg, a.fg)
 	pixel.Cursor.Color = a.fg - 1
 }

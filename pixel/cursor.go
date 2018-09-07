@@ -21,7 +21,9 @@ type cursor struct {
 }
 
 // Cursor holds the state used to write text on the canvas.
-var Cursor cursor
+var Cursor = cursor{
+	Color: 8,
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 

@@ -15,8 +15,6 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 
 type loop5 struct {
-	palette pixel.PaletteID
-
 	points                    []pixel.XY
 	pointshidden, lineshidden bool
 }
@@ -40,7 +38,6 @@ func TestTest5(t *testing.T) {
 
 func (a *loop5) declare() {
 	pixel.SetResolution(128, 128)
-	a.palette = pixel.Palette("graphics/shape1")
 
 	a.points = []pixel.XY{
 		{4, 4},
@@ -52,7 +49,6 @@ func (a *loop5) declare() {
 
 func (a *loop5) Enter() {
 	input.ShowMouse(false)
-	a.palette.Use()
 }
 
 func (loop5) Leave() {

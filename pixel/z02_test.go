@@ -8,7 +8,6 @@ import (
 	"testing"
 
 	"github.com/cozely/cozely"
-	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
 	"github.com/cozely/cozely/window"
@@ -17,10 +16,9 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 
 type loop2 struct {
-	palette pixel.PaletteID
-	txtcol  pixel.Color
-	picts   []pixel.PictureID
-	shapes  []shape
+	txtcol pixel.Color
+	picts  []pixel.PictureID
+	shapes []shape
 }
 
 type shape struct {
@@ -52,10 +50,7 @@ func TestTest2(t *testing.T) {
 func (a *loop2) declare() {
 	pixel.SetZoom(2)
 
-	a.palette = pixel.Palette("graphics/shape1")
-	a.txtcol = a.palette.Set(255, color.LRGB{1, 1, 1})
-	// a.palette = c64.Palette
-	// a.txtcol = c64.Green
+	a.txtcol = 8
 
 	a.picts = []pixel.PictureID{
 		pixel.Picture("graphics/shape1"),
@@ -67,7 +62,6 @@ func (a *loop2) declare() {
 }
 
 func (a *loop2) Enter() {
-	a.palette.Use()
 	pixel.Text(a.txtcol, pixel.Monozela10)
 }
 
@@ -124,7 +118,7 @@ func (a *loop2) React() {
 		a.shapes = make([]shape, 500000)
 		a.resize()
 	}
-	if scenes[10].Started(0) {
+	if scenes[0].Started(0) {
 		a.shapes = make([]shape, 10)
 		a.resize()
 	}

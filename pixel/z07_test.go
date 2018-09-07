@@ -14,17 +14,17 @@ import (
 	"github.com/cozely/cozely/pixel/palettes/cpc"
 	"github.com/cozely/cozely/pixel/palettes/msx"
 	"github.com/cozely/cozely/pixel/palettes/msx2"
+	"github.com/cozely/cozely/pixel/palettes/pico8"
 )
 
 // Declarations ////////////////////////////////////////////////////////////////
 
 type loop7 struct {
-	// context                      input.ContextID
-	pict                                             pixel.PictureID
-	palette, c64, cpc, msx2                          pixel.PaletteID
-	msx, msxIdeal, msxCV, msxCheap, msxTrim, msxLazy pixel.PaletteID
-	orange, cyan, black                              pixel.Color
-	mode                                             int
+	pict                         pixel.PictureID
+	palette, c64, cpc, msx, msx2 pixel.PaletteID
+	pico8                        pixel.PaletteID
+	orange, cyan, black          pixel.Color
+	mode                         int
 }
 
 // Initialization //////////////////////////////////////////////////////////////
@@ -48,19 +48,11 @@ func TestTest7(t *testing.T) {
 func (a *loop7) setup() {
 	a.c64 = pixel.PaletteColors(c64.Colors)
 	a.cpc = pixel.PaletteColors(cpc.Colors)
-	a.msx2 = pixel.PaletteColors(msx2.Colors)
-	a.msxIdeal = pixel.PaletteColors(msx.ColorsIdealized)
 	a.msx = pixel.PaletteColors(msx.Colors)
-	a.msxCV = pixel.PaletteColors(msx.ColorsCVtoRGB)
-	a.msxCheap = pixel.PaletteColors(msx.ColorsCheapRGB)
-	a.msxTrim = pixel.PaletteColors(msx.ColorsCheapRGBTrim)
-	a.msxLazy = pixel.PaletteColors(msx.ColorsLazyRGB)
+	a.msx2 = pixel.PaletteColors(msx2.Colors)
+	a.pico8 = pixel.PaletteColors(pico8.Colors)
 
 	a.pict = pixel.Picture("graphics/paletteswatch")
-
-	// a.context = input.Context("Default", quit, next, previous,
-	// 	scenes[1], scenes[2], scenes[3], scenes[4], scenes[5],
-	// 	scenes[6], scenes[7], scenes[8], scenes[9], scenes[0])
 
 	pixel.SetResolution(160, 160)
 
@@ -68,8 +60,6 @@ func (a *loop7) setup() {
 }
 
 func (a *loop7) Enter() {
-	// a.context.Activate(1)
-
 	a.mode = 1
 	a.palette = pixel.PaletteColors([256]color.Color{
 		color.LRGB{0.1, 0.1, 0.1},
@@ -86,8 +76,6 @@ func (a *loop7) Enter() {
 	a.orange = a.palette.Set(255, color.SRGB{1, 0.6, 0})
 	a.cyan = a.palette.Set(254, color.SRGB{0, 0.9, 1})
 	a.black = a.palette.Set(253, color.SRGB{0, 0, 0})
-
-	a.palette.Use()
 }
 
 func (a *loop7) Leave() {
@@ -102,15 +90,15 @@ func (a *loop7) React() {
 
 	if next.Started(1) {
 		a.mode++
-		if a.mode > 10 {
-			a.mode = 1
+		if a.mode > 9 {
+			a.mode = 0
 		}
 		a.palette.Use()
 	}
 
 	for i := range scenes {
 		if scenes[i].Started(1) {
-			a.mode = i + 1
+			a.mode = i
 		}
 	}
 }
@@ -118,25 +106,25 @@ func (a *loop7) React() {
 func (a *loop7) Update() {
 	switch a.mode {
 	case 1:
-		a.palette.Use()
+		pixel.DefaultPalette.Use()
 	case 2:
 		a.c64.Use()
 	case 3:
 		a.cpc.Use()
 	case 4:
-		a.msx2.Use()
-	case 5:
-		a.msxIdeal.Use()
-	case 6:
 		a.msx.Use()
+	case 5:
+		a.msx2.Use()
+	case 6:
+		a.pico8.Use()
 	case 7:
-		a.msxCV.Use()
+		a.palette.Use()
 	case 8:
-		a.msxCheap.Use()
+		a.palette.Use()
 	case 9:
-		a.msxTrim.Use()
-	case 10:
-		a.msxLazy.Use()
+		a.palette.Use()
+	case 0:
+		a.palette.Use()
 	}
 }
 
@@ -154,24 +142,24 @@ func (a *loop7) Render() {
 	pixel.Locate(p.Minus(pixel.XY{0, 8}))
 	switch a.mode {
 	case 1:
-		pixel.Print("Custom Palette")
+		pixel.Print("Default Palette")
 	case 2:
 		pixel.Print("C64 Palette")
 	case 3:
 		pixel.Print("CPC Palette")
 	case 4:
-		pixel.Print("MSX2 Palette")
+		pixel.Print("MSX Palette")
 	case 5:
-		pixel.Print("MSX Palette (Idealized)")
+		pixel.Print("MSX2 Palette")
 	case 6:
-		pixel.Print("MSX Palette (ITU-R BT601)")
+		pixel.Print("PICO-8 Palette")
 	case 7:
-		pixel.Print("MSX Palette (CV to RGB)")
+		pixel.Print("Palette")
 	case 8:
-		pixel.Print("MSX Palette (Cheap RGB)")
+		pixel.Print("Palette")
 	case 9:
-		pixel.Print("MSX Palette (Cheap RGB + trimpots)")
-	case 10:
-		pixel.Print("MSX Palette (Lazy RGB)")
+		pixel.Print("Palette")
+	case 0:
+		pixel.Print("Custom Palette")
 	}
 }

@@ -9,7 +9,6 @@ import (
 	"testing"
 
 	"github.com/cozely/cozely"
-	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
 )
@@ -17,8 +16,7 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 
 type loop4 struct {
-	palette pixel.PaletteID
-	fg, bg  pixel.Color
+	fg, bg pixel.Color
 
 	tinela9, monozela10, simpela10, simpela12,
 	cozela10, cozela12, chaotela12, font pixel.FontID
@@ -52,9 +50,8 @@ func TestTest4(t *testing.T) {
 func (a *loop4) declare() {
 	pixel.SetZoom(2)
 	//TODO:
-	a.palette = pixel.Palette("")
-	a.bg = a.palette.Set(1, color.SRGB8{0xFF, 0xFE, 0xFC})
-	a.fg = a.palette.Set(2, color.SRGB8{0x07, 0x05, 0x00})
+	a.bg = 8
+	a.fg = 1
 
 	a.tinela9 = pixel.Font("fonts/tinela9")
 	a.monozela10 = pixel.Font("fonts/monozela10")
@@ -87,7 +84,6 @@ func (a *loop4) Enter() {
 		a.code = append(a.code, s.Text())
 	}
 	a.show = a.text
-	a.palette.Use()
 }
 
 func (loop4) Leave() {

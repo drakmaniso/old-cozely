@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/cozely/cozely"
-	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
@@ -17,9 +16,8 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 
 var (
-	palette1 = color.Palette(color.LRGB{1, 1, 1})
-	col1     = palette1.Entry(color.LRGB{0.1, 0.2, 0.5})
-	col2     = palette1.Entry(color.LRGB{0.5, 0.1, 0.0})
+	col1 = pixel.Color(14)
+	col2 = pixel.Color(8)
 )
 
 var (
@@ -53,8 +51,6 @@ func (loop1) Enter() {
 
 	points = make([]coord.XY, 64)
 	newPoints()
-
-	palette1.Activate()
 }
 
 func (loop1) Leave() {
@@ -141,7 +137,7 @@ func (loop1) Update() {
 }
 
 func (loop1) Render() {
-	pixel.Clear(0)
+	pixel.Clear(2)
 	ratio = float32(pixel.Resolution().Y)
 	orig = coord.XY{
 		X: (float32(pixel.Resolution().X) - ratio) / 2,
@@ -151,7 +147,7 @@ func (loop1) Render() {
 	m := pixel.ToCanvas(window.XYof(cursor.XY(0)))
 	p := fromScreen(m)
 	pixel.Locate(pixel.XY{2, 8})
-	pixel.Text(col1, 0)
+	pixel.Text(col2, 0)
 	fsr, fso := cozely.RenderStats()
 	pixel.Printf("Framerate: %.2f (%d)\n", 1000*fsr, fso)
 	if p.X >= 0 && p.X <= 1.0 {

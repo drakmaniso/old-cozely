@@ -2,23 +2,10 @@ package cozely_test
 
 import (
 	"github.com/cozely/cozely"
-	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/pixel"
 )
 
 // Declarations ////////////////////////////////////////////////////////////////
-
-const (
-	bg = iota + 1
-	fg
-)
-
-var (
-	palette = pixel.PaletteColors([256]color.Color{
-		fg: color.SRGB{0.75, 0.98, 0.52},
-		bg: color.SRGB{0.06, 0.18, 0.12},
-	})
-)
 
 type loop struct{}
 
@@ -37,7 +24,6 @@ func Example_helloWorld() {
 }
 
 func (loop) Enter() {
-	palette.Use()
 }
 
 func (loop) Leave() {
@@ -52,9 +38,8 @@ func (loop) Update() {
 }
 
 func (loop) Render() {
-	pixel.Clear(bg)
+	pixel.Clear(2)
 
-	pixel.Text(fg, pixel.Monozela10)
 	pixel.Locate(pixel.XY{16, 32})
 	pixel.Print("Hello, World!")
 }

@@ -137,10 +137,12 @@ func setup() error {
 func cleanup() error {
 	// Palette
 	palettes.ssbo.Delete()
-	palettes.path = palettes.path[:0]
-	palettes.changed = palettes.changed[:0]
-	palettes.stdcolors = palettes.stdcolors[:0]
-	palettes.colors = palettes.colors[:0]
+	palettes.path = palettes.path[:1]
+	palettes.changed = palettes.changed[:1]
+	palettes.stdcolors = palettes.stdcolors[:1]
+	palettes.colors = palettes.colors[:1]
+	palettes.current = 0
+	palettes.changed[0] = true
 
 	// Canvases
 	canvas.texture.Delete()

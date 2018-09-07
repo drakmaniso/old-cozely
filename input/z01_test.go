@@ -13,7 +13,6 @@ import (
 	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
-	"github.com/cozely/cozely/pixel/palettes/msx"
 	"github.com/cozely/cozely/window"
 )
 
@@ -85,7 +84,6 @@ func TestTest1(t *testing.T) {
 	defer cozely.Recover()
 
 	pixel.SetZoom(3)
-	pal = pixel.PaletteColors(msx.ColorsCheapRGB)
 
 	input.Load(Bindings)
 	err := cozely.Run(loop1{})
@@ -103,7 +101,6 @@ type loop1 struct{}
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop1) Enter() {
-	pal.Use()
 	InMenu.Activate(0)
 }
 
@@ -164,10 +161,10 @@ func (loop1) Update() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop1) Render() {
-	pixel.Clear(msx.DarkBlue)
+	pixel.Clear(2)
 
 	pixel.Locate(pixel.XY{2, 12})
-	pixel.Text(msx.White, pixel.Monozela10)
+	pixel.Text(14, pixel.Monozela10)
 
 	pixel.Println()
 	changecolor(false)
@@ -217,9 +214,9 @@ func (loop1) Render() {
 
 func changecolor(p bool) {
 	if p {
-		pixel.Text(msx.MediumRed, pixel.Monozela10)
+		pixel.Text(8, pixel.Monozela10)
 	} else {
-		pixel.Text(msx.White, pixel.Monozela10)
+		pixel.Text(14, pixel.Monozela10)
 	}
 }
 
