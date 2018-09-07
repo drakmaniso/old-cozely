@@ -1,6 +1,7 @@
 // Copyright (c) 2018-2018 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
+// Package c64 provides the color palette of C64 microcomputers.
 package c64
 
 import (
@@ -29,6 +30,7 @@ const (
 	LightGrey
 )
 
+// Colors is the C64 palette.
 var Colors = [256]color.Color{
 	color.SRGBA{0, 0, 0, 0},
 	color.SRGB8{0x00, 0x00, 0x00},

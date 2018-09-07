@@ -88,8 +88,6 @@ func (a *loop7) Enter() {
 	a.black = a.palette.Set(253, color.SRGB{0, 0, 0})
 
 	a.palette.Use()
-	a.c64.Use()
-	a.mode = 2
 }
 
 func (a *loop7) Leave() {
@@ -104,8 +102,8 @@ func (a *loop7) React() {
 
 	if next.Started(1) {
 		a.mode++
-		if a.mode > 5 {
-			a.mode = 2
+		if a.mode > 10 {
+			a.mode = 1
 		}
 		a.palette.Use()
 	}

@@ -1,12 +1,14 @@
 // Copyright (c) 2018-2018 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
+// Package msx2 provides the color palette of MSX2 microcomputers.
 package msx2
 
 import (
 	"github.com/cozely/cozely/color"
 )
 
+// Colors is the MSX2 palette.
 var Colors = [256]color.Color{}
 
 func init() {

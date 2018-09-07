@@ -1,6 +1,7 @@
 // Copyright (c) 2018-2018 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
+// Package cpc provides the color palette of CPC microcomputers.
 package cpc
 
 import (
@@ -40,6 +41,7 @@ const (
 	BrightWhite
 )
 
+// Colors is the CPC palette.
 var Colors = [256]color.Color {
 	color.SRGBA{0, 0, 0, 0},
 	color.SRGB8{0x00, 0x00, 0x00},

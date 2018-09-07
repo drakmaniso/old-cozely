@@ -1,7 +1,7 @@
 // Copyright (c) 2018-2018 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
-// Package msx provides the colors used on MSX micro-computers.
+// Package msx provides the color palette of MSX1 microcomputers.
 //
 // Sources:
 //  https://github.com/openMSX/openMSX/files/275509/TMS9928_family_Palette_v2.xlsx
@@ -33,6 +33,7 @@ const (
 	White
 )
 
+// ColorsIdealized is an idealized MSX palette (source: Wikipedia)
 var ColorsIdealized = [256]color.Color{
 	// Wikipedia
 	color.SRGBA{0, 0, 0, 0},
@@ -53,6 +54,8 @@ var ColorsIdealized = [256]color.Color{
 	color.SRGB8{0xff, 0xff, 0xff},
 }
 
+// Colors is the theorical MSX palette (i.e. conversions done with ITU-R BT.601
+// formula).
 var Colors = [256]color.Color{
 	// ITU-R BT.601
 	color.SRGBA{0, 0, 0, 0},
@@ -73,6 +76,7 @@ var Colors = [256]color.Color{
 	color.SRGB8{247, 255, 247},
 }
 
+// ColorsCVtoRGB is the MSX palette through a Component Video to RGB conversion.
 var ColorsCVtoRGB = [256]color.Color{
 	// Component Video to RGB
 	color.SRGBA{0, 0, 0, 0},
@@ -93,6 +97,9 @@ var ColorsCVtoRGB = [256]color.Color{
 	color.SRGB8{250, 255, 248},
 }
 
+// ColorsCheapRGB is the MSX palette through a typical analog conversion (as
+// done in the 80's), featured in the majority of MSX1 models with a TMS VDP and
+// RGB output.
 var ColorsCheapRGB = [256]color.Color{
 	// El Cheapo RGB
 	color.SRGBA{0, 0, 0, 0},
@@ -113,6 +120,8 @@ var ColorsCheapRGB = [256]color.Color{
 	color.SRGB8{247, 255, 247},
 }
 
+// ColorsCheapRGBTrim is the same as ColorsCheapRGB, but with trimpots to
+// normalize each channels (provides more reddish tones for the red colors).
 var ColorsCheapRGBTrim = [256]color.Color{
 	// El Cheapo RGB with trimpots
 	color.SRGBA{0, 0, 0, 0},
@@ -133,6 +142,8 @@ var ColorsCheapRGBTrim = [256]color.Color{
 	color.SRGB8{252, 255, 255},
 }
 
+// ColorsLazyRGB is the same as ColorsCheapRGB, but with a lower quality analog
+// conversion.
 var ColorsLazyRGB = [256]color.Color{
 	// Lazy El Cheapo RGB
 	color.SRGBA{0, 0, 0, 0},

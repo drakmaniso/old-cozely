@@ -85,7 +85,7 @@ func TestTest1(t *testing.T) {
 	defer cozely.Recover()
 
 	pixel.SetZoom(3)
-	pal = pixel.PaletteColors(msx.Colors)
+	pal = pixel.PaletteColors(msx.ColorsCheapRGB)
 
 	input.Load(Bindings)
 	err := cozely.Run(loop1{})
