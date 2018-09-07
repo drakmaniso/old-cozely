@@ -6,15 +6,13 @@ package pixel
 import (
 	"fmt"
 	"unicode/utf8"
-
-	"github.com/cozely/cozely/color"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
 
 // Cursor holds the state used to write text on the canvas.
 type cursor struct {
-	Color         color.Index
+	Color         Color
 	Font          FontID
 	Margin        int16
 	LetterSpacing int16
@@ -30,7 +28,7 @@ var Cursor cursor
 // Text configures the color and font used to display text on the canvas.
 //
 // Note that you can also directly change the Cursor attributes.
-func Text(c color.Index, f FontID) {
+func Text(c Color, f FontID) {
 	Cursor.Color = c
 	Cursor.Font = f
 	if Cursor.Interline == 0 {

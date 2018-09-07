@@ -317,6 +317,9 @@ var currentPipeline *Pipeline
 
 // Delete closes the pipeline.
 func (p *Pipeline) Delete() {
+	if p == nil {
+		return
+	}
 	C.PipelineDelete(p.object, p.vao)
 }
 

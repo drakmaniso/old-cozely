@@ -17,8 +17,8 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 
 type loop2 struct {
-	palette color.PaletteID
-	txtcol  color.Index
+	palette pixel.PaletteID
+	txtcol  pixel.Color
 	picts   []pixel.PictureID
 	shapes  []shape
 }
@@ -52,8 +52,10 @@ func TestTest2(t *testing.T) {
 func (a *loop2) declare() {
 	pixel.SetZoom(2)
 
-	a.palette = color.PaletteFrom("graphics/shape1")
+	a.palette = pixel.Palette("graphics/shape1")
 	a.txtcol = a.palette.Entry(color.LRGB{1, 1, 1})
+	// a.palette = c64.Palette
+	// a.txtcol = c64.Green
 
 	a.picts = []pixel.PictureID{
 		pixel.Picture("graphics/shape1"),
@@ -65,7 +67,7 @@ func (a *loop2) declare() {
 }
 
 func (a *loop2) Enter() {
-	a.palette.Activate()
+	a.palette.Use()
 	pixel.Text(a.txtcol, pixel.Monozela10)
 }
 

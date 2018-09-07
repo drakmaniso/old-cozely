@@ -22,6 +22,19 @@ func init() {
 }
 
 func setup() error {
+	// Prepare the palettes
+
+	palettes.ssbo = gl.NewStorageBuffer(uintptr(256*4*4), gl.DynamicStorage|gl.MapWrite)
+
+	for id, pp := range palettes.path {
+		if pp != "" {
+			PaletteID(id).load(pp)
+		}
+	}
+
+	//TODO: Add default palette
+	palettes.current = PaletteID(0)
+
 	// Prepare the canvas
 
 	canvas.commands = make([]gl.DrawIndirectCommand, 0, maxCommandCount)
@@ -122,6 +135,13 @@ func setup() error {
 }
 
 func cleanup() error {
+	// Palette
+	palettes.ssbo.Delete()
+	palettes.path = palettes.path[:0]
+	palettes.changed = palettes.changed[:0]
+	palettes.stdcolors = palettes.stdcolors[:0]
+	palettes.colors = palettes.colors[:0]
+
 	// Canvases
 	canvas.texture.Delete()
 	canvas.buffer.Delete()

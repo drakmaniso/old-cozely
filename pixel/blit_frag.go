@@ -35,9 +35,9 @@ void main(void) {
 	}
 
 	out_color = Colours[c];
-	if (f != 0) {
-		out_color = Colours[c-1];
-	}
+	// if (f != 0) {
+	// 	out_color = Colours[c-1];
+	// }
 }
 
 ////////////////////////////////////////////////////////////////////////////////

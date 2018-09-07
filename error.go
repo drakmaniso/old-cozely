@@ -28,7 +28,6 @@ func Stop(err error) {
 func Error() bool {
 	return internal.GLErr() != nil ||
 		internal.InputErr() != nil ||
-		internal.ColorErr() != nil ||
 		internal.PixelErr() != nil ||
 		internal.PolyErr() != nil
 }
@@ -52,10 +51,6 @@ func Recover() {
 		err = internal.InputErr()
 		if err != nil {
 			internal.Log.Printf("*** panic: INPUT unchecked ERROR ***\n%s", err)
-		}
-		err = internal.ColorErr()
-		if err != nil {
-			internal.Log.Printf("*** panic: COLOR unchecked ERROR ***\n%s", err)
 		}
 		err = internal.PixelErr()
 		if err != nil {

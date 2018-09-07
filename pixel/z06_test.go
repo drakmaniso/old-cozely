@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/cozely/cozely"
-	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
 	"github.com/cozely/cozely/window"
@@ -16,7 +15,7 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 
 type loop6 struct {
-	palette color.PaletteID
+	palette pixel.PaletteID
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -38,12 +37,12 @@ func TestTest6(t *testing.T) {
 
 func (a *loop6) declare() {
 	pixel.SetZoom(3)
-	a.palette = color.PaletteFrom("graphics/shape1")
+	a.palette = pixel.Palette("graphics/shape1")
 }
 
 func (a *loop6) Enter() {
 	input.ShowMouse(false)
-	a.palette.Activate()
+	a.palette.Use()
 }
 
 func (loop6) Leave() {

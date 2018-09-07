@@ -1,0 +1,27 @@
+// Copyright (c) 2018-2018 Laurent Moussault. All rights reserved.
+// Licensed under a simplified BSD license (see LICENSE file).
+
+package pixel_test
+
+import (
+	"github.com/cozely/cozely/color"
+	"github.com/cozely/cozely/pixel"
+)
+
+const (
+	red pixel.Color = 1 + iota
+	green
+	blue
+)
+
+var (
+	palette1 = pixel.PaletteColors(
+		[256]color.Color{
+			red:   color.SRGB8{0xFF, 0, 0},
+			green: color.SRGB8{0, 0xFF, 0},
+			blue:  color.SRGB8{0, 0, 0xFF},
+		},
+	)
+
+	palette2 = pixel.Palette("graphics/mire")
+)

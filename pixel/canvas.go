@@ -6,7 +6,6 @@ package pixel
 import (
 	"errors"
 
-	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/internal"
 	"github.com/cozely/cozely/window"
 	"github.com/cozely/cozely/x/gl"
@@ -142,13 +141,20 @@ func init() {
 // by Display; the only reason to call it manually is to be able to read from it
 // before display.
 func render() error {
-	if len(canvas.commands) == 0 {
-		goto display
+	// Upload the current palette
+
+	p := palettes.current
+	if palettes.changed[p] {
+		palettes.ssbo.SubData(palettes.stdcolors[p][:], 0)
+		palettes.changed[p] = false
 	}
+	palettes.ssbo.Bind(0)
 
 	// Execute all pending commands
 
-	internal.ColorUpload()
+	if len(canvas.commands) == 0 {
+		goto display
+	}
 
 	screenUniforms.PixelSize.X = 1.0 / float32(canvas.size.X)
 	screenUniforms.PixelSize.Y = 1.0 / float32(canvas.size.Y)
@@ -183,8 +189,6 @@ display:
 	blitUniforms.ScreenSize.Y = float32(canvas.size.Y)
 	blitUBO.SubData(&blitUniforms, 0)
 
-	internal.ColorUpload()
-
 	blitPipeline.Bind()
 	gl.DefaultFramebuffer.Bind(gl.DrawFramebuffer)
 	gl.Enable(gl.FramebufferSRGB)
@@ -203,7 +207,7 @@ display:
 
 // Clear sets the color of all pixels on the canvas; it also resets the filter
 // of all pixels.
-func Clear(color color.Index) {
+func Clear(color Color) {
 	pipeline.Bind() //TODO: find another way to enable depthWrite
 	canvas.buffer.ClearColor(0, float32(color)/255, 0, 0, 0)
 	canvas.buffer.ClearColor(1, 0, 0, 0, 0)

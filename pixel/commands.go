@@ -6,7 +6,6 @@ package pixel
 import (
 	"unsafe"
 
-	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/x/gl"
 )
 
@@ -32,15 +31,15 @@ func Paint(p PictureID, pos XY) {
 ////////////////////////////////////////////////////////////////////////////////
 
 // Point queues a GPU command to draw a point on the canvas.
-func Point(color color.Index, pos XY) {
-	canvas.command(cmdPoint, 3, 1, int16(color), pos.X, pos.Y)
+func Point(c Color, pos XY) {
+	canvas.command(cmdPoint, 3, 1, int16(c), pos.X, pos.Y)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 // Lines queues a GPU command to draw a line strip on the canvas. A line strip
 // is a succession of connected lines; all lines share the same color.
-func Lines(c color.Index, strip ...XY) {
+func Lines(c Color, strip ...XY) {
 	if len(strip) < 2 {
 		return
 	}
@@ -56,7 +55,7 @@ func Lines(c color.Index, strip ...XY) {
 // Triangles queues a GPU command to draw a triangle strip on the canvas.
 // Triangle strip have the same meaning than in OpenGL. All triangles share the
 // same color.
-func Triangles(c color.Index, strip ...XY) {
+func Triangles(c Color, strip ...XY) {
 	if len(strip) < 3 {
 		return
 	}
@@ -70,7 +69,7 @@ func Triangles(c color.Index, strip ...XY) {
 ////////////////////////////////////////////////////////////////////////////////
 
 // Box queues a GPU command to draw a box on the canvas.
-func Box(fg, bg color.Index, corner int16, p1, p2 XY) {
+func Box(fg, bg Color, corner int16, p1, p2 XY) {
 	if p2.X < p1.X {
 		p1.X, p2.X = p2.X, p1.X
 	}

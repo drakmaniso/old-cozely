@@ -7,13 +7,12 @@ import (
 	"testing"
 
 	"github.com/cozely/cozely"
-	"github.com/cozely/cozely/color"
-	"github.com/cozely/cozely/color/palettes/c64"
-	"github.com/cozely/cozely/color/palettes/cpc"
-	"github.com/cozely/cozely/color/palettes/msx"
-	"github.com/cozely/cozely/color/palettes/msx2"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
+	"github.com/cozely/cozely/pixel/palettes/c64"
+	"github.com/cozely/cozely/pixel/palettes/cpc"
+	"github.com/cozely/cozely/pixel/palettes/msx"
+	"github.com/cozely/cozely/pixel/palettes/msx2"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -21,7 +20,8 @@ import (
 var ()
 
 type loop1 struct {
-	palmire, palsrgb                       color.PaletteID
+	palmire, palsrgb                       pixel.PaletteID
+	c64, cpc, msx, msx2                    pixel.PaletteID
 	mire                                   pixel.PictureID
 	srgbGray, srgbRed, srgbGreen, srgbBlue pixel.PictureID
 	mode                                   int
@@ -45,8 +45,12 @@ func TestTest1(t *testing.T) {
 func (a *loop1) declare() {
 	pixel.SetResolution(320, 180)
 
-	a.palmire = color.PaletteFrom("graphics/mire")
-	a.palsrgb = color.PaletteFrom("graphics/srgb-gray")
+	a.palmire = pixel.Palette("graphics/mire")
+	a.palsrgb = pixel.Palette("graphics/srgb-gray")
+	a.c64 = pixel.PaletteColors(c64.Colors)
+	a.cpc = pixel.PaletteColors(cpc.Colors)
+	a.msx = pixel.PaletteColors(msx.Colors)
+	a.msx2 = pixel.PaletteColors(msx2.Colors)
 
 	a.mire = pixel.Picture("graphics/mire")
 	a.srgbGray = pixel.Picture("graphics/srgb-gray")
@@ -58,7 +62,7 @@ func (a *loop1) declare() {
 func (a *loop1) Enter() {
 	a.mode = 0
 
-	a.palmire.Activate()
+	a.palmire.Use()
 }
 
 func (loop1) Leave() {
@@ -78,23 +82,23 @@ func (a *loop1) React() {
 		}
 		switch a.mode {
 		case 0:
-			a.palmire.Activate()
+			a.palmire.Use()
 		case 1:
-			a.palsrgb.Activate()
+			a.palsrgb.Use()
 		}
 	}
 
 	if scene1.Started(0) {
-		c64.Palette.Activate()
+		a.c64.Use()
 	}
 	if scene2.Started(0) {
-		cpc.Palette.Activate()
+		a.cpc.Use()
 	}
 	if scene3.Started(0) {
-		msx.Palette.Activate()
+		a.msx.Use()
 	}
 	if scene4.Started(0) {
-		msx2.Palette.Activate()
+		a.msx2.Use()
 	}
 }
 

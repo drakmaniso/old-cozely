@@ -18,8 +18,8 @@ import (
 var ()
 
 type loop3 struct {
-	palette color.PaletteID
-	bg, fg  color.Index
+	palette pixel.PaletteID
+	bg, fg  pixel.Color
 
 	tinela9, monozela10, simpela10, simpela12,
 	cozela10, cozela12, chaotela12, font pixel.FontID
@@ -44,7 +44,8 @@ func TestTest3(t *testing.T) {
 
 func (a *loop3) declare() {
 	pixel.SetZoom(2)
-	a.palette = color.Palette()
+	//TODO: 
+	a.palette = pixel.PaletteColors([256]color.Color{})
 	a.bg = a.palette.Entry(color.SRGB8{0xFF, 0xFE, 0xFC})
 	a.fg = a.palette.Entry(color.SRGB8{0x07, 0x05, 0x00})
 
@@ -59,7 +60,7 @@ func (a *loop3) declare() {
 }
 
 func (a *loop3) Enter() {
-	a.palette.Activate()
+	a.palette.Use()
 	println(a.bg, a.fg)
 	pixel.Cursor.Color = a.fg - 1
 }
