@@ -1,6 +1,11 @@
 // Copyright (c) 2018-2018 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
+// Package msx provides the colors used on MSX micro-computers.
+//
+// Sources:
+//  https://github.com/openMSX/openMSX/files/275509/TMS9928_family_Palette_v2.xlsx
+//  https://github.com/openMSX/openMSX/issues/1024
 package msx
 
 import (
