@@ -30,6 +30,7 @@ const (
 )
 
 var Colors = [256]color.Color{
+	color.SRGBA{0, 0, 0, 0},
 	color.SRGB8{0x00, 0x00, 0x00},
 	color.SRGB8{0xff, 0xff, 0xff},
 	color.SRGB8{0x68, 0x37, 0x2b},

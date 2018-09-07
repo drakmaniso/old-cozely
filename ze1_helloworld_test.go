@@ -8,10 +8,16 @@ import (
 
 // Declarations ////////////////////////////////////////////////////////////////
 
+const (
+	bg = iota + 1
+	fg
+)
+
 var (
-	palette = color.Palette()
-	fg      = palette.Entry(color.SRGB{0.75, 0.98, 0.52})
-	bg      = palette.Entry(color.SRGB{0.06, 0.18, 0.12})
+	palette = pixel.PaletteColors([256]color.Color{
+		fg: color.SRGB{0.75, 0.98, 0.52},
+		bg: color.SRGB{0.06, 0.18, 0.12},
+	})
 )
 
 type loop struct{}
@@ -31,7 +37,7 @@ func Example_helloWorld() {
 }
 
 func (loop) Enter() {
-	palette.Activate()
+	palette.Use()
 }
 
 func (loop) Leave() {

@@ -44,10 +44,10 @@ func TestTest3(t *testing.T) {
 
 func (a *loop3) declare() {
 	pixel.SetZoom(2)
-	//TODO: 
-	a.palette = pixel.PaletteColors([256]color.Color{})
-	a.bg = a.palette.Entry(color.SRGB8{0xFF, 0xFE, 0xFC})
-	a.fg = a.palette.Entry(color.SRGB8{0x07, 0x05, 0x00})
+	//TODO:
+	a.palette = pixel.Palette("")
+	a.bg = a.palette.Set(1, color.SRGB8{0xFF, 0xFE, 0xFC})
+	a.fg = a.palette.Set(2, color.SRGB8{0x07, 0x05, 0x00})
 
 	a.tinela9 = pixel.Font("fonts/tinela9")
 	a.monozela10 = pixel.Font("fonts/monozela10")

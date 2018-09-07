@@ -76,8 +76,8 @@ func (a *loop5) React() {
 		}
 	}
 
-	a.pointshidden = scene1.Ongoing(0)
-	a.lineshidden = scene2.Ongoing(0)
+	a.pointshidden = scenes[1].Ongoing(0)
+	a.lineshidden = scenes[2].Ongoing(0)
 }
 
 func (loop5) Update() {

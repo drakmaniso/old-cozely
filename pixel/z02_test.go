@@ -53,7 +53,7 @@ func (a *loop2) declare() {
 	pixel.SetZoom(2)
 
 	a.palette = pixel.Palette("graphics/shape1")
-	a.txtcol = a.palette.Entry(color.LRGB{1, 1, 1})
+	a.txtcol = a.palette.Set(255, color.LRGB{1, 1, 1})
 	// a.palette = c64.Palette
 	// a.txtcol = c64.Green
 
@@ -88,43 +88,43 @@ func (a *loop2) resize() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (a *loop2) React() {
-	if scene1.Started(0) {
+	if scenes[1].Started(0) {
 		a.shapes = make([]shape, 1000)
 		a.resize()
 	}
-	if scene2.Started(0) {
+	if scenes[2].Started(0) {
 		a.shapes = make([]shape, 10000)
 		a.resize()
 	}
-	if scene3.Started(0) {
+	if scenes[3].Started(0) {
 		a.shapes = make([]shape, 100000)
 		a.resize()
 	}
-	if scene4.Started(0) {
+	if scenes[4].Started(0) {
 		a.shapes = make([]shape, 200000)
 		a.resize()
 	}
-	if scene5.Started(0) {
+	if scenes[5].Started(0) {
 		a.shapes = make([]shape, 300000)
 		a.resize()
 	}
-	if scene6.Started(0) {
+	if scenes[6].Started(0) {
 		a.shapes = make([]shape, 350000)
 		a.resize()
 	}
-	if scene7.Started(0) {
+	if scenes[7].Started(0) {
 		a.shapes = make([]shape, 400000)
 		a.resize()
 	}
-	if scene8.Started(0) {
+	if scenes[8].Started(0) {
 		a.shapes = make([]shape, 450000)
 		a.resize()
 	}
-	if scene9.Started(0) {
+	if scenes[9].Started(0) {
 		a.shapes = make([]shape, 500000)
 		a.resize()
 	}
-	if scene10.Started(0) {
+	if scenes[10].Started(0) {
 		a.shapes = make([]shape, 10)
 		a.resize()
 	}

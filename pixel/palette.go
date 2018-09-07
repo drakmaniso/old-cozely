@@ -40,10 +40,12 @@ func init() {
 	palettes.stdcolors = append(palettes.stdcolors, [256]color.LRGBA{})
 
 	for c := range palettes.stdcolors {
-		palettes.colors[0][c] = color.LRGBA{1, 0, 0.5, 1}
-		palettes.stdcolors[0][c] = color.LRGBA{1, 0, 0.5, 1}
+		palettes.colors[0][c] = debugColor
+		palettes.stdcolors[0][c] = debugColor
 	}
 }
+
+var debugColor = color.LRGBA{0, 0, 0, 1}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -64,7 +66,7 @@ func PaletteColors(c [256]color.Color) PaletteID {
 		if cc != nil {
 			palettes.stdcolors[a][c] = color.LRGBAof(cc)
 		} else {
-			palettes.stdcolors[a][c] = color.LRGBA{1, 0, 0.5, 1}
+			palettes.stdcolors[a][c] = debugColor
 		}
 	}
 
@@ -158,38 +160,21 @@ func (a PaletteID) Use() {
 func (a PaletteID) Clear() {
 	for c := range palettes.stdcolors[a] {
 		palettes.colors[a][c] = nil
-		palettes.stdcolors[a][c] = color.LRGBA{1, 0, 0.5, 1}
+		palettes.stdcolors[a][c] = debugColor
 	}
 	palettes.colors[a][0] = color.LRGBA{0, 0, 0, 0}
 	palettes.stdcolors[a][0] = color.LRGBA{0, 0, 0, 0}
 	palettes.changed[a] = true
 }
 
-// Entry associates a color to an unused entry of the palette, and returns its
-// index. If every entries are used, it returns the transparent index.
-//
-// It starts looking from the end of the palette (index 255). This way, the same
-// palette can also load colors from a file (starting at index 0).
-func (a PaletteID) Entry(c color.Color) Color {
-	for i := 255; i > 0; i-- {
-		cc := palettes.colors[a][i]
-		if cc == nil {
-			palettes.colors[a][i] = c
-			palettes.stdcolors[a][i] = color.LRGBAof(c)
-			return Color(i)
-		}
-	}
-	//TODO: set err
-	return Transparent
-}
-
+// Set changes the color associated with an index.
 func (a PaletteID) Set(i Color, c color.Color) Color {
 	palettes.colors[a][i] = c
 	palettes.changed[a] = true
 	if c == nil {
-		palettes.colors[a][i] = color.LRGBA{1, 0, .5, 1}
+		palettes.stdcolors[a][i] = color.LRGBA{1, 0, .5, 1}
 	} else {
-		palettes.colors[a][i] = color.LRGBAof(c)
+		palettes.stdcolors[a][i] = color.LRGBAof(c)
 	}
 	return Color(i)
 }
@@ -198,7 +183,6 @@ func (a PaletteID) Set(i Color, c color.Color) Color {
 
 // Match searches for a color by its color.LRGBA values. If this exact color
 // isn't in the palette, index 0 is returned.
-//TODO: search by color proximity
 func (a PaletteID) Match(v color.Color) Color {
 	lv := color.LRGBAof(v)
 	for c, pv := range palettes.stdcolors[a] {
@@ -209,3 +193,5 @@ func (a PaletteID) Match(v color.Color) Color {
 
 	return Color(0)
 }
+
+//TODO: search by color proximity

@@ -88,16 +88,16 @@ func (a *loop1) React() {
 		}
 	}
 
-	if scene1.Started(0) {
+	if scenes[1].Started(0) {
 		a.c64.Use()
 	}
-	if scene2.Started(0) {
+	if scenes[2].Started(0) {
 		a.cpc.Use()
 	}
-	if scene3.Started(0) {
+	if scenes[3].Started(0) {
 		a.msx.Use()
 	}
-	if scene4.Started(0) {
+	if scenes[4].Started(0) {
 		a.msx2.Use()
 	}
 }
