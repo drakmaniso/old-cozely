@@ -82,7 +82,7 @@ func (loop1) Update() {
 }
 
 func (loop1) Render() {
-	pixel.Clear(2)
+	pixel.Clear(1)
 	ratio = float32(pixel.Resolution().Y)
 	offset = coord.XY{
 		X: (float32(pixel.Resolution().X) - ratio),

@@ -51,7 +51,7 @@ func TestTest2(t *testing.T) {
 func (a *loop2) declare() {
 	pixel.SetZoom(2)
 
-	a.txtcol = 8
+	a.txtcol = 7
 
 	a.picts = []pixel.PictureID{
 		pixel.Picture("graphics/shape1"),

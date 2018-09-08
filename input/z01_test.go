@@ -159,10 +159,10 @@ func (loop1) Update() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop1) Render() {
-	pixel.Clear(2)
+	pixel.Clear(1)
 
 	pixel.Locate(pixel.XY{2, 12})
-	pixel.Text(14, pixel.Monozela10)
+	pixel.Text(7, pixel.Monozela10)
 
 	pixel.Println()
 	changecolor(false)
@@ -212,9 +212,9 @@ func (loop1) Render() {
 
 func changecolor(p bool) {
 	if p {
-		pixel.Text(15, pixel.Monozela10)
+		pixel.Text(14, pixel.Monozela10)
 	} else {
-		pixel.Text(8, pixel.Monozela10)
+		pixel.Text(7, pixel.Monozela10)
 	}
 }
 

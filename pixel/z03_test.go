@@ -44,7 +44,7 @@ func TestTest3(t *testing.T) {
 func (a *loop3) declare() {
 	pixel.SetZoom(2)
 	//TODO:
-	a.bg = 8
+	a.bg = 7
 	a.fg = 1
 
 	a.tinela9 = pixel.Font("fonts/tinela9")
