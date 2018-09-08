@@ -259,7 +259,7 @@ func (loop) Render() {
 		pixel.Printf(" (%d)", or)
 	}
 	if window.HasMouseFocus() {
-		pixel.Paint(pixel.MouseCursor, pixel.ToCanvas(window.XYof(cursor.XY(0))))
+		pixel.MouseCursor.Paint(0, pixel.ToCanvas(window.XYof(cursor.XY(0))))
 	}
 }
 

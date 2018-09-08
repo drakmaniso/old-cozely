@@ -131,7 +131,7 @@ func (a *loop7) Render() {
 	ps := a.pict.Size()
 	p := cs.Minus(ps).Slash(2)
 	_ = p
-	a.pict.Paint(p)
+	a.pict.Paint(0, p)
 
 	pixel.Text(15, pixel.Monozela10)
 	pixel.Locate(p.Minus(pixel.XY{0, 8}))

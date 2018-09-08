@@ -34,8 +34,7 @@ layout(binding = 3) uniform usampler2DArray Pictures;
 
 ////////////////////////////////////////////////////////////////////////////////
 
-layout(location = 0) out vec4 out_color;
-layout(location = 1) out vec4 out_filter;
+out uint out_color;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -108,13 +107,7 @@ void main(void)
 		discard;
 	}
 
-	if (c != 999) {
-		out_color = vec4(float(c)/255.0, 0, 0, 1);
-		out_filter = vec4(0, 0, 0, 1);
-	} else {
-		out_color = vec4(float(c)/255.0, 0, 0, 0);
-		out_filter = vec4(1, 0, 0, 1);
-	}
+	out_color = c;
 }
 `
 

@@ -31,7 +31,8 @@ func setup() error {
 	canvas.commands = make([]gl.DrawIndirectCommand, 0, maxCommandCount)
 	canvas.parameters = make([]int16, 0, maxParamCount)
 
-	canvas.buffer = gl.NewFramebuffer()
+	canvas.canvasBuf = gl.NewFramebuffer()
+	canvas.filterBuf = gl.NewFramebuffer()
 
 	canvas.commandsICBO = gl.NewIndirectBuffer(
 		uintptr(cap(canvas.commands))*unsafe.Sizeof(canvas.commands[0]),
@@ -52,8 +53,9 @@ func setup() error {
 		gl.FragmentShader(strings.NewReader(fragmentShader)),
 		gl.CullFace(false, false),
 		gl.Topology(gl.TriangleStrip),
-		gl.DepthTest(false),
-		gl.DepthWrite(false),
+		gl.DepthTest(true),
+		gl.DepthWrite(true),
+		gl.DepthComparison(gl.GreaterOrEqual),
 	)
 
 	screenUBO = gl.NewUniformBuffer(&screenUniforms, gl.DynamicStorage|gl.MapWrite)
@@ -131,8 +133,11 @@ func cleanup() error {
 	dirtyPal = true
 
 	// Canvases
-	canvas.texture.Delete()
-	canvas.buffer.Delete()
+	canvas.depth.Delete()
+	canvas.canvasTex.Delete()
+	canvas.canvasBuf.Delete()
+	canvas.filterTex.Delete()
+	canvas.filterBuf.Delete()
 
 	// Display pipeline
 	pipeline.Delete()

@@ -15,8 +15,8 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 
 type loop5 struct {
-	points                    []pixel.XY
-	pointshidden, lineshidden bool
+	points                                     []pixel.XY
+	pointshidden, lineshidden, triangleshidden bool
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -74,6 +74,7 @@ func (a *loop5) React() {
 
 	a.pointshidden = scenes[1].Ongoing(0)
 	a.lineshidden = scenes[2].Ongoing(0)
+	a.triangleshidden = scenes[3].Ongoing(0)
 }
 
 func (loop5) Update() {
@@ -82,15 +83,17 @@ func (loop5) Update() {
 func (a *loop5) Render() {
 	pixel.Clear(1)
 	m := pixel.ToCanvas(window.XYof(cursor.XY(0)))
-	pixel.Triangles(2, a.points...)
+	if !a.triangleshidden {
+		pixel.Triangles(2, 0, a.points...)
+	}
 	if !a.lineshidden {
-		pixel.Lines(5, a.points...)
-		pixel.Lines(13, a.points[len(a.points)-1], m)
+		pixel.Lines(14, 0, a.points...)
+		pixel.Lines(13, 0, a.points[len(a.points)-1], m)
 	}
 	if !a.pointshidden {
 		for _, p := range a.points {
-			pixel.Point(8, p)
+			pixel.Point(8, 0, p)
 		}
-		pixel.Point(18, m)
+		pixel.Point(7, 0, m)
 	}
 }

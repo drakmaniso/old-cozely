@@ -98,5 +98,5 @@ func (l *loop2) Render() {
 	pixel.Clear(0)
 
 	o := pixel.Resolution().Minus(l.logo.Size()).Slash(2)
-	l.logo.Paint(o)
+	l.logo.Paint(0, o)
 }

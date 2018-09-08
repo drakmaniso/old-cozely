@@ -154,10 +154,15 @@ func (loop2) Update() {
 
 func (a *loop2) Render() {
 	pixel.Clear(0)
-	for _, o := range a.shapes {
-		o.pict.Paint(o.pos)
+	for i, o := range a.shapes {
+		l := i-(0xFFFF/2)
+		if l > 0xFFFF/2 {
+			l = 0xFFFF/2
+		}
+		o.pict.Paint(int16(l), o.pos)
 	}
 	pixel.Locate(pixel.XY{8, 16})
+	pixel.Cursor.Layer = 0xFFFF/2
 	ft, ov := cozely.RenderStats()
 	pixel.Printf("%dk pictures: %6.2f", len(a.shapes)/1000, ft*1000)
 	if ov > 0 {

@@ -50,13 +50,13 @@ func (loop) Update() {
 func (loop) Render() {
 	pixel.Clear(0)
 	origin = pixel.Resolution().Minus(resolution).Slash(2)
-	pixel.Box(9, 0, 3,
+	pixel.Box(9, 0, 0, 3,
 		origin.PlusS(4), origin.Plus(resolution).MinusS(4))
 	for x := int16(0); x < gridsize.X; x++ {
 		for y := int16(0); y < gridsize.Y; y++ {
 			offset := resolution.Minus(gridsize.Times(16)).Slash(2)
 			p := pixel.XY{x, y}.TimesXY(cellsize).Plus(offset)
-			pixel.Box(10, 0, 2,
+			pixel.Box(10, 0, 0, 2,
 				origin.Plus(p), origin.Plus(p).PlusS(15))
 		}
 	}

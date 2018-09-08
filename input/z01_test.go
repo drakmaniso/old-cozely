@@ -207,7 +207,7 @@ func (loop1) Render() {
 	pixel.Printf("   Delta = %+12.6f, %+12.6f\n", deltaval.X, deltaval.Y)
 
 	//TODO:
-	pixel.Paint(pixel.MouseCursor, pixel.ToCanvas(window.XYof(cursorval)))
+	pixel.MouseCursor.Paint(0, pixel.ToCanvas(window.XYof(cursorval)))
 }
 
 func changecolor(p bool) {

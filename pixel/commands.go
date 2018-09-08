@@ -25,26 +25,26 @@ const (
 ////////////////////////////////////////////////////////////////////////////////
 
 // Paint queues a GPU command to put a picture on the canvas.
-func (p PictureID) Paint (pos XY) {
-	canvas.command(cmdPicture, 4, 1, int16(p), pos.X, pos.Y)
+func (p PictureID) Paint(layer int16, pos XY) {
+	canvas.command(cmdPicture, 4, 1, int16(p), layer, pos.X, pos.Y)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 // Point queues a GPU command to draw a point on the canvas.
-func Point(c color.Index, pos XY) {
-	canvas.command(cmdPoint, 3, 1, int16(c), pos.X, pos.Y)
+func Point(c color.Index, layer int16, pos XY) {
+	canvas.command(cmdPoint, 3, 1, int16(c), layer, pos.X, pos.Y)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 // Lines queues a GPU command to draw a line strip on the canvas. A line strip
 // is a succession of connected lines; all lines share the same color.
-func Lines(c color.Index, strip ...XY) {
+func Lines(c color.Index, layer int16, strip ...XY) {
 	if len(strip) < 2 {
 		return
 	}
-	prm := []int16{int16(c)} //TODO: remove alloc
+	prm := []int16{int16(c), layer} //TODO: remove alloc
 	for _, p := range strip {
 		prm = append(prm, p.X, p.Y)
 	}
@@ -56,11 +56,11 @@ func Lines(c color.Index, strip ...XY) {
 // Triangles queues a GPU command to draw a triangle strip on the canvas.
 // Triangle strip have the same meaning than in OpenGL. All triangles share the
 // same color.
-func Triangles(c color.Index, strip ...XY) {
+func Triangles(c color.Index, layer int16, strip ...XY) {
 	if len(strip) < 3 {
 		return
 	}
-	prm := []int16{int16(c)} //TODO: remove alloc
+	prm := []int16{int16(c), layer} //TODO: remove alloc
 	for _, p := range strip {
 		prm = append(prm, p.X, p.Y)
 	}
@@ -70,7 +70,7 @@ func Triangles(c color.Index, strip ...XY) {
 ////////////////////////////////////////////////////////////////////////////////
 
 // Box queues a GPU command to draw a box on the canvas.
-func Box(fg, bg color.Index, corner int16, p1, p2 XY) {
+func Box(fg, bg color.Index, layer int16, corner int16, p1, p2 XY) {
 	if p2.X < p1.X {
 		p1.X, p2.X = p2.X, p1.X
 	}
@@ -79,6 +79,7 @@ func Box(fg, bg color.Index, corner int16, p1, p2 XY) {
 	}
 	canvas.command(cmdBox, 4, 1,
 		int16(uint32(fg)<<8|uint32(bg)),
+		layer,
 		corner,
 		p1.X, p1.Y,
 		p2.X, p2.Y)
@@ -105,10 +106,10 @@ func (a *cmdQueue) command(c uint32, v uint32, n uint32, params ...int16) {
 		} else {
 			// Check if same color and y
 			pi := a.commands[l-1].BaseInstance & 0xFFFFFF
-			if a.parameters[pi] == params[0] && a.parameters[pi+1] == params[1] {
+			if a.parameters[pi] == params[0] && a.parameters[pi+1] == params[1] && a.parameters[pi+2] == params[2] {
 				// Collapse with previous draw command
 				a.commands[l-1].InstanceCount += n
-				a.parameters = append(a.parameters, params[2:]...)
+				a.parameters = append(a.parameters, params[3:]...)
 				break
 			}
 		}

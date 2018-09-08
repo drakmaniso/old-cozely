@@ -67,26 +67,26 @@ func (a *loop6) Render() {
 	dy := pixel.XY{0, 32}
 
 	for i := int16(0); i < 13; i++ {
-		pixel.Box(9, 0, i, o.Plus(dx.Times(i)), o.Plus(dx.Times(i)).Plus(s))
+		pixel.Box(9, 0, 0, i, o.Plus(dx.Times(i)), o.Plus(dx.Times(i)).Plus(s))
 	}
 
 	o = o.Plus(dy)
 	for i := int16(0); i < 13; i++ {
-		pixel.Box(0, 8, i, o.Plus(dx.Times(i)), o.Plus(dx.Times(i)).Plus(s))
+		pixel.Box(0, 8, 0, i, o.Plus(dx.Times(i)), o.Plus(dx.Times(i)).Plus(s))
 	}
 
 	o = o.Plus(dy)
 	for i := int16(0); i < 13; i++ {
-		pixel.Box(9, 8, i, o.Plus(dx.Times(i)), o.Plus(dx.Times(i)).Plus(s))
+		pixel.Box(9, 8, 0, i, o.Plus(dx.Times(i)), o.Plus(dx.Times(i)).Plus(s))
 	}
 
 	o = o.Plus(dy)
 	for i := int16(0); i < 13; i++ {
-		pixel.Box(9, 9, i, o.Plus(dx.Times(i)), o.Plus(dx.Times(i)).Plus(s))
+		pixel.Box(9, 9, 0, i, o.Plus(dx.Times(i)), o.Plus(dx.Times(i)).Plus(s))
 	}
 
 	m := pixel.ToCanvas(window.XYof(cursor.XY(0)))
-	pixel.Point(7, m)
+	pixel.Point(7, 0, m)
 }
 
 ////////////////////////////////////////////////////////////////////////////////

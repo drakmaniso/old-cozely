@@ -22,9 +22,11 @@ var canvas = struct {
 	margin XY        // for fixed resolution only, = size - resolution
 	border window.XY // leftover from division by pixel size
 
-	buffer  gl.Framebuffer
-	texture gl.Texture2D
-	filter  gl.Texture2D
+	canvasBuf gl.Framebuffer
+	filterBuf gl.Framebuffer
+	canvasTex gl.Texture2D
+	filterTex gl.Texture2D
+	depth     gl.Renderbuffer
 
 	cmdQueue
 }{
@@ -115,18 +117,31 @@ func resize() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func createCanvasTextures() {
-	canvas.texture.Delete()
-	canvas.texture = gl.NewTexture2D(1, gl.R8, int32(canvas.size.X), int32(canvas.size.Y))
-	canvas.buffer.Texture(gl.ColorAttachment0, canvas.texture, 0)
+	canvas.depth.Delete()
+	canvas.depth = gl.NewRenderbuffer(gl.Depth32F, int32(canvas.size.X), int32(canvas.size.Y))
 
-	canvas.filter.Delete()
-	canvas.filter = gl.NewTexture2D(1, gl.R8, int32(canvas.size.X), int32(canvas.size.Y))
-	canvas.buffer.Texture(gl.ColorAttachment1, canvas.filter, 0)
+	canvas.canvasTex.Delete()
+	canvas.canvasTex = gl.NewTexture2D(1, gl.R8UI, int32(canvas.size.X), int32(canvas.size.Y))
+	canvas.canvasBuf.Texture(gl.ColorAttachment0, canvas.canvasTex, 0)
 
-	canvas.buffer.DrawBuffers([]gl.FramebufferAttachment{gl.ColorAttachment0, gl.ColorAttachment1})
-	canvas.buffer.ReadBuffer(gl.NoAttachment)
+	canvas.canvasBuf.Renderbuffer(gl.DepthAttachment, canvas.depth)
+	canvas.canvasBuf.DrawBuffer(gl.ColorAttachment0)
+	canvas.canvasBuf.ReadBuffer(gl.NoAttachment)
 
-	st := canvas.buffer.CheckStatus(gl.DrawReadFramebuffer)
+	st := canvas.canvasBuf.CheckStatus(gl.DrawReadFramebuffer)
+	if st != gl.FramebufferComplete {
+		setErr(errors.New("pixel canvas texture creation: " + st.String()))
+	}
+
+	canvas.filterTex.Delete()
+	canvas.filterTex = gl.NewTexture2D(1, gl.R8UI, int32(canvas.size.X), int32(canvas.size.Y))
+	canvas.filterBuf.Texture(gl.ColorAttachment0, canvas.filterTex, 0)
+
+	canvas.filterBuf.Renderbuffer(gl.DepthAttachment, canvas.depth)
+	canvas.filterBuf.DrawBuffer(gl.ColorAttachment0)
+	canvas.filterBuf.ReadBuffer(gl.NoAttachment)
+
+	st = canvas.filterBuf.CheckStatus(gl.DrawReadFramebuffer)
 	if st != gl.FramebufferComplete {
 		setErr(errors.New("pixel canvas texture creation: " + st.String()))
 	}
@@ -162,11 +177,11 @@ func render() error {
 	screenUniforms.CanvasMargin.Y = int32(canvas.margin.Y)
 	screenUBO.SubData(&screenUniforms, 0)
 
-	canvas.buffer.Bind(gl.DrawFramebuffer)
+	canvas.canvasBuf.Bind(gl.DrawFramebuffer)
 	gl.Viewport(0, 0, int32(canvas.size.X), int32(canvas.size.Y))
 	pipeline.Bind()
-	gl.Enable(gl.Blend)
-	gl.Blending(gl.SrcAlpha, gl.OneMinusSrcAlpha)
+	gl.Disable(gl.Blend)
+	// gl.Blending(gl.SrcAlpha, gl.OneMinusSrcAlpha)
 
 	screenUBO.Bind(layoutScreen)
 	canvas.commandsICBO.Bind()
@@ -196,8 +211,7 @@ display:
 	gl.Viewport(int32(canvas.border.X), int32(canvas.border.Y),
 		int32(canvas.border.X+sz.X), int32(canvas.border.Y+sz.Y))
 	blitUBO.Bind(0)
-	canvas.texture.Bind(0)
-	canvas.filter.Bind(1)
+	canvas.canvasTex.Bind(0)
 	gl.Draw(0, 4)
 
 	return gl.Err()
@@ -208,9 +222,11 @@ display:
 // Clear sets the color of all pixels on the canvas; it also resets the filter
 // of all pixels.
 func Clear(c color.Index) {
+	//TODO: **defer clear to render function**
 	pipeline.Bind() //TODO: find another way to enable depthWrite
-	canvas.buffer.ClearColor(0, float32(c)/255, 0, 0, 0)
-	canvas.buffer.ClearColor(1, 0, 0, 0, 0)
+	// canvas.canvasBuf.ClearColor(0, float32(c)/255, 0, 0, 0)
+	canvas.canvasBuf.ClearColorUint(uint32(c), 0, 0, 1)
+	canvas.canvasBuf.ClearDepth(-1.0)
 }
 
 ////////////////////////////////////////////////////////////////////////////////

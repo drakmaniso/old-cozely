@@ -160,17 +160,17 @@ func (loop1) Render() {
 	}
 
 	triangulation.Walk(func(e quadedge.Edge) {
-		pixel.Lines(col1, toScreen(points[e.Orig()]), toScreen(points[e.Dest()]))
+		pixel.Lines(col1, 0, toScreen(points[e.Orig()]), toScreen(points[e.Dest()]))
 	})
 
 	pt := make([]pixel.XY, len(points))
 	for i, sd := range points {
 		pt[i] = toScreen(sd)
-		pixel.Box(col2, col2, 1, pt[i].MinusS(2), pt[i].PlusS(2))
+		pixel.Box(col2, col2, 0, 1, pt[i].MinusS(2), pt[i].PlusS(2))
 	}
 
 	if window.HasMouseFocus() {
-		pixel.Paint(pixel.MouseCursor, m)
+		pixel.MouseCursor. Paint(0, m)
 	}
 }
 

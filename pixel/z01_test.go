@@ -90,15 +90,15 @@ func (a *loop1) Render() {
 	switch a.mode {
 	case 0:
 		pz := a.mire.Size()
-		a.mire.Paint(pixel.XY{0, 0})
-		a.mire.Paint(pixel.XY{0, sz.Y - pz.Y})
-		a.mire.Paint(pixel.XY{sz.X - pz.X, 0})
-		a.mire.Paint(sz.Minus(pz))
+		a.mire.Paint(0, pixel.XY{0, 0})
+		a.mire.Paint(0, pixel.XY{0, sz.Y - pz.Y})
+		a.mire.Paint(0, pixel.XY{sz.X - pz.X, 0})
+		a.mire.Paint(0, sz.Minus(pz))
 	case 1:
 		pz := a.srgbGray.Size()
-		a.srgbGray.Paint(pixel.XY{sz.X/2 - pz.X/2, 32})
-		a.srgbRed.Paint(pixel.XY{sz.X/4 - pz.X/2, 96})
-		a.srgbGreen.Paint(pixel.XY{sz.X/2 - pz.X/2, 96})
-		a.srgbBlue.Paint(pixel.XY{3*sz.X/4 - pz.X/2, 96})
+		a.srgbGray.Paint(0, pixel.XY{sz.X/2 - pz.X/2, 32})
+		a.srgbRed.Paint(0, pixel.XY{sz.X/4 - pz.X/2, 96})
+		a.srgbGreen.Paint(0, pixel.XY{sz.X/2 - pz.X/2, 96})
+		a.srgbBlue.Paint(0, pixel.XY{3*sz.X/4 - pz.X/2, 96})
 	}
 }

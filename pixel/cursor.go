@@ -20,6 +20,7 @@ type cursor struct {
 	LetterSpacing int16
 	Interline     int16
 	Position      XY
+	Layer         int16
 }
 
 // Cursor holds the state used to write text on the canvas.
@@ -113,6 +114,7 @@ func (a *cmdQueue) WriteRune(r rune) {
 	g := Cursor.Font.glyph(r)
 	a.command(cmdText, 4, 1,
 		int16(Cursor.Color-fonts[Cursor.Font].basecolor),
+		Cursor.Layer,
 		Cursor.Position.Y-fonts[Cursor.Font].baseline,
 		int16(g), Cursor.Position.X)
 	Cursor.Position.X += pictures.mapping[g].w + Cursor.LetterSpacing
