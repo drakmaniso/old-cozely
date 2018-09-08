@@ -127,7 +127,7 @@ func setup() error {
 
 func cleanup() error {
 	// Palette
-	Palette(DefaultPalette)
+	SetPalette(DefaultPalette)
 	dirtyPal = true
 
 	// Canvases

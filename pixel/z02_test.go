@@ -155,7 +155,7 @@ func (loop2) Update() {
 func (a *loop2) Render() {
 	pixel.Clear(0)
 	for _, o := range a.shapes {
-		pixel.Paint(o.pict, o.pos)
+		o.pict.Paint(o.pos)
 	}
 	pixel.Locate(pixel.XY{8, 16})
 	ft, ov := cozely.RenderStats()

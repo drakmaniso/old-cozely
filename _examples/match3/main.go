@@ -67,7 +67,7 @@ func main() {
 }
 
 func (loop) Enter() {
-	pixel.Palette(palette)
+	pixel.SetPalette(palette)
 }
 
 func (loop) Leave() {

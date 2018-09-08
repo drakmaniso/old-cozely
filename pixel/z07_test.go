@@ -98,25 +98,25 @@ func (a *loop7) React() {
 func (a *loop7) Update() {
 	switch a.mode {
 	case 1:
-		pixel.Palette(pixel.DefaultPalette)
+		pixel.SetPalette(pixel.DefaultPalette)
 	case 2:
-		pixel.Palette(c64.Palette)
+		pixel.SetPalette(c64.Palette)
 	case 3:
-		pixel.Palette(cpc.Palette)
+		pixel.SetPalette(cpc.Palette)
 	case 4:
-		pixel.Palette(msx.Palette)
+		pixel.SetPalette(msx.Palette)
 	case 5:
-		pixel.Palette(msx2.Palette)
+		pixel.SetPalette(msx2.Palette)
 	case 6:
-		pixel.Palette(pico8.Palette)
+		pixel.SetPalette(pico8.Palette)
 	case 7:
-		pixel.Palette(a.palette)
+		pixel.SetPalette(a.palette)
 	case 8:
-		pixel.Palette(a.palette)
+		pixel.SetPalette(a.palette)
 	case 9:
-		pixel.Palette(a.palette)
+		pixel.SetPalette(a.palette)
 	case 0:
-		pixel.Palette(a.palette)
+		pixel.SetPalette(a.palette)
 		a.orange = pixel.SetColor(255, color.SRGB{1, 0.6, 0})
 		a.cyan = pixel.SetColor(254, color.SRGB{0, 0.9, 1})
 		a.black = pixel.SetColor(253, color.SRGB{0, 0, 0})
@@ -131,7 +131,7 @@ func (a *loop7) Render() {
 	ps := a.pict.Size()
 	p := cs.Minus(ps).Slash(2)
 	_ = p
-	pixel.Paint(a.pict, p)
+	a.pict.Paint(p)
 
 	pixel.Text(15, pixel.Monozela10)
 	pixel.Locate(p.Minus(pixel.XY{0, 8}))

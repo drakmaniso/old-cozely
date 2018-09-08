@@ -25,7 +25,7 @@ const (
 ////////////////////////////////////////////////////////////////////////////////
 
 // Paint queues a GPU command to put a picture on the canvas.
-func Paint(p PictureID, pos XY) {
+func (p PictureID) Paint (pos XY) {
 	canvas.command(cmdPicture, 4, 1, int16(p), pos.X, pos.Y)
 }
 

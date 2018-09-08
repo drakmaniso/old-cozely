@@ -56,7 +56,7 @@ func (l *loop2) setup() {
 }
 
 func (l *loop2) Enter() {
-	pixel.Palette(l.monochrome)
+	pixel.SetPalette(l.monochrome)
 }
 
 func (loop2) Leave() {
@@ -68,10 +68,10 @@ func (l *loop2) React() {
 	if play.Started(input.Any) {
 		l.playing = !l.playing
 		if l.playing {
-			pixel.Palette(l.colorful)
+			pixel.SetPalette(l.colorful)
 			l.shufflecolors()
 		} else {
-			pixel.Palette(l.monochrome)
+			pixel.SetPalette(l.monochrome)
 		}
 	}
 	if quit.Started(input.Any) {
@@ -98,5 +98,5 @@ func (l *loop2) Render() {
 	pixel.Clear(0)
 
 	o := pixel.Resolution().Minus(l.logo.Size()).Slash(2)
-	pixel.Paint(l.logo, o)
+	l.logo.Paint(o)
 }

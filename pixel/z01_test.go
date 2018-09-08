@@ -54,7 +54,7 @@ func (a *loop1) declare() {
 func (a *loop1) Enter() {
 	a.mode = 0
 
-	pixel.Palette(a.palmire)
+	pixel.SetPalette(a.palmire)
 }
 
 func (loop1) Leave() {
@@ -74,9 +74,9 @@ func (a *loop1) React() {
 		}
 		switch a.mode {
 		case 0:
-			pixel.Palette(a.palmire)
+			pixel.SetPalette(a.palmire)
 		case 1:
-			pixel.Palette(a.palsrgb)
+			pixel.SetPalette(a.palsrgb)
 		}
 	}
 }
@@ -90,15 +90,15 @@ func (a *loop1) Render() {
 	switch a.mode {
 	case 0:
 		pz := a.mire.Size()
-		pixel.Paint(a.mire, pixel.XY{0, 0})
-		pixel.Paint(a.mire, pixel.XY{0, sz.Y - pz.Y})
-		pixel.Paint(a.mire, pixel.XY{sz.X - pz.X, 0})
-		pixel.Paint(a.mire, sz.Minus(pz))
+		a.mire.Paint(pixel.XY{0, 0})
+		a.mire.Paint(pixel.XY{0, sz.Y - pz.Y})
+		a.mire.Paint(pixel.XY{sz.X - pz.X, 0})
+		a.mire.Paint(sz.Minus(pz))
 	case 1:
 		pz := a.srgbGray.Size()
-		pixel.Paint(a.srgbGray, pixel.XY{sz.X/2 - pz.X/2, 32})
-		pixel.Paint(a.srgbRed, pixel.XY{sz.X/4 - pz.X/2, 96})
-		pixel.Paint(a.srgbGreen, pixel.XY{sz.X/2 - pz.X/2, 96})
-		pixel.Paint(a.srgbBlue, pixel.XY{3*sz.X/4 - pz.X/2, 96})
+		a.srgbGray.Paint(pixel.XY{sz.X/2 - pz.X/2, 32})
+		a.srgbRed.Paint(pixel.XY{sz.X/4 - pz.X/2, 96})
+		a.srgbGreen.Paint(pixel.XY{sz.X/2 - pz.X/2, 96})
+		a.srgbBlue.Paint(pixel.XY{3*sz.X/4 - pz.X/2, 96})
 	}
 }

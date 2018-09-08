@@ -57,19 +57,19 @@ var (
 )
 
 func init() {
-	Palette(DefaultPalette)
+	SetPalette(DefaultPalette)
 }
 
 var debugColor = color.LRGBA{0, 0, 0, 1}
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// Palette asks the GPU to change the color palette.
+// SetPalette asks the GPU to change the color palette.
 //
 // Note that the palette will be used for every drawing command of the current
 // frame, even those issued before the call to Use. In other words, you cannot
 // change the palette in the middle of a frame.
-func Palette(p color.Palette) {
+func SetPalette(p color.Palette) {
 	for c := range palette {
 		switch {
 		case c == 0:
