@@ -7,12 +7,9 @@ import (
 	"testing"
 
 	"github.com/cozely/cozely"
+	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
-	"github.com/cozely/cozely/pixel/palettes/c64"
-	"github.com/cozely/cozely/pixel/palettes/cpc"
-	"github.com/cozely/cozely/pixel/palettes/msx"
-	"github.com/cozely/cozely/pixel/palettes/msx2"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -20,8 +17,7 @@ import (
 var ()
 
 type loop1 struct {
-	palmire, palsrgb                       pixel.PaletteID
-	c64, cpc, msx, msx2                    pixel.PaletteID
+	palmire, palsrgb                       color.Palette
 	mire                                   pixel.PictureID
 	srgbGray, srgbRed, srgbGreen, srgbBlue pixel.PictureID
 	mode                                   int
@@ -45,12 +41,8 @@ func TestTest1(t *testing.T) {
 func (a *loop1) declare() {
 	pixel.SetResolution(320, 180)
 
-	a.palmire = pixel.Palette("graphics/mire")
-	a.palsrgb = pixel.Palette("graphics/srgb-gray")
-	a.c64 = pixel.PaletteColors(c64.Colors)
-	a.cpc = pixel.PaletteColors(cpc.Colors)
-	a.msx = pixel.PaletteColors(msx.Colors)
-	a.msx2 = pixel.PaletteColors(msx2.Colors)
+	a.palmire = color.PaletteFrom("graphics/mire")
+	a.palsrgb = color.PaletteFrom("graphics/srgb-gray")
 
 	a.mire = pixel.Picture("graphics/mire")
 	a.srgbGray = pixel.Picture("graphics/srgb-gray")
@@ -62,7 +54,7 @@ func (a *loop1) declare() {
 func (a *loop1) Enter() {
 	a.mode = 0
 
-	a.palmire.Use()
+	pixel.Palette(a.palmire)
 }
 
 func (loop1) Leave() {
@@ -82,23 +74,10 @@ func (a *loop1) React() {
 		}
 		switch a.mode {
 		case 0:
-			a.palmire.Use()
+			pixel.Palette(a.palmire)
 		case 1:
-			a.palsrgb.Use()
+			pixel.Palette(a.palsrgb)
 		}
-	}
-
-	if scenes[1].Started(0) {
-		a.c64.Use()
-	}
-	if scenes[2].Started(0) {
-		a.cpc.Use()
-	}
-	if scenes[3].Started(0) {
-		a.msx.Use()
-	}
-	if scenes[4].Started(0) {
-		a.msx2.Use()
 	}
 }
 

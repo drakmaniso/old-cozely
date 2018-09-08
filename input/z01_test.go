@@ -92,8 +92,6 @@ func TestTest1(t *testing.T) {
 	}
 }
 
-var pal pixel.PaletteID
-
 ////////////////////////////////////////////////////////////////////////////////
 
 type loop1 struct{}
@@ -214,9 +212,9 @@ func (loop1) Render() {
 
 func changecolor(p bool) {
 	if p {
-		pixel.Text(8, pixel.Monozela10)
+		pixel.Text(15, pixel.Monozela10)
 	} else {
-		pixel.Text(14, pixel.Monozela10)
+		pixel.Text(8, pixel.Monozela10)
 	}
 }
 

@@ -8,23 +8,22 @@ import (
 
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/color"
+	"github.com/cozely/cozely/color/c64"
+	"github.com/cozely/cozely/color/cpc"
+	"github.com/cozely/cozely/color/msx"
+	"github.com/cozely/cozely/color/msx2"
+	"github.com/cozely/cozely/color/pico8"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
-	"github.com/cozely/cozely/pixel/palettes/c64"
-	"github.com/cozely/cozely/pixel/palettes/cpc"
-	"github.com/cozely/cozely/pixel/palettes/msx"
-	"github.com/cozely/cozely/pixel/palettes/msx2"
-	"github.com/cozely/cozely/pixel/palettes/pico8"
 )
 
 // Declarations ////////////////////////////////////////////////////////////////
 
 type loop7 struct {
-	pict                         pixel.PictureID
-	palette, c64, cpc, msx, msx2 pixel.PaletteID
-	pico8                        pixel.PaletteID
-	orange, cyan, black          pixel.Color
-	mode                         int
+	pict                pixel.PictureID
+	palette             color.Palette
+	orange, cyan, black color.Index
+	mode                int
 }
 
 // Initialization //////////////////////////////////////////////////////////////
@@ -46,12 +45,6 @@ func TestTest7(t *testing.T) {
 }
 
 func (a *loop7) setup() {
-	a.c64 = pixel.PaletteColors(c64.Colors)
-	a.cpc = pixel.PaletteColors(cpc.Colors)
-	a.msx = pixel.PaletteColors(msx.Colors)
-	a.msx2 = pixel.PaletteColors(msx2.Colors)
-	a.pico8 = pixel.PaletteColors(pico8.Colors)
-
 	a.pict = pixel.Picture("graphics/paletteswatch")
 
 	pixel.SetResolution(160, 160)
@@ -61,21 +54,21 @@ func (a *loop7) setup() {
 
 func (a *loop7) Enter() {
 	a.mode = 1
-	a.palette = pixel.PaletteColors([256]color.Color{
-		color.LRGB{0.1, 0.1, 0.1},
-		color.LRGB{0.2, 0.2, 0.2},
-		color.LRGB{0.3, 0.3, 0.3},
-		color.LRGB{0.4, 0.4, 0.4},
-		color.LRGB{0.5, 0.5, 0.5},
-		color.LRGB{0.6, 0.6, 0.6},
-		color.LRGB{0.7, 0.7, 0.7},
-		color.LRGB{0.8, 0.8, 0.8},
-		color.LRGB{0.9, 0.9, 0.9},
-		color.LRGB{1.0, 1.0, 1.0},
-	})
-	a.orange = a.palette.Set(255, color.SRGB{1, 0.6, 0})
-	a.cyan = a.palette.Set(254, color.SRGB{0, 0.9, 1})
-	a.black = a.palette.Set(253, color.SRGB{0, 0, 0})
+	a.palette = color.Palette{
+		Names: map[string]color.Index{},
+		Colors: []color.LRGBA{
+			{0.1, 0.1, 0.1, 0},
+			{0.2, 0.2, 0.2, 0},
+			{0.3, 0.3, 0.3, 0},
+			{0.4, 0.4, 0.4, 0},
+			{0.5, 0.5, 0.5, 0},
+			{0.6, 0.6, 0.6, 0},
+			{0.7, 0.7, 0.7, 0},
+			{0.8, 0.8, 0.8, 0},
+			{0.9, 0.9, 0.9, 0},
+			{1.0, 1.0, 1.0, 0},
+		},
+	}
 }
 
 func (a *loop7) Leave() {
@@ -93,7 +86,6 @@ func (a *loop7) React() {
 		if a.mode > 9 {
 			a.mode = 0
 		}
-		a.palette.Use()
 	}
 
 	for i := range scenes {
@@ -106,25 +98,28 @@ func (a *loop7) React() {
 func (a *loop7) Update() {
 	switch a.mode {
 	case 1:
-		pixel.DefaultPalette.Use()
+		pixel.Palette(pixel.DefaultPalette)
 	case 2:
-		a.c64.Use()
+		pixel.Palette(c64.Palette)
 	case 3:
-		a.cpc.Use()
+		pixel.Palette(cpc.Palette)
 	case 4:
-		a.msx.Use()
+		pixel.Palette(msx.Palette)
 	case 5:
-		a.msx2.Use()
+		pixel.Palette(msx2.Palette)
 	case 6:
-		a.pico8.Use()
+		pixel.Palette(pico8.Palette)
 	case 7:
-		a.palette.Use()
+		pixel.Palette(a.palette)
 	case 8:
-		a.palette.Use()
+		pixel.Palette(a.palette)
 	case 9:
-		a.palette.Use()
+		pixel.Palette(a.palette)
 	case 0:
-		a.palette.Use()
+		pixel.Palette(a.palette)
+		a.orange = pixel.SetColor(255, color.SRGB{1, 0.6, 0})
+		a.cyan = pixel.SetColor(254, color.SRGB{0, 0.9, 1})
+		a.black = pixel.SetColor(253, color.SRGB{0, 0, 0})
 	}
 }
 

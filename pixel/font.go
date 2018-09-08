@@ -10,6 +10,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/internal"
 )
 
@@ -34,7 +35,7 @@ var fonts = []font{{}}
 type font struct {
 	height    int16
 	baseline  int16
-	basecolor Color
+	basecolor color.Index
 	first     uint16 // index of the first glyph
 }
 
@@ -79,8 +80,6 @@ func (f FontID) glyph(r rune) uint16 {
 func (f FontID) Height() int16 {
 	return fonts[f].height
 }
-
-////////////////////////////////////////////////////////////////////////////////
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -135,8 +134,8 @@ func (f FontID) load(frects *[]uint32) error {
 
 	fonts[f].basecolor = 255
 	for _, c := range p.Pix {
-		if c != 0 && Color(c) < fonts[f].basecolor {
-			fonts[f].basecolor = Color(c)
+		if c != 0 && color.Index(c) < fonts[f].basecolor {
+			fonts[f].basecolor = color.Index(c)
 		}
 	}
 

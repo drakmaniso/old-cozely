@@ -61,12 +61,6 @@ var bindings1 = input.Bindings{
 
 ////////////////////////////////////////////////////////////////////////////////
 
-var (
-	palette = color.Palette(color.SRGB8{0xFF, 0xFF, 0xFF})
-)
-
-////////////////////////////////////////////////////////////////////////////////
-
 var pipeline *gl.Pipeline
 
 // Uniform buffer
@@ -110,7 +104,7 @@ func TestTest1(t *testing.T) {
 			cozely.UpdateStep(1.0/50),
 			cozely.Multisample(8),
 		)
-		cozely.Events.Resize = resize
+		window.Events.Resize = resize
 		err := cozely.Run(loop{})
 		if err != nil {
 			panic(err)
@@ -122,7 +116,6 @@ func (loop) Enter() {
 	input.ShowMouse(false)
 	input.Load(bindings1)
 	context1.Activate(1)
-	palette.Activate()
 
 	pipeline = gl.NewPipeline(
 		poly.PipelineSetup(),
@@ -161,7 +154,7 @@ func (loop) Leave() {
 }
 
 func resize() {
-	s := cozely.WindowSize()
+	s := window.Size()
 	gl.Viewport(0, 0, int32(s.X), int32(s.Y))
 	if camera != nil {
 		camera.WindowResized()
@@ -239,7 +232,7 @@ func (loop) Render() {
 	prepare()
 
 	gl.DefaultFramebuffer.Bind(gl.DrawFramebuffer)
-	s := cozely.WindowSize()
+	s := window.Size()
 	gl.Viewport(0, 0, int32(s.X), int32(s.Y))
 	pipeline.Bind()
 	gl.ClearDepthBuffer(1.0)
@@ -265,7 +258,7 @@ func (loop) Render() {
 	if or > 0 {
 		pixel.Printf(" (%d)", or)
 	}
-	if cozely.HasMouseFocus() {
+	if window.HasMouseFocus() {
 		pixel.Paint(pixel.MouseCursor, pixel.ToCanvas(window.XYof(cursor.XY(0))))
 	}
 }
@@ -277,7 +270,7 @@ func prepare() {
 
 	m := rotation.XY(0)
 
-	s := coord.XYof(cozely.WindowSize())
+	s := coord.XYof(window.Size())
 	switch {
 	case rollleft.Ongoing(1) || rollright.Ongoing(1):
 		camera.Rotate(0, 0, rolling*dt)

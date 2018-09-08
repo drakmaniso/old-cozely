@@ -16,8 +16,9 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 
 var (
-	col1 = pixel.Color(14)
-	col2 = pixel.Color(8)
+	col1 = pixel.DefaultPalette.Names["Indigo"]
+	col2 = pixel.DefaultPalette.Names["Orange"]
+	col3 = pixel.DefaultPalette.Names["White"]
 )
 
 var (
@@ -37,6 +38,8 @@ type loop1 struct{}
 func TestTest1(t *testing.T) {
 	do(func() {
 		defer cozely.Recover()
+
+		pixel.SetZoom(2)
 
 		input.Load(bindings)
 		err := cozely.Run(loop1{})
@@ -147,7 +150,7 @@ func (loop1) Render() {
 	m := pixel.ToCanvas(window.XYof(cursor.XY(0)))
 	p := fromScreen(m)
 	pixel.Locate(pixel.XY{2, 8})
-	pixel.Text(col2, 0)
+	pixel.Text(col3, 0)
 	fsr, fso := cozely.RenderStats()
 	pixel.Printf("Framerate: %.2f (%d)\n", 1000*fsr, fso)
 	if p.X >= 0 && p.X <= 1.0 {

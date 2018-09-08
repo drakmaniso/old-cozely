@@ -6,6 +6,7 @@ package pixel
 import (
 	"errors"
 
+	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/internal"
 	"github.com/cozely/cozely/window"
 	"github.com/cozely/cozely/x/gl"
@@ -27,7 +28,7 @@ var canvas = struct {
 
 	cmdQueue
 }{
-	resolution: XY{640, 360},
+	resolution: XY{},
 	zoom:       2,
 }
 
@@ -143,12 +144,11 @@ func init() {
 func render() error {
 	// Upload the current palette
 
-	p := palettes.current
-	if palettes.changed[p] {
-		palettes.ssbo.SubData(palettes.stdcolors[p][:], 0)
-		palettes.changed[p] = false
+	if dirtyPal {
+		paletteSSBO.SubData(palette[:], 0)
+		dirtyPal = false
 	}
-	palettes.ssbo.Bind(0)
+	paletteSSBO.Bind(0)
 
 	// Execute all pending commands
 
@@ -207,9 +207,9 @@ display:
 
 // Clear sets the color of all pixels on the canvas; it also resets the filter
 // of all pixels.
-func Clear(color Color) {
+func Clear(c color.Index) {
 	pipeline.Bind() //TODO: find another way to enable depthWrite
-	canvas.buffer.ClearColor(0, float32(color)/255, 0, 0, 0)
+	canvas.buffer.ClearColor(0, float32(c)/255, 0, 0, 0)
 	canvas.buffer.ClearColor(1, 0, 0, 0, 0)
 }
 

@@ -22,18 +22,9 @@ func init() {
 }
 
 func setup() error {
-	// Prepare the palettes
+	// Prepare the palette
 
-	palettes.ssbo = gl.NewStorageBuffer(uintptr(256*4*4), gl.DynamicStorage|gl.MapWrite)
-
-	for id, pp := range palettes.path {
-		if pp != "" {
-			PaletteID(id).load(pp)
-		}
-	}
-
-	//TODO: Add default palette
-	palettes.current = PaletteID(0)
+	paletteSSBO = gl.NewStorageBuffer(uintptr(256*4*4), gl.DynamicStorage|gl.MapWrite)
 
 	// Prepare the canvas
 
@@ -136,12 +127,8 @@ func setup() error {
 
 func cleanup() error {
 	// Palette
-	palettes.ssbo.Delete()
-	palettes.path = palettes.path[:1]
-	palettes.changed = palettes.changed[:1]
-	palettes.stdcolors = palettes.stdcolors[:1]
-	palettes.current = 0
-	palettes.changed[0] = true
+	Palette(DefaultPalette)
+	dirtyPal = true
 
 	// Canvases
 	canvas.texture.Delete()

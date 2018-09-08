@@ -48,6 +48,7 @@ func (c SRGB8) Standard() (r, g, b, a float32) {
 	return r, g, b, 1
 }
 
+
 ////////////////////////////////////////////////////////////////////////////////
 
 // RGBA implements the image.Color interface.

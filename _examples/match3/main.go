@@ -67,14 +67,14 @@ func main() {
 }
 
 func (loop) Enter() {
-	palette.Activate()
+	pixel.Palette(palette)
 }
 
 func (loop) Leave() {
 }
 
 func setup() error {
-	cozely.Events.Resize = resize
+	window.Events.Resize = resize
 
 	pixel.SetResolution(180, 180)
 

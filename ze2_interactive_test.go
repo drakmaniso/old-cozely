@@ -25,8 +25,8 @@ var bindings = input.Bindings{
 
 type loop2 struct {
 	logo       pixel.PictureID
-	monochrome pixel.PaletteID
-	colorful   pixel.PaletteID
+	monochrome color.Palette
+	colorful   color.Palette
 
 	playing bool
 }
@@ -51,13 +51,12 @@ func Example_interactive() {
 func (l *loop2) setup() {
 	pixel.SetResolution(160, 100)
 	l.logo = pixel.Picture("graphics/cozely")
-	l.monochrome = pixel.Palette("graphics/cozely")
-	l.colorful = pixel.Palette("")
+	l.monochrome = color.PaletteFrom("graphics/cozely")
+	l.colorful = color.PaletteFrom("")
 }
 
 func (l *loop2) Enter() {
-	l.monochrome.Use()
-	l.shufflecolors()
+	pixel.Palette(l.monochrome)
 }
 
 func (loop2) Leave() {
@@ -68,6 +67,12 @@ func (loop2) Leave() {
 func (l *loop2) React() {
 	if play.Started(input.Any) {
 		l.playing = !l.playing
+		if l.playing {
+			pixel.Palette(l.colorful)
+			l.shufflecolors()
+		} else {
+			pixel.Palette(l.monochrome)
+		}
 	}
 	if quit.Started(input.Any) {
 		cozely.Stop(nil)
@@ -85,18 +90,12 @@ func (l *loop2) shufflecolors() {
 		g := 0.2 + 0.7*rand.Float32()
 		r := 0.2 + 0.7*rand.Float32()
 		b := 0.2 + 0.7*rand.Float32()
-		l.colorful.Set(pixel.Color(i), color.SRGB{r, g, b})
+		pixel.SetColor(color.Index(i), color.SRGB{r, g, b})
 	}
 }
 
 func (l *loop2) Render() {
 	pixel.Clear(0)
-
-	if l.playing {
-		l.colorful.Use()
-	} else {
-		l.monochrome.Use()
-	}
 
 	o := pixel.Resolution().Minus(l.logo.Size()).Slash(2)
 	pixel.Paint(l.logo, o)

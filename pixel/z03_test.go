@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/cozely/cozely"
+	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
 	"github.com/cozely/cozely/window"
@@ -17,7 +18,7 @@ import (
 var ()
 
 type loop3 struct {
-	bg, fg  pixel.Color
+	bg, fg color.Index
 
 	tinela9, monozela10, simpela10, simpela12,
 	cozela10, cozela12, chaotela12, font pixel.FontID

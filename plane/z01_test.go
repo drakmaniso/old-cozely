@@ -7,26 +7,26 @@ import (
 	"math/rand"
 	"testing"
 
-	"github.com/cozely/cozely/window"
-
 	"github.com/cozely/cozely"
+	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
 	"github.com/cozely/cozely/plane"
+	"github.com/cozely/cozely/window"
 	"github.com/cozely/cozely/x/math32"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
 
 var (
-	col1 = pixel.Color(8) // palette1.Set(1,color.LRGB{1, 1, 1})
-	col2 = pixel.Color(9) // palette1.Set(2,color.LRGB{0.4, 0.05, 0.0})
-	col3 = pixel.Color(12) //  palette1.Set(3,color.LRGB{0.0, 0.4, 0.05})
-	col4 = pixel.Color(13) // palette1.Set(4,color.LRGB{0.0, 0.05, 0.45})
-	col5 = pixel.Color(3) // palette1.Set(5,color.LRGB{0.1, 0.0, 0.15})
-	col6 = pixel.Color(7) // palette1.Set(6,color.LRGB{0.25, 0.25, 0.25})
-	col7 = pixel.Color(6) // palette1.Set(7,color.LRGB{0.025, 0.025, 0.025})
+	col1 = pixel.DefaultPalette.Names["White"]
+	col2 = pixel.DefaultPalette.Names["Red"]
+	col3 = pixel.DefaultPalette.Names["Green"]
+	col4 = pixel.DefaultPalette.Names["Blue"]
+	col5 = pixel.DefaultPalette.Names["Dark Gray"]
+	col6 = pixel.DefaultPalette.Names["Light Gray"]
+	col7 = pixel.DefaultPalette.Names["Black"]
 )
 
 var (
@@ -82,7 +82,7 @@ func (loop1) Update() {
 }
 
 func (loop1) Render() {
-	pixel.Clear(0)
+	pixel.Clear(2)
 	ratio = float32(pixel.Resolution().Y)
 	offset = coord.XY{
 		X: (float32(pixel.Resolution().X) - ratio),
@@ -104,7 +104,7 @@ func (loop1) Render() {
 	pixel.Triangles(col7, pt[0], pt[1], pt[2], pt[0])
 	pixel.Lines(col6, pt[0], pt[1], pt[2], pt[0])
 	for i := range points {
-		var c pixel.Color
+		var c color.Index
 		switch i {
 		case 0:
 			c = col2

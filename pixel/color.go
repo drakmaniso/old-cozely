@@ -9,15 +9,12 @@ import (
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// A Color is an index in the palette currently in use.
-type Color uint8
-
 // Transparent is the only reserved color index. All palettes start with it.
-const Transparent = Color(0)
+const Transparent = color.Index(0)
 
 ////////////////////////////////////////////////////////////////////////////////
 
 // LRGBA returns the color corresponding to a color index.
-func (c Color) LRGBA() color.LRGBA {
-	return palettes.stdcolors[palettes.current][c]
+func LRGBA(c color.Index) color.LRGBA {
+	return palette[c]
 }

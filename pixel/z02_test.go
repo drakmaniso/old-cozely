@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/cozely/cozely"
+	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
 	"github.com/cozely/cozely/window"
@@ -16,7 +17,7 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 
 type loop2 struct {
-	txtcol pixel.Color
+	txtcol color.Index
 	picts  []pixel.PictureID
 	shapes []shape
 }
