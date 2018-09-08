@@ -32,14 +32,13 @@ var palettes struct {
 	path    []string
 
 	// For each palette/color combination
-	colors    [][256]color.Color
 	stdcolors [][256]color.LRGBA
 }
 
 func init() {
 	palettes.changed = append(palettes.changed, true)
 	palettes.path = append(palettes.path, "")
-	palettes.colors = append(palettes.colors, [256]color.Color{
+	pal := [256]color.Color{
 		color.SRGBA{0, 0, 0, 0},
 		color.SRGB8{0x00, 0x00, 0x00},
 		color.SRGB8{0x28, 0x22, 0x53},
@@ -57,13 +56,12 @@ func init() {
 		color.SRGB8{0x83, 0x76, 0x9C},
 		color.SRGB8{0xFF, 0x77, 0xA8},
 		color.SRGB8{0xFF, 0xCC, 0xAA},
-	})
+	}
 	palettes.stdcolors = append(palettes.stdcolors, [256]color.LRGBA{})
 
-	for c := range palettes.colors[0] {
-		cc := palettes.colors[0][c]
+	for c := range pal {
+		cc := pal[c]
 		if cc == nil {
-			palettes.colors[0][c] = debugColor
 			palettes.stdcolors[0][c] = debugColor
 			continue
 		}
@@ -75,7 +73,7 @@ var debugColor = color.LRGBA{0, 0, 0, 1}
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func PaletteColors(c [256]color.Color) PaletteID {
+func PaletteColors(pal [256]color.Color) PaletteID {
 	//TODO: avoid copy?
 	a := len(palettes.stdcolors)
 
@@ -85,10 +83,9 @@ func PaletteColors(c [256]color.Color) PaletteID {
 
 	palettes.changed = append(palettes.changed, true)
 	palettes.path = append(palettes.path, "")
-	palettes.colors = append(palettes.colors, c)
 	palettes.stdcolors = append(palettes.stdcolors, [256]color.LRGBA{})
-	for c := range palettes.colors[a] {
-		cc := palettes.colors[a][c]
+	for c := range pal {
+		cc := pal[c]
 		if cc != nil {
 			palettes.stdcolors[a][c] = color.LRGBAof(cc)
 		} else {
@@ -108,7 +105,6 @@ func Palette(path string) PaletteID {
 
 	palettes.changed = append(palettes.changed, false)
 	palettes.path = append(palettes.path, path)
-	palettes.colors = append(palettes.colors, [256]color.Color{})
 	palettes.stdcolors = append(palettes.stdcolors, [256]color.LRGBA{})
 
 	return PaletteID(a)
@@ -133,7 +129,6 @@ func (a PaletteID) load(name string) error {
 	//TODO: clear the palette?
 
 	palettes.stdcolors[a][0] = color.LRGBA{0, 0, 0, 0}
-	palettes.colors[a][0] = color.LRGBA{0, 0, 0, 0}
 	j := 1
 	for i := range p {
 		r, g, b, al := p[i].RGBA()
@@ -150,7 +145,6 @@ func (a PaletteID) load(name string) error {
 			B: float32(b) / float32(0xFFFF),
 			A: float32(al) / float32(0xFFFF),
 		}
-		palettes.colors[a][j] = c
 		palettes.stdcolors[a][j] = color.LRGBAof(c)
 		j++
 	}
@@ -185,17 +179,14 @@ func (a PaletteID) Use() {
 // Clear removes all colors from the palette.
 func (a PaletteID) Clear() {
 	for c := range palettes.stdcolors[a] {
-		palettes.colors[a][c] = nil
 		palettes.stdcolors[a][c] = debugColor
 	}
-	palettes.colors[a][0] = color.LRGBA{0, 0, 0, 0}
 	palettes.stdcolors[a][0] = color.LRGBA{0, 0, 0, 0}
 	palettes.changed[a] = true
 }
 
 // Set changes the color associated with an index.
 func (a PaletteID) Set(i Color, c color.Color) Color {
-	palettes.colors[a][i] = c
 	palettes.changed[a] = true
 	if c == nil {
 		palettes.stdcolors[a][i] = color.LRGBA{1, 0, .5, 1}

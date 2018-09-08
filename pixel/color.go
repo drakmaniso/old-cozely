@@ -21,8 +21,3 @@ const Transparent = Color(0)
 func (c Color) LRGBA() color.LRGBA {
 	return palettes.stdcolors[palettes.current][c]
 }
-
-// Color returns the color corresponding to a color index.
-func (c Color) Color() color.Color {
-	return palettes.colors[palettes.current][c]
-}

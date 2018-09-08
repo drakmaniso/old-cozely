@@ -140,7 +140,6 @@ func cleanup() error {
 	palettes.path = palettes.path[:1]
 	palettes.changed = palettes.changed[:1]
 	palettes.stdcolors = palettes.stdcolors[:1]
-	palettes.colors = palettes.colors[:1]
 	palettes.current = 0
 	palettes.changed[0] = true
 
