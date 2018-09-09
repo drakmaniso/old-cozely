@@ -151,7 +151,7 @@ func (loop1) Render() {
 
 	m := pixel.ToCanvas(window.XYof(cursor.XY(0)))
 	p := fromScreen(m)
-	cur.Locate(pixel.XY{2, 8})
+	cur.Locate(1, pixel.XY{2, 8})
 	cur.Color = col3
 	fsr, fso := cozely.RenderStats()
 	cur.Printf("Framerate: %.2f (%d)\n", 1000*fsr, fso)
@@ -172,7 +172,7 @@ func (loop1) Render() {
 	}
 
 	if window.HasMouseFocus() {
-		pixel.MouseCursor. Paint(0, m)
+		pixel.MouseCursor.Paint(0, m)
 	}
 }
 

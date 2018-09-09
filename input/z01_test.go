@@ -139,8 +139,8 @@ func (loop1) Render() {
 
 	cur := pixel.Cursor{}
 
-	cur.Locate(pixel.XY{2, 12})
-	cur.Text(7, pixel.Monozela10)
+	cur.Locate(0, pixel.XY{2, 12})
+	cur.Style(7, pixel.Monozela10)
 
 	cur.Println()
 	changecolor(&cur, false)
@@ -193,9 +193,9 @@ func (loop1) Render() {
 
 func changecolor(cur *pixel.Cursor, p bool) {
 	if p {
-		cur.Text(14, pixel.Monozela10)
+		cur.Style(14, pixel.Monozela10)
 	} else {
-		cur.Text(7, pixel.Monozela10)
+		cur.Style(7, pixel.Monozela10)
 	}
 }
 

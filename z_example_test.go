@@ -23,7 +23,7 @@ var bindings = input.Bindings{
 	},
 }
 
-type loop2 struct {
+type loop struct {
 	logo       pixel.PictureID
 	monochrome color.Palette
 	colorful   color.Palette
@@ -33,10 +33,10 @@ type loop2 struct {
 
 // Initialization //////////////////////////////////////////////////////////////
 
-func Example_interactive() {
+func Example() {
 	defer cozely.Recover()
 
-	l := loop2{}
+	l := loop{}
 	l.setup()
 
 	input.Load(bindings)
@@ -48,23 +48,23 @@ func Example_interactive() {
 	// Output:
 }
 
-func (l *loop2) setup() {
+func (l *loop) setup() {
 	pixel.SetResolution(160, 100)
 	l.logo = pixel.Picture("graphics/cozely")
 	l.monochrome = color.PaletteFrom("graphics/cozely")
 	l.colorful = color.PaletteFrom("")
 }
 
-func (l *loop2) Enter() {
+func (l *loop) Enter() {
 	pixel.SetPalette(l.monochrome)
 }
 
-func (loop2) Leave() {
+func (loop) Leave() {
 }
 
 // Game Loop ///////////////////////////////////////////////////////////////////
 
-func (l *loop2) React() {
+func (l *loop) React() {
 	if play.Started(input.Any) {
 		l.playing = !l.playing
 		if l.playing {
@@ -79,13 +79,13 @@ func (l *loop2) React() {
 	}
 }
 
-func (l *loop2) Update() {
+func (l *loop) Update() {
 	if l.playing {
 		l.shufflecolors()
 	}
 }
 
-func (l *loop2) shufflecolors() {
+func (l *loop) shufflecolors() {
 	for i := 2; i < 14; i++ {
 		g := 0.2 + 0.7*rand.Float32()
 		r := 0.2 + 0.7*rand.Float32()
@@ -94,7 +94,7 @@ func (l *loop2) shufflecolors() {
 	}
 }
 
-func (l *loop2) Render() {
+func (l *loop) Render() {
 	pixel.Clear(0)
 
 	o := pixel.Resolution().Minus(l.logo.Size()).Slash(2)

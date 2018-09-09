@@ -134,8 +134,8 @@ func (a *loop7) Render() {
 	a.pict.Paint(0, p)
 
 	cur := pixel.Cursor{}
-	cur.Text(15, pixel.Monozela10)
-	cur.Locate(p.Minus(pixel.XY{0, 8}))
+	cur.Style(15, pixel.Monozela10)
+	cur.Locate(0,p.Minus(pixel.XY{0, 8}))
 	switch a.mode {
 	case 1:
 		cur.Print("Default Palette")

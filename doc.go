@@ -10,5 +10,44 @@ supports windows and linux, and has only two dependencies (SDL2 and Opengl 4.6).
 
 **THIS IS A WORK IN PROGRESS**, not usable yet: the framework is *very*
 incomplete, and the API is subject to frequent changes.
+
+Hello World example:
+
+	package main
+
+	import (
+		"github.com/cozely/cozely"
+		"github.com/cozely/cozely/pixel"
+	)
+
+	func main() {
+		cozely.Run(loop{})
+	}
+
+	type loop struct{}
+
+	func (loop) Enter()  {
+		// Enter the game loop
+	}
+
+	func (loop) React()  {
+		// React to user inputs
+	}
+
+	func (loop) Update() {
+		// Update the game state
+	}
+
+	func (loop) Render() {
+		// Render the game state
+		pixel.Clear(1)
+		cur := pixel.Cursor{}
+		cur.Print("Hello, World!")
+	}
+
+	func (loop) Leave()  {
+		// Leave the game loop
+	}
+
 */
 package cozely

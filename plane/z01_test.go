@@ -116,15 +116,15 @@ func (loop1) Render() {
 			c = col4
 		}
 		pixel.Box(c, c, 0, 2, pt[i].Minus(s), pt[i].Plus(s))
-		cur.Locate(pixel.XY{pt[i].X - 2, pt[i].Y + 3})
-		cur.Text(col1, 0)
+		cur.Locate(0, pixel.XY{pt[i].X - 2, pt[i].Y + 3})
+		cur.Style(col1, 0)
 		cur.Print([]string{"A", "B", "C"}[i])
 	}
 
 	m := pixel.ToCanvas(window.XYof(cursor.XY(0)))
 	p := fromScreen(m)
-	cur.Locate(pixel.XY{2, 8})
-	cur.Text(col1, 0)
+	cur.Locate(1, pixel.XY{2, 8})
+	cur.Style(col1, 0)
 	cur.Printf("A: %.3f, %.3f\n", points[0].X, points[0].Y)
 	cur.Printf("B: %.3f, %.3f\n", points[1].X, points[1].Y)
 	cur.Printf("C: %.3f, %.3f\n", points[2].X, points[2].Y)
@@ -138,18 +138,18 @@ func (loop1) Render() {
 	cur.Println()
 
 	if plane.IsCCW(points[0], points[1], points[2]) {
-		cur.Text(col4, 0)
+		cur.Style(col4, 0)
 		cur.Println("IsCCW: TRUE")
 	} else {
-		cur.Text(col1, 0)
+		cur.Style(col1, 0)
 		cur.Println("IsCCW: false")
 	}
 
 	if plane.InTriangle(points[0], points[1], points[2], p) {
-		cur.Text(col2, 0)
+		cur.Style(col2, 0)
 		cur.Println("InTriangle: TRUE")
 	} else {
-		cur.Text(col1, 0)
+		cur.Style(col1, 0)
 		cur.Println("InTriangle: false")
 	}
 
@@ -158,24 +158,24 @@ func (loop1) Render() {
 		b, c = c, b
 	}
 	if plane.InTriangleCCW(points[a], points[b], points[c], p) {
-		cur.Text(col2, 0)
+		cur.Style(col2, 0)
 		cur.Println("InTriangleCCW: TRUE")
 	} else {
-		cur.Text(col1, 0)
+		cur.Style(col1, 0)
 		cur.Println("InTriangleCCW: false")
 	}
 
 	if plane.InCircumcircle(points[a], points[b], points[c], p) {
-		cur.Text(col3, 0)
+		cur.Style(col3, 0)
 		cur.Println("InCircumcircle: TRUE")
 	} else {
-		cur.Text(col1, 0)
+		cur.Style(col1, 0)
 		cur.Println("InCircumcircle: false")
 	}
 
 	cur.Println(" ")
 
-	cur.Text(col1, 0)
+	cur.Style(col1, 0)
 	cur.Printf("Circumcenter: %.3f, %.3f\n", d.X, d.Y)
 	dd := toScreen(d)
 	pixel.Lines(col5, 0, dd.MinusS(2), dd.PlusS(2))
