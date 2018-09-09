@@ -32,7 +32,7 @@ var names = map[string]color.Index{
 
 // PaletteIdealized is an idealized MSX palette (source: Wikipedia)
 var PaletteIdealized = color.Palette{
-	Names: names,
+	ByName: names,
 	// Wikipedia
 	Colors: []color.LRGBA{
 		color.LRGBAof(color.SRGB8{0x00, 0x00, 0x00}),
@@ -56,7 +56,7 @@ var PaletteIdealized = color.Palette{
 // Palette is the theorical MSX palette (i.e. conversions done with ITU-R BT.601
 // formula).
 var Palette = color.Palette{
-	Names: names,
+	ByName: names,
 	// ITU-R BT.601
 	Colors: []color.LRGBA{
 		color.LRGBAof(color.SRGB8{0, 6, 0}),
@@ -79,7 +79,7 @@ var Palette = color.Palette{
 
 // PaletteCVtoRGB is the MSX palette through a Component Video to RGB conversion.
 var PaletteCVtoRGB = color.Palette{
-	Names: names,
+	ByName: names,
 	// Component Video to RGB
 	Colors: []color.LRGBA{
 		color.LRGBAof(color.SRGB8{0, 4, 0}),
@@ -104,7 +104,7 @@ var PaletteCVtoRGB = color.Palette{
 // done in the 80's), featured in the majority of MSX1 models with a TMS VDP and
 // RGB output.
 var PaletteCheapRGB = color.Palette{
-	Names: names,
+	ByName: names,
 	// El Cheapo RGB
 	Colors: []color.LRGBA{
 		color.LRGBAof(color.SRGB8{0, 5, 0}),
@@ -128,7 +128,7 @@ var PaletteCheapRGB = color.Palette{
 // PaletteCheapRGBTrim is the same as ColorsCheapRGB, but with trimpots to
 // normalize each channels (provides more reddish tones for the red colors).
 var PaletteCheapRGBTrim = color.Palette{
-	Names: names,
+	ByName: names,
 	// El Cheapo RGB with trimpots
 	Colors: []color.LRGBA{
 		color.LRGBAof(color.SRGB8{0, 0, 0}),
@@ -152,7 +152,7 @@ var PaletteCheapRGBTrim = color.Palette{
 // PaletteLazyRGB is the same as ColorsCheapRGB, but with a lower quality analog
 // conversion.
 var PaletteLazyRGB = color.Palette{
-	Names: names,
+	ByName: names,
 	// Lazy El Cheapo RGB
 	Colors: []color.LRGBA{
 		color.LRGBAof(color.SRGB8{0, 8, 0}),

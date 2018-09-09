@@ -16,9 +16,9 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 
 var (
-	col1 = pixel.DefaultPalette.Names["Indigo"]
-	col2 = pixel.DefaultPalette.Names["Orange"]
-	col3 = pixel.DefaultPalette.Names["White"]
+	col1 = pixel.DefaultPalette.ByName["Indigo"]
+	col2 = pixel.DefaultPalette.ByName["Orange"]
+	col3 = pixel.DefaultPalette.ByName["White"]
 )
 
 var (

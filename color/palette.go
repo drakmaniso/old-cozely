@@ -13,21 +13,26 @@ import (
 
 ////////////////////////////////////////////////////////////////////////////////
 
+// A Palette is an ordered list of colors (defined by their LRGBA values), and a
+// name-to-index dictionary.
 type Palette struct {
-	Names  map[string]Index
+	ByName map[string]Index
 	Colors []LRGBA
 }
 
+// An Index is used to refer to colors inside a palette.
 type Index uint8
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func PaletteFrom(name string) Palette {
+// PaletteFrom returns a new Palette created from the file at the specified
+// path.
+func PaletteFrom(path string) Palette {
 	var pal = Palette{
-		Names: map[string]Index{},
+		ByName: map[string]Index{},
 	}
 
-	f, err := os.Open(internal.Path + name + ".png")
+	f, err := os.Open(internal.Path + path + ".png")
 	if err != nil {
 		//TODO: errors.New("unable to open file for palette " + name)
 		return pal
@@ -67,7 +72,7 @@ func PaletteFrom(name string) Palette {
 		pal.Colors = append(pal.Colors, LRGBAof(c))
 	}
 
-	internal.Debug.Printf("Loaded color palette (%d entries) from %s", len(p), name)
+	internal.Debug.Printf("Loaded color palette (%d entries) from %s", len(p), path)
 
 	return pal
 }

@@ -12,7 +12,7 @@ import (
 
 // Palette is the CPC palette.
 var Palette = color.Palette{
-	Names: map[string]color.Index{
+	ByName: map[string]color.Index{
 		"Black":          1,
 		"Blue":           2,
 		"Bright Blue":    3,

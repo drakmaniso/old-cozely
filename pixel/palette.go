@@ -11,7 +11,7 @@ import (
 
 // DefaultPalette is the palette initially loaded when the framework starts.
 var DefaultPalette = color.Palette{
-	Names: map[string]color.Index{
+	ByName: map[string]color.Index{
 		"Dark Blue":   1,
 		"Dark Purple": 2,
 		"Dark Green":  3,

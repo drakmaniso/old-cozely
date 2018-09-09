@@ -19,7 +19,7 @@ import (
 
 // Palette is the PICO-8 palette.
 var Palette = color.Palette{
-	Names: map[string]color.Index{
+	ByName: map[string]color.Index{
 		"Dark Blue":   1,
 		"Dark Purple": 2,
 		"Dark Green":  3,

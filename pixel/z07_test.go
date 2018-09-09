@@ -55,7 +55,7 @@ func (a *loop7) setup() {
 func (a *loop7) Enter() {
 	a.mode = 1
 	a.palette = color.Palette{
-		Names: map[string]color.Index{},
+		ByName: map[string]color.Index{},
 		Colors: []color.LRGBA{
 			{0.1, 0.1, 0.1, 0},
 			{0.2, 0.2, 0.2, 0},
@@ -135,7 +135,7 @@ func (a *loop7) Render() {
 
 	cur := pixel.Cursor{}
 	cur.Style(15, pixel.Monozela10)
-	cur.Locate(0,p.Minus(pixel.XY{0, 8}))
+	cur.Locate(0, p.Minus(pixel.XY{0, 8}))
 	switch a.mode {
 	case 1:
 		cur.Print("Default Palette")

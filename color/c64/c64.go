@@ -10,7 +10,7 @@ import (
 
 // Palette is the C64 palette.
 var Palette = color.Palette{
-	Names: map[string]color.Index{
+	ByName: map[string]color.Index{
 		"Black":       1,
 		"White":       2,
 		"Red":         3,

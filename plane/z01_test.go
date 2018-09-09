@@ -19,13 +19,13 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 
 var (
-	col1 = pixel.DefaultPalette.Names["White"]
-	col2 = pixel.DefaultPalette.Names["Red"]
-	col3 = pixel.DefaultPalette.Names["Green"]
-	col4 = pixel.DefaultPalette.Names["Blue"]
-	col5 = pixel.DefaultPalette.Names["Dark Gray"]
-	col6 = pixel.DefaultPalette.Names["Light Gray"]
-	col7 = pixel.DefaultPalette.Names["Black"]
+	col1 = pixel.DefaultPalette.ByName["White"]
+	col2 = pixel.DefaultPalette.ByName["Red"]
+	col3 = pixel.DefaultPalette.ByName["Green"]
+	col4 = pixel.DefaultPalette.ByName["Blue"]
+	col5 = pixel.DefaultPalette.ByName["Dark Gray"]
+	col6 = pixel.DefaultPalette.ByName["Light Gray"]
+	col7 = pixel.DefaultPalette.ByName["Black"]
 )
 
 var (
