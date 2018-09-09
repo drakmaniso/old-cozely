@@ -1,6 +1,6 @@
 package pixel
 
-const vertexShader = "\n" + `#version 460 core
+const drawVertexShader = "\n" + `#version 460 core
 
 ////////////////////////////////////////////////////////////////////////////////
 

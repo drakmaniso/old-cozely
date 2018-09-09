@@ -88,5 +88,3 @@ func (a *loop6) Render() {
 	m := pixel.ToCanvas(window.XYof(cursor.XY(0)))
 	pixel.Point(7, 0, m)
 }
-
-////////////////////////////////////////////////////////////////////////////////

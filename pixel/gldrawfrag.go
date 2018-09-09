@@ -1,6 +1,6 @@
 package pixel
 
-const fragmentShader = "\n" + `#version 460 core
+const drawFragmentShader = "\n" + `#version 460 core
 
 ////////////////////////////////////////////////////////////////////////////////
 

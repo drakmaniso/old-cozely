@@ -4,10 +4,7 @@
 package pixel
 
 import (
-	"unsafe"
-
 	"github.com/cozely/cozely/color"
-	"github.com/cozely/cozely/x/gl"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -26,14 +23,14 @@ const (
 
 // Paint queues a GPU command to put a picture on the canvas.
 func (p PictureID) Paint(layer int16, pos XY) {
-	canvas.command(cmdPicture, 4, 1, int16(p), layer, pos.X, pos.Y)
+	renderer.command(cmdPicture, 4, 1, int16(p), layer, pos.X, pos.Y)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 // Point queues a GPU command to draw a point on the canvas.
 func Point(c color.Index, layer int16, pos XY) {
-	canvas.command(cmdPoint, 3, 1, int16(c), layer, pos.X, pos.Y)
+	renderer.command(cmdPoint, 3, 1, int16(c), layer, pos.X, pos.Y)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -48,7 +45,7 @@ func Lines(c color.Index, layer int16, strip ...XY) {
 	for _, p := range strip {
 		prm = append(prm, p.X, p.Y)
 	}
-	canvas.command(cmdLines, 4, uint32(len(strip)-1), prm...)
+	renderer.command(cmdLines, 4, uint32(len(strip)-1), prm...)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -64,7 +61,7 @@ func Triangles(c color.Index, layer int16, strip ...XY) {
 	for _, p := range strip {
 		prm = append(prm, p.X, p.Y)
 	}
-	canvas.command(cmdTriangles, uint32(len(strip)), 1, prm...)
+	renderer.command(cmdTriangles, uint32(len(strip)), 1, prm...)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -77,72 +74,10 @@ func Box(fg, bg color.Index, layer int16, corner int16, p1, p2 XY) {
 	if p2.Y < p1.Y {
 		p1.Y, p2.Y = p2.Y, p1.Y
 	}
-	canvas.command(cmdBox, 4, 1,
+	renderer.command(cmdBox, 4, 1,
 		int16(uint32(fg)<<8|uint32(bg)),
 		layer,
 		corner,
 		p1.X, p1.Y,
 		p2.X, p2.Y)
 }
-
-////////////////////////////////////////////////////////////////////////////////
-
-func (a *cmdQueue) command(c uint32, v uint32, n uint32, params ...int16) {
-	ccap, pcap := cap(a.commands), cap(a.parameters)
-
-	l := len(a.commands)
-
-	switch {
-
-	case l > 0 && c == (a.commands[l-1].BaseInstance>>24) &&
-		c != cmdLines && c != cmdTriangles:
-
-		if c != cmdText {
-			// Collapse with previous draw command
-			a.commands[l-1].InstanceCount += n
-			a.parameters = append(a.parameters, params...)
-			break
-
-		} else {
-			// Check if same color and y
-			pi := a.commands[l-1].BaseInstance & 0xFFFFFF
-			if a.parameters[pi] == params[0] && a.parameters[pi+1] == params[1] && a.parameters[pi+2] == params[2] {
-				// Collapse with previous draw command
-				a.commands[l-1].InstanceCount += n
-				a.parameters = append(a.parameters, params[3:]...)
-				break
-			}
-		}
-		// cmdText but with different params
-		fallthrough
-
-	default:
-		// Create new draw command
-		a.commands = append(a.commands, gl.DrawIndirectCommand{
-			VertexCount:   v,
-			InstanceCount: n,
-			FirstVertex:   0,
-			BaseInstance:  uint32(c<<24 | uint32(len(a.parameters)&0xFFFFFF)),
-		})
-		a.parameters = append(a.parameters, params...)
-	}
-
-	if ccap < cap(a.commands) {
-		a.commandsICBO.Delete()
-		a.commandsICBO = gl.NewIndirectBuffer(
-			uintptr(cap(a.commands))*unsafe.Sizeof(a.commands[0]),
-			gl.DynamicStorage,
-		)
-	}
-
-	if pcap < cap(a.parameters) {
-		a.parametersTBO.Delete()
-		a.parametersTBO = gl.NewBufferTexture(
-			uintptr(cap(a.parameters))*unsafe.Sizeof(a.parameters[0]),
-			gl.R16I,
-			gl.DynamicStorage,
-		)
-	}
-}
-
-////////////////////////////////////////////////////////////////////////////////

@@ -5,7 +5,6 @@ package pixel
 
 import (
 	"github.com/cozely/cozely/color"
-	"github.com/cozely/cozely/x/gl"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -50,11 +49,10 @@ var DefaultPalette = color.Palette{
 	},
 }
 
-var (
-	paletteSSBO gl.StorageBuffer
-	palette     [256]color.LRGBA
-	dirtyPal    bool
-)
+var palette struct {
+	colors   [256]color.LRGBA
+	dirty bool
+}
 
 func init() {
 	SetPalette(DefaultPalette)
@@ -70,17 +68,17 @@ var debugColor = color.LRGBA{0, 0, 0, 1}
 // frame, even those issued before the call to Use. In other words, you cannot
 // change the palette in the middle of a frame.
 func SetPalette(p color.Palette) {
-	for c := range palette {
+	for c := range palette.colors {
 		switch {
 		case c == 0:
-			palette[c] = color.LRGBA{0, 0, 0, 0}
+			palette.colors[c] = color.LRGBA{0, 0, 0, 0}
 		case c-1 < len(p.Colors):
-			palette[c] = p.Colors[c-1]
+			palette.colors[c] = p.Colors[c-1]
 		default:
-			palette[c] = debugColor
+			palette.colors[c] = debugColor
 		}
 	}
-	dirtyPal = true
+	palette.dirty = true
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -88,11 +86,11 @@ func SetPalette(p color.Palette) {
 // SetColor changes the color associated with an index.
 func SetColor(i color.Index, c color.Color) color.Index {
 	if c == nil {
-		palette[i] = color.LRGBA{1, 0, .5, 1}
+		palette.colors[i] = color.LRGBA{1, 0, .5, 1}
 	} else {
-		palette[i] = color.LRGBAof(c)
+		palette.colors[i] = color.LRGBAof(c)
 	}
-	dirtyPal = true //TODO: finer-grained palette upload
+	palette.dirty = true //TODO: finer-grained palette upload
 	return color.Index(i)
 }
 
@@ -102,7 +100,7 @@ func SetColor(i color.Index, c color.Color) color.Index {
 // isn't in the palette, index 0 is returned.
 func MatchColor(v color.Color) color.Index {
 	lv := color.LRGBAof(v)
-	for c, pv := range palette {
+	for c, pv := range palette.colors {
 		if pv == lv {
 			return color.Index(c)
 		}
