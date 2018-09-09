@@ -76,7 +76,6 @@ func Example_texture() {
 
 func (l *loop05) Enter() {
 	input.Load(bindings)
-	context.Activate()
 
 	// Create and configure the pipeline
 	l.pipeline = gl.NewPipeline(

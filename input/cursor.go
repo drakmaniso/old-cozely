@@ -12,6 +12,8 @@ import (
 
 ////////////////////////////////////////////////////////////////////////////////
 
+//TODO: it seems the mouse is always bound to all cursors! :(
+
 // CursorID identifes an absolute two-dimensional analog input, i.e. any action
 // that is best represented by a pair of X and Y coordinates, and whose most
 // important characteristic is the position in the game window.
@@ -19,9 +21,16 @@ type CursorID uint32
 
 const noCursor = CursorID(maxID)
 
-var cursors struct {
+// Pointer is a default action.
+const Pointer = CursorID(iota)
+
+var cursors = struct {
 	// For each cursor
 	name []string
+}{
+	name: []string{
+		"Menu Pointer",
+	},
 }
 
 type cursor struct {

@@ -13,8 +13,6 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 
 var (
-	quit     = input.Button("Quit")
-	cursor   = input.Cursor("Cursor")
 	next     = input.Button("Next")
 	previous = input.Button("Previous")
 	scene1   = input.Button("Scene1")
@@ -30,8 +28,6 @@ var (
 )
 var bindings = input.Bindings{
 	"Default": {
-		"Quit":     {"Escape"},
-		"Cursor":   {"Mouse"},
 		"Next":     {"Mouse Left", "Space"},
 		"Previous": {"Mouse Right", "U"},
 		"Scene1":   {"1"},

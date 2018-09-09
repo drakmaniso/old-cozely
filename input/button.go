@@ -21,9 +21,29 @@ type ButtonID uint32
 
 const noButton = ButtonID(maxID)
 
-var buttons struct {
+const (
+	Select = ButtonID(iota)
+	Back
+	Up
+	Down
+	Left
+	Right
+	Click
+)
+
+var buttons = struct {
 	// For each digital
 	name []string
+}{
+	name: []string{
+		"Menu Select",
+		"Menu Back",
+		"Menu Up",
+		"Menu Down",
+		"Menu Left",
+		"Menu Right",
+		"Menu Click",
+	},
 }
 
 type button struct {

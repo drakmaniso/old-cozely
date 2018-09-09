@@ -15,7 +15,7 @@ func init() {
 
 func setup() error {
 	internal.Log.Printf("Input declarations: %d contexts and %d actions",
-		len(contexts.name), len(actions.name))
+		len(contexts.name), len(actions.name)-8) //TODO
 
 	if len(contexts.name) == 0 {
 		aa := []Action{}
@@ -25,6 +25,70 @@ func setup() error {
 		c := Context("Default", aa...)
 		c.ActivateOn(Any)
 		internal.Log.Printf("(added default context with all actions)")
+	}
+
+	if len(contexts.name) == 1 {
+		ContextID(0).ActivateOn(Any)
+	}
+
+	if len(bindings) == 0 {
+		bindings = Bindings{
+			"Default": {},
+		}
+		internal.Log.Printf("(added default bindings)")
+	}
+
+	for i, c := range contexts.name {
+		m, ok := bindings[c]
+		if !ok {
+			m = map[string][]string{}
+			bindings[c] = m
+		}
+		for _, a := range contexts.actions[i] {
+			var b []string
+			switch a {
+			case Back:
+				b, ok = m["Menu Back"]
+				if !ok || len(b) == 0 {
+					m["Menu Back"] = []string{"Escape", "Button B"}
+				}
+			case Select:
+				b, ok = m["Menu Select"]
+				if !ok || len(b) == 0 {
+					m["Menu Select"] = []string{"Space", "Enter", "Button A"}
+				}
+			case Up:
+				b, ok = m["Menu Up"]
+				if !ok || len(b) == 0 {
+					m["Menu Up"] = []string{"Up", "Dpad Up"} //TODO: keypad and left stick support
+				}
+			case Down:
+				b, ok = m["Menu Down"]
+				if !ok || len(b) == 0 {
+					m["Menu Down"] = []string{"Down", "Dpad Down"} //TODO: keypad and left stick support
+				}
+			case Left:
+				b, ok = m["Menu Left"]
+				if !ok || len(b) == 0 {
+					m["Menu Left"] = []string{"Left", "Dpad Left"} //TODO: keypad and left stick support
+				}
+			case Right:
+				b, ok = m["Menu Right"]
+				if !ok || len(b) == 0 {
+					m["Menu Right"] = []string{"Right", "Dpad Right"} //TODO: keypad and left stick support
+				}
+			case Pointer:
+				b, ok = m["Menu Pointer"]
+				if !ok || len(b) == 0 {
+					m["Menu Pointer"] = []string{"Mouse", "Right Stick"}
+				}
+			case Click:
+				b, ok = m["Menu Click"]
+				if !ok || len(b) == 0 {
+					m["Menu Click"] = []string{"Mouse Left", "Right Trigger"}
+				}
+			}
+		}
 	}
 
 	load()

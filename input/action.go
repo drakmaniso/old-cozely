@@ -21,8 +21,26 @@ var actions = struct {
 	// For fast iteration, the same list in a slice:
 	list []Action
 }{
-	name: map[string]Action{},
-	list: []Action{},
+	name: map[string]Action{
+		"Menu Select": Select,
+		"Menu Back":   Back,
+		"Menu Up":     Up,
+		"Menu Down":   Down,
+		"Menu Left":   Left,
+		"Menu Right":  Right,
+		"Menu Pointer": Pointer,
+		"Menu Click":  Click,
+	},
+	list: []Action{
+		Select,
+		Back,
+		Up,
+		Down,
+		Left,
+		Right,
+		Pointer,
+		Click,
+	},
 }
 
 const maxID = 0xFFFFFFFF

@@ -37,7 +37,12 @@ func (a *gpTrigger) activate(d DeviceID) {
 }
 
 func (a *gpTrigger) asBool() (just bool, value bool) {
-	return false, false //TODO:
+	//TODO: implement hair-trigger instead
+	v := a.gamepad.Axis(a.axis)
+	vv := v > (0x7FFF / 2)
+	j := vv != (a.value > (0x7FFF / 2))
+	a.value = v
+	return j, vv
 }
 
 func (a *gpTrigger) asUnipolar() (just bool, value float32) {

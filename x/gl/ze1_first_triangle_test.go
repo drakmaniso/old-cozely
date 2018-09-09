@@ -49,6 +49,9 @@ func (loop01) Leave() {
 // Game Loop ///////////////////////////////////////////////////////////////////
 
 func (loop01) React() {
+	// if input.Default.Back.Pushed() {
+	// 	cozely.Stop(nil)
+	// }
 }
 
 func (loop01) Update() {

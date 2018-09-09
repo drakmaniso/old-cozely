@@ -12,14 +12,12 @@ import (
 // Declarations ////////////////////////////////////////////////////////////////
 
 var (
-	quit = input.Button("Quit")
 	play = input.Button("Play")
 )
 
 var bindings = input.Bindings{
 	"Default": {
 		"Play": {"Space", "Mouse Left", "Button A"},
-		"Quit": {"Escape", "Button Back"},
 	},
 }
 
@@ -74,7 +72,7 @@ func (l *loop) React() {
 			pixel.SetPalette(l.monochrome)
 		}
 	}
-	if quit.Pushed() {
+	if input.Back.Pushed() {
 		cozely.Stop(nil)
 	}
 }

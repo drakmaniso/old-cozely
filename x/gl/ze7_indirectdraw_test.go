@@ -119,7 +119,6 @@ func Example_indirectDraw() {
 
 func (l *loop07) Enter() {
 	input.Load(bindings)
-	context.Activate()
 
 	// Create and configure the pipeline
 	l.pipeline = gl.NewPipeline(

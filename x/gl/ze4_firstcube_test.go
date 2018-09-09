@@ -26,8 +26,6 @@ var (
 	delta  = input.Delta("Delta")
 )
 
-var context = input.Context("Default", quit, rotate, move, zoom, delta)
-
 var bindings = input.Bindings{
 	"Default": {
 		"Quit":   {"Escape"},
@@ -86,7 +84,6 @@ func Example_firstCube() {
 
 func (l *loop04) Enter() {
 	input.Load(bindings)
-	context.Activate()
 
 	// Create and configure the pipeline
 	l.pipeline = gl.NewPipeline(

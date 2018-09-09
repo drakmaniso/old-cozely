@@ -20,6 +20,8 @@ var bindings = Bindings{}
 
 ////////////////////////////////////////////////////////////////////////////////
 
+//TODO: auto-load bindings
+
 // Load associates each context/action combination found in the bindings map to
 // the requested bindings.
 func Load(b Bindings) {

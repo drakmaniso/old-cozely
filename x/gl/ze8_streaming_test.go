@@ -52,6 +52,7 @@ var points [512]struct {
 
 func Example_streaming() {
 	defer cozely.Recover()
+	input.Load(bindings)
 
 	l := loop08{
 		bgColor:  color.LRGBA{0.9, 0.87, 0.85, 1.0},
@@ -71,8 +72,6 @@ func Example_streaming() {
 }
 
 func (l *loop08) Enter() {
-	input.Load(bindings06)
-	context06.Activate()
 
 	// Create and configure the pipeline
 	l.pipeline = gl.NewPipeline(
@@ -105,7 +104,7 @@ func (loop08) Leave() {
 // Game Loop ///////////////////////////////////////////////////////////////////
 
 func (l *loop08) React() {
-	if randomize.Pushed() {
+	if input.Select.Pushed() {
 		l.setupPoints()
 	}
 
