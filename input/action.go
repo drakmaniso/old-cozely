@@ -9,11 +9,10 @@ package input
 // bound to hardware input (by the player). During the game loop, actions can be
 // queried and reacted upon.
 type Action interface {
-	ActiveOn(d DeviceID) bool
-	deactivate(d DeviceID)
-	activate(d DeviceID, b source)
 	newframe(d DeviceID)
 	update(d DeviceID)
+	activate(d DeviceID, b source)
+	deactivate(d DeviceID)
 }
 
 var actions = struct {

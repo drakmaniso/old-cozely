@@ -24,7 +24,6 @@ var halfaxes struct {
 }
 
 type halfaxis struct {
-	active   bool
 	value    float32
 	previous float32
 }
@@ -64,18 +63,6 @@ func (a HalfAxisID) Name() string {
 	return halfaxes.name[a]
 }
 
-// Active returns true if the action is currently active on the current device
-// (i.e. if it is listed in the context currently active on the device).
-func (a HalfAxisID) Active() bool {
-	return a.ActiveOn(Any)
-}
-
-// ActiveOn returns true if the action is currently active on a specific device
-// (i.e. if it is listed in the context currently active on the device).
-func (a HalfAxisID) ActiveOn(d DeviceID) bool {
-	return devices.halfaxes[d][a].active
-}
-
 // Value returns the current value of the action on the current device. This
 // value is normalized between 0 and 1.
 func (a HalfAxisID) Value() float32 {
@@ -91,7 +78,6 @@ func (a HalfAxisID) ValueOn(d DeviceID) float32 {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (a HalfAxisID) activate(d DeviceID, b source) {
-	devices.halfaxes[d][a].active = true
 	devices.halfaxesbinds[d][a] = append(devices.halfaxesbinds[d][a], b)
 }
 
@@ -111,5 +97,4 @@ func (a HalfAxisID) update(d DeviceID) {
 
 func (a HalfAxisID) deactivate(d DeviceID) {
 	devices.halfaxesbinds[d][a] = devices.halfaxesbinds[d][a][:0]
-	devices.halfaxes[d][a].active = false
 }

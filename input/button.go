@@ -37,7 +37,7 @@ var buttons = struct {
 }
 
 type button struct {
-	active   bool
+	// active   bool
 	previous bool
 	pressed  bool
 }
@@ -75,17 +75,6 @@ func Button(name string) ButtonID {
 // Name of the button action.
 func (a ButtonID) Name() string {
 	return buttons.name[a]
-}
-
-// Active return true if the action is currently active on the current device.
-func (a ButtonID) Active() bool {
-	return a.ActiveOn(Any)
-}
-
-// ActiveOn returns true if the action is currently active on a specific device
-// (i.e. if it is listed in the context currently active on the device).
-func (a ButtonID) ActiveOn(d DeviceID) bool {
-	return devices.buttons[d][a].active
 }
 
 // Pressed returns true if the action has been started and is currently ongoing
@@ -157,7 +146,6 @@ func (a ButtonID) ReleasedOn(d DeviceID) bool {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (a ButtonID) activate(d DeviceID, b source) {
-	devices.buttons[d][a].active = true
 	devices.buttonsbinds[d][a] = append(devices.buttonsbinds[d][a], b)
 	_, v := b.asBool()
 	if v {
@@ -184,8 +172,6 @@ func (a ButtonID) update(d DeviceID) {
 
 func (a ButtonID) deactivate(d DeviceID) {
 	devices.buttonsbinds[d][a] = devices.buttonsbinds[d][a][:0]
-	devices.buttons[d][a].active = false
 	devices.buttons[d][a].pressed = false
-	devices.buttons[0][a].active = false
 	devices.buttons[0][a].pressed = false
 }

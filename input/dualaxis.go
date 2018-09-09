@@ -24,7 +24,6 @@ var dualaxes struct {
 }
 
 type dualaxis struct {
-	active   bool
 	value    coord.XY
 	previous coord.XY
 }
@@ -62,18 +61,6 @@ func (a DualAxisID) Name() string {
 	return dualaxes.name[a]
 }
 
-// Active returns true if the action is currently active on the current device
-// (i.e. if it is listed in the context currently active on the device).
-func (a DualAxisID) Active() bool {
-	return a.ActiveOn(Any)
-}
-
-// ActiveOn returns true if the action is currently active on a specific device
-// (i.e. if it is listed in the context currently active on the device).
-func (a DualAxisID) ActiveOn(d DeviceID) bool {
-	return devices.dualaxes[d][a].active
-}
-
 // XY returns the current status of the action on the current device. The
 // coordinates are the current absolute position; the values of X and Y are
 // normalized between -1 and 1.
@@ -91,7 +78,6 @@ func (a DualAxisID) XYon(d DeviceID) coord.XY {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (a DualAxisID) activate(d DeviceID, b source) {
-	devices.dualaxes[d][a].active = true
 	devices.dualaxesbinds[d][a] = append(devices.dualaxesbinds[d][a], b)
 }
 
@@ -111,5 +97,4 @@ func (a DualAxisID) update(d DeviceID) {
 
 func (a DualAxisID) deactivate(d DeviceID) {
 	devices.dualaxesbinds[d][a] = devices.dualaxesbinds[d][a][:0]
-	devices.dualaxes[d][a].active = false
 }

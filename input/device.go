@@ -26,7 +26,7 @@ var devices struct {
 	context    []ContextID
 	newcontext []ContextID
 
-	// For each device/action combination
+	// For each device/action combination, the current state of the action
 	buttons  [][]button
 	halfaxes [][]halfaxis
 	axes     [][]axis

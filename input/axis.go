@@ -24,7 +24,6 @@ var axes struct {
 }
 
 type axis struct {
-	active   bool
 	value    float32
 	previous float32
 }
@@ -64,18 +63,6 @@ func (a AxisID) Name() string {
 	return axes.name[a]
 }
 
-// Active returns true if the action is currently active on the current device
-// (i.e. if it is listed in the context currently active on the device).
-func (a AxisID) Active() bool {
-	return a.ActiveOn(Any)
-}
-
-// ActiveOn returns true if the action is currently active on a specific device
-// (i.e. if it is listed in the context currently active on the device).
-func (a AxisID) ActiveOn(d DeviceID) bool {
-	return devices.axes[d][a].active
-}
-
 // Value returns the current value of the action on the current device. This
 // value is normalized between -1 and +1.
 func (a AxisID) Value() float32 {
@@ -91,7 +78,6 @@ func (a AxisID) ValueOn(d DeviceID) float32 {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (a AxisID) activate(d DeviceID, b source) {
-	devices.axes[d][a].active = true
 	devices.axesbinds[d][a] = append(devices.axesbinds[d][a], b)
 }
 
@@ -111,5 +97,4 @@ func (a AxisID) update(d DeviceID) {
 
 func (a AxisID) deactivate(d DeviceID) {
 	devices.axesbinds[d][a] = devices.axesbinds[d][a][:0]
-	devices.axes[d][a].active = false
 }

@@ -25,7 +25,6 @@ var deltas struct {
 }
 
 type delta struct {
-	active   bool
 	value    coord.XY
 	previous coord.XY
 }
@@ -65,18 +64,6 @@ func (a DeltaID) Name() string {
 	return dualaxes.name[a]
 }
 
-// Active returns true if the action is currently active on the current device
-// (i.e. if it is listed in the context currently active on the device).
-func (a DeltaID) Active() bool {
-	return a.ActiveOn(Any)
-}
-
-// ActiveOn returns true if the action is currently active on a specific device
-// (i.e. if it is listed in the context currently active on the device).
-func (a DeltaID) ActiveOn(d DeviceID) bool {
-	return devices.deltas[d][a].active
-}
-
 // XY returns the current status of the action on the current device. The
 // coordinates correspond to the change in position since the last frame.
 func (a DeltaID) XY() coord.XY {
@@ -92,7 +79,6 @@ func (a DeltaID) XYon(d DeviceID) coord.XY {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (a DeltaID) activate(d DeviceID, b source) {
-	devices.deltas[d][a].active = true
 	devices.deltasbinds[d][a] = append(devices.deltasbinds[d][a], b)
 }
 
@@ -112,5 +98,4 @@ func (a DeltaID) update(d DeviceID) {
 
 func (a DeltaID) deactivate(d DeviceID) {
 	devices.deltasbinds[d][a] = devices.deltasbinds[d][a][:0]
-	devices.deltas[d][a].active = false
 }

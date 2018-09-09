@@ -33,7 +33,6 @@ var cursors = struct {
 }
 
 type cursor struct {
-	active   bool
 	value    window.XY
 	previous window.XY
 }
@@ -71,18 +70,6 @@ func (a CursorID) Name() string {
 	return cursors.name[a]
 }
 
-// Active returns true if the action is currently active on the current device
-// (i.e. if it is listed in the context currently active on the device).
-func (a CursorID) Active() bool {
-	return a.ActiveOn(Any)
-}
-
-// ActiveOn returns true if the action is currently active on a specific device
-// (i.e. if it is listed in the context currently active on the device).
-func (a CursorID) ActiveOn(d DeviceID) bool {
-	return devices.cursors[d][a].active
-}
-
 // XY returns the current status of the action on the current device. The
 // cursorinates are the current absolute position; the values of X and Y are
 // normalized between -1 and 1.
@@ -100,7 +87,6 @@ func (a CursorID) XYon(d DeviceID) window.XY {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (a CursorID) activate(d DeviceID, b source) {
-	devices.cursors[d][a].active = true
 	devices.cursorsbinds[d][a] = append(devices.cursorsbinds[d][a], b)
 }
 
@@ -157,5 +143,4 @@ func (a CursorID) update(d DeviceID) {
 
 func (a CursorID) deactivate(d DeviceID) {
 	devices.cursorsbinds[d][a] = devices.cursorsbinds[d][a][:0]
-	devices.cursors[d][a].active = false
 }
