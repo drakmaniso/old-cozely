@@ -13,20 +13,20 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 
 var (
-	quit     = input.Digital("Quit")
+	quit     = input.Button("Quit")
 	cursor   = input.Cursor("Cursor")
-	next     = input.Digital("Next")
-	previous = input.Digital("Previous")
-	scene1   = input.Digital("Scene1")
-	scene2   = input.Digital("Scene2")
-	scene3   = input.Digital("Scene3")
-	scene4   = input.Digital("Scene4")
-	scene5   = input.Digital("Scene5")
-	scene6   = input.Digital("Scene6")
-	scene7   = input.Digital("Scene7")
-	scene8   = input.Digital("Scene8")
-	scene9   = input.Digital("Scene9")
-	scene10  = input.Digital("Scene10")
+	next     = input.Button("Next")
+	previous = input.Button("Previous")
+	scene1   = input.Button("Scene1")
+	scene2   = input.Button("Scene2")
+	scene3   = input.Button("Scene3")
+	scene4   = input.Button("Scene4")
+	scene5   = input.Button("Scene5")
+	scene6   = input.Button("Scene6")
+	scene7   = input.Button("Scene7")
+	scene8   = input.Button("Scene8")
+	scene9   = input.Button("Scene9")
+	scene10  = input.Button("Scene10")
 )
 var bindings = input.Bindings{
 	"Default": {

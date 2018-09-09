@@ -62,19 +62,30 @@ func Delta(name string) DeltaID {
 
 // Name of the action.
 func (a DeltaID) Name() string {
-	return analogs.name[a]
+	return dualaxes.name[a]
 }
 
-// Active returns true if the action is currently active on a specific device
+// Active returns true if the action is currently active on the current device
 // (i.e. if it is listed in the context currently active on the device).
-func (a DeltaID) Active(d DeviceID) bool {
+func (a DeltaID) Active() bool {
+	return a.ActiveOn(Any)
+}
+
+// ActiveOn returns true if the action is currently active on a specific device
+// (i.e. if it is listed in the context currently active on the device).
+func (a DeltaID) ActiveOn(d DeviceID) bool {
 	return devices.deltas[d][a].active
 }
 
-// XY returns the current status of the action on a specific device. The
-// coordinates correspond to the change in position since the last frame; the
-// values of X and Y are normalized between -1 and 1.
-func (a DeltaID) XY(d DeviceID) coord.XY {
+// XY returns the current status of the action on the current device. The
+// coordinates correspond to the change in position since the last frame.
+func (a DeltaID) XY() coord.XY {
+	return a.XYon(Any)
+}
+
+// XYon returns the current status of the action on a specific device. The
+// coordinates correspond to the change in position since the last frame.
+func (a DeltaID) XYon(d DeviceID) coord.XY {
 	return devices.deltas[d][a].value
 }
 
@@ -82,7 +93,7 @@ func (a DeltaID) XY(d DeviceID) coord.XY {
 
 func (a DeltaID) activate(d DeviceID, b source) {
 	devices.deltas[d][a].active = true
-	devices.deltabinds[d][a] = append(devices.deltabinds[d][a], b)
+	devices.deltasbinds[d][a] = append(devices.deltasbinds[d][a], b)
 }
 
 func (a DeltaID) newframe(d DeviceID) {
@@ -92,7 +103,7 @@ func (a DeltaID) newframe(d DeviceID) {
 
 func (a DeltaID) update(d DeviceID) {
 	v := coord.XY{}
-	for _, b := range devices.deltabinds[d][a] {
+	for _, b := range devices.deltasbinds[d][a] {
 		v = b.asDelta()
 		devices.deltas[d][a].value = devices.deltas[d][a].value.Plus(v)
 		devices.deltas[0][a].value = devices.deltas[0][a].value.Plus(v)
@@ -100,6 +111,6 @@ func (a DeltaID) update(d DeviceID) {
 }
 
 func (a DeltaID) deactivate(d DeviceID) {
-	devices.deltabinds[d][a] = devices.deltabinds[d][a][:0]
+	devices.deltasbinds[d][a] = devices.deltasbinds[d][a][:0]
 	devices.deltas[d][a].active = false
 }

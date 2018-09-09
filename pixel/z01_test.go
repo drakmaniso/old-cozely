@@ -63,11 +63,11 @@ func (loop1) Leave() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (a *loop1) React() {
-	if quit.Started(0) {
+	if quit.Pushed() {
 		cozely.Stop(nil)
 	}
 
-	if next.Started(0) {
+	if next.Pushed() {
 		a.mode++
 		if a.mode > 1 {
 			a.mode = 0

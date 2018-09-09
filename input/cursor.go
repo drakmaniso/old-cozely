@@ -63,16 +63,29 @@ func (a CursorID) Name() string {
 	return cursors.name[a]
 }
 
-// Active returns true if the action is currently active on a specific device
+// Active returns true if the action is currently active on the current device
 // (i.e. if it is listed in the context currently active on the device).
-func (a CursorID) Active(d DeviceID) bool {
+func (a CursorID) Active() bool {
+	return a.ActiveOn(Any)
+}
+
+// ActiveOn returns true if the action is currently active on a specific device
+// (i.e. if it is listed in the context currently active on the device).
+func (a CursorID) ActiveOn(d DeviceID) bool {
 	return devices.cursors[d][a].active
 }
 
-// XY returns the current status of the action on a specific device. The
+// XY returns the current status of the action on the current device. The
 // cursorinates are the current absolute position; the values of X and Y are
 // normalized between -1 and 1.
-func (a CursorID) XY(d DeviceID) window.XY {
+func (a CursorID) XY() window.XY {
+	return a.XYon(Any)
+}
+
+// XYon returns the current status of the action on a specific device. The
+// cursorinates are the current absolute position; the values of X and Y are
+// normalized between -1 and 1.
+func (a CursorID) XYon(d DeviceID) window.XY {
 	return devices.cursors[d][a].value
 }
 
@@ -80,7 +93,7 @@ func (a CursorID) XY(d DeviceID) window.XY {
 
 func (a CursorID) activate(d DeviceID, b source) {
 	devices.cursors[d][a].active = true
-	devices.cursorbinds[d][a] = append(devices.cursorbinds[d][a], b)
+	devices.cursorsbinds[d][a] = append(devices.cursorsbinds[d][a], b)
 }
 
 func (a CursorID) newframe(d DeviceID) {
@@ -98,7 +111,7 @@ func (a CursorID) update(d DeviceID) {
 		return
 	}
 	var v window.XY
-	for _, b := range devices.cursorbinds[d][a] {
+	for _, b := range devices.cursorsbinds[d][a] {
 		v = v.Plus(window.XYof(b.asDelta()))
 	}
 	if v.X != 0 || v.Y != 0 {
@@ -106,8 +119,7 @@ func (a CursorID) update(d DeviceID) {
 	}
 	if !mouse.moved {
 		s := window.XY{internal.Window.Width, internal.Window.Height}
-		// v = v.Times(float32(s.Y) / 128)
-		v = v.Times(s.Y)
+		v = v.Times(int16(float32(s.Y) / 128)) //TODO: handle stick->cursor
 
 		devices.cursors[d][a].value = devices.cursors[d][a].value.Plus(v)
 		if devices.cursors[d][a].value.X < 0 {
@@ -136,6 +148,6 @@ func (a CursorID) update(d DeviceID) {
 }
 
 func (a CursorID) deactivate(d DeviceID) {
-	devices.cursorbinds[d][a] = devices.cursorbinds[d][a][:0]
+	devices.cursorsbinds[d][a] = devices.cursorsbinds[d][a][:0]
 	devices.cursors[d][a].active = false
 }

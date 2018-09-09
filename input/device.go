@@ -29,23 +29,23 @@ var devices struct {
 	newcontext []ContextID
 
 	// For each device/action combination
-	digitals  [][]digital
-	unipolars [][]unipolar
-	bipolars  [][]bipolar
-	analogs   [][]analog
-	cursors   [][]cursor
-	deltas    [][]delta
+	buttons  [][]button
+	halfaxes [][]halfaxis
+	axes     [][]axis
+	dualaxes [][]dualaxis
+	cursors  [][]cursor
+	deltas   [][]delta
 
 	// For each device/context combination, the list of bindings
 	bindings [][][]source
 
 	// For each device/action combination, the list of *current* bindings
-	digitalbinds  [][][]source
-	unipolarbinds [][][]source
-	bipolarbinds  [][][]source
-	analogbinds   [][][]source
-	cursorbinds   [][][]source
-	deltabinds    [][][]source
+	buttonsbinds  [][][]source
+	halfaxesbinds [][][]source
+	axesbinds     [][][]source
+	dualaxesbinds [][][]source
+	cursorsbinds  [][][]source
+	deltasbinds   [][][]source
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -62,29 +62,29 @@ func addDevice(name string) DeviceID {
 	devices.context = append(devices.context, noContext)
 	devices.newcontext = append(devices.newcontext, 0)
 
-	n := len(digitals.name)
-	devices.digitals = append(devices.digitals, make([]digital, n))
-	devices.digitalbinds = append(devices.digitalbinds, make([][]source, n))
+	n := len(buttons.name)
+	devices.buttons = append(devices.buttons, make([]button, n))
+	devices.buttonsbinds = append(devices.buttonsbinds, make([][]source, n))
 
-	n = len(unipolars.name)
-	devices.unipolars = append(devices.unipolars, make([]unipolar, n))
-	devices.unipolarbinds = append(devices.unipolarbinds, make([][]source, n))
+	n = len(halfaxes.name)
+	devices.halfaxes = append(devices.halfaxes, make([]halfaxis, n))
+	devices.halfaxesbinds = append(devices.halfaxesbinds, make([][]source, n))
 
-	n = len(bipolars.name)
-	devices.bipolars = append(devices.bipolars, make([]bipolar, n))
-	devices.bipolarbinds = append(devices.bipolarbinds, make([][]source, n))
+	n = len(axes.name)
+	devices.axes = append(devices.axes, make([]axis, n))
+	devices.axesbinds = append(devices.axesbinds, make([][]source, n))
 
-	n = len(analogs.name)
-	devices.analogs = append(devices.analogs, make([]analog, n))
-	devices.analogbinds = append(devices.analogbinds, make([][]source, n))
+	n = len(dualaxes.name)
+	devices.dualaxes = append(devices.dualaxes, make([]dualaxis, n))
+	devices.dualaxesbinds = append(devices.dualaxesbinds, make([][]source, n))
 
 	n = len(cursors.name)
 	devices.cursors = append(devices.cursors, make([]cursor, n))
-	devices.cursorbinds = append(devices.cursorbinds, make([][]source, n))
+	devices.cursorsbinds = append(devices.cursorsbinds, make([][]source, n))
 
 	n = len(deltas.name)
 	devices.deltas = append(devices.deltas, make([]delta, n))
-	devices.deltabinds = append(devices.deltabinds, make([][]source, n))
+	devices.deltasbinds = append(devices.deltasbinds, make([][]source, n))
 
 	n = len(contexts.name)
 	devices.bindings = append(devices.bindings, make([][]source, n))
@@ -98,18 +98,18 @@ func clearDevices() {
 	devices.name = nil
 	devices.context = nil
 	devices.newcontext = nil
-	devices.digitals = nil
-	devices.digitalbinds = nil
-	devices.unipolars = nil
-	devices.unipolarbinds = nil
-	devices.bipolars = nil
-	devices.bipolarbinds = nil
-	devices.analogs = nil
-	devices.analogbinds = nil
+	devices.buttons = nil
+	devices.buttonsbinds = nil
+	devices.halfaxes = nil
+	devices.halfaxesbinds = nil
+	devices.axes = nil
+	devices.axesbinds = nil
+	devices.dualaxes = nil
+	devices.dualaxesbinds = nil
 	devices.cursors = nil
-	devices.cursorbinds = nil
+	devices.cursorsbinds = nil
 	devices.deltas = nil
-	devices.deltabinds = nil
+	devices.deltasbinds = nil
 	devices.bindings = nil
 
 	addDevice("Any")

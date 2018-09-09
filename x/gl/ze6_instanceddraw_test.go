@@ -20,7 +20,7 @@ import (
 // Input Bindings
 
 var (
-	randomize = input.Digital("Randomize")
+	randomize = input.Button("Randomize")
 )
 
 var context06 = input.Context("Default06", quit, randomize)
@@ -79,7 +79,7 @@ func Example_instancedDraw() {
 
 func (l *loop06) Enter() {
 	input.Load(bindings06)
-	context06.Activate(1)
+	context06.Activate()
 
 	// Setup the pipeline
 	l.pipeline = gl.NewPipeline(
@@ -109,12 +109,12 @@ func (loop06) Leave() {
 // Game Loop ///////////////////////////////////////////////////////////////////
 
 func (l *loop06) React() {
-	if randomize.Started(1) {
+	if randomize.Pushed() {
 		l.randomizeRosesData()
 		l.rosesINBO.SubData(roses[:], 0)
 	}
 
-	if quit.Started(1) {
+	if quit.Pushed() {
 		cozely.Stop(nil)
 	}
 }

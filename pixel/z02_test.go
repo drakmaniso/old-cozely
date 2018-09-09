@@ -82,67 +82,67 @@ func (a *loop2) resize() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (a *loop2) React() {
-	if scenes[1].Started(0) {
+	if scenes[1].Pushed() {
 		a.shapes = make([]shape, 1000)
 		a.resize()
 	}
-	if scenes[2].Started(0) {
+	if scenes[2].Pushed() {
 		a.shapes = make([]shape, 10000)
 		a.resize()
 	}
-	if scenes[3].Started(0) {
+	if scenes[3].Pushed() {
 		a.shapes = make([]shape, 100000)
 		a.resize()
 	}
-	if scenes[4].Started(0) {
+	if scenes[4].Pushed() {
 		a.shapes = make([]shape, 200000)
 		a.resize()
 	}
-	if scenes[5].Started(0) {
+	if scenes[5].Pushed() {
 		a.shapes = make([]shape, 300000)
 		a.resize()
 	}
-	if scenes[6].Started(0) {
+	if scenes[6].Pushed() {
 		a.shapes = make([]shape, 350000)
 		a.resize()
 	}
-	if scenes[7].Started(0) {
+	if scenes[7].Pushed() {
 		a.shapes = make([]shape, 400000)
 		a.resize()
 	}
-	if scenes[8].Started(0) {
+	if scenes[8].Pushed() {
 		a.shapes = make([]shape, 450000)
 		a.resize()
 	}
-	if scenes[9].Started(0) {
+	if scenes[9].Pushed() {
 		a.shapes = make([]shape, 500000)
 		a.resize()
 	}
-	if scenes[0].Started(0) {
+	if scenes[0].Pushed() {
 		a.shapes = make([]shape, 10)
 		a.resize()
 	}
-	if scrollup.Started(0) {
+	if scrollup.Pushed() {
 		a.shapes = make([]shape, len(a.shapes)+1000)
 		a.resize()
 	}
-	if scrolldown.Started(0) && len(a.shapes) > 1000 {
+	if scrolldown.Pushed() && len(a.shapes) > 1000 {
 		a.shapes = make([]shape, len(a.shapes)-1000)
 		a.resize()
 	}
-	if next.Started(0) {
+	if next.Pushed() {
 		a.shapes = append(a.shapes, shape{})
 		i := len(a.shapes) - 1
 		j := rand.Intn(len(a.picts))
 		p := a.picts[j]
 		a.shapes[i].pict = p
 		//TODO:
-		a.shapes[i].pos = pixel.XYof(cursor.XY(0)).Minus(p.Size().Slash(2))
+		a.shapes[i].pos = pixel.XYof(cursor.XY()).Minus(p.Size().Slash(2))
 	}
-	if previous.Started(0) && len(a.shapes) > 0 {
+	if previous.Pushed() && len(a.shapes) > 0 {
 		a.shapes = a.shapes[:len(a.shapes)-1]
 	}
-	if quit.Started(0) {
+	if quit.Pushed() {
 		cozely.Stop(nil)
 	}
 }

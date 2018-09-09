@@ -13,9 +13,9 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 
 var (
-	quit     = input.Digital("Quit")
-	next     = input.Digital("Next")
-	previous = input.Digital("Previous")
+	quit     = input.Button("Quit")
+	next     = input.Button("Next")
+	previous = input.Button("Previous")
 	cursor   = input.Cursor("Cursor")
 )
 

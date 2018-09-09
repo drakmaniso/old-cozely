@@ -65,7 +65,7 @@ func (loop3) Leave() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop3) React() {
-	if quit.Started(0) {
+	if quit.Pushed() {
 		cozely.Stop(nil)
 	}
 }
@@ -115,6 +115,6 @@ func (a *loop3) Render() {
 
 	cur.Locate(0, pixel.XY{pixel.Resolution().X - 200, 9})
 	cur.Font = pixel.FontID(0)
-	m := pixel.XYof(cursor.XY(0))
+	m := pixel.XYof(cursor.XY())
 	cur.Printf("Position x=%d, y=%d\n", m.X, m.Y)
 }

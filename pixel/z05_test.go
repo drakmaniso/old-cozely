@@ -15,7 +15,6 @@ import (
 
 type loop5 struct {
 	points                                     []pixel.XY
-	pointshidden, lineshidden, triangleshidden bool
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -56,24 +55,20 @@ func (loop5) Leave() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (a *loop5) React() {
-	if quit.Started(0) {
+	if quit.Pushed() {
 		cozely.Stop(nil)
 	}
 
-	if next.Started(0) {
-		m := pixel.XYof(cursor.XY(0))
+	if next.Pushed() {
+		m := pixel.XYof(cursor.XY())
 		a.points = append(a.points, m)
 	}
 
-	if previous.Started(0) {
+	if previous.Pushed() {
 		if len(a.points) > 0 {
 			a.points = a.points[:len(a.points)-1]
 		}
 	}
-
-	a.pointshidden = scenes[1].Ongoing(0)
-	a.lineshidden = scenes[2].Ongoing(0)
-	a.triangleshidden = scenes[3].Ongoing(0)
 }
 
 func (loop5) Update() {
@@ -81,15 +76,15 @@ func (loop5) Update() {
 
 func (a *loop5) Render() {
 	pixel.Clear(1)
-	m := pixel.XYof(cursor.XY(0))
-	if !a.triangleshidden {
+	m := pixel.XYof(cursor.XY())
+	if !scenes[3].Pressed() {
 		pixel.Triangles(2, 0, a.points...)
 	}
-	if !a.lineshidden {
+	if !scenes[2].Pressed() {
 		pixel.Lines(14, 0, a.points...)
 		pixel.Lines(13, 0, a.points[len(a.points)-1], m)
 	}
-	if !a.pointshidden {
+	if !scenes[1].Pressed() {
 		for _, p := range a.points {
 			pixel.Point(8, 0, p)
 		}

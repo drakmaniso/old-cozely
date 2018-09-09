@@ -68,11 +68,11 @@ func (loop1) Leave() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop1) React() {
-	if next.Started(0) {
+	if next.Pushed() {
 		newPoints()
 	}
 
-	if quit.Started(0) {
+	if quit.Pushed() {
 		cozely.Stop(nil)
 	}
 }
@@ -120,7 +120,7 @@ func (loop1) Render() {
 		cur.Print([]string{"A", "B", "C"}[i])
 	}
 
-	m := pixel.XYof(cursor.XY(0))
+	m := pixel.XYof(cursor.XYon(0))
 	p := fromScreen(m)
 	cur.Locate(1, pixel.XY{2, 8})
 	cur.Style(col1, 0)

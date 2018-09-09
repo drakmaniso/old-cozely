@@ -72,7 +72,7 @@ func Example_streaming() {
 
 func (l *loop08) Enter() {
 	input.Load(bindings06)
-	context06.Activate(1)
+	context06.Activate()
 
 	// Create and configure the pipeline
 	l.pipeline = gl.NewPipeline(
@@ -105,11 +105,11 @@ func (loop08) Leave() {
 // Game Loop ///////////////////////////////////////////////////////////////////
 
 func (l *loop08) React() {
-	if randomize.Started(1) {
+	if randomize.Pushed() {
 		l.setupPoints()
 	}
 
-	if quit.Started(1) {
+	if quit.Pushed() {
 		cozely.Stop(nil)
 	}
 }

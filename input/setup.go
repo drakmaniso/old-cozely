@@ -23,7 +23,7 @@ func setup() error {
 			aa = append(aa, a)
 		}
 		c := Context("Default", aa...)
-		c.Activate(Any)
+		c.ActivateOn(Any)
 		internal.Log.Printf("(added default context with all actions)")
 	}
 

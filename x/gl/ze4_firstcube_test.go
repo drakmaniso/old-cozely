@@ -19,10 +19,10 @@ import (
 // Input Bindings
 
 var (
-	quit   = input.Digital("Quit")
-	rotate = input.Digital("Rotate")
-	move   = input.Digital("Move")
-	zoom   = input.Digital("Zoom")
+	quit   = input.Button("Quit")
+	rotate = input.Button("Rotate")
+	move   = input.Button("Move")
+	zoom   = input.Button("Zoom")
 	delta  = input.Delta("Delta")
 )
 
@@ -86,7 +86,7 @@ func Example_firstCube() {
 
 func (l *loop04) Enter() {
 	input.Load(bindings)
-	context.Activate(1)
+	context.Activate()
 
 	// Create and configure the pipeline
 	l.pipeline = gl.NewPipeline(
@@ -126,17 +126,17 @@ func (loop04) Leave() {
 // Game Loop ///////////////////////////////////////////////////////////////////
 
 func (l *loop04) React() {
-	m := delta.XY(0)
+	m := delta.XY()
 	s := window.Size().Coord()
 
-	if rotate.Started(1) || move.Started(1) || zoom.Started(1) {
+	if rotate.Pushed() || move.Pushed() || zoom.Pushed() {
 		input.GrabMouse(true)
 	}
-	if rotate.Stopped(1) || move.Stopped(1) || zoom.Stopped(1) {
+	if rotate.Released() || move.Released() || zoom.Released() {
 		input.GrabMouse(false)
 	}
 
-	if rotate.Ongoing(1) {
+	if rotate.Pressed() {
 		l.yaw += 4 * m.X / s.X
 		l.pitch += 4 * m.Y / s.Y
 		switch {
@@ -148,21 +148,21 @@ func (l *loop04) React() {
 		l.computeWorldFromObject()
 	}
 
-	if move.Ongoing(1) {
+	if move.Pressed() {
 		d := m.Times(2).Slashxy(s)
 		l.position.X += d.X
 		l.position.Y -= d.Y
 		l.computeWorldFromObject()
 	}
 
-	if zoom.Ongoing(1) {
+	if zoom.Pressed() {
 		d := m.Times(2).Slashxy(s)
 		l.position.X += d.X
 		l.position.Z += d.Y
 		l.computeWorldFromObject()
 	}
 
-	if quit.Started(1) {
+	if quit.Pushed() {
 		cozely.Stop(nil)
 	}
 }

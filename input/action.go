@@ -9,7 +9,7 @@ package input
 // bound to hardware input (by the player). During the game loop, actions can be
 // queried and reacted upon.
 type Action interface {
-	Active(d DeviceID) bool
+	ActiveOn(d DeviceID) bool
 	deactivate(d DeviceID)
 	activate(d DeviceID, b source)
 	newframe(d DeviceID)

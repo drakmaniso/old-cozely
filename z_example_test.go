@@ -12,8 +12,8 @@ import (
 // Declarations ////////////////////////////////////////////////////////////////
 
 var (
-	quit = input.Digital("Quit")
-	play = input.Digital("Play")
+	quit = input.Button("Quit")
+	play = input.Button("Play")
 )
 
 var bindings = input.Bindings{
@@ -65,7 +65,7 @@ func (loop) Leave() {
 // Game Loop ///////////////////////////////////////////////////////////////////
 
 func (l *loop) React() {
-	if play.Started(input.Any) {
+	if play.Pushed() {
 		l.playing = !l.playing
 		if l.playing {
 			pixel.SetPalette(l.colorful)
@@ -74,7 +74,7 @@ func (l *loop) React() {
 			pixel.SetPalette(l.monochrome)
 		}
 	}
-	if quit.Started(input.Any) {
+	if quit.Pushed() {
 		cozely.Stop(nil)
 	}
 }
