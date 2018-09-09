@@ -22,7 +22,6 @@ type CursorID uint32
 const noCursor = CursorID(maxID)
 
 // Pointer is a default action.
-const Pointer = CursorID(iota)
 
 var cursors = struct {
 	// For each cursor

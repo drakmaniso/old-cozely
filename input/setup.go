@@ -47,42 +47,42 @@ func setup() error {
 		for _, a := range contexts.actions[i] {
 			var b []string
 			switch a {
-			case Back:
+			case MenuBack:
 				b, ok = m["Menu Back"]
 				if !ok || len(b) == 0 {
 					m["Menu Back"] = []string{"Escape", "Button B"}
 				}
-			case Select:
+			case MenuSelect:
 				b, ok = m["Menu Select"]
 				if !ok || len(b) == 0 {
 					m["Menu Select"] = []string{"Space", "Enter", "Button A"}
 				}
-			case Up:
+			case MenuUp:
 				b, ok = m["Menu Up"]
 				if !ok || len(b) == 0 {
 					m["Menu Up"] = []string{"Up", "Dpad Up"} //TODO: keypad and left stick support
 				}
-			case Down:
+			case MenuDown:
 				b, ok = m["Menu Down"]
 				if !ok || len(b) == 0 {
 					m["Menu Down"] = []string{"Down", "Dpad Down"} //TODO: keypad and left stick support
 				}
-			case Left:
+			case MenuLeft:
 				b, ok = m["Menu Left"]
 				if !ok || len(b) == 0 {
 					m["Menu Left"] = []string{"Left", "Dpad Left"} //TODO: keypad and left stick support
 				}
-			case Right:
+			case MenuRight:
 				b, ok = m["Menu Right"]
 				if !ok || len(b) == 0 {
 					m["Menu Right"] = []string{"Right", "Dpad Right"} //TODO: keypad and left stick support
 				}
-			case Pointer:
+			case MenuPointer:
 				b, ok = m["Menu Pointer"]
 				if !ok || len(b) == 0 {
 					m["Menu Pointer"] = []string{"Mouse", "Right Stick"}
 				}
-			case Click:
+			case MenuClick:
 				b, ok = m["Menu Click"]
 				if !ok || len(b) == 0 {
 					m["Menu Click"] = []string{"Mouse Left", "Right Trigger"}

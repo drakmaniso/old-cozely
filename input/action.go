@@ -22,25 +22,41 @@ var actions = struct {
 	list []Action
 }{
 	name: map[string]Action{
-		"Menu Select": Select,
-		"Menu Back":   Back,
-		"Menu Up":     Up,
-		"Menu Down":   Down,
-		"Menu Left":   Left,
-		"Menu Right":  Right,
-		"Menu Pointer": Pointer,
-		"Menu Click":  Click,
+		"Menu Select":  MenuSelect,
+		"Menu Back":    MenuBack,
+		"Menu Up":      MenuUp,
+		"Menu Down":    MenuDown,
+		"Menu Left":    MenuLeft,
+		"Menu Right":   MenuRight,
+		"Menu Pointer": MenuPointer,
+		"Menu Click":   MenuClick,
 	},
 	list: []Action{
-		Select,
-		Back,
-		Up,
-		Down,
-		Left,
-		Right,
-		Pointer,
-		Click,
+		MenuSelect,
+		MenuBack,
+		MenuUp,
+		MenuDown,
+		MenuLeft,
+		MenuRight,
+		MenuPointer,
+		MenuClick,
 	},
 }
+
+// Default actions with automatic bindings. If a context contain one of these,
+// but no bindings is found, default bindings will be added. If there is no
+// declared context, a default context will be created and include all these
+// actions.
+const (
+	MenuSelect = ButtonID(iota)
+	MenuBack
+	MenuUp
+	MenuDown
+	MenuLeft
+	MenuRight
+	MenuClick
+
+	MenuPointer = CursorID(0)
+)
 
 const maxID = 0xFFFFFFFF

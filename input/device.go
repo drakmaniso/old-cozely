@@ -20,8 +20,6 @@ const (
 	kbmouse DeviceID = iota
 )
 
-const maxdevices = 16
-
 var devices struct {
 	// For each device
 	name       []string
