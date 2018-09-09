@@ -5,283 +5,122 @@ package pixel
 
 import (
 	"errors"
-	"unsafe"
 
 	"github.com/cozely/cozely/color"
-	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/internal"
-	"github.com/cozely/cozely/x/gl"
+	"github.com/cozely/cozely/window"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// CanvasID is the ID to handle the GPU framebuffer used to display pictures,
-// print text and for various other drawing primitives.
-type CanvasID uint16
+// screen is the virtual screen. It is mad of a canvas and a filter, with depth
+// information.
+var screen = struct {
+	resolution XY    // fixed resolution, or {0, 0} for fixed zoom
+	zoom       int16 // in window pixels
 
-const (
-	maxCanvasID = 0xFFFF
-	noCanvas    = CanvasID(maxCanvasID)
-)
-
-type canvas struct {
-	resolution coord.CR
-	fixedres   bool
-	size       coord.CR // in canvas pixels
-	pixel      int16    // in window pixels
-	margin     coord.CR // in canvas pixels
-	border     coord.CR // in window pixels (leftover from division by pixel size)
-	buffer     gl.Framebuffer
-	canvas     gl.Texture2D
-	depth      gl.Texture2D
-	filter     gl.Texture2D
-	counter    gl.CounterBuffer
-	heap       gl.StorageBuffer
-
-	cmdcount      uint32
-	commands      []gl.DrawIndirectCommand
-	parameters    []int16
-	cursor        TextCursor
-	commandsICBO  gl.IndirectBuffer
-	parametersTBO gl.BufferTexture
+	size   XY        // size of the canvas
+	margin XY        // for fixed resolution only, = size - resolution
+	border window.XY // leftover from division by pixel size
+}{
+	resolution: XY{},
+	zoom:       2,
 }
 
-var canvases []canvas
-
 ////////////////////////////////////////////////////////////////////////////////
 
-// Canvas declares a new canvas and returns its ID.
-func Canvas(o ...CanvasOption) CanvasID {
+// SetResolution defines a target resolution for the automatic resizing of
+// the canvas.
+//
+// It guarantees that:
+// - the canvas will never be smaller than the target resolution,
+// - the target resolution will occupy as much screen as possible.
+func SetResolution(r XY) {
+	//TODO: allow runtime changes (defered to render?)
 	if internal.Running {
-		setErr(errors.New("pixel canvas declaration: declarations must happen before starting the framework"))
-		return noCanvas
+		setErr(errors.New("Resolution must be called before starting the framework"))
+		return
 	}
+	screen.resolution = r
+	// if internal.Running {
+	// 	resize()
+	// }
+}
 
-	if len(canvases) >= maxCanvasID {
-		setErr(errors.New("pixel canvas declaration: too many canvases"))
-		return noCanvas
+// SetZoom sets the pixel size used to display the canvas.
+func SetZoom(z int16) {
+	//TODO: allow runtime changes (defered to render?)
+	if internal.Running {
+		setErr(errors.New("Resolution must be called before starting the framework"))
+		return
 	}
-
-	a := CanvasID(len(canvases))
-	canvases = append(canvases, canvas{})
-
-	aa := &canvases[a]
-	aa.resolution = coord.CR{640, 360}
-	aa.pixel = 2
-	aa.commands = make([]gl.DrawIndirectCommand, 0, maxCommandCount)
-	aa.parameters = make([]int16, 0, maxParamCount)
-
-	for i := range o {
-		o[i](a)
+	if z < 1 {
+		z = 1
 	}
-
-	//TODO: create textures if not autoresize
-
-	return a
+	screen.zoom = z
+	screen.resolution = XY{}
+	screen.margin = XY{}
+	// if internal.Running {
+	// 	resize()
+	// }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (a CanvasID) setup() {
-	aa := &canvases[a]
-	aa.buffer = gl.NewFramebuffer()
-	aa.counter = gl.NewCounterBuffer(1, gl.DynamicStorage)
-
-	aa.commandsICBO = gl.NewIndirectBuffer(
-		uintptr(cap(aa.commands))*unsafe.Sizeof(aa.commands[0]),
-		gl.DynamicStorage,
-	)
-	aa.parametersTBO = gl.NewBufferTexture(
-		uintptr(cap(aa.parameters))*unsafe.Sizeof(aa.parameters[0]),
-		gl.R16I,
-		gl.DynamicStorage,
-	)
+func init() {
+	internal.PixelResize = resize
 }
 
-////////////////////////////////////////////////////////////////////////////////
+func resize() {
+	//TODO: use window.XY
+	win := window.XY{internal.Window.Width, internal.Window.Height}
 
-func (a CanvasID) autoresize() {
-	aa := &canvases[a]
-	win := coord.CR{internal.Window.Width, internal.Window.Height}
-
-	if aa.fixedres {
+	if !screen.resolution.Null() {
 		// Find best fit for pixel size
-		p := win.Slashcr(aa.resolution)
-		if p.C < p.R {
-			aa.pixel = p.C
+		p := win.SlashXY(window.XYof(screen.resolution))
+		if p.X < p.Y {
+			screen.zoom = p.X
 		} else {
-			aa.pixel = p.R
+			screen.zoom = p.Y
 		}
-		if aa.pixel < 1 {
-			aa.pixel = 1
+		if screen.zoom < 1 {
+			screen.zoom = 1
 		}
 	}
 
 	// Extend the screen to cover the window
-	aa.size = win.Slash(aa.pixel)
-	a.createTextures()
+	screen.size = XY(win.Slash(screen.zoom))
+	adjustScreenTextures()
 
 	// For fixed resolution, compute the margin and fix the size
-	if aa.fixedres {
-		aa.margin = aa.size.Minus(aa.resolution).Slash(2)
+	if !screen.resolution.Null() {
+		screen.margin = screen.size.Minus(screen.resolution).Slash(2)
 	}
 
 	// Compute outside border
-	sz := aa.size.Times(aa.pixel)
-	aa.border = win.Minus(sz).Slash(2)
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-func (a CanvasID) createTextures() {
-	aa := &canvases[a]
-
-	aa.canvas.Delete()
-	aa.canvas = gl.NewTexture2D(1, gl.R8UI, int32(aa.size.C), int32(aa.size.R))
-	aa.buffer.Texture(gl.ColorAttachment0, aa.canvas, 0)
-
-	aa.depth.Delete()
-	aa.depth = gl.NewTexture2D(1, gl.Depth32F, int32(aa.size.C), int32(aa.size.R))
-	aa.buffer.Texture(gl.DepthAttachment, aa.depth, 0)
-
-	aa.filter.Delete()
-	aa.filter = gl.NewTexture2D(1, gl.R32UI, int32(aa.size.C), int32(aa.size.R))
-
-	aa.heap.Delete()
-	aa.heap = gl.NewStorageBuffer(uintptr(64*4*uint(aa.size.C)*uint(aa.size.R)), gl.StaticStorage)
-
-	aa.buffer.DrawBuffer(gl.ColorAttachment0)
-	// aa.buffer.SetEmptySize(aa.size.C, aa.size.R)
-	// aa.buffer.DrawBuffer(gl.NoAttachment)
-	aa.buffer.ReadBuffer(gl.NoAttachment)
-
-	st := aa.buffer.CheckStatus(gl.DrawReadFramebuffer)
-	if st != gl.FramebufferComplete {
-		setErr(errors.New("pixel canvas texture creation: " + st.String()))
-	}
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-// paint executes all pending commands on the canvas. It is automatically called
-// by Display; the only reason to call it manually is to be able to read from it
-// before display.
-func (a CanvasID) paint() {
-	aa := &canvases[a]
-
-	if len(aa.commands) == 0 {
-		return
-	}
-
-	internal.ColorUpload()
-
-	screenUniforms.PixelSize.X = 1.0 / float32(aa.size.C)
-	screenUniforms.PixelSize.Y = 1.0 / float32(aa.size.R)
-	screenUniforms.CanvasMargin.X = int32(aa.margin.C)
-	screenUniforms.CanvasMargin.Y = int32(aa.margin.R)
-	screenUBO.SubData(&screenUniforms, 0)
-
-	aa.buffer.Bind(gl.DrawFramebuffer)
-	gl.Viewport(0, 0, int32(aa.size.C), int32(aa.size.R))
-	pipeline.Bind()
-	gl.Disable(gl.Blend)
-
-	screenUBO.Bind(layoutScreen)
-	aa.commandsICBO.Bind()
-	aa.parametersTBO.Bind(layoutParameters)
-	pictureMapTBO.Bind(layoutPictureMap)
-	picturesTA.Bind(layoutPictures)
-	aa.filter.BindImage(7, 0, gl.ReadWrite, gl.R32UI)
-	aa.counter.Bind(0)
-	aa.counter.SubData([]uint32{1}, 0)
-	aa.heap.Bind(1)
-
-	aa.commandsICBO.SubData(aa.commands, 0)
-	aa.parametersTBO.SubData(aa.parameters, 0)
-	gl.DrawIndirect(0, int32(len(aa.commands)))
-	aa.commands = aa.commands[:0]
-	aa.parameters = aa.parameters[:0]
-	aa.cmdcount = 1
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-// Display tells the GPU to execute all pending drawing commands on the canvas
-// (if any), and then display it on the game window.
-func (a CanvasID) Display() {
-	a.paint()
-
-	aa := &canvases[a]
-
-	sz := aa.size.Times(aa.pixel)
-
-	blitUniforms.ScreenSize.X = float32(aa.size.C)
-	blitUniforms.ScreenSize.Y = float32(aa.size.R)
-	blitUBO.SubData(&blitUniforms, 0)
-
-	internal.ColorUpload()
-
-	blitPipeline.Bind()
-	gl.DefaultFramebuffer.Bind(gl.DrawFramebuffer)
-	gl.Enable(gl.FramebufferSRGB)
-	gl.Disable(gl.Blend)
-	gl.Viewport(int32(aa.border.C), int32(aa.border.R),
-		int32(aa.border.C+sz.C), int32(aa.border.R+sz.R))
-	blitUBO.Bind(0)
-	aa.canvas.Bind(0)
-	aa.depth.Bind(1)
-	aa.filter.BindImage(7, 0, gl.ReadWrite, gl.R32UI)
-	aa.heap.Bind(1)
-	gl.MemoryBarrier()
-	gl.Draw(0, 4)
+	sz := window.XY(screen.size.Times(screen.zoom))
+	screen.border = win.Minus(sz).Slash(2)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 // Clear sets the color of all pixels on the canvas; it also resets the filter
 // of all pixels.
-func (a CanvasID) Clear(color color.Index) {
-	aa := &canvases[a]
-	pipeline.Bind() //TODO: find another way to enable depthWrite
-	// aa.buffer.ClearColorUint(uint32(color), 0, 0, 0)
-	aa.buffer.ClearDepth(-1.0)
-	aa.canvas.ClearByte(0, uint8(color))
-	aa.filter.ClearByte(0, 0)
+func Clear(c color.Index) {
+	renderer.clear(c)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// Size returns the current dimension of the canvas (in *canvas* pixels).
-func (a CanvasID) Size() coord.CR {
-	if canvases[a].fixedres {
-		return canvases[a].resolution
+// Resolution returns the current dimension of the canvas (in *canvas* pixels).
+func Resolution() XY {
+	if !screen.resolution.Null() {
+		return screen.resolution
 	}
-	return canvases[a].size
+	return screen.size
 }
 
-// PixelSize returns the size of one canvas pixel, in *window* pixels.
-func (a CanvasID) PixelSize() int16 {
-	return canvases[a].pixel
+// Zoom returns the size of one canvas pixel, in *window* pixels.
+func Zoom() int16 {
+	return screen.zoom
 }
-
-// FromWindow takes a coordinates in window space and returns it in canvas
-// space.
-func (a CanvasID) FromWindow(p coord.CR) coord.CR {
-	aa := &canvases[a]
-	if aa.fixedres {
-		return p.Minus(aa.border).Slash(aa.pixel).Minus(aa.margin)
-	}
-	return p.Minus(aa.border).Slash(aa.pixel)
-}
-
-// ToWindow takes a coordinates in canvas space and returns it in window
-// space.
-func (a CanvasID) ToWindow(p coord.CR) coord.CR {
-	aa := &canvases[a]
-	if aa.fixedres {
-		return p.Times(aa.pixel).Plus(aa.border)
-	}
-	return p.Plus(aa.margin).Times(aa.pixel).Plus(aa.border)
-}
-
-////////////////////////////////////////////////////////////////////////////////

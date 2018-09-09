@@ -7,8 +7,6 @@ import (
 	"testing"
 
 	"github.com/cozely/cozely"
-	"github.com/cozely/cozely/color"
-	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
 )
@@ -16,11 +14,8 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 
 type loop5 struct {
-	canvas  pixel.CanvasID
-	palette color.PaletteID
-
-	points                    []coord.CR
-	pointshidden, lineshidden bool
+	points                                     []pixel.XY
+	pointshidden, lineshidden, triangleshidden bool
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -41,10 +36,9 @@ func TestTest5(t *testing.T) {
 }
 
 func (a *loop5) declare() {
-	a.canvas = pixel.Canvas(pixel.Resolution(128, 128))
-	a.palette = color.PaletteFrom("graphics/shape1")
+	pixel.SetResolution(pixel.XY{128, 128})
 
-	a.points = []coord.CR{
+	a.points = []pixel.XY{
 		{4, 4},
 		{4 + 1, 4 + 20},
 		{4 + 1 + 20, 4 + 20 - 1},
@@ -54,7 +48,6 @@ func (a *loop5) declare() {
 
 func (a *loop5) Enter() {
 	input.ShowMouse(false)
-	a.palette.Activate()
 }
 
 func (loop5) Leave() {
@@ -68,7 +61,7 @@ func (a *loop5) React() {
 	}
 
 	if next.Started(0) {
-		m := a.canvas.FromWindow(cursor.XY(0).CR())
+		m := pixel.XYof(cursor.XY(0))
 		a.points = append(a.points, m)
 	}
 
@@ -78,26 +71,28 @@ func (a *loop5) React() {
 		}
 	}
 
-	a.pointshidden = scene1.Ongoing(0)
-	a.lineshidden = scene2.Ongoing(0)
+	a.pointshidden = scenes[1].Ongoing(0)
+	a.lineshidden = scenes[2].Ongoing(0)
+	a.triangleshidden = scenes[3].Ongoing(0)
 }
 
 func (loop5) Update() {
 }
 
 func (a *loop5) Render() {
-	a.canvas.Clear(1)
-	m := a.canvas.FromWindow(cursor.XY(0).CR())
-	a.canvas.Triangles(2, a.points...)
+	pixel.Clear(1)
+	m := pixel.XYof(cursor.XY(0))
+	if !a.triangleshidden {
+		pixel.Triangles(2, 0, a.points...)
+	}
 	if !a.lineshidden {
-		a.canvas.Lines(5, a.points...)
-		a.canvas.Lines(13, a.points[len(a.points)-1], m)
+		pixel.Lines(14, 0, a.points...)
+		pixel.Lines(13, 0, a.points[len(a.points)-1], m)
 	}
 	if !a.pointshidden {
 		for _, p := range a.points {
-			a.canvas.Point(8, p)
+			pixel.Point(8, 0, p)
 		}
-		a.canvas.Point(18, m)
+		pixel.Point(7, 0, m)
 	}
-	a.canvas.Display()
 }

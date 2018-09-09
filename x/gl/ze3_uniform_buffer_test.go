@@ -8,6 +8,7 @@ import (
 	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/plane"
+	"github.com/cozely/cozely/window"
 	"github.com/cozely/cozely/x/gl"
 )
 
@@ -37,9 +38,9 @@ type coloredmesh2d []struct {
 func Example_uniformBuffer() {
 	defer cozely.Recover()
 
-	cozely.Events.Resize = func() {
-		s := cozely.WindowSize()
-		gl.Viewport(0, 0, int32(s.C), int32(s.R))
+	window.Events.Resize = func() {
+		s := window.Size()
+		gl.Viewport(0, 0, int32(s.X), int32(s.Y))
 	}
 	l := loop03{}
 	err := cozely.Run(&l)

@@ -4,10 +4,9 @@
 package main
 
 import (
-	"github.com/cozely/cozely/coord"
-
 	"github.com/cozely/cozely/_examples/match3/ecs"
 	"github.com/cozely/cozely/_examples/match3/grid"
+	"github.com/cozely/cozely/pixel"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -19,7 +18,7 @@ var colours [ecs.Size]colour
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop) Render() {
-	canvas.Clear(1)
+	pixel.Clear(1)
 
 	var x, y int16 // screen coords
 
@@ -37,11 +36,9 @@ func (loop) Render() {
 			if grid.PositionOf(e) == current || e.Has(ecs.MatchFlag) {
 				p = tilesPict[c].big
 			}
-			canvas.Picture(p, coord.CR{x, y})
+			p.Paint(0, pixel.XY{x, y})
 		}
 	}
-
-	canvas.Display()
 }
 
 ////////////////////////////////////////////////////////////////////////////////

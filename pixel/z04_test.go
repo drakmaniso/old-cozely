@@ -10,7 +10,6 @@ import (
 
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/color"
-	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
 )
@@ -18,9 +17,7 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 
 type loop4 struct {
-	canvas  pixel.CanvasID
-	palette color.PaletteID
-	fg, bg  color.Index
+	fg, bg color.Index
 
 	tinela9, monozela10, simpela10, simpela12,
 	cozela10, cozela12, chaotela12, font pixel.FontID
@@ -52,10 +49,10 @@ func TestTest4(t *testing.T) {
 }
 
 func (a *loop4) declare() {
-	a.canvas = pixel.Canvas(pixel.Zoom(2))
-	a.palette = color.Palette()
-	a.bg = a.palette.Entry(color.SRGB8{0xFF, 0xFE, 0xFC})
-	a.fg = a.palette.Entry(color.SRGB8{0x07, 0x05, 0x00})
+	pixel.SetZoom(2)
+	//TODO:
+	a.bg = 7
+	a.fg = 1
 
 	a.tinela9 = pixel.Font("fonts/tinela9")
 	a.monozela10 = pixel.Font("fonts/monozela10")
@@ -88,7 +85,6 @@ func (a *loop4) Enter() {
 		a.code = append(a.code, s.Text())
 	}
 	a.show = a.text
-	a.palette.Activate()
 }
 
 func (loop4) Leave() {
@@ -119,26 +115,23 @@ func (loop4) Update() {
 }
 
 func (a *loop4) Render() {
-	a.canvas.Clear(a.bg)
+	pixel.Clear(a.bg)
 
-	a.canvas.Cursor().Color = a.fg
-	a.canvas.Locate(coord.CR{16, a.font.Height() + 2})
+	cur := pixel.Cursor{}
+	cur.Style(a.fg, a.font)
+	cur.Locate(0, pixel.XY{16, a.font.Height() + 2})
+	cur.LetterSpacing = a.letterspacing
+	// u.Interline = fntInterline
 
-	a.canvas.Cursor().Font = a.font
-	a.canvas.Cursor().LetterSpacing = a.letterspacing
-	// curScreen.Interline = fntInterline
+	y := cur.Position.Y
 
-	y := a.canvas.Cursor().Position.R
-
-	for l := a.line; l < len(a.show) && y < a.canvas.Size().R; l++ {
-		a.canvas.Println(a.show[l])
-		y = a.canvas.Cursor().Position.R
+	for l := a.line; l < len(a.show) && y < pixel.Resolution().Y; l++ {
+		cur.Println(a.show[l])
+		y = cur.Position.Y
 	}
 
-	a.canvas.Locate(coord.CR{a.canvas.Size().C - 96, 16})
-	a.canvas.Printf("Line %d", a.line)
-
-	a.canvas.Display()
+	cur.Locate(0, pixel.XY{pixel.Resolution().X - 96, 16})
+	cur.Printf("Line %d", a.line)
 }
 
 //TODO:

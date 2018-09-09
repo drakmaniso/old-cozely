@@ -5,32 +5,30 @@ package coord
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// CRD is a vector of 3D integer coordinates. C stands for "column" and
-// corresponds to the x-coordinate, R stands for "row" and corresponds to the
-// y-coordinate, and D stands for "depth" and corresponds to the z-coordinate.
+// CRD represents 3D integer coordinates. C stands for "column" and corresponds
+// to the x-coordinate, R stands for "row" and corresponds to the y-coordinate,
+// and D stands for "depth" and corresponds to the z-coordinate.
 type CRD struct {
 	C, R, D int16
 }
 
-// CRDof returns an integer vector corresponding to v.
-func CRDof(v Vector) CRD {
+// CRDof returns the integer coordinates corresponding to v.
+func CRDof(v Coordinates) CRD {
 	x, y, z := v.Cartesian()
 	return CRD{int16(x), int16(y), int16(z)}
 }
 
 // Cartesian returns the coordinates of the vector in 3D space. C,R and D are
 // casted to float32.
-//
-// This method implements the Vector interface.
 func (a CRD) Cartesian() (x, y, z float32) {
 	return float32(a.C), float32(a.R), float32(a.D)
 }
 
-// CR returns the 2D integer vector corresponding to the first two dimensions of
-// the vector.
-func (a CRD) CR() CR {
-	return CR{a.C, a.R}
-}
+// // CR returns the 2D integer vector corresponding to the first two dimensions of
+// // the vector.
+// func (a CRD) CR() CR {
+// 	return CR{a.C, a.R}
+// }
 
 // XY returns the 3D floating-point vector corresponding to the first two
 // dimensions of the vector.

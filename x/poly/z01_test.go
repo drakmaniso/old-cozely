@@ -12,6 +12,7 @@ import (
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
 	"github.com/cozely/cozely/space"
+	"github.com/cozely/cozely/window"
 	"github.com/cozely/cozely/x/gl"
 	"github.com/cozely/cozely/x/poly"
 )
@@ -60,13 +61,6 @@ var bindings1 = input.Bindings{
 
 ////////////////////////////////////////////////////////////////////////////////
 
-var (
-	overlay = pixel.Canvas(pixel.Zoom(2))
-	palette = color.Palette(color.SRGB8{0xFF, 0xFF, 0xFF})
-)
-
-////////////////////////////////////////////////////////////////////////////////
-
 var pipeline *gl.Pipeline
 
 // Uniform buffer
@@ -110,7 +104,7 @@ func TestTest1(t *testing.T) {
 			cozely.UpdateStep(1.0/50),
 			cozely.Multisample(8),
 		)
-		cozely.Events.Resize = resize
+		window.Events.Resize = resize
 		err := cozely.Run(loop{})
 		if err != nil {
 			panic(err)
@@ -122,7 +116,6 @@ func (loop) Enter() {
 	input.ShowMouse(false)
 	input.Load(bindings1)
 	context1.Activate(1)
-	palette.Activate()
 
 	pipeline = gl.NewPipeline(
 		poly.PipelineSetup(),
@@ -161,8 +154,8 @@ func (loop) Leave() {
 }
 
 func resize() {
-	s := cozely.WindowSize()
-	gl.Viewport(0, 0, int32(s.C), int32(s.R))
+	s := window.Size()
+	gl.Viewport(0, 0, int32(s.X), int32(s.Y))
 	if camera != nil {
 		camera.WindowResized()
 	}
@@ -239,8 +232,8 @@ func (loop) Render() {
 	prepare()
 
 	gl.DefaultFramebuffer.Bind(gl.DrawFramebuffer)
-	s := cozely.WindowSize()
-	gl.Viewport(0, 0, int32(s.C), int32(s.R))
+	s := window.Size()
+	gl.Viewport(0, 0, int32(s.X), int32(s.Y))
 	pipeline.Bind()
 	gl.ClearDepthBuffer(1.0)
 	gl.ClearColorBuffer(color.LRGBA{0.025, 0.025, 0.025, 1.0})
@@ -258,17 +251,19 @@ func (loop) Render() {
 
 	pipeline.Unbind()
 
-	overlay.Clear(0)
-	overlay.Locate(coord.CR{2, 12})
+	pixel.Clear(0)
+	cur := pixel.Cursor{
+		Color: 7,
+	}
+	cur.Locate(0, pixel.XY{2, 12})
 	ft, or := cozely.RenderStats()
-	overlay.Printf("% 3.2f", ft*1000)
+	cur.Printf("% 3.2f", ft*1000)
 	if or > 0 {
-		overlay.Printf(" (%d)", or)
+		cur.Printf(" (%d)", or)
 	}
-	if cozely.HasMouseFocus() {
-		overlay.Picture(pixel.MouseCursor, overlay.FromWindow(cursor.XY(0).CR()))
+	if window.HasMouseFocus() {
+		pixel.MouseCursor.Paint(0, pixel.XYof(cursor.XY(0)))
 	}
-	overlay.Display()
 }
 
 func prepare() {
@@ -278,7 +273,7 @@ func prepare() {
 
 	m := rotation.XY(0)
 
-	s := cozely.WindowSize().XY()
+	s := coord.XYof(window.Size())
 	switch {
 	case rollleft.Ongoing(1) || rollright.Ongoing(1):
 		camera.Rotate(0, 0, rolling*dt)

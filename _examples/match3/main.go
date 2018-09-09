@@ -11,6 +11,7 @@ import (
 	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
+	"github.com/cozely/cozely/window"
 
 	"github.com/cozely/cozely/_examples/match3/ecs"
 	"github.com/cozely/cozely/_examples/match3/grid"
@@ -19,16 +20,16 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 
 var (
-	quit  = input.Digital("Quit")
-	selct = input.Digital("Select")
-	test  = input.Digital("Test")
+	quit   = input.Digital("Quit")
+	selct  = input.Digital("Select")
+	test   = input.Digital("Test")
 	cursor = input.Cursor("Cursor")
 )
 
 var bindings = input.Bindings{
 	"Default": {
 		"Quit":   {"Escape"},
-		"Cursor" : {"Mouse"},
+		"Cursor": {"Mouse"},
 		"Select": {"Mouse Left"},
 		"Test":   {"Space"},
 	},
@@ -37,7 +38,6 @@ var bindings = input.Bindings{
 ////////////////////////////////////////////////////////////////////////////////
 
 var (
-	canvas  = pixel.Canvas(pixel.Resolution(180, 180))
 	palette = color.PaletteFrom("graphics/blue")
 )
 
@@ -67,14 +67,16 @@ func main() {
 }
 
 func (loop) Enter() {
-	palette.Activate()
+	pixel.SetPalette(palette)
 }
 
 func (loop) Leave() {
 }
 
 func setup() error {
-	cozely.Events.Resize = resize
+	window.Events.Resize = resize
+
+	pixel.SetResolution(180, 180)
 
 	for i, n := range []string{
 		"red",
@@ -99,8 +101,7 @@ func setup() error {
 }
 
 func resize() {
-	w, h := canvas.Size().C, canvas.Size().R
-	grid.ScreenResized(w, h)
+	grid.ScreenResized(pixel.Resolution().X, pixel.Resolution().Y)
 }
 
 func newTile() ecs.Entity {
@@ -122,7 +123,7 @@ func init() {
 
 func (loop) React() {
 	if selct.Started(1) {
-		m := canvas.FromWindow(cursor.XY(0).CR())
+		m := pixel.ToCanvas(window.XYof(cursor.XY(0)))
 		current = grid.PositionAt(m)
 		if current != grid.Nowhere() {
 			e := grid.At(current)

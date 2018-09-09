@@ -10,6 +10,7 @@ import (
 	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
+	"github.com/cozely/cozely/window"
 	"github.com/cozely/cozely/x/gl"
 	"github.com/cozely/cozely/x/math32"
 )
@@ -61,7 +62,7 @@ func Example_streaming() {
 	}
 
 	cozely.Configure(cozely.Multisample(8), gl.NoClear())
-	cozely.Events.Resize = l.resize
+	window.Events.Resize = l.resize
 	err := cozely.Run(&l)
 	if err != nil {
 		panic(err)
@@ -175,7 +176,7 @@ func (l *loop08) setupPoints() {
 func (l *loop08) resize() {
 	l.setupPoints()
 
-	s := cozely.WindowSize().XY()
+	s := window.Size().Coord()
 
 	// Compute ratio
 	if s.X > s.Y {

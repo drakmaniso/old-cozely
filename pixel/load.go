@@ -5,10 +5,8 @@ package pixel
 
 import (
 	"errors"
-	_ "image/png" // Activate PNG support
 
 	"github.com/cozely/cozely/internal"
-	"github.com/cozely/cozely/x/gl"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -59,5 +57,5 @@ func loadAssets() error {
 		float64(pictures.atlas.Unused())/1024.0,
 	)
 
-	return gl.Err()
+	return nil
 }

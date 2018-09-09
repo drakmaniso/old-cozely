@@ -13,6 +13,7 @@ import (
 	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/space"
+	"github.com/cozely/cozely/window"
 	"github.com/cozely/cozely/x/gl"
 	"github.com/cozely/cozely/x/math32"
 )
@@ -60,10 +61,10 @@ func Example_texture() {
 
 	cozely.Configure(cozely.Multisample(8))
 	l := loop05{}
-	cozely.Events.Resize = func() {
-		s := cozely.WindowSize()
-		gl.Viewport(0, 0, int32(s.C), int32(s.R))
-		r := float32(s.C) / float32(s.R)
+	window.Events.Resize = func() {
+		s := window.Size()
+		gl.Viewport(0, 0, int32(s.X), int32(s.Y))
+		r := float32(s.X) / float32(s.Y)
 		l.screenFromView = space.Perspective(math32.Pi/4, r, 0.001, 1000.0)
 	}
 	err := cozely.Run(&l)
@@ -136,7 +137,7 @@ func (loop05) Leave() {
 
 func (l *loop05) React() {
 	m := delta.XY(0)
-	s := cozely.WindowSize().XY()
+	s := window.Size().Coord()
 
 	if rotate.Started(1) || move.Started(1) || zoom.Started(1) {
 		input.GrabMouse(true)

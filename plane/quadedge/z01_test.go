@@ -5,21 +5,20 @@ import (
 	"testing"
 
 	"github.com/cozely/cozely"
-	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
 	"github.com/cozely/cozely/plane/quadedge"
+	"github.com/cozely/cozely/window"
 	"github.com/cozely/cozely/x/math32"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
 
 var (
-	canvas1  = pixel.Canvas(pixel.Zoom(2))
-	palette1 = color.Palette(color.LRGB{1, 1, 1})
-	col1     = palette1.Entry(color.LRGB{0.1, 0.2, 0.5})
-	col2     = palette1.Entry(color.LRGB{0.5, 0.1, 0.0})
+	col1 = pixel.DefaultPalette.ByName["Indigo"]
+	col2 = pixel.DefaultPalette.ByName["Orange"]
+	col3 = pixel.DefaultPalette.ByName["White"]
 )
 
 var (
@@ -40,6 +39,8 @@ func TestTest1(t *testing.T) {
 	do(func() {
 		defer cozely.Recover()
 
+		pixel.SetZoom(2)
+
 		input.Load(bindings)
 		err := cozely.Run(loop1{})
 		if err != nil {
@@ -53,8 +54,6 @@ func (loop1) Enter() {
 
 	points = make([]coord.XY, 64)
 	newPoints()
-
-	palette1.Activate()
 }
 
 func (loop1) Leave() {
@@ -71,7 +70,7 @@ func (loop1) React() {
 	}
 
 	if previous.Started(0) {
-		m := canvas1.FromWindow(cursor.XY(0).CR())
+		m := pixel.XYof(cursor.XY(0))
 		p := fromScreen(m)
 		points = append(points, p)
 		triangulation = quadedge.Delaunay(points)
@@ -141,48 +140,48 @@ func (loop1) Update() {
 }
 
 func (loop1) Render() {
-	canvas1.Clear(0)
-	ratio = float32(canvas1.Size().R)
+	pixel.Clear(1)
+	cur := pixel.Cursor{}
+
+	ratio = float32(pixel.Resolution().Y)
 	orig = coord.XY{
-		X: (float32(canvas1.Size().C) - ratio) / 2,
-		Y: float32(canvas1.Size().R),
+		X: (float32(pixel.Resolution().X) - ratio) / 2,
+		Y: float32(pixel.Resolution().Y),
 	}
 
-	m := canvas1.FromWindow(cursor.XY(0).CR())
+	m := pixel.XYof(cursor.XY(0))
 	p := fromScreen(m)
-	canvas1.Locate(coord.CR{2, 8})
-	canvas1.Text(col1, 0)
+	cur.Locate(1, pixel.XY{2, 8})
+	cur.Color = col3
 	fsr, fso := cozely.RenderStats()
-	canvas1.Printf("Framerate: %.2f (%d)\n", 1000*fsr, fso)
+	cur.Printf("Framerate: %.2f (%d)\n", 1000*fsr, fso)
 	if p.X >= 0 && p.X <= 1.0 {
-		canvas1.Printf("Position: %.3f, %.3f\n", p.X, p.Y)
+		cur.Printf("Position: %.3f, %.3f\n", p.X, p.Y)
 	} else {
-		canvas1.Println(" ")
+		cur.Println(" ")
 	}
 
 	triangulation.Walk(func(e quadedge.Edge) {
-		canvas1.Lines(col1, toScreen(points[e.Orig()]), toScreen(points[e.Dest()]))
+		pixel.Lines(col1, 0, toScreen(points[e.Orig()]), toScreen(points[e.Dest()]))
 	})
 
-	pt := make([]coord.CR, len(points))
+	pt := make([]pixel.XY, len(points))
 	for i, sd := range points {
 		pt[i] = toScreen(sd)
-		canvas1.Box(col2, col2, 1, pt[i].Minuss(2), pt[i].Pluss(2))
+		pixel.Box(col2, col2, 0, 1, pt[i].MinusS(2), pt[i].PlusS(2))
 	}
 
-	if cozely.HasMouseFocus() {
-		canvas1.Picture(pixel.MouseCursor, m)
+	if window.HasMouseFocus() {
+		pixel.MouseCursor.Paint(0, m)
 	}
-
-	canvas1.Display()
 }
 
-func toScreen(p coord.XY) coord.CR {
-	return orig.Plus(p.FlipY().Times(ratio)).CR()
+func toScreen(p coord.XY) pixel.XY {
+	return pixel.XYof(orig.Plus(p.FlipY().Times(ratio)))
 }
 
-func fromScreen(p coord.CR) coord.XY {
-	return (p.XY().FlipY().Minus(orig.FlipY())).Slash(ratio)
+func fromScreen(p pixel.XY) coord.XY {
+	return (p.Coord().FlipY().Minus(orig.FlipY())).Slash(ratio)
 }
 
 func newPoints() {

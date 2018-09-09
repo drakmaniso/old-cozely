@@ -10,41 +10,38 @@ import (
 	"testing"
 
 	"github.com/cozely/cozely"
-	"github.com/cozely/cozely/color/palettes/msx"
-	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
+	"github.com/cozely/cozely/window"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
 
 var (
-	quit                   = input.Digital("Quit")
-	InventoryAction        = input.Digital("Inventory")
-	OptionsAction          = input.Digital("Options")
-	CloseMenuAction        = input.Digital("Close Menu")
-	InstantCloseMenuAction = input.Digital("Instant Close Menu")
-	JumpAction             = input.Digital("Jump")
-	OpenMenuAction         = input.Digital("Open Menu")
-	InstantOpenMenuAction  = input.Digital("Instant Open Menu")
-	trigger                = input.Unipolar("Trigger")
-	position               = input.Analog("Position")
-	cursor                 = input.Cursor("Cursor")
-	delta                  = input.Delta("Delta")
+	quitAct      = input.Digital("Quit")
+	inventoryAct = input.Digital("Inventory")
+	optionsAct   = input.Digital("Options")
+	closeAct     = input.Digital("Close Menu")
+	instCloseAct = input.Digital("Instant Close Menu")
+	jumpAct      = input.Digital("Jump")
+	openAct      = input.Digital("Open Menu")
+	instOpenAct  = input.Digital("Instant Open Menu")
+	triggerAct   = input.Unipolar("Trigger")
+	positionAct  = input.Analog("Position")
+	cursorAct    = input.Cursor("Cursor")
+	deltaAct     = input.Delta("Delta")
 )
 
 var (
-	InMenu = input.Context("Menu", quit,
-		CloseMenuAction, InstantCloseMenuAction, InventoryAction, OptionsAction,
-		trigger, position, cursor, delta)
+	inMenu = input.Context("Menu", quitAct, closeAct, instCloseAct,
+		inventoryAct, optionsAct, triggerAct, positionAct, cursorAct, deltaAct)
 
-	InGame = input.Context("Game", quit,
-		OpenMenuAction, InstantOpenMenuAction, InventoryAction, JumpAction,
-		trigger, position, cursor, delta)
+	inGame = input.Context("Game", quitAct, openAct, instOpenAct,
+		inventoryAct, jumpAct, triggerAct, positionAct, cursorAct, deltaAct)
 )
 
 var (
-	Bindings = input.Bindings{
+	bindings = input.Bindings{
 		"Menu": {
 			"Quit":               {"Escape", "Button Back"},
 			"Close Menu":         {"Enter", "Button Start"},
@@ -72,22 +69,12 @@ var (
 
 ////////////////////////////////////////////////////////////////////////////////
 
-var (
-	canvas1 = pixel.Canvas(pixel.Zoom(3))
-)
-
-var hidden bool
-var openmenu, closemenu, instopenmenu, instclosemenu, inventory, options, jump bool
-
-var triggerval float32
-var positionval, cursorval, deltaval coord.XY
-
-////////////////////////////////////////////////////////////////////////////////
-
 func TestTest1(t *testing.T) {
 	defer cozely.Recover()
 
-	input.Load(Bindings)
+	pixel.SetZoom(3)
+
+	input.Load(bindings)
 	err := cozely.Run(loop1{})
 	if err != nil {
 		panic(err)
@@ -101,8 +88,7 @@ type loop1 struct{}
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop1) Enter() {
-	msx.Palette.Activate()
-	InMenu.Activate(0)
+	inMenu.Activate(0)
 }
 
 func (loop1) Leave() {
@@ -111,45 +97,32 @@ func (loop1) Leave() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop1) React() {
-	if JumpAction.Started(0) {
+	if jumpAct.Started(0) {
 		println(" Just Pressed: *JUMP*")
 	}
-	if JumpAction.Stopped(0) {
+	if jumpAct.Stopped(0) {
 		println("Just Released: (jump)")
 	}
 
-	if CloseMenuAction.Stopped(0) {
-		InGame.Activate(0)
+	if closeAct.Stopped(0) {
+		inGame.Activate(0)
 		input.GrabMouse(true)
 	}
-	if OpenMenuAction.Stopped(0) {
-		InMenu.Activate(0)
+	if openAct.Stopped(0) {
+		inMenu.Activate(0)
 		input.GrabMouse(false)
 	}
 
-	if InstantCloseMenuAction.Started(0) {
-		InGame.Activate(0)
+	if instCloseAct.Started(0) {
+		inGame.Activate(0)
 		input.GrabMouse(true)
 	}
-	if InstantOpenMenuAction.Started(0) {
-		InMenu.Activate(0)
+	if instOpenAct.Started(0) {
+		inMenu.Activate(0)
 		input.GrabMouse(false)
 	}
 
-	openmenu = OpenMenuAction.Ongoing(0)
-	closemenu = CloseMenuAction.Ongoing(0)
-	instopenmenu = InstantOpenMenuAction.Ongoing(0)
-	instclosemenu = InstantCloseMenuAction.Ongoing(0)
-	inventory = InventoryAction.Ongoing(0)
-	options = OptionsAction.Ongoing(0)
-	jump = JumpAction.Ongoing(0)
-
-	triggerval = trigger.Value(0)
-	positionval = position.XY(0)
-	cursorval = cursor.XY(0)
-	deltaval = delta.XY(0)
-
-	if quit.Started(0) {
+	if quitAct.Started(0) {
 		cozely.Stop(nil)
 	}
 }
@@ -162,63 +135,67 @@ func (loop1) Update() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop1) Render() {
-	canvas1.Clear(msx.DarkBlue)
+	pixel.Clear(1)
 
-	canvas1.Locate(coord.CR{2, 12})
-	canvas1.Text(msx.White, pixel.Monozela10)
+	cur := pixel.Cursor{}
 
-	canvas1.Println()
-	changecolor(false)
+	cur.Locate(0, pixel.XY{2, 12})
+	cur.Style(7, pixel.Monozela10)
 
-	changecolor(InMenu.Active(1))
-	canvas1.Printf("  Menu: ")
-	changecolor(options)
-	canvas1.Print("Options(O/L.C.) ")
-	changecolor(closemenu)
-	canvas1.Print("CloseMenu(ENTER) ")
-	changecolor(instclosemenu)
-	canvas1.Print("InstantCloseMenu(MOUSE RIGHT) ")
-	canvas1.Println(" ")
+	cur.Println()
+	changecolor(&cur, false)
 
-	changecolor(InGame.Active(1))
-	canvas1.Printf("  Game: ")
-	changecolor(jump)
-	canvas1.Print("Jump(SPACE/L.C.) ")
-	changecolor(openmenu)
-	canvas1.Print("OpenMenu(ENTER) ")
-	changecolor(instopenmenu)
-	canvas1.Print("InstantOpenMenu(MOUSE RIGHT) ")
-	canvas1.Println(" ")
+	changecolor(&cur, inMenu.Active(1))
+	cur.Printf("  Menu: ")
+	changecolor(&cur, optionsAct.Ongoing(0))
+	cur.Print("Options(O/L.C.) ")
+	changecolor(&cur, closeAct.Ongoing(0))
+	cur.Print("CloseMenu(ENTER) ")
+	changecolor(&cur, instCloseAct.Ongoing(0))
+	cur.Print("InstantCloseMenu(MOUSE RIGHT) ")
+	cur.Println(" ")
 
-	changecolor(false)
-	canvas1.Printf("  Both: ")
-	changecolor(inventory)
-	canvas1.Println("Inventory(I/TAB) ")
+	changecolor(&cur, inGame.Active(1))
+	cur.Printf("  Game: ")
+	changecolor(&cur, jumpAct.Ongoing(0))
+	cur.Print("Jump(SPACE/L.C.) ")
+	changecolor(&cur, openAct.Ongoing(0))
+	cur.Print("OpenMenu(ENTER) ")
+	changecolor(&cur, instOpenAct.Ongoing(0))
+	cur.Print("InstantOpenMenu(MOUSE RIGHT) ")
+	cur.Println(" ")
 
-	changecolor(false)
-	canvas1.Println()
-	canvas1.Printf(" Trigger = % 12.6f\n", triggerval)
-	canvas1.Printf("Position = % 12.6f, % 12.6f\n", positionval.X, positionval.Y)
-	canvas1.Printf("  Cursor = % 12.6f, % 12.6f", cursorval.X, cursorval.Y)
+	changecolor(&cur, false)
+	cur.Printf("  Both: ")
+	changecolor(&cur, inventoryAct.Ongoing(0))
+	cur.Println("Inventory(I/TAB) ")
+
+	changecolor(&cur, false)
+	cur.Println()
+	cur.Printf(" Trigger = % 12.6f\n", triggerAct.Value(0))
+	p := positionAct.XY(0)
+	cur.Printf("Position = % 12.6f, % 12.6f\n", p.X, p.Y)
+	c := cursorAct.XY(0)
+	cur.Printf("  Cursor = % 12d, % 12d", c.X, c.Y)
 	if input.MouseGrabbed() {
-		changecolor(true)
-		canvas1.Printf(" (mouse GRABBED)\n")
+		changecolor(&cur, true)
+		cur.Printf(" (mouse GRABBED)\n")
 	} else {
-		changecolor(false)
-		canvas1.Printf(" (mouse not grabbed)\n")
+		changecolor(&cur, false)
+		cur.Printf(" (mouse not grabbed)\n")
 	}
-	canvas1.Printf("   Delta = %+12.6f, %+12.6f\n", deltaval.X, deltaval.Y)
+	d := deltaAct.XY(0)
+	cur.Printf("   Delta = %+12.6f, %+12.6f\n", d.X, d.Y)
 
-	canvas1.Picture(pixel.MouseCursor, canvas1.FromWindow(cursorval.CR()))
-
-	canvas1.Display()
+	//TODO:
+	pixel.MouseCursor.Paint(0, pixel.XYof(c))
 }
 
-func changecolor(p bool) {
+func changecolor(cur *pixel.Cursor, p bool) {
 	if p {
-		canvas1.Text(msx.LightRed, pixel.Monozela10)
+		cur.Style(14, pixel.Monozela10)
 	} else {
-		canvas1.Text(msx.White, pixel.Monozela10)
+		cur.Style(7, pixel.Monozela10)
 	}
 }
 
@@ -233,8 +210,8 @@ func (loop1) Hide() {
 }
 
 func (loop1) Resize() {
-	s := cozely.WindowSize()
-	fmt.Printf("%v: resize %dx%d\n", cozely.GameTime(), s.C, s.R)
+	s := window.Size()
+	fmt.Printf("%v: resize %dx%d\n", cozely.GameTime(), s.X, s.Y)
 }
 
 func (loop1) Focus() {

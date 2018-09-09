@@ -6,6 +6,7 @@ package gl_test
 import (
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/color"
+	"github.com/cozely/cozely/window"
 	"github.com/cozely/cozely/x/gl"
 )
 
@@ -21,9 +22,9 @@ type loop01 struct {
 func Example_firstTriangle() {
 	defer cozely.Recover()
 
-	cozely.Events.Resize = func() {
-		s := cozely.WindowSize()
-		gl.Viewport(0, 0, int32(s.C), int32(s.R))
+	window.Events.Resize = func() {
+		s := window.Size()
+		gl.Viewport(0, 0, int32(s.X), int32(s.Y))
 	}
 	l := loop01{}
 	err := cozely.Run(&l)

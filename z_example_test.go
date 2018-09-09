@@ -23,21 +23,20 @@ var bindings = input.Bindings{
 	},
 }
 
-type loop2 struct {
-	canvas     pixel.CanvasID
+type loop struct {
 	logo       pixel.PictureID
-	monochrome color.PaletteID
-	colorful   color.PaletteID
+	monochrome color.Palette
+	colorful   color.Palette
 
 	playing bool
 }
 
 // Initialization //////////////////////////////////////////////////////////////
 
-func Example_interactive() {
+func Example() {
 	defer cozely.Recover()
 
-	l := loop2{}
+	l := loop{}
 	l.setup()
 
 	input.Load(bindings)
@@ -49,58 +48,55 @@ func Example_interactive() {
 	// Output:
 }
 
-func (l *loop2) setup() {
-	l.canvas = pixel.Canvas(pixel.Resolution(160, 100))
+func (l *loop) setup() {
+	pixel.SetResolution(pixel.XY{160, 100})
 	l.logo = pixel.Picture("graphics/cozely")
 	l.monochrome = color.PaletteFrom("graphics/cozely")
-	l.colorful = color.Palette()
+	l.colorful = color.PaletteFrom("")
 }
 
-func (l *loop2) Enter() {
-	l.monochrome.Activate()
-	l.shufflecolors()
+func (l *loop) Enter() {
+	pixel.SetPalette(l.monochrome)
 }
 
-func (loop2) Leave() {
+func (loop) Leave() {
 }
 
 // Game Loop ///////////////////////////////////////////////////////////////////
 
-func (l *loop2) React() {
+func (l *loop) React() {
 	if play.Started(input.Any) {
 		l.playing = !l.playing
+		if l.playing {
+			pixel.SetPalette(l.colorful)
+			l.shufflecolors()
+		} else {
+			pixel.SetPalette(l.monochrome)
+		}
 	}
 	if quit.Started(input.Any) {
 		cozely.Stop(nil)
 	}
 }
 
-func (l *loop2) Update() {
+func (l *loop) Update() {
 	if l.playing {
 		l.shufflecolors()
 	}
 }
 
-func (l *loop2) shufflecolors() {
+func (l *loop) shufflecolors() {
 	for i := 2; i < 14; i++ {
 		g := 0.2 + 0.7*rand.Float32()
 		r := 0.2 + 0.7*rand.Float32()
 		b := 0.2 + 0.7*rand.Float32()
-		l.colorful.Set(uint8(i), color.SRGB{r, g, b})
+		pixel.SetColor(color.Index(i), color.SRGB{r, g, b})
 	}
 }
 
-func (l *loop2) Render() {
-	l.canvas.Clear(0)
+func (l *loop) Render() {
+	pixel.Clear(0)
 
-	if l.playing {
-		l.colorful.Activate()
-	} else {
-		l.monochrome.Activate()
-	}
-
-	o := l.canvas.Size().Minus(l.logo.Size()).Slash(2)
-	l.canvas.Picture(l.logo, o)
-
-	l.canvas.Display()
+	o := pixel.Resolution().Minus(l.logo.Size()).Slash(2)
+	l.logo.Paint(0, o)
 }

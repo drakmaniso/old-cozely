@@ -8,79 +8,81 @@ import (
 	"unicode/utf8"
 
 	"github.com/cozely/cozely/color"
-	"github.com/cozely/cozely/coord"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// TextCursor holds the state necessary to write text on a canvas. Each canvas
-// has its own instance, which can be retrieved and modified with the
-// Canvas.Cursor method.
-type TextCursor struct {
+// A Cursor is used to write text on the canvas.
+type Cursor struct {
 	Color         color.Index
 	Font          FontID
 	Margin        int16
 	LetterSpacing int16
 	Interline     int16
-	Position      coord.CR
+	Position      XY
+	Layer         int16
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// Text configures the color and font used to display text on the canvas.
-//
-// Note that you can also directly change the TextCursor attributes.
-func (a CanvasID) Text(c color.Index, f FontID) {
-	cu := &canvases[a].cursor
-	cu.Color = c
-	cu.Font = f
-	if cu.Interline == 0 {
-		cu.Interline = int16(float32(cu.Font.Height()) * 1.25)
-	}
+// Style configures the color and font used to display text on the canvas. It
+// also sets the cursor Interline to a sensible default for the selected font.
+func (a *Cursor) Style(c color.Index, f FontID) {
+	a.Color = c
+	a.Font = f
+	a.Interline = int16(float32(a.Font.Height()) * 1.25)
 }
 
 // Locate moves the text cursor to a specific position. It also defines column
-// p.C as the cursor margin, i.e. the column to which the cursor returns to
+// p.X as the cursor margin, i.e. the column to which the cursor returns to
 // start a new line.
-//
-// Note that you can also directly change the TextCursor attributes.
-func (a CanvasID) Locate(p coord.CR) {
-	cu := &canvases[a].cursor
-	cu.Position = coord.CR{p.C, p.R}
-	cu.Margin = cu.Position.C
-}
-
-// Cursor gives access to the attributes used to display text on the canvas.
-// These attributes can be changed at anytime.
-func (a CanvasID) Cursor() *TextCursor {
-	return &canvases[a].cursor
+func (a *Cursor) Locate(layer int16, p XY) {
+	a.Layer = layer
+	a.Position = XY{p.X, p.Y}
+	a.Margin = a.Position.X
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// Print asks the GPU to display text on the canvas (works like fmt.Print).
-func (a CanvasID) Print(args ...interface{}) (n int, err error) {
+// Print queues a command on the GPU to display text on the canvas (works like
+// fmt.Print).
+func (a *Cursor) Print(args ...interface{}) (n int, err error) {
 	n, err = fmt.Fprint(a, args...)
 	return n, err
 }
 
-// Println asks the GPU to display text on the canvas (works like fmt.Println).
-func (a CanvasID) Println(args ...interface{}) (n int, err error) {
+// Println queues a command on the GPU to display text on the canvas (works like
+// fmt.Println).
+func (a *Cursor) Println(args ...interface{}) (n int, err error) {
 	n, err = fmt.Fprintln(a, args...)
 	return n, err
 }
 
-// Printf asks the GPU to display text on the canvas (like fmt.Printf).
-func (a CanvasID) Printf(format string, args ...interface{}) (n int, err error) {
+// Printf queues a command on the GPU to display text on the canvas (works like
+// fmt.Printf).
+func (a *Cursor) Printf(format string, args ...interface{}) (n int, err error) {
 	n, err = fmt.Fprintf(a, format, args...)
 	return n, err
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
+// // Write asks the GPU to display p (interpreted as an UTF8 string) on the
+// // canvas. This method implements the io.Writer interface.
+// func (a *Cursor) Write(p []byte) (n int, err error) {
+// 	return renderer.Write(p)
+// }
+
+// // WriteRune asks the GPU to display a single rune on the canvas.
+// func (a *Cursor) WriteRune(r rune) {
+// 	renderer.WriteRune(r)
+// }
+
+////////////////////////////////////////////////////////////////////////////////
+
 // Write asks the GPU to display p (interpreted as an UTF8 string) on the
 // canvas. This method implements the io.Writer interface.
-func (a CanvasID) Write(p []byte) (n int, err error) {
+func (a *Cursor) Write(p []byte) (n int, err error) {
 	n = len(p)
 	for len(p) > 0 {
 		r, s := utf8.DecodeRune(p)
@@ -91,24 +93,26 @@ func (a CanvasID) Write(p []byte) (n int, err error) {
 }
 
 // WriteRune asks the GPU to display a single rune on the canvas.
-func (a CanvasID) WriteRune(r rune) {
-	cu := &canvases[a].cursor
-	if r == '\n' {
-		if cu.Interline == 0 {
-			cu.Position.R += int16(float32(cu.Font.Height()) * 1.25)
-		} else {
-			cu.Position.R += cu.Interline
+func (a *Cursor) WriteRune(r rune) {
+	if a.Color == 0 && a.Font == 0 && a.Interline == 0 {
+		a.Color = 7
+		a.Interline = int16(float32(a.Font.Height()) * 1.25)
+		if a.Position.X == 0 && a.Position.Y == 0 {
+			a.Position.X = 4
+			a.Position.Y = a.Interline
 		}
-		cu.Position.C = cu.Margin
+	}
+	if r == '\n' {
+		a.Position.Y += a.Interline
+		a.Position.X = a.Margin
 		return
 	}
 
-	g := cu.Font.glyph(r)
-	a.command(cmdText, 4, 1,
-		int16(cu.Color-fonts[cu.Font].basecolor),
-		cu.Position.R-fonts[cu.Font].baseline,
-		int16(g), cu.Position.C)
-	cu.Position.C += pictures.mapping[g].w + cu.LetterSpacing
+	g := a.Font.glyph(r)
+	renderer.command(cmdText, 4, 1,
+		int16(a.Color-fonts[a.Font].basecolor),
+		a.Layer,
+		a.Position.Y-fonts[a.Font].baseline,
+		int16(g), a.Position.X)
+	a.Position.X += pictures.mapping[g].w + a.LetterSpacing
 }
-
-////////////////////////////////////////////////////////////////////////////////

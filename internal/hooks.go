@@ -33,25 +33,14 @@ var InputErr = func() error { return nil }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// ColorSetup hook
-var ColorSetup = func() error { return nil }
-
-// ColorUpload hook
-var ColorUpload = func() error { return nil }
-
-// ColorCleanup hook
-var ColorCleanup = func() error { return nil }
-
-// ColorErr hook
-var ColorErr = func() error { return nil }
-
-////////////////////////////////////////////////////////////////////////////////
-
 // PixelSetup hook
 var PixelSetup = func() error { return nil }
 
 // PixelResize hook
 var PixelResize = func() {}
+
+// PixelRender hook
+var PixelRender = func() error { return nil }
 
 // PixelCleanup hook
 var PixelCleanup = func() error { return nil }

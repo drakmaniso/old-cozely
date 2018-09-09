@@ -11,7 +11,7 @@ import (
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// RA represents a two dimensional vector, defined by its polar coordinates.
+// RA represents polar coordinates.
 //
 // Note: incomplete implementation.
 type RA struct {
@@ -19,8 +19,7 @@ type RA struct {
 	A float32 // Angle (counter-clockwise from 3 b'clock)
 }
 
-// Cartesian returns the cartesian coordinates of the vector. This implements the
-// Vector interface.
+// Cartesian returns the cartesian coordinates; z is alwyas 0.
 func (a RA) Cartesian() (x, y, z float32) {
 	return a.R * math32.Cos(a.A), a.R * math32.Sin(a.A), 0
 }

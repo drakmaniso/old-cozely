@@ -13,19 +13,21 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 
 var (
-	quit       = input.Digital("Quit")
-	next       = input.Digital("Next")
-	previous   = input.Digital("Previous")
-	scene1     = input.Digital("Scene1")
-	scene2     = input.Digital("Scene2")
-	scene3     = input.Digital("Scene3")
-	scene4     = input.Digital("Scene4")
-	scene5     = input.Digital("Scene5")
-	scene6     = input.Digital("Scene6")
-	scene7     = input.Digital("Scene7")
-	scene8     = input.Digital("Scene8")
-	scene9     = input.Digital("Scene9")
-	scene10    = input.Digital("Scene10")
+	quit     = input.Digital("Quit")
+	next     = input.Digital("Next")
+	previous = input.Digital("Previous")
+	scenes   = []input.DigitalID{
+		input.Digital("Scene0"),
+		input.Digital("Scene1"),
+		input.Digital("Scene2"),
+		input.Digital("Scene3"),
+		input.Digital("Scene4"),
+		input.Digital("Scene5"),
+		input.Digital("Scene6"),
+		input.Digital("Scene7"),
+		input.Digital("Scene8"),
+		input.Digital("Scene9"),
+	}
 	scrollup   = input.Digital("ScrollUp")
 	scrolldown = input.Digital("ScrollDown")
 	cursor     = input.Cursor("Cursor")
@@ -45,7 +47,7 @@ var bindings = input.Bindings{
 		"Scene7":     {"7"},
 		"Scene8":     {"8"},
 		"Scene9":     {"9"},
-		"Scene10":    {"0"},
+		"Scene0":     {"0"},
 		"ScrollUp":   {"Mouse Scroll Up"},
 		"ScrollDown": {"Mouse Scroll Down"},
 		"Cursor":     {"Mouse"},
@@ -84,5 +86,3 @@ func TestMain(m *testing.M) {
 		f()
 	}
 }
-
-////////////////////////////////////////////////////////////////////////////////

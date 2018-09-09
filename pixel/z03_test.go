@@ -8,7 +8,6 @@ import (
 
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/color"
-	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
 )
@@ -18,9 +17,7 @@ import (
 var ()
 
 type loop3 struct {
-	canvas  pixel.CanvasID
-	palette color.PaletteID
-	bg, fg  color.Index
+	bg, fg color.Index
 
 	tinela9, monozela10, simpela10, simpela12,
 	cozela10, cozela12, chaotela12, font pixel.FontID
@@ -44,10 +41,10 @@ func TestTest3(t *testing.T) {
 }
 
 func (a *loop3) declare() {
-	a.canvas = pixel.Canvas(pixel.Zoom(2))
-	a.palette = color.Palette()
-	a.bg = a.palette.Entry(color.SRGB8{0xFF, 0xFE, 0xFC})
-	a.fg = a.palette.Entry(color.SRGB8{0x07, 0x05, 0x00})
+	pixel.SetZoom(2)
+	//TODO:
+	a.bg = 7
+	a.fg = 1
 
 	a.tinela9 = pixel.Font("fonts/tinela9")
 	a.monozela10 = pixel.Font("fonts/monozela10")
@@ -60,9 +57,6 @@ func (a *loop3) declare() {
 }
 
 func (a *loop3) Enter() {
-	a.palette.Activate()
-	println(a.bg, a.fg)
-	a.canvas.Cursor().Color = a.fg - 1
 }
 
 func (loop3) Leave() {
@@ -80,47 +74,47 @@ func (loop3) Update() {
 }
 
 func (a *loop3) Render() {
-	a.canvas.Clear(a.bg)
+	pixel.Clear(a.bg)
 
-	a.canvas.Text(a.fg, pixel.Monozela10)
+	cur := pixel.Cursor{}
 
-	a.canvas.Locate(coord.CR{2, 8})
-	a.canvas.Println("a quick brown fox \"jumps\" over the (lazy) dog.")
-	a.canvas.Println("A QUICK BROWN FOX \"JUMPS\" OVER THE (LAZY) DOG.")
-	a.canvas.Println("0123456789!@#$^&*()-+=_~[]{}|\\;:'\",.<>/?%")
-	a.canvas.Println("12+34 56-7.8 90*13 24/35 -5 +2 3*(2+5) 4<5 6>2 2=1+1 *f := &x;")
-	a.canvas.Println()
+	cur.Style(a.fg, pixel.Monozela10)
 
-	a.canvas.Locate(coord.CR{16, 100})
-	a.canvas.Write([]byte("Foo"))
-	a.canvas.Cursor().Position = a.canvas.Cursor().Position.Plus(coord.CR{1, 3})
-	a.canvas.WriteRune('B')
-	a.canvas.Cursor().Position = a.canvas.Cursor().Position.Plus(coord.CR{2, 2})
-	a.canvas.WriteRune('a')
-	a.canvas.Cursor().Position = a.canvas.Cursor().Position.Plus(coord.CR{3, 1})
-	a.canvas.WriteRune('r')
-	a.canvas.Cursor().Position = coord.CR{32, 132}
-	a.canvas.Write([]byte("Boo\n"))
-	a.canvas.Write([]byte("Choo"))
+	cur.Locate(0, pixel.XY{2, 8})
+	cur.Println("a quick brown fox \"jumps\" over the (lazy) dog.")
+	cur.Println("A QUICK BROWN FOX \"JUMPS\" OVER THE (LAZY) DOG.")
+	cur.Println("0123456789!@#$^&*()-+=_~[]{}|\\;:'\",.<>/?%")
+	cur.Println("12+34 56-7.8 90*13 24/35 -5 +2 3*(2+5) 4<5 6>2 2=1+1 *f := &x;")
+	cur.Println()
 
-	a.canvas.Locate(coord.CR{16, 200})
-	a.canvas.Cursor().Font = a.tinela9
-	a.canvas.Print("Tinela")
-	a.canvas.Cursor().Font = a.simpela10
-	a.canvas.Print("Simpela10")
-	a.canvas.Cursor().Font = a.simpela12
-	a.canvas.Print("Simpela12")
-	a.canvas.Cursor().Font = a.cozela10
-	a.canvas.Print("Cozela10")
-	a.canvas.Cursor().Font = a.cozela12
-	a.canvas.Print("Cozela12")
-	a.canvas.Cursor().Font = a.chaotela12
-	a.canvas.Print("Chaotela12")
+	cur.Locate(0, pixel.XY{16, 100})
+	cur.Write([]byte("Foo"))
+	cur.Position = cur.Position.Plus(pixel.XY{1, 3})
+	cur.WriteRune('B')
+	cur.Position = cur.Position.Plus(pixel.XY{2, 2})
+	cur.WriteRune('a')
+	cur.Position = cur.Position.Plus(pixel.XY{3, 1})
+	cur.WriteRune('r')
+	cur.Position = pixel.XY{32, 132}
+	cur.Write([]byte("Boo\n"))
+	cur.Write([]byte("Choo"))
 
-	a.canvas.Locate(coord.CR{a.canvas.Size().C - 200, 9})
-	a.canvas.Cursor().Font = pixel.FontID(0)
-	m := a.canvas.FromWindow(cursor.XY(0).CR())
-	a.canvas.Printf("Position x=%d, y=%d\n", m.C, m.R)
+	cur.Locate(0, pixel.XY{16, 200})
+	cur.Font = a.tinela9
+	cur.Print("Tinela")
+	cur.Font = a.simpela10
+	cur.Print("Simpela10")
+	cur.Font = a.simpela12
+	cur.Print("Simpela12")
+	cur.Font = a.cozela10
+	cur.Print("Cozela10")
+	cur.Font = a.cozela12
+	cur.Print("Cozela12")
+	cur.Font = a.chaotela12
+	cur.Print("Chaotela12")
 
-	a.canvas.Display()
+	cur.Locate(0, pixel.XY{pixel.Resolution().X - 200, 9})
+	cur.Font = pixel.FontID(0)
+	m := pixel.XYof(cursor.XY(0))
+	cur.Printf("Position x=%d, y=%d\n", m.X, m.Y)
 }

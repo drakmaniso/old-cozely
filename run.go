@@ -5,6 +5,7 @@ package cozely
 
 import (
 	"github.com/cozely/cozely/internal"
+	"github.com/cozely/cozely/window"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -37,28 +38,6 @@ type GameLoop interface {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// Events holds the callbacks for each window events.
-//
-// These callbacks can be modified at anytime, but should always contain valid
-// functions (i.e., non nil). The change will take effect at the next frame.
-var Events = struct {
-	Resize  func()
-	Hide    func()
-	Show    func()
-	Focus   func()
-	Unfocus func()
-	Quit    func()
-}{
-	Resize:  func() {},
-	Hide:    func() {},
-	Show:    func() {},
-	Focus:   func() {},
-	Unfocus: func() {},
-	Quit:    func() { Stop(nil) },
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
 // Run initializes the framework, creates the ressources and loads all assets,
 // and finally starts the game loop. The loop will run until Stop is called.
 //
@@ -77,11 +56,6 @@ func Run(loop GameLoop) (err error) {
 		derr = internal.PixelCleanup()
 		if err == nil && derr != nil {
 			err = internal.Wrap("pixel cleanup", derr)
-			return
-		}
-		derr = internal.ColorCleanup()
-		if err == nil && derr != nil {
-			err = internal.Wrap("color cleanup", derr)
 			return
 		}
 		derr = internal.InputCleanup()
@@ -122,10 +96,6 @@ func Run(loop GameLoop) (err error) {
 	if err != nil {
 		return internal.Wrap("input setup", err)
 	}
-	err = internal.ColorSetup()
-	if err != nil {
-		return internal.Wrap("color setup", err)
-	}
 	err = internal.PixelSetup()
 	if err != nil {
 		return internal.Wrap("pixel setup", err)
@@ -137,7 +107,7 @@ func Run(loop GameLoop) (err error) {
 
 	// First, send a fake resize window event
 	internal.PixelResize()
-	Events.Resize()
+	window.Events.Resize()
 
 	// Main Loop
 
@@ -168,7 +138,7 @@ func Run(loop GameLoop) (err error) {
 		if internal.UpdateLag < internal.UpdateStep {
 			// Process events even if there is no Update this frame
 			internal.GameTime = now //TODO: check if correct
-			internal.ProcessEvents(Events)
+			internal.ProcessEvents(window.Events)
 			internal.InputNewFrame()
 			internal.Loop.React()
 		}
@@ -178,7 +148,7 @@ func Run(loop GameLoop) (err error) {
 			gametime += internal.UpdateStep
 			internal.GameTime = gametime
 			// Events
-			internal.ProcessEvents(Events)
+			internal.ProcessEvents(window.Events)
 			internal.InputNewFrame()
 			internal.Loop.React()
 			// Update
@@ -194,6 +164,10 @@ func Run(loop GameLoop) (err error) {
 		}
 		internal.GameTime = gametime + internal.UpdateLag //TODO: check if correct
 		internal.Loop.Render()
+		err = internal.PixelRender()
+		if err != nil {
+			return err
+		}
 
 		internal.SwapWindow()
 

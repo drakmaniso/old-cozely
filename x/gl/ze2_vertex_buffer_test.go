@@ -7,6 +7,7 @@ import (
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/coord"
+	"github.com/cozely/cozely/window"
 	"github.com/cozely/cozely/x/gl"
 )
 
@@ -27,9 +28,9 @@ type mesh2d []struct {
 func Example_vertexBuffer() {
 	defer cozely.Recover()
 
-	cozely.Events.Resize = func() {
-		s := cozely.WindowSize()
-		gl.Viewport(0, 0, int32(s.C), int32(s.R))
+	window.Events.Resize = func() {
+		s := window.Size()
+		gl.Viewport(0, 0, int32(s.X), int32(s.Y))
 	}
 	l := loop02{}
 	err := cozely.Run(&l)

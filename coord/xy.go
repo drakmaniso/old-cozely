@@ -11,27 +11,30 @@ import (
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// XY represents a two-dimensional vector, defined by its cartesian
-// coordinates.
+// XY represents 2D cartesian coordinates.
 type XY struct {
 	X float32
 	Y float32
 }
 
-// Cartesian returns the cartesian coordinates of the vector.
-//
-// This function implements the Vector interface.
+// Cartesian returns the two coordinates; z is always 0.
 func (a XY) Cartesian() (x, y, z float32) {
 	return a.X, a.Y, 0
 }
 
-// CR return the interger coordinates of the vector.
+// XYof converts the first two coordinates of c to XY.
+func XYof(c Coordinates) XY {
+	x, y, _ := c.Cartesian()
+	return XY{x, y}
+}
+
+// CR return the integer coordinates of the vector.
 func (a XY) CR() CR {
 	return CR{int16(a.X), int16(a.Y)}
 }
 
-// CRound return the rounded interger coordinates of the vector.
-func (a XY) CRound() CR {
+// RoundCR return the rounded interger coordinates of the vector.
+func (a XY) RoundCR() CR {
 	return CR{
 		int16(math.Round(float64(a.X))),
 		int16(math.Round(float64(a.Y))),
