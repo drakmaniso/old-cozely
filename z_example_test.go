@@ -49,7 +49,7 @@ func Example() {
 }
 
 func (l *loop) setup() {
-	pixel.SetResolution(160, 100)
+	pixel.SetResolution(pixel.XY{160, 100})
 	l.logo = pixel.Picture("graphics/cozely")
 	l.monochrome = color.PaletteFrom("graphics/cozely")
 	l.colorful = color.PaletteFrom("")

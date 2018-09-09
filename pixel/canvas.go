@@ -35,13 +35,13 @@ var screen = struct {
 // It guarantees that:
 // - the canvas will never be smaller than the target resolution,
 // - the target resolution will occupy as much screen as possible.
-func SetResolution(w, h int16) {
+func SetResolution(r XY) {
 	//TODO: allow runtime changes (defered to render?)
 	if internal.Running {
 		setErr(errors.New("Resolution must be called before starting the framework"))
 		return
 	}
-	screen.resolution = XY{w, h}
+	screen.resolution = r
 	// if internal.Running {
 	// 	resize()
 	// }

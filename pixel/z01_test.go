@@ -39,7 +39,7 @@ func TestTest1(t *testing.T) {
 }
 
 func (a *loop1) declare() {
-	pixel.SetResolution(320, 180)
+	pixel.SetResolution(pixel.XY{320, 180})
 
 	a.palmire = color.PaletteFrom("graphics/mire")
 	a.palsrgb = color.PaletteFrom("graphics/srgb-gray")

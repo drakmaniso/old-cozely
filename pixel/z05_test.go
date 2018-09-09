@@ -36,7 +36,7 @@ func TestTest5(t *testing.T) {
 }
 
 func (a *loop5) declare() {
-	pixel.SetResolution(128, 128)
+	pixel.SetResolution(pixel.XY{128, 128})
 
 	a.points = []pixel.XY{
 		{4, 4},

@@ -47,7 +47,7 @@ func TestTest7(t *testing.T) {
 func (a *loop7) setup() {
 	a.pict = pixel.Picture("graphics/paletteswatch")
 
-	pixel.SetResolution(160, 160)
+	pixel.SetResolution(pixel.XY{160, 160})
 
 	a.mode = 0
 }

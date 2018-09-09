@@ -14,7 +14,8 @@ const Transparent = color.Index(0)
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// LRGBA returns the color corresponding to a color index.
-func LRGBA(c color.Index) color.LRGBA {
+// LRGBAof returns the color corresponding to a color index in the current
+// palette.
+func LRGBAof(c color.Index) color.LRGBA {
 	return palette.colors[c]
 }

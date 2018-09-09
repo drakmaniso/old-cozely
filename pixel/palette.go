@@ -50,8 +50,8 @@ var DefaultPalette = color.Palette{
 }
 
 var palette struct {
-	colors   [256]color.LRGBA
-	dirty bool
+	colors [256]color.LRGBA
+	dirty  bool
 }
 
 func init() {
@@ -96,9 +96,10 @@ func SetColor(i color.Index, c color.Color) color.Index {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// MatchColor searches for a color by its color.LRGBA values. If this exact color
-// isn't in the palette, index 0 is returned.
-func MatchColor(v color.Color) color.Index {
+// FindColor returns the first color index associated with specific LRGBA
+// values. If there isn't any color with these values in the palette, index 0 is
+// returned.
+func FindColor(v color.Color) color.Index {
 	lv := color.LRGBAof(v)
 	for c, pv := range palette.colors {
 		if pv == lv {

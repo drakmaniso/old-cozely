@@ -35,13 +35,13 @@ func XYof(v coord.Coordinates) XY {
 }
 
 // WindowXY takes coordinates in canvas space and returns them in window space.
-func (p XY) WindowXY() window.XY {
+func (a XY) WindowXY() window.XY {
 	if !screen.resolution.Null() {
-		p = p.Times(screen.zoom)
-		return window.XY(p).Plus(screen.border)
+		a = a.Times(screen.zoom)
+		return window.XY(a).Plus(screen.border)
 	}
-	p = p.Plus(screen.margin).Times(screen.zoom)
-	return window.XY(p).Plus(screen.border)
+	a = a.Plus(screen.margin).Times(screen.zoom)
+	return window.XY(a).Plus(screen.border)
 }
 
 // RoundXYof returns an integer vector corresponding to the first two
