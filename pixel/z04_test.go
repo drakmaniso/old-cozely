@@ -117,22 +117,24 @@ func (loop4) Update() {
 func (a *loop4) Render() {
 	pixel.Clear(a.bg)
 
-	pixel.Cursor.Color = a.fg
-	pixel.Locate(pixel.XY{16, a.font.Height() + 2})
+	cur := pixel.Cursor{}
 
-	pixel.Cursor.Font = a.font
-	pixel.Cursor.LetterSpacing = a.letterspacing
-	// curScreen.Interline = fntInterline
+	cur.Color = a.fg
+	cur.Locate(pixel.XY{16, a.font.Height() + 2})
 
-	y := pixel.Cursor.Position.Y
+	cur.Font = a.font
+	cur.LetterSpacing = a.letterspacing
+	// u.Interline = fntInterline
+
+	y := cur.Position.Y
 
 	for l := a.line; l < len(a.show) && y < pixel.Resolution().Y; l++ {
-		pixel.Println(a.show[l])
-		y = pixel.Cursor.Position.Y
+		cur.Println(a.show[l])
+		y = cur.Position.Y
 	}
 
-	pixel.Locate(pixel.XY{pixel.Resolution().X - 96, 16})
-	pixel.Printf("Line %d", a.line)
+	cur.Locate(pixel.XY{pixel.Resolution().X - 96, 16})
+	cur.Printf("Line %d", a.line)
 }
 
 //TODO:

@@ -141,6 +141,8 @@ func (loop1) Update() {
 
 func (loop1) Render() {
 	pixel.Clear(1)
+	cur := pixel.Cursor{}
+
 	ratio = float32(pixel.Resolution().Y)
 	orig = coord.XY{
 		X: (float32(pixel.Resolution().X) - ratio) / 2,
@@ -149,14 +151,14 @@ func (loop1) Render() {
 
 	m := pixel.ToCanvas(window.XYof(cursor.XY(0)))
 	p := fromScreen(m)
-	pixel.Locate(pixel.XY{2, 8})
-	pixel.Text(col3, 0)
+	cur.Locate(pixel.XY{2, 8})
+	cur.Color = col3
 	fsr, fso := cozely.RenderStats()
-	pixel.Printf("Framerate: %.2f (%d)\n", 1000*fsr, fso)
+	cur.Printf("Framerate: %.2f (%d)\n", 1000*fsr, fso)
 	if p.X >= 0 && p.X <= 1.0 {
-		pixel.Printf("Position: %.3f, %.3f\n", p.X, p.Y)
+		cur.Printf("Position: %.3f, %.3f\n", p.X, p.Y)
 	} else {
-		pixel.Println(" ")
+		cur.Println(" ")
 	}
 
 	triangulation.Walk(func(e quadedge.Edge) {

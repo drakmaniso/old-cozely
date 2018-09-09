@@ -40,6 +40,9 @@ func (loop) Update() {
 func (loop) Render() {
 	pixel.Clear(1)
 
-	pixel.Locate(pixel.XY{16, 32})
-	pixel.Print("Hello, World!")
+	cur := pixel.Cursor{
+		Color: 7,
+		Position: pixel.XY{16, 32},
+	}
+	cur.Print("Hello, World!")
 }

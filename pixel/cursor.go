@@ -5,14 +5,15 @@ package pixel
 
 import (
 	"fmt"
+	"unicode/utf8"
 
 	"github.com/cozely/cozely/color"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// Cursor holds the state used to write text on the canvas.
-type cursor struct {
+// A Cursor is used to write text on the canvas.
+type Cursor struct {
 	Color         color.Index
 	Font          FontID
 	Margin        int16
@@ -22,21 +23,16 @@ type cursor struct {
 	Layer         int16
 }
 
-// Cursor holds the state used to write text on the canvas.
-var Cursor = cursor{
-	Color: 7,
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 
 // Text configures the color and font used to display text on the canvas.
 //
 // Note that you can also directly change the Cursor attributes.
-func Text(c color.Index, f FontID) {
-	Cursor.Color = c
-	Cursor.Font = f
-	if Cursor.Interline == 0 {
-		Cursor.Interline = int16(float32(Cursor.Font.Height()) * 1.25)
+func (a *Cursor) Text(c color.Index, f FontID) {
+	a.Color = c
+	a.Font = f
+	if a.Interline == 0 {
+		a.Interline = int16(float32(a.Font.Height()) * 1.25)
 	}
 }
 
@@ -45,43 +41,78 @@ func Text(c color.Index, f FontID) {
 // start a new line.
 //
 // Note that you can also directly change the TextCursor attributes.
-func Locate(p XY) {
-	Cursor.Position = XY{p.X, p.Y}
-	Cursor.Margin = Cursor.Position.X
+func (a *Cursor) Locate(p XY) {
+	a.Position = XY{p.X, p.Y}
+	a.Margin = a.Position.X
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 // Print queues a command on the GPU to display text on the canvas (works like
 // fmt.Print).
-func Print(args ...interface{}) (n int, err error) {
-	n, err = fmt.Fprint(&renderer, args...)
+func (a *Cursor) Print(args ...interface{}) (n int, err error) {
+	n, err = fmt.Fprint(a, args...)
 	return n, err
 }
 
 // Println queues a command on the GPU to display text on the canvas (works like
 // fmt.Println).
-func Println(args ...interface{}) (n int, err error) {
-	n, err = fmt.Fprintln(&renderer, args...)
+func (a *Cursor) Println(args ...interface{}) (n int, err error) {
+	n, err = fmt.Fprintln(a, args...)
 	return n, err
 }
 
 // Printf queues a command on the GPU to display text on the canvas (works like
 // fmt.Printf).
-func Printf(format string, args ...interface{}) (n int, err error) {
-	n, err = fmt.Fprintf(&renderer, format, args...)
+func (a *Cursor) Printf(format string, args ...interface{}) (n int, err error) {
+	n, err = fmt.Fprintf(a, format, args...)
 	return n, err
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
+// // Write asks the GPU to display p (interpreted as an UTF8 string) on the
+// // canvas. This method implements the io.Writer interface.
+// func (a *Cursor) Write(p []byte) (n int, err error) {
+// 	return renderer.Write(p)
+// }
+
+// // WriteRune asks the GPU to display a single rune on the canvas.
+// func (a *Cursor) WriteRune(r rune) {
+// 	renderer.WriteRune(r)
+// }
+
+////////////////////////////////////////////////////////////////////////////////
+
 // Write asks the GPU to display p (interpreted as an UTF8 string) on the
 // canvas. This method implements the io.Writer interface.
-func (a cursor) Write(p []byte) (n int, err error) {
-	return renderer.Write(p)
+func (a *Cursor) Write(p []byte) (n int, err error) {
+	n = len(p)
+	for len(p) > 0 {
+		r, s := utf8.DecodeRune(p)
+		a.WriteRune(r)
+		p = p[s:]
+	}
+	return n, nil
 }
 
 // WriteRune asks the GPU to display a single rune on the canvas.
-func (a cursor) WriteRune(r rune) {
-	renderer.WriteRune(r)
+func (a *Cursor) WriteRune(r rune) {
+	if r == '\n' {
+		if a.Interline == 0 {
+			a.Position.Y += int16(float32(a.Font.Height()) * 1.25)
+		} else {
+			a.Position.Y += a.Interline
+		}
+		a.Position.X = a.Margin
+		return
+	}
+
+	g := a.Font.glyph(r)
+	renderer.command(cmdText, 4, 1,
+		int16(a.Color-fonts[a.Font].basecolor),
+		a.Layer,
+		a.Position.Y-fonts[a.Font].baseline,
+		int16(g), a.Position.X)
+	a.Position.X += pictures.mapping[g].w + a.LetterSpacing
 }

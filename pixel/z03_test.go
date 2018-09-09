@@ -58,8 +58,6 @@ func (a *loop3) declare() {
 }
 
 func (a *loop3) Enter() {
-	println(a.bg, a.fg)
-	pixel.Cursor.Color = a.fg - 1
 }
 
 func (loop3) Leave() {
@@ -79,43 +77,45 @@ func (loop3) Update() {
 func (a *loop3) Render() {
 	pixel.Clear(a.bg)
 
-	pixel.Text(a.fg, pixel.Monozela10)
+	cur := pixel.Cursor{}
 
-	pixel.Locate(pixel.XY{2, 8})
-	pixel.Println("a quick brown fox \"jumps\" over the (lazy) dog.")
-	pixel.Println("A QUICK BROWN FOX \"JUMPS\" OVER THE (LAZY) DOG.")
-	pixel.Println("0123456789!@#$^&*()-+=_~[]{}|\\;:'\",.<>/?%")
-	pixel.Println("12+34 56-7.8 90*13 24/35 -5 +2 3*(2+5) 4<5 6>2 2=1+1 *f := &x;")
-	pixel.Println()
+	cur.Text(a.fg, pixel.Monozela10)
 
-	pixel.Locate(pixel.XY{16, 100})
-	pixel.Cursor.Write([]byte("Foo"))
-	pixel.Cursor.Position = pixel.Cursor.Position.Plus(pixel.XY{1, 3})
-	pixel.Cursor.WriteRune('B')
-	pixel.Cursor.Position = pixel.Cursor.Position.Plus(pixel.XY{2, 2})
-	pixel.Cursor.WriteRune('a')
-	pixel.Cursor.Position = pixel.Cursor.Position.Plus(pixel.XY{3, 1})
-	pixel.Cursor.WriteRune('r')
-	pixel.Cursor.Position = pixel.XY{32, 132}
-	pixel.Cursor.Write([]byte("Boo\n"))
-	pixel.Cursor.Write([]byte("Choo"))
+	cur.Locate(pixel.XY{2, 8})
+	cur.Println("a quick brown fox \"jumps\" over the (lazy) dog.")
+	cur.Println("A QUICK BROWN FOX \"JUMPS\" OVER THE (LAZY) DOG.")
+	cur.Println("0123456789!@#$^&*()-+=_~[]{}|\\;:'\",.<>/?%")
+	cur.Println("12+34 56-7.8 90*13 24/35 -5 +2 3*(2+5) 4<5 6>2 2=1+1 *f := &x;")
+	cur.Println()
 
-	pixel.Locate(pixel.XY{16, 200})
-	pixel.Cursor.Font = a.tinela9
-	pixel.Print("Tinela")
-	pixel.Cursor.Font = a.simpela10
-	pixel.Print("Simpela10")
-	pixel.Cursor.Font = a.simpela12
-	pixel.Print("Simpela12")
-	pixel.Cursor.Font = a.cozela10
-	pixel.Print("Cozela10")
-	pixel.Cursor.Font = a.cozela12
-	pixel.Print("Cozela12")
-	pixel.Cursor.Font = a.chaotela12
-	pixel.Print("Chaotela12")
+	cur.Locate(pixel.XY{16, 100})
+	cur.Write([]byte("Foo"))
+	cur.Position = cur.Position.Plus(pixel.XY{1, 3})
+	cur.WriteRune('B')
+	cur.Position = cur.Position.Plus(pixel.XY{2, 2})
+	cur.WriteRune('a')
+	cur.Position = cur.Position.Plus(pixel.XY{3, 1})
+	cur.WriteRune('r')
+	cur.Position = pixel.XY{32, 132}
+	cur.Write([]byte("Boo\n"))
+	cur.Write([]byte("Choo"))
 
-	pixel.Locate(pixel.XY{pixel.Resolution().X - 200, 9})
-	pixel.Cursor.Font = pixel.FontID(0)
+	cur.Locate(pixel.XY{16, 200})
+	cur.Font = a.tinela9
+	cur.Print("Tinela")
+	cur.Font = a.simpela10
+	cur.Print("Simpela10")
+	cur.Font = a.simpela12
+	cur.Print("Simpela12")
+	cur.Font = a.cozela10
+	cur.Print("Cozela10")
+	cur.Font = a.cozela12
+	cur.Print("Cozela12")
+	cur.Font = a.chaotela12
+	cur.Print("Chaotela12")
+
+	cur.Locate(pixel.XY{pixel.Resolution().X - 200, 9})
+	cur.Font = pixel.FontID(0)
 	m := pixel.ToCanvas(window.XYof(cursor.XY(0)))
-	pixel.Printf("Position x=%d, y=%d\n", m.X, m.Y)
+	cur.Printf("Position x=%d, y=%d\n", m.X, m.Y)
 }

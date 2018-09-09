@@ -133,28 +133,29 @@ func (a *loop7) Render() {
 	_ = p
 	a.pict.Paint(0, p)
 
-	pixel.Text(15, pixel.Monozela10)
-	pixel.Locate(p.Minus(pixel.XY{0, 8}))
+	cur := pixel.Cursor{}
+	cur.Text(15, pixel.Monozela10)
+	cur.Locate(p.Minus(pixel.XY{0, 8}))
 	switch a.mode {
 	case 1:
-		pixel.Print("Default Palette")
+		cur.Print("Default Palette")
 	case 2:
-		pixel.Print("C64 Palette")
+		cur.Print("C64 Palette")
 	case 3:
-		pixel.Print("CPC Palette")
+		cur.Print("CPC Palette")
 	case 4:
-		pixel.Print("MSX Palette")
+		cur.Print("MSX Palette")
 	case 5:
-		pixel.Print("MSX2 Palette")
+		cur.Print("MSX2 Palette")
 	case 6:
-		pixel.Print("PICO-8 Palette")
+		cur.Print("PICO-8 Palette")
 	case 7:
-		pixel.Print("Palette")
+		cur.Print("Palette")
 	case 8:
-		pixel.Print("Palette")
+		cur.Print("Palette")
 	case 9:
-		pixel.Print("Palette")
+		cur.Print("Palette")
 	case 0:
-		pixel.Print("Custom Palette")
+		cur.Print("Custom Palette")
 	}
 }

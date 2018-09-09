@@ -8,7 +8,6 @@ import (
 	"image"
 	stdcolor "image/color"
 	"strings"
-	"unicode/utf8"
 	"unsafe"
 
 	"github.com/cozely/cozely/color"
@@ -269,41 +268,6 @@ func adjustScreenTextures() {
 func (a *glRenderer) clear(c color.Index) {
 	renderer.clearQueued = true
 	renderer.clearColor = c
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-// Write asks the GPU to display p (interpreted as an UTF8 string) on the
-// canvas. This method implements the io.Writer interface.
-func (a *glRenderer) Write(p []byte) (n int, err error) {
-	n = len(p)
-	for len(p) > 0 {
-		r, s := utf8.DecodeRune(p)
-		a.WriteRune(r)
-		p = p[s:]
-	}
-	return n, nil
-}
-
-// WriteRune asks the GPU to display a single rune on the canvas.
-func (a *glRenderer) WriteRune(r rune) {
-	if r == '\n' {
-		if Cursor.Interline == 0 {
-			Cursor.Position.Y += int16(float32(Cursor.Font.Height()) * 1.25)
-		} else {
-			Cursor.Position.Y += Cursor.Interline
-		}
-		Cursor.Position.X = Cursor.Margin
-		return
-	}
-
-	g := Cursor.Font.glyph(r)
-	a.command(cmdText, 4, 1,
-		int16(Cursor.Color-fonts[Cursor.Font].basecolor),
-		Cursor.Layer,
-		Cursor.Position.Y-fonts[Cursor.Font].baseline,
-		int16(g), Cursor.Position.X)
-	Cursor.Position.X += pictures.mapping[g].w + Cursor.LetterSpacing
 }
 
 ////////////////////////////////////////////////////////////////////////////////

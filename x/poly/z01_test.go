@@ -252,11 +252,14 @@ func (loop) Render() {
 	pipeline.Unbind()
 
 	pixel.Clear(0)
-	pixel.Locate(pixel.XY{2, 12})
+	cur := pixel.Cursor{
+		Color: 7,
+	}
+	cur.Locate(pixel.XY{2, 12})
 	ft, or := cozely.RenderStats()
-	pixel.Printf("% 3.2f", ft*1000)
+	cur.Printf("% 3.2f", ft*1000)
 	if or > 0 {
-		pixel.Printf(" (%d)", or)
+		cur.Printf(" (%d)", or)
 	}
 	if window.HasMouseFocus() {
 		pixel.MouseCursor.Paint(0, pixel.ToCanvas(window.XYof(cursor.XY(0))))

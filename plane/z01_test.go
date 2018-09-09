@@ -83,6 +83,8 @@ func (loop1) Update() {
 
 func (loop1) Render() {
 	pixel.Clear(1)
+	cur := pixel.Cursor{}
+
 	ratio = float32(pixel.Resolution().Y)
 	offset = coord.XY{
 		X: (float32(pixel.Resolution().X) - ratio),
@@ -114,41 +116,41 @@ func (loop1) Render() {
 			c = col4
 		}
 		pixel.Box(c, c, 0, 2, pt[i].Minus(s), pt[i].Plus(s))
-		pixel.Locate(pixel.XY{pt[i].X - 2, pt[i].Y + 3})
-		pixel.Text(col1, 0)
-		pixel.Print([]string{"A", "B", "C"}[i])
+		cur.Locate(pixel.XY{pt[i].X - 2, pt[i].Y + 3})
+		cur.Text(col1, 0)
+		cur.Print([]string{"A", "B", "C"}[i])
 	}
 
 	m := pixel.ToCanvas(window.XYof(cursor.XY(0)))
 	p := fromScreen(m)
-	pixel.Locate(pixel.XY{2, 8})
-	pixel.Text(col1, 0)
-	pixel.Printf("A: %.3f, %.3f\n", points[0].X, points[0].Y)
-	pixel.Printf("B: %.3f, %.3f\n", points[1].X, points[1].Y)
-	pixel.Printf("C: %.3f, %.3f\n", points[2].X, points[2].Y)
+	cur.Locate(pixel.XY{2, 8})
+	cur.Text(col1, 0)
+	cur.Printf("A: %.3f, %.3f\n", points[0].X, points[0].Y)
+	cur.Printf("B: %.3f, %.3f\n", points[1].X, points[1].Y)
+	cur.Printf("C: %.3f, %.3f\n", points[2].X, points[2].Y)
 	if p.X >= 0 {
-		pixel.Printf("   %.3f, %.3f\n", p.X, p.Y)
+		cur.Printf("   %.3f, %.3f\n", p.X, p.Y)
 	} else {
-		pixel.Println(" ")
+		cur.Println(" ")
 	}
 	pixel.Point(col1, 0, m)
 
-	pixel.Println()
+	cur.Println()
 
 	if plane.IsCCW(points[0], points[1], points[2]) {
-		pixel.Text(col4, 0)
-		pixel.Println("IsCCW: TRUE")
+		cur.Text(col4, 0)
+		cur.Println("IsCCW: TRUE")
 	} else {
-		pixel.Text(col1, 0)
-		pixel.Println("IsCCW: false")
+		cur.Text(col1, 0)
+		cur.Println("IsCCW: false")
 	}
 
 	if plane.InTriangle(points[0], points[1], points[2], p) {
-		pixel.Text(col2, 0)
-		pixel.Println("InTriangle: TRUE")
+		cur.Text(col2, 0)
+		cur.Println("InTriangle: TRUE")
 	} else {
-		pixel.Text(col1, 0)
-		pixel.Println("InTriangle: false")
+		cur.Text(col1, 0)
+		cur.Println("InTriangle: false")
 	}
 
 	a, b, c := 0, 1, 2
@@ -156,25 +158,25 @@ func (loop1) Render() {
 		b, c = c, b
 	}
 	if plane.InTriangleCCW(points[a], points[b], points[c], p) {
-		pixel.Text(col2, 0)
-		pixel.Println("InTriangleCCW: TRUE")
+		cur.Text(col2, 0)
+		cur.Println("InTriangleCCW: TRUE")
 	} else {
-		pixel.Text(col1, 0)
-		pixel.Println("InTriangleCCW: false")
+		cur.Text(col1, 0)
+		cur.Println("InTriangleCCW: false")
 	}
 
 	if plane.InCircumcircle(points[a], points[b], points[c], p) {
-		pixel.Text(col3, 0)
-		pixel.Println("InCircumcircle: TRUE")
+		cur.Text(col3, 0)
+		cur.Println("InCircumcircle: TRUE")
 	} else {
-		pixel.Text(col1, 0)
-		pixel.Println("InCircumcircle: false")
+		cur.Text(col1, 0)
+		cur.Println("InCircumcircle: false")
 	}
 
-	pixel.Println(" ")
+	cur.Println(" ")
 
-	pixel.Text(col1, 0)
-	pixel.Printf("Circumcenter: %.3f, %.3f\n", d.X, d.Y)
+	cur.Text(col1, 0)
+	cur.Printf("Circumcenter: %.3f, %.3f\n", d.X, d.Y)
 	dd := toScreen(d)
 	pixel.Lines(col5, 0, dd.MinusS(2), dd.PlusS(2))
 	pixel.Lines(col5, 0, dd.Minus(pixel.XY{-2, 2}), dd.Plus(pixel.XY{-2, 2}))
