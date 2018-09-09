@@ -70,7 +70,7 @@ func (loop1) React() {
 	}
 
 	if previous.Started(0) {
-		m := pixel.ToCanvas(window.XYof(cursor.XY(0)))
+		m := pixel.XYof(cursor.XY(0))
 		p := fromScreen(m)
 		points = append(points, p)
 		triangulation = quadedge.Delaunay(points)
@@ -149,7 +149,7 @@ func (loop1) Render() {
 		Y: float32(pixel.Resolution().Y),
 	}
 
-	m := pixel.ToCanvas(window.XYof(cursor.XY(0)))
+	m := pixel.XYof(cursor.XY(0))
 	p := fromScreen(m)
 	cur.Locate(1, pixel.XY{2, 8})
 	cur.Color = col3

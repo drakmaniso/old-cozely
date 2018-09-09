@@ -89,7 +89,7 @@ func resize() {
 	}
 
 	// Extend the screen to cover the window
-	screen.size = XYof(win.Slash(screen.zoom))
+	screen.size = XY(win.Slash(screen.zoom))
 	adjustScreenTextures()
 
 	// For fixed resolution, compute the margin and fix the size
@@ -98,7 +98,7 @@ func resize() {
 	}
 
 	// Compute outside border
-	sz := window.XYof(screen.size.Times(screen.zoom))
+	sz := window.XY(screen.size.Times(screen.zoom))
 	screen.border = win.Minus(sz).Slash(2)
 }
 
@@ -123,23 +123,4 @@ func Resolution() XY {
 // Zoom returns the size of one canvas pixel, in *window* pixels.
 func Zoom() int16 {
 	return screen.zoom
-}
-
-// ToCanvas takes coordinates in window space and returns them in canvas
-// space.
-func ToCanvas(p window.XY) XY {
-	//TODO:
-	if !screen.resolution.Null() {
-		return XYof(p.Minus(screen.border).Slash(screen.zoom)).Minus(screen.margin)
-	}
-	return XYof(p.Minus(screen.border).Slash(screen.zoom))
-}
-
-// ToWindow takes coordinates in canvas space and returns them in window space.
-func ToWindow(p XY) window.XY {
-	//TODO:
-	if !screen.resolution.Null() {
-		return window.XYof(p.Times(screen.zoom)).Plus(screen.border)
-	}
-	return window.XY(p.Plus(screen.margin).Times(screen.zoom)).Plus(screen.border)
 }

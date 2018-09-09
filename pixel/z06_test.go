@@ -9,7 +9,6 @@ import (
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
-	"github.com/cozely/cozely/window"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -85,6 +84,6 @@ func (a *loop6) Render() {
 		pixel.Box(9, 9, 0, i, o.Plus(dx.Times(i)), o.Plus(dx.Times(i)).Plus(s))
 	}
 
-	m := pixel.ToCanvas(window.XYof(cursor.XY(0)))
+	m := pixel.XYof(cursor.XY(0))
 	pixel.Point(7, 0, m)
 }

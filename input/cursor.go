@@ -6,8 +6,8 @@ package input
 import (
 	"errors"
 
-	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/internal"
+	"github.com/cozely/cozely/window"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -26,8 +26,8 @@ var cursors struct {
 
 type cursor struct {
 	active   bool
-	value    coord.XY
-	previous coord.XY
+	value    window.XY
+	previous window.XY
 }
 
 // Cursor declares a new cursor action, and returns its ID.
@@ -72,7 +72,7 @@ func (a CursorID) Active(d DeviceID) bool {
 // XY returns the current status of the action on a specific device. The
 // cursorinates are the current absolute position; the values of X and Y are
 // normalized between -1 and 1.
-func (a CursorID) XY(d DeviceID) coord.XY {
+func (a CursorID) XY(d DeviceID) window.XY {
 	return devices.cursors[d][a].value
 }
 
@@ -89,24 +89,25 @@ func (a CursorID) newframe(d DeviceID) {
 
 func (a CursorID) update(d DeviceID) {
 	if d == kbmouse && mouse.moved {
-		v := coord.XY{
-			float32(internal.MousePositionX),
-			float32(internal.MousePositionY),
+		v := window.XY{
+			internal.MousePositionX,
+			internal.MousePositionY,
 		}
 		devices.cursors[d][a].value = v
 		devices.cursors[0][a].value = v //TODO
 		return
 	}
-	var v coord.XY
+	var v window.XY
 	for _, b := range devices.cursorbinds[d][a] {
-		v = v.Plus(b.asDelta())
+		v = v.Plus(window.XYof(b.asDelta()))
 	}
 	if v.X != 0 || v.Y != 0 {
 		mouse.moved = false
 	}
 	if !mouse.moved {
-		s := coord.XY{float32(internal.Window.Width), float32(internal.Window.Height)}
-		v = v.Times(s.Y / 128)
+		s := window.XY{internal.Window.Width, internal.Window.Height}
+		// v = v.Times(float32(s.Y) / 128)
+		v = v.Times(s.Y)
 
 		devices.cursors[d][a].value = devices.cursors[d][a].value.Plus(v)
 		if devices.cursors[d][a].value.X < 0 {

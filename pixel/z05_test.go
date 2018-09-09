@@ -9,7 +9,6 @@ import (
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
-	"github.com/cozely/cozely/window"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -62,7 +61,7 @@ func (a *loop5) React() {
 	}
 
 	if next.Started(0) {
-		m := pixel.ToCanvas(window.XYof(cursor.XY(0)))
+		m := pixel.XYof(cursor.XY(0))
 		a.points = append(a.points, m)
 	}
 
@@ -82,7 +81,7 @@ func (loop5) Update() {
 
 func (a *loop5) Render() {
 	pixel.Clear(1)
-	m := pixel.ToCanvas(window.XYof(cursor.XY(0)))
+	m := pixel.XYof(cursor.XY(0))
 	if !a.triangleshidden {
 		pixel.Triangles(2, 0, a.points...)
 	}

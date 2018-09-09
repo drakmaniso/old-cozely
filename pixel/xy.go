@@ -7,6 +7,7 @@ import (
 	"math"
 
 	"github.com/cozely/cozely/coord"
+	"github.com/cozely/cozely/window"
 )
 
 //// Defintion /////////////////////////////////////////////////////////////////
@@ -17,10 +18,30 @@ type XY struct {
 }
 
 // XYof returns an integer vector corresponding to the first two coordinates of
-// v.
+// v. If v is a window.XY, the coordinates are converted from window space to
+// canvas space.
 func XYof(v coord.Coordinates) XY {
-	x, y, _ := v.Cartesian()
-	return XY{int16(x), int16(y)}
+	switch v := v.(type) {
+	case window.XY:
+		v = v.Minus(screen.border).Slash(screen.zoom)
+		if !screen.resolution.Null() {
+			return XY(v).Minus(screen.margin)
+		}
+		return XY(v)
+	default:
+		x, y, _ := v.Cartesian()
+		return XY{int16(x), int16(y)}
+	}
+}
+
+// WindowXY takes coordinates in canvas space and returns them in window space.
+func (p XY) WindowXY() window.XY {
+	if !screen.resolution.Null() {
+		p = p.Times(screen.zoom)
+		return window.XY(p).Plus(screen.border)
+	}
+	p = p.Plus(screen.margin).Times(screen.zoom)
+	return window.XY(p).Plus(screen.border)
 }
 
 // RoundXYof returns an integer vector corresponding to the first two

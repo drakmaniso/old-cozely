@@ -176,7 +176,7 @@ func (loop1) Render() {
 	p := positionAct.XY(0)
 	cur.Printf("Position = % 12.6f, % 12.6f\n", p.X, p.Y)
 	c := cursorAct.XY(0)
-	cur.Printf("  Cursor = % 12.6f, % 12.6f", c.X, c.Y)
+	cur.Printf("  Cursor = % 12d, % 12d", c.X, c.Y)
 	if input.MouseGrabbed() {
 		changecolor(&cur, true)
 		cur.Printf(" (mouse GRABBED)\n")
@@ -188,7 +188,7 @@ func (loop1) Render() {
 	cur.Printf("   Delta = %+12.6f, %+12.6f\n", d.X, d.Y)
 
 	//TODO:
-	pixel.MouseCursor.Paint(0, pixel.ToCanvas(window.XYof(c)))
+	pixel.MouseCursor.Paint(0, pixel.XYof(c))
 }
 
 func changecolor(cur *pixel.Cursor, p bool) {

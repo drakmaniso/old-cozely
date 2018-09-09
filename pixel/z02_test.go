@@ -137,7 +137,7 @@ func (a *loop2) React() {
 		p := a.picts[j]
 		a.shapes[i].pict = p
 		//TODO:
-		a.shapes[i].pos = pixel.ToCanvas(window.XYof(cursor.XY(0))).Minus(p.Size().Slash(2))
+		a.shapes[i].pos = pixel.XYof(cursor.XY(0)).Minus(p.Size().Slash(2))
 	}
 	if previous.Started(0) && len(a.shapes) > 0 {
 		a.shapes = a.shapes[:len(a.shapes)-1]

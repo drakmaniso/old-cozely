@@ -10,7 +10,6 @@ import (
 	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
-	"github.com/cozely/cozely/window"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -116,6 +115,6 @@ func (a *loop3) Render() {
 
 	cur.Locate(0, pixel.XY{pixel.Resolution().X - 200, 9})
 	cur.Font = pixel.FontID(0)
-	m := pixel.ToCanvas(window.XYof(cursor.XY(0)))
+	m := pixel.XYof(cursor.XY(0))
 	cur.Printf("Position x=%d, y=%d\n", m.X, m.Y)
 }

@@ -13,7 +13,6 @@ import (
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
 	"github.com/cozely/cozely/plane"
-	"github.com/cozely/cozely/window"
 	"github.com/cozely/cozely/x/math32"
 )
 
@@ -121,7 +120,7 @@ func (loop1) Render() {
 		cur.Print([]string{"A", "B", "C"}[i])
 	}
 
-	m := pixel.ToCanvas(window.XYof(cursor.XY(0)))
+	m := pixel.XYof(cursor.XY(0))
 	p := fromScreen(m)
 	cur.Locate(1, pixel.XY{2, 8})
 	cur.Style(col1, 0)

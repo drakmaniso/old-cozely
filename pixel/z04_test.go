@@ -118,11 +118,8 @@ func (a *loop4) Render() {
 	pixel.Clear(a.bg)
 
 	cur := pixel.Cursor{}
-
-	cur.Color = a.fg
-	cur.Locate(0,pixel.XY{16, a.font.Height() + 2})
-
-	cur.Font = a.font
+	cur.Style(a.fg, a.font)
+	cur.Locate(0, pixel.XY{16, a.font.Height() + 2})
 	cur.LetterSpacing = a.letterspacing
 	// u.Interline = fntInterline
 
@@ -133,7 +130,7 @@ func (a *loop4) Render() {
 		y = cur.Position.Y
 	}
 
-	cur.Locate(0,pixel.XY{pixel.Resolution().X - 96, 16})
+	cur.Locate(0, pixel.XY{pixel.Resolution().X - 96, 16})
 	cur.Printf("Line %d", a.line)
 }
 
