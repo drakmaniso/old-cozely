@@ -15,12 +15,14 @@ type DeviceID uint32
 const noDevice = DeviceID(maxID)
 
 const (
-	// Any is a pseudo-device that aggregates the status of all other devices.
-	Any     DeviceID = 0
-	kbmouse DeviceID = iota
+	// KeyboardAndMouse is the only device that doesn't need to be declared
+	KeyboardAndMouse DeviceID = 0
 )
 
 var devices struct {
+	// The device most recently used
+	current DeviceID
+
 	// For each device
 	name       []string
 	context    []ContextID
@@ -37,7 +39,7 @@ var devices struct {
 	// For each device/context combination, the list of bindings
 	bindings [][][]source
 
-	// For each device/action combination, the list of *current* bindings
+	// For each device/action combination, the list of *active* bindings
 	buttonsbinds  [][][]source
 	halfaxesbinds [][][]source
 	axesbinds     [][][]source
@@ -109,13 +111,16 @@ func clearDevices() {
 	devices.deltas = nil
 	devices.deltasbinds = nil
 	devices.bindings = nil
-
-	addDevice("Any")
-	addDevice("KeyboardAndMouse")
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (a DeviceID) isMouse() bool {
-	return a == kbmouse
+// CurrentDevice returns the device most recently used
+func CurrentDevice() DeviceID {
+	return devices.current
+}
+
+// Name returns the name of the device
+func (a DeviceID) Name() string {
+	return devices.name[a]
 }

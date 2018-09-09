@@ -35,6 +35,7 @@ func load() {
 	// Forget devices (and previous bindings)
 	clearDevices()
 	// Add gamepad devices
+	addDevice("Keyboard and Mouse")
 	scanJoysticks()
 
 	lcn := "Loaded input bindings (contexts:"

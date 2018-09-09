@@ -80,7 +80,7 @@ func (a ButtonID) Name() string {
 // Pressed returns true if the action has been started and is currently ongoing
 // (i.e. "on", "pressed") on the current device.
 func (a ButtonID) Pressed() bool {
-	return a.PressedOn(Any)
+	return a.PressedOn(devices.current)
 }
 
 // PressedOn returns true if the action has been started and is currently ongoing
@@ -95,7 +95,7 @@ func (a ButtonID) PressedOn(d DeviceID) bool {
 // Note: this *must* be queried in the React method of the game loop, as this is
 // the only method that is guaranteed to run at least once each frame.
 func (a ButtonID) Changed() bool {
-	return a.ChangedOn(Any)
+	return a.ChangedOn(devices.current)
 }
 
 // ChangedOn returns true if the action has just been pressed or released this
@@ -113,7 +113,7 @@ func (a ButtonID) ChangedOn(d DeviceID) bool {
 // Note: this *must* be queried in the React method of the game loop, as this is
 // the only method that is guaranteed to run at least once each frame.
 func (a ButtonID) Pushed() bool {
-	return a.PushedOn(Any)
+	return a.PushedOn(devices.current)
 }
 
 // PushedOn returns true if the action has just been started this very frame
@@ -131,7 +131,7 @@ func (a ButtonID) PushedOn(d DeviceID) bool {
 // Note: this *must* be queried in the React method of the game loop, as this is
 // the only method that is guaranteed to run at least once each frame.
 func (a ButtonID) Released() bool {
-	return a.ReleasedOn(Any)
+	return a.ReleasedOn(devices.current)
 }
 
 // ReleasedOn returns true if the action has just been stopped this very frame
@@ -147,12 +147,10 @@ func (a ButtonID) ReleasedOn(d DeviceID) bool {
 
 func (a ButtonID) activate(d DeviceID, b source) {
 	devices.buttonsbinds[d][a] = append(devices.buttonsbinds[d][a], b)
-	_, v := b.asBool()
+	_, v := b.asButton()
 	if v {
 		devices.buttons[d][a].pressed = true
 		devices.buttons[d][a].previous = true
-		devices.buttons[0][a].pressed = true
-		devices.buttons[0][a].previous = true
 	}
 }
 
@@ -161,11 +159,11 @@ func (a ButtonID) newframe(d DeviceID) {
 }
 
 func (a ButtonID) update(d DeviceID) {
-	for _, b := range devices.buttonsbinds[d][a] {
-		j, v := b.asBool()
+	for _, s := range devices.buttonsbinds[d][a] {
+		j, v := s.asButton()
 		if j {
 			devices.buttons[d][a].pressed = v
-			devices.buttons[0][a].pressed = v
+			devices.current = d
 		}
 	}
 }
@@ -173,5 +171,4 @@ func (a ButtonID) update(d DeviceID) {
 func (a ButtonID) deactivate(d DeviceID) {
 	devices.buttonsbinds[d][a] = devices.buttonsbinds[d][a][:0]
 	devices.buttons[d][a].pressed = false
-	devices.buttons[0][a].pressed = false
 }

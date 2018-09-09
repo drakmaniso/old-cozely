@@ -36,22 +36,22 @@ const (
 func (a *msButton) bind(c ContextID, target Action) {
 	aa := *a
 	aa.target = target
-	devices.bindings[kbmouse][c] =
-		append(devices.bindings[kbmouse][c], &aa)
+	devices.bindings[KeyboardAndMouse][c] =
+		append(devices.bindings[KeyboardAndMouse][c], &aa)
 }
 
 func (a *msButton) activate(d DeviceID) {
 	a.target.activate(d, a)
 }
 
-func (a *msButton) asBool() (just bool, value bool) {
+func (a *msButton) asButton() (just bool, value bool) {
 	v := (mouseButton(internal.MouseButtons) & a.button) != 0
 	j := (v != a.pressed)
 	a.pressed = v
 	return j, a.pressed
 }
 
-func (a *msButton) asUnipolar() (just bool, value float32) {
+func (a *msButton) asHalfAxis() (just bool, value float32) {
 	v := (mouseButton(internal.MouseButtons) & a.button) != 0
 	j := (v != a.pressed)
 	a.pressed = v
@@ -61,7 +61,7 @@ func (a *msButton) asUnipolar() (just bool, value float32) {
 	return j, 0
 }
 
-func (a *msButton) asBipolar() (just bool, value float32) {
+func (a *msButton) asAxis() (just bool, value float32) {
 	v := (mouseButton(internal.MouseButtons) & a.button) != 0
 	j := (v != a.pressed)
 	a.pressed = v
@@ -71,7 +71,7 @@ func (a *msButton) asBipolar() (just bool, value float32) {
 	return j, 0
 }
 
-func (a *msButton) asCoord() (just bool, value coord.XY) {
+func (a *msButton) asDualAxis() (just bool, value coord.XY) {
 	v := (mouseButton(internal.MouseButtons) & a.button) != 0
 	j := (v != a.pressed)
 	a.pressed = v
@@ -81,11 +81,12 @@ func (a *msButton) asCoord() (just bool, value coord.XY) {
 	return j, coord.XY{0, 0}
 }
 
-func (a *msButton) asDelta() coord.XY {
+func (a *msButton) asDelta() (just bool, value coord.XY) {
 	v := (mouseButton(internal.MouseButtons) & a.button) != 0
+	j := (v != a.pressed)
 	a.pressed = v
 	if v {
-		return coord.XY{1, 0}
+		return j, coord.XY{1, 0}
 	}
-	return coord.XY{0, 0}
+	return j, coord.XY{0, 0}
 }

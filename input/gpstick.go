@@ -36,19 +36,19 @@ func (a *gpStick) activate(d DeviceID) {
 	a.target.activate(d, a)
 }
 
-func (a *gpStick) asBool() (just bool, value bool) {
+func (a *gpStick) asButton() (just bool, value bool) {
 	return false, false
 }
 
-func (a *gpStick) asUnipolar() (just bool, value float32) {
+func (a *gpStick) asHalfAxis() (just bool, value float32) {
 	return false, 0
 }
 
-func (a *gpStick) asBipolar() (just bool, value float32) {
+func (a *gpStick) asAxis() (just bool, value float32) {
 	return false, 0
 }
 
-func (a *gpStick) asCoord() (just bool, value coord.XY) {
+func (a *gpStick) asDualAxis() (just bool, value coord.XY) {
 	vx, vy := a.gamepad.Axis(a.xaxis), a.gamepad.Axis(a.yaxis)
 	j := (vx != a.x) || (vy != a.y)
 	a.x, a.y = vx, vy
@@ -66,9 +66,10 @@ func (a *gpStick) asCoord() (just bool, value coord.XY) {
 	return j, c
 }
 
-func (a *gpStick) asDelta() coord.XY {
-	a.x, a.y = a.gamepad.Axis(a.xaxis), a.gamepad.Axis(a.yaxis)
-	vx, vy := a.x, a.y
+func (a *gpStick) asDelta() (just bool, value coord.XY) {
+	vx, vy := a.gamepad.Axis(a.xaxis), a.gamepad.Axis(a.yaxis)
+	j := (vx != a.x) || (vy != a.y)
+	a.x, a.y = vx, vy
 	var c coord.XY
 	if vx < 0 {
 		c.X = float32(vx) / float32(0x8000)
@@ -89,5 +90,5 @@ func (a *gpStick) asDelta() coord.XY {
 	s := coord.XY{float32(internal.Window.Width), float32(internal.Window.Height)}
 	c = c.Times(s.Y / 256)
 
-	return c
+	return j, c
 }

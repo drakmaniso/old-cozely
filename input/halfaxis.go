@@ -66,7 +66,7 @@ func (a HalfAxisID) Name() string {
 // Value returns the current value of the action on the current device. This
 // value is normalized between 0 and 1.
 func (a HalfAxisID) Value() float32 {
-	return a.ValueOn(Any)
+	return a.ValueOn(devices.current)
 }
 
 // ValueOn returns the current value of the action on a specific device. This
@@ -77,8 +77,8 @@ func (a HalfAxisID) ValueOn(d DeviceID) float32 {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (a HalfAxisID) activate(d DeviceID, b source) {
-	devices.halfaxesbinds[d][a] = append(devices.halfaxesbinds[d][a], b)
+func (a HalfAxisID) activate(d DeviceID, s source) {
+	devices.halfaxesbinds[d][a] = append(devices.halfaxesbinds[d][a], s)
 }
 
 func (a HalfAxisID) newframe(d DeviceID) {
@@ -86,11 +86,11 @@ func (a HalfAxisID) newframe(d DeviceID) {
 }
 
 func (a HalfAxisID) update(d DeviceID) {
-	for _, b := range devices.halfaxesbinds[d][a] {
-		j, v := b.asUnipolar()
+	for _, s := range devices.halfaxesbinds[d][a] {
+		j, v := s.asHalfAxis()
 		if j {
 			devices.halfaxes[d][a].value = v
-			devices.halfaxes[0][a].value = v
+			devices.current = d
 		}
 	}
 }

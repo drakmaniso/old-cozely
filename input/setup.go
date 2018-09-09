@@ -23,12 +23,13 @@ func setup() error {
 			aa = append(aa, a)
 		}
 		c := Context("Default", aa...)
-		c.ActivateOn(Any)
+		c.Activate()
 		internal.Log.Printf("(added default context with all actions)")
 	}
 
+	//TODO: always start with the first context instead?
 	if len(contexts.name) == 1 {
-		ContextID(0).ActivateOn(Any)
+		ContextID(0).Activate()
 	}
 
 	if len(bindings) == 0 {
@@ -77,11 +78,11 @@ func setup() error {
 				if !ok || len(b) == 0 {
 					m["Menu Right"] = []string{"Right", "Dpad Right"} //TODO: keypad and left stick support
 				}
-			case MenuPointer:
-				b, ok = m["Menu Pointer"]
-				if !ok || len(b) == 0 {
-					m["Menu Pointer"] = []string{"Mouse", "Right Stick"}
-				}
+			// case MenuPointer:
+			// 	b, ok = m["Menu Pointer"]
+			// 	if !ok || len(b) == 0 {
+			// 		m["Menu Pointer"] = []string{"Mouse", "Right Stick"}
+			// 	}
 			case MenuClick:
 				b, ok = m["Menu Click"]
 				if !ok || len(b) == 0 {

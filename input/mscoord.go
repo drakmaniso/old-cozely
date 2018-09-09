@@ -19,27 +19,28 @@ type msCoord struct {
 func (a *msCoord) bind(c ContextID, target Action) {
 	aa := *a
 	aa.target = target
-	devices.bindings[kbmouse][c] =
-		append(devices.bindings[kbmouse][c], &aa)
+	devices.bindings[KeyboardAndMouse][c] =
+		append(devices.bindings[KeyboardAndMouse][c], &aa)
 }
 
 func (a *msCoord) activate(d DeviceID) {
 	a.target.activate(d, a)
 }
 
-func (a *msCoord) asBool() (just bool, value bool) {
+func (a *msCoord) asButton() (just bool, value bool) {
 	return false, false
 }
 
-func (a *msCoord) asUnipolar() (just bool, value float32) {
+func (a *msCoord) asHalfAxis() (just bool, value float32) {
 	return false, 0
 }
 
-func (a *msCoord) asBipolar() (just bool, value float32) {
+func (a *msCoord) asAxis() (just bool, value float32) {
 	return false, 0
 }
 
-func (a *msCoord) asCoord() (just bool, value coord.XY) {
+func (a *msCoord) asDualAxis() (just bool, value coord.XY) {
+	//TODO: implement threshold
 	j := mouse.delta.C != 0 || mouse.delta.R != 0
 	c := coord.XY{
 		X: float32(internal.MousePositionX) / float32(internal.Window.Width),
@@ -48,6 +49,8 @@ func (a *msCoord) asCoord() (just bool, value coord.XY) {
 	return j, c
 }
 
-func (a *msCoord) asDelta() coord.XY {
-	return mouse.delta.XY()
+func (a *msCoord) asDelta() (just bool, value coord.XY) {
+	//TODO: implement threshold
+	j := mouse.delta.C != 0 || mouse.delta.R != 0
+	return j, mouse.delta.XY()
 }

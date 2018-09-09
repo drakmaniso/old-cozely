@@ -36,14 +36,14 @@ func (a *gpButton) activate(d DeviceID) {
 	a.target.activate(d, a)
 }
 
-func (a *gpButton) asBool() (just bool, value bool) {
+func (a *gpButton) asButton() (just bool, value bool) {
 	v := a.gamepad.Button(a.button)
 	j := (v != a.pressed)
 	a.pressed = v
 	return j, a.pressed
 }
 
-func (a *gpButton) asUnipolar() (just bool, value float32) {
+func (a *gpButton) asHalfAxis() (just bool, value float32) {
 	v := a.gamepad.Button(a.button)
 	j := (v != a.pressed)
 	a.pressed = v
@@ -53,7 +53,7 @@ func (a *gpButton) asUnipolar() (just bool, value float32) {
 	return j, 0
 }
 
-func (a *gpButton) asBipolar() (just bool, value float32) {
+func (a *gpButton) asAxis() (just bool, value float32) {
 	v := a.gamepad.Button(a.button)
 	j := (v != a.pressed)
 	a.pressed = v
@@ -63,7 +63,7 @@ func (a *gpButton) asBipolar() (just bool, value float32) {
 	return j, 0
 }
 
-func (a *gpButton) asCoord() (just bool, value coord.XY) {
+func (a *gpButton) asDualAxis() (just bool, value coord.XY) {
 	v := a.gamepad.Button(a.button)
 	j := (v != a.pressed)
 	a.pressed = v
@@ -73,11 +73,12 @@ func (a *gpButton) asCoord() (just bool, value coord.XY) {
 	return j, coord.XY{0, 0}
 }
 
-func (a *gpButton) asDelta() coord.XY {
+func (a *gpButton) asDelta() (just bool, value coord.XY) {
 	v := a.gamepad.Button(a.button)
+	j := (v != a.pressed)
 	a.pressed = v
 	if v {
-		return coord.XY{1, 0}
+		return j, coord.XY{1, 0}
 	}
-	return coord.XY{0, 0}
+	return j, coord.XY{0, 0}
 }

@@ -60,9 +60,9 @@ var (
 			"Inventory":         {"Tab", "Button Y"},
 			"Jump":              {"Space", "Mouse Left", "Button A"},
 			"Trigger":           {"Right Trigger"},
-			"Position":          {"Mouse", "Right Stick"},
-			"Cursor":            {"Mouse", "Right Stick"},
-			"Delta":             {"Mouse", "Right Stick"},
+			"Position":          {"Right Stick", "Mouse"},
+			"Cursor":            {"Right Stick", "Mouse"},
+			"Delta":             {"Right Stick", "Mouse"},
 		},
 	}
 )
@@ -173,9 +173,9 @@ func (loop1) Render() {
 	changecolor(&cur, false)
 	cur.Println()
 	cur.Printf(" Trigger = % 12.6f\n", triggerAct.Value())
-	p := positionAct.XYon(0)
+	p := positionAct.XY()
 	cur.Printf("Position = % 12.6f, % 12.6f\n", p.X, p.Y)
-	c := cursorAct.XYon(0)
+	c := cursorAct.XY()
 	cur.Printf("  Cursor = % 12d, % 12d", c.X, c.Y)
 	if input.MouseGrabbed() {
 		changecolor(&cur, true)
@@ -184,8 +184,13 @@ func (loop1) Render() {
 		changecolor(&cur, false)
 		cur.Printf(" (mouse not grabbed)\n")
 	}
-	d := deltaAct.XYon(0)
+	d := deltaAct.XY()
 	cur.Printf("   Delta = %+12.6f, %+12.6f\n", d.X, d.Y)
+
+	changecolor(&cur, false)
+	cur.Locate(0, pixel.XY{2, pixel.Resolution().Y - 14})
+	dv := input.CurrentDevice()
+	cur.Printf("Current device: %d = %s", dv, dv.Name())
 
 	//TODO:
 	pixel.MouseCursor.Paint(0, pixel.XYof(c))

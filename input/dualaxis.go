@@ -65,7 +65,7 @@ func (a DualAxisID) Name() string {
 // coordinates are the current absolute position; the values of X and Y are
 // normalized between -1 and 1.
 func (a DualAxisID) XY() coord.XY {
-	return a.XYon(Any)
+	return a.XYon(devices.current)
 }
 
 // XYon returns the current status of the action on a specific device. The
@@ -77,8 +77,8 @@ func (a DualAxisID) XYon(d DeviceID) coord.XY {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (a DualAxisID) activate(d DeviceID, b source) {
-	devices.dualaxesbinds[d][a] = append(devices.dualaxesbinds[d][a], b)
+func (a DualAxisID) activate(d DeviceID, s source) {
+	devices.dualaxesbinds[d][a] = append(devices.dualaxesbinds[d][a], s)
 }
 
 func (a DualAxisID) newframe(d DeviceID) {
@@ -86,11 +86,11 @@ func (a DualAxisID) newframe(d DeviceID) {
 }
 
 func (a DualAxisID) update(d DeviceID) {
-	for _, b := range devices.dualaxesbinds[d][a] {
-		j, v := b.asCoord()
+	for _, s := range devices.dualaxesbinds[d][a] {
+		j, v := s.asDualAxis()
 		if j {
 			devices.dualaxes[d][a].value = v
-			devices.dualaxes[0][a].value = v
+			devices.current = d
 		}
 	}
 }

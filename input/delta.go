@@ -67,7 +67,7 @@ func (a DeltaID) Name() string {
 // XY returns the current status of the action on the current device. The
 // coordinates correspond to the change in position since the last frame.
 func (a DeltaID) XY() coord.XY {
-	return a.XYon(Any)
+	return a.XYon(devices.current)
 }
 
 // XYon returns the current status of the action on a specific device. The
@@ -78,8 +78,8 @@ func (a DeltaID) XYon(d DeviceID) coord.XY {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (a DeltaID) activate(d DeviceID, b source) {
-	devices.deltasbinds[d][a] = append(devices.deltasbinds[d][a], b)
+func (a DeltaID) activate(d DeviceID, s source) {
+	devices.deltasbinds[d][a] = append(devices.deltasbinds[d][a], s)
 }
 
 func (a DeltaID) newframe(d DeviceID) {
@@ -88,11 +88,14 @@ func (a DeltaID) newframe(d DeviceID) {
 }
 
 func (a DeltaID) update(d DeviceID) {
+	j := false
 	v := coord.XY{}
-	for _, b := range devices.deltasbinds[d][a] {
-		v = b.asDelta()
+	for _, s := range devices.deltasbinds[d][a] {
+		j, v = s.asDelta()
 		devices.deltas[d][a].value = devices.deltas[d][a].value.Plus(v)
-		devices.deltas[0][a].value = devices.deltas[0][a].value.Plus(v)
+		if j {
+			devices.current = d
+		}
 	}
 }
 

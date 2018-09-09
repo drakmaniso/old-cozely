@@ -74,14 +74,14 @@ func (a CursorID) Name() string {
 // cursorinates are the current absolute position; the values of X and Y are
 // normalized between -1 and 1.
 func (a CursorID) XY() window.XY {
-	return a.XYon(Any)
+	return a.XYon(devices.current)
 }
 
 // XYon returns the current status of the action on a specific device. The
 // cursorinates are the current absolute position; the values of X and Y are
 // normalized between -1 and 1.
 func (a CursorID) XYon(d DeviceID) window.XY {
-	return devices.cursors[d][a].value
+	return devices.cursors[0][a].value
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -95,47 +95,49 @@ func (a CursorID) newframe(d DeviceID) {
 }
 
 func (a CursorID) update(d DeviceID) {
-	if d == kbmouse && mouse.moved {
-		v := window.XY{
-			internal.MousePositionX,
-			internal.MousePositionY,
+	var v window.XY
+	if d == KeyboardAndMouse {
+		if mouse.moved {
+			// Check if the mouse is among the active bindings
+			bo := false
+			for _, s := range devices.cursorsbinds[d][a] {
+				_, ok := s.(*msCoord)
+				if ok {
+					bo = true
+					break
+				}
+			}
+			if bo {
+				v = window.XY{
+					internal.MousePositionX,
+					internal.MousePositionY,
+				}
+				devices.cursors[0][a].value = v
+				devices.current = d //TODO: implement threshold
+			}
 		}
-		devices.cursors[d][a].value = v
-		devices.cursors[0][a].value = v //TODO
 		return
 	}
-	var v window.XY
-	for _, b := range devices.cursorsbinds[d][a] {
-		v = v.Plus(window.XYof(b.asDelta()))
+	for _, s := range devices.cursorsbinds[d][a] {
+		j, de := s.asDelta()
+		v = v.Plus(window.XYof(de))
+		if j {
+			devices.current = d
+		}
 	}
 	if v.X != 0 || v.Y != 0 {
-		mouse.moved = false
-	}
-	if !mouse.moved {
 		s := window.XY{internal.Window.Width, internal.Window.Height}
 		v = v.Times(int16(float32(s.Y) / 128)) //TODO: handle stick->cursor
-
-		devices.cursors[d][a].value = devices.cursors[d][a].value.Plus(v)
-		if devices.cursors[d][a].value.X < 0 {
-			devices.cursors[d][a].value.X = 0
-		} else if devices.cursors[d][a].value.X > s.X-1 {
-			devices.cursors[d][a].value.X = s.X - 1
-		}
-		if devices.cursors[d][a].value.Y < 0 {
-			devices.cursors[d][a].value.Y = 0
-		} else if devices.cursors[d][a].value.Y > s.Y-1 {
-			devices.cursors[d][a].value.Y = s.Y - 1
-		}
 
 		devices.cursors[0][a].value = devices.cursors[0][a].value.Plus(v)
 		if devices.cursors[0][a].value.X < 0 {
 			devices.cursors[0][a].value.X = 0
-		} else if devices.cursors[0][a].value.X >= s.X-1 {
+		} else if devices.cursors[0][a].value.X > s.X-1 {
 			devices.cursors[0][a].value.X = s.X - 1
 		}
 		if devices.cursors[0][a].value.Y < 0 {
 			devices.cursors[0][a].value.Y = 0
-		} else if devices.cursors[0][a].value.Y >= s.Y-1 {
+		} else if devices.cursors[0][a].value.Y > s.Y-1 {
 			devices.cursors[0][a].value.Y = s.Y - 1
 		}
 	}

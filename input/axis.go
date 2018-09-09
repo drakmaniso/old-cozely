@@ -66,7 +66,7 @@ func (a AxisID) Name() string {
 // Value returns the current value of the action on the current device. This
 // value is normalized between -1 and +1.
 func (a AxisID) Value() float32 {
-	return a.ValueOn(Any)
+	return a.ValueOn(devices.current)
 }
 
 // ValueOn returns the current value of the action on a specific device. This
@@ -86,11 +86,11 @@ func (a AxisID) newframe(d DeviceID) {
 }
 
 func (a AxisID) update(d DeviceID) {
-	for _, b := range devices.axesbinds[d][a] {
-		j, v := b.asBipolar()
+	for _, s := range devices.axesbinds[d][a] {
+		j, v := s.asAxis()
 		if j {
 			devices.axes[d][a].value = v
-			devices.axes[0][a].value = v
+			devices.current = d
 		}
 	}
 }
