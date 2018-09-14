@@ -1,16 +1,21 @@
 package ciziel_test
 
 import (
-	"github.com/cozely/cozely/formats/ciziel"
+	"fmt"
 	"os"
 	"testing"
+
+	"github.com/cozely/cozely/formats/ciziel"
 )
 
 func TestParse1(t *testing.T) {
-	f, err := os.Open("testdata/init.czl")
+	f, err := os.Open("testdata/bindings.czl")
 	if err != nil {
 		t.Error(err)
 		return
 	}
-	_ = ciziel.Parse(f)
+	d := ciziel.Parse(f)
+	for _, dd := range d {
+		fmt.Print(dd.String())
+	}
 }

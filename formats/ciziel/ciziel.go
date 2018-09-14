@@ -10,128 +10,57 @@ import (
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// A Data is either a String or a Table
-type Data interface {
-	Position() (line, col int)
+type Definition struct {
+	Line     int
+	indent   int
+	Label    string
+	Elements []string
+	Children []Definition
 }
 
-////////////////////////////////////////////////////////////////////////////////
-
-// A String is a sequence of characters.
-type String struct {
-	string
-	line, col uint32
+func (a Definition) String() string {
+	return a.string(0)
 }
 
-// String returns the content of the String.
-func (a String) String() string {
-	return a.string
-}
-
-// Position returns the position of the string in the source file.
-func (a String) Position() (line, col int) {
-	return int(a.line), int(a.col)
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-// A Table is composed of a header and a set of sections (both of wich are
-// optional).
-type Table struct {
-	header    []Data
-	sections  map[string][]Data
-	line, col uint32
-}
-
-// Position returns the position of the table in the source file.
-func (a Table) Position() (line, col int) {
-	return int(a.line), int(a.col)
-}
-
-// Header returns the values not associated with any labels (i.e. the values
-// occuring before any definition).
-func (a Table) Header() []Data {
-	return a.header
-}
-
-// Section returns the values associated with a label.
-func (a Table) Section(label string) []Data {
-	return a.sections[label]
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-func Parse(source io.Reader) Table {
-	s := state{
-		src:  bufio.NewReader(source),
-		line: 1, col: 1,
+func (a Definition) string(level int) string {
+	var s string // = strconv.Itoa(a.Line) + ": "
+	for i := 0; i < level; i++ {
+		s += "    "
 	}
-	s.ancestors = append(s.ancestors, &s.top)
-loop:
-	for {
-		l, c := s.line, s.col
-		t := s.scan()
-		switch t {
-		case invalid:
-			println(l, ".", c, ": ", "invalid")
-
-		case newline:
-			println(l, ".", c, ": ", "newline")
-
-		case whitespace:
-			println(l, ".", c, ": ", "whitespace")
-
-		case basic:
-			println(l, ".", c, ": ", "basic")
-
-		case quote:
-			println(l, ".", c, ": ", "quote")
-
-		case open:
-			println(l, ".", c, ": ", "open")
-
-		case colon:
-			println(l, ".", c, ": ", "colon")
-
-		case coma:
-			println(l, ".", c, ": ", "coma")
-
-		case close:
-			println(l, ".", c, ": ", "close")
-
-		case shortcut:
-			println(l, ".", c, ": ", "shortcut")
-
-		case comment:
-			println(l, ".", c, ": ", "comment")
-
-		case eof:
-			println(l, ".", c, ": ", "eof")
-			break loop
-
-		default:
-			println("*** what? ***")
+	if a.Label != "" {
+		s += a.Label + ":"
+	}
+	for i, e := range a.Elements {
+		if i == 0 {
+			if a.Label != "" {
+				s += " "
+			}
+		} else {
+			s += ", "
 		}
+		s += e
 	}
-	//TODO
-	return Table{}
+	s += "\n"
+	for _, c := range a.Children {
+		s += c.string(level + 1)
+	}
+	return s
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-
-const (
-	specials = "\",:[]()<>"
-)
 
 type state struct {
-	src       *bufio.Reader
-	top       Table
-	ancestors []*Table
-	table     *Table
-	section   string
+	src *bufio.Reader
+
+	previous  token
 	builder   strings.Builder
-	line, col uint32
-	err       error
+	line, col int
+
+	top     Definition
+	current *Definition
+	indent  int
+
+	err error
 }
 
 type token int
@@ -142,38 +71,178 @@ const (
 	whitespace
 	basic
 	quote
-	open
 	colon
 	coma
-	close
-	shortcut
 	comment
 	eof
 )
 
-func (a *state) scan() token {
-	r, _, err := a.src.ReadRune()
+////////////////////////////////////////////////////////////////////////////////
+
+func Parse(source io.Reader) []Definition {
+	s := state{
+		src:      bufio.NewReader(source),
+		line:     1,
+		previous: newline,
+		top:      Definition{indent: 0},
+	}
+
+loop:
+	for {
+		t := s.scan()
+
+		switch t {
+		case invalid:
+
+		case newline:
+			s.addElement()
+			s.current = nil
+			s.indent = 0
+
+		case whitespace:
+			if s.previous == newline {
+				s.indent = 0
+				if t == whitespace {
+					s.indent = countsp(s.builder.String())
+				}
+			}
+			s.builder.Reset()
+
+		case basic:
+
+		case quote:
+			s.builder.Reset()
+
+		case colon:
+			s.addLabel()
+
+		case coma:
+			s.addElement()
+
+		case comment:
+			s.builder.Reset()
+
+		case eof:
+			break loop
+
+		default:
+			println("*** what? ***")
+		}
+		s.previous = t
+	}
+
+	return s.top.Children
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+func countsp(s string) int {
+	r := 0
+	for _, c := range s {
+		switch c {
+		case ' ':
+			r++
+		case '\t':
+			r += 0x1000
+		default:
+			//TODO: error
+		}
+	}
+	return r
+}
+
+func (s *state) startDef() {
+	c := &s.top
+	p := c
+	for s.indent > c.indent && len(c.Children) > 0 {
+		p = c
+		c = &c.Children[len(c.Children)-1]
+	}
+
+	switch {
+	case s.indent > c.indent:
+		c.Children =
+			append(c.Children, Definition{
+				Line:   s.line,
+				indent: s.indent,
+			})
+		s.current = &c.Children[len(c.Children)-1]
+
+	case s.indent < c.indent:
+		//TODO: err
+		s.errmsg(s.line, s.col, "misaligned indentation")
+		fallthrough
+	default: // s.indent == c.indent:
+		p.Children =
+			append(p.Children, Definition{
+				Line:   s.line,
+				indent: s.indent,
+			})
+		s.current = &p.Children[len(p.Children)-1]
+	}
+}
+
+func (s *state) addLabel() {
+	if s.previous == basic {
+		if s.current == nil {
+			s.startDef()
+		}
+		var l string
+		if s.previous == basic {
+			l = strings.ToLower(s.builder.String())
+		} else {
+			l = s.builder.String()
+		}
+		if s.current.Label != "" {
+			//TODO: error
+		}
+		s.current.Label = l
+	}
+	s.builder.Reset()
+}
+
+func (s *state) addElement() {
+	if s.previous == basic {
+		if s.current == nil {
+			s.startDef()
+		}
+		var e string
+		if s.previous == basic {
+			e = strings.ToLower(s.builder.String())
+		} else {
+			e = s.builder.String()
+		}
+		s.current.Elements = append(s.current.Elements, e)
+	}
+	s.builder.Reset()
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+func (s *state) scan() token {
+	r, _, err := s.src.ReadRune()
 	if err != nil {
-		a.err = err
+		s.err = err
 		return eof
 	}
 	switch r {
 	case '\n':
-		a.line++
-		a.col = 1
+		s.line++
+		s.col = 1
 		return newline
 
 	case ' ', '\t':
 	spaceloop:
 		for {
 			switch r {
-			case ' ', '\t':
-				a.col++
+			case ' ', '\t': //TODO: unicode whitespace?
+				s.col++
+				s.builder.WriteRune(r)
 			default:
-				a.src.UnreadRune()
+				s.src.UnreadRune()
 				break spaceloop
 			}
-			r, _, err = a.src.ReadRune()
+			r, _, err = s.src.ReadRune()
 			if err != nil {
 				break spaceloop
 			}
@@ -184,52 +253,52 @@ func (a *state) scan() token {
 		//TODO
 		return quote
 
-	case '(':
-		a.col++
-		return open
-
-	case ')':
-		a.col++
-		return close
-
 	case ',':
-		a.col++
+		s.col++
 		return coma
 
 	case ':':
-		a.col++
+		s.col++
 		return colon
 
-	case '<':
-		//TODO
-		return shortcut
-
-	case '>':
-		a.errmsg(a.line, a.col, "unexpected '>' outside shortcut")
-		a.col++
-		return invalid
-
-	case '[':
+	case '(':
 		//TODO
 		return comment
 
-	case ']':
-		a.errmsg(a.line, a.col, "unexpected ']' outside comment")
-		a.col++
+	case ')':
+		s.errmsg(s.line, s.col, "unexpected ')' outside comment")
+		s.col++
+		return invalid
+
+	case '{':
+		//TODO
+		return comment
+
+	case '}':
+		s.errmsg(s.line, s.col, "unexpected '}' outside comment")
+		s.col++
 		return invalid
 
 	default:
+		sp := false
 	basicloop:
 		for {
 			switch r {
-			case '\n', '(', ')', ',', ':', '<', '>', '[', ']':
-				a.src.UnreadRune()
+			case '\n', '(', ')', '{', '}', ',', ':':
+				s.src.UnreadRune()
 				break basicloop
+			case ' ', '\t': //TODO: unicode whitespace?
+				s.col++
+				sp = true
 			default:
-				a.col++
-				a.builder.WriteRune(r)
+				s.col++
+				if sp {
+					s.builder.WriteRune(' ')
+					sp = false
+				}
+				s.builder.WriteRune(r)
 			}
-			r, _, err = a.src.ReadRune()
+			r, _, err = s.src.ReadRune()
 			if err != nil {
 				break basicloop
 			}
@@ -238,9 +307,11 @@ func (a *state) scan() token {
 	}
 }
 
-func (a *state) errmsg(l, c uint32, msg string) {
-	if a.err == nil {
-		a.err = errors.New(
+////////////////////////////////////////////////////////////////////////////////
+
+func (s *state) errmsg(l, c int, msg string) {
+	if s.err == nil {
+		s.err = errors.New(
 			strconv.Itoa(int(l)) + "." + strconv.Itoa(int(c)) + ": " + msg,
 		)
 	}
