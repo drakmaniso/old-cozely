@@ -1,16 +1,14 @@
 Menu:
 	Quit: Escape, Button Back
 	Close Menu: Enter, Button Start
-
 	Instant Close Menu: Mouse Right, Button B
 	Inventory: I, Button Y, Mouse Scroll Up
 	Options: O, Mouse Left
 	Trigger: Left Trigger, Right Trigger, T, Button X
 	Position: Mouse, Left Stick, Right Stick
 	Cursor: Mouse, Left Stick, Right Stick
-	Delta: Mouse, Left Stick, Joystick 1, Joystick 2,
+	Delta: Mouse, Left Stick, Joystick 1, Joystick 2
 		Right Stick: Deadzone 0.1
-	    FOO: bar
 
 Game:
 	Quit: Escape, Button Back
@@ -18,9 +16,8 @@ Game:
 	Instant Open Menu: Mouse Right, Button B
 	Inventory: Tab, Button Y
 	Jump: Space, Mouse Left, Button A
-	Trigger: Right Trigger
+	Trigger: Right Trigger, Left Trigger
 		Mouse: Flip Y, Flip X
-		Left Trigger, Button A
 	Position   : Mouse, Right Stick
 	Cursor:    Mouse, Right Stick
 	Delta: Mouse   , Right    Stick
