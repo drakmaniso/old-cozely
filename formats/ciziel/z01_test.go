@@ -9,7 +9,7 @@ import (
 )
 
 func TestParse1(t *testing.T) {
-	f, err := os.Open("testdata/test6.czl")
+	f, err := os.Open("testdata/inputbindings.czl")
 	if err != nil {
 		t.Error(err)
 		return

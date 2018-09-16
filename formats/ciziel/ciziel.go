@@ -13,6 +13,7 @@ import (
 type Data interface {
 	Position() (line, col int)
 	String() string
+	substring(indent int) string
 	append(st *state, d Data) Data
 }
 
@@ -28,7 +29,11 @@ func (s String) Position() (line, col int) {
 }
 
 func (s String) String() string {
-	return s.string
+	return "\"" + s.string + "\""
+}
+
+func (s String) substring(indent int) string {
+	return "\"" + s.string + "\""
 }
 
 func (s String) append(st *state, d Data) Data {
@@ -47,14 +52,18 @@ func (a Array) Position() (line, col int) {
 }
 
 func (a Array) String() string {
-	s := "["
+	return a.substring(0)
+}
+
+func (a Array) substring(n int) string {
+	s := "[\n"
 	for i, d := range a {
 		if i > 0 {
-			s += ", "
+			s += ",\n"
 		}
-		s += d.String()
+		s += indent(n) + d.substring(n + 1)
 	}
-	return s + "]"
+	return s + "\n" + indent(n-1) + "]"
 }
 
 func (a Array) append(st *state, d Data) Data {
@@ -84,16 +93,20 @@ func (m Map) Position() (line, col int) {
 }
 
 func (m Map) String() string {
-	s := "{"
+	return m.substring(0)
+}
+
+func (m Map) substring(n int) string {
+	s := "{\n"
 	f := true // first iteration
 	for k, d := range m {
 		if !f {
-			s += ", "
+			s += ",\n"
 		}
-		s += k + ": " + d.String()
+		s += indent(n) + "\"" + k + "\": " + d.substring(n + 1)
 		f = false
 	}
-	return s + "}"
+	return s + "\n" + indent(n-1) + "}"
 }
 
 func (m Map) append(st *state, d Data) Data {
@@ -221,7 +234,7 @@ loop:
 		panic(nil)
 	}
 
-	return r
+	return r[0]
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -346,4 +359,19 @@ func (s *state) errmsg(l, c int, msg string) {
 			strconv.Itoa(int(l)) + "." + strconv.Itoa(int(c)) + ": " + msg,
 		)
 	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+var indents = map[int] string{}
+func indent(n int) string{
+	v, ok := indents[n]
+	if !ok {
+		v = ""
+		for i := 0; i <= n; i++ {
+			v += "    "
+		}
+		indents[n] = v
+	}
+	return v
 }
