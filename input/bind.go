@@ -20,19 +20,11 @@ var bindings = Bindings{}
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// Load associates each context/action combination found in the bindings map to
-// the requested bindings.
-func Load(b Bindings) {
-	bindings = b
-	if internal.Running {
-		load()
-	}
-}
-
 func load() {
 	// Forget devices (and previous bindings)
 	clearDevices()
 	// Add gamepad devices
+	addDevice("Keyboard and Mouse")
 	scanJoysticks()
 
 	lcn := "Loaded input bindings (contexts:"

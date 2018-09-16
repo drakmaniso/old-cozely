@@ -12,9 +12,9 @@ import (
 type source interface {
 	bind(c ContextID, a Action)
 	activate(d DeviceID)
-	asBool() (just bool, value bool)
-	asUnipolar() (just bool, value float32)
-	asBipolar() (just bool, value float32)
-	asCoord() (just bool, value coord.XY)
-	asDelta() coord.XY
+	asButton() (just bool, value bool)
+	asHalfAxis() (just bool, value float32)
+	asAxis() (just bool, value float32)
+	asDualAxis() (just bool, value coord.XY)
+	asDelta() (just bool, value coord.XY)
 }

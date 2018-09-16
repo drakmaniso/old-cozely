@@ -17,21 +17,6 @@ import (
 
 // Declarations ////////////////////////////////////////////////////////////////
 
-// Input Bindings
-
-var (
-	randomize = input.Digital("Randomize")
-)
-
-var context06 = input.Context("Default06", quit, randomize)
-
-var bindings06 = input.Bindings{
-	"Default06": {
-		"Quit":      {"Escape"},
-		"Randomize": {"Space", "Mouse Left"},
-	},
-}
-
 type loop06 struct {
 	// OpenGL objects
 	pipeline    *gl.Pipeline
@@ -78,8 +63,6 @@ func Example_instancedDraw() {
 }
 
 func (l *loop06) Enter() {
-	input.Load(bindings06)
-	context06.Activate(1)
 
 	// Setup the pipeline
 	l.pipeline = gl.NewPipeline(
@@ -109,12 +92,12 @@ func (loop06) Leave() {
 // Game Loop ///////////////////////////////////////////////////////////////////
 
 func (l *loop06) React() {
-	if randomize.Started(1) {
+	if input.MenuSelect.Pushed() || input.MenuClick.Pushed() {
 		l.randomizeRosesData()
 		l.rosesINBO.SubData(roses[:], 0)
 	}
 
-	if quit.Started(1) {
+	if quit.Pushed() {
 		cozely.Stop(nil)
 	}
 }

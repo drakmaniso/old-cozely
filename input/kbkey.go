@@ -21,12 +21,12 @@ type kbKey struct {
 func (a *kbKey) bind(c ContextID, target Action) {
 	aa := *a
 	aa.target = target
-	devices.bindings[kbmouse][c] =
-		append(devices.bindings[kbmouse][c], &aa)
+	devices.bindings[KeyboardAndMouse][c] =
+		append(devices.bindings[KeyboardAndMouse][c], &aa)
 }
 
 func (a *kbKey) device() DeviceID {
-	return kbmouse
+	return KeyboardAndMouse
 }
 
 func (a *kbKey) action() Action {
@@ -37,14 +37,14 @@ func (a *kbKey) activate(d DeviceID) {
 	a.target.activate(d, a)
 }
 
-func (a *kbKey) asBool() (just bool, value bool) {
+func (a *kbKey) asButton() (just bool, value bool) {
 	v := internal.Key(a.keycode)
 	j := (v != a.pressed)
 	a.pressed = v
 	return j, a.pressed
 }
 
-func (a *kbKey) asUnipolar() (just bool, value float32) {
+func (a *kbKey) asHalfAxis() (just bool, value float32) {
 	v := internal.Key(a.keycode)
 	j := (v != a.pressed)
 	a.pressed = v
@@ -54,7 +54,7 @@ func (a *kbKey) asUnipolar() (just bool, value float32) {
 	return j, 0
 }
 
-func (a *kbKey) asBipolar() (just bool, value float32) {
+func (a *kbKey) asAxis() (just bool, value float32) {
 	v := internal.Key(a.keycode)
 	j := (v != a.pressed)
 	a.pressed = v
@@ -64,21 +64,22 @@ func (a *kbKey) asBipolar() (just bool, value float32) {
 	return j, 0
 }
 
-func (a *kbKey) asCoord() (just bool, value coord.XY) {
+func (a *kbKey) asDualAxis() (just bool, value coord.XY) {
 	v := internal.Key(a.keycode)
 	j := (v != a.pressed)
 	a.pressed = v
 	if v {
-		return j, coord.XY{1,0}
+		return j, coord.XY{1, 0}
 	}
-	return j, coord.XY{0,0}
+	return j, coord.XY{0, 0}
 }
 
-func (a *kbKey) asDelta() coord.XY {
+func (a *kbKey) asDelta() (just bool, value coord.XY) {
 	v := internal.Key(a.keycode)
+	j := (v != a.pressed)
 	a.pressed = v
 	if v {
-		return coord.XY{1,0}
+		return j, coord.XY{1, 0}
 	}
-	return coord.XY{0,0}
+	return j, coord.XY{0, 0}
 }

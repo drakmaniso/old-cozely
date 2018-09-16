@@ -41,7 +41,6 @@ func TestTest1(t *testing.T) {
 
 		pixel.SetZoom(2)
 
-		input.Load(bindings)
 		err := cozely.Run(loop1{})
 		if err != nil {
 			t.Error(err)
@@ -62,21 +61,21 @@ func (loop1) Leave() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop1) React() {
-	if quit.Started(0) {
+	if input.MenuBack.Pushed() {
 		cozely.Stop(nil)
 	}
-	if next.Started(0) {
+	if next.Pushed() {
 		newPoints()
 	}
 
-	if previous.Started(0) {
-		m := pixel.XYof(cursor.XY(0))
+	if previous.Pushed() {
+		m := pixel.XYof(input.MenuPointer.XYon(0))
 		p := fromScreen(m)
 		points = append(points, p)
 		triangulation = quadedge.Delaunay(points)
 	}
 
-	if scene1.Started(0) {
+	if scene1.Pushed() {
 		points = points[:0]
 		const st = 1.0 / 8
 		for x := float32(st); x < 1.0; x += st {
@@ -86,7 +85,7 @@ func (loop1) React() {
 		}
 		triangulation = quadedge.Delaunay(points)
 	}
-	if scene2.Started(0) {
+	if scene2.Pushed() {
 		points = points[:0]
 		for a := float32(0); a < 2*math32.Pi; a += math32.Pi / 8 {
 			points = append(points, coord.XY{
@@ -96,7 +95,7 @@ func (loop1) React() {
 		}
 		triangulation = quadedge.Delaunay(points)
 	}
-	if scene3.Started(0) {
+	if scene3.Pushed() {
 		points = points[:0]
 		const n = 26
 		for a := float32(0); a < n*2*math32.Pi; a += math32.Pi / 26 {
@@ -107,7 +106,7 @@ func (loop1) React() {
 		}
 		triangulation = quadedge.Delaunay(points)
 	}
-	if scene4.Started(0) {
+	if scene4.Pushed() {
 		points = points[:0]
 		const st = 1.0 / 6
 		for x := float32(st); x < 1.0; x += st {
@@ -115,11 +114,11 @@ func (loop1) React() {
 		}
 		triangulation = quadedge.Delaunay(points)
 	}
-	if scene5.Started(0) {
+	if scene5.Pushed() {
 		points = make([]coord.XY, 25000)
 		newPoints()
 	}
-	if scene6.Started(0) {
+	if scene6.Pushed() {
 		points = points[:0]
 		const st = 1.0 / 27
 		const h = 0.5 * 1.732050807568877 * st
@@ -129,10 +128,6 @@ func (loop1) React() {
 			}
 		}
 		triangulation = quadedge.Delaunay(points)
-	}
-
-	if quit.Started(0) {
-		cozely.Stop(nil)
 	}
 }
 
@@ -149,7 +144,7 @@ func (loop1) Render() {
 		Y: float32(pixel.Resolution().Y),
 	}
 
-	m := pixel.XYof(cursor.XY(0))
+	m := pixel.XYof(input.MenuPointer.XYon(0))
 	p := fromScreen(m)
 	cur.Locate(1, pixel.XY{2, 8})
 	cur.Color = col3

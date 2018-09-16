@@ -1,0 +1,19 @@
+{
+	"Default": {
+		"Quit":         ["Escape"],
+		"Rotate":       ["Mouse Right"],
+		"Move":         ["Mouse Left"],
+		"Rotation":     ["Mouse", "Right Stick"],
+		"Onward":       ["W", "Up"],
+		"Left":         ["A", "Left"],
+		"Back":         ["S", "Down"],
+		"Right":        ["D", "Right"],
+		"Up":           ["Space"],
+		"Down":         ["Left Shift"],
+		"Roll Left":    ["Q"],
+		"Roll Right":   ["E"],
+		"Reset View":   ["Mouse Back"],
+		"Reset Object": ["Mouse Forward"],
+		"Cursor":       ["Mouse"]
+	}
+}

@@ -23,11 +23,6 @@ func newframe() error {
 	}
 
 	for d := range devices.name {
-		if d == 0 {
-			// Pseudo-device 0 has no context and no binds
-			continue
-		}
-
 		c := devices.context[d]
 		// Activate this device context if necessary
 		if c != devices.newcontext[d] {
@@ -36,15 +31,15 @@ func newframe() error {
 					t.deactivate(DeviceID(d))
 				}
 			}
+			devices.context[d] = devices.newcontext[d]
 			c = devices.newcontext[d]
-			devices.context[d] = c
 			for _, b := range devices.bindings[d][c] {
 				b.activate(DeviceID(d))
 			}
 		}
 
-		for _, t := range contexts.actions[c] {
-			t.update(DeviceID(d))
+		for _, a := range contexts.actions[c] {
+			a.update(DeviceID(d))
 		}
 	}
 

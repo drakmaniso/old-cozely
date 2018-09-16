@@ -20,44 +20,25 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 
 var (
-	rotate    = input.Digital("Rotate")
-	move      = input.Digital("Move")
-	onward    = input.Digital("Onward")
-	left      = input.Digital("Left")
-	back      = input.Digital("Back")
-	right     = input.Digital("Right")
-	up        = input.Digital("Up")
-	down      = input.Digital("Down")
-	rollleft  = input.Digital("Roll Left")
-	rollright = input.Digital("Roll Right")
-	resetview = input.Digital("Reset View")
-	resetobj  = input.Digital("Reset Object")
+	quit    = input.Button("Quit")
+	rotate    = input.Button("Rotate")
+	move      = input.Button("Move")
+	onward    = input.Button("Onward")
+	left      = input.Button("Left")
+	back      = input.Button("Back")
+	right     = input.Button("Right")
+	up        = input.Button("Up")
+	down      = input.Button("Down")
+	rollleft  = input.Button("Roll Left")
+	rollright = input.Button("Roll Right")
+	resetview = input.Button("Reset View")
+	resetobj  = input.Button("Reset Object")
 	rotation  = input.Delta("Rotation")
 	cursor    = input.Cursor("Cursor")
 )
 
 var context1 = input.Context("Default", quit, rotate, move, rotation, cursor,
 	onward, back, left, right, up, down, rollleft, rollright, resetview, resetobj)
-
-var bindings1 = input.Bindings{
-	"Default": {
-		"Quit":         {"Escape"},
-		"Rotate":       {"Mouse Right"},
-		"Move":         {"Mouse Left"},
-		"Rotation":     {"Mouse", "Right Stick"},
-		"Onward":       {"W", "Up"},
-		"Left":         {"A", "Left"},
-		"Back":         {"S", "Down"},
-		"Right":        {"D", "Right"},
-		"Up":           {"Space"},
-		"Down":         {"Left Shift"},
-		"Roll Left":    {"Q"},
-		"Roll Right":   {"E"},
-		"Reset View":   {"Mouse Back"},
-		"Reset Object": {"Mouse Forward"},
-		"Cursor":       {"Mouse"},
-	},
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -114,8 +95,7 @@ func TestTest1(t *testing.T) {
 
 func (loop) Enter() {
 	input.ShowMouse(false)
-	input.Load(bindings1)
-	context1.Activate(1)
+	context1.ActivateOn(1)
 
 	pipeline = gl.NewPipeline(
 		poly.PipelineSetup(),
@@ -164,63 +144,63 @@ func resize() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop) React() {
-	if move.Started(0) {
+	if move.Pushed() {
 		dragStart = misc.worldFromObject
 		current.dragDelta = coord.XY{0, 0}
 		input.GrabMouse(true)
 	}
-	if rotate.Started(0) {
+	if rotate.Pushed() {
 		input.GrabMouse(true)
 	}
 
 	const s = 2.0
 	switch {
-	case onward.Ongoing(0):
+	case onward.Pressed():
 		forward = -s
-	case back.Ongoing(0):
+	case back.Pressed():
 		forward = s
 	default:
 		forward = 0
 	}
 	switch {
-	case left.Ongoing(0):
+	case left.Pressed():
 		lateral = -s
-	case right.Ongoing(0):
+	case right.Pressed():
 		lateral = s
 	default:
 		lateral = 0
 	}
 	switch {
-	case up.Ongoing(0):
+	case up.Pressed():
 		vertical = s
-	case down.Ongoing(0):
+	case down.Pressed():
 		vertical = -s
 	default:
 		vertical = 0
 	}
 	switch {
-	case rollleft.Ongoing(0):
+	case rollleft.Pressed():
 		rolling = -s
-	case rollright.Ongoing(0):
+	case rollright.Pressed():
 		rolling = s
 	default:
 		rolling = 0
 	}
 
-	if resetview.Started(0) {
+	if resetview.Pushed() {
 		camera.SetFocus(coord.XYZ{0, 0, 0})
 		camera.SetDistance(4)
 		camera.SetOrientation(0, 0, 0)
 	}
-	if resetobj.Started(0) {
+	if resetobj.Pushed() {
 		misc.worldFromObject = space.Identity()
 	}
 
-	if move.Stopped(0) || rotate.Stopped(0) {
+	if move.Released() || rotate.Released() {
 		input.GrabMouse(false)
 	}
 
-	if quit.Started(0) {
+	if quit.Pushed() {
 		cozely.Stop(nil)
 	}
 }
@@ -262,7 +242,7 @@ func (loop) Render() {
 		cur.Printf(" (%d)", or)
 	}
 	if window.HasMouseFocus() {
-		pixel.MouseCursor.Paint(0, pixel.XYof(cursor.XY(0)))
+		pixel.MouseCursor.Paint(0, pixel.XYof(cursor.XY()))
 	}
 }
 
@@ -271,15 +251,15 @@ func prepare() {
 
 	camera.Move(forward*dt, lateral*dt, vertical*dt)
 
-	m := rotation.XY(0)
+	m := rotation.XY()
 
 	s := coord.XYof(window.Size())
 	switch {
-	case rollleft.Ongoing(1) || rollright.Ongoing(1):
+	case rollleft.Pressed() || rollright.PressedOn(1):
 		camera.Rotate(0, 0, rolling*dt)
-	case rotate.Ongoing(1):
+	case rotate.Pressed():
 		camera.Rotate(2*m.X/s.X, 2*m.Y/s.Y, rolling*dt)
-	case move.Ongoing(1):
+	case move.Pressed():
 		current.dragDelta = current.dragDelta.Plus(coord.XY{2 * m.Y / s.Y, 2 * m.X / s.X})
 		r := space.EulerXYZ(current.dragDelta.X, current.dragDelta.Y, 0)
 		vr := camera.View().WithoutTranslation()

@@ -36,18 +36,23 @@ func (a *gpTrigger) activate(d DeviceID) {
 	a.target.activate(d, a)
 }
 
-func (a *gpTrigger) asBool() (just bool, value bool) {
-	return false, false //TODO:
+func (a *gpTrigger) asButton() (just bool, value bool) {
+	//TODO: implement hair-trigger instead
+	v := a.gamepad.Axis(a.axis)
+	vv := v > (0x7FFF / 2)
+	j := vv != (a.value > (0x7FFF / 2))
+	a.value = v
+	return j, vv
 }
 
-func (a *gpTrigger) asUnipolar() (just bool, value float32) {
+func (a *gpTrigger) asHalfAxis() (just bool, value float32) {
 	v := a.gamepad.Axis(a.axis)
 	j := v != a.value
 	a.value = v
 	return j, float32(v) / float32(0x7FFF)
 }
 
-func (a *gpTrigger) asBipolar() (just bool, value float32) {
+func (a *gpTrigger) asAxis() (just bool, value float32) {
 	v := a.gamepad.Axis(a.axis)
 	j := v != a.value
 	a.value = v
@@ -55,15 +60,16 @@ func (a *gpTrigger) asBipolar() (just bool, value float32) {
 	// return j, 2*float32(v) / float32(0x7FFF) - 1
 }
 
-func (a *gpTrigger) asCoord() (just bool, value coord.XY) {
+func (a *gpTrigger) asDualAxis() (just bool, value coord.XY) {
 	v := a.gamepad.Axis(a.axis)
 	j := v != a.value
 	a.value = v
 	return j, coord.XY{float32(v) / float32(0x7FFF), 0}
 }
 
-func (a *gpTrigger) asDelta() coord.XY {
+func (a *gpTrigger) asDelta() (just bool, value coord.XY) {
 	v := a.gamepad.Axis(a.axis)
+	j := v != a.value
 	a.value = v
-	return coord.XY{float32(v) / float32(0x7FFF), 0}
+	return j, coord.XY{float32(v) / float32(0x7FFF), 0}
 }

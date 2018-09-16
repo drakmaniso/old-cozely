@@ -13,46 +13,25 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 
 var (
-	quit     = input.Digital("Quit")
-	next     = input.Digital("Next")
-	previous = input.Digital("Previous")
-	scenes   = []input.DigitalID{
-		input.Digital("Scene0"),
-		input.Digital("Scene1"),
-		input.Digital("Scene2"),
-		input.Digital("Scene3"),
-		input.Digital("Scene4"),
-		input.Digital("Scene5"),
-		input.Digital("Scene6"),
-		input.Digital("Scene7"),
-		input.Digital("Scene8"),
-		input.Digital("Scene9"),
+	quit     = input.Button("Quit")
+	next     = input.Button("Next")
+	previous = input.Button("Previous")
+	scenes   = []input.ButtonID{
+		input.Button("Scene0"),
+		input.Button("Scene1"),
+		input.Button("Scene2"),
+		input.Button("Scene3"),
+		input.Button("Scene4"),
+		input.Button("Scene5"),
+		input.Button("Scene6"),
+		input.Button("Scene7"),
+		input.Button("Scene8"),
+		input.Button("Scene9"),
 	}
-	scrollup   = input.Digital("ScrollUp")
-	scrolldown = input.Digital("ScrollDown")
+	scrollup   = input.Button("ScrollUp")
+	scrolldown = input.Button("ScrollDown")
 	cursor     = input.Cursor("Cursor")
 )
-
-var bindings = input.Bindings{
-	"Default": {
-		"Quit":       {"Escape"},
-		"Next":       {"Mouse Left", "Space"},
-		"Previous":   {"Mouse Right", "U"},
-		"Scene1":     {"1"},
-		"Scene2":     {"2"},
-		"Scene3":     {"3"},
-		"Scene4":     {"4"},
-		"Scene5":     {"5"},
-		"Scene6":     {"6"},
-		"Scene7":     {"7"},
-		"Scene8":     {"8"},
-		"Scene9":     {"9"},
-		"Scene0":     {"0"},
-		"ScrollUp":   {"Mouse Scroll Up"},
-		"ScrollDown": {"Mouse Scroll Down"},
-		"Cursor":     {"Mouse"},
-	},
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 

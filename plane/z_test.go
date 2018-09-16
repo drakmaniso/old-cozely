@@ -6,27 +6,7 @@ package plane_test
 import (
 	"os"
 	"testing"
-
-	"github.com/cozely/cozely/input"
 )
-
-////////////////////////////////////////////////////////////////////////////////
-
-var (
-	quit     = input.Digital("Quit")
-	next     = input.Digital("Next")
-	previous = input.Digital("Previous")
-	cursor   = input.Cursor("Cursor")
-)
-
-var bindings = input.Bindings{
-	"Default": {
-		"Quit":     {"Escape"},
-		"Next":     {"Mouse Left", "Space"},
-		"Previous": {"Mouse Right", "U"},
-		"Cursor":   {"Mouse"},
-	},
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -60,5 +40,3 @@ func TestMain(m *testing.M) {
 		f()
 	}
 }
-
-////////////////////////////////////////////////////////////////////////////////

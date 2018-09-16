@@ -17,14 +17,12 @@ var mouse struct {
 	wheel   coord.CR
 }
 
-// The cursor is unique action shared by several devices, it needs a special
-// update.
 func updateMouse() {
 	mouse.delta = coord.CR{
 		C: internal.MouseDeltaX,
 		R: internal.MouseDeltaY,
 	}
-	mouse.moved = mouse.moved || mouse.delta.C != 0 || mouse.delta.R != 0
+	mouse.moved = mouse.delta.C != 0 || mouse.delta.R != 0
 	internal.MouseDeltaX = 0
 	internal.MouseDeltaY = 0
 
@@ -39,9 +37,8 @@ func updateMouse() {
 		mouse.wheel.R++
 	}
 	// Wheel delta multiplied by 2 to generate on/off events
-	mouse.wheel = mouse.wheel.Plus(
-		coord.CR{internal.MouseWheelX, internal.MouseWheelY}.
-			Times(2))
+	mw := coord.CR{internal.MouseWheelX, internal.MouseWheelY}
+	mouse.wheel = mouse.wheel.Plus(mw.Times(2))
 	internal.MouseWheelX = 0
 	internal.MouseWheelY = 0
 }

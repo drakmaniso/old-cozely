@@ -25,7 +25,6 @@ func TestTest6(t *testing.T) {
 		l := loop6{}
 		l.declare()
 
-		input.Load(bindings)
 		err := cozely.Run(&l)
 		if err != nil {
 			t.Error(err)
@@ -47,7 +46,7 @@ func (loop6) Leave() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop6) React() {
-	if quit.Started(0) {
+	if quit.Pushed() {
 		cozely.Stop(nil)
 	}
 }
@@ -84,6 +83,6 @@ func (a *loop6) Render() {
 		pixel.Box(9, 9, 0, i, o.Plus(dx.Times(i)), o.Plus(dx.Times(i)).Plus(s))
 	}
 
-	m := pixel.XYof(cursor.XY(0))
+	m := pixel.XYof(cursor.XY())
 	pixel.Point(7, 0, m)
 }

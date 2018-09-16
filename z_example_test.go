@@ -12,16 +12,8 @@ import (
 // Declarations ////////////////////////////////////////////////////////////////
 
 var (
-	quit = input.Digital("Quit")
-	play = input.Digital("Play")
+	play = input.Button("Play")
 )
-
-var bindings = input.Bindings{
-	"Default": {
-		"Play": {"Space", "Mouse Left", "Button A"},
-		"Quit": {"Escape", "Button Back"},
-	},
-}
 
 type loop struct {
 	logo       pixel.PictureID
@@ -39,7 +31,6 @@ func Example() {
 	l := loop{}
 	l.setup()
 
-	input.Load(bindings)
 	cozely.Configure(cozely.UpdateStep(1.0 / 3))
 	err := cozely.Run(&l)
 	if err != nil {
@@ -65,7 +56,7 @@ func (loop) Leave() {
 // Game Loop ///////////////////////////////////////////////////////////////////
 
 func (l *loop) React() {
-	if play.Started(input.Any) {
+	if play.Pushed() {
 		l.playing = !l.playing
 		if l.playing {
 			pixel.SetPalette(l.colorful)
@@ -74,7 +65,7 @@ func (l *loop) React() {
 			pixel.SetPalette(l.monochrome)
 		}
 	}
-	if quit.Started(input.Any) {
+	if input.MenuBack.Pushed() {
 		cozely.Stop(nil)
 	}
 }

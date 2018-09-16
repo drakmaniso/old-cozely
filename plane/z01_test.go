@@ -47,7 +47,6 @@ func TestTest1(t *testing.T) {
 
 		pixel.SetZoom(3)
 
-		input.Load(bindings)
 		err := cozely.Run(loop1{})
 		if err != nil {
 			t.Error(err)
@@ -68,11 +67,11 @@ func (loop1) Leave() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop1) React() {
-	if next.Started(0) {
+	if input.MenuSelect.Pushed() || input.MenuClick.Pushed() {
 		newPoints()
 	}
 
-	if quit.Started(0) {
+	if input.MenuBack.Pushed() {
 		cozely.Stop(nil)
 	}
 }
@@ -120,7 +119,7 @@ func (loop1) Render() {
 		cur.Print([]string{"A", "B", "C"}[i])
 	}
 
-	m := pixel.XYof(cursor.XY(0))
+	m := pixel.XYof(input.MenuPointer.XYon(0))
 	p := fromScreen(m)
 	cur.Locate(1, pixel.XY{2, 8})
 	cur.Style(col1, 0)
