@@ -15,12 +15,6 @@ var (
 	play = input.Button("Play")
 )
 
-var bindings = input.Bindings{
-	"Default": {
-		"Play": {"Space", "Mouse Left", "Button A"},
-	},
-}
-
 type loop struct {
 	logo       pixel.PictureID
 	monochrome color.Palette
@@ -37,7 +31,6 @@ func Example() {
 	l := loop{}
 	l.setup()
 
-	input.Load(bindings)
 	cozely.Configure(cozely.UpdateStep(1.0 / 3))
 	err := cozely.Run(&l)
 	if err != nil {

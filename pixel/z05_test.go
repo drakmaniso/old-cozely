@@ -14,7 +14,7 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 
 type loop5 struct {
-	points                                     []pixel.XY
+	points []pixel.XY
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -26,7 +26,6 @@ func TestTest5(t *testing.T) {
 		l := loop5{}
 		l.declare()
 
-		input.Load(bindings)
 		err := cozely.Run(&l)
 		if err != nil {
 			t.Error(err)

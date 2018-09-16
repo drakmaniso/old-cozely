@@ -40,33 +40,6 @@ var (
 		inventoryAct, jumpAct, triggerAct, positionAct, cursorAct, deltaAct)
 )
 
-var (
-	bindings = input.Bindings{
-		"Menu": {
-			"Quit":               {"Escape", "Button Back"},
-			"Close Menu":         {"Enter", "Button Start"},
-			"Instant Close Menu": {"Mouse Right", "Button B"},
-			"Inventory":          {"I", "Button Y", "Mouse Scroll Up"},
-			"Options":            {"O", "Mouse Left"},
-			"Trigger":            {"Left Trigger", "Right Trigger", "T", "Button X"},
-			"Position":           {"Mouse", "Left Stick", "Right Stick"},
-			"Cursor":             {"Mouse", "Left Stick", "Right Stick"},
-			"Delta":              {"Mouse", "Left Stick", "Right Stick"},
-		},
-		"Game": {
-			"Quit":              {"Escape", "Button Back"},
-			"Open Menu":         {"Enter", "Button Start"},
-			"Instant Open Menu": {"Mouse Right", "Button B"},
-			"Inventory":         {"Tab", "Button Y"},
-			"Jump":              {"Space", "Mouse Left", "Button A"},
-			"Trigger":           {"Right Trigger"},
-			"Position":          {"Right Stick", "Mouse"},
-			"Cursor":            {"Right Stick", "Mouse"},
-			"Delta":             {"Right Stick", "Mouse"},
-		},
-	}
-)
-
 ////////////////////////////////////////////////////////////////////////////////
 
 func TestTest1(t *testing.T) {
@@ -74,7 +47,6 @@ func TestTest1(t *testing.T) {
 
 	pixel.SetZoom(3)
 
-	input.Load(bindings)
 	err := cozely.Run(loop1{})
 	if err != nil {
 		panic(err)

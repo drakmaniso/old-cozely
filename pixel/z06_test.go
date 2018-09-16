@@ -25,7 +25,6 @@ func TestTest6(t *testing.T) {
 		l := loop6{}
 		l.declare()
 
-		input.Load(bindings)
 		err := cozely.Run(&l)
 		if err != nil {
 			t.Error(err)

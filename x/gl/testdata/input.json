@@ -1,0 +1,9 @@
+{
+	"Default": {
+		"Quit":   ["Escape"],
+		"Rotate": ["Mouse Left"],
+		"Move":   ["Mouse Right"],
+		"Zoom":   ["Mouse Middle"],
+		"Delta":  ["Mouse"]
+	}
+}

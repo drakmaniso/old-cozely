@@ -20,6 +20,7 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 
 var (
+	quit    = input.Button("Quit")
 	rotate    = input.Button("Rotate")
 	move      = input.Button("Move")
 	onward    = input.Button("Onward")
@@ -38,26 +39,6 @@ var (
 
 var context1 = input.Context("Default", quit, rotate, move, rotation, cursor,
 	onward, back, left, right, up, down, rollleft, rollright, resetview, resetobj)
-
-var bindings1 = input.Bindings{
-	"Default": {
-		"Quit":         {"Escape"},
-		"Rotate":       {"Mouse Right"},
-		"Move":         {"Mouse Left"},
-		"Rotation":     {"Mouse", "Right Stick"},
-		"Onward":       {"W", "Up"},
-		"Left":         {"A", "Left"},
-		"Back":         {"S", "Down"},
-		"Right":        {"D", "Right"},
-		"Up":           {"Space"},
-		"Down":         {"Left Shift"},
-		"Roll Left":    {"Q"},
-		"Roll Right":   {"E"},
-		"Reset View":   {"Mouse Back"},
-		"Reset Object": {"Mouse Forward"},
-		"Cursor":       {"Mouse"},
-	},
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -114,7 +95,6 @@ func TestTest1(t *testing.T) {
 
 func (loop) Enter() {
 	input.ShowMouse(false)
-	input.Load(bindings1)
 	context1.ActivateOn(1)
 
 	pipeline = gl.NewPipeline(

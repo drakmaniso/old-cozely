@@ -75,8 +75,6 @@ func Example_texture() {
 }
 
 func (l *loop05) Enter() {
-	input.Load(bindings)
-
 	// Create and configure the pipeline
 	l.pipeline = gl.NewPipeline(
 		gl.Shader(cozely.Path()+"shader05.vert"),

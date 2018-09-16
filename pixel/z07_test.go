@@ -13,7 +13,6 @@ import (
 	"github.com/cozely/cozely/color/msx"
 	"github.com/cozely/cozely/color/msx2"
 	"github.com/cozely/cozely/color/pico8"
-	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
 )
 
@@ -34,8 +33,6 @@ func TestTest7(t *testing.T) {
 
 		l := loop7{}
 		l.setup()
-
-		input.Load(bindings)
 
 		err := cozely.Run(&l)
 		if err != nil {

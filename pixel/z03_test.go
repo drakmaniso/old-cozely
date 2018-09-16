@@ -8,7 +8,6 @@ import (
 
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/color"
-	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
 )
 
@@ -32,7 +31,6 @@ func TestTest3(t *testing.T) {
 		l := loop3{}
 		l.declare()
 
-		input.Load(bindings)
 		err := cozely.Run(&l)
 		if err != nil {
 			t.Error(err)

@@ -41,7 +41,6 @@ func TestTest1(t *testing.T) {
 
 		pixel.SetZoom(2)
 
-		input.Load(bindings)
 		err := cozely.Run(loop1{})
 		if err != nil {
 			t.Error(err)

@@ -6,45 +6,7 @@ package poly_test
 import (
 	"os"
 	"testing"
-
-	"github.com/cozely/cozely/input"
 )
-
-////////////////////////////////////////////////////////////////////////////////
-
-var (
-	quit    = input.Button("Quit")
-	next    = input.Button("Next")
-	prev    = input.Button("Previous")
-	scene1  = input.Button("Scene1")
-	scene2  = input.Button("Scene2")
-	scene3  = input.Button("Scene3")
-	scene4  = input.Button("Scene4")
-	scene5  = input.Button("Scene5")
-	scene6  = input.Button("Scene6")
-	scene7  = input.Button("Scene7")
-	scene8  = input.Button("Scene8")
-	scene9  = input.Button("Scene9")
-	scene10 = input.Button("Scene10")
-)
-
-var bindings = input.Bindings{
-	"Default": {
-		"Quit":     {"Escape"},
-		"Next":     {"Mouse Left", "Space"},
-		"Previous": {"Mouse Right", "U"},
-		"Scene1":   {"1"},
-		"Scene2":   {"2"},
-		"Scene3":   {"3"},
-		"Scene4":   {"4"},
-		"Scene5":   {"5"},
-		"Scene6":   {"6"},
-		"Scene7":   {"7"},
-		"Scene8":   {"8"},
-		"Scene9":   {"9"},
-		"Scene10":  {"10"},
-	},
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 

@@ -47,7 +47,6 @@ type perFrame06 struct {
 
 func Example_instancedDraw() {
 	defer cozely.Recover()
-	input.Load(bindings)
 
 	cozely.Configure(cozely.Multisample(8))
 	l := loop06{}

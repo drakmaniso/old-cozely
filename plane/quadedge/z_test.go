@@ -26,22 +26,6 @@ var (
 	scene9   = input.Button("Scene9")
 	scene10  = input.Button("Scene10")
 )
-var bindings = input.Bindings{
-	"Default": {
-		"Next":     {"Mouse Left", "Space"},
-		"Previous": {"Mouse Right", "U"},
-		"Scene1":   {"1"},
-		"Scene2":   {"2"},
-		"Scene3":   {"3"},
-		"Scene4":   {"4"},
-		"Scene5":   {"5"},
-		"Scene6":   {"6"},
-		"Scene7":   {"7"},
-		"Scene8":   {"8"},
-		"Scene9":   {"9"},
-		"Scene10":  {"0"},
-	},
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 

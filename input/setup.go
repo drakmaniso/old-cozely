@@ -4,6 +4,9 @@
 package input
 
 import (
+	"encoding/json"
+	"os"
+
 	"github.com/cozely/cozely/internal"
 )
 
@@ -30,6 +33,17 @@ func setup() error {
 	//TODO: always start with the first context instead?
 	if len(contexts.name) == 1 {
 		ContextID(0).Activate()
+	}
+
+	f, err := os.Open(internal.Path + "input.json")
+	if !os.IsNotExist(err) {
+		if err != nil {
+			return internal.Wrap(`in configuration file "input.json" opening`, err)
+		}
+		d := json.NewDecoder(f)
+		if err := d.Decode(&bindings); err != nil {
+			return internal.Wrap(`in configuration file "input.json" parsing`, err)
+		}
 	}
 
 	if len(bindings) == 0 {
@@ -78,11 +92,11 @@ func setup() error {
 				if !ok || len(b) == 0 {
 					m["Menu Right"] = []string{"Right", "Dpad Right"} //TODO: keypad and left stick support
 				}
-			// case MenuPointer:
-			// 	b, ok = m["Menu Pointer"]
-			// 	if !ok || len(b) == 0 {
-			// 		m["Menu Pointer"] = []string{"Mouse", "Right Stick"}
-			// 	}
+			case MenuPointer:
+				b, ok = m["Menu Pointer"]
+				if !ok || len(b) == 0 {
+					m["Menu Pointer"] = []string{"Mouse", "Right Stick"}
+				}
 			case MenuClick:
 				b, ok = m["Menu Click"]
 				if !ok || len(b) == 0 {

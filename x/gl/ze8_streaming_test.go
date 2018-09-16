@@ -52,7 +52,6 @@ var points [512]struct {
 
 func Example_streaming() {
 	defer cozely.Recover()
-	input.Load(bindings)
 
 	l := loop08{
 		bgColor:  color.LRGBA{0.9, 0.87, 0.85, 1.0},

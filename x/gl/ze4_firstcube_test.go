@@ -26,16 +26,6 @@ var (
 	delta  = input.Delta("Delta")
 )
 
-var bindings = input.Bindings{
-	"Default": {
-		"Quit":   {"Escape"},
-		"Rotate": {"Mouse Left"},
-		"Move":   {"Mouse Right"},
-		"Zoom":   {"Mouse Middle"},
-		"Delta":  {"Mouse"},
-	},
-}
-
 type loop04 struct {
 	// OpenGL objects
 	pipeline    *gl.Pipeline
@@ -83,8 +73,6 @@ func Example_firstCube() {
 }
 
 func (l *loop04) Enter() {
-	input.Load(bindings)
-
 	// Create and configure the pipeline
 	l.pipeline = gl.NewPipeline(
 		gl.Shader(cozely.Path()+"shader04.vert"),

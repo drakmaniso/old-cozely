@@ -99,18 +99,26 @@ func (a CursorID) update(d DeviceID) {
 	if d == KeyboardAndMouse {
 		if mouse.moved {
 			// Check if the mouse is among the active bindings
-			bo := false
+			b := false
 			for _, s := range devices.cursorsbinds[d][a] {
 				_, ok := s.(*msCoord)
 				if ok {
-					bo = true
+					b = true
 					break
 				}
 			}
-			if bo {
-				v = window.XY{
-					internal.MousePositionX,
-					internal.MousePositionY,
+			if b {
+				//TODO: should work even if multiple actions bound to mouse
+				if devices.current != KeyboardAndMouse && !devices.cursors[0][a].value.Null() {
+					//TODO: only if mouse is hidden?
+					v = devices.cursors[0][a].value
+					internal.MouseWarp(v.X, v.Y)
+				} else
+				{
+					v = window.XY{
+						internal.MousePositionX,
+						internal.MousePositionY,
+					}
 				}
 				devices.cursors[0][a].value = v
 				devices.current = d //TODO: implement threshold
@@ -119,6 +127,9 @@ func (a CursorID) update(d DeviceID) {
 		return
 	}
 	for _, s := range devices.cursorsbinds[d][a] {
+		if d == KeyboardAndMouse {
+			continue
+		}
 		j, de := s.asDelta()
 		v = v.Plus(window.XYof(de))
 		if j {
