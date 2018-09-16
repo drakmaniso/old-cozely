@@ -15,7 +15,5 @@ func TestParse1(t *testing.T) {
 		return
 	}
 	d := ciziel.Parse(f)
-	for _, dd := range d {
-		fmt.Print(dd.String())
-	}
+	fmt.Print(d.String())
 }

@@ -1,5 +1,5 @@
 Debug: true
-Window: 1280, 720
+Window: {1280, 720}
 Display: 1
 Fullscreen: false
 Fullscreen Mode: Desktop

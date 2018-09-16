@@ -10,41 +10,102 @@ import (
 
 ////////////////////////////////////////////////////////////////////////////////
 
-type Definition struct {
-	Line     int
-	indent   int
-	Label    string
-	Elements []string
-	Children []Definition
+type Data interface {
+	Position() (line, col int)
+	String() string
+	add(st *state, d Data)
 }
 
-func (a Definition) String() string {
-	return a.string(0)
+////////////////////////////////////////////////////////////////////////////////
+
+type String struct {
+	line, col int
+	string
 }
 
-func (a Definition) string(level int) string {
-	var s string // = strconv.Itoa(a.Line) + ": "
-	for i := 0; i < level; i++ {
-		s += "    "
+func (s String) Position() (line, col int) {
+	return s.line, s.col
+}
+
+func (s String) String() string {
+	return s.string
+}
+
+func (s String) add(st *state, d Data) {
+	panic(nil)
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+type Array []Data
+
+func (a Array) Position() (line, col int) {
+	if len(a) == 0 {
+		return 0, 0
 	}
-	if a.Label != "" {
-		s += a.Label + ":"
-	}
-	for i, e := range a.Elements {
-		if i == 0 {
-			if a.Label != "" {
-				s += " "
-			}
-		} else {
+	return a[0].Position()
+}
+
+func (a Array) String() string {
+	s := "["
+	for i, d := range a {
+		if i > 0 {
 			s += ", "
 		}
-		s += e
+		s += d.String()
 	}
-	s += "\n"
-	for _, c := range a.Children {
-		s += c.string(level + 1)
+	return s + "]"
+}
+
+func (a *Array) add(st *state, d Data) {
+	*a = append(*a, d)
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+type Map map[string]Data
+
+func (m Map) Position() (line, col int) {
+	l, c := 0, 0
+	for _, d := range m {
+		ll, cc := d.Position()
+		if l > ll {
+			l = ll
+			c = cc
+		} else if l == ll {
+			if c > cc {
+				c = cc
+			}
+		}
 	}
-	return s
+	return l, c
+}
+
+func (m Map) String() string {
+	s := "{"
+	f := true // first iteration
+	for k, d := range m {
+		if !f {
+			s += ", "
+		}
+		s += k + ": " + d.String()
+		f = false
+	}
+	return s + "}"
+}
+
+func (m *Map) add(st *state, d Data) {
+	k := st.live.key()
+	if k == nil {
+		//TODO: error
+		panic(nil)
+	}
+	v, ok := (*m)[*k]
+	if ok {
+		(*m)[*k] = &Array{v, d}
+		return
+	}
+	(*m)[*k] = d
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -52,75 +113,83 @@ func (a Definition) string(level int) string {
 type state struct {
 	src *bufio.Reader
 
-	previous  token
-	builder   strings.Builder
-	line, col int
+	previous    token
+	line, col   int
+	builder     strings.Builder
+	bline, bcol int
 
-	top     Definition
-	current *Definition
-	indent  int
+	live stack
 
 	err error
 }
 
-type token int
-
-const (
-	invalid token = iota
-	newline
-	whitespace
-	basic
-	quote
-	colon
-	coma
-	comment
-	eof
-)
-
 ////////////////////////////////////////////////////////////////////////////////
 
-func Parse(source io.Reader) []Definition {
-	s := state{
-		src:      bufio.NewReader(source),
-		line:     1,
-		previous: newline,
-		top:      Definition{indent: 0},
+func Parse(source io.Reader) Data {
+	st := state{
+		src:  bufio.NewReader(source),
+		line: 1,
 	}
+	st.live.push(nil)
 
 loop:
 	for {
-		t := s.scan()
+		t := st.scan()
 
 		switch t {
 		case invalid:
+			//TODO
+			panic(nil)
 
-		case newline:
-			s.addElement()
-			s.current = nil
-			s.indent = 0
+		case open:
+			st.live.push(nil)
+
+		case close:
+			if st.live.peek() == nil {
+				st.live.replace(&Array{})
+			}
+			if st.previous == basic {
+				s := String{
+					line: st.bline, col: st.bcol,
+					string: st.builder.String(),
+				}
+				st.builder.Reset()
+				st.live.peek().add(&st, s)
+			}
+			d := st.live.pop()
+			st.live.peek().add(&st, d)
+
+		case separator:
+			if st.previous == basic {
+				if st.live.peek() == nil {
+					st.live.replace(&Array{})
+				}
+				s := String{
+					line: st.bline, col: st.bcol,
+					string: st.builder.String(),
+				}
+				st.builder.Reset()
+				st.live.peek().add(&st, s)
+			}
 
 		case whitespace:
-			if s.previous == newline {
-				s.indent = 0
-				if t == whitespace {
-					s.indent = countsp(s.builder.String())
-				}
-			}
-			s.builder.Reset()
 
 		case basic:
 
 		case quote:
-			s.builder.Reset()
+			st.builder.Reset()
 
 		case colon:
-			s.addLabel()
-
-		case coma:
-			s.addElement()
+			if st.live.peek() == nil {
+				st.live.replace(&Map{})
+			}
+			s := st.builder.String()
+			st.builder.Reset()
+			st.live.setkey(&s)
+			println("LABEL: ", s)
 
 		case comment:
-			s.builder.Reset()
+			st.builder.Reset()
 
 		case eof:
 			break loop
@@ -128,98 +197,31 @@ loop:
 		default:
 			println("*** what? ***")
 		}
-		s.previous = t
+		st.previous = t
 	}
 
-	return s.top.Children
+	return st.live.stack[0]
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func countsp(s string) int {
-	r := 0
-	for _, c := range s {
-		switch c {
-		case ' ':
-			r++
-		case '\t':
-			r += 0x1000
-		default:
-			//TODO: error
-		}
-	}
-	return r
-}
+type token int
 
-func (s *state) startDef() {
-	c := &s.top
-	p := c
-	for s.indent > c.indent && len(c.Children) > 0 {
-		p = c
-		c = &c.Children[len(c.Children)-1]
-	}
-
-	switch {
-	case s.indent > c.indent:
-		c.Children =
-			append(c.Children, Definition{
-				Line:   s.line,
-				indent: s.indent,
-			})
-		s.current = &c.Children[len(c.Children)-1]
-
-	case s.indent < c.indent:
-		//TODO: err
-		s.errmsg(s.line, s.col, "misaligned indentation")
-		fallthrough
-	default: // s.indent == c.indent:
-		p.Children =
-			append(p.Children, Definition{
-				Line:   s.line,
-				indent: s.indent,
-			})
-		s.current = &p.Children[len(p.Children)-1]
-	}
-}
-
-func (s *state) addLabel() {
-	if s.previous == basic {
-		if s.current == nil {
-			s.startDef()
-		}
-		var l string
-		if s.previous == basic {
-			l = strings.ToLower(s.builder.String())
-		} else {
-			l = s.builder.String()
-		}
-		if s.current.Label != "" {
-			//TODO: error
-		}
-		s.current.Label = l
-	}
-	s.builder.Reset()
-}
-
-func (s *state) addElement() {
-	if s.previous == basic {
-		if s.current == nil {
-			s.startDef()
-		}
-		var e string
-		if s.previous == basic {
-			e = strings.ToLower(s.builder.String())
-		} else {
-			e = s.builder.String()
-		}
-		s.current.Elements = append(s.current.Elements, e)
-	}
-	s.builder.Reset()
-}
-
-////////////////////////////////////////////////////////////////////////////////
+const (
+	invalid token = iota
+	whitespace
+	separator
+	basic
+	quote
+	open
+	close
+	colon
+	comment
+	eof
+)
 
 func (s *state) scan() token {
+	s.bline, s.bcol = s.line, s.col
 	r, _, err := s.src.ReadRune()
 	if err != nil {
 		s.err = err
@@ -229,7 +231,7 @@ func (s *state) scan() token {
 	case '\n':
 		s.line++
 		s.col = 1
-		return newline
+		return separator
 
 	case ' ', '\t':
 	spaceloop:
@@ -237,7 +239,6 @@ func (s *state) scan() token {
 			switch r {
 			case ' ', '\t': //TODO: unicode whitespace?
 				s.col++
-				s.builder.WriteRune(r)
 			default:
 				s.src.UnreadRune()
 				break spaceloop
@@ -255,7 +256,7 @@ func (s *state) scan() token {
 
 	case ',':
 		s.col++
-		return coma
+		return separator
 
 	case ':':
 		s.col++
@@ -271,13 +272,12 @@ func (s *state) scan() token {
 		return invalid
 
 	case '{':
-		//TODO
-		return comment
+		s.col++
+		return open
 
 	case '}':
-		s.errmsg(s.line, s.col, "unexpected '}' outside comment")
 		s.col++
-		return invalid
+		return close
 
 	default:
 		sp := false

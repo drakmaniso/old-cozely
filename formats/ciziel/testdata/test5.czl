@@ -1,0 +1,21 @@
+abc: {
+	a
+	b
+	c
+}
+de: {
+	d: d1
+	e: e1
+}
+f: f
+ghij: {
+	g, h
+	i, j,
+}
+empty: {
+
+}
+kl: {
+	k: k1
+	l: l1
+}
