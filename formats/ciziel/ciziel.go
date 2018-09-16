@@ -100,12 +100,8 @@ func (m *Map) add(st *state, d Data) {
 		//TODO: error
 		panic(nil)
 	}
-	v, ok := (*m)[*k]
-	if ok {
-		(*m)[*k] = &Array{v, d}
-		return
-	}
 	(*m)[*k] = d
+	st.live.setkey(nil)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -130,7 +126,7 @@ func Parse(source io.Reader) Data {
 		src:  bufio.NewReader(source),
 		line: 1,
 	}
-	st.live.push(nil)
+	st.live.push(&Array{})
 
 loop:
 	for {
@@ -141,13 +137,32 @@ loop:
 			//TODO
 			panic(nil)
 
-		case open:
-			st.live.push(nil)
+		case openmap:
+			m := Map(make(map[string]Data, 0))
+			st.live.push(&m)
 
-		case close:
-			if st.live.peek() == nil {
-				st.live.replace(&Array{})
+		case openarray:
+			st.live.push(&Array{})
+
+		case closemap:
+			// if st.live.peek() == nil {
+			// 	st.live.replace(&Array{})
+			// }
+			if st.previous == basic {
+				s := String{
+					line: st.bline, col: st.bcol,
+					string: st.builder.String(),
+				}
+				st.builder.Reset()
+				st.live.peek().add(&st, s)
 			}
+			d := st.live.pop()
+			st.live.peek().add(&st, d)
+
+		case closearray:
+			// if st.live.peek() == nil {
+			// 	st.live.replace(&Array{})
+			// }
 			if st.previous == basic {
 				s := String{
 					line: st.bline, col: st.bcol,
@@ -180,11 +195,12 @@ loop:
 			st.builder.Reset()
 
 		case colon:
-			if st.live.peek() == nil {
-				st.live.replace(&Map{})
-			}
+			// if st.live.peek() == nil {
+			// 	st.live.replace(&Map{})
+			// }
 			s := st.builder.String()
 			st.builder.Reset()
+			//TODO: check for duplicate keys
 			st.live.setkey(&s)
 			println("LABEL: ", s)
 
@@ -200,7 +216,12 @@ loop:
 		st.previous = t
 	}
 
-	return st.live.stack[0]
+	r, ok := st.live.stack[0].(*Array)
+	if ! ok {
+		panic(nil)
+	}
+
+	return (*r)[0]
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -213,8 +234,10 @@ const (
 	separator
 	basic
 	quote
-	open
-	close
+	openmap
+	closemap
+	openarray
+	closearray
 	colon
 	comment
 	eof
@@ -273,18 +296,26 @@ func (s *state) scan() token {
 
 	case '{':
 		s.col++
-		return open
+		return openmap
 
 	case '}':
 		s.col++
-		return close
+		return closemap
+
+	case '[':
+		s.col++
+		return openarray
+
+	case ']':
+		s.col++
+		return closearray
 
 	default:
 		sp := false
 	basicloop:
 		for {
 			switch r {
-			case '\n', '(', ')', '{', '}', ',', ':':
+			case '\n', '(', ')', '{', '}', '[', ']', ',', ':':
 				s.src.UnreadRune()
 				break basicloop
 			case ' ', '\t': //TODO: unicode whitespace?

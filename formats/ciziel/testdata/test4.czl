@@ -1,19 +1,21 @@
-abc: {
-	a
-	b
-	c
-}
-de: {
-	d
-	e
-}
-f: f
-ghij: {
-	g, h
-	i, j,
-}
-empty: {
+{
+	abc: [
+		a
+		b
+		c
+	]
+	de: [
+		d
+		e
+	]
+	f: f
+	ghij: [
+		g, h
+		i, j,
+	]
+	empty: [
 
+	]
+	kl: [k
+	l]
 }
-kl: {k
-l}

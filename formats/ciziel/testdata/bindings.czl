@@ -1,24 +1,33 @@
-Menu: {
-	Quit: key escape, button back
-	Close menu: key enter, button start
-	Instant close menu: mouse right, button B
-	Inventory: key I, button Y, mouse scroll up
-	Options: key O, mouse left
-	Trigger: left trigger, right trigger, key T, button X
-	Position: mouse, left stick, right stick
-	Cursor: mouse, left stick, right stick
-	Delta: mouse, left stick, joystick 1 XY, joystick 2 XY,
-		{source: right stick, deadzone: 0.1}
-}
+{
+	Menu: {
+		Quit: [key escape, button back]
+		Close menu: [key enter, button start]
+		Instant close menu: [mouse right, button B]
+		Inventory: [key I, button Y, mouse scroll up]
+		Options: [key O, mouse left]
+		Trigger: [left trigger, right trigger, key T, button X]
+		Position: [mouse, left stick, right stick]
+		Cursor: [mouse, left stick, right stick]
+		Delta: [mouse, left stick, joystick 1 XY, joystick 2 XY,
+			{source: right stick, deadzone: 0.1}]
+	}
 
-Game: {
-	Quit: escape, button back
-	Open menu: enter, button start
-	Instant open menu: mouse right, button B
-	Inventory: tab, button Y
-	Jump: space, mouse left, button A
-	Trigger: right trigger, left trigger, {source: mouse, range Y: 1,-1, flip: X}
-	Position: mouse, right stick
-	Cursor: mouse, right stick
-	Delta: mouse, right stick
+	Game: {
+		Quit: [escape, button back]
+		Open menu: [enter, button start]
+		Instant open menu: [mouse right, button B]
+		Inventory: [tab, button Y]
+		Jump: [space, mouse left, button A]
+		Trigger: [
+			right trigger, left trigger,
+			{
+				source: mouse,
+				range Y: [1,-1],
+				flip: X
+			}
+		]
+		Position: [mouse, right stick]
+		Cursor: [mouse, right stick]
+		Delta: [mouse, right stick]
+	}
 }

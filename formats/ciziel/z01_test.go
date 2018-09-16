@@ -9,11 +9,11 @@ import (
 )
 
 func TestParse1(t *testing.T) {
-	f, err := os.Open("testdata/bindings.czl")
+	f, err := os.Open("testdata/test6.czl")
 	if err != nil {
 		t.Error(err)
 		return
 	}
 	d := ciziel.Parse(f)
-	fmt.Print(d.String())
+	fmt.Println(d.String())
 }

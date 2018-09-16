@@ -1,6 +1,8 @@
-A: {a, b, c}
-B: {d, e}
-C: f
-D: {g, h, i, j,}
-E: {}
-F: {k, l}
+{
+	A: [a, b, c]
+	B: [d, e]
+	C: f
+	D: [g, h, i, j,]
+	E: []
+	F: [k, l]
+}
