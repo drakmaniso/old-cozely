@@ -13,7 +13,7 @@ import (
 type Data interface {
 	Position() (line, col int)
 	String() string
-	add(st *state, d Data)
+	append(st *state, d Data) Data
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -31,7 +31,7 @@ func (s String) String() string {
 	return s.string
 }
 
-func (s String) add(st *state, d Data) {
+func (s String) append(st *state, d Data) Data {
 	panic(nil)
 }
 
@@ -57,8 +57,10 @@ func (a Array) String() string {
 	return s + "]"
 }
 
-func (a *Array) add(st *state, d Data) {
-	*a = append(*a, d)
+func (a Array) append(st *state, d Data) Data {
+	a = append(a, d)
+	st.live.replace(a)
+	return a
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -94,14 +96,16 @@ func (m Map) String() string {
 	return s + "}"
 }
 
-func (m *Map) add(st *state, d Data) {
+func (m Map) append(st *state, d Data) Data {
 	k := st.live.key()
 	if k == nil {
 		//TODO: error
 		panic(nil)
 	}
-	(*m)[*k] = d
 	st.live.setkey(nil)
+	m[*k] = d
+	// st.live.replace(m)
+	return m
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -126,7 +130,7 @@ func Parse(source io.Reader) Data {
 		src:  bufio.NewReader(source),
 		line: 1,
 	}
-	st.live.push(&Array{})
+	st.live.push(Array{})
 
 loop:
 	for {
@@ -139,10 +143,10 @@ loop:
 
 		case openmap:
 			m := Map(make(map[string]Data, 0))
-			st.live.push(&m)
+			st.live.push(m)
 
 		case openarray:
-			st.live.push(&Array{})
+			st.live.push(Array{})
 
 		case closemap:
 			// if st.live.peek() == nil {
@@ -154,10 +158,10 @@ loop:
 					string: st.builder.String(),
 				}
 				st.builder.Reset()
-				st.live.peek().add(&st, s)
+				st.live.peek().append(&st, s)
 			}
 			d := st.live.pop()
-			st.live.peek().add(&st, d)
+			st.live.peek().append(&st, d)
 
 		case closearray:
 			// if st.live.peek() == nil {
@@ -169,22 +173,19 @@ loop:
 					string: st.builder.String(),
 				}
 				st.builder.Reset()
-				st.live.peek().add(&st, s)
+				st.live.peek().append(&st, s)
 			}
 			d := st.live.pop()
-			st.live.peek().add(&st, d)
+			st.live.peek().append(&st, d)
 
 		case separator:
 			if st.previous == basic {
-				if st.live.peek() == nil {
-					st.live.replace(&Array{})
-				}
 				s := String{
 					line: st.bline, col: st.bcol,
 					string: st.builder.String(),
 				}
 				st.builder.Reset()
-				st.live.peek().add(&st, s)
+				st.live.peek().append(&st, s)
 			}
 
 		case whitespace:
@@ -202,7 +203,6 @@ loop:
 			st.builder.Reset()
 			//TODO: check for duplicate keys
 			st.live.setkey(&s)
-			println("LABEL: ", s)
 
 		case comment:
 			st.builder.Reset()
@@ -211,17 +211,17 @@ loop:
 			break loop
 
 		default:
-			println("*** what? ***")
+			panic(nil)
 		}
 		st.previous = t
 	}
 
-	r, ok := st.live.stack[0].(*Array)
-	if ! ok {
+	r, ok := st.live.stack[0].(Array)
+	if !ok {
 		panic(nil)
 	}
 
-	return (*r)[0]
+	return r
 }
 
 ////////////////////////////////////////////////////////////////////////////////
