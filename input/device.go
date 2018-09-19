@@ -51,7 +51,7 @@ var devices struct {
 ////////////////////////////////////////////////////////////////////////////////
 
 func addDevice(name string) DeviceID {
-	l := len(devices.name)
+	l := DeviceID(len(devices.name))
 	if l >= maxID {
 		//TODO: set error
 		return DeviceID(maxID)

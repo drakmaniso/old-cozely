@@ -50,7 +50,7 @@ func Cursor(name string) CursorID {
 		return noCursor
 	}
 
-	a := len(cursors.name)
+	a := CursorID(len(cursors.name))
 	if a >= maxID {
 		setErr(errors.New("input cursor declaration: too many cursor actions"))
 		return noCursor

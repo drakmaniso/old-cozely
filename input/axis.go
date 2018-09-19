@@ -43,7 +43,7 @@ func Axis(name string) AxisID {
 		return noAxis
 	}
 
-	a := len(axes.name)
+	a := AxisID(len(axes.name))
 	if a >= maxID {
 		setErr(errors.New("input axis declaration: too many axis actions"))
 		return noAxis

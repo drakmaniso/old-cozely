@@ -41,7 +41,7 @@ func DualAxis(name string) DualAxisID {
 		return noDualAxis
 	}
 
-	a := len(dualaxes.name)
+	a := DualAxisID(len(dualaxes.name))
 	if a >= maxID {
 		setErr(errors.New("input dual-axis declaration: too many dual-axis actions"))
 		return noDualAxis

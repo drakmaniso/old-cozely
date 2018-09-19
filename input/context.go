@@ -37,7 +37,7 @@ func Context(name string, list ...Action) ContextID {
 		return ContextID(maxID)
 	}
 
-	l := len(contexts.name)
+	l := ContextID(len(contexts.name))
 	if l >= maxID {
 		setErr(errors.New("input context declaration: too many contexts"))
 		return ContextID(maxID)

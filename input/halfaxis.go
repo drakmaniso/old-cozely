@@ -43,7 +43,7 @@ func HalfAxis(name string) HalfAxisID {
 		return noHalfAxis
 	}
 
-	a := len(halfaxes.name)
+	a := HalfAxisID(len(halfaxes.name))
 	if a >= maxID {
 		setErr(errors.New("input half-axis declaration: too many half-axis actions"))
 		return noHalfAxis

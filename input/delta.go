@@ -44,7 +44,7 @@ func Delta(name string) DeltaID {
 		return noDelta
 	}
 
-	a := len(deltas.name)
+	a := DeltaID(len(deltas.name))
 	if a >= maxID {
 		setErr(errors.New("input delta declaration: too many delta actions"))
 		return noDelta

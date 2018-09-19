@@ -57,7 +57,7 @@ func Button(name string) ButtonID {
 		return noButton
 	}
 
-	a := len(buttons.name)
+	a := ButtonID(len(buttons.name))
 	if a >= maxID {
 		setErr(errors.New("input button declaration: too many button actions"))
 		return noButton
