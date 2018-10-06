@@ -18,7 +18,7 @@ var (
 
 func main() {
 	defer cozely.Recover()
-	pixel.SetResolution(resolution.X, resolution.Y)
+	pixel.SetResolution(pixel.XY{resolution.X, resolution.Y})
 	err := cozely.Run(loop{})
 	if err != nil {
 		panic(err)

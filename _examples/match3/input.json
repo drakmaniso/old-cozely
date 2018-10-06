@@ -1,0 +1,8 @@
+{
+	"Default": {
+		"Quit":   ["Escape"],
+		"Cursor": ["Mouse"],
+		"Select": ["Mouse Left"],
+		"Test":   ["Space"]
+	}
+}

@@ -20,20 +20,11 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 
 var (
-	quit   = input.Digital("Quit")
-	selct  = input.Digital("Select")
-	test   = input.Digital("Test")
+	quit   = input.Button("Quit")
+	selct  = input.Button("Select")
+	test   = input.Button("Test")
 	cursor = input.Cursor("Cursor")
 )
-
-var bindings = input.Bindings{
-	"Default": {
-		"Quit":   {"Escape"},
-		"Cursor": {"Mouse"},
-		"Select": {"Mouse Left"},
-		"Test":   {"Space"},
-	},
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -53,8 +44,6 @@ type loop struct{}
 
 func main() {
 	setup()
-
-	input.Load(bindings)
 
 	cozely.Configure(
 		cozely.Title("Match 3"),
@@ -76,7 +65,7 @@ func (loop) Leave() {
 func setup() error {
 	window.Events.Resize = resize
 
-	pixel.SetResolution(180, 180)
+	pixel.SetResolution(pixel.XY{180, 180})
 
 	for i, n := range []string{
 		"red",
@@ -122,8 +111,8 @@ func init() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop) React() {
-	if selct.Started(1) {
-		m := pixel.ToCanvas(window.XYof(cursor.XY(0)))
+	if selct.Pushed() {
+		m := pixel.XYof(cursor.XY())
 		current = grid.PositionAt(m)
 		if current != grid.Nowhere() {
 			e := grid.At(current)
@@ -137,11 +126,11 @@ func (loop) React() {
 		}
 	}
 
-	if selct.Stopped(1) {
+	if selct.Released() {
 		current = grid.Nowhere()
 	}
 
-	if test.Started(1) {
+	if test.Pushed() {
 		f := func(e ecs.Entity) {
 			if !e.Has(ecs.MatchFlag) {
 				print(grid.PositionOf(e).String(), " ")
@@ -152,7 +141,7 @@ func (loop) React() {
 		println()
 	}
 
-	if quit.Started(1) {
+	if quit.Pushed() {
 		cozely.Stop(nil)
 	}
 }
