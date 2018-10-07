@@ -35,49 +35,48 @@ func Point(c color.Index, layer int16, pos XY) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// Lines queues a GPU command to draw a line strip on the canvas. A line strip
-// is a succession of connected lines; all lines share the same color.
-func Lines(c color.Index, layer int16, strip ...XY) {
-	if len(strip) < 2 {
-		return
-	}
-	prm := []int16{int16(c), layer} //TODO: remove alloc
-	for _, p := range strip {
-		prm = append(prm, p.X, p.Y)
-	}
-	renderer.command(cmdLines, 4, uint32(len(strip)-1), prm...)
+// Line queues a GPU command to draw a single line on the canvas.
+func Line(c color.Index, layer int16, start, end XY) {
+	renderer.command(
+		cmdLines, 4,
+		1,
+		int16(c), layer,
+		start.X, start.Y,
+		end.X, end.Y,
+	)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// Triangles queues a GPU command to draw a triangle strip on the canvas.
-// Triangle strip have the same meaning than in OpenGL. All triangles share the
-// same color.
-func Triangles(c color.Index, layer int16, strip ...XY) {
-	if len(strip) < 3 {
-		return
-	}
-	prm := []int16{int16(c), layer} //TODO: remove alloc
-	for _, p := range strip {
-		prm = append(prm, p.X, p.Y)
-	}
-	renderer.command(cmdTriangles, uint32(len(strip)), 1, prm...)
+// Triangle queues a GPU command to draw a single triangle on the canvas.
+func Triangle(co color.Index, layer int16, a, b, c XY) {
+	renderer.command(
+		cmdTriangles, 3,
+		1,
+		int16(co), layer,
+		a.X, a.Y,
+		b.X, b.Y,
+		c.X, c.Y,
+	)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 // Box queues a GPU command to draw a box on the canvas.
-func Box(fg, bg color.Index, layer int16, corner int16, p1, p2 XY) {
-	if p2.X < p1.X {
-		p1.X, p2.X = p2.X, p1.X
+func Box(fg, bg color.Index, layer int16, corner int16, position, size XY) {
+	//TODO: maybe the shader can take this?
+	if size.X < 0 {
+		position.X = position.X + size.X
+		size.X = -size.X
 	}
-	if p2.Y < p1.Y {
-		p1.Y, p2.Y = p2.Y, p1.Y
+	if size.Y < 0 {
+		position.X = position.Y + size.Y
+		size.Y = -size.Y
 	}
 	renderer.command(cmdBox, 4, 1,
 		int16(uint32(fg)<<8|uint32(bg)),
 		layer,
 		corner,
-		p1.X, p1.Y,
-		p2.X, p2.Y)
+		position.X, position.Y,
+		size.X, size.Y)
 }

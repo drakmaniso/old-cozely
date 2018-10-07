@@ -176,8 +176,8 @@ void main(void)
 		Flags = texelFetch(parameters, param+2+offset).r;
 		x = texelFetch(parameters, param+3+offset).r;
 		y = texelFetch(parameters, param+4+offset).r;
-		x2 = texelFetch(parameters, param+5+offset).r;
-		y2 = texelFetch(parameters, param+6+offset).r;
+		x2 = x + texelFetch(parameters, param+5+offset).r;
+		y2 = y + texelFetch(parameters, param+6+offset).r;
 		wh = vec2(x2 -x+1, y2-y+1);
 		// Position
 		Box = vec4(x+CanvasMargin.x, y+CanvasMargin.y, x2+CanvasMargin.x, y2+CanvasMargin.y);

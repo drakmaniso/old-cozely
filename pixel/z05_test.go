@@ -77,11 +77,15 @@ func (a *loop5) Render() {
 	pixel.Clear(1)
 	m := pixel.XYof(cursor.XY())
 	if !scenes[3].Pressed() {
-		pixel.Triangles(2, 0, a.points...)
+		for i := 0; i < len(a.points) - 2; i++ {
+			pixel.Triangle(2, 0, a.points[i], a.points[i+1], a.points[i+2])
+		}
 	}
 	if !scenes[2].Pressed() {
-		pixel.Lines(14, 0, a.points...)
-		pixel.Lines(13, 0, a.points[len(a.points)-1], m)
+		for i := 0; i < len(a.points) - 1; i++ {
+			pixel.Line(14, 0, a.points[i], a.points[i+1])
+		}
+		pixel.Line(13, 0, a.points[len(a.points)-1], m)
 	}
 	if !scenes[1].Pressed() {
 		for _, p := range a.points {

@@ -55,34 +55,34 @@ func (loop6) Update() {
 }
 
 func (a *loop6) Render() {
-	pixel.Clear(0)
+	pixel.Clear(1)
 
 	const corner = 3
 
 	o := pixel.XY{8, 8}
-	s := pixel.XY{24, 24}
-	dx := pixel.XY{32, 0}
-	dy := pixel.XY{0, 32}
+	s := pixel.XY{16, 16}
+	dx := pixel.XY{20, 0}
+	dy := pixel.XY{0, 20}
 
-	for i := int16(0); i < 13; i++ {
-		pixel.Box(9, 0, 0, i, o.Plus(dx.Times(i)), o.Plus(dx.Times(i)).Plus(s))
+	for i := int16(0); i < 16; i++ {
+		pixel.Box(7, 0, 0, i, o.Plus(dx.Times(i)), s)
 	}
 
 	o = o.Plus(dy)
-	for i := int16(0); i < 13; i++ {
-		pixel.Box(0, 8, 0, i, o.Plus(dx.Times(i)), o.Plus(dx.Times(i)).Plus(s))
+	for i := int16(0); i < 16; i++ {
+		pixel.Box(0, 13, 0, i, o.Plus(dx.Times(i)), s)
 	}
 
 	o = o.Plus(dy)
-	for i := int16(0); i < 13; i++ {
-		pixel.Box(9, 8, 0, i, o.Plus(dx.Times(i)), o.Plus(dx.Times(i)).Plus(s))
+	for i := int16(0); i < 16; i++ {
+		pixel.Box(7, 7, 0, i, o.Plus(dx.Times(i)), s)
 	}
 
 	o = o.Plus(dy)
-	for i := int16(0); i < 13; i++ {
-		pixel.Box(9, 9, 0, i, o.Plus(dx.Times(i)), o.Plus(dx.Times(i)).Plus(s))
+	for i := int16(0); i < 16; i++ {
+		pixel.Box(7, 13, 0, i, o.Plus(dx.Times(i)), s)
 	}
 
 	m := pixel.XYof(cursor.XY())
-	pixel.Point(7, 0, m)
+	pixel.Point(8, 0, m)
 }

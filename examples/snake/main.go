@@ -264,7 +264,7 @@ func drawGrid() {
 	pixel.Box(
 		11, 3, 0, 0,
 		origin.Plus(cellsize).MinusS(1),
-		origin.Plus(pixel.XY{width, height}.TimesXY(cellsize)).Minus(cellsize).PlusS(1),
+		pixel.XY{width-2, height-2}.TimesXY(cellsize).PlusS(1),
 	)
 	for x := int16(0); x < width; x++ {
 		for y := int16(0); y < height; y++ {
@@ -275,20 +275,20 @@ func drawGrid() {
 				pixel.Box(
 					8, 8, 0, 5,
 					p,
-					p.Plus(cellsize),
+					cellsize,
 				)
 			case up, right, down, left, tail:
 				pixel.Box(
 					2, 15, 0, 2,
 					p,
-					p.Plus(cellsize),
+					cellsize,
 				)
 			}
 			if x == snake.X && y == snake.Y {
 				pixel.Box(
 					2, 14, 0, 2,
 					p,
-					p.Plus(cellsize),
+					cellsize,
 				)
 			}
 		}
