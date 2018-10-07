@@ -94,7 +94,7 @@ func (a *Cursor) Write(p []byte) (n int, err error) {
 
 // WriteRune asks the GPU to display a single rune on the canvas.
 func (a *Cursor) WriteRune(r rune) {
-	if a.Color == 0 && a.Font == 0 && a.Interline == 0 {
+	if a.Font == 0 && a.Interline == 0 {
 		a.Color = 7
 		a.Interline = int16(float32(a.Font.Height()) * 1.25)
 		if a.Position.X == 0 && a.Position.Y == 0 {
