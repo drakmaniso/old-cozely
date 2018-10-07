@@ -109,10 +109,13 @@ func (a *Cursor) WriteRune(r rune) {
 	}
 
 	g := a.Font.glyph(r)
-	renderer.command(cmdText, 4, 1,
+	renderer.command(cmdPicture,
 		int16(a.Color-fonts[a.Font].basecolor),
 		a.Layer,
-		a.Position.Y-fonts[a.Font].baseline,
-		int16(g), a.Position.X)
+		a.Position.X, a.Position.Y-fonts[a.Font].baseline,
+		0, 0, //TODO
+		int16(g),
+		0,
+	)
 	a.Position.X += pictures.mapping[g].w + a.LetterSpacing
 }

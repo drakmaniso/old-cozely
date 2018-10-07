@@ -274,45 +274,16 @@ func (a *glRenderer) clear(c color.Index) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (a *glRenderer) command(c uint32, v uint32, n uint32, params ...int16) {
+func (a *glRenderer) command(c uint32, params ...int16) {
 	ccap, pcap := cap(a.commands), cap(a.parameters)
 
-	l := len(a.commands)
-
-	switch {
-
-	case l > 0 && c == (a.commands[l-1].BaseInstance>>24) &&
-		c != cmdLines && c != cmdTriangles:
-
-		if c != cmdText {
-			// Collapse with previous draw command
-			a.commands[l-1].InstanceCount += n
-			a.parameters = append(a.parameters, params...)
-			break
-
-		} else {
-			// Check if same color and y
-			pi := a.commands[l-1].BaseInstance & 0xFFFFFF
-			if a.parameters[pi] == params[0] && a.parameters[pi+1] == params[1] && a.parameters[pi+2] == params[2] {
-				// Collapse with previous draw command
-				a.commands[l-1].InstanceCount += n
-				a.parameters = append(a.parameters, params[3:]...)
-				break
-			}
-		}
-		// cmdText but with different params
-		fallthrough
-
-	default:
-		// Create new draw command
-		a.commands = append(a.commands, gl.DrawIndirectCommand{
-			VertexCount:   v,
-			InstanceCount: n,
-			FirstVertex:   0,
-			BaseInstance:  uint32(c<<24 | uint32(len(a.parameters)&0xFFFFFF)),
-		})
-		a.parameters = append(a.parameters, params...)
-	}
+	a.commands = append(a.commands, gl.DrawIndirectCommand{
+		VertexCount:   4,
+		InstanceCount: 1,
+		FirstVertex:   0,
+		BaseInstance:  uint32(c<<24 | uint32(len(a.parameters)&0xFFFFFF)),
+	})
+	a.parameters = append(a.parameters, params...)
 
 	if ccap < cap(a.commands) {
 		a.commandsICBO.Delete()

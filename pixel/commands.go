@@ -11,26 +11,25 @@ import (
 
 const (
 	cmdPicture    = 1
-	cmdPictureExt = 2
-	cmdText       = 3
-	cmdPoint      = 4
-	cmdLines      = 5
-	cmdTriangles  = 6
-	cmdBox        = 7
+	cmdTriangle   = 2
+	cmdLine       = 3
+	cmdBox        = 4
+	cmdPoint      = 5
 )
 
 ////////////////////////////////////////////////////////////////////////////////
 
 // Paint queues a GPU command to put a picture on the canvas.
 func (p PictureID) Paint(layer int16, pos XY) {
-	renderer.command(cmdPicture, 4, 1, int16(p), layer, pos.X, pos.Y)
+	renderer.command(cmdPicture, 0, layer, pos.X, pos.Y, 0, 0, int16(p), 0)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 // Point queues a GPU command to draw a point on the canvas.
 func Point(c color.Index, layer int16, pos XY) {
-	renderer.command(cmdPoint, 3, 1, int16(c), layer, pos.X, pos.Y)
+	renderer.command(cmdPoint, int16(c), layer, pos.X, pos.Y, 0, 0, 0, 0)
+	// Line(c, layer, pos, pos)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -38,11 +37,11 @@ func Point(c color.Index, layer int16, pos XY) {
 // Line queues a GPU command to draw a single line on the canvas.
 func Line(c color.Index, layer int16, start, end XY) {
 	renderer.command(
-		cmdLines, 4,
-		1,
+		cmdLine,
 		int16(c), layer,
 		start.X, start.Y,
 		end.X, end.Y,
+		0, 0,
 	)
 }
 
@@ -51,8 +50,7 @@ func Line(c color.Index, layer int16, start, end XY) {
 // Triangle queues a GPU command to draw a single triangle on the canvas.
 func Triangle(co color.Index, layer int16, a, b, c XY) {
 	renderer.command(
-		cmdTriangles, 3,
-		1,
+		cmdTriangle,
 		int16(co), layer,
 		a.X, a.Y,
 		b.X, b.Y,
@@ -73,10 +71,12 @@ func Box(fg, bg color.Index, layer int16, corner int16, position, size XY) {
 		position.X = position.Y + size.Y
 		size.Y = -size.Y
 	}
-	renderer.command(cmdBox, 4, 1,
+	renderer.command(cmdBox,
 		int16(uint32(fg)<<8|uint32(bg)),
 		layer,
-		corner,
 		position.X, position.Y,
-		size.X, size.Y)
+		size.X, size.Y,
+		corner,
+		0,
+	)
 }

@@ -5,12 +5,10 @@ const drawFragmentShader = "\n" + `#version 460 core
 ////////////////////////////////////////////////////////////////////////////////
 
 const uint cmdPicture    = 1;
-const uint cmdPictureExt = 2;
-const uint cmdText       = 3;
-const uint cmdPoint      = 4;
-const uint cmdLines      = 5;
-const uint cmdTriangles  = 6;
-const uint cmdBox        = 7;
+const uint cmdTriangle   = 2;
+const uint cmdLine       = 3;
+const uint cmdBox        = 4;
+const uint cmdPoint      = 5;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -48,18 +46,6 @@ void main(void)
 		if (p == 0) {
 			c = 0;
 		} else {
-			c = p;// + Tint;
-			if (c > 255) {
-				c -= 255;
-			}
-		}
-		break;
-
-	case cmdText:
-		p = texelFetch(Pictures, ivec3(UV.x, UV.y, Bin), 0).x;
-		if (p == 0) {
-			c = 0;
-		} else {
 			c = p + ColorIndex;
 			if (c > 255) {
 				c -= 255;
@@ -68,11 +54,11 @@ void main(void)
 		break;
 
 	case cmdPoint:
-	case cmdTriangles:
+	case cmdTriangle:
 		c = ColorIndex;
 		break;
 
-	case cmdLines:
+	case cmdLine:
 		x = gl_FragCoord.x - Box.x;
 		y = gl_FragCoord.y - Box.y;
 		if (Flags == steep) {
