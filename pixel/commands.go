@@ -72,11 +72,11 @@ func Box(fg, bg color.Index, layer int16, corner int16, position, size XY) {
 		size.Y = -size.Y
 	}
 	renderer.command(cmdBox,
-		int16(uint32(fg)<<8|uint32(bg)),
+		int16(bg),
 		layer,
 		position.X, position.Y,
 		size.X, size.Y,
 		corner,
-		0,
+		int16(fg),
 	)
 }

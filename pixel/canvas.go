@@ -89,7 +89,7 @@ func resize() {
 
 	// Extend the screen to cover the window
 	screen.size = XY(win.Slash(screen.zoom))
-	adjustScreenTextures()
+	renderer.adjustScreenTextures()
 
 	// For fixed resolution, compute the margin and fix the size
 	if (screen.resolution == XY{}) {

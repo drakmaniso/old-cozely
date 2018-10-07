@@ -57,12 +57,12 @@ float floatZ(int z) {
 
 void main(void)
 {
-	Command = gl_BaseInstance >> 24;
-	int param = gl_BaseInstance & 0xFFFFFF;
-	int instance = gl_InstanceID;
+	int param = gl_InstanceID * 8;
 	int vertex = gl_VertexID;
 
 	uint c = texelFetch(parameters, param+0).r;
+	Command = c >> 12;
+	ColorIndex = c & 0xFF;
 	int z = texelFetch(parameters, param+1).r;
 	int x = texelFetch(parameters, param+2).r;
 	int y = texelFetch(parameters, param+3).r;
@@ -85,7 +85,6 @@ void main(void)
 		p = (CanvasMargin + vec2(x, y) + corners[vertex] * wh) * PixelSize;
 		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), floatZ(z), 1);
 		UV += corners[vertex] * wh;
-		ColorIndex = uint(c&0xFFFF);
 		break;
 
 	// case cmdText:
@@ -105,8 +104,6 @@ void main(void)
 		// Position
 		p = (CanvasMargin + vec2(x, y) + corners[vertex]) * PixelSize;
 		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), floatZ(z), 1);
-		// Color
-		ColorIndex = uint(c&0xFFFF);
 		break;
 
 	case cmdLine:
@@ -130,8 +127,6 @@ void main(void)
 		} else {
 			Slope = float(dy)/float(dx);
 		}
-		// Color
-		ColorIndex = uint(c&0xFFFF);
 		break;
 
 	case cmdTriangle:
@@ -151,8 +146,6 @@ void main(void)
 		}
 		p = (CanvasMargin + vec2(0.5,0.5) + vec2(x, y)) * PixelSize;
 		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), floatZ(z), 1);
-		// Color
-		ColorIndex = uint(c&0xFFFF);
 		break;
 
 	case cmdBox:
@@ -163,8 +156,7 @@ void main(void)
 		Box = vec4(x+CanvasMargin.x, y+CanvasMargin.y, x+p4+CanvasMargin.x, y+p5+CanvasMargin.y);
 		p = (CanvasMargin + vec2(x, y) + corners[vertex] * wh) * PixelSize;
 		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), floatZ(z), 1);
-		// Color
-		ColorIndex = uint(c&0xFFFF);
+		ColorIndex |= (p7 & 0xFF) << 8;
 		break;
 	}
 }

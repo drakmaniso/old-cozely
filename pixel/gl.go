@@ -61,12 +61,11 @@ type glRenderer struct {
 	paletteSSBO gl.StorageBuffer
 
 	// Command queue
-	clearQueued   bool
-	clearColor    color.Index
-	commandsICBO  gl.IndirectBuffer
-	commands      []gl.DrawIndirectCommand
-	parametersTBO gl.BufferTexture
-	parameters    []int16
+	clearQueued      bool
+	clearColor       color.Index
+	commands         int32
+	parametersTBO    gl.BufferTexture
+	parameters       []int16
 }
 
 // Note: The uniform structs need to be at top level to pass cgo's pointer
@@ -86,30 +85,25 @@ var blitUniforms struct {
 ////////////////////////////////////////////////////////////////////////////////
 
 func init() {
-	internal.PixelSetup = setup
-	internal.PixelCleanup = cleanup
-	internal.PixelRender = render
+	internal.PixelSetup = renderer.setup
+	internal.PixelCleanup = renderer.cleanup
+	internal.PixelRender = renderer.render
 }
 
-func setup() error {
+func (r *glRenderer) setup() error {
 	// Prepare the palette
 
-	renderer.paletteSSBO = gl.NewStorageBuffer(uintptr(256*4*4), gl.DynamicStorage|gl.MapWrite)
+	r.paletteSSBO = gl.NewStorageBuffer(uintptr(256*4*4), gl.DynamicStorage|gl.MapWrite)
 
 	// Prepare the canvas
 
-	renderer.commands = make([]gl.DrawIndirectCommand, 0, maxCommandCount)
-	renderer.parameters = make([]int16, 0, maxParamCount)
+	r.canvasBuf = gl.NewFramebuffer()
+	r.filterBuf = gl.NewFramebuffer()
 
-	renderer.canvasBuf = gl.NewFramebuffer()
-	renderer.filterBuf = gl.NewFramebuffer()
-
-	renderer.commandsICBO = gl.NewIndirectBuffer(
-		uintptr(cap(renderer.commands))*unsafe.Sizeof(renderer.commands[0]),
-		gl.DynamicStorage,
-	)
-	renderer.parametersTBO = gl.NewBufferTexture(
-		uintptr(cap(renderer.parameters))*unsafe.Sizeof(renderer.parameters[0]),
+	r.commands = 0
+	r.parameters = make([]int16, 0, maxParamCount)
+	r.parametersTBO = gl.NewBufferTexture(
+		uintptr(cap(r.parameters))*unsafe.Sizeof(r.parameters[0]),
 		gl.R16I,
 		gl.DynamicStorage,
 	)
@@ -118,7 +112,7 @@ func setup() error {
 
 	// Create the paint pipeline
 
-	renderer.drawPipeline = gl.NewPipeline(
+	r.drawPipeline = gl.NewPipeline(
 		gl.VertexShader(strings.NewReader(drawVertexShader)),
 		gl.FragmentShader(strings.NewReader(drawFragmentShader)),
 		gl.CullFace(false, false),
@@ -128,13 +122,13 @@ func setup() error {
 		gl.DepthComparison(gl.GreaterOrEqual),
 	)
 
-	renderer.drawUBO = gl.NewUniformBuffer(&drawUniforms, gl.DynamicStorage|gl.MapWrite)
+	r.drawUBO = gl.NewUniformBuffer(&drawUniforms, gl.DynamicStorage|gl.MapWrite)
 
-	renderer.clearQueued = true
+	r.clearQueued = true
 
 	// Create the display pipeline
 
-	renderer.blitPipeline = gl.NewPipeline(
+	r.blitPipeline = gl.NewPipeline(
 		gl.VertexShader(strings.NewReader(blitVertexShader)),
 		gl.FragmentShader(strings.NewReader(blitFragmentShader)),
 		gl.Topology(gl.TriangleStrip),
@@ -142,7 +136,7 @@ func setup() error {
 		gl.DepthWrite(false),
 	)
 
-	renderer.blitUBO = gl.NewUniformBuffer(&blitUniforms, gl.DynamicStorage|gl.MapWrite)
+	r.blitUBO = gl.NewUniformBuffer(&blitUniforms, gl.DynamicStorage|gl.MapWrite)
 
 	// Create texture atlas for pictures (and fonts glyphs)
 
@@ -154,12 +148,12 @@ func setup() error {
 	}
 
 	// Mappings Buffer
-	renderer.pictureMapTBO = gl.NewBufferTexture(pictures.mapping, gl.R16I, gl.StaticStorage)
+	r.pictureMapTBO = gl.NewBufferTexture(pictures.mapping, gl.R16I, gl.StaticStorage)
 
 	// Create the pictures texture array
 	w, h := pictures.atlas.BinSize()
 	if pictures.atlas.BinCount() > 0 {
-		renderer.picturesTA = gl.NewTextureArray2D(1, gl.R8UI, int32(w), int32(h), int32(pictures.atlas.BinCount()))
+		r.picturesTA = gl.NewTextureArray2D(1, gl.R8UI, int32(w), int32(h), int32(pictures.atlas.BinCount()))
 	}
 	for i := int16(0); i < pictures.atlas.BinCount(); i++ {
 		m := image.NewPaletted(image.Rectangle{
@@ -189,7 +183,7 @@ func setup() error {
 		// }
 		// of.Close()
 
-		renderer.picturesTA.SubImage(0, 0, 0, int32(i), m)
+		r.picturesTA.SubImage(0, 0, 0, int32(i), m)
 	}
 
 	pictures.path = pictures.path[:2]
@@ -200,28 +194,28 @@ func setup() error {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func cleanup() error {
+func (r *glRenderer) cleanup() error {
 	// Palette
 	SetPalette(DefaultPalette)
 	palette.dirty = true
 
 	// Canvases
-	renderer.depthTex.Delete()
-	renderer.canvasTex.Delete()
-	renderer.canvasBuf.Delete()
-	renderer.filterTex.Delete()
-	renderer.filterBuf.Delete()
+	r.depthTex.Delete()
+	r.canvasTex.Delete()
+	r.canvasBuf.Delete()
+	r.filterTex.Delete()
+	r.filterBuf.Delete()
 
 	// Display pipeline
-	renderer.drawPipeline.Delete()
-	renderer.drawPipeline = nil
-	renderer.drawUBO.Delete()
+	r.drawPipeline.Delete()
+	r.drawPipeline = nil
+	r.drawUBO.Delete()
 
 	// Pictures
 	pictures.atlas = nil
 	pictures.mapping = pictures.mapping[:2]
-	renderer.pictureMapTBO.Delete()
-	renderer.picturesTA.Delete()
+	r.pictureMapTBO.Delete()
+	r.picturesTA.Delete()
 
 	// Fonts
 	fonts = fonts[:1]
@@ -232,32 +226,32 @@ func cleanup() error {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func adjustScreenTextures() {
-	renderer.depthTex.Delete()
-	renderer.depthTex = gl.NewRenderbuffer(gl.Depth32F, int32(screen.size.X), int32(screen.size.Y))
+func (r *glRenderer) adjustScreenTextures() {
+	r.depthTex.Delete()
+	r.depthTex = gl.NewRenderbuffer(gl.Depth32F, int32(screen.size.X), int32(screen.size.Y))
 
-	renderer.canvasTex.Delete()
-	renderer.canvasTex = gl.NewTexture2D(1, gl.R8UI, int32(screen.size.X), int32(screen.size.Y))
-	renderer.canvasBuf.Texture(gl.ColorAttachment0, renderer.canvasTex, 0)
+	r.canvasTex.Delete()
+	r.canvasTex = gl.NewTexture2D(1, gl.R8UI, int32(screen.size.X), int32(screen.size.Y))
+	r.canvasBuf.Texture(gl.ColorAttachment0, r.canvasTex, 0)
 
-	renderer.canvasBuf.Renderbuffer(gl.DepthAttachment, renderer.depthTex)
-	renderer.canvasBuf.DrawBuffer(gl.ColorAttachment0)
-	renderer.canvasBuf.ReadBuffer(gl.NoAttachment)
+	r.canvasBuf.Renderbuffer(gl.DepthAttachment, r.depthTex)
+	r.canvasBuf.DrawBuffer(gl.ColorAttachment0)
+	r.canvasBuf.ReadBuffer(gl.NoAttachment)
 
-	st := renderer.canvasBuf.CheckStatus(gl.DrawReadFramebuffer)
+	st := r.canvasBuf.CheckStatus(gl.DrawReadFramebuffer)
 	if st != gl.FramebufferComplete {
 		setErr(errors.New("pixel canvas texture creation: " + st.String()))
 	}
 
-	renderer.filterTex.Delete()
-	renderer.filterTex = gl.NewTexture2D(1, gl.R8UI, int32(screen.size.X), int32(screen.size.Y))
-	renderer.filterBuf.Texture(gl.ColorAttachment0, renderer.filterTex, 0)
+	r.filterTex.Delete()
+	r.filterTex = gl.NewTexture2D(1, gl.R8UI, int32(screen.size.X), int32(screen.size.Y))
+	r.filterBuf.Texture(gl.ColorAttachment0, r.filterTex, 0)
 
-	renderer.filterBuf.Renderbuffer(gl.DepthAttachment, renderer.depthTex)
-	renderer.filterBuf.DrawBuffer(gl.ColorAttachment0)
-	renderer.filterBuf.ReadBuffer(gl.NoAttachment)
+	r.filterBuf.Renderbuffer(gl.DepthAttachment, r.depthTex)
+	r.filterBuf.DrawBuffer(gl.ColorAttachment0)
+	r.filterBuf.ReadBuffer(gl.NoAttachment)
 
-	st = renderer.filterBuf.CheckStatus(gl.DrawReadFramebuffer)
+	st = r.filterBuf.CheckStatus(gl.DrawReadFramebuffer)
 	if st != gl.FramebufferComplete {
 		setErr(errors.New("pixel canvas texture creation: " + st.String()))
 	}
@@ -267,36 +261,30 @@ func adjustScreenTextures() {
 
 // Clear sets the color of all pixels on the canvas; it also resets the filter
 // of all pixels.
-func (a *glRenderer) clear(c color.Index) {
-	renderer.clearQueued = true
-	renderer.clearColor = c
+func (r *glRenderer) clear(c color.Index) {
+	r.clearQueued = true
+	r.clearColor = c
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (a *glRenderer) command(c uint32, params ...int16) {
-	ccap, pcap := cap(a.commands), cap(a.parameters)
+func (r *glRenderer) command(c int16, color, layer, x, y, p4, p5, p6, p7 int16) {
+	pcap := cap(r.parameters)
 
-	a.commands = append(a.commands, gl.DrawIndirectCommand{
-		VertexCount:   4,
-		InstanceCount: 1,
-		FirstVertex:   0,
-		BaseInstance:  uint32(c<<24 | uint32(len(a.parameters)&0xFFFFFF)),
-	})
-	a.parameters = append(a.parameters, params...)
+	r.commands++
+	r.parameters = append(
+		r.parameters,
+		c<<12|(color&0xFF),
+		layer,
+		x, y,
+		p4, p5,
+		p6, p7,
+	)
 
-	if ccap < cap(a.commands) {
-		a.commandsICBO.Delete()
-		a.commandsICBO = gl.NewIndirectBuffer(
-			uintptr(cap(a.commands))*unsafe.Sizeof(a.commands[0]),
-			gl.DynamicStorage,
-		)
-	}
-
-	if pcap < cap(a.parameters) {
-		a.parametersTBO.Delete()
-		a.parametersTBO = gl.NewBufferTexture(
-			uintptr(cap(a.parameters))*unsafe.Sizeof(a.parameters[0]),
+	if pcap < cap(r.parameters) {
+		r.parametersTBO.Delete()
+		r.parametersTBO = gl.NewBufferTexture(
+			uintptr(cap(r.parameters))*unsafe.Sizeof(r.parameters[0]),
 			gl.R16I,
 			gl.DynamicStorage,
 		)
@@ -308,29 +296,29 @@ func (a *glRenderer) command(c uint32, params ...int16) {
 // render executes all pending commands on the canvas. It is automatically called
 // by Display; the only reason to call it manually is to be able to read from it
 // before display.
-func render() error {
+func (r *glRenderer) render() error {
 	// Upload the current palette
 
 	if palette.dirty {
-		renderer.paletteSSBO.SubData(palette.colors[:], 0)
+		r.paletteSSBO.SubData(palette.colors[:], 0)
 		palette.dirty = false
 	}
-	renderer.paletteSSBO.Bind(0)
+	r.paletteSSBO.Bind(0)
 
 	// Execute all pending commands
 
-	renderer.canvasBuf.Bind(gl.DrawFramebuffer)
+	r.canvasBuf.Bind(gl.DrawFramebuffer)
 	gl.Viewport(0, 0, int32(screen.size.X), int32(screen.size.Y))
-	renderer.drawPipeline.Bind()
+	r.drawPipeline.Bind()
 	gl.Disable(gl.Blend)
 
-	if renderer.clearQueued {
-		renderer.clearQueued = false
-		renderer.canvasBuf.ClearColorUint(uint32(renderer.clearColor), 0, 0, 1)
-		renderer.canvasBuf.ClearDepth(-1.0)
+	if r.clearQueued {
+		r.clearQueued = false
+		r.canvasBuf.ClearColorUint(uint32(r.clearColor), 0, 0, 1)
+		r.canvasBuf.ClearDepth(-1.0)
 	}
 
-	if len(renderer.commands) == 0 {
+	if r.commands == 0 {
 		goto display
 	}
 
@@ -338,19 +326,17 @@ func render() error {
 	drawUniforms.PixelSize.Y = 1.0 / float32(screen.size.Y)
 	drawUniforms.CanvasMargin.X = int32(screen.margin.X)
 	drawUniforms.CanvasMargin.Y = int32(screen.margin.Y)
-	renderer.drawUBO.SubData(&drawUniforms, 0)
+	r.drawUBO.SubData(&drawUniforms, 0)
 
-	renderer.drawUBO.Bind(layoutScreen)
-	renderer.commandsICBO.Bind()
-	renderer.parametersTBO.Bind(layoutParameters)
-	renderer.pictureMapTBO.Bind(layoutPictureMap)
-	renderer.picturesTA.Bind(layoutPictures)
+	r.drawUBO.Bind(layoutScreen)
+	r.parametersTBO.Bind(layoutParameters)
+	r.pictureMapTBO.Bind(layoutPictureMap)
+	r.picturesTA.Bind(layoutPictures)
 
-	renderer.commandsICBO.SubData(renderer.commands, 0)
-	renderer.parametersTBO.SubData(renderer.parameters, 0)
-	gl.DrawIndirect(0, int32(len(renderer.commands)))
-	renderer.commands = renderer.commands[:0]
-	renderer.parameters = renderer.parameters[:0]
+	r.parametersTBO.SubData(r.parameters, 0)
+	gl.DrawInstanced(0, 4, r.commands)
+	r.commands = 0
+	r.parameters = r.parameters[:0]
 
 	// Display the canvas on the game window.
 
@@ -361,17 +347,15 @@ display:
 	blitUniforms.ScreenSize.Y = float32(screen.size.Y)
 	blitUniforms.ScreenZoom.X = float32(screen.zoom)
 	blitUniforms.ScreenZoom.Y = float32(screen.zoom)
-	renderer.blitUBO.SubData(&blitUniforms, 0)
+	r.blitUBO.SubData(&blitUniforms, 0)
 
-	renderer.blitPipeline.Bind()
+	r.blitPipeline.Bind()
 	gl.DefaultFramebuffer.Bind(gl.DrawFramebuffer)
 	gl.Enable(gl.FramebufferSRGB)
 	gl.Disable(gl.Blend)
-	// gl.Viewport(int32(screen.border.X), int32(screen.border.Y),
-	// 	int32(screen.border.X+sz.X), int32(screen.border.Y+sz.Y))
 	gl.Viewport(0, 0, int32(internal.Window.Width), int32(internal.Window.Height))
-	renderer.blitUBO.Bind(0)
-	renderer.canvasTex.Bind(0)
+	r.blitUBO.Bind(0)
+	r.canvasTex.Bind(0)
 	gl.Draw(0, 4)
 
 	return gl.Err()
