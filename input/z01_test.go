@@ -117,7 +117,7 @@ func (loop1) Render() {
 	cur.Println()
 	changecolor(&cur, false)
 
-	changecolor(&cur, inMenu.ActiveOn(1))
+	changecolor(&cur, inMenu.Active())
 	cur.Printf("  Menu: ")
 	changecolor(&cur, optionsAct.Pressed())
 	cur.Print("Options(O/L.C.) ")
@@ -127,7 +127,7 @@ func (loop1) Render() {
 	cur.Print("InstantCloseMenu(MOUSE RIGHT) ")
 	cur.Println(" ")
 
-	changecolor(&cur, inGame.ActiveOn(1))
+	changecolor(&cur, inGame.Active())
 	cur.Printf("  Game: ")
 	changecolor(&cur, jumpAct.Pressed())
 	cur.Print("Jump(SPACE/L.C.) ")
