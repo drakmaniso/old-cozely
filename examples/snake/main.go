@@ -6,19 +6,14 @@ import (
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
+	"github.com/cozely/cozely/window"
 )
 
-////////////////////////////////////////////////////////////////////////////////
-
-var (
-	resolution = pixel.XY{180, 180}
-	cellsize   = pixel.XY{8, 8}
-	origin     pixel.XY
-)
+//// Game Sate /////////////////////////////////////////////////////////////////
 
 const (
-	width  = 16
-	height = 16
+	width  = 18
+	height = 18
 )
 
 var (
@@ -32,6 +27,7 @@ type cell byte
 
 const (
 	empty cell = iota
+	border
 	fruit
 	up
 	right
@@ -40,13 +36,16 @@ const (
 	tail
 )
 
-////////////////////////////////////////////////////////////////////////////////
+//// Main //////////////////////////////////////////////////////////////////////
 
 func main() {
 	defer cozely.Recover()
 
-	pixel.SetResolution(pixel.XY{resolution.X, resolution.Y})
+	pixel.SetResolution(pixel.XY{180, 180})
 	cozely.Configure(cozely.UpdateStep(.25))
+	window.Events.Resize = func() {
+		origin = pixel.Resolution().Minus(pixel.XY{width, height}.TimesXY(cellsize)).Slash(2)
+	}
 
 	err := cozely.Run(menu{})
 	if err != nil {
@@ -54,7 +53,7 @@ func main() {
 	}
 }
 
-////////////////////////////////////////////////////////////////////////////////
+//// Menu Loop /////////////////////////////////////////////////////////////////
 
 type menu struct{}
 
@@ -87,7 +86,7 @@ func (menu) Render() {
 	drawGrid()
 }
 
-////////////////////////////////////////////////////////////////////////////////
+//// Game Loop /////////////////////////////////////////////////////////////////
 
 type loop struct{}
 
@@ -120,47 +119,25 @@ func (loop) React() {
 
 func (loop) Update() {
 	direction = next
-
 	switch direction {
 	case up:
-		if snake.Y == 0 {
-			cozely.Goto(gameover{})
-			return
-		}
 		snake.Y--
-		advance()
 	case right:
-		if snake.X == width-1 {
-			cozely.Goto(gameover{})
-			return
-		}
 		snake.X++
-		advance()
 	case down:
-		if snake.Y == height-1 {
-			cozely.Goto(gameover{})
-			return
-		}
 		snake.Y++
-		advance()
 	case left:
-		if snake.X == 0 {
-			cozely.Goto(gameover{})
-			return
-		}
 		snake.X--
-		advance()
 	}
+	advance()
 }
-
-////////////////////////////////////////////////////////////////////////////////
 
 func (loop) Render() {
 	pixel.Clear(1)
 	drawGrid()
 }
 
-////////////////////////////////////////////////////////////////////////////////
+//// Game Over Loop ////////////////////////////////////////////////////////////
 
 type gameover struct{}
 
@@ -195,7 +172,7 @@ func (gameover) Update() {
 }
 
 func (gameover) Render() {
-	pixel.Clear(2)
+	pixel.Clear(8)
 	if counter%2 == 0 {
 		c := pixel.Cursor{
 			Position: pixel.XY{40, 16},
@@ -205,10 +182,18 @@ func (gameover) Render() {
 	drawGrid()
 }
 
-////////////////////////////////////////////////////////////////////////////////
+//// Game Logic /////////////////////////////////////////////////////////////////
 
 func setupGrid() {
 	grid = [width][height]cell{}
+	for x := 0; x < width; x++ {
+		grid[x][0] = border
+		grid[x][height-1] = border
+	}
+	for y := 0; y < height; y++ {
+		grid[0][y] = border
+		grid[width-1][y] = border
+	}
 	snake.X, snake.Y = width/2, height/2
 	grid[snake.X][snake.Y] = up
 	grid[snake.X][snake.Y+1] = up
@@ -268,12 +253,18 @@ func advance() {
 	panic(nil)
 }
 
+//// Game Rendering ////////////////////////////////////////////////////////////
+
+var (
+	cellsize = pixel.XY{8, 8}
+	origin   pixel.XY
+)
+
 func drawGrid() {
-	origin = resolution.Minus(pixel.XY{width, height}.TimesXY(cellsize)).Slash(2)
 	pixel.Box(
 		11, 3, 0, 0,
-		origin.MinusS(1),
-		origin.Plus(pixel.XY{width, height}.TimesXY(cellsize)).PlusS(1),
+		origin.Plus(cellsize).MinusS(1),
+		origin.Plus(pixel.XY{width, height}.TimesXY(cellsize)).Minus(cellsize).PlusS(1),
 	)
 	for x := int16(0); x < width; x++ {
 		for y := int16(0); y < height; y++ {
@@ -287,16 +278,15 @@ func drawGrid() {
 					p.Plus(cellsize),
 				)
 			case up, right, down, left, tail:
-				if x == snake.X && y == snake.Y {
-					pixel.Box(
-						2, 14, 0, 2,
-						p,
-						p.Plus(cellsize),
-					)
-					break
-				}
 				pixel.Box(
 					2, 15, 0, 2,
+					p,
+					p.Plus(cellsize),
+				)
+			}
+			if x == snake.X && y == snake.Y {
+				pixel.Box(
+					2, 14, 0, 2,
 					p,
 					p.Plus(cellsize),
 				)
@@ -304,13 +294,13 @@ func drawGrid() {
 		}
 	}
 	c := pixel.Cursor{
-		Position: pixel.XY{25, 170},
+		Position: pixel.XY{25, pixel.Resolution().Y - 10},
 	}
 	if score > 0 {
 		c.Printf("Score: %2d", score)
 	}
 	if bestscore > 0 {
-		c.Position = pixel.XY{109, 170}
+		c.Position = pixel.XY{109, pixel.Resolution().Y - 10}
 		c.Printf("Best: %2d", bestscore)
 	}
 }
