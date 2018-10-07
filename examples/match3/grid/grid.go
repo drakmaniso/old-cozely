@@ -6,7 +6,7 @@ package grid
 import (
 	"fmt"
 
-	"github.com/cozely/cozely/_examples/match3/ecs"
+	"github.com/cozely/cozely/examples/match3/ecs"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
