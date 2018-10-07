@@ -78,7 +78,9 @@ var drawUniforms struct {
 }
 
 var blitUniforms struct {
+	WindowSize struct{ X, Y float32 }
 	ScreenSize struct{ X, Y float32 }
+	ScreenZoom struct{ X, Y float32 }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -382,18 +384,21 @@ func render() error {
 	// Display the canvas on the game window.
 
 display:
-	sz := screen.size.Times(screen.zoom)
-
+	blitUniforms.WindowSize.X = float32(internal.Window.Width)
+	blitUniforms.WindowSize.Y = float32(internal.Window.Height)
 	blitUniforms.ScreenSize.X = float32(screen.size.X)
 	blitUniforms.ScreenSize.Y = float32(screen.size.Y)
+	blitUniforms.ScreenZoom.X = float32(screen.zoom)
+	blitUniforms.ScreenZoom.Y = float32(screen.zoom)
 	renderer.blitUBO.SubData(&blitUniforms, 0)
 
 	renderer.blitPipeline.Bind()
 	gl.DefaultFramebuffer.Bind(gl.DrawFramebuffer)
 	gl.Enable(gl.FramebufferSRGB)
 	gl.Disable(gl.Blend)
-	gl.Viewport(int32(screen.border.X), int32(screen.border.Y),
-		int32(screen.border.X+sz.X), int32(screen.border.Y+sz.Y))
+	// gl.Viewport(int32(screen.border.X), int32(screen.border.Y),
+	// 	int32(screen.border.X+sz.X), int32(screen.border.Y+sz.Y))
+	gl.Viewport(0, 0, int32(internal.Window.Width), int32(internal.Window.Height))
 	renderer.blitUBO.Bind(0)
 	renderer.canvasTex.Bind(0)
 	gl.Draw(0, 4)

@@ -21,7 +21,6 @@ var screen = struct {
 
 	size   XY        // size of the canvas
 	margin XY        // for fixed resolution only, = size - resolution
-	border window.XY // leftover from division by pixel size
 }{
 	resolution: XY{},
 	zoom:       2,
@@ -93,13 +92,11 @@ func resize() {
 	adjustScreenTextures()
 
 	// For fixed resolution, compute the margin and fix the size
-	if !screen.resolution.Null() {
+	if (screen.resolution == XY{}) {
+		screen.margin = XY{}
+	} else {
 		screen.margin = screen.size.Minus(screen.resolution).Slash(2)
 	}
-
-	// Compute outside border
-	sz := window.XY(screen.size.Times(screen.zoom))
-	screen.border = win.Minus(sz).Slash(2)
 }
 
 ////////////////////////////////////////////////////////////////////////////////

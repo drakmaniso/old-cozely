@@ -23,7 +23,7 @@ type XY struct {
 func XYof(v coord.Coordinates) XY {
 	switch v := v.(type) {
 	case window.XY:
-		v = v.Minus(screen.border).Slash(screen.zoom)
+		v = v.Slash(screen.zoom)
 		if !screen.resolution.Null() {
 			return XY(v).Minus(screen.margin)
 		}
@@ -38,10 +38,10 @@ func XYof(v coord.Coordinates) XY {
 func (a XY) WindowXY() window.XY {
 	if !screen.resolution.Null() {
 		a = a.Times(screen.zoom)
-		return window.XY(a).Plus(screen.border)
+		return window.XY(a)
 	}
 	a = a.Plus(screen.margin).Times(screen.zoom)
-	return window.XY(a).Plus(screen.border)
+	return window.XY(a)
 }
 
 // RoundXYof returns an integer vector corresponding to the first two
