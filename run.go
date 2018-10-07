@@ -38,6 +38,10 @@ type GameLoop interface {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+var next GameLoop
+
+////////////////////////////////////////////////////////////////////////////////
+
 // Run initializes the framework, creates the ressources and loads all assets,
 // and finally starts the game loop. The loop will run until Stop is called.
 //
@@ -171,12 +175,27 @@ func Run(loop GameLoop) (err error) {
 
 		internal.SwapWindow()
 
+		if next != nil {
+			internal.Loop.Leave()
+			internal.Loop = next
+			next = nil
+			internal.Loop.Enter()
+		}
+
 		then = now
 		now = internal.GetSeconds()
 	}
 
 	internal.Loop.Leave()
 	return stopErr
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+// Goto replaces the current running loop with l. The change take place at next
+// frame.
+func Goto(l GameLoop) {
+	next = l
 }
 
 ////////////////////////////////////////////////////////////////////////////////

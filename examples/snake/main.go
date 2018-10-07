@@ -22,9 +22,10 @@ const (
 )
 
 var (
-	grid            [width][height]cell
-	snake           struct{ X, Y int16 }
-	direction, next cell
+	grid             [width][height]cell
+	snake            struct{ X, Y int16 }
+	direction, next  cell
+	score, bestscore int
 )
 
 type cell byte
@@ -39,14 +40,6 @@ const (
 	tail
 )
 
-const (
-	paused = iota
-	playing
-	gameover
-)
-
-var state int
-
 ////////////////////////////////////////////////////////////////////////////////
 
 func main() {
@@ -55,7 +48,7 @@ func main() {
 	pixel.SetResolution(pixel.XY{resolution.X, resolution.Y})
 	cozely.Configure(cozely.UpdateStep(.25))
 
-	err := cozely.Run(loop{})
+	err := cozely.Run(menu{})
 	if err != nil {
 		panic(err)
 	}
@@ -63,12 +56,156 @@ func main() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+type menu struct{}
+
+func (menu) Enter() {
+	setupGrid()
+	score = 0
+}
+
+func (menu) Leave() {}
+
+func (menu) React() {
+	if input.MenuBack.Pushed() {
+		cozely.Stop(nil)
+	}
+
+	if input.MenuSelect.Pushed() {
+		cozely.Goto(loop{})
+	}
+	return
+}
+
+func (menu) Update() {}
+
+func (menu) Render() {
+	pixel.Clear(1)
+	c := pixel.Cursor{
+		Position: pixel.XY{25, 16},
+	}
+	c.Print("Press [space] to start")
+	drawGrid()
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
 type loop struct{}
 
 func (loop) Enter() {
-	setupGrid()
-	state = paused
+	input.ShowMouse(false)
 }
+
+func (loop) Leave() {
+	input.ShowMouse(true)
+}
+
+func (loop) React() {
+	if input.MenuBack.Pushed() {
+		cozely.Stop(nil)
+	}
+
+	if input.MenuUp.Pushed() && direction != down {
+		next = up
+	}
+	if input.MenuRight.Pushed() && direction != left {
+		next = right
+	}
+	if input.MenuDown.Pushed() && direction != up {
+		next = down
+	}
+	if input.MenuLeft.Pushed() && direction != right {
+		next = left
+	}
+}
+
+func (loop) Update() {
+	direction = next
+
+	switch direction {
+	case up:
+		if snake.Y == 0 {
+			cozely.Goto(gameover{})
+			return
+		}
+		snake.Y--
+		advance()
+	case right:
+		if snake.X == width-1 {
+			cozely.Goto(gameover{})
+			return
+		}
+		snake.X++
+		advance()
+	case down:
+		if snake.Y == height-1 {
+			cozely.Goto(gameover{})
+			return
+		}
+		snake.Y++
+		advance()
+	case left:
+		if snake.X == 0 {
+			cozely.Goto(gameover{})
+			return
+		}
+		snake.X--
+		advance()
+	}
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+func (loop) Render() {
+	pixel.Clear(1)
+	drawGrid()
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+type gameover struct{}
+
+var counter int
+
+func (gameover) Enter() {
+	counter = 0
+}
+
+func (gameover) Leave() {
+	if score > bestscore {
+		bestscore = score
+	}
+}
+
+func (gameover) React() {
+	if input.MenuBack.Pushed() {
+		cozely.Stop(nil)
+	}
+
+	if input.MenuSelect.Pushed() {
+		cozely.Goto(menu{})
+	}
+	return
+}
+
+func (gameover) Update() {
+	counter++
+	if counter == 16 {
+		cozely.Goto(menu{})
+	}
+}
+
+func (gameover) Render() {
+	pixel.Clear(2)
+	if counter%2 == 0 {
+		c := pixel.Cursor{
+			Position: pixel.XY{40, 16},
+		}
+		c.Print("*** GAME OVER ***")
+	}
+	drawGrid()
+}
+
+////////////////////////////////////////////////////////////////////////////////
 
 func setupGrid() {
 	grid = [width][height]cell{}
@@ -94,99 +231,20 @@ func addFruit() {
 	}
 }
 
-func (loop) Leave() {
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-func (loop) React() {
-	if input.MenuBack.Pushed() {
-		cozely.Stop(nil)
-	}
-
-	if state == paused {
-		if input.MenuSelect.Pushed() {
-			state = playing
-		}
-		return
-	}
-
-	if state == gameover {
-		if input.MenuSelect.Pushed() {
-			setupGrid()
-			state = paused
-		}
-		return
-	}
-
-	if input.MenuUp.Pushed() && direction != down {
-		next = up
-	}
-	if input.MenuRight.Pushed() && direction != left {
-		next = right
-	}
-	if input.MenuDown.Pushed() && direction != up {
-		next = down
-	}
-	if input.MenuLeft.Pushed() && direction != right {
-		next = left
-	}
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-func (loop) Update() {
-	if state != playing {
-		return
-	}
-
-	direction = next
-
-	switch direction {
-	case up:
-		if snake.Y == 0 {
-			state = gameover
-			return
-		}
-		snake.Y--
-		advance()
-	case right:
-		if snake.X == width-1 {
-			state = gameover
-			return
-		}
-		snake.X++
-		advance()
-	case down:
-		if snake.Y == height-1 {
-			state = gameover
-			return
-		}
-		snake.Y++
-		advance()
-	case left:
-		if snake.X == 0 {
-			state = gameover
-			return
-		}
-		snake.X--
-		advance()
-	}
-}
-
 func advance() {
 	if grid[snake.X][snake.Y] == fruit {
 		grid[snake.X][snake.Y] = direction
 		addFruit()
+		score++
 		return
 	}
 	if grid[snake.X][snake.Y] != empty {
-		state = gameover
+		cozely.Goto(gameover{})
 		return
 	}
 	grid[snake.X][snake.Y] = direction
 	x, y := snake.X, snake.Y
-	for i := 0; true; i++ {
+	for i := 0; i < width*height; i++ {
 		xx, yy := x, y
 		switch grid[x][y] {
 		case up:
@@ -198,7 +256,6 @@ func advance() {
 		case left:
 			xx++
 		default:
-			println("OUCH!")
 			panic(nil)
 		}
 		if grid[xx][yy] == tail {
@@ -207,25 +264,8 @@ func advance() {
 			return
 		}
 		x, y = xx, yy
-		if i > 1000 {
-			panic(nil)
-			println("OOO?")
-		}
 	}
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-func (loop) Render() {
-	pixel.Clear(1)
-	c := pixel.Cursor{}
-	if state == paused {
-		c.Print("Press [space] to start")
-	}
-	drawGrid()
-	if state == gameover {
-		c.Print("*** Game Over ***")
-	}
+	panic(nil)
 }
 
 func drawGrid() {
@@ -263,6 +303,14 @@ func drawGrid() {
 			}
 		}
 	}
+	c := pixel.Cursor{
+		Position: pixel.XY{25, 170},
+	}
+	if score > 0 {
+		c.Printf("Score: %2d", score)
+	}
+	if bestscore > 0 {
+		c.Position = pixel.XY{109, 170}
+		c.Printf("Best: %2d", bestscore)
+	}
 }
-
-////////////////////////////////////////////////////////////////////////////////
