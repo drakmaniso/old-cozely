@@ -35,9 +35,6 @@ func TestTest2(t *testing.T) {
 		l := loop2{}
 		l.declare()
 
-		cozely.Configure(
-			cozely.UpdateStep(1 / 60.0),
-		)
 		window.Events.Resize = l.resize
 		err := cozely.Run(&l)
 		if err != nil {
@@ -46,99 +43,99 @@ func TestTest2(t *testing.T) {
 	})
 }
 
-func (a *loop2) declare() {
+func (l *loop2) declare() {
 	pixel.SetZoom(2)
 
-	a.txtcol = 7
+	l.txtcol = 7
 
-	a.picts = []pixel.PictureID{
+	l.picts = []pixel.PictureID{
 		pixel.Picture("graphics/shape1"),
 		pixel.Picture("graphics/shape2"),
 		pixel.Picture("graphics/shape3"),
 		pixel.Picture("graphics/shape4"),
 	}
-	a.shapes = make([]shape, 200000)
+	l.shapes = make([]shape, 200000)
 }
 
-func (a *loop2) Enter() {
+func (l *loop2) Enter() {
 }
 
 func (loop2) Leave() {
 }
 
-func (a *loop2) resize() {
+func (l *loop2) resize() {
 	s := pixel.Resolution()
-	for i := range a.shapes {
-		j := rand.Intn(len(a.picts))
-		p := a.picts[j]
-		a.shapes[i].pict = p
-		a.shapes[i].pos.X = int16(rand.Intn(int(s.X - p.Size().X)))
-		a.shapes[i].pos.Y = int16(rand.Intn(int(s.Y - p.Size().Y)))
+	for i := range l.shapes {
+		j := rand.Intn(len(l.picts))
+		p := l.picts[j]
+		l.shapes[i].pict = p
+		l.shapes[i].pos.X = int16(rand.Intn(int(s.X - p.Size().X)))
+		l.shapes[i].pos.Y = int16(rand.Intn(int(s.Y - p.Size().Y)))
 	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (a *loop2) React() {
+func (l *loop2) React() {
 	if scenes[1].Pushed() {
-		a.shapes = make([]shape, 1000)
-		a.resize()
+		l.shapes = make([]shape, 1000)
+		l.resize()
 	}
 	if scenes[2].Pushed() {
-		a.shapes = make([]shape, 10000)
-		a.resize()
+		l.shapes = make([]shape, 10000)
+		l.resize()
 	}
 	if scenes[3].Pushed() {
-		a.shapes = make([]shape, 100000)
-		a.resize()
+		l.shapes = make([]shape, 100000)
+		l.resize()
 	}
 	if scenes[4].Pushed() {
-		a.shapes = make([]shape, 200000)
-		a.resize()
+		l.shapes = make([]shape, 200000)
+		l.resize()
 	}
 	if scenes[5].Pushed() {
-		a.shapes = make([]shape, 300000)
-		a.resize()
+		l.shapes = make([]shape, 300000)
+		l.resize()
 	}
 	if scenes[6].Pushed() {
-		a.shapes = make([]shape, 350000)
-		a.resize()
+		l.shapes = make([]shape, 350000)
+		l.resize()
 	}
 	if scenes[7].Pushed() {
-		a.shapes = make([]shape, 400000)
-		a.resize()
+		l.shapes = make([]shape, 400000)
+		l.resize()
 	}
 	if scenes[8].Pushed() {
-		a.shapes = make([]shape, 450000)
-		a.resize()
+		l.shapes = make([]shape, 450000)
+		l.resize()
 	}
 	if scenes[9].Pushed() {
-		a.shapes = make([]shape, 500000)
-		a.resize()
+		l.shapes = make([]shape, 500000)
+		l.resize()
 	}
 	if scenes[0].Pushed() {
-		a.shapes = make([]shape, 10)
-		a.resize()
+		l.shapes = make([]shape, 10)
+		l.resize()
 	}
 	if scrollup.Pushed() {
-		a.shapes = make([]shape, len(a.shapes)+1000)
-		a.resize()
+		l.shapes = make([]shape, len(l.shapes)+1000)
+		l.resize()
 	}
-	if scrolldown.Pushed() && len(a.shapes) > 1000 {
-		a.shapes = make([]shape, len(a.shapes)-1000)
-		a.resize()
+	if scrolldown.Pushed() && len(l.shapes) > 1000 {
+		l.shapes = make([]shape, len(l.shapes)-1000)
+		l.resize()
 	}
 	if next.Pushed() {
-		a.shapes = append(a.shapes, shape{})
-		i := len(a.shapes) - 1
-		j := rand.Intn(len(a.picts))
-		p := a.picts[j]
-		a.shapes[i].pict = p
+		l.shapes = append(l.shapes, shape{})
+		i := len(l.shapes) - 1
+		j := rand.Intn(len(l.picts))
+		p := l.picts[j]
+		l.shapes[i].pict = p
 		//TODO:
-		a.shapes[i].pos = pixel.XYof(cursor.XY()).Minus(p.Size().Slash(2))
+		l.shapes[i].pos = pixel.XYof(cursor.XY()).Minus(p.Size().Slash(2))
 	}
-	if previous.Pushed() && len(a.shapes) > 0 {
-		a.shapes = a.shapes[:len(a.shapes)-1]
+	if previous.Pushed() && len(l.shapes) > 0 {
+		l.shapes = l.shapes[:len(l.shapes)-1]
 	}
 	if quit.Pushed() {
 		cozely.Stop(nil)
@@ -146,12 +143,11 @@ func (a *loop2) React() {
 }
 
 func (loop2) Update() {
-
 }
 
-func (a *loop2) Render() {
+func (l *loop2) Render() {
 	pixel.Clear(0)
-	for i, o := range a.shapes {
+	for i, o := range l.shapes {
 		l := i - (0xFFFF / 2)
 		if l > 0xFFFF/2 {
 			l = 0xFFFF / 2
@@ -159,10 +155,10 @@ func (a *loop2) Render() {
 		o.pict.Paint(int16(l), o.pos)
 	}
 	cur := pixel.Cursor{}
-	cur.Style(a.txtcol, pixel.Monozela10)
+	cur.Style(l.txtcol, pixel.Monozela10)
 	cur.Locate(0xFFFF/2, pixel.XY{8, 16})
 	ft, ov := cozely.RenderStats()
-	cur.Printf("%dk pictures: %6.2f", len(a.shapes)/1000, ft*1000)
+	cur.Printf("%dk pictures: %6.2f", len(l.shapes)/1000, ft*1000)
 	if ov > 0 {
 		cur.Printf(" (%d)", ov)
 	}

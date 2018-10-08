@@ -87,19 +87,6 @@ void main(void)
 		UV += corners[vertex] * wh;
 		break;
 
-	// case cmdText:
-	// 	// Mapping of the current character
-	// 	p6 *= 5;
-	// 	Bin = texelFetch(pictureMap, p6+0).r;
-	// 	UV = vec2(texelFetch(pictureMap, p6+1).r, texelFetch(pictureMap, p6+2).r);
-	// 	wh = vec2(texelFetch(pictureMap, p6+3).r, texelFetch(pictureMap, p6+4).r);
-	// 	// Character quad
-	// 	p = (CanvasMargin + vec2(x, y) + corners[vertex] * wh) * PixelSize;
-	// 	gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), floatZ(z), 1);
-	// 	UV += corners[vertex] * wh;
-	// 	ColorIndex = uint(c&0xFFFF);
-	// 	break;
-
 	case cmdPoint:
 		// Position
 		p = (CanvasMargin + vec2(x, y) + corners[vertex]) * PixelSize;

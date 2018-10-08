@@ -31,8 +31,7 @@ const (
 )
 
 const (
-	maxCommandCount = 1024
-	maxParamCount   = 4 * 1024
+	maxParamCount   = 8 * 1024
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -61,11 +60,10 @@ type glRenderer struct {
 	paletteSSBO gl.StorageBuffer
 
 	// Command queue
-	clearQueued      bool
-	clearColor       color.Index
-	commands         int32
-	parametersTBO    gl.BufferTexture
-	parameters       []int16
+	clearQueued   bool
+	clearColor    color.Index
+	parametersTBO gl.BufferTexture
+	parameters    []int16
 }
 
 // Note: The uniform structs need to be at top level to pass cgo's pointer
@@ -100,7 +98,6 @@ func (r *glRenderer) setup() error {
 	r.canvasBuf = gl.NewFramebuffer()
 	r.filterBuf = gl.NewFramebuffer()
 
-	r.commands = 0
 	r.parameters = make([]int16, 0, maxParamCount)
 	r.parametersTBO = gl.NewBufferTexture(
 		uintptr(cap(r.parameters))*unsafe.Sizeof(r.parameters[0]),
@@ -271,7 +268,6 @@ func (r *glRenderer) clear(c color.Index) {
 func (r *glRenderer) command(c int16, color, layer, x, y, p4, p5, p6, p7 int16) {
 	pcap := cap(r.parameters)
 
-	r.commands++
 	r.parameters = append(
 		r.parameters,
 		c<<12|(color&0xFF),
@@ -318,7 +314,7 @@ func (r *glRenderer) render() error {
 		r.canvasBuf.ClearDepth(-1.0)
 	}
 
-	if r.commands == 0 {
+	if len(r.parameters) == 0 {
 		goto display
 	}
 
@@ -334,8 +330,7 @@ func (r *glRenderer) render() error {
 	r.picturesTA.Bind(layoutPictures)
 
 	r.parametersTBO.SubData(r.parameters, 0)
-	gl.DrawInstanced(0, 4, r.commands)
-	r.commands = 0
+	gl.DrawInstanced(0, 4, int32(len(r.parameters)/8))
 	r.parameters = r.parameters[:0]
 
 	// Display the canvas on the game window.
