@@ -41,7 +41,10 @@ Hello World example:
 	func (loop) Render() {
 		// Render the game state
 		pixel.Clear(1)
-		cur := pixel.Cursor{}
+		cur := pixel.Cursor{
+			Position: pixel.XY{8, 16},
+			Color: 7,
+		}
 		cur.Print("Hello, World!")
 	}
 

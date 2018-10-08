@@ -76,16 +76,16 @@ func (a *loop3) Render() {
 
 	cur := pixel.Cursor{}
 
-	cur.Style(a.fg, pixel.Monozela10)
+	cur.Color = a.fg
 
-	cur.Locate(0, pixel.XY{2, 8})
+	cur.Position = pixel.XY{2, 8}
 	cur.Println("a quick brown fox \"jumps\" over the (lazy) dog.")
 	cur.Println("A QUICK BROWN FOX \"JUMPS\" OVER THE (LAZY) DOG.")
 	cur.Println("0123456789!@#$^&*()-+=_~[]{}|\\;:'\",.<>/?%")
 	cur.Println("12+34 56-7.8 90*13 24/35 -5 +2 3*(2+5) 4<5 6>2 2=1+1 *f := &x;")
 	cur.Println()
 
-	cur.Locate(0, pixel.XY{16, 100})
+	cur.Position = pixel.XY{16, 100}
 	cur.Write([]byte("Foo"))
 	cur.Position = cur.Position.Plus(pixel.XY{1, 3})
 	cur.WriteRune('B')
@@ -97,7 +97,7 @@ func (a *loop3) Render() {
 	cur.Write([]byte("Boo\n"))
 	cur.Write([]byte("Choo"))
 
-	cur.Locate(0, pixel.XY{16, 200})
+	cur.Position = pixel.XY{16, 200}
 	cur.Font = a.tinela9
 	cur.Print("Tinela")
 	cur.Font = a.simpela10
@@ -111,7 +111,7 @@ func (a *loop3) Render() {
 	cur.Font = a.chaotela12
 	cur.Print("Chaotela12")
 
-	cur.Locate(0, pixel.XY{pixel.Resolution().X - 200, 9})
+	cur.Position = pixel.XY{pixel.Resolution().X - 200, 9}
 	cur.Font = pixel.FontID(0)
 	m := pixel.XYof(cursor.XY())
 	cur.Printf("Position x=%d, y=%d\n", m.X, m.Y)

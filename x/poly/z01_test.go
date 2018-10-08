@@ -20,7 +20,7 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 
 var (
-	quit    = input.Button("Quit")
+	quit      = input.Button("Quit")
 	rotate    = input.Button("Rotate")
 	move      = input.Button("Move")
 	onward    = input.Button("Onward")
@@ -235,7 +235,7 @@ func (loop) Render() {
 	cur := pixel.Cursor{
 		Color: 7,
 	}
-	cur.Locate(0, pixel.XY{2, 12})
+	cur.Position = pixel.XY{2, 12}
 	ft, or := cozely.RenderStats()
 	cur.Printf("% 3.2f", ft*1000)
 	if or > 0 {

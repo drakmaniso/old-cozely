@@ -81,6 +81,12 @@ func (f FontID) Height() int16 {
 	return fonts[f].height
 }
 
+// Interline returns the default interline of the font, i.e. the vertical
+// distance between the baselines of two consecutive lines.
+func (f FontID) Interline() int16 {
+	return int16(float32(fonts[f].height) * 1.25)
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 func (f FontID) load(frects *[]uint32) error {

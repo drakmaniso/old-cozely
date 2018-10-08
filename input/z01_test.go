@@ -111,8 +111,8 @@ func (loop1) Render() {
 
 	cur := pixel.Cursor{}
 
-	cur.Locate(0, pixel.XY{2, 12})
-	cur.Style(7, pixel.Monozela10)
+	cur.Position = pixel.XY{2, 12}
+	cur.Color = 7
 
 	cur.Println()
 	changecolor(&cur, false)
@@ -160,7 +160,7 @@ func (loop1) Render() {
 	cur.Printf("   Delta = %+12.6f, %+12.6f\n", d.X, d.Y)
 
 	changecolor(&cur, false)
-	cur.Locate(0, pixel.XY{2, pixel.Resolution().Y - 14})
+	cur.Position = pixel.XY{2, pixel.Resolution().Y - 14}
 	dv := input.CurrentDevice()
 	cur.Printf("Current device: %d = %s", dv, dv.Name())
 
@@ -170,9 +170,9 @@ func (loop1) Render() {
 
 func changecolor(cur *pixel.Cursor, p bool) {
 	if p {
-		cur.Style(14, pixel.Monozela10)
+		cur.Color = 14
 	} else {
-		cur.Style(7, pixel.Monozela10)
+		cur.Color = 7
 	}
 }
 

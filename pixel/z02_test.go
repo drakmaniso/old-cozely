@@ -154,9 +154,11 @@ func (l *loop2) Render() {
 		}
 		o.pict.Paint(int16(l), o.pos)
 	}
-	cur := pixel.Cursor{}
-	cur.Style(l.txtcol, pixel.Monozela10)
-	cur.Locate(0xFFFF/2, pixel.XY{8, 16})
+	cur := pixel.Cursor{
+		Position: pixel.XY{8, 16},
+		Layer: 0xFFFF/2,
+		Color: l.txtcol,
+	}
 	ft, ov := cozely.RenderStats()
 	cur.Printf("%dk pictures: %6.2f", len(l.shapes)/1000, ft*1000)
 	if ov > 0 {

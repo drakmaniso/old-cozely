@@ -14,32 +14,13 @@ import (
 
 // A Cursor is used to write text on the canvas.
 type Cursor struct {
-	Color         color.Index
-	Font          FontID
-	Margin        int16
-	LetterSpacing int16
-	Interline     int16
-	Position      XY
+	Position      XY    // Current position (updated by Print and Write)
+	Margin        int16 // X coordinate for new lines
 	Layer         int16
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-// Style configures the color and font used to display text on the canvas. It
-// also sets the cursor Interline to a sensible default for the selected font.
-func (a *Cursor) Style(c color.Index, f FontID) {
-	a.Color = c
-	a.Font = f
-	a.Interline = int16(float32(a.Font.Height()) * 1.25)
-}
-
-// Locate moves the text cursor to a specific position. It also defines column
-// p.X as the cursor margin, i.e. the column to which the cursor returns to
-// start a new line.
-func (a *Cursor) Locate(layer int16, p XY) {
-	a.Layer = layer
-	a.Position = XY{p.X, p.Y}
-	a.Margin = a.Position.X
+	Font          FontID
+	Color         color.Index
+	LetterSpacing int16 // Additional space between letters, in pixels
+	LineSpacing   int16 // Additional space between lines, in pixels
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -94,16 +75,8 @@ func (a *Cursor) Write(p []byte) (n int, err error) {
 
 // WriteRune asks the GPU to display a single rune on the canvas.
 func (a *Cursor) WriteRune(r rune) {
-	if a.Font == 0 && a.Interline == 0 {
-		a.Color = 7
-		a.Interline = int16(float32(a.Font.Height()) * 1.25)
-		if a.Position.X == 0 && a.Position.Y == 0 {
-			a.Position.X = 4
-			a.Position.Y = a.Interline
-		}
-	}
 	if r == '\n' {
-		a.Position.Y += a.Interline
+		a.Position.Y += a.LineSpacing + a.Font.Interline()
 		a.Position.X = a.Margin
 		return
 	}
