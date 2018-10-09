@@ -16,7 +16,7 @@ in PerVertex {
 	layout(location=0) flat uint Command;
 	layout(location=1) flat uint Bin;
 	layout(location=2) vec2 UV;
-	layout(location=3) flat uint ColorIndex;
+	layout(location=3) flat uint ColorParam;
 	layout(location=4) flat vec4 Box;
 	layout(location=5) flat float Slope;
 	layout(location=6) flat uint Flags;
@@ -32,7 +32,7 @@ layout(binding = 3) uniform usampler2DArray Pictures;
 
 ////////////////////////////////////////////////////////////////////////////////
 
-out uint out_color;
+out uint Color;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -46,7 +46,7 @@ void main(void)
 		if (p == 0) {
 			c = 0;
 		} else {
-			c = p + ColorIndex;
+			c = p + ColorParam;
 			if (c > 255) {
 				c -= 255;
 			}
@@ -55,7 +55,7 @@ void main(void)
 
 	case cmdPoint:
 	case cmdTriangle:
-		c = ColorIndex;
+		c = ColorParam;
 		break;
 
 	case cmdLine:
@@ -63,11 +63,11 @@ void main(void)
 		y = gl_FragCoord.y - Box.y;
 		if (Flags == steep) {
 			if (x == round(Slope*y)) {
-				c = ColorIndex;
+				c = ColorParam;
 			}
 		} else {
 			if (y == round(Slope*x)) {
-				c = ColorIndex;
+				c = ColorParam;
 			}
 		}
 		break;
@@ -81,9 +81,9 @@ void main(void)
 		if (dx + dy < cor) {
 			c = 0;
 		}	else if (dx + dy == cor || dx < 1 || dy < 1) {
-			c = ColorIndex>>8;
+			c = ColorParam>>8;
 		} else {
-			c = ColorIndex&0xFF;
+			c = ColorParam&0xFF;
 		}
 
 		break;
@@ -93,7 +93,7 @@ void main(void)
 		discard;
 	}
 
-	out_color = c;
+	Color = c;
 }
 `
 
