@@ -54,7 +54,7 @@ func (l *loop2) declare() {
 		pixel.Picture("graphics/shape3"),
 		pixel.Picture("graphics/shape4"),
 	}
-	l.shapes = make([]shape, 200000)
+	l.shapes = make([]shape, 400000)
 }
 
 func (l *loop2) Enter() {

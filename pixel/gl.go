@@ -113,7 +113,7 @@ func (r *glRenderer) setup() error {
 		gl.VertexShader(strings.NewReader(drawVertexShader)),
 		gl.FragmentShader(strings.NewReader(drawFragmentShader)),
 		gl.CullFace(false, false),
-		gl.Topology(gl.TriangleStrip),
+		gl.Topology(gl.Triangles),
 		gl.DepthTest(true),
 		gl.DepthWrite(true),
 		gl.DepthComparison(gl.GreaterOrEqual),
@@ -330,7 +330,7 @@ func (r *glRenderer) render() error {
 	r.picturesTA.Bind(layoutPictures)
 
 	r.parametersTBO.SubData(r.parameters, 0)
-	gl.DrawInstanced(0, 4, int32(len(r.parameters)/8))
+	gl.Draw(0, 6 * int32(len(r.parameters)/8))
 	r.parameters = r.parameters[:0]
 
 	// Display the canvas on the game window.

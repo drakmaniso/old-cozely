@@ -10,8 +10,10 @@ const uint cmdLine       = 3;
 const uint cmdBox        = 4;
 const uint cmdPoint      = 5;
 
-const vec2 corners[4] = vec2[4](
+const vec2 corners[6] = vec2[6](
 	vec2(0, 0),
+	vec2(1, 0),
+	vec2(0, 1),
 	vec2(1, 0),
 	vec2(0, 1),
 	vec2(1, 1)
@@ -57,8 +59,9 @@ float floatZ(int z) {
 
 void main(void)
 {
-	int param = gl_InstanceID * 8;
-	int vertex = gl_VertexID;
+	int param = gl_VertexID / 6;
+	int vertex = gl_VertexID % 6;
+	param *= 8;
 
 	uint c = texelFetch(parameters, param+0).r;
 	Command = c >> 12;
@@ -73,7 +76,7 @@ void main(void)
 
 	int dx, dy;
 	vec2 p, wh;
-	vec2 t, n, pts[4];
+	vec2 t, n, pts[6];
 	switch (Command) {
 	case cmdPicture:
 		// Mapping of the picture
@@ -101,8 +104,10 @@ void main(void)
 		Flags = uint(abs(dx) < abs(dy)) * steep;
 		t = 0.25*normalize(vec2(dx, dy));
 		n = 0.75*normalize(vec2(-dy, dx));
-		pts = vec2[4](
+		pts = vec2[6](
 			vec2(x, y)+n-t,
+			vec2(x, y)-n-t,
+			vec2(p4, p5)+n+t,
 			vec2(x, y)-n-t,
 			vec2(p4, p5)+n+t,
 			vec2(p4, p5)-n+t
@@ -118,7 +123,7 @@ void main(void)
 
 	case cmdTriangle:
 		// Parameters
-		switch (gl_VertexID) {
+		switch (vertex) {
 		case 0:
 			break;
 		case 1:
@@ -127,6 +132,8 @@ void main(void)
 			break;
 		case 2:
 		case 3:
+		case 4:
+		case 5:
 			x = p6;
 			y = p7;
 			break;
