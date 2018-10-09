@@ -101,12 +101,12 @@ func (loop1) Render() {
 		cir = append(cir, toScreen(coord.RA{r, a}.XY().Plus(d)))
 	}
 	for i := 0; i < len(cir)-1; i++ {
-		pixel.Line(col5, 0, cir[i], cir[i+1])
+		pixel.Line(cir[i], cir[i+1], 0, col5)
 	}
-	pixel.Triangle(col7, 0, pt[0], pt[1], pt[2])
-	pixel.Line(col6, 0, pt[0], pt[1])
-	pixel.Line(col6, 0, pt[1], pt[2])
-	pixel.Line(col6, 0, pt[2], pt[0])
+	pixel.Triangle(pt[0], pt[1], pt[2], 0, col7)
+	pixel.Line(pt[0], pt[1], 0, col6)
+	pixel.Line(pt[1], pt[2], 0, col6)
+	pixel.Line(pt[2], pt[0], 0, col6)
 	for i := range points {
 		var c color.Index
 		switch i {
@@ -117,7 +117,7 @@ func (loop1) Render() {
 		case 2:
 			c = col4
 		}
-		pixel.Box(c, c, 0, 2, pt[i].Minus(s), s.Times(2))
+		pixel.Box(pt[i].Minus(s), s.Times(2), 0, 2, c, c)
 		cur.Position = pixel.XY{pt[i].X - 2, pt[i].Y + 3}
 		cur.Color = col1
 		cur.Print([]string{"A", "B", "C"}[i])
@@ -136,7 +136,7 @@ func (loop1) Render() {
 	} else {
 		cur.Println(" ")
 	}
-	pixel.Point(col1, 0, m)
+	pixel.Point(m, 0, col1)
 
 	cur.Println()
 
@@ -181,8 +181,8 @@ func (loop1) Render() {
 	cur.Color = col1
 	cur.Printf("Circumcenter: %.3f, %.3f\n", d.X, d.Y)
 	dd := toScreen(d)
-	pixel.Line(col5, 0, dd.MinusS(2), dd.PlusS(2))
-	pixel.Line(col5, 0, dd.Minus(pixel.XY{-2, 2}), dd.Plus(pixel.XY{-2, 2}))
+	pixel.Line(dd.MinusS(2), dd.PlusS(2), 0, col5)
+	pixel.Line(dd.Minus(pixel.XY{-2, 2}), dd.Plus(pixel.XY{-2, 2}), 0, col5)
 }
 
 func toScreen(p coord.XY) pixel.XY {

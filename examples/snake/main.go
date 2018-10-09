@@ -262,9 +262,10 @@ var (
 
 func drawGrid() {
 	pixel.Box(
-		11, 3, 0, 0,
 		origin.Plus(cellsize).MinusS(1),
-		pixel.XY{width-2, height-2}.TimesXY(cellsize).PlusS(1),
+		pixel.XY{width - 2, height - 2}.TimesXY(cellsize).PlusS(1),
+		0, 0,
+		11, 3,
 	)
 	for x := int16(0); x < width; x++ {
 		for y := int16(0); y < height; y++ {
@@ -273,28 +274,32 @@ func drawGrid() {
 			switch grid[x][y] {
 			case fruit:
 				pixel.Box(
-					8, 8, 0, 5,
 					p,
 					cellsize,
+					0, 5,
+					8, 8,
 				)
 			case up, right, down, left, tail:
 				pixel.Box(
-					2, 15, 0, 2,
 					p,
 					cellsize,
+					0, 2,
+					2, 15,
 				)
 			}
 			if x == snake.X && y == snake.Y {
 				pixel.Box(
-					2, 14, 0, 2,
 					p,
 					cellsize,
+					0, 2,
+					2, 14,
 				)
 			}
 		}
 	}
 	c := pixel.Cursor{
 		Position: pixel.XY{25, pixel.Resolution().Y - 10},
+		Color: 7,
 	}
 	if score > 0 {
 		c.Printf("Score: %2d", score)

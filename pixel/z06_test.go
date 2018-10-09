@@ -65,24 +65,24 @@ func (a *loop6) Render() {
 	dy := pixel.XY{0, 20}
 
 	for i := int16(0); i < 16; i++ {
-		pixel.Box(7, 0, 0, i, o.Plus(dx.Times(i)), s)
+		pixel.Box(o.Plus(dx.Times(i)), s, 0, i, 7, 0)
 	}
 
 	o = o.Plus(dy)
 	for i := int16(0); i < 16; i++ {
-		pixel.Box(0, 13, 0, i, o.Plus(dx.Times(i)), s)
+		pixel.Box(o.Plus(dx.Times(i)), s, 0, i, 13, 0)
 	}
 
 	o = o.Plus(dy)
 	for i := int16(0); i < 16; i++ {
-		pixel.Box(7, 7, 0, i, o.Plus(dx.Times(i)), s)
+		pixel.Box(o.Plus(dx.Times(i)), s, 0, i, 7, 7)
 	}
 
 	o = o.Plus(dy)
 	for i := int16(0); i < 16; i++ {
-		pixel.Box(7, 13, 0, i, o.Plus(dx.Times(i)), s)
+		pixel.Box(o.Plus(dx.Times(i)), s, 0, i, 7, 13)
 	}
 
 	m := pixel.XYof(cursor.XY())
-	pixel.Point(8, 0, m)
+	pixel.Point(m, 8, 0)
 }

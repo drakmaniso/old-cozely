@@ -78,19 +78,19 @@ func (a *loop5) Render() {
 	m := pixel.XYof(cursor.XY())
 	if !scenes[3].Pressed() {
 		for i := 0; i < len(a.points) - 2; i++ {
-			pixel.Triangle(2, 0, a.points[i], a.points[i+1], a.points[i+2])
+			pixel.Triangle(a.points[i], a.points[i+1], a.points[i+2], 0, 2)
 		}
 	}
 	if !scenes[2].Pressed() {
 		for i := 0; i < len(a.points) - 1; i++ {
-			pixel.Line(14, 0, a.points[i], a.points[i+1])
+			pixel.Line(a.points[i], a.points[i+1], 0, 14)
 		}
-		pixel.Line(13, 0, a.points[len(a.points)-1], m)
+		pixel.Line(a.points[len(a.points)-1], m, 0, 13)
 	}
 	if !scenes[1].Pressed() {
 		for _, p := range a.points {
-			pixel.Point(8, 0, p)
+			pixel.Point(p, 0, 8)
 		}
-		pixel.Point(7, 0, m)
+		pixel.Point(m, 0, 7)
 	}
 }

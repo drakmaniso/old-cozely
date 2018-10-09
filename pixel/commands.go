@@ -10,37 +10,37 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 
 const (
-	cmdPicture    = 1
-	cmdTriangle   = 2
-	cmdLine       = 3
-	cmdBox        = 4
-	cmdPoint      = 5
+	cmdPicture  = 1
+	cmdTriangle = 2
+	cmdLine     = 3
+	cmdBox      = 4
+	cmdPoint    = 5
 )
 
 ////////////////////////////////////////////////////////////////////////////////
 
 // Paint queues a GPU command to put a picture on the canvas.
-func (p PictureID) Paint(layer int16, pos XY) {
-	renderer.command(cmdPicture, 0, layer, pos.X, pos.Y, 0, 0, int16(p), 0)
+func (p PictureID) Paint(pos XY, z Layer) {
+	renderer.command(cmdPicture, 0, int16(z), pos.X, pos.Y, 0, 0, int16(p), 0)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 // Point queues a GPU command to draw a point on the canvas.
-func Point(c color.Index, layer int16, pos XY) {
-	renderer.command(cmdPoint, int16(c), layer, pos.X, pos.Y, 0, 0, 0, 0)
+func Point(pos XY, z Layer, c color.Index) {
+	renderer.command(cmdPoint, int16(c), int16(z), pos.X, pos.Y, 0, 0, 0, 0)
 	// Line(c, layer, pos, pos)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 // Line queues a GPU command to draw a single line on the canvas.
-func Line(c color.Index, layer int16, start, end XY) {
+func Line(p1, p2 XY, z Layer, c color.Index) {
 	renderer.command(
 		cmdLine,
-		int16(c), layer,
-		start.X, start.Y,
-		end.X, end.Y,
+		int16(c), int16(z),
+		p1.X, p1.Y,
+		p2.X, p2.Y,
 		0, 0,
 	)
 }
@@ -48,20 +48,20 @@ func Line(c color.Index, layer int16, start, end XY) {
 ////////////////////////////////////////////////////////////////////////////////
 
 // Triangle queues a GPU command to draw a single triangle on the canvas.
-func Triangle(co color.Index, layer int16, a, b, c XY) {
+func Triangle(p1, p2, p3 XY, z Layer, co color.Index) {
 	renderer.command(
 		cmdTriangle,
-		int16(co), layer,
-		a.X, a.Y,
-		b.X, b.Y,
-		c.X, c.Y,
+		int16(co), int16(z),
+		p1.X, p1.Y,
+		p2.X, p2.Y,
+		p3.X, p3.Y,
 	)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 // Box queues a GPU command to draw a box on the canvas.
-func Box(fg, bg color.Index, layer int16, corner int16, position, size XY) {
+func Box(position, size XY, z Layer, corner int16, fg, bg color.Index) {
 	//TODO: maybe the shader can take this?
 	if size.X < 0 {
 		position.X = position.X + size.X
@@ -73,7 +73,7 @@ func Box(fg, bg color.Index, layer int16, corner int16, position, size XY) {
 	}
 	renderer.command(cmdBox,
 		int16(bg),
-		layer,
+		int16(z),
 		position.X, position.Y,
 		size.X, size.Y,
 		corner,

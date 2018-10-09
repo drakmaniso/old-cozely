@@ -152,7 +152,7 @@ func (l *loop2) Render() {
 		if l > 0xFFFF/2 {
 			l = 0xFFFF / 2
 		}
-		o.pict.Paint(int16(l), o.pos)
+		o.pict.Paint(o.pos, pixel.Layer(l))
 	}
 	cur := pixel.Cursor{
 		Position: pixel.XY{8, 16},

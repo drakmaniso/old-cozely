@@ -10,6 +10,12 @@ import (
 	"github.com/cozely/cozely/window"
 )
 
+////////////////////////////////////////////////////////////////////////////////
+
+// A Layer designates the virtual layer (i.e. depth) used to draw pixels on the
+// screen.
+type Layer int16
+
 //// Defintion /////////////////////////////////////////////////////////////////
 
 // XY represents the coordinates of a pixel on the canvas.

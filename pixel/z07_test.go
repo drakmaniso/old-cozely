@@ -128,7 +128,7 @@ func (a *loop7) Render() {
 	ps := a.pict.Size()
 	p := cs.Minus(ps).Slash(2)
 	_ = p
-	a.pict.Paint(0, p)
+	a.pict.Paint(p, 0)
 
 	cur := pixel.Cursor{}
 	cur.Color = 15
