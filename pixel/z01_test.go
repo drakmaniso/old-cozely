@@ -37,23 +37,23 @@ func TestTest1(t *testing.T) {
 	})
 }
 
-func (a *loop1) declare() {
+func (l *loop1) declare() {
 	pixel.SetResolution(pixel.XY{320, 180})
 
-	a.palmire = color.PaletteFrom("graphics/mire")
-	a.palsrgb = color.PaletteFrom("graphics/srgb-gray")
+	l.palmire = color.PaletteFrom("graphics/mire")
+	l.palsrgb = color.PaletteFrom("graphics/srgb-gray")
 
-	a.mire = pixel.Picture("graphics/mire")
-	a.srgbGray = pixel.Picture("graphics/srgb-gray")
-	a.srgbRed = pixel.Picture("graphics/srgb-red")
-	a.srgbGreen = pixel.Picture("graphics/srgb-green")
-	a.srgbBlue = pixel.Picture("graphics/srgb-blue")
+	l.mire = pixel.Picture("graphics/mire")
+	l.srgbGray = pixel.Picture("graphics/srgb-gray")
+	l.srgbRed = pixel.Picture("graphics/srgb-red")
+	l.srgbGreen = pixel.Picture("graphics/srgb-green")
+	l.srgbBlue = pixel.Picture("graphics/srgb-blue")
 }
 
-func (a *loop1) Enter() {
-	a.mode = 0
+func (l *loop1) Enter() {
+	l.mode = 0
 
-	pixel.SetPalette(a.palsrgb)
+	pixel.SetPalette(l.palsrgb)
 }
 
 func (loop1) Leave() {
@@ -61,7 +61,7 @@ func (loop1) Leave() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (a *loop1) React() {
+func (l *loop1) React() {
 	if input.MenuBack.Pushed() {
 		cozely.Stop(nil)
 	}
@@ -70,15 +70,15 @@ func (a *loop1) React() {
 func (loop1) Update() {
 }
 
-func (a *loop1) Render() {
+func (l *loop1) Render() {
 	pixel.Clear(0)
 	sz := pixel.Resolution()
 
-	pz := a.mire.Size()
-	a.mire.Paint(pixel.XY{0, 0}, 0)
-	a.mire.Paint(pixel.XY{0, sz.Y - pz.Y}, 0)
-	a.mire.Paint(pixel.XY{sz.X - pz.X, 0}, 0)
-	a.mire.Paint(sz.Minus(pz), 0)
+	pz := l.mire.Size()
+	l.mire.Paint(pixel.XY{0, 0}, 0)
+	l.mire.Paint(pixel.XY{0, sz.Y - pz.Y}, 0)
+	l.mire.Paint(pixel.XY{sz.X - pz.X, 0}, 0)
+	l.mire.Paint(sz.Minus(pz), 0)
 
 	pixel.Box(pz, sz.Minus(pz.Times(2)).MinusS(1), -1, 0, 3, 4)
 
@@ -92,11 +92,11 @@ func (a *loop1) Render() {
 		)
 	}
 
-	pz = a.srgbGray.Size()
-	a.srgbGray.Paint(pixel.XY{sz.X/2 - pz.X/2, 48}, 0)
-	a.srgbRed.Paint(pixel.XY{sz.X/4 - pz.X/2, 96}, 0)
-	a.srgbGreen.Paint(pixel.XY{sz.X/2 - pz.X/2, 96}, 0)
-	a.srgbBlue.Paint(pixel.XY{3*sz.X/4 - pz.X/2, 96}, 0)
+	pz = l.srgbGray.Size()
+	l.srgbGray.Paint(pixel.XY{sz.X/2 - pz.X/2, 48}, 0)
+	l.srgbRed.Paint(pixel.XY{sz.X/4 - pz.X/2, 96}, 0)
+	l.srgbGreen.Paint(pixel.XY{sz.X/2 - pz.X/2, 96}, 0)
+	l.srgbBlue.Paint(pixel.XY{3*sz.X/4 - pz.X/2, 96}, 0)
 
 	cur := pixel.Cursor{
 		Position: pixel.XY{sz.X/2 - pz.X/2 - 29, 66},

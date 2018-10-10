@@ -8,6 +8,7 @@ import (
 
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/color"
+	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
 )
 
@@ -38,20 +39,20 @@ func TestTest3(t *testing.T) {
 	})
 }
 
-func (a *loop3) declare() {
+func (l *loop3) declare() {
 	pixel.SetZoom(2)
 	//TODO:
-	a.bg = 7
-	a.fg = 1
+	l.bg = 7
+	l.fg = 1
 
-	a.tinela9 = pixel.Font("fonts/tinela9")
-	a.monozela10 = pixel.Font("fonts/monozela10")
-	a.simpela10 = pixel.Font("fonts/simpela10")
-	a.simpela12 = pixel.Font("fonts/simpela12")
-	a.cozela10 = pixel.Font("fonts/cozela10")
-	a.cozela12 = pixel.Font("fonts/cozela12")
-	a.chaotela12 = pixel.Font("fonts/chaotela12")
-	a.font = a.monozela10
+	l.tinela9 = pixel.Font("fonts/tinela9")
+	l.monozela10 = pixel.Font("fonts/monozela10")
+	l.simpela10 = pixel.Font("fonts/simpela10")
+	l.simpela12 = pixel.Font("fonts/simpela12")
+	l.cozela10 = pixel.Font("fonts/cozela10")
+	l.cozela12 = pixel.Font("fonts/cozela12")
+	l.chaotela12 = pixel.Font("fonts/chaotela12")
+	l.font = l.monozela10
 }
 
 func (a *loop3) Enter() {
@@ -63,7 +64,7 @@ func (loop3) Leave() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop3) React() {
-	if quit.Pushed() {
+	if input.MenuBack.Pushed() {
 		cozely.Stop(nil)
 	}
 }
@@ -71,12 +72,12 @@ func (loop3) React() {
 func (loop3) Update() {
 }
 
-func (a *loop3) Render() {
-	pixel.Clear(a.bg)
+func (l *loop3) Render() {
+	pixel.Clear(l.bg)
 
 	cur := pixel.Cursor{}
 
-	cur.Color = a.fg
+	cur.Color = l.fg
 
 	cur.Position = pixel.XY{2, 8}
 	cur.Println("a quick brown fox \"jumps\" over the (lazy) dog.")
@@ -98,21 +99,21 @@ func (a *loop3) Render() {
 	cur.Write([]byte("Choo"))
 
 	cur.Position = pixel.XY{16, 200}
-	cur.Font = a.tinela9
+	cur.Font = l.tinela9
 	cur.Print("Tinela")
-	cur.Font = a.simpela10
+	cur.Font = l.simpela10
 	cur.Print("Simpela10")
-	cur.Font = a.simpela12
+	cur.Font = l.simpela12
 	cur.Print("Simpela12")
-	cur.Font = a.cozela10
+	cur.Font = l.cozela10
 	cur.Print("Cozela10")
-	cur.Font = a.cozela12
+	cur.Font = l.cozela12
 	cur.Print("Cozela12")
-	cur.Font = a.chaotela12
+	cur.Font = l.chaotela12
 	cur.Print("Chaotela12")
 
 	cur.Position = pixel.XY{pixel.Resolution().X - 200, 9}
 	cur.Font = pixel.FontID(0)
-	m := pixel.XYof(cursor.XY())
+	m := pixel.XYof(input.MenuPointer.XY())
 	cur.Printf("Position x=%d, y=%d\n", m.X, m.Y)
 }

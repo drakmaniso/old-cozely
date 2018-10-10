@@ -13,16 +13,19 @@ import (
 	"github.com/cozely/cozely/color/msx"
 	"github.com/cozely/cozely/color/msx2"
 	"github.com/cozely/cozely/color/pico8"
+	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
 )
 
 // Declarations ////////////////////////////////////////////////////////////////
 
 type loop7 struct {
-	pict                pixel.PictureID
-	palette             color.Palette
-	orange, cyan, black color.Index
-	mode                int
+	pict     pixel.PictureID
+	palettes []struct {
+		string
+		color.Palette
+	}
+	current int
 }
 
 // Initialization //////////////////////////////////////////////////////////////
@@ -41,118 +44,83 @@ func TestTest7(t *testing.T) {
 	})
 }
 
-func (a *loop7) setup() {
-	a.pict = pixel.Picture("graphics/paletteswatch")
+func (l *loop7) setup() {
+	l.pict = pixel.Picture("graphics/paletteswatch")
+
+	l.palettes = []struct {
+		string
+		color.Palette
+	}{
+		{"Default Palette", pixel.DefaultPalette},
+		{"C64 Palette", c64.Palette},
+		{"CPC Palette", cpc.Palette},
+		{"MSX Palette", msx.Palette},
+		{"MSX2 Palette", msx2.Palette},
+		{"PICO8 Palette", pico8.Palette},
+	}
 
 	pixel.SetResolution(pixel.XY{160, 160})
 
-	a.mode = 0
+	l.current = 0
 }
 
-func (a *loop7) Enter() {
-	a.mode = 1
-	a.palette = color.Palette{
-		ByName: map[string]color.Index{},
-		Colors: []color.LRGBA{
-			{0.1, 0.1, 0.1, 0},
-			{0.2, 0.2, 0.2, 0},
-			{0.3, 0.3, 0.3, 0},
-			{0.4, 0.4, 0.4, 0},
-			{0.5, 0.5, 0.5, 0},
-			{0.6, 0.6, 0.6, 0},
-			{0.7, 0.7, 0.7, 0},
-			{0.8, 0.8, 0.8, 0},
-			{0.9, 0.9, 0.9, 0},
-			{1.0, 1.0, 1.0, 0},
-		},
-	}
+func (loop7) Enter() {
 }
 
-func (a *loop7) Leave() {
+func (loop7) Leave() {
 }
 
 // Game Loop ///////////////////////////////////////////////////////////////////
 
-func (a *loop7) React() {
-	if quit.Pushed() {
+func (l *loop7) React() {
+	if input.MenuBack.Pushed() {
 		cozely.Stop(nil)
 	}
 
-	if next.Pushed() {
-		a.mode++
-		if a.mode > 9 {
-			a.mode = 0
+	if input.MenuRight.Pushed() {
+		l.current++
+		if l.current >= len(l.palettes) {
+			l.current = len(l.palettes) - 1
 		}
+		setPalette(l.palettes[l.current].Palette)
 	}
+	if input.MenuLeft.Pushed() {
+		l.current--
+		if l.current < 0 {
+			l.current = 0
+		}
+		setPalette(l.palettes[l.current].Palette)
+	}
+}
 
-	for i := range scenes {
-		if scenes[i].Pushed() {
-			a.mode = i
+func (loop7) Update() {
+}
+
+func setPalette(p color.Palette) {
+	for i := 1; i < 256; i++ {
+		switch {
+		case i <= len(p.Colors):
+			pixel.SetColor(color.Index(i), p.Colors[i-1])
+		case i == 255:
+			pixel.SetColor(color.Index(i), color.LRGBA{1, 1, 1, 1})
+		default:
+			pixel.SetColor(color.Index(i), color.LRGBA{0, 0, 0, 1})
 		}
 	}
 }
 
-func (a *loop7) Update() {
-	switch a.mode {
-	case 1:
-		pixel.SetPalette(pixel.DefaultPalette)
-	case 2:
-		pixel.SetPalette(c64.Palette)
-	case 3:
-		pixel.SetPalette(cpc.Palette)
-	case 4:
-		pixel.SetPalette(msx.Palette)
-	case 5:
-		pixel.SetPalette(msx2.Palette)
-	case 6:
-		pixel.SetPalette(pico8.Palette)
-	case 7:
-		pixel.SetPalette(a.palette)
-	case 8:
-		pixel.SetPalette(a.palette)
-	case 9:
-		pixel.SetPalette(a.palette)
-	case 0:
-		pixel.SetPalette(a.palette)
-		a.orange = pixel.SetColor(255, color.SRGB{1, 0.6, 0})
-		a.cyan = pixel.SetColor(254, color.SRGB{0, 0.9, 1})
-		a.black = pixel.SetColor(253, color.SRGB{0, 0, 0})
-	}
-}
-
-func (a *loop7) Render() {
+func (l *loop7) Render() {
 	pixel.Clear(0)
 
 	cs := pixel.Resolution()
 
-	ps := a.pict.Size()
+	ps := l.pict.Size()
 	p := cs.Minus(ps).Slash(2)
 	_ = p
-	a.pict.Paint(p, 0)
+	l.pict.Paint(p, 0)
 
 	cur := pixel.Cursor{}
 	cur.Color = 15
 	cur.Position = p.Minus(pixel.XY{0, 8})
-	switch a.mode {
-	case 1:
-		cur.Print("Default Palette")
-	case 2:
-		cur.Print("C64 Palette")
-	case 3:
-		cur.Print("CPC Palette")
-	case 4:
-		cur.Print("MSX Palette")
-	case 5:
-		cur.Print("MSX2 Palette")
-	case 6:
-		cur.Print("PICO-8 Palette")
-	case 7:
-		cur.Print("Palette")
-	case 8:
-		cur.Print("Palette")
-	case 9:
-		cur.Print("Palette")
-	case 0:
-		cur.Print("Custom Palette")
-	}
+	cur.Print(l.palettes[l.current].string)
 }

@@ -32,11 +32,11 @@ func TestTest6(t *testing.T) {
 	})
 }
 
-func (a *loop6) declare() {
+func (loop6) declare() {
 	pixel.SetZoom(3)
 }
 
-func (a *loop6) Enter() {
+func (loop6) Enter() {
 	input.ShowMouse(false)
 }
 
@@ -46,7 +46,7 @@ func (loop6) Leave() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop6) React() {
-	if quit.Pushed() {
+	if input.MenuBack.Pushed() {
 		cozely.Stop(nil)
 	}
 }
@@ -54,7 +54,7 @@ func (loop6) React() {
 func (loop6) Update() {
 }
 
-func (a *loop6) Render() {
+func (loop6) Render() {
 	pixel.Clear(1)
 
 	const corner = 3
@@ -83,6 +83,6 @@ func (a *loop6) Render() {
 		pixel.Box(o.Plus(dx.Times(i)), s, 0, i, 7, 13)
 	}
 
-	m := pixel.XYof(cursor.XY())
+	m := pixel.XYof(input.MenuPointer.XY())
 	pixel.Point(m, 8, 0)
 }
