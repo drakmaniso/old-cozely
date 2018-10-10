@@ -145,6 +145,7 @@ func (l *loop2) Render() {
 			l = 0xFFFF / 2
 		}
 		o.pict.Paint(o.pos, pixel.Layer(l))
+		// o.pict.Tile(o.pos, o.pict.Size(), pixel.Layer(l))
 	}
 	cur := pixel.Cursor{
 		Position: pixel.XY{8, 16},

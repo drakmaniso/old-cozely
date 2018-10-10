@@ -10,11 +10,13 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 
 const (
-	cmdPicture  = 1
-	cmdTriangle = 2
-	cmdLine     = 3
-	cmdBox      = 4
-	cmdPoint    = 5
+	cmdPicture    = 1
+	cmdTile       = 2
+	cmdSubpicture = 3
+	cmdTriangle   = 4
+	cmdLine       = 5
+	cmdPoint      = 6
+	cmdBox        = 7
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -22,6 +24,19 @@ const (
 // Paint queues a GPU command to put a picture on the canvas.
 func (p PictureID) Paint(pos XY, z Layer) {
 	renderer.command(cmdPicture, 0, int16(z), pos.X, pos.Y, 0, 0, int16(p), 0)
+}
+
+// Tile
+func (p PictureID) Tile(pos XY, size XY, z Layer) {
+	if size.X < 0 {
+		pos.X += size.X
+		size.X = -size.X
+	}
+	if size.Y < 0 {
+		pos.Y += size.Y
+		size.Y = -size.Y
+	}
+	renderer.command(cmdTile, 0, int16(z), pos.X, pos.Y, size.X, size.Y, int16(p), 0)
 }
 
 ////////////////////////////////////////////////////////////////////////////////

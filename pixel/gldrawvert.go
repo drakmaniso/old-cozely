@@ -5,10 +5,14 @@ const drawVertexShader = "\n" + `#version 460 core
 ////////////////////////////////////////////////////////////////////////////////
 
 const uint cmdPicture    = 1;
-const uint cmdTriangle   = 2;
-const uint cmdLine       = 3;
-const uint cmdBox        = 4;
-const uint cmdPoint      = 5;
+const uint cmdTile       = 2;
+const uint cmdSubpicture = 3;
+const uint cmdTriangle   = 4;
+const uint cmdLine       = 5;
+const uint cmdPoint      = 6;
+const uint cmdBox        = 7;
+
+const int mappingSize = 7;
 
 const vec2 corners[6] = vec2[6](
 	vec2(0, 0),
@@ -39,12 +43,15 @@ out gl_PerVertex {
 
 out PerVertex {
 	layout(location=0) flat uint Command;
-	layout(location=1) flat uint Bin;
-	layout(location=2) vec2 UV;
-	layout(location=3) flat uint ColorParam;
-	layout(location=4) flat vec4 Box;
-	layout(location=5) flat float Slope;
-	layout(location=6) flat uint Flags;
+	layout(location=1) flat uint ColorParam;
+	layout(location=2) flat uint Param1; // picture bin, line flag
+	layout(location=3) flat float Param2; // line slope
+	layout(location=4) flat ivec2 UV;
+	layout(location=5) flat ivec2 PictSize;
+	layout(location=6) flat ivec2 TileSize;
+	layout(location=7) flat ivec2 Borders;
+	layout(location=8) vec2 Position;
+	layout(location=9) flat vec4 Box;
 };
 
 const uint steep = 0x01;
@@ -69,20 +76,36 @@ void main(void)
 	int z = texelFetch(parameters, param+1).r;
 	int x = texelFetch(parameters, param+2).r;
 	int y = texelFetch(parameters, param+3).r;
-	int p4, p5, p6, p7;
+	int p4, p5, m, p6, p7;
 
-	vec2 p, wh;
+	vec2 p, uv, size;
 	switch (Command) {
 	case cmdPicture:
 		// Mapping of the picture
-		int m = 5 * texelFetch(parameters, param+6).r;
-		Bin = texelFetch(pictureMap, m+0).r;
-		UV = vec2(texelFetch(pictureMap, m+1).r, texelFetch(pictureMap, m+2).r);
-		wh = vec2(texelFetch(pictureMap, m+3).r, texelFetch(pictureMap, m+4).r);
+		m = mappingSize * texelFetch(parameters, param+6).r;
+		Param1 = texelFetch(pictureMap, m+0).r;
+		uv = ivec2(texelFetch(pictureMap, m+1).r, texelFetch(pictureMap, m+2).r);
+		size = vec2(texelFetch(pictureMap, m+3).r, texelFetch(pictureMap, m+4).r);
 		// Picture quad
-		p = (CanvasMargin + vec2(x, y) + corners[vertex] * wh) * PixelSize;
+		p = (CanvasMargin + vec2(x, y) + corners[vertex] * size) * PixelSize;
 		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), floatZ(z), 1);
-		UV += corners[vertex] * wh;
+		Position = uv + corners[vertex] * size;
+		break;
+
+	case cmdTile:
+		p4 = texelFetch(parameters, param+4).r;
+		p5 = texelFetch(parameters, param+5).r;
+		// Mapping of the picture
+		m = mappingSize * texelFetch(parameters, param+6).r;
+		Param1 = texelFetch(pictureMap, m+0).r;
+		UV = ivec2(texelFetch(pictureMap, m+1).r, texelFetch(pictureMap, m+2).r);
+		PictSize = ivec2(texelFetch(pictureMap, m+3).r, texelFetch(pictureMap, m+4).r);
+		TileSize = ivec2(p4, p5);
+		Borders = ivec2(texelFetch(pictureMap, m+5).r, texelFetch(pictureMap, m+6).r);
+		// Picture quad
+		p = (CanvasMargin + vec2(x, y) + corners[vertex] * TileSize) * PixelSize;
+		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), floatZ(z), 1);
+		Position = corners[vertex] * TileSize;
 		break;
 
 	case cmdPoint:
@@ -96,7 +119,7 @@ void main(void)
 		Box = vec4(x+CanvasMargin.x, y+CanvasMargin.y, p4+CanvasMargin.x, p5+CanvasMargin.y);
 		int dx = p4-x;
 		int dy = p5-y;
-		Flags = uint(abs(dx) < abs(dy)) * steep;
+		Param1 = uint(abs(dx) < abs(dy)) * steep;
 		vec2 t = 0.25*normalize(vec2(dx, dy));
 		vec2 n = 0.75*normalize(vec2(-dy, dx));
 		vec2 pts[6] = vec2[6](
@@ -109,10 +132,10 @@ void main(void)
 		);
 		p = (CanvasMargin + vec2(0.5,0.5) + pts[vertex].xy) * PixelSize;
 		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), floatZ(z), 1);
-		if (Flags == steep) {
-			Slope = float(dx)/float(dy);
+		if (Param1 == steep) {
+			Param2 = float(dx)/float(dy);
 		} else {
-			Slope = float(dy)/float(dx);
+			Param2 = float(dy)/float(dx);
 		}
 		break;
 
@@ -146,10 +169,10 @@ void main(void)
 		p5 = texelFetch(parameters, param+5).r;
 		p6 = texelFetch(parameters, param+6).r;
 		p7 = texelFetch(parameters, param+7).r;
-		wh = vec2(p4+1, p5+1);
-		Flags = p6;
+		size = vec2(p4+1, p5+1);
+		Param1 = p6;
 		Box = vec4(x+CanvasMargin.x, y+CanvasMargin.y, x+p4+CanvasMargin.x, y+p5+CanvasMargin.y);
-		p = (CanvasMargin + vec2(x, y) + corners[vertex] * wh) * PixelSize;
+		p = (CanvasMargin + vec2(x, y) + corners[vertex] * size) * PixelSize;
 		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), floatZ(z), 1);
 		ColorParam |= (p7 & 0xFF) << 8;
 		break;

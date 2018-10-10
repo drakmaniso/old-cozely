@@ -4,6 +4,7 @@
 package pixel
 
 import (
+	"encoding/json"
 	"errors"
 	"image"
 	"os"
@@ -38,9 +39,11 @@ var pictures = struct {
 }
 
 type mapping struct {
-	bin  int16
-	x, y int16
-	w, h int16
+	bin       int16
+	x, y      int16
+	w, h      int16
+	leftright int16
+	topbottom int16
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -116,9 +119,31 @@ func (p PictureID) load(prects *[]uint32) error {
 	}
 
 	n := pictures.path[p]
-	//TODO: support other image formats?
-	path := filepath.FromSlash(internal.Path + n + ".png")
+
+	conf := struct {
+		TopBorder    int8
+		BottomBorder int8
+		LeftBorder   int8
+		RightBorder  int8
+	}{}
+	path := filepath.FromSlash(internal.Path + n + ".json")
 	path, err := filepath.EvalSymlinks(path)
+	if err == nil {
+		f, err := os.Open(path)
+		if !os.IsNotExist(err) {
+			if err != nil {
+				return internal.Wrap(`opening `+path, err)
+			}
+			d := json.NewDecoder(f)
+			if err := d.Decode(&conf); err != nil {
+				return internal.Wrap(`decoding `+path, err)
+			}
+		}
+	}
+
+	//TODO: support other image formats?
+	path = filepath.FromSlash(internal.Path + n + ".png")
+	path, err = filepath.EvalSymlinks(path)
 	if err != nil {
 		return internal.Wrap("in path while scanning picture", err)
 	}
@@ -147,6 +172,8 @@ func (p PictureID) load(prects *[]uint32) error {
 	w, h := int16(m.Bounds().Dx()), int16(m.Bounds().Dy())
 
 	pictures.mapping[p].w, pictures.mapping[p].h = w, h
+	pictures.mapping[p].topbottom = int16(conf.TopBorder)<<8 | int16(conf.BottomBorder)
+	pictures.mapping[p].leftright = int16(conf.LeftBorder)<<8 | int16(conf.RightBorder)
 	pictures.image[p] = m
 	*prects = append(*prects, uint32(p))
 
