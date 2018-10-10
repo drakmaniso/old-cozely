@@ -58,7 +58,7 @@ func init() {
 	SetPalette(DefaultPalette)
 }
 
-var debugColor = color.LRGBA{0, 0, 0, 1}
+var debugColor = color.LRGBA{1, 0, 1, 1}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -75,7 +75,14 @@ func SetPalette(p color.Palette) {
 		case c-1 < len(p.Colors):
 			palette.colors[c] = p.Colors[c-1]
 		default:
-			palette.colors[c] = debugColor
+			switch c {
+			case 254:
+				palette.colors[c] = color.LRGBA{0, 0, 0, 1}
+			case 255:
+				palette.colors[c] = color.LRGBA{1, 1, 1, 1}
+			default:
+				palette.colors[c] = debugColor
+			}
 		}
 	}
 	palette.dirty = true

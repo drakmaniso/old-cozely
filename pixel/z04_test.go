@@ -10,6 +10,7 @@ import (
 
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/color"
+	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
 )
 
@@ -18,9 +19,10 @@ import (
 type loop4 struct {
 	fg, bg color.Index
 
-	tinela9, monozela10, simpela10, simpela12,
-	cozela10, cozela12, chaotela12, font pixel.FontID
+	fontNames []string
+	fonts     []pixel.FontID
 
+	font          int
 	interline     int16
 	letterspacing int16
 
@@ -52,14 +54,23 @@ func (a *loop4) declare() {
 	a.bg = 7
 	a.fg = 1
 
-	a.tinela9 = pixel.Font("fonts/tinela9")
-	a.monozela10 = pixel.Font("fonts/monozela10")
-	a.simpela10 = pixel.Font("fonts/simpela10")
-	a.simpela12 = pixel.Font("fonts/simpela12")
-	a.cozela10 = pixel.Font("fonts/cozela10")
-	a.cozela12 = pixel.Font("fonts/cozela12")
-	a.chaotela12 = pixel.Font("fonts/chaotela12")
-	a.font = a.monozela10
+	a.fontNames = []string{
+		"Monozela10 (builtin)",
+		"fonts/tinela9",
+		"fonts/simpela10",
+		"fonts/cozela10",
+		"fonts/monozela10",
+		"fonts/simpela12",
+		"fonts/cozela12",
+		"fonts/chaotela12",
+	}
+	a.fonts = []pixel.FontID{
+		pixel.Monozela10,
+	}
+	for i := 1; i < len(a.fontNames); i++ {
+		a.fonts = append(a.fonts, pixel.Font(a.fontNames[i]))
+	}
+	a.font = 0
 
 	a.interline = int16(18)
 	a.letterspacing = int16(0)
@@ -91,25 +102,50 @@ func (loop4) Leave() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (a *loop4) React() {
-	if scrollup.Pushed() {
+	if input.MenuBack.Pushed() {
+		cozely.Stop(nil)
+	}
+
+	if input.MenuRight.Pushed() {
+		a.font++
+		if a.font >= len(a.fonts) {
+			a.font = len(a.fonts) - 1
+		}
+	}
+	if input.MenuLeft.Pushed() {
+		a.font--
+		if a.font < 0 {
+			a.font = 0
+		}
+	}
+
+	if input.MenuSelect.Pushed() {
+		if a.show[0] == a.text[0] {
+			a.show = a.code
+			a.bg = 1
+			a.fg = 7
+		} else {
+			a.show = a.text
+			a.bg = 7
+			a.fg = 1
+		}
+		a.interline = 0
+	}
+}
+
+func (a *loop4) Update() {
+	if input.MenuUp.Pressed() {
 		a.line--
 		if a.line < 0 {
 			a.line = 0
 		}
 	}
-	if scrolldown.Pushed() {
+	if input.MenuDown.Pressed() {
 		a.line++
 		if a.line > len(a.show)-1 {
 			a.line = len(a.show) - 1
 		}
 	}
-
-	if quit.Pushed() {
-		cozely.Stop(nil)
-	}
-}
-
-func (loop4) Update() {
 }
 
 func (a *loop4) Render() {
@@ -117,75 +153,23 @@ func (a *loop4) Render() {
 
 	cur := pixel.Cursor{}
 	cur.Color = a.fg
-	cur.Font = a.font
-	cur.Position = pixel.XY{16, a.font.Height() + 2}
+	cur.Font = a.fonts[a.font]
+	cur.Position = pixel.XY{16, cur.Font.Height() + 2}
+	cur.Margin = cur.Position.X
 	cur.LetterSpacing = a.letterspacing
 	// u.Interline = fntInterline
 
 	y := cur.Position.Y
 
-	for l := a.line; l < len(a.show) && y < pixel.Resolution().Y; l++ {
+	l := a.line
+	for ; l < len(a.show) && y < pixel.Resolution().Y; l++ {
 		cur.Println(a.show[l])
 		y = cur.Position.Y
 	}
 
-	cur.Position = pixel.XY{pixel.Resolution().X - 96, 16}
-	cur.Printf("Line %d", a.line)
+	cur.Font = a.fonts[1]
+	cur.Position = pixel.XY{pixel.Resolution().X - 128, cur.Font.Height() + 3}
+	cur.Printf("Font: %s", a.fontNames[a.font])
+	cur.Position = pixel.XY{pixel.Resolution().X - 64, pixel.Resolution().Y - 3}
+	cur.Printf("Line: %d - %d", a.line, l-1)
 }
-
-//TODO:
-// func (fl fntLoop) KeyDown(l key.Keyabel, p key.Position) {
-// 	switch l {
-// 	case key.LabelSpace:
-// 		if fntShow[0] == fntText[0] {
-// 			fntShow = fntCode
-// 			curBg = color.Find("black")
-// 			curFg = color.Find("green")
-// 		} else {
-// 			fntShow = fntText
-// 			curBg = color.Find("white")
-// 			curFg = color.Find("black")
-// 		}
-// 		curScreen.Color = curFg - 1
-// 		fntLine = 0
-// 	case key.Label1:
-// 		font = tinela9
-// 	case key.Label2:
-// 		font = monozela10
-// 	case key.Label3:
-// 		font = simpela10
-// 	case key.Label4:
-// 		font = cozela10
-// 	case key.Label5:
-// 		font = simpela12
-// 	case key.Label6:
-// 		font = cozela12
-// 	case key.Label7:
-// 		font = chaotela12
-// 	case key.Label0:
-// 		font = pixel.Font(0)
-// 	case key.LabelKPDivide:
-// 		fntLetterSpacing--
-// 	case key.LabelKPMultiply:
-// 		fntLetterSpacing++
-// 	case key.LabelKPMinus:
-// 		fntInterline--
-// 	case key.LabelKPPlus:
-// 		fntInterline++
-// 	case key.LabelPageDown:
-// 		fntLine += 40
-// 		if fntLine > len(fntShow)-1 {
-// 			fntLine = len(fntShow) - 1
-// 		}
-// 	case key.LabelPageUp:
-// 		fntLine -= 40
-// 		if fntLine < 0 {
-// 			fntLine = 0
-// 		}
-// 	default:
-// 		fl.EmptyLoop.KeyDown(l, p)
-// 	}
-// }
-
-// func (fntLoop) MouseWheel(_, dy int32) {
-// }

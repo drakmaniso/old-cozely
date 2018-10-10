@@ -8,6 +8,7 @@ import (
 
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/color"
+	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
 )
 
@@ -52,7 +53,7 @@ func (a *loop1) declare() {
 func (a *loop1) Enter() {
 	a.mode = 0
 
-	pixel.SetPalette(a.palmire)
+	pixel.SetPalette(a.palsrgb)
 }
 
 func (loop1) Leave() {
@@ -61,21 +62,8 @@ func (loop1) Leave() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (a *loop1) React() {
-	if quit.Pushed() {
+	if input.MenuBack.Pushed() {
 		cozely.Stop(nil)
-	}
-
-	if next.Pushed() {
-		a.mode++
-		if a.mode > 1 {
-			a.mode = 0
-		}
-		switch a.mode {
-		case 0:
-			pixel.SetPalette(a.palmire)
-		case 1:
-			pixel.SetPalette(a.palsrgb)
-		}
 	}
 }
 
@@ -85,18 +73,36 @@ func (loop1) Update() {
 func (a *loop1) Render() {
 	pixel.Clear(0)
 	sz := pixel.Resolution()
-	switch a.mode {
-	case 0:
-		pz := a.mire.Size()
-		a.mire.Paint(pixel.XY{0, 0}, 0)
-		a.mire.Paint(pixel.XY{0, sz.Y - pz.Y}, 0)
-		a.mire.Paint(pixel.XY{sz.X - pz.X, 0}, 0)
-		a.mire.Paint(sz.Minus(pz), 0)
-	case 1:
-		pz := a.srgbGray.Size()
-		a.srgbGray.Paint(pixel.XY{sz.X/2 - pz.X/2, 32}, 0)
-		a.srgbRed.Paint(pixel.XY{sz.X/4 - pz.X/2, 96}, 0)
-		a.srgbGreen.Paint(pixel.XY{sz.X/2 - pz.X/2, 96}, 0)
-		a.srgbBlue.Paint(pixel.XY{3*sz.X/4 - pz.X/2, 96}, 0)
+
+	pz := a.mire.Size()
+	a.mire.Paint(pixel.XY{0, 0}, 0)
+	a.mire.Paint(pixel.XY{0, sz.Y - pz.Y}, 0)
+	a.mire.Paint(pixel.XY{sz.X - pz.X, 0}, 0)
+	a.mire.Paint(sz.Minus(pz), 0)
+
+	pixel.Box(pz, sz.Minus(pz.Times(2)).MinusS(1), -1, 0, 3, 4)
+
+	for i := int16(0); i < 6; i++ {
+		pixel.Box(
+			pixel.XY{sz.X/2 - 3*10 + i*10, sz.Y - 20},
+			pixel.XY{8, 8},
+			0,
+			i,
+			1, 3,
+		)
 	}
+
+	pz = a.srgbGray.Size()
+	a.srgbGray.Paint(pixel.XY{sz.X/2 - pz.X/2, 48}, 0)
+	a.srgbRed.Paint(pixel.XY{sz.X/4 - pz.X/2, 96}, 0)
+	a.srgbGreen.Paint(pixel.XY{sz.X/2 - pz.X/2, 96}, 0)
+	a.srgbBlue.Paint(pixel.XY{3*sz.X/4 - pz.X/2, 96}, 0)
+
+	cur := pixel.Cursor{
+		Position: pixel.XY{sz.X/2 - pz.X/2 - 29, 66},
+	}
+	cur.Color = 2
+	cur.Print("sRGB       ")
+	cur.Color = 3
+	cur.Print("Linear")
 }

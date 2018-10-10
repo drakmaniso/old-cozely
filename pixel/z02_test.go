@@ -9,6 +9,7 @@ import (
 
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/color"
+	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
 	"github.com/cozely/cozely/window"
 )
@@ -64,81 +65,72 @@ func (loop2) Leave() {
 }
 
 func (l *loop2) resize() {
-	s := pixel.Resolution()
-	for i := range l.shapes {
-		j := rand.Intn(len(l.picts))
-		p := l.picts[j]
-		l.shapes[i].pict = p
-		l.shapes[i].pos.X = int16(rand.Intn(int(s.X - p.Size().X)))
-		l.shapes[i].pos.Y = int16(rand.Intn(int(s.Y - p.Size().Y)))
+	s := len(l.shapes)
+	l.shapes = l.shapes[:0]
+	for i := 0; i < s; i++ {
+		l.addShape()
 	}
+}
+
+func (l *loop2) addShape() {
+	r := pixel.Resolution()
+	j := rand.Intn(len(l.picts))
+	p := l.picts[j]
+	s := shape{
+		pict: p,
+		pos: pixel.XY{
+			int16(rand.Intn(int(r.X - p.Size().X))),
+			int16(rand.Intn(int(r.Y - p.Size().Y))),
+		},
+	}
+	l.shapes = append(l.shapes, s)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 func (l *loop2) React() {
-	if scenes[1].Pushed() {
-		l.shapes = make([]shape, 1000)
+	if input.MenuBack.Pushed() {
+		cozely.Stop(nil)
+	}
+
+	s := len(l.shapes)
+	if input.MenuUp.Pushed() {
+		for i := 0; i < 50000; i++ {
+			l.addShape()
+		}
+	}
+	if input.MenuDown.Pushed() {
+		s -= 50000
+		if s < 0 {
+			s = 0
+		}
+		l.shapes = l.shapes[:s]
+	}
+	if input.MenuRight.Pushed() {
+		for i := 0; i < 1000; i++ {
+			l.addShape()
+		}
+	}
+	if input.MenuLeft.Pushed() {
+		s -= 1000
+		if s < 0 {
+			s = 0
+		}
+		l.shapes = l.shapes[:s]
+	}
+
+	if input.MenuSelect.Pushed() {
 		l.resize()
 	}
-	if scenes[2].Pushed() {
-		l.shapes = make([]shape, 10000)
-		l.resize()
-	}
-	if scenes[3].Pushed() {
-		l.shapes = make([]shape, 100000)
-		l.resize()
-	}
-	if scenes[4].Pushed() {
-		l.shapes = make([]shape, 200000)
-		l.resize()
-	}
-	if scenes[5].Pushed() {
-		l.shapes = make([]shape, 300000)
-		l.resize()
-	}
-	if scenes[6].Pushed() {
-		l.shapes = make([]shape, 350000)
-		l.resize()
-	}
-	if scenes[7].Pushed() {
-		l.shapes = make([]shape, 400000)
-		l.resize()
-	}
-	if scenes[8].Pushed() {
-		l.shapes = make([]shape, 450000)
-		l.resize()
-	}
-	if scenes[9].Pushed() {
-		l.shapes = make([]shape, 500000)
-		l.resize()
-	}
-	if scenes[0].Pushed() {
-		l.shapes = make([]shape, 10)
-		l.resize()
-	}
-	if scrollup.Pushed() {
-		l.shapes = make([]shape, len(l.shapes)+1000)
-		l.resize()
-	}
-	if scrolldown.Pushed() && len(l.shapes) > 1000 {
-		l.shapes = make([]shape, len(l.shapes)-1000)
-		l.resize()
-	}
-	if next.Pushed() {
+
+	if input.MenuClick.Pushed() {
 		l.shapes = append(l.shapes, shape{})
 		i := len(l.shapes) - 1
 		j := rand.Intn(len(l.picts))
 		p := l.picts[j]
 		l.shapes[i].pict = p
 		//TODO:
-		l.shapes[i].pos = pixel.XYof(cursor.XY()).Minus(p.Size().Slash(2))
-	}
-	if previous.Pushed() && len(l.shapes) > 0 {
-		l.shapes = l.shapes[:len(l.shapes)-1]
-	}
-	if quit.Pushed() {
-		cozely.Stop(nil)
+		l.shapes[i].pos = pixel.XYof(input.MenuPointer.XY()).Minus(p.Size().Slash(2))
 	}
 }
 
@@ -156,8 +148,8 @@ func (l *loop2) Render() {
 	}
 	cur := pixel.Cursor{
 		Position: pixel.XY{8, 16},
-		Layer: 0xFFFF/2,
-		Color: l.txtcol,
+		Layer:    0xFFFF / 2,
+		Color:    l.txtcol,
 	}
 	ft, ov := cozely.RenderStats()
 	cur.Printf("%dk pictures: %6.2f", len(l.shapes)/1000, ft*1000)
