@@ -51,12 +51,11 @@ func (l *loop7) setup() {
 		string
 		color.Palette
 	}{
-		{"Default Palette", pixel.DefaultPalette},
+		{"PICO8 Palette", pico8.Palette},
 		{"C64 Palette", c64.Palette},
 		{"CPC Palette", cpc.Palette},
 		{"MSX Palette", msx.Palette},
 		{"MSX2 Palette", msx2.Palette},
-		{"PICO8 Palette", pico8.Palette},
 	}
 
 	pixel.SetResolution(pixel.XY{160, 160})
@@ -64,7 +63,8 @@ func (l *loop7) setup() {
 	l.current = 0
 }
 
-func (loop7) Enter() {
+func (l *loop7) Enter() {
+	setPalette(l.palettes[l.current].Palette)
 }
 
 func (loop7) Leave() {

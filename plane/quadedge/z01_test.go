@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/cozely/cozely"
+	"github.com/cozely/cozely/color/pico8"
 	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
@@ -14,12 +15,6 @@ import (
 )
 
 ////////////////////////////////////////////////////////////////////////////////
-
-var (
-	col1 = pixel.DefaultPalette.ByName["Indigo"]
-	col2 = pixel.DefaultPalette.ByName["Orange"]
-	col3 = pixel.DefaultPalette.ByName["White"]
-)
 
 var (
 	points        []coord.XY
@@ -147,7 +142,7 @@ func (loop1) Render() {
 	m := pixel.XYof(input.MenuPointer.XYon(0))
 	p := fromScreen(m)
 	cur.Position = pixel.XY{2, 8}
-	cur.Color = col3
+	cur.Color = pico8.White
 	fsr, fso := cozely.RenderStats()
 	cur.Printf("Framerate: %.2f (%d)\n", 1000*fsr, fso)
 	if p.X >= 0 && p.X <= 1.0 {
@@ -157,13 +152,13 @@ func (loop1) Render() {
 	}
 
 	triangulation.Walk(func(e quadedge.Edge) {
-		pixel.Line(toScreen(points[e.Orig()]), toScreen(points[e.Dest()]), 0, col1)
+		pixel.Line(toScreen(points[e.Orig()]), toScreen(points[e.Dest()]), 0, pico8.Indigo)
 	})
 
 	pt := make([]pixel.XY, len(points))
 	for i, sd := range points {
 		pt[i] = toScreen(sd)
-		pixel.Box(pt[i].MinusS(2), pixel.XY{4, 4}, 0, 1, col2, col2)
+		pixel.Box(pt[i].MinusS(2), pixel.XY{4, 4}, 0, 1, pico8.Orange, pico8.Orange)
 	}
 
 	if window.HasMouseFocus() {

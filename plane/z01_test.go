@@ -9,6 +9,7 @@ import (
 
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/color"
+	"github.com/cozely/cozely/color/pico8"
 	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
@@ -17,16 +18,6 @@ import (
 )
 
 ////////////////////////////////////////////////////////////////////////////////
-
-var (
-	col1 = pixel.DefaultPalette.ByName["White"]
-	col2 = pixel.DefaultPalette.ByName["Red"]
-	col3 = pixel.DefaultPalette.ByName["Green"]
-	col4 = pixel.DefaultPalette.ByName["Blue"]
-	col5 = pixel.DefaultPalette.ByName["Dark Gray"]
-	col6 = pixel.DefaultPalette.ByName["Light Gray"]
-	col7 = pixel.DefaultPalette.ByName["Black"]
-)
 
 var (
 	points []coord.XY
@@ -101,25 +92,25 @@ func (loop1) Render() {
 		cir = append(cir, toScreen(coord.RA{r, a}.XY().Plus(d)))
 	}
 	for i := 0; i < len(cir)-1; i++ {
-		pixel.Line(cir[i], cir[i+1], 0, col5)
+		pixel.Line(cir[i], cir[i+1], 0, pico8.DarkGray)
 	}
-	pixel.Triangle(pt[0], pt[1], pt[2], 0, col7)
-	pixel.Line(pt[0], pt[1], 0, col6)
-	pixel.Line(pt[1], pt[2], 0, col6)
-	pixel.Line(pt[2], pt[0], 0, col6)
+	pixel.Triangle(pt[0], pt[1], pt[2], 0, pico8.Black)
+	pixel.Line(pt[0], pt[1], 0, pico8.LightGray)
+	pixel.Line(pt[1], pt[2], 0, pico8.LightGray)
+	pixel.Line(pt[2], pt[0], 0, pico8.LightGray)
 	for i := range points {
 		var c color.Index
 		switch i {
 		case 0:
-			c = col2
+			c = pico8.Red
 		case 1:
-			c = col3
+			c = pico8.Green
 		case 2:
-			c = col4
+			c = pico8.Blue
 		}
 		pixel.Box(pt[i].Minus(s), s.Times(2), 0, 2, c, c)
 		cur.Position = pixel.XY{pt[i].X - 2, pt[i].Y + 3}
-		cur.Color = col1
+		cur.Color = pico8.White
 		cur.Print([]string{"A", "B", "C"}[i])
 	}
 
@@ -127,7 +118,7 @@ func (loop1) Render() {
 	p := fromScreen(m)
 	cur.Position = pixel.XY{2, 8}
 	cur.Layer = 1
-	cur.Color = col1
+	cur.Color = pico8.White
 	cur.Printf("A: %.3f, %.3f\n", points[0].X, points[0].Y)
 	cur.Printf("B: %.3f, %.3f\n", points[1].X, points[1].Y)
 	cur.Printf("C: %.3f, %.3f\n", points[2].X, points[2].Y)
@@ -136,23 +127,23 @@ func (loop1) Render() {
 	} else {
 		cur.Println(" ")
 	}
-	pixel.Point(m, 0, col1)
+	pixel.Point(m, 0, pico8.White)
 
 	cur.Println()
 
 	if plane.IsCCW(points[0], points[1], points[2]) {
-		cur.Color = col4
+		cur.Color = pico8.Blue
 		cur.Println("IsCCW: TRUE")
 	} else {
-		cur.Color = col1
+		cur.Color = pico8.White
 		cur.Println("IsCCW: false")
 	}
 
 	if plane.InTriangle(points[0], points[1], points[2], p) {
-		cur.Color = col2
+		cur.Color = pico8.Red
 		cur.Println("InTriangle: TRUE")
 	} else {
-		cur.Color = col1
+		cur.Color = pico8.White
 		cur.Println("InTriangle: false")
 	}
 
@@ -161,28 +152,28 @@ func (loop1) Render() {
 		b, c = c, b
 	}
 	if plane.InTriangleCCW(points[a], points[b], points[c], p) {
-		cur.Color = col2
+		cur.Color = pico8.Red
 		cur.Println("InTriangleCCW: TRUE")
 	} else {
-		cur.Color = col1
+		cur.Color = pico8.White
 		cur.Println("InTriangleCCW: false")
 	}
 
 	if plane.InCircumcircle(points[a], points[b], points[c], p) {
-		cur.Color = col3
+		cur.Color = pico8.Green
 		cur.Println("InCircumcircle: TRUE")
 	} else {
-		cur.Color = col1
+		cur.Color = pico8.White
 		cur.Println("InCircumcircle: false")
 	}
 
 	cur.Println(" ")
 
-	cur.Color = col1
+	cur.Color = pico8.White
 	cur.Printf("Circumcenter: %.3f, %.3f\n", d.X, d.Y)
 	dd := toScreen(d)
-	pixel.Line(dd.MinusS(2), dd.PlusS(2), 0, col5)
-	pixel.Line(dd.Minus(pixel.XY{-2, 2}), dd.Plus(pixel.XY{-2, 2}), 0, col5)
+	pixel.Line(dd.MinusS(2), dd.PlusS(2), 0, pico8.DarkGray)
+	pixel.Line(dd.Minus(pixel.XY{-2, 2}), dd.Plus(pixel.XY{-2, 2}), 0, pico8.DarkGray)
 }
 
 func toScreen(p coord.XY) pixel.XY {

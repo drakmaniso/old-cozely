@@ -11,6 +11,7 @@ import (
 	"unsafe"
 
 	"github.com/cozely/cozely/color"
+	"github.com/cozely/cozely/color/pico8"
 	"github.com/cozely/cozely/internal"
 	"github.com/cozely/cozely/x/atlas"
 	"github.com/cozely/cozely/x/gl"
@@ -31,7 +32,7 @@ const (
 )
 
 const (
-	maxParamCount   = 8 * 1024
+	maxParamCount = 8 * 1024
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -193,7 +194,7 @@ func (r *glRenderer) setup() error {
 
 func (r *glRenderer) cleanup() error {
 	// Palette
-	SetPalette(DefaultPalette)
+	SetPalette(pico8.Palette)
 	palette.dirty = true
 
 	// Canvases
@@ -330,7 +331,7 @@ func (r *glRenderer) render() error {
 	r.picturesTA.Bind(layoutPictures)
 
 	r.parametersTBO.SubData(r.parameters, 0)
-	gl.Draw(0, 6 * int32(len(r.parameters)/8))
+	gl.Draw(0, 6*int32(len(r.parameters)/8))
 	r.parameters = r.parameters[:0]
 
 	// Display the canvas on the game window.

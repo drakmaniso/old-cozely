@@ -56,3 +56,23 @@ var Palette = color.Palette{
 		color.LRGBAof(color.SRGB8{0x00, 0x00, 0x00}),
 	},
 }
+
+// Color indices constants
+const (
+	DarkBlue   color.Index = 1
+	DarkPurple color.Index = 2
+	DarkGreen  color.Index = 3
+	Brown       color.Index = 4
+	DarkGray   color.Index = 5
+	LightGray  color.Index = 6
+	White       color.Index = 7
+	Red         color.Index = 8
+	Orange      color.Index = 9
+	Yellow      color.Index = 10
+	Green       color.Index = 11
+	Blue        color.Index = 12
+	Indigo      color.Index = 13
+	Pink        color.Index = 14
+	Peach       color.Index = 15
+	Black       color.Index = 16
+)
