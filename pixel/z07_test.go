@@ -97,20 +97,18 @@ func (loop7) Update() {
 }
 
 func setPalette(p color.Palette) {
-	for i := 1; i < 256; i++ {
+	for i := 1; i < 251; i++ {
 		switch {
 		case i <= len(p.Colors):
 			pixel.SetColor(color.Index(i), p.Colors[i-1])
-		case i == 255:
-			pixel.SetColor(color.Index(i), color.LRGBA{1, 1, 1, 1})
 		default:
-			pixel.SetColor(color.Index(i), color.LRGBA{0, 0, 0, 1})
+			pixel.SetColor(color.Index(i), color.SRGBA{0.5, 0.5, 0.5, 1})
 		}
 	}
 }
 
 func (l *loop7) Render() {
-	pixel.Clear(0)
+	pixel.Clear(253)
 
 	cs := pixel.Resolution()
 
@@ -120,7 +118,7 @@ func (l *loop7) Render() {
 	l.pict.Paint(p, 0)
 
 	cur := pixel.Cursor{}
-	cur.Color = 15
+	cur.Color = 254
 	cur.Position = p.Minus(pixel.XY{0, 8})
 	cur.Print(l.palettes[l.current].string)
 }

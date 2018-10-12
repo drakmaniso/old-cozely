@@ -10,6 +10,7 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/internal"
 	"github.com/cozely/cozely/x/atlas"
 )
@@ -32,10 +33,12 @@ var pictures = struct {
 	path    []string
 	mapping []mapping
 	image   []*image.Paletted
+	lut     []color.LUT
 }{
 	path:    []string{"", ""},
 	mapping: []mapping{{}, {}},
 	image:   []*image.Paletted{nil, nil},
+	lut:     []color.LUT{color.Identity, color.Identity},
 }
 
 type mapping struct {
@@ -44,6 +47,35 @@ type mapping struct {
 	w, h      int16
 	leftright int16
 	topbottom int16
+}
+
+var initLUT = color.LUT{
+	0, 250, 250, 250, 250, 250, 250, 250, 250, 250,
+	250, 250, 250, 250, 250, 250, 250, 250, 250, 250,
+	250, 250, 250, 250, 250, 250, 250, 250, 250, 250,
+	250, 250, 250, 250, 250, 250, 250, 250, 250, 250,
+	250, 250, 250, 250, 250, 250, 250, 250, 250, 250,
+	250, 250, 250, 250, 250, 250, 250, 250, 250, 250,
+	250, 250, 250, 250, 250, 250, 250, 250, 250, 250,
+	250, 250, 250, 250, 250, 250, 250, 250, 250, 250,
+	250, 250, 250, 250, 250, 250, 250, 250, 250, 250,
+	250, 250, 250, 250, 250, 250, 250, 250, 250, 250,
+	250, 250, 250, 250, 250, 250, 250, 250, 250, 250,
+	250, 250, 250, 250, 250, 250, 250, 250, 250, 250,
+	250, 250, 250, 250, 250, 250, 250, 250, 250, 250,
+	250, 250, 250, 250, 250, 250, 250, 250, 250, 250,
+	250, 250, 250, 250, 250, 250, 250, 250, 250, 250,
+	250, 250, 250, 250, 250, 250, 250, 250, 250, 250,
+	250, 250, 250, 250, 250, 250, 250, 250, 250, 250,
+	250, 250, 250, 250, 250, 250, 250, 250, 250, 250,
+	250, 250, 250, 250, 250, 250, 250, 250, 250, 250,
+	250, 250, 250, 250, 250, 250, 250, 250, 250, 250,
+	250, 250, 250, 250, 250, 250, 250, 250, 250, 250,
+	250, 250, 250, 250, 250, 250, 250, 250, 250, 250,
+	250, 250, 250, 250, 250, 250, 250, 250, 250, 250,
+	250, 250, 250, 250, 250, 250, 250, 250, 250, 250,
+	250, 250, 250, 250, 250, 250, 250, 250, 250, 250,
+	250, 251, 252, 253, 254, 255,
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -62,6 +94,7 @@ func Picture(path string) PictureID {
 
 	pictures.path = append(pictures.path, path)
 	pictures.image = append(pictures.image, nil)
+	pictures.lut = append(pictures.lut, initLUT)
 	pictures.mapping = append(pictures.mapping, mapping{})
 	return PictureID(len(pictures.path) - 1)
 }
@@ -80,6 +113,7 @@ func picture(img *image.Paletted) PictureID {
 
 	pictures.path = append(pictures.path, "")
 	pictures.image = append(pictures.image, img)
+	pictures.lut = append(pictures.lut, initLUT)
 	pictures.mapping = append(pictures.mapping, mapping{})
 	return PictureID(len(pictures.path) - 1)
 }
@@ -168,6 +202,39 @@ func (p PictureID) load(prects *[]uint32) error {
 		return errors.New("impossible to load picture " + path + " (color model not supported)")
 	}
 
+	for i := range m.Palette {
+		r, g, b, al := m.Palette[i].RGBA()
+		c := color.SRGBA{
+			R: float32(r) / float32(0xFFFF),
+			G: float32(g) / float32(0xFFFF),
+			B: float32(b) / float32(0xFFFF),
+			A: float32(al) / float32(0xFFFF),
+		}
+		lc := color.LRGBAof(c)
+		if i == 0 && lc.A == 0 {
+			continue
+		}
+		if palette.used[i] && palette.colors[i] == lc {
+			pictures.lut[p][i] = color.Index(i)
+			println("Already there: ", i)
+			continue
+		}
+		j := FindColor(lc)
+		if j != 0 {
+			pictures.lut[p][i] = color.Index(j)
+			println("Found: ", i, j)
+			continue
+		}
+		j = AddColor(lc)
+		if j != 0 {
+			pictures.lut[p][i] = color.Index(j)
+			println("Added: ", i, j)
+			continue
+		}
+		pictures.lut[p][i] = 250
+		println("Palette Full: ", i)
+}
+
 	//TODO: check for width and height overflow
 	w, h := int16(m.Bounds().Dx()), int16(m.Bounds().Dy())
 
@@ -205,7 +272,7 @@ func pictPaint(rect uint32, dest interface{}) error {
 		for x := 0; x < int(pw); x++ {
 			w := dm.Bounds().Dx()
 			ci := sm.Pix[x+y*pictures.image[rect].Stride]
-			dm.Pix[int(px)+x+w*(int(py)+y)] = uint8(ci)
+			dm.Pix[int(px)+x+w*(int(py)+y)] = uint8(pictures.lut[rect][ci])
 		}
 	}
 

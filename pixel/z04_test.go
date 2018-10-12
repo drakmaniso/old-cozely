@@ -51,8 +51,8 @@ func TestTest4(t *testing.T) {
 func (l *loop4) declare() {
 	pixel.SetZoom(2)
 	//TODO:
-	l.bg = 7
-	l.fg = 1
+	l.bg = pixel.White
+	l.fg = pixel.DarkGray
 
 	l.fontNames = []string{
 		"Monozela10 (builtin)",
@@ -122,12 +122,10 @@ func (l *loop4) React() {
 	if input.MenuSelect.Pushed() {
 		if l.show[0] == l.text[0] {
 			l.show = l.code
-			l.bg = 1
-			l.fg = 7
+			l.bg, l.fg = l.fg, l.bg
 		} else {
 			l.show = l.text
-			l.bg = 7
-			l.fg = 1
+			l.bg, l.fg = l.fg, l.bg
 		}
 		l.interline = 0
 	}

@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/cozely/cozely"
-	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
 )
@@ -17,7 +16,6 @@ import (
 var ()
 
 type loop1 struct {
-	palmire, palsrgb                       color.Palette
 	mire                                   pixel.PictureID
 	srgbGray, srgbRed, srgbGreen, srgbBlue pixel.PictureID
 	mode                                   int
@@ -40,20 +38,15 @@ func TestTest1(t *testing.T) {
 func (l *loop1) declare() {
 	pixel.SetResolution(pixel.XY{320, 180})
 
-	l.palmire = color.PaletteFrom("graphics/mire")
-	l.palsrgb = color.PaletteFrom("graphics/srgb-gray")
-
-	l.mire = pixel.Picture("graphics/mire")
 	l.srgbGray = pixel.Picture("graphics/srgb-gray")
 	l.srgbRed = pixel.Picture("graphics/srgb-red")
 	l.srgbGreen = pixel.Picture("graphics/srgb-green")
 	l.srgbBlue = pixel.Picture("graphics/srgb-blue")
+	l.mire = pixel.Picture("graphics/mire")
 }
 
 func (l *loop1) Enter() {
 	l.mode = 0
-
-	pixel.SetPalette(l.palsrgb)
 }
 
 func (loop1) Leave() {
@@ -80,7 +73,7 @@ func (l *loop1) Render() {
 	l.mire.Paint(pixel.XY{sz.X - pz.X, 0}, 0)
 	l.mire.Paint(sz.Minus(pz), 0)
 
-	pixel.Box(pz, sz.Minus(pz.Times(2)).MinusS(1), -1, 0, 3, 4)
+	pixel.Box(pz, sz.Minus(pz.Times(2)).MinusS(1), -1, 0, pixel.DarkGray, pixel.Black)
 
 	for i := int16(0); i < 6; i++ {
 		pixel.Box(
@@ -88,21 +81,21 @@ func (l *loop1) Render() {
 			pixel.XY{8, 8},
 			0,
 			i,
-			1, 3,
+			254, 252,
 		)
 	}
 
-	pz = l.srgbGray.Size()
-	l.srgbGray.Paint(pixel.XY{sz.X/2 - pz.X/2, 48}, 0)
-	l.srgbRed.Paint(pixel.XY{sz.X/4 - pz.X/2, 96}, 0)
-	l.srgbGreen.Paint(pixel.XY{sz.X/2 - pz.X/2, 96}, 0)
-	l.srgbBlue.Paint(pixel.XY{3*sz.X/4 - pz.X/2, 96}, 0)
-
 	cur := pixel.Cursor{
-		Position: pixel.XY{sz.X/2 - pz.X/2 - 29, 66},
+		Position: pixel.XY{pz.X + 28, 108},
 	}
-	cur.Color = 2
-	cur.Print("sRGB       ")
-	cur.Color = 3
-	cur.Print("Linear")
+	cur.Margin = cur.Position.X
+	cur.Color = pixel.MidGray
+	cur.Println("  sRGB:")
+	cur.Println("Linear:")
+
+	pz = l.srgbGray.Size()
+	l.srgbGray.Paint(pixel.XY{pz.X + 44 + 1*(pz.X + 4), 96}, 0)
+	l.srgbRed.Paint(pixel.XY{pz.X + 44 + 2*(pz.X + 4), 96}, 0)
+	l.srgbGreen.Paint(pixel.XY{pz.X + 44 + 3*(pz.X + 4), 96}, 0)
+	l.srgbBlue.Paint(pixel.XY{pz.X + 44 + 4*(pz.X + 4), 96}, 0)
 }

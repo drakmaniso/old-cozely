@@ -11,7 +11,6 @@ import (
 	"unsafe"
 
 	"github.com/cozely/cozely/color"
-	"github.com/cozely/cozely/color/pico8"
 	"github.com/cozely/cozely/internal"
 	"github.com/cozely/cozely/x/atlas"
 	"github.com/cozely/cozely/x/gl"
@@ -186,6 +185,7 @@ func (r *glRenderer) setup() error {
 
 	pictures.path = pictures.path[:2]
 	pictures.image = pictures.image[:2]
+	pictures.lut = pictures.lut[:2]
 
 	return gl.Err()
 }
@@ -194,7 +194,7 @@ func (r *glRenderer) setup() error {
 
 func (r *glRenderer) cleanup() error {
 	// Palette
-	SetPalette(pico8.Palette)
+	clearPalette()
 	palette.dirty = true
 
 	// Canvases

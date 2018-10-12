@@ -9,8 +9,15 @@ import (
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// Transparent is the only reserved color index. All palettes start with it.
-const Transparent = color.Index(0)
+// Reserved color indices.
+const (
+	Transparent = color.Index(0)
+	Black = color.Index(251)
+	DarkGray = color.Index(252)
+	MidGray = color.Index(253)
+	LightGray = color.Index(254)
+	White = color.Index(255)
+)
 
 ////////////////////////////////////////////////////////////////////////////////
 

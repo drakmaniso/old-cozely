@@ -164,6 +164,7 @@ func (f FontID) load(frects *[]uint32) error {
 		if gg != PictureID(g) {
 			//TODO:
 		}
+		pictures.lut[gg][1] = 255 //TODO: actual LUT
 		x += w
 		for x < p.Bounds().Dx() && p.Pix[x+h*p.Stride] == 0 {
 			x++
