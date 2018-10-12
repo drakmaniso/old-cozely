@@ -33,6 +33,17 @@ var InputErr = func() error { return nil }
 
 ////////////////////////////////////////////////////////////////////////////////
 
+// PaletteSetup hook
+var PaletteSetup = func() error { return nil }
+
+// PaletteRender hook
+var PaletteRender = func() error { return nil }
+
+// PaletteCleanup hook
+var PaletteCleanup = func() error { return nil }
+
+////////////////////////////////////////////////////////////////////////////////
+
 // PixelSetup hook
 var PixelSetup = func() error { return nil }
 

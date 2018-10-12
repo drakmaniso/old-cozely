@@ -4,6 +4,7 @@
 package color
 
 import (
+	"errors"
 	"image"
 	stdcolor "image/color"
 	"os"
@@ -13,54 +14,35 @@ import (
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// A Palette is an ordered list of colors (defined by their LRGBA values), and a
-// name-to-index dictionary.
-type Palette struct {
-	ByName map[string]Index
-	Colors []LRGBA
-}
-
-// An Index is used to refer to colors inside a palette.
-type Index uint8
+// A Palette is an ordered list of colors.
+type Palette []Color
 
 ////////////////////////////////////////////////////////////////////////////////
 
 // PaletteFrom returns a new Palette created from the file at the specified
 // path.
-func PaletteFrom(path string) Palette {
-	var pal = Palette{
-		ByName: map[string]Index{},
-	}
+func PaletteFrom(path string) (Palette, error) {
+	var pal = Palette{}
 
 	f, err := os.Open(internal.Path + path + ".png")
 	if err != nil {
-		//TODO: errors.New("unable to open file for palette " + name)
-		return pal
+		return pal, errors.New("unable to open file for palette " + path)
 	}
 	defer f.Close() //TODO: error handling
 	cf, _, err := image.DecodeConfig(f)
 	if err != nil {
-		//TODO: errors.New("unable to decode file for palette " + name)
-		return pal
+		return pal, errors.New("unable to decode file for palette " + path)
 	}
 
 	p, ok := cf.ColorModel.(stdcolor.Palette)
 	if !ok {
-		//TODO: errors.New("image file not paletted for palette " + name)
-		return pal
+		return pal, errors.New("image file not paletted for palette " + path)
 	}
-
-	//TODO: clear the palette?
 
 	for i := range p {
 		r, g, b, al := p[i].RGBA()
-		if i == 0 {
-			//TODO: check if first entry is transparent
-			continue
-		}
 		if i > 255 {
-			//TODO:errors.New("too many colors for palette " + name)
-			return pal
+			return pal, errors.New("too many colors for palette " + path)
 		}
 		c := SRGBA{
 			R: float32(r) / float32(0xFFFF),
@@ -69,10 +51,10 @@ func PaletteFrom(path string) Palette {
 			A: float32(al) / float32(0xFFFF),
 		}
 		//TODO: append name
-		pal.Colors = append(pal.Colors, LRGBAof(c))
+		pal = append(pal, c)
 	}
 
 	internal.Debug.Printf("Loaded color palette (%d entries) from %s", len(p), path)
 
-	return pal
+	return pal, nil
 }

@@ -10,8 +10,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/internal"
+	"github.com/cozely/cozely/palette"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -35,7 +35,7 @@ var fonts = []font{{}}
 type font struct {
 	height    int16
 	baseline  int16
-	basecolor color.Index
+	basecolor palette.Index
 	first     uint16 // index of the first glyph
 }
 
@@ -140,8 +140,8 @@ func (f FontID) load(frects *[]uint32) error {
 
 	fonts[f].basecolor = 255
 	for _, c := range p.Pix {
-		if c != 0 && color.Index(c) < fonts[f].basecolor {
-			fonts[f].basecolor = color.Index(c)
+		if c != 0 && palette.Index(c) < fonts[f].basecolor {
+			fonts[f].basecolor = palette.Index(c)
 		}
 	}
 

@@ -9,15 +9,15 @@ import (
 	"testing"
 
 	"github.com/cozely/cozely"
-	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/input"
+	"github.com/cozely/cozely/palette"
 	"github.com/cozely/cozely/pixel"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
 
 type loop4 struct {
-	fg, bg color.Index
+	fg, bg palette.Index
 
 	fontNames []string
 	fonts     []pixel.FontID
@@ -51,8 +51,8 @@ func TestTest4(t *testing.T) {
 func (l *loop4) declare() {
 	pixel.SetZoom(2)
 	//TODO:
-	l.bg = pixel.White
-	l.fg = pixel.DarkGray
+	l.bg = palette.White
+	l.fg = palette.DarkGray
 
 	l.fontNames = []string{
 		"Monozela10 (builtin)",

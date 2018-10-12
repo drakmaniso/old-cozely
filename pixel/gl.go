@@ -10,8 +10,8 @@ import (
 	"strings"
 	"unsafe"
 
-	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/internal"
+	"github.com/cozely/cozely/palette"
 	"github.com/cozely/cozely/x/atlas"
 	"github.com/cozely/cozely/x/gl"
 )
@@ -56,12 +56,9 @@ type glRenderer struct {
 	filterTex gl.Texture2D
 	depthTex  gl.Renderbuffer
 
-	// Palette
-	paletteSSBO gl.StorageBuffer
-
 	// Command queue
 	clearQueued   bool
-	clearColor    color.Index
+	clearColor    palette.Index
 	parametersTBO gl.BufferTexture
 	parameters    []int16
 }
@@ -89,10 +86,6 @@ func init() {
 }
 
 func (r *glRenderer) setup() error {
-	// Prepare the palette
-
-	r.paletteSSBO = gl.NewStorageBuffer(uintptr(256*4*4), gl.DynamicStorage|gl.MapWrite)
-
 	// Prepare the canvas
 
 	r.canvasBuf = gl.NewFramebuffer()
@@ -193,10 +186,6 @@ func (r *glRenderer) setup() error {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (r *glRenderer) cleanup() error {
-	// Palette
-	clearPalette()
-	palette.dirty = true
-
 	// Canvases
 	r.depthTex.Delete()
 	r.canvasTex.Delete()
@@ -259,7 +248,7 @@ func (r *glRenderer) adjustScreenTextures() {
 
 // Clear sets the color of all pixels on the canvas; it also resets the filter
 // of all pixels.
-func (r *glRenderer) clear(c color.Index) {
+func (r *glRenderer) clear(c palette.Index) {
 	r.clearQueued = true
 	r.clearColor = c
 }
@@ -294,14 +283,6 @@ func (r *glRenderer) command(c int16, color, layer, x, y, p4, p5, p6, p7 int16) 
 // by Display; the only reason to call it manually is to be able to read from it
 // before display.
 func (r *glRenderer) render() error {
-	// Upload the current palette
-
-	if palette.dirty {
-		r.paletteSSBO.SubData(palette.colors[:], 0)
-		palette.dirty = false
-	}
-	r.paletteSSBO.Bind(0)
-
 	// Execute all pending commands
 
 	r.canvasBuf.Bind(gl.DrawFramebuffer)

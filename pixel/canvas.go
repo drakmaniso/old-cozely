@@ -6,8 +6,8 @@ package pixel
 import (
 	"errors"
 
-	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/internal"
+	"github.com/cozely/cozely/palette"
 	"github.com/cozely/cozely/window"
 )
 
@@ -19,8 +19,8 @@ var screen = struct {
 	resolution XY    // fixed resolution, or {0, 0} for fixed zoom
 	zoom       int16 // in window pixels
 
-	size   XY        // size of the canvas
-	margin XY        // for fixed resolution only, = size - resolution
+	size   XY // size of the canvas
+	margin XY // for fixed resolution only, = size - resolution
 }{
 	resolution: XY{},
 	zoom:       2,
@@ -103,7 +103,7 @@ func resize() {
 
 // Clear sets the color of all pixels on the canvas; it also resets the filter
 // of all pixels.
-func Clear(c color.Index) {
+func Clear(c palette.Index) {
 	renderer.clear(c)
 }
 

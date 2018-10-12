@@ -8,6 +8,7 @@ import (
 
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/input"
+	"github.com/cozely/cozely/palette"
 	"github.com/cozely/cozely/pixel"
 )
 
@@ -73,7 +74,7 @@ func (l *loop1) Render() {
 	l.mire.Paint(pixel.XY{sz.X - pz.X, 0}, 0)
 	l.mire.Paint(sz.Minus(pz), 0)
 
-	pixel.Box(pz, sz.Minus(pz.Times(2)).MinusS(1), -1, 0, pixel.DarkGray, pixel.Black)
+	pixel.Box(pz, sz.Minus(pz.Times(2)).MinusS(1), -1, 0, palette.DarkGray, palette.Black)
 
 	for i := int16(0); i < 6; i++ {
 		pixel.Box(
@@ -89,13 +90,13 @@ func (l *loop1) Render() {
 		Position: pixel.XY{pz.X + 28, 108},
 	}
 	cur.Margin = cur.Position.X
-	cur.Color = pixel.MidGray
+	cur.Color = palette.MidGray
 	cur.Println("  sRGB:")
 	cur.Println("Linear:")
 
 	pz = l.srgbGray.Size()
-	l.srgbGray.Paint(pixel.XY{pz.X + 44 + 1*(pz.X + 4), 96}, 0)
-	l.srgbRed.Paint(pixel.XY{pz.X + 44 + 2*(pz.X + 4), 96}, 0)
-	l.srgbGreen.Paint(pixel.XY{pz.X + 44 + 3*(pz.X + 4), 96}, 0)
-	l.srgbBlue.Paint(pixel.XY{pz.X + 44 + 4*(pz.X + 4), 96}, 0)
+	l.srgbGray.Paint(pixel.XY{pz.X + 44 + 1*(pz.X+4), 96}, 0)
+	l.srgbRed.Paint(pixel.XY{pz.X + 44 + 2*(pz.X+4), 96}, 0)
+	l.srgbGreen.Paint(pixel.XY{pz.X + 44 + 3*(pz.X+4), 96}, 0)
+	l.srgbBlue.Paint(pixel.XY{pz.X + 44 + 4*(pz.X+4), 96}, 0)
 }

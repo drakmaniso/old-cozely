@@ -10,64 +10,64 @@ import (
 
 ////////////////////////////////////////////////////////////////////////////////
 
+// Color names.
+const (
+	Black         = 1
+	Blue          = 2
+	BrightBlue    = 3
+	Red           = 4
+	Magenta       = 5
+	Mauve         = 6
+	BrightRed     = 7
+	Purple        = 8
+	BrightMagenta = 9
+	Green         = 10
+	Cyan          = 11
+	SkyBlue       = 12
+	Yellow        = 13
+	White         = 14
+	PastelBlue    = 15
+	Orange        = 16
+	Pink          = 17
+	PastelMagenta = 18
+	BrightGreen   = 19
+	SeaGreen      = 20
+	BrightCyan    = 21
+	Lime          = 22
+	PastelGreen   = 23
+	PastelCyan    = 24
+	BrightYellow  = 25
+	PastelYellow  = 26
+	BrightWhite   = 27
+)
+
 // Palette is the CPC palette.
 var Palette = color.Palette{
-	ByName: map[string]color.Index{
-		"Black":          1,
-		"Blue":           2,
-		"Bright Blue":    3,
-		"Red":            4,
-		"Magenta":        5,
-		"Mauve":          6,
-		"Bright Red":     7,
-		"Purple":         8,
-		"Bright Magenta": 9,
-		"Green":          10,
-		"Cyan":           11,
-		"SkyBlue":        12,
-		"Yellow":         13,
-		"White":          14,
-		"Pastel Blue":    15,
-		"Orange":         16,
-		"Pink":           17,
-		"Pastel Magenta": 18,
-		"Bright Green":   19,
-		"Sea Green":      20,
-		"Bright Cyan":    21,
-		"Lime":           22,
-		"Pastel Green":   23,
-		"Pastel Cyan":    24,
-		"Bright Yellow":  25,
-		"Pastel Yellow":  26,
-		"Bright White":   27,
-	},
-	Colors: []color.LRGBA{
-		color.LRGBAof(color.SRGB8{0x00, 0x00, 0x00}),
-		color.LRGBAof(color.SRGB8{0x00, 0x00, 0x80}),
-		color.LRGBAof(color.SRGB8{0x00, 0x00, 0xff}),
-		color.LRGBAof(color.SRGB8{0x80, 0x00, 0x00}),
-		color.LRGBAof(color.SRGB8{0x80, 0x00, 0x80}),
-		color.LRGBAof(color.SRGB8{0x80, 0x00, 0xff}),
-		color.LRGBAof(color.SRGB8{0xff, 0x00, 0x00}),
-		color.LRGBAof(color.SRGB8{0xff, 0x00, 0x80}),
-		color.LRGBAof(color.SRGB8{0xff, 0x00, 0xff}),
-		color.LRGBAof(color.SRGB8{0x00, 0x80, 0x00}),
-		color.LRGBAof(color.SRGB8{0x00, 0x80, 0x80}),
-		color.LRGBAof(color.SRGB8{0x00, 0x80, 0xff}),
-		color.LRGBAof(color.SRGB8{0x80, 0x80, 0x00}),
-		color.LRGBAof(color.SRGB8{0x80, 0x80, 0x80}),
-		color.LRGBAof(color.SRGB8{0x80, 0x80, 0xff}),
-		color.LRGBAof(color.SRGB8{0xff, 0x80, 0x00}),
-		color.LRGBAof(color.SRGB8{0xff, 0x80, 0x80}),
-		color.LRGBAof(color.SRGB8{0xff, 0x80, 0xff}),
-		color.LRGBAof(color.SRGB8{0x00, 0xff, 0x00}),
-		color.LRGBAof(color.SRGB8{0x00, 0xff, 0x80}),
-		color.LRGBAof(color.SRGB8{0x00, 0xff, 0xff}),
-		color.LRGBAof(color.SRGB8{0x80, 0xff, 0x00}),
-		color.LRGBAof(color.SRGB8{0x80, 0xff, 0x80}),
-		color.LRGBAof(color.SRGB8{0x80, 0xff, 0xff}),
-		color.LRGBAof(color.SRGB8{0xff, 0xff, 0x00}),
-		color.LRGBAof(color.SRGB8{0xff, 0xff, 0x80}),
-		color.LRGBAof(color.SRGB8{0xff, 0xff, 0xff}),
-	},
+	color.SRGB8{0x00, 0x00, 0x00},
+	color.SRGB8{0x00, 0x00, 0x80},
+	color.SRGB8{0x00, 0x00, 0xff},
+	color.SRGB8{0x80, 0x00, 0x00},
+	color.SRGB8{0x80, 0x00, 0x80},
+	color.SRGB8{0x80, 0x00, 0xff},
+	color.SRGB8{0xff, 0x00, 0x00},
+	color.SRGB8{0xff, 0x00, 0x80},
+	color.SRGB8{0xff, 0x00, 0xff},
+	color.SRGB8{0x00, 0x80, 0x00},
+	color.SRGB8{0x00, 0x80, 0x80},
+	color.SRGB8{0x00, 0x80, 0xff},
+	color.SRGB8{0x80, 0x80, 0x00},
+	color.SRGB8{0x80, 0x80, 0x80},
+	color.SRGB8{0x80, 0x80, 0xff},
+	color.SRGB8{0xff, 0x80, 0x00},
+	color.SRGB8{0xff, 0x80, 0x80},
+	color.SRGB8{0xff, 0x80, 0xff},
+	color.SRGB8{0x00, 0xff, 0x00},
+	color.SRGB8{0x00, 0xff, 0x80},
+	color.SRGB8{0x00, 0xff, 0xff},
+	color.SRGB8{0x80, 0xff, 0x00},
+	color.SRGB8{0x80, 0xff, 0x80},
+	color.SRGB8{0x80, 0xff, 0xff},
+	color.SRGB8{0xff, 0xff, 0x00},
+	color.SRGB8{0xff, 0xff, 0x80},
+	color.SRGB8{0xff, 0xff, 0xff},
 }

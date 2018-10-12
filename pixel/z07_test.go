@@ -14,6 +14,7 @@ import (
 	"github.com/cozely/cozely/color/msx2"
 	"github.com/cozely/cozely/color/pico8"
 	"github.com/cozely/cozely/input"
+	"github.com/cozely/cozely/palette"
 	"github.com/cozely/cozely/pixel"
 )
 
@@ -97,18 +98,14 @@ func (loop7) Update() {
 }
 
 func setPalette(p color.Palette) {
-	for i := 1; i < 251; i++ {
-		switch {
-		case i <= len(p.Colors):
-			pixel.SetColor(color.Index(i), p.Colors[i-1])
-		default:
-			pixel.SetColor(color.Index(i), color.SRGBA{0.5, 0.5, 0.5, 1})
-		}
+	palette.Clear()
+	for i := 1; i < 251 && i < len(p); i++ {
+		palette.Set(palette.Index(i), p[i-1])
 	}
 }
 
 func (l *loop7) Render() {
-	pixel.Clear(253)
+	pixel.Clear(palette.Black)
 
 	cs := pixel.Resolution()
 

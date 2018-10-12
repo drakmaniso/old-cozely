@@ -8,10 +8,10 @@ import (
 	"testing"
 
 	"github.com/cozely/cozely"
-	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/color/pico8"
 	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
+	"github.com/cozely/cozely/palette"
 	"github.com/cozely/cozely/pixel"
 	"github.com/cozely/cozely/plane"
 	"github.com/cozely/cozely/x/math32"
@@ -99,7 +99,7 @@ func (loop1) Render() {
 	pixel.Line(pt[1], pt[2], 0, pico8.LightGray)
 	pixel.Line(pt[2], pt[0], 0, pico8.LightGray)
 	for i := range points {
-		var c color.Index
+		var c palette.Index
 		switch i {
 		case 0:
 			c = pico8.Red

@@ -62,6 +62,11 @@ func Run(loop GameLoop) (err error) {
 			err = internal.Wrap("pixel cleanup", derr)
 			return
 		}
+		derr = internal.PaletteCleanup()
+		if err == nil && derr != nil {
+			err = internal.Wrap("palette cleanup", derr)
+			return
+		}
 		derr = internal.InputCleanup()
 		if err == nil && derr != nil {
 			err = internal.Wrap("input cleanup", derr)
@@ -103,6 +108,10 @@ func Run(loop GameLoop) (err error) {
 	err = internal.PixelSetup()
 	if err != nil {
 		return internal.Wrap("pixel setup", err)
+	}
+	err = internal.PaletteSetup()
+	if err != nil {
+		return internal.Wrap("palette setup", err)
 	}
 	err = internal.PolySetup()
 	if err != nil {
@@ -168,6 +177,10 @@ func Run(loop GameLoop) (err error) {
 		}
 		internal.GameTime = gametime + internal.UpdateLag //TODO: check if correct
 		internal.Loop.Render()
+		err = internal.PaletteRender()
+		if err != nil {
+			return err
+		}
 		err = internal.PixelRender()
 		if err != nil {
 			return err

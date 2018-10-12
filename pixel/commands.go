@@ -3,9 +3,7 @@
 
 package pixel
 
-import (
-	"github.com/cozely/cozely/color"
-)
+import "github.com/cozely/cozely/palette"
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -42,7 +40,7 @@ func (p PictureID) Tile(pos XY, size XY, z Layer) {
 ////////////////////////////////////////////////////////////////////////////////
 
 // Point queues a GPU command to draw a point on the canvas.
-func Point(pos XY, z Layer, c color.Index) {
+func Point(pos XY, z Layer, c palette.Index) {
 	renderer.command(cmdPoint, int16(c), int16(z), pos.X, pos.Y, 0, 0, 0, 0)
 	// Line(c, layer, pos, pos)
 }
@@ -50,7 +48,7 @@ func Point(pos XY, z Layer, c color.Index) {
 ////////////////////////////////////////////////////////////////////////////////
 
 // Line queues a GPU command to draw a single line on the canvas.
-func Line(p1, p2 XY, z Layer, c color.Index) {
+func Line(p1, p2 XY, z Layer, c palette.Index) {
 	renderer.command(
 		cmdLine,
 		int16(c), int16(z),
@@ -63,7 +61,7 @@ func Line(p1, p2 XY, z Layer, c color.Index) {
 ////////////////////////////////////////////////////////////////////////////////
 
 // Triangle queues a GPU command to draw a single triangle on the canvas.
-func Triangle(p1, p2, p3 XY, z Layer, co color.Index) {
+func Triangle(p1, p2, p3 XY, z Layer, co palette.Index) {
 	renderer.command(
 		cmdTriangle,
 		int16(co), int16(z),
@@ -76,7 +74,7 @@ func Triangle(p1, p2, p3 XY, z Layer, co color.Index) {
 ////////////////////////////////////////////////////////////////////////////////
 
 // Box queues a GPU command to draw a box on the canvas.
-func Box(position, size XY, z Layer, corner int16, fg, bg color.Index) {
+func Box(position, size XY, z Layer, corner int16, fg, bg palette.Index) {
 	//TODO: maybe the shader can take this?
 	if size.X < 0 {
 		position.X = position.X + size.X
