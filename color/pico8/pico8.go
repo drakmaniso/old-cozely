@@ -18,7 +18,7 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 
 // Palette is the PICO-8 palette.
-var Palette = color.Palette{
+var Palette = []color.Color{
 	color.SRGB8{0x28, 0x22, 0x53},
 	color.SRGB8{0x7E, 0x25, 0x53},
 	color.SRGB8{0x00, 0x87, 0x51},

@@ -1,7 +1,7 @@
 // Copyright (c) 2013-2018 Laurent Moussault. All rights reserved.
 // Licensed under a simplified BSD license (see LICENSE file).
 
-package palette
+package color
 
 import (
 	"github.com/cozely/cozely/internal"
@@ -19,9 +19,9 @@ type glRenderer struct {
 ////////////////////////////////////////////////////////////////////////////////
 
 func init() {
-	internal.PaletteSetup = renderer.setup
-	internal.PaletteCleanup = renderer.cleanup
-	internal.PaletteRender = renderer.render
+	internal.ColorSetup = renderer.setup
+	internal.ColorCleanup = renderer.cleanup
+	internal.ColorRender = renderer.render
 }
 
 func (r *glRenderer) setup() error {

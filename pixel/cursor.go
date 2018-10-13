@@ -7,7 +7,7 @@ import (
 	"fmt"
 	"unicode/utf8"
 
-	"github.com/cozely/cozely/palette"
+	"github.com/cozely/cozely/color"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -18,7 +18,7 @@ type Cursor struct {
 	Margin        int16 // X coordinate for new lines
 	Layer         int16
 	Font          FontID
-	Color         palette.Index
+	Color         color.Index
 	LetterSpacing int16 // Additional space between letters, in pixels
 	LineSpacing   int16 // Additional space between lines, in pixels
 }

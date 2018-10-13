@@ -42,7 +42,7 @@ const (
 )
 
 // Palette is the CPC palette.
-var Palette = color.Palette{
+var Palette = []color.Color{
 	color.SRGB8{0x00, 0x00, 0x00},
 	color.SRGB8{0x00, 0x00, 0x80},
 	color.SRGB8{0x00, 0x00, 0xff},

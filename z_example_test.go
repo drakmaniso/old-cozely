@@ -6,7 +6,6 @@ import (
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/input"
-	"github.com/cozely/cozely/palette"
 	"github.com/cozely/cozely/pixel"
 )
 
@@ -82,7 +81,7 @@ func (l *loop) shufflecolors() {
 		g := 0.2 + 0.7*rand.Float32()
 		r := 0.2 + 0.7*rand.Float32()
 		b := 0.2 + 0.7*rand.Float32()
-		pixel.SetColor(palette.Index(i), color.SRGB{r, g, b})
+		pixel.SetColor(color.Index(i), color.SRGB{r, g, b})
 	}
 }
 

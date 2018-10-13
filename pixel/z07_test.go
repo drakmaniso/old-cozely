@@ -14,7 +14,6 @@ import (
 	"github.com/cozely/cozely/color/msx2"
 	"github.com/cozely/cozely/color/pico8"
 	"github.com/cozely/cozely/input"
-	"github.com/cozely/cozely/palette"
 	"github.com/cozely/cozely/pixel"
 )
 
@@ -24,7 +23,7 @@ type loop7 struct {
 	pict     pixel.PictureID
 	palettes []struct {
 		string
-		color.Palette
+		Palette []color.Color
 	}
 	current int
 }
@@ -50,7 +49,7 @@ func (l *loop7) setup() {
 
 	l.palettes = []struct {
 		string
-		color.Palette
+		Palette []color.Color
 	}{
 		{"PICO8 Palette", pico8.Palette},
 		{"C64 Palette", c64.Palette},
@@ -97,15 +96,15 @@ func (l *loop7) React() {
 func (loop7) Update() {
 }
 
-func setPalette(p color.Palette) {
-	palette.Clear()
+func setPalette(p []color.Color) {
+	color.Clear()
 	for i := 1; i < 251 && i < len(p); i++ {
-		palette.Set(palette.Index(i), p[i-1])
+		color.Set(color.Index(i), p[i-1])
 	}
 }
 
 func (l *loop7) Render() {
-	pixel.Clear(palette.Black)
+	pixel.Clear(color.Black)
 
 	cs := pixel.Resolution()
 

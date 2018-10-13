@@ -6,8 +6,8 @@ package pixel
 import (
 	"errors"
 
+	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/internal"
-	"github.com/cozely/cozely/palette"
 	"github.com/cozely/cozely/window"
 )
 
@@ -103,7 +103,7 @@ func resize() {
 
 // Clear sets the color of all pixels on the canvas; it also resets the filter
 // of all pixels.
-func Clear(c palette.Index) {
+func Clear(c color.Index) {
 	renderer.clear(c)
 }
 

@@ -10,8 +10,8 @@ import (
 	"strings"
 	"unsafe"
 
+	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/internal"
-	"github.com/cozely/cozely/palette"
 	"github.com/cozely/cozely/x/atlas"
 	"github.com/cozely/cozely/x/gl"
 )
@@ -58,7 +58,7 @@ type glRenderer struct {
 
 	// Command queue
 	clearQueued   bool
-	clearColor    palette.Index
+	clearColor    color.Index
 	parametersTBO gl.BufferTexture
 	parameters    []int16
 }
@@ -248,7 +248,7 @@ func (r *glRenderer) adjustScreenTextures() {
 
 // Clear sets the color of all pixels on the canvas; it also resets the filter
 // of all pixels.
-func (r *glRenderer) clear(c palette.Index) {
+func (r *glRenderer) clear(c color.Index) {
 	r.clearQueued = true
 	r.clearColor = c
 }

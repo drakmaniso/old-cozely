@@ -12,7 +12,6 @@ import (
 
 	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/internal"
-	"github.com/cozely/cozely/palette"
 	"github.com/cozely/cozely/x/atlas"
 )
 
@@ -34,12 +33,12 @@ var pictures = struct {
 	path    []string
 	mapping []mapping
 	image   []*image.Paletted
-	lut     []palette.LUT
+	lut     []color.LUT
 }{
 	path:    []string{"", ""},
 	mapping: []mapping{{}, {}},
 	image:   []*image.Paletted{nil, nil},
-	lut:     []palette.LUT{palette.Identity, palette.Identity},
+	lut:     []color.LUT{color.Identity, color.Identity},
 }
 
 type mapping struct {
@@ -50,7 +49,7 @@ type mapping struct {
 	topbottom int16
 }
 
-var initLUT = palette.LUT{
+var initLUT = color.LUT{
 	0, 255, 255, 255, 255, 255, 255, 255, 255, 255,
 	255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
 	255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
@@ -215,28 +214,28 @@ func (p PictureID) load(prects *[]uint32) error {
 		if i == 0 && lc.A == 0 {
 			continue
 		}
-		pc, ok := palette.LRGBA(palette.Index(i))
+		pc, ok := color.LRGBAat(color.Index(i))
 		if ok && pc == lc {
-			pictures.lut[p][i] = palette.Index(i)
+			pictures.lut[p][i] = color.Index(i)
 			println("Already there: ", i)
 			continue
 		}
-		j := palette.Find(lc)
+		j := color.Find(lc)
 		if j != 0 {
-			pictures.lut[p][i] = palette.Index(j)
+			pictures.lut[p][i] = color.Index(j)
 			println("Found: ", i, j)
 			continue
 		}
-		j = palette.Add(lc)
+		j = color.Add(lc)
 		if j != 0 {
-			pictures.lut[p][i] = palette.Index(j)
+			pictures.lut[p][i] = color.Index(j)
 			println("Added: ", i, j)
 			continue
 		}
 		pictures.lut[p][i] = 250
 		println("Palette Full: ", i)
 	}
-	// pictures.lut[p] = palette.Identity
+	// pictures.lut[p] = color.Identity
 
 	//TODO: check for width and height overflow
 	w, h := int16(m.Bounds().Dx()), int16(m.Bounds().Dy())

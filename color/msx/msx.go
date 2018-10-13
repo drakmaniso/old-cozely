@@ -32,7 +32,7 @@ const (
 )
 
 // PaletteIdealized is an idealized MSX palette (source: Wikipedia)
-var PaletteIdealized = color.Palette{
+var PaletteIdealized = []color.Color{
 	// Wikipedia
 		color.SRGB8{0x00, 0x00, 0x00},
 		color.SRGB8{0x3E, 0xB8, 0x49},
@@ -53,7 +53,7 @@ var PaletteIdealized = color.Palette{
 
 // Palette is the theorical MSX palette (i.e. conversions done with ITU-R BT.601
 // formula).
-var Palette = color.Palette{
+var Palette = []color.Color{
 	// ITU-R BT.601
 		color.SRGB8{0, 6, 0},
 		color.SRGB8{26, 207, 60},
@@ -73,7 +73,7 @@ var Palette = color.Palette{
 }
 
 // PaletteCVtoRGB is the MSX palette through a Component Video to RGB conversion.
-var PaletteCVtoRGB = color.Palette{
+var PaletteCVtoRGB = []color.Color{
 	// Component Video to RGB
 		color.SRGB8{0, 4, 0},
 		color.SRGB8{58, 187, 67},
@@ -95,7 +95,7 @@ var PaletteCVtoRGB = color.Palette{
 // PaletteCheapRGB is the MSX palette through a typical analog conversion (as
 // done in the 80's), featured in the majority of MSX1 models with a TMS VDP and
 // RGB output.
-var PaletteCheapRGB = color.Palette{
+var PaletteCheapRGB = []color.Color{
 	// El Cheapo RGB
 		color.SRGB8{0, 5, 0},
 		color.SRGB8{26, 205, 59},
@@ -116,7 +116,7 @@ var PaletteCheapRGB = color.Palette{
 
 // PaletteCheapRGBTrim is the same as ColorsCheapRGB, but with trimpots to
 // normalize each channels (provides more reddish tones for the red colors).
-var PaletteCheapRGBTrim = color.Palette{
+var PaletteCheapRGBTrim = []color.Color{
 	// El Cheapo RGB with trimpots
 		color.SRGB8{0, 0, 0},
 		color.SRGB8{26, 208, 62},
@@ -137,7 +137,7 @@ var PaletteCheapRGBTrim = color.Palette{
 
 // PaletteLazyRGB is the same as ColorsCheapRGB, but with a lower quality analog
 // conversion.
-var PaletteLazyRGB = color.Palette{
+var PaletteLazyRGB = []color.Color{
 	// Lazy El Cheapo RGB
 		color.SRGB8{0, 8, 0},
 		color.SRGB8{21, 202, 53},
