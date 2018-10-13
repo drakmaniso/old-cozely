@@ -9,6 +9,7 @@ import (
 
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/color"
+	"github.com/cozely/cozely/color/pico8"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
 	"github.com/cozely/cozely/window"
@@ -34,7 +35,7 @@ func TestTest2(t *testing.T) {
 		defer cozely.Recover()
 
 		l := loop2{}
-		l.declare()
+		l.setup()
 
 		window.Events.Resize = l.resize
 		err := cozely.Run(&l)
@@ -44,7 +45,8 @@ func TestTest2(t *testing.T) {
 	})
 }
 
-func (l *loop2) declare() {
+func (l *loop2) setup() {
+	color.Load(pico8.Palette)
 	pixel.SetZoom(2)
 
 	l.txtcol = 7

@@ -11,7 +11,9 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 
 // Palette is the MSX2 palette.
-var Palette = []color.Color{}
+var Palette = []color.Color{
+	color.LRGBA{},
+}
 
 func init() {
 	for i := 1; i < 256; i++ {

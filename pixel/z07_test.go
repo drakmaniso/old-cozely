@@ -64,7 +64,7 @@ func (l *loop7) setup() {
 }
 
 func (l *loop7) Enter() {
-	setPalette(l.palettes[l.current].Palette)
+	color.Load(l.palettes[l.current].Palette)
 }
 
 func (loop7) Leave() {
@@ -82,29 +82,22 @@ func (l *loop7) React() {
 		if l.current >= len(l.palettes) {
 			l.current = len(l.palettes) - 1
 		}
-		setPalette(l.palettes[l.current].Palette)
+		color.Load(l.palettes[l.current].Palette)
 	}
 	if input.MenuLeft.Pushed() {
 		l.current--
 		if l.current < 0 {
 			l.current = 0
 		}
-		setPalette(l.palettes[l.current].Palette)
+		color.Load(l.palettes[l.current].Palette)
 	}
 }
 
 func (loop7) Update() {
 }
 
-func setPalette(p []color.Color) {
-	color.Clear()
-	for i := 1; i < 251 && i < len(p); i++ {
-		color.Set(color.Index(i), p[i-1])
-	}
-}
-
 func (l *loop7) Render() {
-	pixel.Clear(color.Black)
+	pixel.Clear(color.Transparent)
 
 	cs := pixel.Resolution()
 

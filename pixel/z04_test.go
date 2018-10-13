@@ -10,6 +10,7 @@ import (
 
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/color"
+	"github.com/cozely/cozely/color/pico8"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
 )
@@ -50,9 +51,10 @@ func TestTest4(t *testing.T) {
 
 func (l *loop4) declare() {
 	pixel.SetZoom(2)
-	//TODO:
-	l.bg = color.White
-	l.fg = color.DarkGray
+
+	color.Load(pico8.Palette)
+	l.bg = pico8.Red
+	l.fg = pico8.DarkBlue
 
 	l.fontNames = []string{
 		"Monozela10 (builtin)",

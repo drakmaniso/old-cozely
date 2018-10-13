@@ -31,7 +31,6 @@ func (r *glRenderer) setup() error {
 
 func (r *glRenderer) cleanup() error {
 	Clear()
-	dirty = true
 
 	return nil
 }

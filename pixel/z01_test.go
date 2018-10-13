@@ -28,7 +28,7 @@ func TestTest1(t *testing.T) {
 	do(func() {
 		defer cozely.Recover()
 		l := loop1{}
-		l.declare()
+		l.setup()
 		err := cozely.Run(&l)
 		if err != nil {
 			t.Error(err)
@@ -36,7 +36,7 @@ func TestTest1(t *testing.T) {
 	})
 }
 
-func (l *loop1) declare() {
+func (l *loop1) setup() {
 	pixel.SetResolution(pixel.XY{320, 180})
 
 	l.srgbGray = pixel.Picture("graphics/srgb-gray")
@@ -50,7 +50,7 @@ func (l *loop1) Enter() {
 	l.mode = 0
 }
 
-func (loop1) Leave() {
+func (l *loop1) Leave() {
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -61,7 +61,7 @@ func (l *loop1) React() {
 	}
 }
 
-func (loop1) Update() {
+func (l *loop1) Update() {
 }
 
 func (l *loop1) Render() {

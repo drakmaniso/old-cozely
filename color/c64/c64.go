@@ -10,26 +10,28 @@ import (
 
 // Color names.
 const (
-	Black      = 1
-	White      = 2
-	Red        = 3
-	Cyan       = 4
-	Violet     = 5
-	Green      = 6
-	Blue       = 7
-	Yellow     = 8
-	Orange     = 9
-	Brown      = 10
-	LightRed   = 11
-	DarkGrey   = 12
-	Grey       = 13
-	LightGreen = 14
-	LightBlue  = 15
-	LightGrey  = 16
+	Transparent color.Index = iota
+	Black
+	White
+	Red
+	Cyan
+	Violet
+	Green
+	Blue
+	Yellow
+	Orange
+	Brown
+	LightRed
+	DarkGrey
+	Grey
+	LightGreen
+	LightBlue
+	LightGrey
 )
 
 // Palette is the C64 palette.
 var Palette = []color.Color{
+	color.LRGBA{},
 	color.SRGB8{0x00, 0x00, 0x00},
 	color.SRGB8{0xff, 0xff, 0xff},
 	color.SRGB8{0x68, 0x37, 0x2b},

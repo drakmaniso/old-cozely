@@ -19,6 +19,7 @@ import (
 
 // Palette is the PICO-8 palette.
 var Palette = []color.Color{
+	color.LRGBA{},
 	color.SRGB8{0x28, 0x22, 0x53},
 	color.SRGB8{0x7E, 0x25, 0x53},
 	color.SRGB8{0x00, 0x87, 0x51},
@@ -39,20 +40,21 @@ var Palette = []color.Color{
 
 // Color names.
 const (
-	DarkBlue   = 1
-	DarkPurple = 2
-	DarkGreen  = 3
-	Brown      = 4
-	DarkGray   = 5
-	LightGray  = 6
-	White      = 7
-	Red        = 8
-	Orange     = 9
-	Yellow     = 10
-	Green      = 11
-	Blue       = 12
-	Indigo     = 13
-	Pink       = 14
-	Peach      = 15
-	Black      = 16
+	Transparent color.Index = iota
+	DarkBlue
+	DarkPurple
+	DarkGreen
+	Brown
+	DarkGray
+	LightGray
+	White
+	Red
+	Orange
+	Yellow
+	Green
+	Blue
+	Indigo
+	Pink
+	Peach
+	Black
 )
