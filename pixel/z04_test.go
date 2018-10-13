@@ -52,7 +52,7 @@ func TestTest4(t *testing.T) {
 func (l *loop4) declare() {
 	pixel.SetZoom(2)
 
-	color.Load(pico8.Palette)
+	color.Load(&pico8.Palette)
 	l.bg = pico8.White
 	l.fg = pico8.DarkBlue
 

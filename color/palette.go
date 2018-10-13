@@ -3,8 +3,6 @@
 
 package color
 
-import "errors"
-
 ////////////////////////////////////////////////////////////////////////////////
 
 // An Index in the palette.
@@ -22,6 +20,8 @@ const (
 
 var debugColor = LRGBA{1, 0, 1, 1}
 
+type Palette [256]Color
+
 ////////////////////////////////////////////////////////////////////////////////
 
 func init() {
@@ -29,7 +29,7 @@ func init() {
 }
 
 var (
-	sources [256]Color
+	sources Palette
 	colors  [256]LRGBA
 	dirty   bool
 )
@@ -61,19 +61,18 @@ func Clear() {
 
 // Load clears the master palette and fill it with the specified colors. The
 // first entry in the slice must be transparent (LRGBA{}).
-func Load(c []Color) error {
+func Load(c *Palette) error {
 	Clear()
-	if len(c) == 0 {
-		return errors.New("color.Load: invalid palette (empty slice)")
-	}
-	if c[0] != (LRGBA{}) {
-		return errors.New("color.Load: invalid palette (first color must be trasnparent)")
-	}
-	if len(c) > 256 {
-		return errors.New("color.Load: invalid palette (too many colors)")
-	}
+	// if c[0] != (LRGBA{}) {
+	// 	return errors.New("color.Load: invalid palette (first color must be trasnparent)")
+	// }
 	for i := range c {
-		Set(Index(i), c[i])
+		if i == 0 {
+			continue
+		}
+		if c[i] != nil {
+			Set(Index(i), c[i])
+		}
 	}
 	return nil
 }

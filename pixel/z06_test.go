@@ -35,7 +35,7 @@ func TestTest6(t *testing.T) {
 }
 
 func (loop6) setup() {
-	color.Load(pico8.Palette)
+	color.Load(&pico8.Palette)
 	pixel.SetZoom(3)
 }
 

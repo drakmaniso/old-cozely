@@ -11,20 +11,18 @@ import (
 ////////////////////////////////////////////////////////////////////////////////
 
 // Palette is the MSX2 palette.
-var Palette = []color.Color{
-	color.LRGBA{},
+var Palette = color.Palette{
+	1: color.LRGBA{1,0,0,1},
 }
 
 func init() {
 	for i := 1; i < 256; i++ {
 		g, r, b := i>>5, (i&0x1C)>>2, i&0x3
-		Palette = append(
-			Palette,
-			color.LRGBA{
-				float32(r) / 7.0,
-				float32(g) / 7.0,
-				float32(b) / 3.0,
-				1.0,
-			})
+		Palette[i] = color.LRGBA{
+			float32(r) / 7.0,
+			float32(g) / 7.0,
+			float32(b) / 3.0,
+			1.0,
+		}
 	}
 }

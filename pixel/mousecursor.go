@@ -11,7 +11,7 @@ var mousecursor = image.Paletted{
 	Palette: []stdcolor.Color{
 		stdcolor.RGBA{},
 		stdcolor.RGBA{255, 255, 255, 255},
-		stdcolor.RGBA{0, 0, 0, 0},
+		stdcolor.RGBA{0, 0, 0, 255},
 	},
 	Pix: []uint8{
 		0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,

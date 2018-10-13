@@ -36,7 +36,7 @@ func TestTest5(t *testing.T) {
 }
 
 func (l *loop5) setup() {
-	color.Load(pico8.Palette)
+	color.Load(&pico8.Palette)
 	pixel.SetResolution(pixel.XY{128, 128})
 
 	l.points = []pixel.XY{

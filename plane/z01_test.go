@@ -36,7 +36,7 @@ func TestTest1(t *testing.T) {
 	do(func() {
 		defer cozely.Recover()
 
-		color.Load(pico8.Palette)
+		color.Load(&pico8.Palette)
 		pixel.SetZoom(3)
 
 		err := cozely.Run(loop1{})

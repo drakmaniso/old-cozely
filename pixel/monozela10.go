@@ -11,6 +11,7 @@ var monozela10 = image.Paletted{
 	Palette: []stdcolor.Color{
 		stdcolor.RGBA{0,0,0,0},
 		stdcolor.RGBA{255,255,255,255},
+		stdcolor.RGBA{64,64,64,255},
 	},
 	Pix: []uint8{
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,

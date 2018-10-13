@@ -46,7 +46,7 @@ func TestTest2(t *testing.T) {
 }
 
 func (l *loop2) setup() {
-	color.Load(pico8.Palette)
+	color.Load(&pico8.Palette)
 	pixel.SetZoom(2)
 
 	l.txtcol = 7

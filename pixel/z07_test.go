@@ -23,7 +23,7 @@ type loop7 struct {
 	pict     pixel.PictureID
 	palettes []struct {
 		string
-		Palette []color.Color
+		*color.Palette
 	}
 	current int
 }
@@ -49,13 +49,13 @@ func (l *loop7) setup() {
 
 	l.palettes = []struct {
 		string
-		Palette []color.Color
+		*color.Palette
 	}{
-		{"PICO8 Palette", pico8.Palette},
-		{"C64 Palette", c64.Palette},
-		{"CPC Palette", cpc.Palette},
-		{"MSX Palette", msx.Palette},
-		{"MSX2 Palette", msx2.Palette},
+		{"PICO8 Palette", &pico8.Palette},
+		{"C64 Palette", &c64.Palette},
+		{"CPC Palette", &cpc.Palette},
+		{"MSX Palette", &msx.Palette},
+		{"MSX2 Palette", &msx2.Palette},
 	}
 
 	pixel.SetResolution(pixel.XY{160, 160})
