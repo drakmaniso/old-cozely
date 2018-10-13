@@ -202,40 +202,8 @@ func (p PictureID) load(prects *[]uint32) error {
 		return errors.New("impossible to load picture " + path + " (color model not supported)")
 	}
 
-	for i := range m.Palette {
-		r, g, b, al := m.Palette[i].RGBA()
-		c := color.SRGBA{
-			R: float32(r) / float32(0xFFFF),
-			G: float32(g) / float32(0xFFFF),
-			B: float32(b) / float32(0xFFFF),
-			A: float32(al) / float32(0xFFFF),
-		}
-		lc := color.LRGBAof(c)
-		if i == 0 && lc.A == 0 {
-			continue
-		}
-		pc, ok := color.LRGBAat(color.Index(i))
-		if ok && pc == lc {
-			pictures.lut[p][i] = color.Index(i)
-			println("Already there: ", i)
-			continue
-		}
-		j := color.Find(lc)
-		if j != 0 {
-			pictures.lut[p][i] = color.Index(j)
-			println("Found: ", i, j)
-			continue
-		}
-		j = color.Add(lc)
-		if j != 0 {
-			pictures.lut[p][i] = color.Index(j)
-			println("Added: ", i, j)
-			continue
-		}
-		pictures.lut[p][i] = 250
-		println("Palette Full: ", i)
-	}
-	// pictures.lut[p] = color.Identity
+	pictures.lut[p] = color.LUTfor(m)
+	//TODO: if ...  pictures.lut[p] = color.Identity
 
 	//TODO: check for width and height overflow
 	w, h := int16(m.Bounds().Dx()), int16(m.Bounds().Dy())

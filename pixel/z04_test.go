@@ -53,7 +53,7 @@ func (l *loop4) declare() {
 	pixel.SetZoom(2)
 
 	color.Load(pico8.Palette)
-	l.bg = pico8.Red
+	l.bg = pico8.White
 	l.fg = pico8.DarkBlue
 
 	l.fontNames = []string{

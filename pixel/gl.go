@@ -165,7 +165,10 @@ func (r *glRenderer) setup() error {
 		// m.Palette = stdcolor.Palette{
 		// 	stdcolor.RGBA{0, 0, 0, 255},
 		// 	stdcolor.RGBA{255, 255, 255, 255},
-		// 	stdcolor.RGBA{255, 0, 255, 255},
+		// }
+		// for i := 2; i < 256; i++ {
+		// 	c := uint8(i-1)
+		// 	m.Palette = append(m.Palette, stdcolor.RGBA{c,c,c,c})
 		// }
 		// err = png.Encode(of, m)
 		// if err != nil {
@@ -205,8 +208,12 @@ func (r *glRenderer) cleanup() error {
 	r.picturesTA.Delete()
 
 	// Fonts
-	fonts = fonts[:1]
-	fontPaths = fontPaths[:1]
+	fonts.path = fonts.path[:1]
+	fonts.height = fonts.height[:1]
+	fonts.baseline = fonts.baseline[:1]
+	fonts.basecolor = fonts.basecolor[:1]
+	fonts.first = fonts.first[:1]
+	fonts.lut = fonts.lut[:1]
 
 	return gl.Err()
 }

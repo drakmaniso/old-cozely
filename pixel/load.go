@@ -22,7 +22,7 @@ func loadAssets() error {
 
 	c := len(pictures.path)
 
-	for i := range fonts {
+	for i := range fonts.path {
 		err := FontID(i).load(&prects)
 		if err != nil {
 			//TODO: sticky error instead?
@@ -32,7 +32,7 @@ func loadAssets() error {
 
 	internal.Debug.Printf(
 		"Loaded %d fonts (%d glyphs)\n",
-		len(fonts),
+		len(fonts.path),
 		len(pictures.path)-c,
 	)
 

@@ -1,10 +1,17 @@
 package pixel
 
-import "image"
+import (
+	"image"
+	stdcolor "image/color"
+)
 
 var monozela10 = image.Paletted{
 	Rect:   image.Rectangle{Max: image.Point{680, 12}},
 	Stride: 680,
+	Palette: []stdcolor.Color{
+		stdcolor.RGBA{0,0,0,0},
+		stdcolor.RGBA{255,255,255,255},
+	},
 	Pix: []uint8{
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,

@@ -82,10 +82,16 @@ func (a *Cursor) WriteRune(r rune) {
 	}
 
 	g := a.Font.glyph(r)
+	var cs uint8 // Color shift
+	if a.Color >= fonts.basecolor[a.Font] {
+		cs = uint8(a.Color) - uint8(fonts.basecolor[a.Font])
+	} else {
+		cs = 255 - (uint8(fonts.basecolor[a.Font]) - uint8(a.Color))
+	}
 	renderer.command(cmdPicture,
-		int16(a.Color-fonts[a.Font].basecolor),
+		int16(cs),
 		a.Layer,
-		a.Position.X, a.Position.Y-fonts[a.Font].baseline,
+		a.Position.X, a.Position.Y-fonts.baseline[a.Font],
 		0, 0, //TODO
 		int16(g),
 		0,
