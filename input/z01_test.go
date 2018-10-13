@@ -10,6 +10,8 @@ import (
 	"testing"
 
 	"github.com/cozely/cozely"
+	"github.com/cozely/cozely/color"
+	"github.com/cozely/cozely/color/pico8"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
 	"github.com/cozely/cozely/window"
@@ -45,6 +47,7 @@ var (
 func TestTest1(t *testing.T) {
 	defer cozely.Recover()
 
+	color.Load(pico8.Palette)
 	pixel.SetZoom(3)
 
 	err := cozely.Run(loop1{})
@@ -165,7 +168,7 @@ func (loop1) Render() {
 	cur.Printf("Current device: %d = %s", dv, dv.Name())
 
 	//TODO:
-	pixel.MouseCursor.Paint(0, pixel.XYof(c))
+	pixel.MouseCursor.Paint(pixel.XYof(c), 0)
 }
 
 func changecolor(cur *pixel.Cursor, p bool) {

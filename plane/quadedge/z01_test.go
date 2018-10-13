@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/cozely/cozely"
+	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/color/pico8"
 	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
@@ -34,6 +35,7 @@ func TestTest1(t *testing.T) {
 	do(func() {
 		defer cozely.Recover()
 
+		color.Load(pico8.Palette)
 		pixel.SetZoom(2)
 
 		err := cozely.Run(loop1{})
@@ -130,7 +132,7 @@ func (loop1) Update() {
 }
 
 func (loop1) Render() {
-	pixel.Clear(1)
+	pixel.Clear(pico8.DarkBlue)
 	cur := pixel.Cursor{}
 
 	ratio = float32(pixel.Resolution().Y)

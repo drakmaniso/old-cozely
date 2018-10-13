@@ -137,6 +137,7 @@ func (p PictureID) load(prects *[]uint32) error {
 		//TODO: add mapping
 		pictures.mapping[p].w, pictures.mapping[p].h = w, h
 		pictures.image[p] = &mousecursor
+		pictures.lut[p] = color.LUTfor(&mousecursor)
 		*prects = append(*prects, uint32(p))
 		return nil
 	}

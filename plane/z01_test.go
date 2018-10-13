@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/cozely/cozely"
+	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/color/pico8"
 	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
@@ -35,6 +36,7 @@ func TestTest1(t *testing.T) {
 	do(func() {
 		defer cozely.Recover()
 
+		color.Load(pico8.Palette)
 		pixel.SetZoom(3)
 
 		err := cozely.Run(loop1{})

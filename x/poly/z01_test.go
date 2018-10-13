@@ -233,7 +233,7 @@ func (loop) Render() {
 
 	pixel.Clear(0)
 	cur := pixel.Cursor{
-		Color: 7,
+		Color: color.White,
 	}
 	cur.Position = pixel.XY{2, 12}
 	ft, or := cozely.RenderStats()
@@ -242,7 +242,7 @@ func (loop) Render() {
 		cur.Printf(" (%d)", or)
 	}
 	if window.HasMouseFocus() {
-		pixel.MouseCursor.Paint(0, pixel.XYof(cursor.XY()))
+		pixel.MouseCursor.Paint(pixel.XYof(cursor.XY()), 0)
 	}
 }
 
