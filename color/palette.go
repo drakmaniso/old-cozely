@@ -20,6 +20,8 @@ const (
 
 var debugColor = LRGBA{1, 0, 1, 1}
 
+// A Palette associates a colors to indices. A nil entry means the index is not
+// used in this palette.
 type Palette [256]Color
 
 ////////////////////////////////////////////////////////////////////////////////

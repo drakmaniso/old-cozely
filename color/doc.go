@@ -2,7 +2,8 @@
 // Licensed under a simplified BSD license (see LICENSE file).
 
 /*
-Package color provides types and functions to manipulate colors.
+Package color provides types and functions to manipulate colors, and also
+implements the master palette used by package pixel.
 
 The types defined here are compatible with the standard library package
 "image/color", but are designed to work well with the GPU.

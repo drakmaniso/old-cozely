@@ -77,11 +77,10 @@ var initLUT = LUT{
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// FitInMaster constructs a LUT that allows to display m using the master
-// palette. Any image color that is already in the palette is tranlated through
-// the LUT; remaining unkown colors are added to the master palette. If the
-// latter is full, an error is returned.
-func FitInMaster(m *image.Paletted) (LUT, error) {
+// ToMaster constructs a LUT that translates the color indices of an image to
+// the corresponding colors in the master palette. If necessary, new colors are
+// added to the master palette. If the latter is full, an error is returned.
+func ToMaster(m *image.Paletted) (LUT, error) {
 	var err error
 	l := initLUT
 	a := 0

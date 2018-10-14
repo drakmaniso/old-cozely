@@ -136,7 +136,7 @@ func (f FontID) load(frects *[]uint32) error {
 		}
 	}
 
-	fonts.lut[f], err = color.FitInMaster(p)
+	fonts.lut[f], err = color.ToMaster(p)
 	if err != nil {
 		return errors.New("impossible to load font: " + err.Error())
 	}

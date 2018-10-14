@@ -139,7 +139,7 @@ func (p PictureID) load(prects *[]uint32) error {
 		//TODO: add mapping
 		pictures.mapping[p].w, pictures.mapping[p].h = w, h
 		pictures.image[p] = &mousecursor
-		pictures.lut[p], err = color.FitInMaster(&mousecursor)
+		pictures.lut[p], err = color.ToMaster(&mousecursor)
 		if err != nil {
 			return internal.Wrap(`loading mouse cursor picture`, err)
 		}
@@ -208,9 +208,9 @@ func (p PictureID) load(prects *[]uint32) error {
 		return errors.New("impossible to load picture " + path + " (color model not supported)")
 	}
 
-	pictures.lut[p], err = color.FitInMaster(m)
+	pictures.lut[p], err = color.ToMaster(m)
 	if err != nil {
-		return internal.Wrap("loading picture " + path, err)
+		return internal.Wrap("loading picture "+path, err)
 	}
 	//TODO: if ...  pictures.lut[p] = color.Identity
 
