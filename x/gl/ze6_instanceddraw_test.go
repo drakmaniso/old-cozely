@@ -92,7 +92,7 @@ func (loop06) Leave() {
 // Game Loop ///////////////////////////////////////////////////////////////////
 
 func (l *loop06) React() {
-	if input.MenuSelect.Pressed() || input.MenuClick.Pressed() {
+	if input.Select.Pressed() || input.Click.Pressed() {
 		l.randomizeRosesData()
 		l.rosesINBO.SubData(roses[:], 0)
 	}

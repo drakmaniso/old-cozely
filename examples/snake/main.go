@@ -65,11 +65,11 @@ func (menu) Enter() {
 func (menu) Leave() {}
 
 func (menu) React() {
-	if input.MenuBack.Pressed() {
+	if input.Close.Pressed() {
 		cozely.Stop(nil)
 	}
 
-	if input.MenuSelect.Pressed() {
+	if input.Select.Pressed() {
 		cozely.Goto(loop{})
 	}
 	return
@@ -99,20 +99,20 @@ func (loop) Leave() {
 }
 
 func (loop) React() {
-	if input.MenuBack.Pressed() {
+	if input.Close.Pressed() {
 		cozely.Stop(nil)
 	}
 
-	if input.MenuUp.Pressed() && direction != down {
+	if input.Up.Pressed() && direction != down {
 		next = up
 	}
-	if input.MenuRight.Pressed() && direction != left {
+	if input.Right.Pressed() && direction != left {
 		next = right
 	}
-	if input.MenuDown.Pressed() && direction != up {
+	if input.Down.Pressed() && direction != up {
 		next = down
 	}
-	if input.MenuLeft.Pressed() && direction != right {
+	if input.Left.Pressed() && direction != right {
 		next = left
 	}
 }
@@ -154,11 +154,11 @@ func (gameover) Leave() {
 }
 
 func (gameover) React() {
-	if input.MenuBack.Pressed() {
+	if input.Close.Pressed() {
 		cozely.Stop(nil)
 	}
 
-	if input.MenuSelect.Pressed() {
+	if input.Select.Pressed() {
 		cozely.Goto(menu{})
 	}
 	return

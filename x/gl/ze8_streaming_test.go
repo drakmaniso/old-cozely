@@ -103,7 +103,7 @@ func (loop08) Leave() {
 // Game Loop ///////////////////////////////////////////////////////////////////
 
 func (l *loop08) React() {
-	if input.MenuSelect.Pressed() {
+	if input.Select.Pressed() {
 		l.setupPoints()
 	}
 

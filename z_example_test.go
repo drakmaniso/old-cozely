@@ -65,7 +65,7 @@ func (l *loop) React() {
 			pixel.SetPalette(l.monochrome)
 		}
 	}
-	if input.MenuBack.Pressed() {
+	if input.Close.Pressed() {
 		cozely.Stop(nil)
 	}
 }

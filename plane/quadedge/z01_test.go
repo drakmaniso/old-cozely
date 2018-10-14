@@ -61,7 +61,7 @@ func (loop1) Leave() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop1) React() {
-	if input.MenuBack.Pressed() {
+	if input.Close.Pressed() {
 		cozely.Stop(nil)
 	}
 	if next.Pressed() {
@@ -69,7 +69,7 @@ func (loop1) React() {
 	}
 
 	if previous.Pressed() {
-		m := pixel.XYof(input.MenuPointer.XYon(0))
+		m := pixel.XYof(input.Pointer.XYon(0))
 		p := fromScreen(m)
 		points = append(points, p)
 		triangulation = quadedge.Delaunay(points)
@@ -144,7 +144,7 @@ func (loop1) Render() {
 		Y: float32(pixel.Resolution().Y),
 	}
 
-	m := pixel.XYof(input.MenuPointer.XYon(0))
+	m := pixel.XYof(input.Pointer.XYon(0))
 	p := fromScreen(m)
 	cur.Locate(1, pixel.XY{2, 8})
 	cur.Color = col3
