@@ -91,20 +91,20 @@ func (loop4) Leave() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (a *loop4) React() {
-	if scrollup.Pushed() {
+	if scrollup.Pressed() {
 		a.line--
 		if a.line < 0 {
 			a.line = 0
 		}
 	}
-	if scrolldown.Pushed() {
+	if scrolldown.Pressed() {
 		a.line++
 		if a.line > len(a.show)-1 {
 			a.line = len(a.show) - 1
 		}
 	}
 
-	if quit.Pushed() {
+	if quit.Pressed() {
 		cozely.Stop(nil)
 	}
 }

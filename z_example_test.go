@@ -56,7 +56,7 @@ func (loop) Leave() {
 // Game Loop ///////////////////////////////////////////////////////////////////
 
 func (l *loop) React() {
-	if play.Pushed() {
+	if play.Pressed() {
 		l.playing = !l.playing
 		if l.playing {
 			pixel.SetPalette(l.colorful)
@@ -65,7 +65,7 @@ func (l *loop) React() {
 			pixel.SetPalette(l.monochrome)
 		}
 	}
-	if input.MenuBack.Pushed() {
+	if input.Close.Pressed() {
 		cozely.Stop(nil)
 	}
 }

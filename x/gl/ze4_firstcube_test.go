@@ -114,14 +114,14 @@ func (l *loop04) React() {
 	m := delta.XY()
 	s := window.Size().Coord()
 
-	if rotate.Pushed() || move.Pushed() || zoom.Pushed() {
+	if rotate.Pressed() || move.Pressed() || zoom.Pressed() {
 		input.GrabMouse(true)
 	}
 	if rotate.Released() || move.Released() || zoom.Released() {
 		input.GrabMouse(false)
 	}
 
-	if rotate.Pressed() {
+	if rotate.Ongoing() {
 		l.yaw += 4 * m.X / s.X
 		l.pitch += 4 * m.Y / s.Y
 		switch {
@@ -133,21 +133,21 @@ func (l *loop04) React() {
 		l.computeWorldFromObject()
 	}
 
-	if move.Pressed() {
+	if move.Ongoing() {
 		d := m.Times(2).Slashxy(s)
 		l.position.X += d.X
 		l.position.Y -= d.Y
 		l.computeWorldFromObject()
 	}
 
-	if zoom.Pressed() {
+	if zoom.Ongoing() {
 		d := m.Times(2).Slashxy(s)
 		l.position.X += d.X
 		l.position.Z += d.Y
 		l.computeWorldFromObject()
 	}
 
-	if quit.Pushed() {
+	if quit.Pressed() {
 		cozely.Stop(nil)
 	}
 }

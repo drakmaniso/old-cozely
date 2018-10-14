@@ -80,55 +80,55 @@ func (a *loop2) resize() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (a *loop2) React() {
-	if scenes[1].Pushed() {
+	if scenes[1].Pressed() {
 		a.shapes = make([]shape, 1000)
 		a.resize()
 	}
-	if scenes[2].Pushed() {
+	if scenes[2].Pressed() {
 		a.shapes = make([]shape, 10000)
 		a.resize()
 	}
-	if scenes[3].Pushed() {
+	if scenes[3].Pressed() {
 		a.shapes = make([]shape, 100000)
 		a.resize()
 	}
-	if scenes[4].Pushed() {
+	if scenes[4].Pressed() {
 		a.shapes = make([]shape, 200000)
 		a.resize()
 	}
-	if scenes[5].Pushed() {
+	if scenes[5].Pressed() {
 		a.shapes = make([]shape, 300000)
 		a.resize()
 	}
-	if scenes[6].Pushed() {
+	if scenes[6].Pressed() {
 		a.shapes = make([]shape, 350000)
 		a.resize()
 	}
-	if scenes[7].Pushed() {
+	if scenes[7].Pressed() {
 		a.shapes = make([]shape, 400000)
 		a.resize()
 	}
-	if scenes[8].Pushed() {
+	if scenes[8].Pressed() {
 		a.shapes = make([]shape, 450000)
 		a.resize()
 	}
-	if scenes[9].Pushed() {
+	if scenes[9].Pressed() {
 		a.shapes = make([]shape, 500000)
 		a.resize()
 	}
-	if scenes[0].Pushed() {
+	if scenes[0].Pressed() {
 		a.shapes = make([]shape, 10)
 		a.resize()
 	}
-	if scrollup.Pushed() {
+	if scrollup.Pressed() {
 		a.shapes = make([]shape, len(a.shapes)+1000)
 		a.resize()
 	}
-	if scrolldown.Pushed() && len(a.shapes) > 1000 {
+	if scrolldown.Pressed() && len(a.shapes) > 1000 {
 		a.shapes = make([]shape, len(a.shapes)-1000)
 		a.resize()
 	}
-	if next.Pushed() {
+	if next.Pressed() {
 		a.shapes = append(a.shapes, shape{})
 		i := len(a.shapes) - 1
 		j := rand.Intn(len(a.picts))
@@ -137,10 +137,10 @@ func (a *loop2) React() {
 		//TODO:
 		a.shapes[i].pos = pixel.XYof(cursor.XY()).Minus(p.Size().Slash(2))
 	}
-	if previous.Pushed() && len(a.shapes) > 0 {
+	if previous.Pressed() && len(a.shapes) > 0 {
 		a.shapes = a.shapes[:len(a.shapes)-1]
 	}
-	if quit.Pushed() {
+	if quit.Pressed() {
 		cozely.Stop(nil)
 	}
 }

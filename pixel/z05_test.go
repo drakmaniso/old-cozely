@@ -54,16 +54,16 @@ func (loop5) Leave() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (a *loop5) React() {
-	if quit.Pushed() {
+	if quit.Pressed() {
 		cozely.Stop(nil)
 	}
 
-	if next.Pushed() {
+	if next.Pressed() {
 		m := pixel.XYof(cursor.XY())
 		a.points = append(a.points, m)
 	}
 
-	if previous.Pushed() {
+	if previous.Pressed() {
 		if len(a.points) > 0 {
 			a.points = a.points[:len(a.points)-1]
 		}
@@ -76,14 +76,14 @@ func (loop5) Update() {
 func (a *loop5) Render() {
 	pixel.Clear(1)
 	m := pixel.XYof(cursor.XY())
-	if !scenes[3].Pressed() {
+	if !scenes[3].Ongoing() {
 		pixel.Triangles(2, 0, a.points...)
 	}
-	if !scenes[2].Pressed() {
+	if !scenes[2].Ongoing() {
 		pixel.Lines(14, 0, a.points...)
 		pixel.Lines(13, 0, a.points[len(a.points)-1], m)
 	}
-	if !scenes[1].Pressed() {
+	if !scenes[1].Ongoing() {
 		for _, p := range a.points {
 			pixel.Point(8, 0, p)
 		}

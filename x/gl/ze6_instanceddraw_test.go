@@ -92,12 +92,12 @@ func (loop06) Leave() {
 // Game Loop ///////////////////////////////////////////////////////////////////
 
 func (l *loop06) React() {
-	if input.MenuSelect.Pushed() || input.MenuClick.Pushed() {
+	if input.Select.Pressed() || input.Click.Pressed() {
 		l.randomizeRosesData()
 		l.rosesINBO.SubData(roses[:], 0)
 	}
 
-	if quit.Pushed() {
+	if quit.Pressed() {
 		cozely.Stop(nil)
 	}
 }

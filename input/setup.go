@@ -18,11 +18,11 @@ func init() {
 
 func setup() error {
 	internal.Log.Printf("Input declarations: %d contexts and %d actions",
-		len(contexts.name), len(actions.name)-8) //TODO
+		len(contexts.name), len(actions.name)) //TODO
 
 	if len(contexts.name) == 0 {
 		aa := []Action{}
-		for _, a := range actions.name {
+		for _, a := range actions.list {
 			aa = append(aa, a)
 		}
 		c := Context("Default", aa...)
@@ -62,45 +62,53 @@ func setup() error {
 		for _, a := range contexts.actions[i] {
 			var b []string
 			switch a {
-			case MenuBack:
-				b, ok = m["Menu Back"]
+			case Close:
+				actions.name["Close"] = Close
+				b, ok = m["Close"]
 				if !ok || len(b) == 0 {
-					m["Menu Back"] = []string{"Escape", "Button B"}
+					m["Close"] = []string{"Escape", "Button B"}
 				}
-			case MenuSelect:
-				b, ok = m["Menu Select"]
+			case Select:
+				actions.name["Select"] = Select
+				b, ok = m["Select"]
 				if !ok || len(b) == 0 {
-					m["Menu Select"] = []string{"Space", "Enter", "Button A"}
+					m["Select"] = []string{"Space", "Enter", "Button A"}
 				}
-			case MenuUp:
-				b, ok = m["Menu Up"]
+			case Up:
+				actions.name["Up"] = Up
+				b, ok = m["Up"]
 				if !ok || len(b) == 0 {
-					m["Menu Up"] = []string{"Up", "Dpad Up"} //TODO: keypad and left stick support
+					m["Up"] = []string{"Up", "Dpad Up"} //TODO: keypad and left stick support
 				}
-			case MenuDown:
-				b, ok = m["Menu Down"]
+			case Down:
+				actions.name["Down"] = Down
+				b, ok = m["Down"]
 				if !ok || len(b) == 0 {
-					m["Menu Down"] = []string{"Down", "Dpad Down"} //TODO: keypad and left stick support
+					m["Down"] = []string{"Down", "Dpad Down"} //TODO: keypad and left stick support
 				}
-			case MenuLeft:
-				b, ok = m["Menu Left"]
+			case Left:
+				actions.name["Left"] = Left
+				b, ok = m["Left"]
 				if !ok || len(b) == 0 {
-					m["Menu Left"] = []string{"Left", "Dpad Left"} //TODO: keypad and left stick support
+					m["Left"] = []string{"Left", "Dpad Left"} //TODO: keypad and left stick support
 				}
-			case MenuRight:
-				b, ok = m["Menu Right"]
+			case Right:
+				actions.name["Right"] = Right
+				b, ok = m["Right"]
 				if !ok || len(b) == 0 {
-					m["Menu Right"] = []string{"Right", "Dpad Right"} //TODO: keypad and left stick support
+					m["Right"] = []string{"Right", "Dpad Right"} //TODO: keypad and left stick support
 				}
-			case MenuPointer:
-				b, ok = m["Menu Pointer"]
+			case Pointer:
+				actions.name["Pointer"] = Pointer
+				b, ok = m["Pointer"]
 				if !ok || len(b) == 0 {
-					m["Menu Pointer"] = []string{"Mouse", "Right Stick"}
+					m["Pointer"] = []string{"Mouse", "Right Stick"}
 				}
-			case MenuClick:
-				b, ok = m["Menu Click"]
+			case Click:
+				actions.name["Click"] = Click
+				b, ok = m["Click"]
 				if !ok || len(b) == 0 {
-					m["Menu Click"] = []string{"Mouse Left", "Right Trigger"}
+					m["Click"] = []string{"Mouse Left", "Right Trigger"}
 				}
 			}
 		}

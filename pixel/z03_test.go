@@ -63,7 +63,7 @@ func (loop3) Leave() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop3) React() {
-	if quit.Pushed() {
+	if quit.Pressed() {
 		cozely.Stop(nil)
 	}
 }

@@ -21,24 +21,24 @@ var actions = struct {
 	list []Action
 }{
 	name: map[string]Action{
-		"Menu Select":  MenuSelect,
-		"Menu Back":    MenuBack,
-		"Menu Up":      MenuUp,
-		"Menu Down":    MenuDown,
-		"Menu Left":    MenuLeft,
-		"Menu Right":   MenuRight,
-		"Menu Pointer": MenuPointer,
-		"Menu Click":   MenuClick,
+		// "Select":  Select,
+		// "Back":    Close,
+		// "Up":      Up,
+		// "Down":    Down,
+		// "Left":    Left,
+		// "Right":   Right,
+		// "Pointer": Pointer,
+		// "Click":   Click,
 	},
 	list: []Action{
-		MenuSelect,
-		MenuBack,
-		MenuUp,
-		MenuDown,
-		MenuLeft,
-		MenuRight,
-		MenuPointer,
-		MenuClick,
+		Select,
+		Close,
+		Up,
+		Down,
+		Left,
+		Right,
+		Pointer,
+		Click,
 	},
 }
 
@@ -47,15 +47,15 @@ var actions = struct {
 // declared context, a default context will be created and include all these
 // actions.
 const (
-	MenuSelect = ButtonID(iota)
-	MenuBack
-	MenuUp
-	MenuDown
-	MenuLeft
-	MenuRight
-	MenuClick
+	Select = ButtonID(iota)
+	Close
+	Up
+	Down
+	Left
+	Right
+	Click
 
-	MenuPointer = CursorID(0)
+	Pointer = CursorID(0)
 )
 
 const maxID = 0xFFFFFFFF
