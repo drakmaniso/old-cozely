@@ -18,7 +18,7 @@ var Palette = color.Palette{
 func init() {
 	for i := 1; i < 256; i++ {
 		g, r, b := i>>5, (i&0x1C)>>2, i&0x3
-		Palette[i] = color.LRGBA{
+		Palette[i] = color.SRGBA{
 			float32(r) / 7.0,
 			float32(g) / 7.0,
 			float32(b) / 3.0,

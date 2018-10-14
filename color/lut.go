@@ -7,7 +7,8 @@ import "image"
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// A LUT is a Look-Up Table that is used to transform any color index.
+// A LUT is a Look-Up Table that can be used to map color indices to new
+// indices.
 type LUT [256]Index
 
 // Identity is a LUT that keep each index in place.

@@ -8,7 +8,6 @@ import (
 	"time"
 
 	"github.com/cozely/cozely"
-	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
 	"github.com/cozely/cozely/window"
@@ -27,10 +26,6 @@ var (
 )
 
 ////////////////////////////////////////////////////////////////////////////////
-
-var (
-	palette = color.PaletteFrom("graphics/blue")
-)
 
 var tilesPict [8]struct {
 	normal, big pixel.PictureID
@@ -56,7 +51,6 @@ func main() {
 }
 
 func (loop) Enter() {
-	pixel.SetPalette(palette)
 }
 
 func (loop) Leave() {

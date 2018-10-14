@@ -107,7 +107,7 @@ func (l *loop7) Render() {
 	l.pict.Paint(p, 0)
 
 	cur := pixel.Cursor{}
-	cur.Color = 254
+	cur.Color = color.MidGray
 	cur.Position = p.Minus(pixel.XY{0, 8})
 	cur.Print(l.palettes[l.current].string)
 }

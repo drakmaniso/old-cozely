@@ -5,52 +5,22 @@
 Package cozely is the starting point of the Cozely framework, a simple,
 all-in-one set of packages for making games in Go.
 
-It focuses on pixel art for 2D, and polygonal art (aka low-poly) for 3D,
-supports windows and linux, and has only two dependencies (SDL2 and Opengl 4.6).
+WORK IN PROGRESS
 
-**THIS IS A WORK IN PROGRESS**, not usable yet: the framework is *very*
-incomplete, and the API is subject to frequent changes.
+The framework is *very* incomplete, and the API is subject to frequent changes.
 
-Hello World example:
+The Framework
 
-	package main
+Both Windows and Linux are supported; there is only two dependencies (SDL2 and
+OpenGL4.6).
 
-	import (
-		"github.com/cozely/cozely"
-		"github.com/cozely/cozely/pixel"
-	)
+Package input provides a way to handle user inputs with configurable bindings.
 
-	func main() {
-		cozely.Run(loop{})
-	}
+Package pixel provides a renderer dedicated to pixel art.
 
-	type loop struct{}
+This package
 
-	func (loop) Enter()  {
-		// Enter the game loop
-	}
-
-	func (loop) React()  {
-		// React to user inputs
-	}
-
-	func (loop) Update() {
-		// Update the game state
-	}
-
-	func (loop) Render() {
-		// Render the game state
-		pixel.Clear(1)
-		cur := pixel.Cursor{
-			Position: pixel.XY{8, 16},
-			Color: 7,
-		}
-		cur.Print("Hello, World!")
-	}
-
-	func (loop) Leave()  {
-		// Leave the game loop
-	}
+The main focus of package cozely is to manage the game loop.
 
 */
 package cozely
