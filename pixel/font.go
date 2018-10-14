@@ -151,16 +151,19 @@ func (f FontID) load(frects *[]uint32) error {
 		}
 	}
 
+	// Find the base
 	fonts.basecolor[f] = 255
-	// for _, c := range p.Pix {
-	// 	lc := fonts.lut[f][c]
-	// 	if c != 0 &&  lc < fonts.basecolor[f] {
-	// 		fonts.basecolor[f] = lc
-	// 	}
-	// }
+	for y := 0; y < p.Bounds().Dy()-1; y++ {
+		for x := 1; x < p.Bounds().Dx(); x++ {
+			c := p.Pix[x+y*p.Stride]
+			lc := fonts.lut[f][c]
+			if c != 0 && lc < fonts.basecolor[f] {
+				fonts.basecolor[f] = lc
+			}
+		}
+	}
 
 	// Create images and reserve mapping for each rune
-
 	for x := 1; x < p.Bounds().Dx(); g++ {
 		w := 0
 		for x+w < p.Bounds().Dx() && p.Pix[x+w+h*p.Stride] != 0 {
