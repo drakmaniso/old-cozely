@@ -77,15 +77,15 @@ func (a ButtonID) Name() string {
 	return buttons.name[a]
 }
 
-// Pressed returns true if the action has been started and is currently ongoing
-// (i.e. "on", "pressed") on the current device.
-func (a ButtonID) Pressed() bool {
-	return a.PressedOn(devices.current)
+// Ongoing returns true if the action has been started and is currently ongoing
+// on the current device (i.e. it has been pressed but not released).
+func (a ButtonID) Ongoing() bool {
+	return a.OngoingOn(devices.current)
 }
 
-// PressedOn returns true if the action has been started and is currently ongoing
-// (i.e. "on", "pressed") on a specific device.
-func (a ButtonID) PressedOn(d DeviceID) bool {
+// OngoingOn returns true if the action has been started and is currently
+// ongoing on a specific device  (i.e. it has been pressed but not released).
+func (a ButtonID) OngoingOn(d DeviceID) bool {
 	return devices.buttons[d][a].pressed
 }
 
@@ -107,21 +107,21 @@ func (a ButtonID) ChangedOn(d DeviceID) bool {
 	return devices.buttons[d][a].previous != devices.buttons[d][a].pressed
 }
 
-// Pushed returns true if the action has just been started this very frame (i.e.
+// Pressed returns true if the action has just been started this very frame (i.e.
 // just been pressed by the player).
 //
 // Note: this *must* be queried in the React method of the game loop, as this is
 // the only method that is guaranteed to run at least once each frame.
-func (a ButtonID) Pushed() bool {
-	return a.PushedOn(devices.current)
+func (a ButtonID) Pressed() bool {
+	return a.PressedOn(devices.current)
 }
 
-// PushedOn returns true if the action has just been started this very frame
+// PressedOn returns true if the action has just been started this very frame
 // (i.e. just been pressed by the player).
 //
 // Note: this *must* be queried in the React method of the game loop, as this is
 // the only method that is guaranteed to run at least once each frame.
-func (a ButtonID) PushedOn(d DeviceID) bool {
+func (a ButtonID) PressedOn(d DeviceID) bool {
 	return devices.buttons[d][a].pressed && !devices.buttons[d][a].previous
 }
 

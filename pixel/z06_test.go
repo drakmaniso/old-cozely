@@ -46,7 +46,7 @@ func (loop6) Leave() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop6) React() {
-	if quit.Pushed() {
+	if quit.Pressed() {
 		cozely.Stop(nil)
 	}
 }

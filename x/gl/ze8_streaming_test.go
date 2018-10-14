@@ -103,11 +103,11 @@ func (loop08) Leave() {
 // Game Loop ///////////////////////////////////////////////////////////////////
 
 func (l *loop08) React() {
-	if input.MenuSelect.Pushed() {
+	if input.MenuSelect.Pressed() {
 		l.setupPoints()
 	}
 
-	if quit.Pushed() {
+	if quit.Pressed() {
 		cozely.Stop(nil)
 	}
 }

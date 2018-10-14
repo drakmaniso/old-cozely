@@ -74,11 +74,11 @@ func (a *loop7) Leave() {
 // Game Loop ///////////////////////////////////////////////////////////////////
 
 func (a *loop7) React() {
-	if quit.Pushed() {
+	if quit.Pressed() {
 		cozely.Stop(nil)
 	}
 
-	if next.Pushed() {
+	if next.Pressed() {
 		a.mode++
 		if a.mode > 9 {
 			a.mode = 0
@@ -86,7 +86,7 @@ func (a *loop7) React() {
 	}
 
 	for i := range scenes {
-		if scenes[i].Pushed() {
+		if scenes[i].Pressed() {
 			a.mode = i
 		}
 	}

@@ -111,7 +111,7 @@ func init() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop) React() {
-	if selct.Pushed() {
+	if selct.Pressed() {
 		m := pixel.XYof(cursor.XY())
 		current = grid.PositionAt(m)
 		if current != grid.Nowhere() {
@@ -130,7 +130,7 @@ func (loop) React() {
 		current = grid.Nowhere()
 	}
 
-	if test.Pushed() {
+	if test.Pressed() {
 		f := func(e ecs.Entity) {
 			if !e.Has(ecs.MatchFlag) {
 				print(grid.PositionOf(e).String(), " ")
@@ -141,7 +141,7 @@ func (loop) React() {
 		println()
 	}
 
-	if quit.Pushed() {
+	if quit.Pressed() {
 		cozely.Stop(nil)
 	}
 }

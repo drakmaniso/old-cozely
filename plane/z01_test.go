@@ -67,11 +67,11 @@ func (loop1) Leave() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop1) React() {
-	if input.MenuSelect.Pushed() || input.MenuClick.Pushed() {
+	if input.MenuSelect.Pressed() || input.MenuClick.Pressed() {
 		newPoints()
 	}
 
-	if input.MenuBack.Pushed() {
+	if input.MenuBack.Pressed() {
 		cozely.Stop(nil)
 	}
 }
