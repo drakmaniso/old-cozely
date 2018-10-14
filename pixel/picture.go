@@ -128,6 +128,8 @@ func (p PictureID) Size() XY {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (p PictureID) load(prects *[]uint32) error {
+	var err error
+
 	switch p {
 	case noPicture:
 		//TODO: add mapping
@@ -137,7 +139,10 @@ func (p PictureID) load(prects *[]uint32) error {
 		//TODO: add mapping
 		pictures.mapping[p].w, pictures.mapping[p].h = w, h
 		pictures.image[p] = &mousecursor
-		pictures.lut[p] = color.LUTfor(&mousecursor)
+		pictures.lut[p], err = color.FitInMaster(&mousecursor)
+		if err != nil {
+			return internal.Wrap(`loading mouse cursor picture`, err)
+		}
 		*prects = append(*prects, uint32(p))
 		return nil
 	}
@@ -162,7 +167,7 @@ func (p PictureID) load(prects *[]uint32) error {
 		RightBorder  int8
 	}{}
 	path := filepath.FromSlash(internal.Path + n + ".json")
-	path, err := filepath.EvalSymlinks(path)
+	path, err = filepath.EvalSymlinks(path)
 	if err == nil {
 		f, err := os.Open(path)
 		if !os.IsNotExist(err) {
@@ -203,7 +208,10 @@ func (p PictureID) load(prects *[]uint32) error {
 		return errors.New("impossible to load picture " + path + " (color model not supported)")
 	}
 
-	pictures.lut[p] = color.LUTfor(m)
+	pictures.lut[p], err = color.FitInMaster(m)
+	if err != nil {
+		return internal.Wrap("loading picture " + path, err)
+	}
 	//TODO: if ...  pictures.lut[p] = color.Identity
 
 	//TODO: check for width and height overflow

@@ -3,7 +3,12 @@
 
 package color
 
-import "image"
+import (
+	"errors"
+	"image"
+
+	"github.com/cozely/cozely/internal"
+)
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -72,8 +77,14 @@ var initLUT = LUT{
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func LUTfor(m *image.Paletted) LUT {
+// FitInMaster constructs a LUT that allows to display m using the master
+// palette. Any image color that is already in the palette is tranlated through
+// the LUT; remaining unkown colors are added to the master palette. If the
+// latter is full, an error is returned.
+func FitInMaster(m *image.Paletted) (LUT, error) {
+	var err error
 	l := initLUT
+	a := 0
 
 	for i := range m.Palette {
 		r, g, b, al := m.Palette[i].RGBA()
@@ -90,24 +101,27 @@ func LUTfor(m *image.Paletted) LUT {
 		pc, ok := LRGBAat(Index(i))
 		if ok && pc == lc {
 			l[i] = Index(i)
-			println("Already there: ", i)
 			continue
 		}
 		j := Find(lc)
 		if j != 0 {
 			l[i] = Index(j)
-			println("Found: ", i, j)
 			continue
 		}
 		j = Add(lc)
 		if j != 0 {
 			l[i] = Index(j)
-			println("Added: ", i, j)
+			a++
+			// println("Added: ", i, j)
 			continue
 		}
 		l[i] = 250
-		println("Palette Full: ", i)
+		err = errors.New("FitInMaster: palette full")
 	}
 
-	return l
+	if a > 0 {
+		internal.Debug.Printf("Added %d colors to the master palette", a)
+	}
+
+	return l, err
 }

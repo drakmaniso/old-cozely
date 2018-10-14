@@ -22,6 +22,8 @@ func loadAssets() error {
 
 	c := len(pictures.path)
 
+	internal.Debug.Print("Loading fonts...")
+
 	for i := range fonts.path {
 		err := FontID(i).load(&prects)
 		if err != nil {
@@ -37,6 +39,8 @@ func loadAssets() error {
 	)
 
 	// Load all pictures
+
+	internal.Debug.Print("Loading pictures...")
 
 	for i := range pictures.path {
 		err := PictureID(i).load(&prects)

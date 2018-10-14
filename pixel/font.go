@@ -100,6 +100,7 @@ func (f FontID) Interline() int16 {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (f FontID) load(frects *[]uint32) error {
+	var err error
 	//TODO: support other image formats?
 	var p *image.Paletted
 
@@ -135,7 +136,10 @@ func (f FontID) load(frects *[]uint32) error {
 		}
 	}
 
-	fonts.lut[f] = color.LUTfor(p)
+	fonts.lut[f], err = color.FitInMaster(p)
+	if err != nil {
+		return errors.New("impossible to load font: " + err.Error())
+	}
 
 	h := p.Bounds().Dy() - 1
 	fonts.height[f] = int16(h)
