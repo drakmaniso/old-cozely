@@ -1,6 +1,3 @@
-// Copyright (c) 2013-2018 Laurent Moussault. All rights reserved.
-// Licensed under a simplified BSD license (see LICENSE file).
-
 package pixel
 
 import "github.com/cozely/cozely/color"
@@ -93,3 +90,6 @@ func Box(position, size XY, z Layer, corner int16, fg, bg color.Index) {
 		int16(fg),
 	)
 }
+
+//// Copyright (c) 2013-2018 Laurent Moussault. All rights reserved.
+//// Licensed under a simplified BSD license (see LICENSE file).

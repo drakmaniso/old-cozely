@@ -71,5 +71,5 @@ func (l *loop3) Render() {
 	l.pict1.Tile(l.position, l.size, 0)
 }
 
-// Copyright (c) 2018-2018 Laurent Moussault. All rights reserved.
-// Licensed under a simplified BSD license (see LICENSE file).
+//// Copyright (c) 2018-2018 Laurent Moussault. All rights reserved.
+//// Licensed under a simplified BSD license (see LICENSE file).

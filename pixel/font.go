@@ -1,6 +1,3 @@
-// Copyright (c) 2018-2018 Laurent Moussault. All rights reserved.
-// Licensed under a simplified BSD license (see LICENSE file).
-
 package pixel
 
 import (
@@ -198,3 +195,6 @@ func (f FontID) load(frects *[]uint32) error {
 
 	return nil
 }
+
+//// Copyright (c) 2018-2018 Laurent Moussault. All rights reserved.
+//// Licensed under a simplified BSD license (see LICENSE file).

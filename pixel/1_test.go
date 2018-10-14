@@ -98,5 +98,5 @@ func (l *loop1) Render() {
 	l.srgbBlue.Paint(pixel.XY{pz.X + 44 + 4*(pz.X+4), 96}, 0)
 }
 
-// Copyright (c) 2018-2018 Laurent Moussault. All rights reserved.
-// Licensed under a simplified BSD license (see LICENSE file).
+//// Copyright (c) 2018-2018 Laurent Moussault. All rights reserved.
+//// Licensed under a simplified BSD license (see LICENSE file).

@@ -5,6 +5,8 @@ import (
 	stdcolor "image/color"
 )
 
+////////////////////////////////////////////////////////////////////////////////
+
 var mousecursor = image.Paletted{
 	Rect:   image.Rectangle{Max: image.Point{16, 16}},
 	Stride: 16,
@@ -32,3 +34,6 @@ var mousecursor = image.Paletted{
 		0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 	},
 }
+
+//// Copyright (c) 2018-2018 Laurent Moussault. All rights reserved.
+//// Licensed under a simplified BSD license (see LICENSE file).

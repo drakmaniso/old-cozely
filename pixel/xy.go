@@ -1,6 +1,3 @@
-// Copyright (c) 2013-2018 Laurent Moussault. All rights reserved.
-// Licensed under a simplified BSD license (see LICENSE file).
-
 package pixel
 
 import (
@@ -34,6 +31,8 @@ func XYof(v coord.Coordinates) XY {
 			return XY(v).Minus(screen.margin)
 		}
 		return XY(v)
+	case XY:
+		return v
 	default:
 		x, y, _ := v.Cartesian()
 		return XY{int16(x), int16(y)}
@@ -168,3 +167,6 @@ func (a XY) Perp() XY {
 func (a XY) Null() bool {
 	return a.X == 0 && a.Y == 0
 }
+
+//// Copyright (c) 2013-2018 Laurent Moussault. All rights reserved.
+//// Licensed under a simplified BSD license (see LICENSE file).

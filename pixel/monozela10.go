@@ -5,6 +5,8 @@ import (
 	stdcolor "image/color"
 )
 
+////////////////////////////////////////////////////////////////////////////////
+
 var monozela10 = image.Paletted{
 	Rect:   image.Rectangle{Max: image.Point{680, 12}},
 	Stride: 680,
@@ -356,3 +358,6 @@ var monozela10 = image.Paletted{
 		2, 2, 0, 2, 2, 2, 2, 2, 2, 0, 2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0,
 	},
 }
+
+//// Copyright (c) 2017-2018 Laurent Moussault. All rights reserved.
+//// Licensed under a simplified BSD license (see LICENSE file).
