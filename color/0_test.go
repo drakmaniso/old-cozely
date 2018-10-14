@@ -1,7 +1,4 @@
-// Copyright (c) 2018-2018 Laurent Moussault. All rights reserved.
-// Licensed under a simplified BSD license (see LICENSE file).
-
-package poly_test
+package color_test
 
 import (
 	"os"
@@ -41,4 +38,5 @@ func TestMain(m *testing.M) {
 	}
 }
 
-////////////////////////////////////////////////////////////////////////////////
+// Copyright (c) 2018-2018 Laurent Moussault. All rights reserved.
+// Licensed under a simplified BSD license (see LICENSE file).

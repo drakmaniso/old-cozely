@@ -1,6 +1,3 @@
-// Copyright (c) 2013-2018 Laurent Moussault. All rights reserved.
-// Licensed under a simplified BSD license (see LICENSE file).
-
 package coord
 
 import (
@@ -9,7 +6,7 @@ import (
 	"github.com/cozely/cozely/x/math32"
 )
 
-//-----------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 func add(a, b XYZ) XYZ {
 	return XYZ{
@@ -68,7 +65,7 @@ func (v *arrayCoord) add(a, b arrayCoord) {
 	v[2] = a[2] + b[2]
 }
 
-//-----------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 func BenchmarkCoord_Plus(b *testing.B) {
 	m := XYZ{1.1, 2.2, 3.3}
@@ -156,7 +153,7 @@ func BenchmarkCoord_Plus_ArrayByRefSelf(b *testing.B) {
 	_ = m
 }
 
-//-----------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 func BenchmarkCoord_Times(b *testing.B) {
 	m := XYZ{1.1, 2.2, 3.3}
@@ -196,7 +193,7 @@ func BenchmarkCoord_Times_ByRefSelf(b *testing.B) {
 	_ = m
 }
 
-//-----------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 func BenchmarkCoord_Slash(b *testing.B) {
 	m := XYZ{1.1, 2.2, 3.3}
@@ -236,7 +233,7 @@ func BenchmarkCoord_Slash_ByRefSelf(b *testing.B) {
 	_ = m
 }
 
-//-----------------------------------------------------------------------------
+////////////////////////////////////////////////////////////////////////////////
 
 func BenchmarkCoord_Normalized(b *testing.B) {
 	m := XYZ{1.1, 2.2, 3.3}
@@ -263,4 +260,5 @@ func BenchmarkCoord_Normalize_ByRef(b *testing.B) {
 	_ = m
 }
 
-////////////////////////////////////////////////////////////////////////////////
+// Copyright (c) 2013-2018 Laurent Moussault. All rights reserved.
+// Licensed under a simplified BSD license (see LICENSE file).

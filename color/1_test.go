@@ -1,7 +1,4 @@
-// Copyright (c) 2018-2018 Laurent Moussault. All rights reserved.
-// Licensed under a simplified BSD license (see LICENSE file).
-
-package pixel_test
+package color_test
 
 import (
 	"testing"
@@ -111,3 +108,6 @@ func (l *loop7) Render() {
 	cur.Position = p.Minus(pixel.XY{0, 8})
 	cur.Print(l.palettes[l.current].string)
 }
+
+// Copyright (c) 2018-2018 Laurent Moussault. All rights reserved.
+// Licensed under a simplified BSD license (see LICENSE file).

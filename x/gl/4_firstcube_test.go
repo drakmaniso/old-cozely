@@ -26,7 +26,7 @@ var (
 	delta  = input.Delta("Delta")
 )
 
-type loop04 struct {
+type loop4 struct {
 	// OpenGL objects
 	pipeline    *gl.Pipeline
 	perFrameUBO gl.UniformBuffer
@@ -58,7 +58,7 @@ func Example_firstCube() {
 	defer cozely.Recover()
 
 	cozely.Configure(cozely.Multisample(8))
-	l := loop04{}
+	l := loop4{}
 	window.Events.Resize = func() {
 		s := window.Size()
 		gl.Viewport(0, 0, int32(s.X), int32(s.Y))
@@ -72,7 +72,7 @@ func Example_firstCube() {
 	//Output:
 }
 
-func (l *loop04) Enter() {
+func (l *loop4) Enter() {
 	// Create and configure the pipeline
 	l.pipeline = gl.NewPipeline(
 		gl.Shader(cozely.Path()+"shader04.vert"),
@@ -105,12 +105,12 @@ func (l *loop04) Enter() {
 	l.pipeline.Unbind()
 }
 
-func (loop04) Leave() {
+func (loop4) Leave() {
 }
 
 // Game Loop ///////////////////////////////////////////////////////////////////
 
-func (l *loop04) React() {
+func (l *loop4) React() {
 	m := delta.XY()
 	s := window.Size().Coord()
 
@@ -152,12 +152,12 @@ func (l *loop04) React() {
 	}
 }
 
-func (l *loop04) computeWorldFromObject() {
+func (l *loop4) computeWorldFromObject() {
 	rot := space.EulerZXY(l.pitch, l.yaw, 0)
 	l.worldFromObject = space.Translation(l.position).Times(rot)
 }
 
-func (l *loop04) computeViewFromWorld() {
+func (l *loop4) computeViewFromWorld() {
 	l.viewFromWorld = space.LookAt(
 		coord.XYZ{0, 0, 3},
 		coord.XYZ{0, 0, 0},
@@ -165,10 +165,10 @@ func (l *loop04) computeViewFromWorld() {
 	)
 }
 
-func (loop04) Update() {
+func (loop4) Update() {
 }
 
-func (l *loop04) Render() {
+func (l *loop4) Render() {
 	l.pipeline.Bind()
 	gl.ClearDepthBuffer(1.0)
 	gl.ClearColorBuffer(color.LRGBA{0.9, 0.9, 0.9, 1.0})

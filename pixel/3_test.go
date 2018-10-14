@@ -1,6 +1,3 @@
-// Copyright (c) 2018-2018 Laurent Moussault. All rights reserved.
-// Licensed under a simplified BSD license (see LICENSE file).
-
 package pixel_test
 
 import (
@@ -57,7 +54,7 @@ func (l *loop3) React() {
 		cozely.Stop(nil)
 	}
 
-	if input.Click.Pressed() {
+	if input.Click.Ongoing() {
 		l.size = pixel.XYof(input.Pointer.XY()).Minus(l.position)
 	}
 }
@@ -73,3 +70,6 @@ func (l *loop3) Render() {
 	l.pict2.Tile(pixel.XY{128,4}, pixel.XY{32, 32}, -1)
 	l.pict1.Tile(l.position, l.size, 0)
 }
+
+// Copyright (c) 2018-2018 Laurent Moussault. All rights reserved.
+// Licensed under a simplified BSD license (see LICENSE file).

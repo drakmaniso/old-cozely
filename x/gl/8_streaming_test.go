@@ -1,6 +1,3 @@
-// Copyright (c) 2013-2018 Laurent Moussault. All rights reserved.
-// Licensed under a simplified BSD license (see LICENSE file).
-
 package gl_test
 
 import (
@@ -17,10 +14,7 @@ import (
 
 // Declarations ////////////////////////////////////////////////////////////////
 
-// Input Bindings
-// (same as in InstancedDraw example)
-
-type loop08 struct {
+type loop8 struct {
 	// OpenGL objects
 	pipeline    *gl.Pipeline
 	perFrameUBO gl.UniformBuffer
@@ -53,7 +47,7 @@ var points [512]struct {
 func Example_streaming() {
 	defer cozely.Recover()
 
-	l := loop08{
+	l := loop8{
 		bgColor:  color.LRGBA{0.9, 0.87, 0.85, 1.0},
 		rotSpeed: float32(0.003),
 		jitter:   float32(0.002),
@@ -70,7 +64,7 @@ func Example_streaming() {
 	//Output:
 }
 
-func (l *loop08) Enter() {
+func (l *loop8) Enter() {
 
 	// Create and configure the pipeline
 	l.pipeline = gl.NewPipeline(
@@ -97,22 +91,22 @@ func (l *loop08) Enter() {
 	l.pipeline.Unbind()
 }
 
-func (loop08) Leave() {
+func (loop8) Leave() {
 }
 
 // Game Loop ///////////////////////////////////////////////////////////////////
 
-func (l *loop08) React() {
-	if input.Select.Pressed() {
-		l.setupPoints()
+func (l *loop8) React() {
+	if input.Close.Pressed() {
+		cozely.Stop(nil)
 	}
 
-	if quit.Pressed() {
-		cozely.Stop(nil)
+	if input.Select.Pressed() || input.Click.Pressed() {
+		l.setupPoints()
 	}
 }
 
-func (l *loop08) Update() {
+func (l *loop8) Update() {
 	for i, pt := range points {
 		points[i].Position = coord.XY{
 			pt.Position.X +
@@ -133,7 +127,7 @@ func (l *loop08) Update() {
 	l.updated = true
 }
 
-func (l *loop08) Render() {
+func (l *loop8) Render() {
 	if !l.cleared {
 		gl.ClearColorBuffer(l.bgColor)
 		l.cleared = true
@@ -156,7 +150,7 @@ func (l *loop08) Render() {
 	}
 }
 
-func (l *loop08) setupPoints() {
+func (l *loop8) setupPoints() {
 	n := float32(3 + rand.Intn(13))
 	for i := range points {
 		points[i].Position = coord.XY{rand.Float32(), rand.Float32()}
@@ -171,7 +165,7 @@ func (l *loop08) setupPoints() {
 	l.cleared = false
 }
 
-func (l *loop08) resize() {
+func (l *loop8) resize() {
 	l.setupPoints()
 
 	s := window.Size().Coord()
@@ -184,3 +178,6 @@ func (l *loop08) resize() {
 	}
 	gl.Viewport(0, 0, int32(s.X), int32(s.Y))
 }
+
+// Copyright (c) 2013-2018 Laurent Moussault. All rights reserved.
+// Licensed under a simplified BSD license (see LICENSE file).

@@ -1,6 +1,3 @@
-// Copyright (c) 2013-2018 Laurent Moussault. All rights reserved.
-// Licensed under a simplified BSD license (see LICENSE file).
-
 package gl_test
 
 import (
@@ -19,7 +16,7 @@ import (
 // Input Bindings
 // (same as in FirstCube example)
 
-type loop07 struct {
+type loop7 struct {
 	// OpenGL objects
 	pipeline    *gl.Pipeline
 	perFrameUBO gl.UniformBuffer
@@ -103,7 +100,7 @@ func Example_indirectDraw() {
 	defer cozely.Recover()
 
 	cozely.Configure(cozely.Multisample(8))
-	l := loop07{}
+	l := loop7{}
 	window.Events.Resize = func() {
 		s := window.Size()
 		gl.Viewport(0, 0, int32(s.X), int32(s.Y))
@@ -117,7 +114,7 @@ func Example_indirectDraw() {
 	//Output:
 }
 
-func (l *loop07) Enter() {
+func (l *loop7) Enter() {
 	// Create and configure the pipeline
 	l.pipeline = gl.NewPipeline(
 		gl.Shader(cozely.Path()+"shader07.vert"),
@@ -156,15 +153,15 @@ func (l *loop07) Enter() {
 	l.pipeline.Unbind()
 }
 
-func (loop07) Leave() {
+func (loop7) Leave() {
 }
 
 // Game Loop ///////////////////////////////////////////////////////////////////
 
-func (loop07) Update() {
+func (loop7) Update() {
 }
 
-func (l *loop07) React() {
+func (l *loop7) React() {
 	m := delta.XY()
 	s := window.Size().Coord()
 
@@ -206,7 +203,7 @@ func (l *loop07) React() {
 	}
 }
 
-func (l *loop07) Render() {
+func (l *loop7) Render() {
 	l.pipeline.Bind()
 	gl.ClearDepthBuffer(1.0)
 	gl.ClearColorBuffer(color.LRGBA{0.9, 0.9, 0.9, 1.0})
@@ -224,12 +221,12 @@ func (l *loop07) Render() {
 	l.pipeline.Unbind()
 }
 
-func (l *loop07) computeWorldFromObject() {
+func (l *loop7) computeWorldFromObject() {
 	rot := space.EulerZXY(l.pitch, l.yaw, 0)
 	l.worldFromObject = space.Translation(l.position).Times(rot)
 }
 
-func (l *loop07) computeViewFromWorld() {
+func (l *loop7) computeViewFromWorld() {
 	l.viewFromWorld = space.LookAt(
 		coord.XYZ{0, 0, 3},
 		coord.XYZ{0, 0, 0},
@@ -285,3 +282,6 @@ func simplecube() simplemesh {
 		{coord.XYZ{+0.5, +0.5, -0.5}},
 	}
 }
+
+// Copyright (c) 2013-2018 Laurent Moussault. All rights reserved.
+// Licensed under a simplified BSD license (see LICENSE file).

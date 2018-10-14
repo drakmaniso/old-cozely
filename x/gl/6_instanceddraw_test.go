@@ -1,6 +1,3 @@
-// Copyright (c) 2013-2018 Laurent Moussault. All rights reserved.
-// Licensed under a simplified BSD license (see LICENSE file).
-
 package gl_test
 
 import (
@@ -17,7 +14,7 @@ import (
 
 // Declarations ////////////////////////////////////////////////////////////////
 
-type loop06 struct {
+type loop6 struct {
 	// OpenGL objects
 	pipeline    *gl.Pipeline
 	perFrameUBO gl.UniformBuffer
@@ -49,7 +46,7 @@ func Example_instancedDraw() {
 	defer cozely.Recover()
 
 	cozely.Configure(cozely.Multisample(8))
-	l := loop06{}
+	l := loop6{}
 	window.Events.Resize = func() {
 		s := window.Size()
 		l.perFrame.ratio = float32(s.X) / float32(s.Y)
@@ -62,8 +59,7 @@ func Example_instancedDraw() {
 	//Output:
 }
 
-func (l *loop06) Enter() {
-
+func (l *loop6) Enter() {
 	// Setup the pipeline
 	l.pipeline = gl.NewPipeline(
 		gl.Shader(cozely.Path()+"shader06.vert"),
@@ -86,26 +82,26 @@ func (l *loop06) Enter() {
 	l.pipeline.Unbind()
 }
 
-func (loop06) Leave() {
+func (loop6) Leave() {
 }
 
 // Game Loop ///////////////////////////////////////////////////////////////////
 
-func (l *loop06) React() {
+func (l *loop6) React() {
+	if input.Close.Pressed() {
+		cozely.Stop(nil)
+	}
+
 	if input.Select.Pressed() || input.Click.Pressed() {
 		l.randomizeRosesData()
 		l.rosesINBO.SubData(roses[:], 0)
 	}
-
-	if quit.Pressed() {
-		cozely.Stop(nil)
-	}
 }
 
-func (loop06) Update() {
+func (loop6) Update() {
 }
 
-func (l *loop06) Render() {
+func (l *loop6) Render() {
 	l.perFrame.time += float32(cozely.RenderDelta())
 
 	l.pipeline.Bind()
@@ -123,7 +119,7 @@ func (l *loop06) Render() {
 	l.pipeline.Unbind()
 }
 
-func (l *loop06) randomizeRosesData() {
+func (l *loop6) randomizeRosesData() {
 	for i := 0; i < len(roses); i++ {
 		roses[i].position.X = rand.Float32()*2.0 - 1.0
 		roses[i].position.Y = rand.Float32()*2.0 - 1.0
@@ -151,3 +147,6 @@ func (l *loop06) randomizeRosesData() {
 // 	}
 // 	return m
 // }
+
+// Copyright (c) 2013-2018 Laurent Moussault. All rights reserved.
+// Licensed under a simplified BSD license (see LICENSE file).

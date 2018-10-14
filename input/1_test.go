@@ -1,6 +1,3 @@
-// Copyright (c) 2013-2018 Laurent Moussault. All rights reserved.
-// Licensed under a simplified BSD license (see LICENSE file).
-
 package input_test
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -207,4 +204,5 @@ func (loop1) Quit() {
 	cozely.Stop(nil)
 }
 
-////////////////////////////////////////////////////////////////////////////////
+// Copyright (c) 2013-2018 Laurent Moussault. All rights reserved.
+// Licensed under a simplified BSD license (see LICENSE file).

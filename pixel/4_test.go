@@ -1,6 +1,3 @@
-// Copyright (c) 2018-2018 Laurent Moussault. All rights reserved.
-// Licensed under a simplified BSD license (see LICENSE file).
-
 package pixel_test
 
 import (
@@ -173,3 +170,6 @@ func (l *loop4) Render() {
 	cur.Position = pixel.XY{pixel.Resolution().X - 64, pixel.Resolution().Y - 3}
 	cur.Printf("Line: %d - %d", l.line, li-1)
 }
+
+// Copyright (c) 2018-2018 Laurent Moussault. All rights reserved.
+// Licensed under a simplified BSD license (see LICENSE file).

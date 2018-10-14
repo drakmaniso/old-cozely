@@ -7,13 +7,14 @@ import (
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/coord"
+	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/window"
 	"github.com/cozely/cozely/x/gl"
 )
 
 // Declarations ////////////////////////////////////////////////////////////////
 
-type loop02 struct {
+type loop2 struct {
 	pipeline *gl.Pipeline
 }
 
@@ -32,7 +33,7 @@ func Example_vertexBuffer() {
 		s := window.Size()
 		gl.Viewport(0, 0, int32(s.X), int32(s.Y))
 	}
-	l := loop02{}
+	l := loop2{}
 	err := cozely.Run(&l)
 	if err != nil {
 		panic(err)
@@ -40,7 +41,7 @@ func Example_vertexBuffer() {
 	//Output:
 }
 
-func (l *loop02) Enter() {
+func (l *loop2) Enter() {
 	var triangle mesh2d
 
 	// Create and configure the pipeline
@@ -66,18 +67,21 @@ func (l *loop02) Enter() {
 	l.pipeline.Unbind()
 }
 
-func (loop02) Leave() {
+func (loop2) Leave() {
 }
 
 // Game Loop ///////////////////////////////////////////////////////////////////
 
-func (loop02) React() {
+func (loop2) React() {
+	if input.Close.Pressed() {
+		cozely.Stop(nil)
+	}
 }
 
-func (loop02) Update() {
+func (loop2) Update() {
 }
 
-func (l *loop02) Render() {
+func (l *loop2) Render() {
 	l.pipeline.Bind()
 	gl.ClearColorBuffer(color.LRGBA{0.9, 0.9, 0.9, 1.0})
 

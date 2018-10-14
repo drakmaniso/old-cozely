@@ -7,6 +7,7 @@ import (
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/coord"
+	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/plane"
 	"github.com/cozely/cozely/window"
 	"github.com/cozely/cozely/x/gl"
@@ -14,7 +15,7 @@ import (
 
 // Declarations ////////////////////////////////////////////////////////////////
 
-type loop03 struct {
+type loop3 struct {
 	// OpenGL objects
 	pipeline    *gl.Pipeline
 	perFrameUBO gl.UniformBuffer
@@ -42,7 +43,7 @@ func Example_uniformBuffer() {
 		s := window.Size()
 		gl.Viewport(0, 0, int32(s.X), int32(s.Y))
 	}
-	l := loop03{}
+	l := loop3{}
 	err := cozely.Run(&l)
 	if err != nil {
 		panic(err)
@@ -50,7 +51,7 @@ func Example_uniformBuffer() {
 	//Output:
 }
 
-func (l *loop03) Enter() {
+func (l *loop3) Enter() {
 	var triangle coloredmesh2d
 
 	// Create and configure the pipeline
@@ -79,18 +80,21 @@ func (l *loop03) Enter() {
 	l.pipeline.Unbind()
 }
 
-func (loop03) Leave() {
+func (loop3) Leave() {
 }
 
 // Game Loop ///////////////////////////////////////////////////////////////////
 
-func (loop03) React() {
+func (loop3) React() {
+	if input.Close.Pressed() {
+		cozely.Stop(nil)
+	}
 }
 
-func (loop03) Update() {
+func (loop3) Update() {
 }
 
-func (l *loop03) Render() {
+func (l *loop3) Render() {
 	l.angle -= 1.0 * cozely.RenderDelta()
 
 	l.pipeline.Bind()

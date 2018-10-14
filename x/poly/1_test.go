@@ -1,6 +1,3 @@
-// Copyright (c) 2013-2018 Laurent Moussault. All rights reserved.
-// Licensed under a simplified BSD license (see LICENSE file).
-
 package poly_test
 
 import (
@@ -73,7 +70,7 @@ var previous struct {
 
 var meshes poly.Meshes
 
-type loop struct{}
+type loop1 struct{}
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -86,14 +83,14 @@ func TestTest1(t *testing.T) {
 			cozely.Multisample(8),
 		)
 		window.Events.Resize = resize
-		err := cozely.Run(loop{})
+		err := cozely.Run(loop1{})
 		if err != nil {
 			panic(err)
 		}
 	})
 }
 
-func (loop) Enter() {
+func (loop1) Enter() {
 	input.ShowMouse(false)
 	context1.ActivateOn(1)
 
@@ -130,7 +127,7 @@ func (loop) Enter() {
 	misc.SunIlluminance = poly.DirectionalLightSpectralIlluminance(116400.0, 5400.0)
 }
 
-func (loop) Leave() {
+func (loop1) Leave() {
 }
 
 func resize() {
@@ -143,7 +140,7 @@ func resize() {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func (loop) React() {
+func (loop1) React() {
 	if move.Pressed() {
 		dragStart = misc.worldFromObject
 		current.dragDelta = coord.XY{0, 0}
@@ -205,10 +202,10 @@ func (loop) React() {
 	}
 }
 
-func (loop) Update() {
+func (loop1) Update() {
 }
 
-func (loop) Render() {
+func (loop1) Render() {
 	prepare()
 
 	gl.DefaultFramebuffer.Bind(gl.DrawFramebuffer)
@@ -267,3 +264,6 @@ func prepare() {
 		misc.worldFromObject = r.Times(dragStart)
 	}
 }
+
+// Copyright (c) 2013-2018 Laurent Moussault. All rights reserved.
+// Licensed under a simplified BSD license (see LICENSE file).

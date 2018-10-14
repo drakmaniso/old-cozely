@@ -1,6 +1,3 @@
-// Copyright (c) 2018-2018 Laurent Moussault. All rights reserved.
-// Licensed under a simplified BSD license (see LICENSE file).
-
 package pixel_test
 
 import (
@@ -160,3 +157,6 @@ func (l *loop2) Render() {
 		cur.Printf(" (%d)", ov)
 	}
 }
+
+// Copyright (c) 2018-2018 Laurent Moussault. All rights reserved.
+// Licensed under a simplified BSD license (see LICENSE file).

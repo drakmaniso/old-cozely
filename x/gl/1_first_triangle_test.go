@@ -6,13 +6,14 @@ package gl_test
 import (
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/color"
+	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/window"
 	"github.com/cozely/cozely/x/gl"
 )
 
 // Declarations ////////////////////////////////////////////////////////////////
 
-type loop01 struct {
+type loop1 struct {
 	// OpenGL Object
 	pipeline *gl.Pipeline
 }
@@ -26,7 +27,7 @@ func Example_firstTriangle() {
 		s := window.Size()
 		gl.Viewport(0, 0, int32(s.X), int32(s.Y))
 	}
-	l := loop01{}
+	l := loop1{}
 	err := cozely.Run(&l)
 	if err != nil {
 		panic(err)
@@ -34,7 +35,7 @@ func Example_firstTriangle() {
 	//Output:
 }
 
-func (l *loop01) Enter() {
+func (l *loop1) Enter() {
 	// Create and configure the pipeline
 	l.pipeline = gl.NewPipeline(
 		gl.Shader(cozely.Path()+"shader01.vert"),
@@ -43,21 +44,21 @@ func (l *loop01) Enter() {
 	)
 }
 
-func (loop01) Leave() {
+func (loop1) Leave() {
 }
 
 // Game Loop ///////////////////////////////////////////////////////////////////
 
-func (loop01) React() {
-	// if input.Default.Back.Pushed() {
-	// 	cozely.Stop(nil)
-	// }
+func (loop1) React() {
+	if input.Close.Pressed() {
+		cozely.Stop(nil)
+	}
 }
 
-func (loop01) Update() {
+func (loop1) Update() {
 }
 
-func (l *loop01) Render() {
+func (l *loop1) Render() {
 	l.pipeline.Bind()
 	gl.ClearColorBuffer(color.LRGBA{0.9, 0.9, 0.9, 1.0})
 

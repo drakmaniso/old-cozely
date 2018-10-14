@@ -1,6 +1,3 @@
-// Copyright (c) 2018-2018 Laurent Moussault. All rights reserved.
-// Licensed under a simplified BSD license (see LICENSE file).
-
 package plane_test
 
 import (
@@ -193,3 +190,6 @@ func newPoints() {
 		points[i] = coord.XY{X: rand.Float32(), Y: rand.Float32()}
 	}
 }
+
+// Copyright (c) 2018-2018 Laurent Moussault. All rights reserved.
+// Licensed under a simplified BSD license (see LICENSE file).

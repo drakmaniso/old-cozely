@@ -1,6 +1,3 @@
-// Copyright (c) 2013-2018 Laurent Moussault. All rights reserved.
-// Licensed under a simplified BSD license (see LICENSE file).
-
 package gl_test
 
 import (
@@ -21,11 +18,11 @@ import (
 // Declarations ////////////////////////////////////////////////////////////////
 
 // Input Bindings
-// (same as in example 04)
+// (same as in FirstCube example)
 
 // OpenGL Objects
 
-type loop05 struct {
+type loop5 struct {
 	// OpenGL objects
 	pipeline    *gl.Pipeline
 	perFrameUBO gl.UniformBuffer
@@ -60,7 +57,7 @@ func Example_texture() {
 	defer cozely.Recover()
 
 	cozely.Configure(cozely.Multisample(8))
-	l := loop05{}
+	l := loop5{}
 	window.Events.Resize = func() {
 		s := window.Size()
 		gl.Viewport(0, 0, int32(s.X), int32(s.Y))
@@ -74,7 +71,7 @@ func Example_texture() {
 	//Output:
 }
 
-func (l *loop05) Enter() {
+func (l *loop5) Enter() {
 	// Create and configure the pipeline
 	l.pipeline = gl.NewPipeline(
 		gl.Shader(cozely.Path()+"shader05.vert"),
@@ -127,12 +124,12 @@ func (l *loop05) Enter() {
 	l.pipeline.Unbind()
 }
 
-func (loop05) Leave() {
+func (loop5) Leave() {
 }
 
 // Game Loop ///////////////////////////////////////////////////////////////////
 
-func (l *loop05) React() {
+func (l *loop5) React() {
 	m := delta.XY()
 	s := window.Size().Coord()
 
@@ -174,12 +171,12 @@ func (l *loop05) React() {
 	}
 }
 
-func (l *loop05) computeWorldFromObject() {
+func (l *loop5) computeWorldFromObject() {
 	rot := space.EulerZXY(l.pitch, l.yaw, 0)
 	l.worldFromObject = space.Translation(l.position).Times(rot)
 }
 
-func (l *loop05) computeViewFromWorld() {
+func (l *loop5) computeViewFromWorld() {
 	l.viewFromWorld = space.LookAt(
 		coord.XYZ{0, 0, 3},
 		coord.XYZ{0, 0, 0},
@@ -187,10 +184,10 @@ func (l *loop05) computeViewFromWorld() {
 	)
 }
 
-func (loop05) Update() {
+func (loop5) Update() {
 }
 
-func (l *loop05) Render() {
+func (l *loop5) Render() {
 	l.pipeline.Bind()
 	gl.ClearDepthBuffer(1.0)
 	gl.ClearColorBuffer(color.LRGBA{0.9, 0.9, 0.9, 1.0})
@@ -258,3 +255,6 @@ func uvcube() uvmesh {
 		{coord.XYZ{-0.5, +0.5, -0.5}, coord.XY{0, 0}},
 	}
 }
+
+// Copyright (c) 2013-2018 Laurent Moussault. All rights reserved.
+// Licensed under a simplified BSD license (see LICENSE file).
