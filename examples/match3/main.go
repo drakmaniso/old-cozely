@@ -13,8 +13,8 @@ import (
 	"github.com/cozely/cozely/pixel"
 	"github.com/cozely/cozely/window"
 
-	"github.com/cozely/cozely/_examples/match3/ecs"
-	"github.com/cozely/cozely/_examples/match3/grid"
+	"github.com/cozely/cozely/examples/match3/ecs"
+	"github.com/cozely/cozely/examples/match3/grid"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
