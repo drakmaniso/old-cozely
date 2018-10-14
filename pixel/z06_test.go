@@ -49,7 +49,7 @@ func (loop6) Leave() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop6) React() {
-	if input.MenuBack.Pushed() {
+	if input.Close.Pressed() {
 		cozely.Stop(nil)
 	}
 }
@@ -86,6 +86,6 @@ func (loop6) Render() {
 		pixel.Box(o.Plus(dx.Times(i)), s, 0, i, 7, 13)
 	}
 
-	m := pixel.XYof(input.MenuPointer.XY())
+	m := pixel.XYof(input.Pointer.XY())
 	pixel.Point(m, 8, 0)
 }

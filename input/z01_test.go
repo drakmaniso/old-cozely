@@ -47,7 +47,7 @@ var (
 func TestTest1(t *testing.T) {
 	defer cozely.Recover()
 
-	color.Load(pico8.Palette)
+	color.Load(&pico8.Palette)
 	pixel.SetZoom(3)
 
 	err := cozely.Run(loop1{})
@@ -72,7 +72,7 @@ func (loop1) Leave() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop1) React() {
-	if jumpAct.Pushed() {
+	if jumpAct.Pressed() {
 		println(" Just Pressed: *JUMP*")
 	}
 	if jumpAct.Released() {
@@ -88,16 +88,16 @@ func (loop1) React() {
 		input.GrabMouse(false)
 	}
 
-	if instCloseAct.Pushed() {
+	if instCloseAct.Pressed() {
 		inGame.Activate()
 		input.GrabMouse(true)
 	}
-	if instOpenAct.Pushed() {
+	if instOpenAct.Pressed() {
 		inMenu.Activate()
 		input.GrabMouse(false)
 	}
 
-	if quitAct.Pushed() {
+	if quitAct.Pressed() {
 		cozely.Stop(nil)
 	}
 }
@@ -122,27 +122,27 @@ func (loop1) Render() {
 
 	changecolor(&cur, inMenu.Active())
 	cur.Printf("  Menu: ")
-	changecolor(&cur, optionsAct.Pressed())
+	changecolor(&cur, optionsAct.Ongoing())
 	cur.Print("Options(O/L.C.) ")
-	changecolor(&cur, closeAct.Pressed())
+	changecolor(&cur, closeAct.Ongoing())
 	cur.Print("CloseMenu(ENTER) ")
-	changecolor(&cur, instCloseAct.Pressed())
+	changecolor(&cur, instCloseAct.Ongoing())
 	cur.Print("InstantCloseMenu(MOUSE RIGHT) ")
 	cur.Println(" ")
 
 	changecolor(&cur, inGame.Active())
 	cur.Printf("  Game: ")
-	changecolor(&cur, jumpAct.Pressed())
+	changecolor(&cur, jumpAct.Ongoing())
 	cur.Print("Jump(SPACE/L.C.) ")
-	changecolor(&cur, openAct.Pressed())
+	changecolor(&cur, openAct.Ongoing())
 	cur.Print("OpenMenu(ENTER) ")
-	changecolor(&cur, instOpenAct.Pressed())
+	changecolor(&cur, instOpenAct.Ongoing())
 	cur.Print("InstantOpenMenu(MOUSE RIGHT) ")
 	cur.Println(" ")
 
 	changecolor(&cur, false)
 	cur.Printf("  Both: ")
-	changecolor(&cur, inventoryAct.Pressed())
+	changecolor(&cur, inventoryAct.Ongoing())
 	cur.Println("Inventory(I/TAB) ")
 
 	changecolor(&cur, false)

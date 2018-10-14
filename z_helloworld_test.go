@@ -22,7 +22,7 @@ func (loop) Leave() {}
 
 // React to user inputs
 func (loop) React() {
-	if input.MenuBack.Pushed() {
+	if input.Close.Pressed() {
 		cozely.Stop(nil)
 	}
 }

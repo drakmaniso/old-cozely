@@ -144,55 +144,55 @@ func resize() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop) React() {
-	if move.Pushed() {
+	if move.Pressed() {
 		dragStart = misc.worldFromObject
 		current.dragDelta = coord.XY{0, 0}
 		input.GrabMouse(true)
 	}
-	if rotate.Pushed() {
+	if rotate.Pressed() {
 		input.GrabMouse(true)
 	}
 
 	const s = 2.0
 	switch {
-	case onward.Pressed():
+	case onward.Ongoing():
 		forward = -s
-	case back.Pressed():
+	case back.Ongoing():
 		forward = s
 	default:
 		forward = 0
 	}
 	switch {
-	case left.Pressed():
+	case left.Ongoing():
 		lateral = -s
-	case right.Pressed():
+	case right.Ongoing():
 		lateral = s
 	default:
 		lateral = 0
 	}
 	switch {
-	case up.Pressed():
+	case up.Ongoing():
 		vertical = s
-	case down.Pressed():
+	case down.Ongoing():
 		vertical = -s
 	default:
 		vertical = 0
 	}
 	switch {
-	case rollleft.Pressed():
+	case rollleft.Ongoing():
 		rolling = -s
-	case rollright.Pressed():
+	case rollright.Ongoing():
 		rolling = s
 	default:
 		rolling = 0
 	}
 
-	if resetview.Pushed() {
+	if resetview.Pressed() {
 		camera.SetFocus(coord.XYZ{0, 0, 0})
 		camera.SetDistance(4)
 		camera.SetOrientation(0, 0, 0)
 	}
-	if resetobj.Pushed() {
+	if resetobj.Pressed() {
 		misc.worldFromObject = space.Identity()
 	}
 
@@ -200,7 +200,7 @@ func (loop) React() {
 		input.GrabMouse(false)
 	}
 
-	if quit.Pushed() {
+	if quit.Pressed() {
 		cozely.Stop(nil)
 	}
 }
@@ -255,11 +255,11 @@ func prepare() {
 
 	s := coord.XYof(window.Size())
 	switch {
-	case rollleft.Pressed() || rollright.PressedOn(1):
+	case rollleft.Ongoing() || rollright.OngoingOn(1):
 		camera.Rotate(0, 0, rolling*dt)
-	case rotate.Pressed():
+	case rotate.Ongoing():
 		camera.Rotate(2*m.X/s.X, 2*m.Y/s.Y, rolling*dt)
-	case move.Pressed():
+	case move.Ongoing():
 		current.dragDelta = current.dragDelta.Plus(coord.XY{2 * m.Y / s.Y, 2 * m.X / s.X})
 		r := space.EulerXYZ(current.dragDelta.X, current.dragDelta.Y, 0)
 		vr := camera.View().WithoutTranslation()

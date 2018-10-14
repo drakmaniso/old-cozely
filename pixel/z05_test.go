@@ -57,16 +57,16 @@ func (l *loop5) Leave() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (l *loop5) React() {
-	if input.MenuBack.Pushed() {
+	if input.Close.Pressed() {
 		cozely.Stop(nil)
 	}
 
-	if input.MenuClick.Pushed() {
-		m := pixel.XYof(input.MenuPointer.XY())
+	if input.Click.Pressed() {
+		m := pixel.XYof(input.Pointer.XY())
 		l.points = append(l.points, m)
 	}
 
-	if input.MenuLeft.Pushed() {
+	if input.Left.Pressed() {
 		if len(l.points) > 0 {
 			l.points = l.points[:len(l.points)-1]
 		}
@@ -78,19 +78,19 @@ func (loop5) Update() {
 
 func (l *loop5) Render() {
 	pixel.Clear(1)
-	m := pixel.XYof(input.MenuPointer.XY())
-	if !input.MenuUp.Pressed() {
+	m := pixel.XYof(input.Pointer.XY())
+	if !input.Up.Ongoing() {
 		for i := 0; i < len(l.points)-2; i++ {
 			pixel.Triangle(l.points[i], l.points[i+1], l.points[i+2], 0, 2)
 		}
 	}
-	if !input.MenuRight.Pressed() {
+	if !input.Right.Ongoing() {
 		for i := 0; i < len(l.points)-1; i++ {
 			pixel.Line(l.points[i], l.points[i+1], 0, 14)
 		}
 		pixel.Line(l.points[len(l.points)-1], m, 0, 13)
 	}
-	if !input.MenuDown.Pressed() {
+	if !input.Down.Ongoing() {
 		for _, p := range l.points {
 			pixel.Point(p, 0, 8)
 		}

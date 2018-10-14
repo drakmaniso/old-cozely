@@ -58,21 +58,21 @@ func (loop1) Leave() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop1) React() {
-	if input.MenuBack.Pushed() {
+	if input.Close.Pressed() {
 		cozely.Stop(nil)
 	}
-	if next.Pushed() {
+	if next.Pressed() {
 		newPoints()
 	}
 
-	if previous.Pushed() {
-		m := pixel.XYof(input.MenuPointer.XYon(0))
+	if previous.Pressed() {
+		m := pixel.XYof(input.Pointer.XYon(0))
 		p := fromScreen(m)
 		points = append(points, p)
 		triangulation = quadedge.Delaunay(points)
 	}
 
-	if scene1.Pushed() {
+	if scene1.Pressed() {
 		points = points[:0]
 		const st = 1.0 / 8
 		for x := float32(st); x < 1.0; x += st {
@@ -82,7 +82,7 @@ func (loop1) React() {
 		}
 		triangulation = quadedge.Delaunay(points)
 	}
-	if scene2.Pushed() {
+	if scene2.Pressed() {
 		points = points[:0]
 		for a := float32(0); a < 2*math32.Pi; a += math32.Pi / 8 {
 			points = append(points, coord.XY{
@@ -92,7 +92,7 @@ func (loop1) React() {
 		}
 		triangulation = quadedge.Delaunay(points)
 	}
-	if scene3.Pushed() {
+	if scene3.Pressed() {
 		points = points[:0]
 		const n = 26
 		for a := float32(0); a < n*2*math32.Pi; a += math32.Pi / 26 {
@@ -103,7 +103,7 @@ func (loop1) React() {
 		}
 		triangulation = quadedge.Delaunay(points)
 	}
-	if scene4.Pushed() {
+	if scene4.Pressed() {
 		points = points[:0]
 		const st = 1.0 / 6
 		for x := float32(st); x < 1.0; x += st {
@@ -111,11 +111,11 @@ func (loop1) React() {
 		}
 		triangulation = quadedge.Delaunay(points)
 	}
-	if scene5.Pushed() {
+	if scene5.Pressed() {
 		points = make([]coord.XY, 25000)
 		newPoints()
 	}
-	if scene6.Pushed() {
+	if scene6.Pressed() {
 		points = points[:0]
 		const st = 1.0 / 27
 		const h = 0.5 * 1.732050807568877 * st
@@ -141,7 +141,7 @@ func (loop1) Render() {
 		Y: float32(pixel.Resolution().Y),
 	}
 
-	m := pixel.XYof(input.MenuPointer.XYon(0))
+	m := pixel.XYof(input.Pointer.XYon(0))
 	p := fromScreen(m)
 	cur.Position = pixel.XY{2, 8}
 	cur.Color = pico8.White

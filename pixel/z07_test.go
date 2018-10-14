@@ -73,18 +73,18 @@ func (loop7) Leave() {
 // Game Loop ///////////////////////////////////////////////////////////////////
 
 func (l *loop7) React() {
-	if input.MenuBack.Pushed() {
+	if input.Close.Pressed() {
 		cozely.Stop(nil)
 	}
 
-	if input.MenuRight.Pushed() {
+	if input.Right.Pressed() {
 		l.current++
 		if l.current >= len(l.palettes) {
 			l.current = len(l.palettes) - 1
 		}
 		color.Load(l.palettes[l.current].Palette)
 	}
-	if input.MenuLeft.Pushed() {
+	if input.Left.Pressed() {
 		l.current--
 		if l.current < 0 {
 			l.current = 0

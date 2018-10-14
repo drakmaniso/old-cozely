@@ -53,12 +53,12 @@ func (loop3) Leave() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (l *loop3) React() {
-	if input.MenuBack.Pushed() {
+	if input.Close.Pressed() {
 		cozely.Stop(nil)
 	}
 
-	if input.MenuClick.Pressed() {
-		l.size = pixel.XYof(input.MenuPointer.XY()).Minus(l.position)
+	if input.Click.Pressed() {
+		l.size = pixel.XYof(input.Pointer.XY()).Minus(l.position)
 	}
 }
 

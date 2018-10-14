@@ -104,24 +104,24 @@ func (loop4) Leave() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (l *loop4) React() {
-	if input.MenuBack.Pushed() {
+	if input.Close.Pressed() {
 		cozely.Stop(nil)
 	}
 
-	if input.MenuRight.Pushed() {
+	if input.Right.Pressed() {
 		l.font++
 		if l.font >= len(l.fonts) {
 			l.font = len(l.fonts) - 1
 		}
 	}
-	if input.MenuLeft.Pushed() {
+	if input.Left.Pressed() {
 		l.font--
 		if l.font < 0 {
 			l.font = 0
 		}
 	}
 
-	if input.MenuSelect.Pushed() {
+	if input.Select.Pressed() {
 		if l.show[0] == l.text[0] {
 			l.show = l.code
 			l.bg, l.fg = l.fg, l.bg
@@ -134,13 +134,13 @@ func (l *loop4) React() {
 }
 
 func (l *loop4) Update() {
-	if input.MenuUp.Pressed() {
+	if input.Up.Ongoing() {
 		l.line--
 		if l.line < 0 {
 			l.line = 0
 		}
 	}
-	if input.MenuDown.Pressed() {
+	if input.Down.Ongoing() {
 		l.line++
 		if l.line > len(l.show)-1 {
 			l.line = len(l.show) - 1

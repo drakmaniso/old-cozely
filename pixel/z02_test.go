@@ -91,29 +91,29 @@ func (l *loop2) addShape() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (l *loop2) React() {
-	if input.MenuBack.Pushed() {
+	if input.Close.Pressed() {
 		cozely.Stop(nil)
 	}
 
 	s := len(l.shapes)
-	if input.MenuUp.Pushed() {
+	if input.Up.Pressed() {
 		for i := 0; i < 50000; i++ {
 			l.addShape()
 		}
 	}
-	if input.MenuDown.Pushed() {
+	if input.Down.Pressed() {
 		s -= 50000
 		if s < 0 {
 			s = 0
 		}
 		l.shapes = l.shapes[:s]
 	}
-	if input.MenuRight.Pushed() {
+	if input.Right.Pressed() {
 		for i := 0; i < 1000; i++ {
 			l.addShape()
 		}
 	}
-	if input.MenuLeft.Pushed() {
+	if input.Left.Pressed() {
 		s -= 1000
 		if s < 0 {
 			s = 0
@@ -121,18 +121,18 @@ func (l *loop2) React() {
 		l.shapes = l.shapes[:s]
 	}
 
-	if input.MenuSelect.Pushed() {
+	if input.Select.Pressed() {
 		l.resize()
 	}
 
-	if input.MenuClick.Pushed() {
+	if input.Click.Pressed() {
 		l.shapes = append(l.shapes, shape{})
 		i := len(l.shapes) - 1
 		j := rand.Intn(len(l.picts))
 		p := l.picts[j]
 		l.shapes[i].pict = p
 		//TODO:
-		l.shapes[i].pos = pixel.XYof(input.MenuPointer.XY()).Minus(p.Size().Slash(2))
+		l.shapes[i].pos = pixel.XYof(input.Pointer.XY()).Minus(p.Size().Slash(2))
 	}
 }
 

@@ -56,7 +56,7 @@ func (l *loop1) Leave() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (l *loop1) React() {
-	if input.MenuBack.Pushed() {
+	if input.Close.Pressed() {
 		cozely.Stop(nil)
 	}
 }
