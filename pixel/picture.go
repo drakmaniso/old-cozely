@@ -40,39 +40,14 @@ type mapping struct {
 	topbottom int16
 }
 
-var initLUT = color.LUT{
-	0, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-	255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-	255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-	255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-	255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-	255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-	255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-	255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-	255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-	255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-	255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-	255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-	255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-	255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-	255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-	255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-	255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-	255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-	255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-	255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-	255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-	255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-	255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-	255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-	255, 255, 255, 255, 255, 255, 255, 255, 255, 255,
-	255, 251, 252, 253, 254, 255,
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 
 // Picture declares a new picture and returns its ID.
 func Picture(path string) PictureID {
+	return picture(path, nil, nil)
+}
+
+func picture(path string, m *image.Paletted, l *color.LUT) PictureID {
 	if internal.Running {
 		setErr(errors.New("pixel picture declaration: declarations must happen before starting the framework"))
 		return noPicture
@@ -84,26 +59,7 @@ func Picture(path string) PictureID {
 	}
 
 	pictures.path = append(pictures.path, path)
-	pictures.image = append(pictures.image, nil)
-	pictures.lut = append(pictures.lut, nil)
-	pictures.mapping = append(pictures.mapping, mapping{})
-	return PictureID(len(pictures.path) - 1)
-}
-
-// picture declares a new picture (from an image) and returns its ID.
-func picture(name string, img *image.Paletted, l *color.LUT) PictureID {
-	if internal.Running {
-		setErr(errors.New("pixel picture declaration: declarations must happen before starting the framework"))
-		return noPicture
-	}
-
-	if len(pictures.mapping) >= maxPictureID {
-		setErr(errors.New("pixel picture declaration: too many pictures"))
-		return noPicture
-	}
-
-	pictures.path = append(pictures.path, name)
-	pictures.image = append(pictures.image, img)
+	pictures.image = append(pictures.image, m)
 	pictures.lut = append(pictures.lut, l)
 	pictures.mapping = append(pictures.mapping, mapping{})
 	return PictureID(len(pictures.path) - 1)
@@ -121,83 +77,72 @@ func (p PictureID) Size() XY {
 func (p PictureID) load(prects *[]uint32) error {
 	var err error
 
-	if pictures.image[p] != nil {
-		w, h := pictures.image[p].Bounds().Dx(), pictures.image[p].Bounds().Dy()
-		if w > 0x7FFF || h > 0x7FFF {
-			return errors.New("unable to load image " + pictures.path[p] + ": too large")
-		}
-		pictures.mapping[p].w, pictures.mapping[p].h = int16(w), int16(h)
-		if pictures.lut[p] == nil {
-			var a int
-			pictures.lut[p], a, err = color.ToMaster(pictures.image[p])
-			if a != 0 {
-				internal.Debug.Printf("Warning: %d new colors in picture "+pictures.path[p], a)
-			}
-			if err != nil {
-				setErr(internal.Wrap(`loading builtin picture`, err))
-			}
-		}
-		*prects = append(*prects, uint32(p))
-		return nil
-	}
-
 	conf := struct {
 		TopBorder    int8
 		BottomBorder int8
 		LeftBorder   int8
 		RightBorder  int8
 	}{}
-	f, err := os.Open(internal.Path + pictures.path[p] + ".json")
-	if !os.IsNotExist(err) {
+
+	if pictures.image[p] == nil {
+		// Load the image file
+
+		f, err := os.Open(internal.Path + pictures.path[p] + ".json")
+		if !os.IsNotExist(err) {
+			if err != nil {
+				return internal.Wrap(`opening `+pictures.path[p], err)
+			}
+			defer f.Close()
+			d := json.NewDecoder(f)
+			if err := d.Decode(&conf); err != nil {
+				return internal.Wrap(`decoding `+pictures.path[p], err)
+			}
+		}
+
+		f, err = os.Open(internal.Path + pictures.path[p] + ".png")
 		if err != nil {
-			return internal.Wrap(`opening `+pictures.path[p], err)
+			//TODO: support other image formats?
+			return internal.Wrap(`while opening image "`+pictures.path[p]+`"`, err)
 		}
-		d := json.NewDecoder(f)
-		if err := d.Decode(&conf); err != nil {
-			return internal.Wrap(`decoding `+pictures.path[p], err)
+		defer f.Close()
+
+		img, _, err := image.Decode(f)
+		switch err {
+		case nil:
+		case image.ErrFormat:
+			return nil
+		default:
+			return internal.Wrap("decoding picture file", err)
+		}
+
+		var ok bool
+		pictures.image[p], ok = img.(*image.Paletted)
+		if !ok {
+			return errors.New("impossible to load picture " + pictures.path[p] + " (color model not supported)")
 		}
 	}
 
-	//TODO: support other image formats?
-	f, err = os.Open(internal.Path + pictures.path[p] + ".png")
-	if err != nil {
-		return internal.Wrap(`while opening image "`+pictures.path[p]+`"`, err)
-	}
-	defer f.Close()
-
-	img, _, err := image.Decode(f)
-	switch err {
-	case nil:
-	case image.ErrFormat:
-		return nil
-	default:
-		return internal.Wrap("decoding picture file", err)
+	if pictures.lut[p] == nil {
+		// Construct the LUT
+		//TODO: handle different modes (strict, flexible, lenient...)
+		var a int
+		pictures.lut[p], a, err = color.ToMaster(pictures.image[p])
+		if a != 0 {
+			internal.Debug.Printf("Warning: %d new colors in picture "+pictures.path[p], a)
+		}
+		if err != nil {
+			return internal.Wrap("loading picture "+pictures.path[p], err)
+		}
 	}
 
-	m, ok := img.(*image.Paletted)
-	if !ok {
-		return errors.New("impossible to load picture " + pictures.path[p] + " (color model not supported)")
-	}
-
-	var a int
-	pictures.lut[p], a, err = color.ToMaster(m)
-	if a != 0 {
-		internal.Debug.Printf("Warning: %d new colors in picture "+pictures.path[p], a)
-	}
-	if err != nil {
-		return internal.Wrap("loading picture "+pictures.path[p], err)
-	}
-	//TODO: if ...  pictures.lut[p] = color.Identity
-
-	w, h := int16(m.Bounds().Dx()), int16(m.Bounds().Dy())
+	w, h := int16(pictures.image[p].Bounds().Dx()), int16(pictures.image[p].Bounds().Dy())
 	if w > 0x7FFF || h > 0x7FFF {
 		return errors.New("unable to load image " + pictures.path[p] + ": too large")
 	}
-
 	pictures.mapping[p].w, pictures.mapping[p].h = w, h
 	pictures.mapping[p].topbottom = int16(conf.TopBorder)<<8 | int16(conf.BottomBorder)
 	pictures.mapping[p].leftright = int16(conf.LeftBorder)<<8 | int16(conf.RightBorder)
-	pictures.image[p] = m
+
 	*prects = append(*prects, uint32(p))
 
 	return nil

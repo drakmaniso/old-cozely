@@ -11,11 +11,13 @@ func init() {
 	internal.PixelSetup = setup
 	internal.PixelCleanup = renderer.cleanup
 	internal.PixelRender = renderer.render
+
+	font("(builtin Monozela10)", &monozela10, &color.Identity)
+	picture("(builtin)", &mousecursor, &color.Identity)
+	picture("(builtin cursor)", &mousecursor, &color.Identity)
 }
 
 func setup() error {
-	picture("(builtin)", &mousecursor, &color.Identity)
-	picture("(builtin cursor)", &mousecursor, &color.Identity)
 	return renderer.setup()
 }
 

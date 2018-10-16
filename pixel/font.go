@@ -25,26 +25,24 @@ const (
 
 const maxFontID = 0xFF
 
-var fonts = struct {
+var fonts struct {
 	path      []string
 	height    []int16
 	baseline  []int16
 	basecolor []color.Index
 	first     []uint16 // index of the first glyph
+	image     []*image.Paletted
 	lut       []*color.LUT
-}{
-	path:      []string{"builtin monozela 10"},
-	height:    []int16{0},
-	baseline:  []int16{0},
-	basecolor: []color.Index{0},
-	first:     []uint16{0},
-	lut:       []*color.LUT{&color.Identity},
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 // Font declares a new font and returns its ID.
 func Font(path string) FontID {
+	return font(path, nil, nil)
+}
+
+func font(path string, m *image.Paletted, l *color.LUT) FontID {
 	if internal.Running {
 		setErr(errors.New("pixel font declaration: declarations must happen before starting the framework"))
 		return noFont
@@ -60,7 +58,8 @@ func Font(path string) FontID {
 	fonts.baseline = append(fonts.baseline, 0)
 	fonts.basecolor = append(fonts.basecolor, 0)
 	fonts.first = append(fonts.first, 0)
-	fonts.lut = append(fonts.lut, nil)
+	fonts.image = append(fonts.image, m)
+	fonts.lut = append(fonts.lut, l)
 	return FontID(len(fonts.path) - 1)
 }
 
@@ -97,11 +96,10 @@ func (f FontID) Interline() int16 {
 
 func (f FontID) load(frects *[]uint32) error {
 	var err error
-	var p *image.Paletted
 
-	if f == 0 {
-		p = &monozela10
-	} else {
+	m := fonts.image[f]
+
+	if m == nil {
 		fl, err := os.Open(internal.Path + fonts.path[f] + ".png")
 		if err != nil {
 			return internal.Wrap(`while opening font file "`+fonts.path[f]+`"`, err)
@@ -118,7 +116,7 @@ func (f FontID) load(frects *[]uint32) error {
 		}
 
 		var ok bool
-		p, ok = img.(*image.Paletted)
+		m, ok = img.(*image.Paletted)
 		if !ok {
 			return errors.New("impossible to load font " + fonts.path[f] + " (color model not supported)")
 		}
@@ -126,12 +124,12 @@ func (f FontID) load(frects *[]uint32) error {
 
 	if fonts.lut[f] == nil {
 		// Construct the font LUT
-		m, ok := p.SubImage(image.Rect(1, 1, p.Bounds().Dx()-2, p.Bounds().Dy()-2)).(*image.Paletted)
+		sm, ok := m.SubImage(image.Rect(1, 1, m.Bounds().Dx()-2, m.Bounds().Dy()-2)).(*image.Paletted)
 		if !ok {
 			return errors.New("unexpected subimage in Loadfont")
 		}
 		var a int
-		fonts.lut[f], a, err = color.ToMaster(m)
+		fonts.lut[f], a, err = color.ToMaster(sm)
 		if a != 0 {
 			internal.Debug.Printf("Warning: %d new colors in font "+fonts.path[f], a)
 		}
@@ -140,15 +138,15 @@ func (f FontID) load(frects *[]uint32) error {
 		}
 	}
 
-	h := p.Bounds().Dy() - 1
+	h := m.Bounds().Dy() - 1
 	fonts.height[f] = int16(h)
 	g := uint16(len(pictures.mapping))
 	fonts.first[f] = g
 	maxw := 0
 
 	// Find the baseline
-	for y := 0; y < p.Bounds().Dy(); y++ {
-		if p.Pix[0+y*p.Stride] != 0 {
+	for y := 0; y < m.Bounds().Dy(); y++ {
+		if m.Pix[0+y*m.Stride] != 0 {
 			fonts.baseline[f] = int16(y)
 			break
 		}
@@ -156,9 +154,9 @@ func (f FontID) load(frects *[]uint32) error {
 
 	// Find the basecolor
 	fonts.basecolor[f] = 255
-	for y := 0; y < p.Bounds().Dy()-1; y++ {
-		for x := 1; x < p.Bounds().Dx(); x++ {
-			c := color.Index(p.Pix[x+y*p.Stride])
+	for y := 0; y < m.Bounds().Dy()-1; y++ {
+		for x := 1; x < m.Bounds().Dx(); x++ {
+			c := color.Index(m.Pix[x+y*m.Stride])
 			lc := fonts.lut[f][c]
 			if lc != 0 && c < fonts.basecolor[f] {
 				fonts.basecolor[f] = lc
@@ -167,25 +165,24 @@ func (f FontID) load(frects *[]uint32) error {
 	}
 
 	// Create images and reserve mapping for each rune
-	for x := 1; x < p.Bounds().Dx(); g++ {
+	for x := 1; x < m.Bounds().Dx(); g++ {
 		w := 0
-		for x+w < p.Bounds().Dx() && p.Pix[x+w+h*p.Stride] != 0 {
+		for x+w < m.Bounds().Dx() && m.Pix[x+w+h*m.Stride] != 0 {
 			w++
 		}
 		if w > maxw {
 			maxw = w
 		}
-		m := p.SubImage(image.Rect(x, 0, x+w, h))
-		mm, ok := m.(*image.Paletted)
+		sm, ok := m.SubImage(image.Rect(x, 0, x+w, h)).(*image.Paletted)
 		if !ok {
 			return errors.New("unexpected subimage in Loadfont")
 		}
-		gg := picture("(font)", mm, fonts.lut[f])
+		gg := picture("(font)", sm, fonts.lut[f])
 		if gg != PictureID(g) {
 			//TODO:
 		}
 		x += w
-		for x < p.Bounds().Dx() && p.Pix[x+h*p.Stride] == 0 {
+		for x < m.Bounds().Dx() && m.Pix[x+h*m.Stride] == 0 {
 			x++
 		}
 	}

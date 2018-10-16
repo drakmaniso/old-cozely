@@ -202,6 +202,7 @@ func (r *glRenderer) cleanup() error {
 	fonts.baseline = fonts.baseline[:1]
 	fonts.basecolor = fonts.basecolor[:1]
 	fonts.first = fonts.first[:1]
+	fonts.image = fonts.image[:1]
 	fonts.lut = fonts.lut[:1]
 
 	return gl.Err()
