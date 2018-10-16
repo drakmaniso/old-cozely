@@ -5,7 +5,6 @@ import (
 	"errors"
 	"image"
 	"os"
-	"path/filepath"
 
 	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/internal"
@@ -132,7 +131,7 @@ func (p PictureID) load(prects *[]uint32) error {
 			var a int
 			pictures.lut[p], a, err = color.ToMaster(pictures.image[p])
 			if a != 0 {
-				internal.Debug.Printf("Warning: %d new colors in picture " + pictures.path[p], a)
+				internal.Debug.Printf("Warning: %d new colors in picture "+pictures.path[p], a)
 			}
 			if err != nil {
 				setErr(internal.Wrap(`loading builtin picture`, err))
@@ -142,41 +141,29 @@ func (p PictureID) load(prects *[]uint32) error {
 		return nil
 	}
 
-	n := pictures.path[p]
-
 	conf := struct {
 		TopBorder    int8
 		BottomBorder int8
 		LeftBorder   int8
 		RightBorder  int8
 	}{}
-	path := filepath.FromSlash(internal.Path + n + ".json")
-	path, err = filepath.EvalSymlinks(path)
-	if err == nil {
-		f, err := os.Open(path)
-		if !os.IsNotExist(err) {
-			if err != nil {
-				return internal.Wrap(`opening `+path, err)
-			}
-			d := json.NewDecoder(f)
-			if err := d.Decode(&conf); err != nil {
-				return internal.Wrap(`decoding `+path, err)
-			}
+	f, err := os.Open(internal.Path + pictures.path[p] + ".json")
+	if !os.IsNotExist(err) {
+		if err != nil {
+			return internal.Wrap(`opening `+pictures.path[p], err)
+		}
+		d := json.NewDecoder(f)
+		if err := d.Decode(&conf); err != nil {
+			return internal.Wrap(`decoding `+pictures.path[p], err)
 		}
 	}
 
 	//TODO: support other image formats?
-	path = filepath.FromSlash(internal.Path + n + ".png")
-	path, err = filepath.EvalSymlinks(path)
+	f, err = os.Open(internal.Path + pictures.path[p] + ".png")
 	if err != nil {
-		return internal.Wrap("in path while scanning picture", err)
+		return internal.Wrap(`while opening image "`+pictures.path[p]+`"`, err)
 	}
-
-	f, err := os.Open(path)
-	if err != nil {
-		return internal.Wrap(`while opening image "`+path+`"`, err)
-	}
-	defer f.Close() //TODO: error handling
+	defer f.Close()
 
 	img, _, err := image.Decode(f)
 	switch err {
@@ -189,21 +176,23 @@ func (p PictureID) load(prects *[]uint32) error {
 
 	m, ok := img.(*image.Paletted)
 	if !ok {
-		return errors.New("impossible to load picture " + path + " (color model not supported)")
+		return errors.New("impossible to load picture " + pictures.path[p] + " (color model not supported)")
 	}
 
 	var a int
 	pictures.lut[p], a, err = color.ToMaster(m)
 	if a != 0 {
-		internal.Debug.Printf("Warning: %d new colors in picture " + pictures.path[p], a)
+		internal.Debug.Printf("Warning: %d new colors in picture "+pictures.path[p], a)
 	}
 	if err != nil {
-		return internal.Wrap("loading picture "+path, err)
+		return internal.Wrap("loading picture "+pictures.path[p], err)
 	}
 	//TODO: if ...  pictures.lut[p] = color.Identity
 
-	//TODO: check for width and height overflow
 	w, h := int16(m.Bounds().Dx()), int16(m.Bounds().Dy())
+	if w > 0x7FFF || h > 0x7FFF {
+		return errors.New("unable to load image " + pictures.path[p] + ": too large")
+	}
 
 	pictures.mapping[p].w, pictures.mapping[p].h = w, h
 	pictures.mapping[p].topbottom = int16(conf.TopBorder)<<8 | int16(conf.BottomBorder)

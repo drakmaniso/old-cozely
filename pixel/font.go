@@ -5,7 +5,6 @@ import (
 	"image"
 	_ "image/png" // Activate PNG support
 	"os"
-	"path/filepath"
 
 	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/internal"
@@ -103,16 +102,9 @@ func (f FontID) load(frects *[]uint32) error {
 	if f == 0 {
 		p = &monozela10
 	} else {
-		n := fonts.path[f]
-		path := filepath.FromSlash(internal.Path + n + ".png")
-		path, err := filepath.EvalSymlinks(path)
+		fl, err := os.Open(internal.Path + fonts.path[f] + ".png")
 		if err != nil {
-			return internal.Wrap("in path while loading font", err)
-		}
-
-		fl, err := os.Open(path)
-		if err != nil {
-			return internal.Wrap(`while opening font file "`+path+`"`, err)
+			return internal.Wrap(`while opening font file "`+fonts.path[f]+`"`, err)
 		}
 		defer fl.Close() //TODO: error handling
 
@@ -128,7 +120,7 @@ func (f FontID) load(frects *[]uint32) error {
 		var ok bool
 		p, ok = img.(*image.Paletted)
 		if !ok {
-			return errors.New("impossible to load font " + path + " (color model not supported)")
+			return errors.New("impossible to load font " + fonts.path[f] + " (color model not supported)")
 		}
 	}
 
@@ -141,9 +133,9 @@ func (f FontID) load(frects *[]uint32) error {
 		var a int
 		fonts.lut[f], a, err = color.ToMaster(m)
 		if a != 0 {
-			internal.Debug.Printf("Warning: %d new colors in font " + fonts.path[f], a)
+			internal.Debug.Printf("Warning: %d new colors in font "+fonts.path[f], a)
 		}
-	if err != nil {
+		if err != nil {
 			return errors.New("impossible to load font: " + err.Error())
 		}
 	}
