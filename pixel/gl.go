@@ -76,12 +76,6 @@ var blitUniforms struct {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-func init() {
-	internal.PixelSetup = renderer.setup
-	internal.PixelCleanup = renderer.cleanup
-	internal.PixelRender = renderer.render
-}
-
 func (r *glRenderer) setup() error {
 	// Prepare the canvas
 
@@ -94,8 +88,6 @@ func (r *glRenderer) setup() error {
 		gl.R16I,
 		gl.DynamicStorage,
 	)
-
-	//TODO: create textures if not autoresize
 
 	// Create the paint pipeline
 

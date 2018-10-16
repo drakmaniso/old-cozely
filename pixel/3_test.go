@@ -4,6 +4,8 @@ import (
 	"testing"
 
 	"github.com/cozely/cozely"
+	"github.com/cozely/cozely/color"
+	"github.com/cozely/cozely/color/pico8"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
 )
@@ -13,7 +15,7 @@ import (
 var ()
 
 type loop3 struct {
-	pict1, pict2 pixel.PictureID
+	pict1, pict2   pixel.PictureID
 	position, size pixel.XY
 }
 
@@ -34,9 +36,10 @@ func TestTest3(t *testing.T) {
 }
 
 func (l *loop3) setup() {
+	color.Load(&pico8.Palette)
 	pixel.SetZoom(4)
-	l.pict1 = pixel.Picture("graphics/9tiles")
-	l.pict2 = pixel.Picture("graphics/yellowbutton")
+	l.pict1 = pixel.Picture("graphics/box.9")
+	l.pict2 = pixel.Picture("graphics/button.9")
 	l.position = pixel.XY{48, 48}
 	l.size = pixel.XY{60, 40}
 }
@@ -63,11 +66,11 @@ func (loop3) Update() {
 }
 
 func (l *loop3) Render() {
-	pixel.Clear(7)
-	l.pict2.Tile(pixel.XY{48,4}, l.pict2.Size(), -1)
-	l.pict2.Tile(pixel.XY{64,4}, pixel.XY{32, 16}, -1)
-	l.pict2.Tile(pixel.XY{102,4}, pixel.XY{16, 32}, -1)
-	l.pict2.Tile(pixel.XY{128,4}, pixel.XY{32, 32}, -1)
+	pixel.Clear(pico8.White)
+	l.pict2.Tile(pixel.XY{48, 4}, l.pict2.Size(), -1)
+	l.pict2.Tile(pixel.XY{64, 4}, pixel.XY{32, 16}, -1)
+	l.pict2.Tile(pixel.XY{102, 4}, pixel.XY{16, 32}, -1)
+	l.pict2.Tile(pixel.XY{128, 4}, pixel.XY{32, 32}, -1)
 	l.pict1.Tile(l.position, l.size, 0)
 }
 

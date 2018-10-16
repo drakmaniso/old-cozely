@@ -6,8 +6,6 @@ package color
 import (
 	"errors"
 	"image"
-
-	"github.com/cozely/cozely/internal"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -80,10 +78,10 @@ var initLUT = LUT{
 // ToMaster constructs a LUT that translates the color indices of an image to
 // the corresponding colors in the master palette. If necessary, new colors are
 // added to the master palette. If the latter is full, an error is returned.
-func ToMaster(m *image.Paletted) (LUT, error) {
-	var err error
-	l := initLUT
-	a := 0
+func ToMaster(m *image.Paletted) (l *LUT, added int, err error) {
+	l = &LUT{}
+	*l = initLUT
+	added = 0
 
 	for i := range m.Palette {
 		r, g, b, al := m.Palette[i].RGBA()
@@ -102,25 +100,20 @@ func ToMaster(m *image.Paletted) (LUT, error) {
 			l[i] = Index(i)
 			continue
 		}
-		j := Find(lc)
-		if j != 0 {
+		j, ok := Find(lc)
+		if ok {
 			l[i] = Index(j)
 			continue
 		}
 		j = Add(lc)
 		if j != 0 {
 			l[i] = Index(j)
-			a++
-			// println("Added: ", i, j)
+			added++
 			continue
 		}
 		l[i] = 250
 		err = errors.New("FitInMaster: palette full")
 	}
 
-	if a > 0 {
-		internal.Debug.Printf("Added %d colors to the master palette", a)
-	}
-
-	return l, err
+	return l, added, err
 }

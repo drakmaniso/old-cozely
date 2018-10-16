@@ -18,6 +18,15 @@ const (
 	White       = Index(255)
 )
 
+const (
+	// First is the first user color index
+	First = Index(1)
+	// Last is the last user color index
+	Last = Index(250)
+	// Wrong is the color used to show errors
+	Wrong = Index(255)
+)
+
 var debugColor = LRGBA{1, 0, 1, 1}
 
 // A Palette associates a colors to indices. A nil entry means the index is not
@@ -81,6 +90,11 @@ func Load(c *Palette) error {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+// IsSet returns true if a color is associated with the index.
+func IsSet(i Index) bool {
+	return sources[i] != nil
+}
+
 // Set changes the color associated with an index in the master palette.
 //
 // Note that the modified palette will be used for every drawing command of the
@@ -103,35 +117,31 @@ func Set(i Index, c Color) {
 }
 
 // Add finds the first unused index in the master palette and adds a new color.
-// It returns the found index, or 0 if the palette is full.
+// It returns the found index, or Wrong if the palette is full.
 func Add(c Color) Index {
-	i := Index(1)
-	for ; i < Black; i++ {
+	for i := First; i <= Last; i++ {
 		if sources[i] == nil {
 			Set(i, c)
 			return i
 		}
 	}
-	return Index(0)
+	return Wrong
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
 // Find returns the first color index associated with specific LRGBA values in
 // the master palette. If there isn't any color with these values in the
-// palette, index 0 is returned.
-func Find(c Color) Index {
+// palette, index Wrong is returned.
+func Find(c Color) (Index, bool) {
 	lc := LRGBAof(c)
-	for i := range colors {
-		if i == 0 || sources[i] == nil {
-			continue
-		}
-		if c == sources[i] || lc == colors[i] {
-			return Index(i)
+	for i := First; i <= Last; i++ {
+		if IsSet(i) && (c == sources[i] || lc == colors[i]) {
+			return i, true
 		}
 	}
 
-	return Index(0)
+	return Wrong, false
 }
 
 //TODO: search by color proximity

@@ -52,6 +52,8 @@ func (l *loop4) declare() {
 	color.Load(&pico8.Palette)
 	l.bg = pico8.White
 	l.fg = pico8.DarkBlue
+	// l.bg = 0
+	// l.fg = 1
 
 	l.fontNames = []string{
 		"Monozela10 (builtin)",

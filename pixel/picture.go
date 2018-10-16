@@ -25,17 +25,12 @@ const (
 // MouseCursor is a small picture that can be used as mouse cursor.
 const MouseCursor = PictureID(1)
 
-var pictures = struct {
+var pictures struct {
 	atlas   *atlas.Atlas
 	path    []string
 	mapping []mapping
 	image   []*image.Paletted
-	lut     []color.LUT
-}{
-	path:    []string{"", ""},
-	mapping: []mapping{{}, {}},
-	image:   []*image.Paletted{nil, nil},
-	lut:     []color.LUT{color.Identity, color.Identity},
+	lut     []*color.LUT
 }
 
 type mapping struct {
@@ -91,13 +86,13 @@ func Picture(path string) PictureID {
 
 	pictures.path = append(pictures.path, path)
 	pictures.image = append(pictures.image, nil)
-	pictures.lut = append(pictures.lut, initLUT)
+	pictures.lut = append(pictures.lut, nil)
 	pictures.mapping = append(pictures.mapping, mapping{})
 	return PictureID(len(pictures.path) - 1)
 }
 
 // picture declares a new picture (from an image) and returns its ID.
-func picture(img *image.Paletted) PictureID {
+func picture(name string, img *image.Paletted, l *color.LUT) PictureID {
 	if internal.Running {
 		setErr(errors.New("pixel picture declaration: declarations must happen before starting the framework"))
 		return noPicture
@@ -108,9 +103,9 @@ func picture(img *image.Paletted) PictureID {
 		return noPicture
 	}
 
-	pictures.path = append(pictures.path, "")
+	pictures.path = append(pictures.path, name)
 	pictures.image = append(pictures.image, img)
-	pictures.lut = append(pictures.lut, initLUT)
+	pictures.lut = append(pictures.lut, l)
 	pictures.mapping = append(pictures.mapping, mapping{})
 	return PictureID(len(pictures.path) - 1)
 }
@@ -127,31 +122,23 @@ func (p PictureID) Size() XY {
 func (p PictureID) load(prects *[]uint32) error {
 	var err error
 
-	switch p {
-	case noPicture:
-		//TODO: add mapping
-		return nil
-	case MouseCursor:
-		w, h := int16(mousecursor.Bounds().Dx()), int16(mousecursor.Bounds().Dy())
-		//TODO: add mapping
-		pictures.mapping[p].w, pictures.mapping[p].h = w, h
-		pictures.image[p] = &mousecursor
-		pictures.lut[p], err = color.ToMaster(&mousecursor)
-		if err != nil {
-			return internal.Wrap(`loading mouse cursor picture`, err)
+	if pictures.image[p] != nil {
+		w, h := pictures.image[p].Bounds().Dx(), pictures.image[p].Bounds().Dy()
+		if w > 0x7FFF || h > 0x7FFF {
+			return errors.New("unable to load image " + pictures.path[p] + ": too large")
+		}
+		pictures.mapping[p].w, pictures.mapping[p].h = int16(w), int16(h)
+		if pictures.lut[p] == nil {
+			var a int
+			pictures.lut[p], a, err = color.ToMaster(pictures.image[p])
+			if a != 0 {
+				internal.Debug.Printf("Warning: %d new colors in picture " + pictures.path[p], a)
+			}
+			if err != nil {
+				setErr(internal.Wrap(`loading builtin picture`, err))
+			}
 		}
 		*prects = append(*prects, uint32(p))
-		return nil
-	}
-
-	if pictures.image[p] != nil {
-		//TODO: check for width and height overflow
-		w, h := int16(pictures.image[p].Bounds().Dx()),
-			int16(pictures.image[p].Bounds().Dy())
-
-		pictures.mapping[p].w, pictures.mapping[p].h = w, h
-		*prects = append(*prects, uint32(p))
-
 		return nil
 	}
 
@@ -205,7 +192,11 @@ func (p PictureID) load(prects *[]uint32) error {
 		return errors.New("impossible to load picture " + path + " (color model not supported)")
 	}
 
-	pictures.lut[p], err = color.ToMaster(m)
+	var a int
+	pictures.lut[p], a, err = color.ToMaster(m)
+	if a != 0 {
+		internal.Debug.Printf("Warning: %d new colors in picture " + pictures.path[p], a)
+	}
 	if err != nil {
 		return internal.Wrap("loading picture "+path, err)
 	}
