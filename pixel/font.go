@@ -124,7 +124,10 @@ func (f FontID) load(frects *[]uint32) error {
 
 	if fonts.lut[f] == nil {
 		// Construct the font LUT
-		sm, ok := m.SubImage(image.Rect(1, 1, m.Bounds().Dx()-2, m.Bounds().Dy()-2)).(*image.Paletted)
+		r := m.Bounds()
+		r.Min.X++
+		r.Min.Y++
+		sm, ok := m.SubImage(r).(*image.Paletted)
 		if !ok {
 			return errors.New("unexpected subimage in Loadfont")
 		}

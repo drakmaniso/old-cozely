@@ -90,35 +90,81 @@ func (p PictureID) load(prects *[]uint32) error {
 		f, err := os.Open(internal.Path + pictures.path[p] + ".json")
 		if !os.IsNotExist(err) {
 			if err != nil {
-				return internal.Wrap(`opening `+pictures.path[p], err)
+				return internal.Wrap("opening "+pictures.path[p]+".json", err)
 			}
 			defer f.Close()
 			d := json.NewDecoder(f)
 			if err := d.Decode(&conf); err != nil {
-				return internal.Wrap(`decoding `+pictures.path[p], err)
+				return internal.Wrap("decoding "+pictures.path[p]+".json", err)
 			}
 		}
 
-		f, err = os.Open(internal.Path + pictures.path[p] + ".png")
-		if err != nil {
-			//TODO: support other image formats?
-			return internal.Wrap(`while opening image "`+pictures.path[p]+`"`, err)
-		}
-		defer f.Close()
-
-		img, _, err := image.Decode(f)
-		switch err {
-		case nil:
-		case image.ErrFormat:
-			return nil
-		default:
-			return internal.Wrap("decoding picture file", err)
-		}
-
-		var ok bool
-		pictures.image[p], ok = img.(*image.Paletted)
-		if !ok {
-			return errors.New("impossible to load picture " + pictures.path[p] + " (color model not supported)")
+		f, err = os.Open(internal.Path + pictures.path[p] + ".9.png")
+		if !os.IsNotExist(err) {
+			// Load nine-patch image
+			if err != nil {
+				return internal.Wrap("opening "+pictures.path[p]+".9.png", err)
+			}
+			defer f.Close()
+			m, _, err := image.Decode(f)
+			if err != nil {
+				return internal.Wrap("decoding "+pictures.path[p]+".9.png", err)
+			}
+			var ok bool
+			mm, ok := m.(*image.Paletted)
+			if !ok {
+				return errors.New("impossible to load " + pictures.path[p] + ".9.png: image is not in indexed color format")
+			}
+			r := mm.Bounds()
+			for x := 1; x < r.Dx()-1; x++ {
+				if mm.Pix[mm.PixOffset(x, 0)] != uint8(color.Transparent) {
+					break
+				}
+				conf.LeftBorder++
+			}
+			for x := r.Dx() - 2; x > 0; x-- {
+				if mm.Pix[mm.PixOffset(x, 0)] != uint8(color.Transparent) {
+					break
+				}
+				conf.RightBorder++
+			}
+			for y := 1; y < r.Dy()-1; y++ {
+				if mm.Pix[mm.PixOffset(0, y)] != uint8(color.Transparent) {
+					break
+				}
+				conf.TopBorder++
+			}
+			for y := r.Dy() - 2; y > 0; y-- {
+				if mm.Pix[mm.PixOffset(0, y)] != uint8(color.Transparent) {
+					break
+				}
+				conf.BottomBorder++
+			}
+			r.Min.X++
+			r.Min.Y++
+			r.Max.X--
+			r.Max.Y--
+			pictures.image[p], ok = mm.SubImage(r).(*image.Paletted)
+			if !ok {
+				return errors.New("unexpected subimage in Loadfont")
+			}
+		} else {
+			// Load simple image
+			f, err = os.Open(internal.Path + pictures.path[p] + ".png")
+			if err != nil {
+				//TODO: support other image formats?
+				return internal.Wrap("opening "+pictures.path[p]+".png", err)
+			}
+			defer f.Close()
+			m, _, err := image.Decode(f)
+			if err != nil {
+				return internal.Wrap("decoding ", err)
+			}
+			var ok bool
+			pictures.image[p], ok = m.(*image.Paletted)
+			if !ok {
+				return errors.New("impossible to load " + pictures.path[p] + ".png: image is not in indexed color format")
+			}
 		}
 	}
 

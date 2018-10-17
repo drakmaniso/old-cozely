@@ -38,8 +38,8 @@ func TestTest3(t *testing.T) {
 func (l *loop3) setup() {
 	color.Load(&pico8.Palette)
 	pixel.SetZoom(4)
-	l.pict1 = pixel.Picture("graphics/box.9")
-	l.pict2 = pixel.Picture("graphics/button.9")
+	l.pict1 = pixel.Picture("graphics/box")
+	l.pict2 = pixel.Picture("graphics/button")
 	l.position = pixel.XY{48, 48}
 	l.size = pixel.XY{60, 40}
 }
