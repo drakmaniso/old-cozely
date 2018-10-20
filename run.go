@@ -94,6 +94,7 @@ func Run(loop GameLoop) (err error) {
 
 	// Setup
 
+	//TODO: fix multiple run
 	resource.Path(internal.Path)
 	resource.Path("./") //TODO: remove?
 

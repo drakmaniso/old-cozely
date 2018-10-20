@@ -7,6 +7,7 @@ import (
 
 ////////////////////////////////////////////////////////////////////////////////
 
+// Exist returns true if the resource exists.
 func Exist(name string) bool {
 	for _, s := range sources {
 		if s.exist(name) {
@@ -18,6 +19,8 @@ func Exist(name string) bool {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+// Open returns a ReadCloser corresponding to the resource. If the resource does
+// not exists, it returns an error.
 func Open(name string) (io.ReadCloser, error) {
 	for _, s := range sources {
 		f, err := s.open(name)

@@ -21,6 +21,7 @@ var sources []source
 
 type path string
 
+// Path adds p to the stack of sources for resource look-up.
 func Path(p string) {
 	sources = append(sources, path(p))
 }
@@ -45,6 +46,7 @@ type pack struct {
 	files map[string]*zip.File
 }
 
+// Pack adds a zipped string to the stack of sources for resource look-up.
 func Pack(content string) error {
 	var err error
 	p := pack{}
