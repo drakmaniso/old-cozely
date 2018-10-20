@@ -4,10 +4,10 @@ import (
 	"errors"
 	"image"
 	_ "image/png" // Activate PNG support
-	"os"
 
 	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/internal"
+	"github.com/cozely/cozely/resource"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -100,7 +100,7 @@ func (f FontID) load(frects *[]uint32) error {
 	m := fonts.image[f]
 
 	if m == nil {
-		fl, err := os.Open(internal.Path + fonts.path[f] + ".png")
+		fl, err := resource.Open(fonts.path[f] + ".png")
 		if err != nil {
 			return internal.Wrap(`while opening font file "`+fonts.path[f]+`"`, err)
 		}

@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"errors"
 	"image"
-	"os"
 
 	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/internal"
+	"github.com/cozely/cozely/resource"
 	"github.com/cozely/cozely/x/atlas"
 )
 
@@ -87,8 +87,8 @@ func (p PictureID) load(prects *[]uint32) error {
 	if pictures.image[p] == nil {
 		// Load the image file
 
-		f, err := os.Open(internal.Path + pictures.path[p] + ".json")
-		if !os.IsNotExist(err) {
+		if resource.Exist(pictures.path[p] + ".json") {
+			f, err := resource.Open(pictures.path[p] + ".json")
 			if err != nil {
 				return internal.Wrap("opening "+pictures.path[p]+".json", err)
 			}
@@ -99,9 +99,10 @@ func (p PictureID) load(prects *[]uint32) error {
 			}
 		}
 
-		f, err = os.Open(internal.Path + pictures.path[p] + ".9.png")
-		if !os.IsNotExist(err) {
+		switch {
+		case resource.Exist(pictures.path[p] + ".9.png"):
 			// Load nine-patch image
+			f, err := resource.Open(pictures.path[p] + ".9.png")
 			if err != nil {
 				return internal.Wrap("opening "+pictures.path[p]+".9.png", err)
 			}
@@ -146,13 +147,13 @@ func (p PictureID) load(prects *[]uint32) error {
 			r.Max.Y--
 			pictures.image[p], ok = mm.SubImage(r).(*image.Paletted)
 			if !ok {
-				return errors.New("unexpected subimage in Loadfont")
+				return errors.New("unexpected subimage") //TODO:
 			}
-		} else {
+
+		case resource.Exist(pictures.path[p] + ".png"):
 			// Load simple image
-			f, err = os.Open(internal.Path + pictures.path[p] + ".png")
+			f, err := resource.Open(pictures.path[p] + ".png")
 			if err != nil {
-				//TODO: support other image formats?
 				return internal.Wrap("opening "+pictures.path[p]+".png", err)
 			}
 			defer f.Close()
@@ -165,6 +166,9 @@ func (p PictureID) load(prects *[]uint32) error {
 			if !ok {
 				return errors.New("impossible to load " + pictures.path[p] + ".png: image is not in indexed color format")
 			}
+
+		default:
+			return errors.New("impossible to load " + pictures.path[p] + ": resource not found")
 		}
 	}
 

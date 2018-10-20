@@ -5,6 +5,7 @@ package cozely
 
 import (
 	"github.com/cozely/cozely/internal"
+	"github.com/cozely/cozely/resource"
 	"github.com/cozely/cozely/window"
 )
 
@@ -92,6 +93,9 @@ func Run(loop GameLoop) (err error) {
 	internal.Loop = loop
 
 	// Setup
+
+	resource.Path(internal.Path)
+	resource.Path("./") //TODO: remove?
 
 	err = internal.Setup()
 	if err != nil {

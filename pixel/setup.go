@@ -3,6 +3,7 @@ package pixel
 import (
 	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/internal"
+	"github.com/cozely/cozely/resource"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -12,9 +13,13 @@ func init() {
 	internal.PixelCleanup = renderer.cleanup
 	internal.PixelRender = renderer.render
 
-	font("(builtin Monozela10)", &monozela10, &color.Identity)
-	picture("(builtin)", &mousecursor, &color.Identity)
-	picture("(builtin cursor)", &mousecursor, &color.Identity)
+	resource.Pack(builtins)
+	// font("(builtin Monozela10)", &monozela10, &color.Identity)
+	font("builtins/fonts/monozela10", nil, &color.Identity)
+	// picture("(builtin)", &mousecursor, &color.Identity)
+	// picture("(builtin cursor)", &mousecursor, &color.Identity)
+	picture("builtins/pictures/cursor", nil, &color.Identity) //TODO:
+	picture("builtins/pictures/cursor", nil, &color.Identity)
 }
 
 func setup() error {
