@@ -2,7 +2,6 @@ package pixel_test
 
 import (
 	"bufio"
-	"os"
 	"testing"
 
 	"github.com/cozely/cozely"
@@ -10,6 +9,7 @@ import (
 	"github.com/cozely/cozely/color/pico8"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
+	"github.com/cozely/cozely/resource"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -78,7 +78,7 @@ func (l *loop4) declare() {
 }
 
 func (l *loop4) Enter() {
-	f, err := os.Open(cozely.Path() + "frankenstein.txt")
+	f, err := resource.Open("frankenstein.txt")
 	if err != nil {
 		panic(err)
 	}
@@ -86,7 +86,7 @@ func (l *loop4) Enter() {
 	for s.Scan() {
 		l.text = append(l.text, s.Text())
 	}
-	f, err = os.Open(cozely.Path() + "sourcecode.txt")
+	f, err = resource.Open("sourcecode.txt")
 	if err != nil {
 		panic(err)
 	}

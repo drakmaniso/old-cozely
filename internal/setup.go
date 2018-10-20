@@ -47,7 +47,7 @@ func init() {
 func Setup() error {
 	// Load config file
 
-	//TODO: test if file present.
+	//TODO: should use package resource
 	f, err := os.Open(Path + "init.json")
 	if !os.IsNotExist(err) {
 		if err != nil {

@@ -5,11 +5,11 @@ package poly
 
 import (
 	"fmt"
-	"os"
 	"strconv"
 
 	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/formats/obj"
+	"github.com/cozely/cozely/resource"
 	"github.com/cozely/cozely/space"
 	"github.com/cozely/cozely/x/gl"
 )
@@ -69,7 +69,7 @@ type MeshID struct {
 func (m *Meshes) AddObj(filename string) (MeshID, error) {
 	mid := MeshID{FaceID: uint32(len(m.Faces)), VertexID: uint32(len(m.Vertices))}
 
-	f, err := os.Open(filename)
+	f, err := resource.Open(filename)
 	if err != nil {
 		return MeshID{}, err //TODO: error wrapping
 	}

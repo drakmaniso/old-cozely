@@ -8,6 +8,7 @@ import (
 	"os"
 
 	"github.com/cozely/cozely/internal"
+	"github.com/cozely/cozely/resource"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -35,7 +36,7 @@ func setup() error {
 		ContextID(0).Activate()
 	}
 
-	f, err := os.Open(internal.Path + "input.json")
+	f, err := resource.Open("input.json")
 	if !os.IsNotExist(err) {
 		if err != nil {
 			return internal.Wrap(`in configuration file "input.json" opening`, err)

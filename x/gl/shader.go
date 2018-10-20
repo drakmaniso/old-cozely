@@ -8,12 +8,11 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
-	"os"
-	"path/filepath"
 	"strings"
 	"unsafe"
 
 	"github.com/cozely/cozely/internal"
+	"github.com/cozely/cozely/resource"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -72,7 +71,7 @@ type shader struct {
 // - ".tesc" for a tesselation control shader
 // - ".tese" for a tesselation evaluation shader
 func Shader(path string) PipelineConfig {
-	f, err := os.Open(filepath.FromSlash(path))
+	f, err := resource.Open(path)
 	if err != nil {
 		setErr(internal.Wrap("gl shader file opening", err))
 	}

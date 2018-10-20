@@ -3,12 +3,12 @@ package gl_test
 import (
 	"image"
 	_ "image/png"
-	"os"
 
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
+	"github.com/cozely/cozely/resource"
 	"github.com/cozely/cozely/space"
 	"github.com/cozely/cozely/window"
 	"github.com/cozely/cozely/x/gl"
@@ -99,7 +99,7 @@ func (l *loop5) Enter() {
 
 	// Create and load the textures
 	l.diffuse = gl.NewTexture2D(8, gl.SRGBA8, 512, 512)
-	r, err := os.Open(cozely.Path() + "testpattern.png")
+	r, err := resource.Open("testpattern.png")
 	if err != nil {
 		panic(cozely.Wrap("opening texture", err))
 	}

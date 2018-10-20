@@ -8,9 +8,9 @@ import (
 	"image"
 	stdcolor "image/color"
 	"math"
-	"os"
 
 	"github.com/cozely/cozely/internal"
+	"github.com/cozely/cozely/resource"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -53,7 +53,7 @@ func standardOf(c float32) float32 {
 func ColorsFrom(path string) ([]Color, error) {
 	var pal = []Color{}
 
-	f, err := os.Open(internal.Path + path + ".png")
+	f, err := resource.Open(path + ".png")
 	if err != nil {
 		return pal, errors.New("unable to open file for palette " + path)
 	}
