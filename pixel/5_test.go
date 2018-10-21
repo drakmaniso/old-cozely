@@ -23,16 +23,20 @@ func TestTest5(t *testing.T) {
 		defer cozely.Recover()
 
 		l := loop5{}
-		l.setup()
+		err := l.setup()
+		if err != nil {
+			t.Error(err)
+			return
+		}
 
-		err := cozely.Run(&l)
+		err = cozely.Run(&l)
 		if err != nil {
 			t.Error(err)
 		}
 	})
 }
 
-func (l *loop5) setup() {
+func (l *loop5) setup() error {
 	color.Load(&pico8.Palette)
 	pixel.SetResolution(pixel.XY{128, 128})
 
@@ -42,6 +46,7 @@ func (l *loop5) setup() {
 		{4 + 1 + 20, 4 + 20 - 1},
 		{16, 32},
 	}
+	return nil
 }
 
 func (l *loop5) Enter() {

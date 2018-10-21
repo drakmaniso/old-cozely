@@ -6,6 +6,7 @@ import (
 	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
+	"github.com/cozely/cozely/resource"
 	"github.com/cozely/cozely/window"
 
 	"github.com/cozely/cozely"
@@ -45,6 +46,10 @@ type perFrame06 struct {
 func Example_instancedDraw() {
 	defer cozely.Recover()
 
+	err := resource.Path("testdata/")
+	if err != nil {
+		panic(err)
+	}
 	cozely.Configure(cozely.Multisample(8))
 	l := loop6{}
 	window.Events.Resize = func() {
@@ -52,7 +57,7 @@ func Example_instancedDraw() {
 		l.perFrame.ratio = float32(s.X) / float32(s.Y)
 		gl.Viewport(0, 0, int32(s.X), int32(s.Y))
 	}
-	err := cozely.Run(&l)
+	err = cozely.Run(&l)
 	if err != nil {
 		panic(err)
 	}
@@ -62,8 +67,8 @@ func Example_instancedDraw() {
 func (l *loop6) Enter() {
 	// Setup the pipeline
 	l.pipeline = gl.NewPipeline(
-		gl.Shader(cozely.Path()+"shader06.vert"),
-		gl.Shader(cozely.Path()+"shader06.frag"),
+		gl.Shader("shader06.vert"),
+		gl.Shader("shader06.frag"),
 		gl.VertexFormat(1, roses[:]),
 		gl.Topology(gl.LineStrip),
 	)

@@ -8,6 +8,7 @@ import (
 	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
+	"github.com/cozely/cozely/resource"
 	"github.com/cozely/cozely/space"
 	"github.com/cozely/cozely/window"
 	"github.com/cozely/cozely/x/gl"
@@ -78,12 +79,16 @@ func TestTest1(t *testing.T) {
 	do(func() {
 		defer cozely.Recover()
 
+		err := resource.Path("testdata/")
+		if err != nil {
+			panic(err)
+		}
 		cozely.Configure(
 			cozely.UpdateStep(1.0/50),
 			cozely.Multisample(8),
 		)
 		window.Events.Resize = resize
-		err := cozely.Run(loop1{})
+		err = cozely.Run(loop1{})
 		if err != nil {
 			panic(err)
 		}
@@ -97,8 +102,8 @@ func (loop1) Enter() {
 	pipeline = gl.NewPipeline(
 		poly.PipelineSetup(),
 		poly.ToneMapACES(),
-		gl.Shader(cozely.Path()+"shader.vert"),
-		gl.Shader(cozely.Path()+"shader.frag"),
+		gl.Shader("shader.vert"),
+		gl.Shader("shader.frag"),
 		gl.DepthTest(true),
 		gl.DepthWrite(true),
 	)
@@ -108,9 +113,9 @@ func (loop1) Enter() {
 
 	//
 	meshes = poly.Meshes{}
-	// meshes.AddObj(cozely.Path() + "cube.obj")
-	// meshes.AddObj(cozely.Path() + "teapot.obj")
-	meshes.AddObj(cozely.Path() + "suzanne.obj")
+	// meshes.AddObj("cube.obj")
+	// meshes.AddObj("teapot.obj")
+	meshes.AddObj("suzanne.obj")
 	poly.SetupMeshBuffers(meshes)
 
 	// Setup camera

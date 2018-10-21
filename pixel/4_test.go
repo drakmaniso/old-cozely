@@ -37,23 +37,30 @@ func TestTest4(t *testing.T) {
 		defer cozely.Recover()
 
 		l := loop4{}
-		l.declare()
+		err := l.setup()
+		if err != nil {
+			t.Error(err)
+			return
+		}
 
-		err := cozely.Run(&l)
+		err = cozely.Run(&l)
 		if err != nil {
 			t.Error(err)
 		}
 	})
 }
 
-func (l *loop4) declare() {
+func (l *loop4) setup() error {
 	pixel.SetZoom(2)
 
 	color.Load(&pico8.Palette)
 	l.bg = pico8.White
 	l.fg = pico8.DarkBlue
-	// l.bg = 0
-	// l.fg = 1
+
+	err := resource.Path("testdata/")
+	if err != nil {
+		return err
+	}
 
 	l.fontNames = []string{
 		"Monozela10 (builtin)",
@@ -75,6 +82,8 @@ func (l *loop4) declare() {
 
 	l.interline = int16(18)
 	l.letterspacing = int16(0)
+	
+	return nil
 }
 
 func (l *loop4) Enter() {

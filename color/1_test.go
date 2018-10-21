@@ -12,6 +12,7 @@ import (
 	"github.com/cozely/cozely/color/pico8"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
+	"github.com/cozely/cozely/resource"
 )
 
 // Declarations ////////////////////////////////////////////////////////////////
@@ -32,18 +33,26 @@ func TestTest7(t *testing.T) {
 		defer cozely.Recover()
 
 		l := loop7{}
-		l.setup()
+		err := l.setup()
+		if err != nil {
+			t.Error(err)
+			return
+		}
 
-		err := cozely.Run(&l)
+		err = cozely.Run(&l)
 		if err != nil {
 			panic(err)
 		}
 	})
 }
 
-func (l *loop7) setup() {
+func (l *loop7) setup() error {
 	l.pict = pixel.Picture("graphics/paletteswatch")
 
+	err := resource.Path("testdata/")
+	if err != nil {
+		return err
+	}
 	l.palettes = []struct {
 		string
 		*color.Palette
@@ -58,6 +67,8 @@ func (l *loop7) setup() {
 	pixel.SetResolution(pixel.XY{160, 160})
 
 	l.current = 0
+
+	return nil
 }
 
 func (l *loop7) Enter() {

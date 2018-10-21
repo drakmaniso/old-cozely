@@ -2,10 +2,13 @@ package resource
 
 import (
 	"archive/zip"
+	"errors"
 	"fmt"
 	"io"
 	"os"
 	"strings"
+
+	"github.com/cozely/cozely/internal"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -22,8 +25,16 @@ var sources []source
 type path string
 
 // Path adds p to the stack of sources for resource look-up.
-func Path(p string) {
+func Path(p string) error {
+	if p[len(p)-1] != '/' {
+		return errors.New(`invalid resource path "` + p + `"`)
+	}
+	_, err := os.Stat(p)
+	if err != nil {
+		return internal.Wrap(`invalid resource path "` + p + `"`, err)
+	}
 	sources = append(sources, path(p))
+	return nil
 }
 
 func (p path) exist(n string) bool {

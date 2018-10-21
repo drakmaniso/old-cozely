@@ -9,6 +9,7 @@ import (
 	"github.com/cozely/cozely/color/pico8"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
+	"github.com/cozely/cozely/resource"
 	"github.com/cozely/cozely/window"
 )
 
@@ -32,22 +33,30 @@ func TestTest2(t *testing.T) {
 		defer cozely.Recover()
 
 		l := loop2{}
-		l.setup()
+		err := l.setup()
+		if err != nil {
+			t.Error(err)
+			return
+		}
 
 		window.Events.Resize = l.resize
-		err := cozely.Run(&l)
+		err = cozely.Run(&l)
 		if err != nil {
 			t.Error(err)
 		}
 	})
 }
 
-func (l *loop2) setup() {
+func (l *loop2) setup() error {
 	color.Load(&pico8.Palette)
 	pixel.SetZoom(2)
 
 	l.txtcol = 7
 
+	err := resource.Path("testdata")
+	if err != nil {
+		return err
+	}
 	l.picts = []pixel.PictureID{
 		pixel.Picture("graphics/shape1"),
 		pixel.Picture("graphics/shape2"),
@@ -55,6 +64,7 @@ func (l *loop2) setup() {
 		pixel.Picture("graphics/shape4"),
 	}
 	l.shapes = make([]shape, 400000)
+	return nil
 }
 
 func (l *loop2) Enter() {

@@ -56,6 +56,10 @@ type uvmesh []struct {
 func Example_texture() {
 	defer cozely.Recover()
 
+	err := resource.Path("testdata/")
+	if err != nil {
+		panic(err)
+	}
 	cozely.Configure(cozely.Multisample(8))
 	l := loop5{}
 	window.Events.Resize = func() {
@@ -64,7 +68,7 @@ func Example_texture() {
 		r := float32(s.X) / float32(s.Y)
 		l.screenFromView = space.Perspective(math32.Pi/4, r, 0.001, 1000.0)
 	}
-	err := cozely.Run(&l)
+	err = cozely.Run(&l)
 	if err != nil {
 		panic(err)
 	}
@@ -74,8 +78,8 @@ func Example_texture() {
 func (l *loop5) Enter() {
 	// Create and configure the pipeline
 	l.pipeline = gl.NewPipeline(
-		gl.Shader(cozely.Path()+"shader05.vert"),
-		gl.Shader(cozely.Path()+"shader05.frag"),
+		gl.Shader("shader05.vert"),
+		gl.Shader("shader05.frag"),
 		gl.VertexFormat(0, uvmesh{}),
 		gl.Topology(gl.Triangles),
 		gl.CullFace(false, true),

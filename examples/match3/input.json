@@ -2,7 +2,7 @@
 	"Default": {
 		"Quit":   ["Escape"],
 		"Cursor": ["Mouse"],
-		"Select": ["Mouse Left"],
+		"Clicko":  ["Mouse Left"],
 		"Test":   ["Space"]
 	}
 }

@@ -7,6 +7,7 @@ import (
 	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
+	"github.com/cozely/cozely/resource"
 	"github.com/cozely/cozely/window"
 	"github.com/cozely/cozely/x/gl"
 	"github.com/cozely/cozely/x/math32"
@@ -55,9 +56,13 @@ func Example_streaming() {
 		speeds:   make([]float32, len(points)),
 	}
 
+	err := resource.Path("testdata/")
+	if err != nil {
+		panic(err)
+	}
 	cozely.Configure(cozely.Multisample(8), gl.NoClear())
 	window.Events.Resize = l.resize
-	err := cozely.Run(&l)
+	err = cozely.Run(&l)
 	if err != nil {
 		panic(err)
 	}
@@ -68,8 +73,8 @@ func (l *loop8) Enter() {
 
 	// Create and configure the pipeline
 	l.pipeline = gl.NewPipeline(
-		gl.Shader(cozely.Path()+"shader08.vert"),
-		gl.Shader(cozely.Path()+"shader08.frag"),
+		gl.Shader("shader08.vert"),
+		gl.Shader("shader08.frag"),
 		gl.Topology(gl.Points),
 		gl.VertexFormat(0, points[:]),
 		gl.DepthTest(false),

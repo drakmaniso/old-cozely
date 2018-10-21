@@ -11,6 +11,7 @@ import (
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
 	"github.com/cozely/cozely/plane/quadedge"
+	"github.com/cozely/cozely/resource"
 	"github.com/cozely/cozely/window"
 	"github.com/cozely/cozely/x/math32"
 )
@@ -37,8 +38,13 @@ func TestTest1(t *testing.T) {
 
 		color.Load(&pico8.Palette)
 		pixel.SetZoom(2)
+		err := resource.Path("testdata/")
+		if err != nil {
+			t.Error(err)
+			return
+		}
 
-		err := cozely.Run(loop1{})
+		err = cozely.Run(loop1{})
 		if err != nil {
 			t.Error(err)
 		}

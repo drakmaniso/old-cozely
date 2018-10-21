@@ -56,6 +56,10 @@ func Recover() {
 		if err != nil {
 			internal.Log.Printf("*** panic: PIXEL unchecked ERROR ***\n%s", err)
 		}
+		err = internal.GLErr()
+		if err != nil {
+			internal.Log.Printf("*** panic: GL unchecked ERROR ***\n%s", err)
+		}
 		err = internal.PolyErr()
 		if err != nil {
 			internal.Log.Printf("*** panic: POLY unchecked ERROR ***\n%s", err)

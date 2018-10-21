@@ -10,6 +10,7 @@ import (
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
+	"github.com/cozely/cozely/resource"
 	"github.com/cozely/cozely/window"
 
 	"github.com/cozely/cozely/examples/match3/ecs"
@@ -20,7 +21,7 @@ import (
 
 var (
 	quit   = input.Button("Quit")
-	selct  = input.Button("Select")
+	click  = input.Button("Clicko")
 	test   = input.Button("Test")
 	cursor = input.Cursor("Cursor")
 )
@@ -38,13 +39,18 @@ type loop struct{}
 ////////////////////////////////////////////////////////////////////////////////
 
 func main() {
-	setup()
+	defer cozely.Recover()
+
+	err := setup()
+	if err != nil {
+		panic(err)
+	}
 
 	cozely.Configure(
 		cozely.Title("Match 3"),
 	)
 
-	err := cozely.Run(loop{})
+	err = cozely.Run(loop{})
 	if err != nil {
 		panic(err)
 	}
@@ -61,6 +67,10 @@ func setup() error {
 
 	pixel.SetResolution(pixel.XY{180, 180})
 
+	err := resource.Path(cozely.Path())
+	if err != nil {
+		return err
+	}
 	for i, n := range []string{
 		"red",
 		"yellow",
@@ -105,7 +115,7 @@ func init() {
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop) React() {
-	if selct.Pressed() {
+	if click.Pressed() {
 		m := pixel.XYof(cursor.XY())
 		current = grid.PositionAt(m)
 		if current != grid.Nowhere() {
@@ -120,7 +130,7 @@ func (loop) React() {
 		}
 	}
 
-	if selct.Released() {
+	if click.Released() {
 		current = grid.Nowhere()
 	}
 

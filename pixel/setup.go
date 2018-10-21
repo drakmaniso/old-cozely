@@ -13,11 +13,11 @@ func init() {
 	internal.PixelCleanup = renderer.cleanup
 	internal.PixelRender = renderer.render
 
-	resource.Pack(builtins)
-	// font("(builtin Monozela10)", &monozela10, &color.Identity)
+	err := resource.Pack(builtins)
+	if err != nil {
+		setErr(err)
+	}
 	font("builtins/fonts/monozela10", nil, &color.Identity)
-	// picture("(builtin)", &mousecursor, &color.Identity)
-	// picture("(builtin cursor)", &mousecursor, &color.Identity)
 	picture("builtins/pictures/cursor", nil, &color.Identity) //TODO:
 	picture("builtins/pictures/cursor", nil, &color.Identity)
 }

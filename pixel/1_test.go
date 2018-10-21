@@ -7,6 +7,7 @@ import (
 	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
+	"github.com/cozely/cozely/resource"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -24,23 +25,33 @@ type loop1 struct {
 func TestTest1(t *testing.T) {
 	do(func() {
 		defer cozely.Recover()
+
 		l := loop1{}
-		l.setup()
-		err := cozely.Run(&l)
+		err := l.setup()
+		if err != nil {
+			t.Error(err)
+			return
+		}
+		
+		err = cozely.Run(&l)
 		if err != nil {
 			t.Error(err)
 		}
 	})
 }
 
-func (l *loop1) setup() {
+func (l *loop1) setup() error {
 	pixel.SetResolution(pixel.XY{320, 180})
-
+	err := resource.Path("testdata/")
+	if err != nil {
+		return err
+	}
 	l.srgbGray = pixel.Picture("graphics/srgb-gray")
 	l.srgbRed = pixel.Picture("graphics/srgb-red")
 	l.srgbGreen = pixel.Picture("graphics/srgb-green")
 	l.srgbBlue = pixel.Picture("graphics/srgb-blue")
 	l.mire = pixel.Picture("graphics/mire")
+	return nil
 }
 
 func (l *loop1) Enter() {

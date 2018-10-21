@@ -8,6 +8,7 @@ import (
 	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
+	"github.com/cozely/cozely/resource"
 	"github.com/cozely/cozely/space"
 	"github.com/cozely/cozely/window"
 	"github.com/cozely/cozely/x/gl"
@@ -57,6 +58,10 @@ type mesh []struct {
 func Example_firstCube() {
 	defer cozely.Recover()
 
+	err := resource.Path("testdata/")
+	if err != nil {
+		panic(err)
+	}
 	cozely.Configure(cozely.Multisample(8))
 	l := loop4{}
 	window.Events.Resize = func() {
@@ -65,7 +70,7 @@ func Example_firstCube() {
 		r := float32(s.X) / float32(s.Y)
 		l.screenFromView = space.Perspective(math32.Pi/4, r, 0.001, 1000.0)
 	}
-	err := cozely.Run(&l)
+	err = cozely.Run(&l)
 	if err != nil {
 		panic(err)
 	}
@@ -75,8 +80,8 @@ func Example_firstCube() {
 func (l *loop4) Enter() {
 	// Create and configure the pipeline
 	l.pipeline = gl.NewPipeline(
-		gl.Shader(cozely.Path()+"shader04.vert"),
-		gl.Shader(cozely.Path()+"shader04.frag"),
+		gl.Shader("shader04.vert"),
+		gl.Shader("shader04.frag"),
 		gl.VertexFormat(0, mesh{}),
 		gl.Topology(gl.Triangles),
 		gl.CullFace(false, true),

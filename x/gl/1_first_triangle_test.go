@@ -7,6 +7,7 @@ import (
 	"github.com/cozely/cozely"
 	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/input"
+	"github.com/cozely/cozely/resource"
 	"github.com/cozely/cozely/window"
 	"github.com/cozely/cozely/x/gl"
 )
@@ -23,12 +24,16 @@ type loop1 struct {
 func Example_firstTriangle() {
 	defer cozely.Recover()
 
+	err := resource.Path("testdata/")
+	if err != nil {
+		panic(err)
+	}
 	window.Events.Resize = func() {
 		s := window.Size()
 		gl.Viewport(0, 0, int32(s.X), int32(s.Y))
 	}
 	l := loop1{}
-	err := cozely.Run(&l)
+	err = cozely.Run(&l)
 	if err != nil {
 		panic(err)
 	}
@@ -38,8 +43,8 @@ func Example_firstTriangle() {
 func (l *loop1) Enter() {
 	// Create and configure the pipeline
 	l.pipeline = gl.NewPipeline(
-		gl.Shader(cozely.Path()+"shader01.vert"),
-		gl.Shader(cozely.Path()+"shader01.frag"),
+		gl.Shader("shader01.vert"),
+		gl.Shader("shader01.frag"),
 		gl.Topology(gl.Triangles),
 	)
 }

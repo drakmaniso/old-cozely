@@ -5,6 +5,7 @@ import (
 	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
+	"github.com/cozely/cozely/resource"
 	"github.com/cozely/cozely/space"
 	"github.com/cozely/cozely/window"
 	"github.com/cozely/cozely/x/gl"
@@ -99,6 +100,10 @@ type simplemesh []struct {
 func Example_indirectDraw() {
 	defer cozely.Recover()
 
+	err := resource.Path("testdata/")
+	if err != nil {
+		panic(err)
+	}
 	cozely.Configure(cozely.Multisample(8))
 	l := loop7{}
 	window.Events.Resize = func() {
@@ -107,7 +112,7 @@ func Example_indirectDraw() {
 		r := float32(s.X) / float32(s.Y)
 		l.screenFromView = space.Perspective(math32.Pi/4, r, 0.001, 1000.0)
 	}
-	err := cozely.Run(&l)
+	err = cozely.Run(&l)
 	if err != nil {
 		panic(err)
 	}
@@ -117,8 +122,8 @@ func Example_indirectDraw() {
 func (l *loop7) Enter() {
 	// Create and configure the pipeline
 	l.pipeline = gl.NewPipeline(
-		gl.Shader(cozely.Path()+"shader07.vert"),
-		gl.Shader(cozely.Path()+"shader07.frag"),
+		gl.Shader("shader07.vert"),
+		gl.Shader("shader07.frag"),
 		gl.VertexFormat(0, simplemesh{}),
 		gl.VertexFormat(1, draws),
 		gl.Topology(gl.Triangles),

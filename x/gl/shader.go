@@ -74,6 +74,7 @@ func Shader(path string) PipelineConfig {
 	f, err := resource.Open(path)
 	if err != nil {
 		setErr(internal.Wrap("gl shader file opening", err))
+		return func(*Pipeline) {}
 	}
 	defer f.Close()
 	switch {

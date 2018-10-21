@@ -8,6 +8,7 @@ import (
 	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/coord"
 	"github.com/cozely/cozely/input"
+	"github.com/cozely/cozely/resource"
 	"github.com/cozely/cozely/window"
 	"github.com/cozely/cozely/x/gl"
 )
@@ -29,12 +30,16 @@ type mesh2d []struct {
 func Example_vertexBuffer() {
 	defer cozely.Recover()
 
+	err := resource.Path("testdata/")
+	if err != nil {
+		panic(err)
+	}
 	window.Events.Resize = func() {
 		s := window.Size()
 		gl.Viewport(0, 0, int32(s.X), int32(s.Y))
 	}
 	l := loop2{}
-	err := cozely.Run(&l)
+	err = cozely.Run(&l)
 	if err != nil {
 		panic(err)
 	}
@@ -46,8 +51,8 @@ func (l *loop2) Enter() {
 
 	// Create and configure the pipeline
 	l.pipeline = gl.NewPipeline(
-		gl.Shader(cozely.Path()+"shader02.vert"),
-		gl.Shader(cozely.Path()+"shader02.frag"),
+		gl.Shader("shader02.vert"),
+		gl.Shader("shader02.frag"),
 		gl.VertexFormat(0, triangle),
 		gl.Topology(gl.Triangles),
 	)
