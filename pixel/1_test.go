@@ -32,7 +32,7 @@ func TestTest1(t *testing.T) {
 			t.Error(err)
 			return
 		}
-		
+
 		err = cozely.Run(&l)
 		if err != nil {
 			t.Error(err)
@@ -76,39 +76,69 @@ func (l *loop1) Update() {
 
 func (l *loop1) Render() {
 	pixel.Clear(0)
-	sz := pixel.Resolution()
+	r := pixel.Resolution()
 
-	pz := l.mire.Size()
+	s := l.mire.Size()
 	l.mire.Paint(pixel.XY{0, 0}, 0)
-	l.mire.Paint(pixel.XY{0, sz.Y - pz.Y}, 0)
-	l.mire.Paint(pixel.XY{sz.X - pz.X, 0}, 0)
-	l.mire.Paint(sz.Minus(pz), 0)
+	l.mire.Paint(pixel.XY{0, r.Y - s.Y}, 0)
+	l.mire.Paint(pixel.XY{r.X - s.X, 0}, 0)
+	l.mire.Paint(r.Minus(s), 0)
 
-	pixel.Box(pz, sz.Minus(pz.Times(2)).MinusS(1), -1, 0, color.DarkGray, color.Black)
+	pixel.Box(s, r.Minus(s.Times(2)).MinusS(1), -1, 0, color.DarkGray, color.Black)
 
 	for i := int16(0); i < 6; i++ {
-		pixel.Box(
-			pixel.XY{sz.X/2 - 3*10 + i*10, sz.Y - 20},
-			pixel.XY{8, 8},
+		// pixel.Box(
+		// 	pixel.XY{sz.X/2 - 3*10 + i*10, sz.Y - 20},
+		// 	pixel.XY{8, 8},
+		// 	0,
+		// 	i,
+		// 	254, 252,
+		// )
+		pixel.Rectangle.Tile(
+			pixel.XY{40 + i*10, r.Y - 28},
+			pixel.XY{3 + i, 3 + i},
 			0,
-			i,
-			254, 252,
+		)
+		pixel.FilledRectangle.Tile(
+			pixel.XY{40 + i*10, r.Y - 14},
+			pixel.XY{3 + i, 3 + i},
+			0,
+		)
+		pixel.RectangleR1.Tile(
+			pixel.XY{130 + i*10, r.Y - 28},
+			pixel.XY{3 + i, 3 + i},
+			0,
+		)
+		pixel.FilledRectangleR1.Tile(
+			pixel.XY{130 + i*10, r.Y - 14},
+			pixel.XY{3 + i, 3 + i},
+			0,
+		)
+		pixel.RectangleR2.Tile(
+			pixel.XY{220 + i*10, r.Y - 28},
+			pixel.XY{5 + i, 5 + i},
+			0,
+		)
+		pixel.FilledRectangleR2.Tile(
+			pixel.XY{220 + i*10, r.Y - 14},
+			pixel.XY{5 + i, 5 + i},
+			0,
 		)
 	}
 
 	cur := pixel.Cursor{
-		Position: pixel.XY{pz.X + 28, 108},
+		Position: pixel.XY{s.X + 28, 108},
 	}
 	cur.Margin = cur.Position.X
 	cur.Color = color.MidGray
 	cur.Println("  sRGB:")
 	cur.Println("Linear:")
 
-	pz = l.srgbGray.Size()
-	l.srgbGray.Paint(pixel.XY{pz.X + 44 + 1*(pz.X+4), 96}, 0)
-	l.srgbRed.Paint(pixel.XY{pz.X + 44 + 2*(pz.X+4), 96}, 0)
-	l.srgbGreen.Paint(pixel.XY{pz.X + 44 + 3*(pz.X+4), 96}, 0)
-	l.srgbBlue.Paint(pixel.XY{pz.X + 44 + 4*(pz.X+4), 96}, 0)
+	s = l.srgbGray.Size()
+	l.srgbGray.Paint(pixel.XY{s.X + 44 + 1*(s.X+4), 96}, 0)
+	l.srgbRed.Paint(pixel.XY{s.X + 44 + 2*(s.X+4), 96}, 0)
+	l.srgbGreen.Paint(pixel.XY{s.X + 44 + 3*(s.X+4), 96}, 0)
+	l.srgbBlue.Paint(pixel.XY{s.X + 44 + 4*(s.X+4), 96}, 0)
 
 	pixel.MouseCursor.Paint(pixel.XYof(input.Pointer.XY()), 0)
 }

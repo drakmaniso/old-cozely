@@ -77,9 +77,15 @@ var initLUT = LUT{
 
 // ToMaster constructs a LUT that translates the color indices of an image to
 // the corresponding colors in the master palette. If necessary, new colors are
-// added to the master palette. If the latter is full, an error is returned.
+// added to the master palette. If the latter is full, an error is returned. A
+// special case is when the image has exactly 256 colors in its palette: then
+// Identity is returned, and no colors are added to the master palette.
 func ToMaster(m *image.Paletted) (l *LUT, added int, err error) {
 	l = &LUT{}
+	if len(m.Palette) == 256 {
+		*l = Identity
+		return l, 0, nil
+	}
 	*l = initLUT
 	added = 0
 

@@ -1,9 +1,22 @@
 package pixel
 
 import (
-	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/internal"
 	"github.com/cozely/cozely/resource"
+)
+
+////////////////////////////////////////////////////////////////////////////////
+
+// Built-in pictures
+const (
+	noPicture PictureID = iota
+	MouseCursor
+	Rectangle
+	FilledRectangle
+	RectangleR1
+	FilledRectangleR1
+	RectangleR2
+	FilledRectangleR2
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -17,9 +30,15 @@ func init() {
 	if err != nil {
 		setErr(err)
 	}
-	font("builtins/fonts/monozela10", nil, &color.Identity)
-	picture("builtins/pictures/cursor", nil, &color.Identity) //TODO:
-	picture("builtins/pictures/cursor", nil, &color.Identity)
+	Font("builtins/fonts/monozela10")
+	Picture("builtins/pictures/nopicture")
+	Picture("builtins/pictures/cursor")
+	Picture("builtins/pictures/rectangle")
+	Picture("builtins/pictures/filled_rectangle")
+	Picture("builtins/pictures/rectangle_r1")
+	Picture("builtins/pictures/filled_rectangle_r1")
+	Picture("builtins/pictures/rectangle_r2")
+	Picture("builtins/pictures/filled_rectangle_r2")
 }
 
 func setup() error {

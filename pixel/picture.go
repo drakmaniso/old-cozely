@@ -16,13 +16,7 @@ import (
 // PictureID is the ID to handle static image assets.
 type PictureID uint16
 
-const (
-	maxPictureID = 0xFFFF
-	noPicture    = PictureID(0)
-)
-
-// MouseCursor is a small picture that can be used as mouse cursor.
-const MouseCursor = PictureID(1)
+const maxPictureID = 0xFFFF
 
 var pictures struct {
 	atlas   *atlas.Atlas
@@ -178,7 +172,7 @@ func (p PictureID) load(prects *[]uint32) error {
 		var a int
 		pictures.lut[p], a, err = color.ToMaster(pictures.image[p])
 		if a != 0 {
-			internal.Debug.Printf("Warning: %d new colors in picture "+pictures.path[p], a)
+			internal.Debug.Printf("WARNING: %d new colors in picture "+pictures.path[p], a)
 		}
 		if err != nil {
 			return internal.Wrap("loading picture "+pictures.path[p], err)

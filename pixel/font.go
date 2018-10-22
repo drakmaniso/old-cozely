@@ -39,10 +39,6 @@ var fonts struct {
 
 // Font declares a new font and returns its ID.
 func Font(path string) FontID {
-	return font(path, nil, nil)
-}
-
-func font(path string, m *image.Paletted, l *color.LUT) FontID {
 	if internal.Running {
 		setErr(errors.New("pixel font declaration: declarations must happen before starting the framework"))
 		return noFont
@@ -58,8 +54,8 @@ func font(path string, m *image.Paletted, l *color.LUT) FontID {
 	fonts.baseline = append(fonts.baseline, 0)
 	fonts.basecolor = append(fonts.basecolor, 0)
 	fonts.first = append(fonts.first, 0)
-	fonts.image = append(fonts.image, m)
-	fonts.lut = append(fonts.lut, l)
+	fonts.image = append(fonts.image, nil)
+	fonts.lut = append(fonts.lut, nil)
 	return FontID(len(fonts.path) - 1)
 }
 
@@ -134,7 +130,7 @@ func (f FontID) load(frects *[]uint32) error {
 		var a int
 		fonts.lut[f], a, err = color.ToMaster(sm)
 		if a != 0 {
-			internal.Debug.Printf("Warning: %d new colors in font "+fonts.path[f], a)
+			internal.Debug.Printf("WARNING: %d new colors in font "+fonts.path[f], a)
 		}
 		if err != nil {
 			return errors.New("impossible to load font: " + err.Error())
