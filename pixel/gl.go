@@ -168,9 +168,9 @@ func (r *glRenderer) setup() error {
 		r.picturesTA.SubImage(0, 0, 0, int32(i), m)
 	}
 
-	pictures.path = pictures.path[:2]
-	pictures.image = pictures.image[:2]
-	pictures.lut = pictures.lut[:2]
+	pictures.path = pictures.path[:8]
+	pictures.image = pictures.image[:8]
+	pictures.lut = pictures.lut[:8]
 
 	return gl.Err()
 }
@@ -192,7 +192,7 @@ func (r *glRenderer) cleanup() error {
 
 	// Pictures
 	pictures.atlas = nil
-	pictures.mapping = pictures.mapping[:2]
+	pictures.mapping = pictures.mapping[:8]
 	r.pictureMapTBO.Delete()
 	r.picturesTA.Delete()
 

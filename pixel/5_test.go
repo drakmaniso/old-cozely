@@ -97,6 +97,7 @@ func (l *loop5) Render() {
 			pixel.Point(p, 0, 8)
 		}
 		pixel.Point(m, 0, 7)
+		pixel.MouseCursor.Paint(m, 0)
 	}
 }
 

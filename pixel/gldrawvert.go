@@ -10,7 +10,6 @@ const uint cmdSubpicture = 3;
 const uint cmdTriangle   = 4;
 const uint cmdLine       = 5;
 const uint cmdPoint      = 6;
-const uint cmdBox        = 7;
 
 const int mappingSize = 7;
 
@@ -162,19 +161,6 @@ void main(void)
 		}
 		p = (CanvasMargin + vec2(0.5,0.5) + vec2(x, y)) * PixelSize;
 		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), floatZ(z), 1);
-		break;
-
-	case cmdBox:
-		p4 = texelFetch(parameters, param+4).r;
-		p5 = texelFetch(parameters, param+5).r;
-		p6 = texelFetch(parameters, param+6).r;
-		p7 = texelFetch(parameters, param+7).r;
-		size = vec2(p4+1, p5+1);
-		Param1 = p6;
-		Box = vec4(x+CanvasMargin.x, y+CanvasMargin.y, x+p4+CanvasMargin.x, y+p5+CanvasMargin.y);
-		p = (CanvasMargin + vec2(x, y) + corners[vertex] * size) * PixelSize;
-		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), floatZ(z), 1);
-		ColorParam |= (p7 & 0xFF) << 8;
 		break;
 	}
 }

@@ -78,7 +78,6 @@ func (loop1) Render() {
 		Y: float32(pixel.Resolution().Y),
 	}
 	pt := make([]pixel.XY, len(points))
-	s := pixel.XY{5, 5}
 	for i, sd := range points {
 		pt[i] = toScreen(sd)
 	}
@@ -106,9 +105,9 @@ func (loop1) Render() {
 		case 2:
 			c = pico8.Blue
 		}
-		pixel.Box(pt[i].Minus(s), s.Times(2), 0, 2, c, c)
-		cur.Position = pixel.XY{pt[i].X - 2, pt[i].Y + 3}
-		cur.Color = pico8.White
+		r := pt[i].Minus(toScreen(d)).Slash(12)
+		cur.Position = pt[i].Plus(r).Plus(pixel.XY{-2, +3})
+		cur.Color = c
 		cur.Print([]string{"A", "B", "C"}[i])
 	}
 

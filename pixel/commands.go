@@ -11,7 +11,6 @@ const (
 	cmdTriangle   = 4
 	cmdLine       = 5
 	cmdPoint      = 6
-	cmdBox        = 7
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -23,6 +22,10 @@ func (p PictureID) Paint(pos XY, z Layer) {
 
 // Tile
 func (p PictureID) Tile(pos XY, size XY, z Layer) {
+	p.TileMod(pos, size, z, 0)
+}
+
+func (p PictureID) TileMod(pos XY, size XY, z Layer, shift color.Index) {
 	if size.X < 0 {
 		pos.X += size.X
 		size.X = -size.X
@@ -31,7 +34,7 @@ func (p PictureID) Tile(pos XY, size XY, z Layer) {
 		pos.Y += size.Y
 		size.Y = -size.Y
 	}
-	renderer.command(cmdTile, 0, int16(z), pos.X, pos.Y, size.X, size.Y, int16(p), 0)
+	renderer.command(cmdTile, int16(shift), int16(z), pos.X, pos.Y, size.X, size.Y, int16(p), 0)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -65,29 +68,6 @@ func Triangle(p1, p2, p3 XY, z Layer, co color.Index) {
 		p1.X, p1.Y,
 		p2.X, p2.Y,
 		p3.X, p3.Y,
-	)
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-// Box queues a GPU command to draw a box on the canvas.
-func Box(position, size XY, z Layer, corner int16, fg, bg color.Index) {
-	//TODO: maybe the shader can take this?
-	if size.X < 0 {
-		position.X = position.X + size.X
-		size.X = -size.X
-	}
-	if size.Y < 0 {
-		position.X = position.Y + size.Y
-		size.Y = -size.Y
-	}
-	renderer.command(cmdBox,
-		int16(bg),
-		int16(z),
-		position.X, position.Y,
-		size.X, size.Y,
-		corner,
-		int16(fg),
 	)
 }
 

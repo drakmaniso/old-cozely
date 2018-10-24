@@ -10,7 +10,6 @@ const uint cmdSubpicture = 3;
 const uint cmdTriangle   = 4;
 const uint cmdLine       = 5;
 const uint cmdPoint      = 6;
-const uint cmdBox        = 7;
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -106,22 +105,6 @@ void main(void)
 				c = ColorParam;
 			}
 		}
-		break;
-
-	case cmdBox:
-		x = gl_FragCoord.x;
-		y = gl_FragCoord.y;
-		uint cor = Param1;
-		float dx = min(x-Box.x, Box.z-x);
-		float dy = min(y-Box.y, Box.w-y);
-		if (dx + dy < cor) {
-			c = 0;
-		}	else if (dx + dy == cor || dx < 1 || dy < 1) {
-			c = ColorParam>>8;
-		} else {
-			c = ColorParam&0xFF;
-		}
-
 		break;
 	}
 

@@ -30,7 +30,6 @@ func init() {
 	if err != nil {
 		setErr(err)
 	}
-	Font("builtins/fonts/monozela10")
 	Picture("builtins/pictures/nopicture")
 	Picture("builtins/pictures/cursor")
 	Picture("builtins/pictures/rectangle")
@@ -39,6 +38,7 @@ func init() {
 	Picture("builtins/pictures/filled_rectangle_r1")
 	Picture("builtins/pictures/rectangle_r2")
 	Picture("builtins/pictures/filled_rectangle_r2")
+	Font("builtins/fonts/monozela10")
 }
 
 func setup() error {

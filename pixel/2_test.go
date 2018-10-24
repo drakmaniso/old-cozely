@@ -53,7 +53,7 @@ func (l *loop2) setup() error {
 
 	l.txtcol = 7
 
-	err := resource.Path("testdata")
+	err := resource.Path("testdata/")
 	if err != nil {
 		return err
 	}

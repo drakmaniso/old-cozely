@@ -84,16 +84,10 @@ func (l *loop1) Render() {
 	l.mire.Paint(pixel.XY{r.X - s.X, 0}, 0)
 	l.mire.Paint(r.Minus(s), 0)
 
-	pixel.Box(s, r.Minus(s.Times(2)).MinusS(1), -1, 0, color.DarkGray, color.Black)
+	pixel.FilledRectangle.TileMod(s, r.Minus(s.Times(2)), -1, color.Black)
+	pixel.Rectangle.TileMod(s, r.Minus(s.Times(2)), -1, color.DarkGray)
 
 	for i := int16(0); i < 6; i++ {
-		// pixel.Box(
-		// 	pixel.XY{sz.X/2 - 3*10 + i*10, sz.Y - 20},
-		// 	pixel.XY{8, 8},
-		// 	0,
-		// 	i,
-		// 	254, 252,
-		// )
 		pixel.Rectangle.Tile(
 			pixel.XY{40 + i*10, r.Y - 28},
 			pixel.XY{3 + i, 3 + i},
