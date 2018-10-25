@@ -28,27 +28,18 @@ func TestTest1(t *testing.T) {
 	do(func() {
 		defer cozely.Recover()
 
-		l := loop1{}
-		err := l.setup()
+		pixel.SetResolution(pixel.XY{320, 180})
+		err := resource.Path("testdata/")
 		if err != nil {
 			t.Error(err)
 			return
 		}
 
-		err = cozely.Run(&l)
+		err = cozely.Run(&loop1{})
 		if err != nil {
 			t.Error(err)
 		}
 	})
-}
-
-func (l *loop1) setup() error {
-	pixel.SetResolution(pixel.XY{320, 180})
-	err := resource.Path("testdata/")
-	if err != nil {
-		return err
-	}
-	return nil
 }
 
 func (l *loop1) Enter() {

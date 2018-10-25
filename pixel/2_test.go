@@ -32,32 +32,19 @@ func TestTest2(t *testing.T) {
 	do(func() {
 		defer cozely.Recover()
 
-		l := loop2{}
-		err := l.setup()
+		color.Load(&pico8.Palette)
+		pixel.SetZoom(2)
+		err := resource.Path("testdata/")
 		if err != nil {
 			t.Error(err)
 			return
 		}
 
-		err = cozely.Run(&l)
+		err = cozely.Run(&loop2{})
 		if err != nil {
 			t.Error(err)
 		}
 	})
-}
-
-func (l *loop2) setup() error {
-	color.Load(&pico8.Palette)
-	pixel.SetZoom(2)
-
-	l.txtcol = 7
-
-	err := resource.Path("testdata/")
-	if err != nil {
-		return err
-	}
-	l.shapes = make([]shape, 400000)
-	return nil
 }
 
 func (l *loop2) Enter() {
@@ -67,8 +54,11 @@ func (l *loop2) Enter() {
 		pixel.Picture("graphics/shape3"),
 		pixel.Picture("graphics/shape4"),
 	}
+	l.shapes = make([]shape, 400000)
 	l.resize()
 	window.Events.Resize = l.resize
+
+	l.txtcol = 7
 }
 
 func (loop2) Leave() {
@@ -155,7 +145,6 @@ func (l *loop2) Render() {
 			l = 0xFFFF / 2
 		}
 		o.pict.Paint(o.pos, pixel.Layer(l), 0)
-		// o.pict.Tile(o.pos, o.pict.Size(), pixel.Layer(l))
 	}
 	cur := pixel.Cursor{
 		Position: pixel.XY{8, 16},

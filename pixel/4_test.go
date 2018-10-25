@@ -36,36 +36,25 @@ func TestTest4(t *testing.T) {
 	do(func() {
 		defer cozely.Recover()
 
-		l := loop4{}
-		err := l.setup()
+		color.Load(&pico8.Palette)
+		pixel.SetZoom(2)
+		err := resource.Path("testdata/")
 		if err != nil {
 			t.Error(err)
 			return
 		}
 
-		err = cozely.Run(&l)
+		err = cozely.Run(&loop4{})
 		if err != nil {
 			t.Error(err)
 		}
 	})
 }
 
-func (l *loop4) setup() error {
-	pixel.SetZoom(2)
-
-	color.Load(&pico8.Palette)
+func (l *loop4) Enter() {
 	l.bg = pico8.White
 	l.fg = pico8.DarkBlue
 
-	err := resource.Path("testdata/")
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (l *loop4) Enter() {
 	l.fontNames = []string{
 		"builtins/default",
 		"fonts/tinela9",

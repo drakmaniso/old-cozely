@@ -15,7 +15,7 @@ import (
 // FontID is the ID to handle font assets.
 type FontID uint8
 
-const noFont = FontID(maxFontID) //TODO
+const noFont = FontID(0) //TODO
 
 const maxFontID = 0xFF
 
@@ -34,12 +34,23 @@ var fonts = struct {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+// Font returns the font ID corresponding to a name.
+//
+// Should only be called when the framework is running (since resources are
+// loaded when the framework starts).
 func Font(name string) FontID {
-	return fonts.dictionary[name]
+	f, ok := fonts.dictionary[name]
+	if ok {
+		return f
+	}
+	return noFont
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
+// newFont creates a new font from an image.
+//
+// Must be called *before* running the framework.
 func newFont(name string, m *image.Paletted, l *color.LUT) FontID {
 	var err error
 
@@ -51,7 +62,7 @@ func newFont(name string, m *image.Paletted, l *color.LUT) FontID {
 	_, ok := fonts.dictionary[name]
 	if ok && name != "" {
 		setErr(errors.New(`new font: name "` + name + `" already taken`))
-		return 0 //TODO
+		return noFont
 	}
 
 	if len(fonts.name) >= maxFontID {
@@ -76,7 +87,7 @@ func newFont(name string, m *image.Paletted, l *color.LUT) FontID {
 		sm, ok := m.SubImage(r).(*image.Paletted)
 		if !ok {
 			setErr(errors.New("unexpected subimage in Loadfont"))
-			return 0 //TODO
+			return noFont
 		}
 		var a int
 		fonts.lut[f], a, err = color.ToMaster(sm)
@@ -85,7 +96,7 @@ func newFont(name string, m *image.Paletted, l *color.LUT) FontID {
 		}
 		if err != nil {
 			setErr(errors.New("impossible to load font: " + err.Error()))
-			return 0 //TODO
+			return noFont
 		}
 	}
 
@@ -127,7 +138,7 @@ func newFont(name string, m *image.Paletted, l *color.LUT) FontID {
 		sm, ok := m.SubImage(image.Rect(x, 0, x+w, h)).(*image.Paletted)
 		if !ok {
 			setErr(errors.New("unexpected subimage in Loadfont"))
-			return 0 //TODO
+			return noFont
 		}
 		gg := NewPicture("", sm, fonts.lut[f])
 		if gg != PictureID(g) {
@@ -157,6 +168,7 @@ func newFont(name string, m *image.Paletted, l *color.LUT) FontID {
 
 ////////////////////////////////////////////////////////////////////////////////
 
+// loadFont is the resource handler for fonts.
 func loadFont(name string, tags []string, ext string, r io.Reader) error {
 	var err error
 
