@@ -5,6 +5,14 @@ package internal
 
 ////////////////////////////////////////////////////////////////////////////////
 
+// ResourceSetup hook
+var ResourceSetup = func() error { return nil }
+
+// ResourceCleanup hook
+var ResourceCleanup = func() error { return nil }
+
+////////////////////////////////////////////////////////////////////////////////
+
 // GLSetup hook
 var GLSetup = func() error { return nil }
 

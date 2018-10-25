@@ -276,7 +276,7 @@ func drawGrid() {
 		// Draw background
 		o := origin.Plus(cellsize).MinusS(1)
 		s := pixel.XY{gridwidth - 2, gridheight - 2}.TimesXY(cellsize).PlusS(3)
-		pixel.FilledRectangle.TileMod(o, s, 0, pico8.DarkGreen)
+		pixel.Fill.TileMod(o, s, 0, pico8.DarkGreen)
 		pixel.Rectangle.TileMod(o, s, 0, pico8.Green)
 	}
 
@@ -288,27 +288,27 @@ func drawGrid() {
 			p = origin.Plus(p)
 			switch grid[s.X][s.Y] {
 			case fruit:
-				pixel.FilledRectangle.TileMod(p.PlusS(3), cellsize.MinusS(3), 0, pico8.Red)
+				pixel.Fill.TileMod(p.PlusS(3), cellsize.MinusS(3), 0, pico8.Red)
 			case up, right, down, left, tail:
-				pixel.FilledRectangle.TileMod(p, cellsize.PlusS(1), 0, pico8.Peach)
+				pixel.Fill.TileMod(p, cellsize.PlusS(1), 0, pico8.Peach)
 				pixel.Rectangle.TileMod(p, cellsize.PlusS(1), 0, pico8.DarkPurple)
 			}
 			if s.X == head.X && s.Y == head.Y {
-				pixel.FilledRectangle.TileMod(p, cellsize.PlusS(1), 0, pico8.Pink)
+				pixel.Fill.TileMod(p, cellsize.PlusS(1), 0, pico8.Pink)
 				pixel.Rectangle.TileMod(p, cellsize.PlusS(1), 0, pico8.DarkPurple)
 				switch next {
 				case up:
 					pixel.Point(p.Plus(pixel.XY{3, 2}), 0, pico8.DarkBlue)
 					pixel.Point(p.Plus(pixel.XY{5, 2}), 0, pico8.DarkBlue)
 				case down:
-					pixel.Point(p.Plus(pixel.XY{3, 8-2}), 0, pico8.DarkBlue)
-					pixel.Point(p.Plus(pixel.XY{5, 8-2}), 0, pico8.DarkBlue)
+					pixel.Point(p.Plus(pixel.XY{3, 8 - 2}), 0, pico8.DarkBlue)
+					pixel.Point(p.Plus(pixel.XY{5, 8 - 2}), 0, pico8.DarkBlue)
 				case left:
 					pixel.Point(p.Plus(pixel.XY{2, 3}), 0, pico8.DarkBlue)
 					pixel.Point(p.Plus(pixel.XY{2, 5}), 0, pico8.DarkBlue)
 				case right:
-					pixel.Point(p.Plus(pixel.XY{8-2, 3}), 0, pico8.DarkBlue)
-					pixel.Point(p.Plus(pixel.XY{8-2, 5}), 0, pico8.DarkBlue)
+					pixel.Point(p.Plus(pixel.XY{8 - 2, 3}), 0, pico8.DarkBlue)
+					pixel.Point(p.Plus(pixel.XY{8 - 2, 5}), 0, pico8.DarkBlue)
 				}
 			}
 		}

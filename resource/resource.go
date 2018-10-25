@@ -31,5 +31,15 @@ func Open(name string) (io.ReadCloser, error) {
 	return nil, os.ErrNotExist
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
+type Handler func(name string, tags []string, ext string, r io.Reader) error
+
+var handlers = map[string]Handler{}
+
+func Handle(kind string, fn Handler) {
+	handlers[kind] = fn
+}
+
 //// Copyright (c) 2013-2018 Laurent Moussault. All rights reserved.
 //// Licensed under a simplified BSD license (see LICENSE file).

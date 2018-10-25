@@ -4,6 +4,8 @@
 package cozely
 
 import (
+	"errors"
+
 	"github.com/cozely/cozely/internal"
 	"github.com/cozely/cozely/window"
 )
@@ -77,6 +79,11 @@ func Run(loop GameLoop) (err error) {
 			err = internal.Wrap("gl cleanup", derr)
 			return
 		}
+		derr = internal.ResourceCleanup()
+		if err == nil && derr != nil {
+			err = internal.Wrap("resource cleanup", derr)
+			return
+		}
 		derr = internal.Cleanup()
 		if err == nil && derr != nil {
 			err = internal.Wrap("internal cleanup", derr)
@@ -85,8 +92,7 @@ func Run(loop GameLoop) (err error) {
 	}()
 
 	if internal.Running {
-		//TODO:
-		return nil
+		return errors.New("unable to run (framework is already running)")
 	}
 
 	internal.Loop = loop
@@ -96,6 +102,10 @@ func Run(loop GameLoop) (err error) {
 	err = internal.Setup()
 	if err != nil {
 		return internal.Wrap("internal setup", err)
+	}
+	err = internal.ResourceSetup()
+	if err != nil {
+		return internal.Wrap("resource setup", err)
 	}
 	err = internal.GLSetup()
 	if err != nil {

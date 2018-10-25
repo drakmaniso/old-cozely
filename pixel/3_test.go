@@ -16,7 +16,7 @@ import (
 var ()
 
 type loop3 struct {
-	pict1, pict2   pixel.PictureID
+	pict1, pict2   pixel.BoxID
 	position, size pixel.XY
 }
 
@@ -47,14 +47,14 @@ func (l *loop3) setup() error {
 	if err != nil {
 		return err
 	}
-	l.pict1 = pixel.Picture("graphics/box")
-	l.pict2 = pixel.Picture("graphics/button")
 	l.position = pixel.XY{48, 48}
 	l.size = pixel.XY{60, 40}
 	return nil
 }
 
 func (l *loop3) Enter() {
+	l.pict1 = pixel.Box("graphics/box")
+	l.pict2 = pixel.Box("graphics/button")
 }
 
 func (loop3) Leave() {
@@ -77,11 +77,11 @@ func (loop3) Update() {
 
 func (l *loop3) Render() {
 	pixel.Clear(pico8.White)
-	l.pict2.Tile(pixel.XY{48, 4}, l.pict2.Size(), -1)
-	l.pict2.Tile(pixel.XY{64, 4}, pixel.XY{32, 16}, -1)
-	l.pict2.Tile(pixel.XY{102, 4}, pixel.XY{16, 32}, -1)
-	l.pict2.Tile(pixel.XY{128, 4}, pixel.XY{32, 32}, -1)
-	l.pict1.Tile(l.position, l.size, 0)
+	l.pict2.Paint(pixel.XY{48, 4}, pixel.XY{8, 8}, -1, 0)
+	l.pict2.Paint(pixel.XY{64, 4}, pixel.XY{32, 16}, -1, 0)
+	l.pict2.Paint(pixel.XY{102, 4}, pixel.XY{16, 32}, -1, 0)
+	l.pict2.Paint(pixel.XY{128, 4}, pixel.XY{32, 32}, -1, 0)
+	l.pict1.Paint(l.position, l.size, 0, 0)
 }
 
 //// Copyright (c) 2018-2018 Laurent Moussault. All rights reserved.

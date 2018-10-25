@@ -7,42 +7,45 @@ import (
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// Built-in pictures
-const (
-	noPicture PictureID = iota
-	MouseCursor
-	Rectangle
-	FilledRectangle
-	RectangleR1
-	FilledRectangleR1
-	RectangleR2
-	FilledRectangleR2
-)
-
-////////////////////////////////////////////////////////////////////////////////
-
 func init() {
 	internal.PixelSetup = setup
-	internal.PixelCleanup = renderer.cleanup
+	internal.PixelCleanup = cleanup
 	internal.PixelRender = renderer.render
 
 	err := resource.Pack(builtins)
 	if err != nil {
 		setErr(err)
 	}
-	Picture("builtins/pictures/nopicture")
-	Picture("builtins/pictures/cursor")
-	Picture("builtins/pictures/rectangle")
-	Picture("builtins/pictures/filled_rectangle")
-	Picture("builtins/pictures/rectangle_r1")
-	Picture("builtins/pictures/filled_rectangle_r1")
-	Picture("builtins/pictures/rectangle_r2")
-	Picture("builtins/pictures/filled_rectangle_r2")
-	Font("builtins/fonts/monozela10")
+	resource.Handle("picture", loadPicture)
+	resource.Handle("box", loadBox)
+	resource.Handle("font", loadFont)
+	Font("builtins/default")
 }
 
 func setup() error {
 	return renderer.setup()
+}
+
+func cleanup() error {
+	// Pictures
+	pictures.dictionary = map[string]PictureID{}
+	pictures.atlas = nil
+	pictures.mapping = pictures.mapping[:0]
+
+	// Boxes
+	boxes.dictionary = map[string]BoxID{}
+
+	// Fonts
+	fonts.dictionary = map[string]FontID{}
+	fonts.name = fonts.name[:0]
+	fonts.height = fonts.height[:0]
+	fonts.baseline = fonts.baseline[:0]
+	fonts.basecolor = fonts.basecolor[:0]
+	fonts.first = fonts.first[:0]
+	fonts.image = fonts.image[:0]
+	fonts.lut = fonts.lut[:0]
+
+	return renderer.cleanup()
 }
 
 //// Copyright (c) 2018-2018 Laurent Moussault. All rights reserved.

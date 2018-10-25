@@ -20,12 +20,7 @@ func (p PictureID) Paint(pos XY, z Layer) {
 	renderer.command(cmdPicture, 0, int16(z), pos.X, pos.Y, 0, 0, int16(p), 0)
 }
 
-// Tile
-func (p PictureID) Tile(pos XY, size XY, z Layer) {
-	p.TileMod(pos, size, z, 0)
-}
-
-func (p PictureID) TileMod(pos XY, size XY, z Layer, shift color.Index) {
+func (b BoxID) Paint(pos XY, size XY, z Layer, shift color.Index) {
 	if size.X < 0 {
 		pos.X += size.X
 		size.X = -size.X
@@ -34,7 +29,7 @@ func (p PictureID) TileMod(pos XY, size XY, z Layer, shift color.Index) {
 		pos.Y += size.Y
 		size.Y = -size.Y
 	}
-	renderer.command(cmdTile, int16(shift), int16(z), pos.X, pos.Y, size.X, size.Y, int16(p), 0)
+	renderer.command(cmdTile, int16(shift), int16(z), pos.X, pos.Y, size.X, size.Y, int16(b), 0)
 }
 
 ////////////////////////////////////////////////////////////////////////////////

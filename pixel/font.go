@@ -4,10 +4,10 @@ import (
 	"errors"
 	"image"
 	_ "image/png" // Activate PNG support
+	"io"
 
 	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/internal"
-	"github.com/cozely/cozely/resource"
 )
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -15,108 +15,58 @@ import (
 // FontID is the ID to handle font assets.
 type FontID uint8
 
-const (
-	// Monozela10 is the default font (10 pixel high, monospace). This is the only
-	// font that is always loaded and doesn't need declaration.
-	Monozela10 = FontID(0)
-
-	noFont = FontID(maxFontID)
-)
+const noFont = FontID(maxFontID) //TODO
 
 const maxFontID = 0xFF
 
-var fonts struct {
-	path      []string
-	height    []int16
-	baseline  []int16
-	basecolor []color.Index
-	first     []uint16 // index of the first glyph
-	image     []*image.Paletted
-	lut       []*color.LUT
+var fonts = struct {
+	dictionary map[string]FontID
+	name       []string
+	height     []int16
+	baseline   []int16
+	basecolor  []color.Index
+	first      []uint16 // index of the first glyph
+	image      []*image.Paletted
+	lut        []*color.LUT
+}{
+	dictionary: map[string]FontID{},
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// Font declares a new font and returns its ID.
-func Font(path string) FontID {
+func Font(name string) FontID {
+	return fonts.dictionary[name]
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+func newFont(name string, m *image.Paletted, l *color.LUT) FontID {
+	var err error
+
 	if internal.Running {
 		setErr(errors.New("pixel font declaration: declarations must happen before starting the framework"))
 		return noFont
 	}
 
-	if len(fonts.path) >= maxFontID {
+	_, ok := fonts.dictionary[name]
+	if ok && name != "" {
+		setErr(errors.New(`new font: name "` + name + `" already taken`))
+		return 0 //TODO
+	}
+
+	if len(fonts.name) >= maxFontID {
 		setErr(errors.New("pixel font declaration: too many fonts"))
 		return noFont
 	}
 
-	fonts.path = append(fonts.path, path)
+	fonts.name = append(fonts.name, name)
 	fonts.height = append(fonts.height, 0)
 	fonts.baseline = append(fonts.baseline, 0)
 	fonts.basecolor = append(fonts.basecolor, 0)
 	fonts.first = append(fonts.first, 0)
-	fonts.image = append(fonts.image, nil)
-	fonts.lut = append(fonts.lut, nil)
-	return FontID(len(fonts.path) - 1)
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-func (f FontID) glyph(r rune) uint16 {
-	//TODO: add support for non-ascii runes
-	switch {
-	case r < ' ':
-		r = 0x7F - ' '
-	case r <= 0x7F:
-		r = r - ' '
-	default:
-		r = 0x7F - ' '
-	}
-	return fonts.first[f] + uint16(r)
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-// Height returns the height of the font, i.e. the height of the images used to
-// store the glyphs.
-func (f FontID) Height() int16 {
-	return fonts.height[f]
-}
-
-// Interline returns the default interline of the font, i.e. the vertical
-// distance between the baselines of two consecutive lines.
-func (f FontID) Interline() int16 {
-	return int16(float32(fonts.height[f]) * 1.25)
-}
-
-////////////////////////////////////////////////////////////////////////////////
-
-func (f FontID) load(frects *[]uint32) error {
-	var err error
-
-	m := fonts.image[f]
-
-	if m == nil {
-		fl, err := resource.Open(fonts.path[f] + ".png")
-		if err != nil {
-			return internal.Wrap(`while opening font file "`+fonts.path[f]+`"`, err)
-		}
-		defer fl.Close() //TODO: error handling
-
-		img, _, err := image.Decode(fl)
-		switch err {
-		case nil:
-		case image.ErrFormat:
-			return nil
-		default:
-			return internal.Wrap("decoding font file", err)
-		}
-
-		var ok bool
-		m, ok = img.(*image.Paletted)
-		if !ok {
-			return errors.New("impossible to load font " + fonts.path[f] + " (color model not supported)")
-		}
-	}
+	fonts.image = append(fonts.image, m)
+	fonts.lut = append(fonts.lut, l)
+	f := FontID(len(fonts.name) - 1)
 
 	if fonts.lut[f] == nil {
 		// Construct the font LUT
@@ -125,15 +75,17 @@ func (f FontID) load(frects *[]uint32) error {
 		r.Min.Y++
 		sm, ok := m.SubImage(r).(*image.Paletted)
 		if !ok {
-			return errors.New("unexpected subimage in Loadfont")
+			setErr(errors.New("unexpected subimage in Loadfont"))
+			return 0 //TODO
 		}
 		var a int
 		fonts.lut[f], a, err = color.ToMaster(sm)
 		if a != 0 {
-			internal.Debug.Printf("WARNING: %d new colors in font "+fonts.path[f], a)
+			internal.Debug.Printf("WARNING: %d new colors in font "+fonts.name[f], a)
 		}
 		if err != nil {
-			return errors.New("impossible to load font: " + err.Error())
+			setErr(errors.New("impossible to load font: " + err.Error()))
+			return 0 //TODO
 		}
 	}
 
@@ -174,11 +126,13 @@ func (f FontID) load(frects *[]uint32) error {
 		}
 		sm, ok := m.SubImage(image.Rect(x, 0, x+w, h)).(*image.Paletted)
 		if !ok {
-			return errors.New("unexpected subimage in Loadfont")
+			setErr(errors.New("unexpected subimage in Loadfont"))
+			return 0 //TODO
 		}
-		gg := picture("(font)", sm, fonts.lut[f])
+		gg := NewPicture("", sm, fonts.lut[f])
 		if gg != PictureID(g) {
 			//TODO:
+			panic("load font: gg != g")
 		}
 		x += w
 		for x < m.Bounds().Dx() && m.Pix[x+h*m.Stride] == 0 {
@@ -188,13 +142,75 @@ func (f FontID) load(frects *[]uint32) error {
 
 	internal.Debug.Printf(
 		"Loaded font %s (%d glyphs, %dx%d)",
-		fonts.path[f],
+		fonts.name[f],
 		g-fonts.first[f],
 		maxw,
 		fonts.height[f],
 	)
 
+	if name != "" {
+		fonts.dictionary[name] = f
+	}
+
+	return f
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+func loadFont(name string, tags []string, ext string, r io.Reader) error {
+	var err error
+
+	if ext != "png" {
+		return errors.New(`load box "` + name + `": format "` + ext + `" not supported`)
+	}
+	println("Loading font", name)
+
+	m, _, err := image.Decode(r)
+	switch err {
+	case nil:
+	case image.ErrFormat:
+		return nil
+	default:
+		return internal.Wrap("decoding font file", err)
+	}
+
+	mm, ok := m.(*image.Paletted)
+	if !ok {
+		return errors.New("impossible to load font " + name + " (color model not supported)")
+	}
+
+	newFont(name, mm, nil)
+
 	return nil
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+func (f FontID) glyph(r rune) uint16 {
+	//TODO: add support for non-ascii runes
+	switch {
+	case r < ' ':
+		r = 0x7F - ' '
+	case r <= 0x7F:
+		r = r - ' '
+	default:
+		r = 0x7F - ' '
+	}
+	return fonts.first[f] + uint16(r)
+}
+
+////////////////////////////////////////////////////////////////////////////////
+
+// Height returns the height of the font, i.e. the height of the images used to
+// store the glyphs.
+func (f FontID) Height() int16 {
+	return fonts.height[f]
+}
+
+// Interline returns the default interline of the font, i.e. the vertical
+// distance between the baselines of two consecutive lines.
+func (f FontID) Interline() int16 {
+	return int16(float32(fonts.height[f]) * 1.25)
 }
 
 //// Copyright (c) 2018-2018 Laurent Moussault. All rights reserved.

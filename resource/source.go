@@ -26,12 +26,15 @@ type path string
 
 // Path adds p to the stack of sources for resource look-up.
 func Path(p string) error {
+	if internal.Running {
+		return errors.New("unable to add resource path while the framework is running")
+	}
 	if p[len(p)-1] != '/' {
 		return errors.New(`invalid resource path "` + p + `"`)
 	}
 	_, err := os.Stat(p)
 	if err != nil {
-		return internal.Wrap(`invalid resource path "` + p + `"`, err)
+		return internal.Wrap(`invalid resource path "`+p+`"`, err)
 	}
 	sources = append(sources, path(p))
 	return nil
@@ -60,6 +63,9 @@ type pack struct {
 // Pack adds a zipped string to the stack of sources for resource look-up.
 func Pack(content string) error {
 	var err error
+	if internal.Running {
+		return errors.New("unable to add resource path while the framework is running")
+	}
 	p := pack{}
 	p.Reader, err = zip.NewReader(strings.NewReader(content), int64(len(content)))
 	if err != nil {

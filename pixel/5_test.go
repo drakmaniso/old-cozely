@@ -14,6 +14,7 @@ import (
 
 type loop5 struct {
 	points []pixel.XY
+	cursor pixel.PictureID
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -51,6 +52,7 @@ func (l *loop5) setup() error {
 
 func (l *loop5) Enter() {
 	input.ShowMouse(false)
+	l.cursor = pixel.Picture("builtins/cursor")
 }
 
 func (l *loop5) Leave() {
@@ -97,7 +99,7 @@ func (l *loop5) Render() {
 			pixel.Point(p, 0, 8)
 		}
 		pixel.Point(m, 0, 7)
-		pixel.MouseCursor.Paint(m, 0)
+		l.cursor.Paint(m, 0)
 	}
 }
 

@@ -166,7 +166,7 @@ func (loop1) Render() {
 	pt := make([]pixel.XY, len(points))
 	for i, sd := range points {
 		pt[i] = toScreen(sd)
-		pixel.FilledRectangle.TileMod(pt[i].MinusS(1), pixel.XY{3, 3}, 0, pico8.Orange)
+		pixel.Fill.TileMod(pt[i].MinusS(1), pixel.XY{3, 3}, 0, pico8.Orange)
 	}
 
 	if window.HasMouseFocus() {

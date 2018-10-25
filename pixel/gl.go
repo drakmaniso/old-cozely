@@ -168,9 +168,9 @@ func (r *glRenderer) setup() error {
 		r.picturesTA.SubImage(0, 0, 0, int32(i), m)
 	}
 
-	pictures.path = pictures.path[:8]
-	pictures.image = pictures.image[:8]
-	pictures.lut = pictures.lut[:8]
+	pictures.name = pictures.name[:0]
+	pictures.image = pictures.image[:0]
+	pictures.lut = pictures.lut[:0]
 
 	return gl.Err()
 }
@@ -191,19 +191,8 @@ func (r *glRenderer) cleanup() error {
 	r.drawUBO.Delete()
 
 	// Pictures
-	pictures.atlas = nil
-	pictures.mapping = pictures.mapping[:8]
 	r.pictureMapTBO.Delete()
 	r.picturesTA.Delete()
-
-	// Fonts
-	fonts.path = fonts.path[:1]
-	fonts.height = fonts.height[:1]
-	fonts.baseline = fonts.baseline[:1]
-	fonts.basecolor = fonts.basecolor[:1]
-	fonts.first = fonts.first[:1]
-	fonts.image = fonts.image[:1]
-	fonts.lut = fonts.lut[:1]
 
 	return gl.Err()
 }

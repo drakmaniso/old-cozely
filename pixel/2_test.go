@@ -39,7 +39,6 @@ func TestTest2(t *testing.T) {
 			return
 		}
 
-		window.Events.Resize = l.resize
 		err = cozely.Run(&l)
 		if err != nil {
 			t.Error(err)
@@ -57,17 +56,19 @@ func (l *loop2) setup() error {
 	if err != nil {
 		return err
 	}
+	l.shapes = make([]shape, 400000)
+	return nil
+}
+
+func (l *loop2) Enter() {
 	l.picts = []pixel.PictureID{
 		pixel.Picture("graphics/shape1"),
 		pixel.Picture("graphics/shape2"),
 		pixel.Picture("graphics/shape3"),
 		pixel.Picture("graphics/shape4"),
 	}
-	l.shapes = make([]shape, 400000)
-	return nil
-}
-
-func (l *loop2) Enter() {
+	l.resize()
+	window.Events.Resize = l.resize
 }
 
 func (loop2) Leave() {

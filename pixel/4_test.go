@@ -62,8 +62,12 @@ func (l *loop4) setup() error {
 		return err
 	}
 
+	return nil
+}
+
+func (l *loop4) Enter() {
 	l.fontNames = []string{
-		"Monozela10 (builtin)",
+		"builtins/default",
 		"fonts/tinela9",
 		"fonts/simpela10",
 		"fonts/cozela10",
@@ -72,21 +76,14 @@ func (l *loop4) setup() error {
 		"fonts/cozela12",
 		"fonts/chaotela12",
 	}
-	l.fonts = []pixel.FontID{
-		pixel.Monozela10,
-	}
-	for i := 1; i < len(l.fontNames); i++ {
+	for i := 0; i < len(l.fontNames); i++ {
 		l.fonts = append(l.fonts, pixel.Font(l.fontNames[i]))
 	}
 	l.font = 0
 
 	l.interline = int16(18)
 	l.letterspacing = int16(0)
-	
-	return nil
-}
 
-func (l *loop4) Enter() {
 	f, err := resource.Open("frankenstein.txt")
 	if err != nil {
 		panic(err)

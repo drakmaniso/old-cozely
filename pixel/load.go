@@ -13,41 +13,44 @@ func loadAssets() error {
 		return errors.New("loading graphics while running not implemented")
 	}
 
-	prects := []uint32{} //TODO: move with pictures.image
-
 	// Load all fonts
 
-	c := len(pictures.path)
+	// c := len(pictures.name)
 
-	internal.Debug.Print("Loading fonts...")
+	// internal.Debug.Print("Loading fonts...")
 
-	for i := range fonts.path {
-		err := FontID(i).load(&prects)
-		if err != nil {
-			//TODO: sticky error instead?
-			return err
-		}
-	}
+	// for i := range fonts.name {
+	// 	err := FontID(i).load()
+	// 	if err != nil {
+	// 		//TODO: sticky error instead?
+	// 		return err
+	// 	}
+	// }
 
-	internal.Debug.Printf(
-		"Loaded %d fonts (%d glyphs)\n",
-		len(fonts.path),
-		len(pictures.path)-c,
-	)
+	// internal.Debug.Printf(
+	// 	"Loaded %d fonts (%d glyphs)\n",
+	// 	len(fonts.name),
+	// 	len(pictures.name)-c,
+	// )
 
 	// Load all pictures
 
-	internal.Debug.Print("Loading pictures...")
+	// internal.Debug.Print("Loading pictures...")
 
-	for i := range pictures.path {
-		err := PictureID(i).load(&prects)
-		if err != nil {
-			//TODO: sticky error instead?
-			return err
-		}
-	}
+	// for i := range pictures.name {
+	// 	err := PictureID(i).load()
+	// 	if err != nil {
+	// 		//TODO: sticky error instead?
+	// 		return err
+	// 	}
+	// }
 
 	// Pack them into a texture atlas
+
+	prects := make([]uint32, len(pictures.name))
+	for i := range pictures.name {
+		prects[i] = uint32(i)
+	}
 
 	pictures.atlas.Pack(prects, pictSize, pictPut)
 
