@@ -290,7 +290,7 @@ func drawGrid() {
 			p = origin.Plus(p)
 			switch grid[s.X][s.Y] {
 			case fruit:
-				fill.Paint(p.PlusS(3), cellsize.MinusS(3), 0, pico8.Red)
+				fill.Paint(p.PlusS(2), cellsize.MinusS(3), 0, pico8.Red)
 			case up, right, down, left, tail:
 				fill.Paint(p, cellsize.PlusS(1), 0, pico8.Peach)
 				rectangle.Paint(p, cellsize.PlusS(1), 0, pico8.DarkPurple)

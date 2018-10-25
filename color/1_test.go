@@ -100,7 +100,7 @@ func (l *loop7) Render() {
 	ps := l.pict.Size()
 	p := cs.Minus(ps).Slash(2)
 	_ = p
-	l.pict.Paint(p, 0)
+	l.pict.Paint(p, 0, 0)
 
 	cur := pixel.Cursor{}
 	cur.Color = color.MidGray

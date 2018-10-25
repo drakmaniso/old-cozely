@@ -154,7 +154,7 @@ func (l *loop2) Render() {
 		if l > 0xFFFF/2 {
 			l = 0xFFFF / 2
 		}
-		o.pict.Paint(o.pos, pixel.Layer(l))
+		o.pict.Paint(o.pos, pixel.Layer(l), 0)
 		// o.pict.Tile(o.pos, o.pict.Size(), pixel.Layer(l))
 	}
 	cur := pixel.Cursor{

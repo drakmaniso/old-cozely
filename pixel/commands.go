@@ -16,10 +16,11 @@ const (
 ////////////////////////////////////////////////////////////////////////////////
 
 // Paint queues a GPU command to put a picture on the canvas.
-func (p PictureID) Paint(pos XY, z Layer) {
-	renderer.command(cmdPicture, 0, int16(z), pos.X, pos.Y, 0, 0, int16(p), 0)
+func (p PictureID) Paint(pos XY, z Layer, shift color.Index) {
+	renderer.command(cmdPicture, int16(shift), int16(z), pos.X, pos.Y, 0, 0, int16(p), 0)
 }
 
+// Paint queues a GPU command to put a box on the canvas.
 func (b BoxID) Paint(pos XY, size XY, z Layer, shift color.Index) {
 	if size.X < 0 {
 		pos.X += size.X

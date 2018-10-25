@@ -173,7 +173,7 @@ func (loop1) Render() {
 	cur.Printf("Current device: %d = %s", dv, dv.Name())
 
 	//TODO:
-	cursor.Paint(pixel.XYof(c), 0)
+	cursor.Paint(pixel.XYof(c), 0, 0)
 }
 
 func changecolor(cur *pixel.Cursor, p bool) {

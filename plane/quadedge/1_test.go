@@ -177,7 +177,7 @@ func (loop1) Render() {
 	}
 
 	if window.HasMouseFocus() {
-		cursor.Paint(m, 0)
+		cursor.Paint(m, 0, 0)
 	}
 }
 

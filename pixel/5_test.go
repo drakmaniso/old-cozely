@@ -99,7 +99,7 @@ func (l *loop5) Render() {
 			pixel.Point(p, 0, 8)
 		}
 		pixel.Point(m, 0, 7)
-		l.cursor.Paint(m, 0)
+		l.cursor.Paint(m, 0, 0)
 	}
 }
 

@@ -84,10 +84,10 @@ func (l *loop1) Render() {
 	r := pixel.Resolution()
 
 	s := l.mire.Size()
-	l.mire.Paint(pixel.XY{0, 0}, 0)
-	l.mire.Paint(pixel.XY{0, r.Y - s.Y}, 0)
-	l.mire.Paint(pixel.XY{r.X - s.X, 0}, 0)
-	l.mire.Paint(r.Minus(s), 0)
+	l.mire.Paint(pixel.XY{0, 0}, 0, 0)
+	l.mire.Paint(pixel.XY{0, r.Y - s.Y}, 0, 0)
+	l.mire.Paint(pixel.XY{r.X - s.X, 0}, 0, 0)
+	l.mire.Paint(r.Minus(s), 0, 0)
 
 	l.fill.Paint(s, r.Minus(s.Times(2)), -1, color.Black)
 	l.rectangle.Paint(s, r.Minus(s.Times(2)), -1, color.DarkGray)
@@ -116,12 +116,12 @@ func (l *loop1) Render() {
 	cur.Println("Linear:")
 
 	s = l.srgbGray.Size()
-	l.srgbGray.Paint(pixel.XY{s.X + 44 + 1*(s.X+4), 96}, 0)
-	l.srgbRed.Paint(pixel.XY{s.X + 44 + 2*(s.X+4), 96}, 0)
-	l.srgbGreen.Paint(pixel.XY{s.X + 44 + 3*(s.X+4), 96}, 0)
-	l.srgbBlue.Paint(pixel.XY{s.X + 44 + 4*(s.X+4), 96}, 0)
+	l.srgbGray.Paint(pixel.XY{s.X + 44 + 1*(s.X+4), 96}, 0, 0)
+	l.srgbRed.Paint(pixel.XY{s.X + 44 + 2*(s.X+4), 96}, 0, 0)
+	l.srgbGreen.Paint(pixel.XY{s.X + 44 + 3*(s.X+4), 96}, 0, 0)
+	l.srgbBlue.Paint(pixel.XY{s.X + 44 + 4*(s.X+4), 96}, 0, 0)
 
-	l.cursor.Paint(pixel.XYof(input.Pointer.XY()), 0)
+	l.cursor.Paint(pixel.XYof(input.Pointer.XY()), 0, 0)
 }
 
 //// Copyright (c) 2018-2018 Laurent Moussault. All rights reserved.

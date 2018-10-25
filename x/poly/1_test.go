@@ -247,7 +247,7 @@ func (loop1) Render() {
 		cur.Printf(" (%d)", or)
 	}
 	if window.HasMouseFocus() {
-		curpict.Paint(pixel.XYof(cursor.XY()), 0)
+		curpict.Paint(pixel.XYof(cursor.XY()), 0, 0)
 	}
 }
 
