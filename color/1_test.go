@@ -32,27 +32,21 @@ func TestTest7(t *testing.T) {
 	do(func() {
 		defer cozely.Recover()
 
-		l := loop7{}
-		err := l.setup()
+		err := resource.Path("testdata/")
 		if err != nil {
 			t.Error(err)
 			return
 		}
+		pixel.SetResolution(pixel.XY{160, 160})
 
-		err = cozely.Run(&l)
+		err = cozely.Run(&loop7{})
 		if err != nil {
 			panic(err)
 		}
 	})
 }
 
-func (l *loop7) setup() error {
-	l.pict = pixel.Picture("graphics/paletteswatch")
-
-	err := resource.Path("testdata/")
-	if err != nil {
-		return err
-	}
+func (l *loop7) Enter() {
 	l.palettes = []struct {
 		string
 		*color.Palette
@@ -63,16 +57,10 @@ func (l *loop7) setup() error {
 		{"MSX Palette", &msx.Palette},
 		{"MSX2 Palette", &msx2.Palette},
 	}
-
-	pixel.SetResolution(pixel.XY{160, 160})
-
 	l.current = 0
-
-	return nil
-}
-
-func (l *loop7) Enter() {
 	color.Load(l.palettes[l.current].Palette)
+
+	l.pict = pixel.Picture("graphics/paletteswatch")
 }
 
 func (loop7) Leave() {

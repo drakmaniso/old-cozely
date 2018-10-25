@@ -272,12 +272,14 @@ func step() {
 
 // drawGrid draws the current game state.
 func drawGrid() {
+	rectangle := pixel.Box("builtins/rectangle")
+	fill := pixel.Box("builtins/fill")
 	{
 		// Draw background
 		o := origin.Plus(cellsize).MinusS(1)
 		s := pixel.XY{gridwidth - 2, gridheight - 2}.TimesXY(cellsize).PlusS(3)
-		pixel.Fill.TileMod(o, s, 0, pico8.DarkGreen)
-		pixel.Rectangle.TileMod(o, s, 0, pico8.Green)
+		fill.Paint(o, s, 0, pico8.DarkGreen)
+		rectangle.Paint(o, s, 0, pico8.Green)
 	}
 
 	// Draw grid content
@@ -288,14 +290,14 @@ func drawGrid() {
 			p = origin.Plus(p)
 			switch grid[s.X][s.Y] {
 			case fruit:
-				pixel.Fill.TileMod(p.PlusS(3), cellsize.MinusS(3), 0, pico8.Red)
+				fill.Paint(p.PlusS(3), cellsize.MinusS(3), 0, pico8.Red)
 			case up, right, down, left, tail:
-				pixel.Fill.TileMod(p, cellsize.PlusS(1), 0, pico8.Peach)
-				pixel.Rectangle.TileMod(p, cellsize.PlusS(1), 0, pico8.DarkPurple)
+				fill.Paint(p, cellsize.PlusS(1), 0, pico8.Peach)
+				rectangle.Paint(p, cellsize.PlusS(1), 0, pico8.DarkPurple)
 			}
 			if s.X == head.X && s.Y == head.Y {
-				pixel.Fill.TileMod(p, cellsize.PlusS(1), 0, pico8.Pink)
-				pixel.Rectangle.TileMod(p, cellsize.PlusS(1), 0, pico8.DarkPurple)
+				fill.Paint(p, cellsize.PlusS(1), 0, pico8.Pink)
+				rectangle.Paint(p, cellsize.PlusS(1), 0, pico8.DarkPurple)
 				switch next {
 				case up:
 					pixel.Point(p.Plus(pixel.XY{3, 2}), 0, pico8.DarkBlue)

@@ -9,7 +9,6 @@ import (
 
 	"github.com/cozely/cozely/color"
 	"github.com/cozely/cozely/internal"
-	"github.com/cozely/cozely/x/atlas"
 	"github.com/cozely/cozely/x/gl"
 )
 
@@ -117,15 +116,6 @@ func (r *glRenderer) setup() error {
 
 	r.blitUBO = gl.NewUniformBuffer(&blitUniforms, gl.DynamicStorage|gl.MapWrite)
 
-	// Create texture atlas for pictures (and fonts glyphs)
-
-	pictures.atlas = atlas.New(1024, 1024)
-
-	err := loadAssets()
-	if err != nil {
-		return err
-	}
-
 	// Mappings Buffer
 	r.pictureMapTBO = gl.NewBufferTexture(pictures.mapping, gl.R16I, gl.StaticStorage)
 
@@ -167,10 +157,6 @@ func (r *glRenderer) setup() error {
 
 		r.picturesTA.SubImage(0, 0, 0, int32(i), m)
 	}
-
-	pictures.name = pictures.name[:0]
-	pictures.image = pictures.image[:0]
-	pictures.lut = pictures.lut[:0]
 
 	return gl.Err()
 }

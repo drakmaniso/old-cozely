@@ -39,16 +39,19 @@ type loop struct{}
 ////////////////////////////////////////////////////////////////////////////////
 
 func main() {
+	var err error
 	defer cozely.Recover()
-
-	err := setup()
-	if err != nil {
-		panic(err)
-	}
 
 	cozely.Configure(
 		cozely.Title("Match 3"),
 	)
+	window.Events.Resize = resize
+	pixel.SetResolution(pixel.XY{180, 180})
+
+	err = resource.Path(cozely.Path())
+	if err != nil {
+		panic(err)
+	}
 
 	err = cozely.Run(loop{})
 	if err != nil {
@@ -57,20 +60,6 @@ func main() {
 }
 
 func (loop) Enter() {
-}
-
-func (loop) Leave() {
-}
-
-func setup() error {
-	window.Events.Resize = resize
-
-	pixel.SetResolution(pixel.XY{180, 180})
-
-	err := resource.Path(cozely.Path())
-	if err != nil {
-		return err
-	}
 	for i, n := range []string{
 		"red",
 		"yellow",
@@ -89,8 +78,10 @@ func setup() error {
 
 	grid.Setup(8, 8)
 	grid.Fill(newTile)
+	resize()
+}
 
-	return nil
+func (loop) Leave() {
 }
 
 func resize() {

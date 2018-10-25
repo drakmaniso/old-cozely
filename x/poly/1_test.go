@@ -73,6 +73,8 @@ var meshes poly.Meshes
 
 type loop1 struct{}
 
+var curpict pixel.PictureID
+
 ////////////////////////////////////////////////////////////////////////////////
 
 func TestTest1(t *testing.T) {
@@ -96,6 +98,7 @@ func TestTest1(t *testing.T) {
 }
 
 func (loop1) Enter() {
+	curpict = pixel.Picture("builtins/cursor")
 	input.ShowMouse(false)
 	context1.ActivateOn(1)
 
@@ -244,7 +247,7 @@ func (loop1) Render() {
 		cur.Printf(" (%d)", or)
 	}
 	if window.HasMouseFocus() {
-		pixel.MouseCursor.Paint(pixel.XYof(cursor.XY()), 0)
+		curpict.Paint(pixel.XYof(cursor.XY()), 0)
 	}
 }
 

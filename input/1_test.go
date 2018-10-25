@@ -40,6 +40,8 @@ var (
 		inventoryAct, jumpAct, triggerAct, positionAct, cursorAct, deltaAct)
 )
 
+var cursor pixel.PictureID
+
 ////////////////////////////////////////////////////////////////////////////////
 
 func TestTest1(t *testing.T) {
@@ -65,6 +67,7 @@ type loop1 struct{}
 ////////////////////////////////////////////////////////////////////////////////
 
 func (loop1) Enter() {
+	cursor = pixel.Picture("builtins/cursor")
 	inMenu.Activate()
 }
 
@@ -170,7 +173,7 @@ func (loop1) Render() {
 	cur.Printf("Current device: %d = %s", dv, dv.Name())
 
 	//TODO:
-	pixel.MouseCursor.Paint(pixel.XYof(c), 0)
+	cursor.Paint(pixel.XYof(c), 0)
 }
 
 func changecolor(cur *pixel.Cursor, p bool) {

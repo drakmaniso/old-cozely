@@ -28,6 +28,11 @@ var (
 	orig  coord.XY
 )
 
+var (
+	fill pixel.BoxID
+	cursor pixel.PictureID
+)
+
 type loop1 struct{}
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -52,6 +57,8 @@ func TestTest1(t *testing.T) {
 }
 
 func (loop1) Enter() {
+	fill = pixel.Box("builtins/fill")
+	cursor = pixel.Picture("builtins/cursor")
 	input.ShowMouse(false)
 
 	points = make([]coord.XY, 64)
@@ -166,11 +173,11 @@ func (loop1) Render() {
 	pt := make([]pixel.XY, len(points))
 	for i, sd := range points {
 		pt[i] = toScreen(sd)
-		pixel.Fill.TileMod(pt[i].MinusS(1), pixel.XY{3, 3}, 0, pico8.Orange)
+		fill.Paint(pt[i].MinusS(1), pixel.XY{3, 3}, 0, pico8.Orange)
 	}
 
 	if window.HasMouseFocus() {
-		pixel.MouseCursor.Paint(m, 0)
+		cursor.Paint(m, 0)
 	}
 }
 
