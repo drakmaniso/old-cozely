@@ -5,13 +5,13 @@ const drawVertexShader = "\n" + `#version 460 core
 ////////////////////////////////////////////////////////////////////////////////
 
 const uint cmdPicture    = 1;
-const uint cmdTile       = 2;
+const uint cmdBox        = 2;
 const uint cmdSubpicture = 3;
 const uint cmdTriangle   = 4;
 const uint cmdLine       = 5;
 const uint cmdPoint      = 6;
 
-const int mappingSize = 7;
+const int mappingSize = 5;
 
 const vec2 corners[6] = vec2[6](
 	vec2(0, 0),
@@ -48,7 +48,7 @@ out PerVertex {
 	layout(location=4) flat ivec2 UV;
 	layout(location=5) flat ivec2 PictSize;
 	layout(location=6) flat ivec2 TileSize;
-	layout(location=7) flat ivec2 Borders;
+	layout(location=7) flat uint Borders;
 	layout(location=8) vec2 Position;
 	layout(location=9) flat vec4 Box;
 };
@@ -80,8 +80,8 @@ void main(void)
 	vec2 p, uv, size;
 	switch (Command) {
 	case cmdPicture:
-		// Mapping of the picture
 		m = mappingSize * texelFetch(parameters, param+6).r;
+		// Mapping of the picture
 		Param1 = texelFetch(pictureMap, m+0).r;
 		uv = ivec2(texelFetch(pictureMap, m+1).r, texelFetch(pictureMap, m+2).r);
 		size = vec2(texelFetch(pictureMap, m+3).r, texelFetch(pictureMap, m+4).r);
@@ -91,16 +91,16 @@ void main(void)
 		Position = uv + corners[vertex] * size;
 		break;
 
-	case cmdTile:
+	case cmdBox:
 		p4 = texelFetch(parameters, param+4).r;
 		p5 = texelFetch(parameters, param+5).r;
-		// Mapping of the picture
 		m = mappingSize * texelFetch(parameters, param+6).r;
+		Borders = uint(texelFetch(parameters, param+7).r);
+		// Mapping of the picture
 		Param1 = texelFetch(pictureMap, m+0).r;
 		UV = ivec2(texelFetch(pictureMap, m+1).r, texelFetch(pictureMap, m+2).r);
 		PictSize = ivec2(texelFetch(pictureMap, m+3).r, texelFetch(pictureMap, m+4).r);
 		TileSize = ivec2(p4, p5);
-		Borders = ivec2(texelFetch(pictureMap, m+5).r, texelFetch(pictureMap, m+6).r);
 		// Picture quad
 		p = (CanvasMargin + vec2(x, y) + corners[vertex] * TileSize) * PixelSize;
 		gl_Position = vec4(p * vec2(2, -2) + vec2(-1,1), floatZ(z), 1);

@@ -26,6 +26,7 @@ var pictures = struct {
 	atlas      *atlas.Atlas
 	name       []string
 	mapping    []mapping
+	border     []int16
 	image      []*image.Paletted
 	lut        []*color.LUT
 }{
@@ -36,8 +37,6 @@ type mapping struct {
 	bin       int16
 	x, y      int16
 	w, h      int16
-	leftright int16
-	topbottom int16
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -82,6 +81,7 @@ func NewPicture(name string, m *image.Paletted, l *color.LUT) PictureID {
 	pictures.image = append(pictures.image, m)
 	pictures.lut = append(pictures.lut, l)
 	pictures.mapping = append(pictures.mapping, mapping{})
+	pictures.border = append(pictures.border, 0)
 	p := PictureID(len(pictures.name) - 1)
 
 	if pictures.lut[p] == nil {
@@ -104,8 +104,6 @@ func NewPicture(name string, m *image.Paletted, l *color.LUT) PictureID {
 		return NoPicture
 	}
 	pictures.mapping[p].w, pictures.mapping[p].h = w, h
-	pictures.mapping[p].topbottom = 0 //int16(conf.TopBorder)<<8 | int16(conf.BottomBorder)
-	pictures.mapping[p].leftright = 0 //int16(conf.LeftBorder)<<8 | int16(conf.RightBorder)
 
 	if name != "" {
 		pictures.dictionary[name] = p

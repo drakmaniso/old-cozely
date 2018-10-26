@@ -17,8 +17,17 @@ const (
 
 // Paint queues a GPU command to put a picture on the canvas.
 func (p PictureID) Paint(pos XY, z Layer, shift color.Index) {
-	renderer.command(cmdPicture, int16(shift), int16(z), pos.X, pos.Y, 0, 0, int16(p), 0)
+	renderer.command(
+		cmdPicture,	int16(shift),
+		int16(z),
+		pos.X, pos.Y,
+		0, 0,
+		int16(p),
+		0,
+	)
 }
+
+////////////////////////////////////////////////////////////////////////////////
 
 // Paint queues a GPU command to put a box on the canvas.
 func (b BoxID) Paint(pos XY, size XY, z Layer, shift color.Index) {
@@ -30,7 +39,14 @@ func (b BoxID) Paint(pos XY, size XY, z Layer, shift color.Index) {
 		pos.Y += size.Y
 		size.Y = -size.Y
 	}
-	renderer.command(cmdTile, int16(shift), int16(z), pos.X, pos.Y, size.X, size.Y, int16(b), 0)
+	renderer.command(
+		cmdTile, int16(shift),
+		int16(z),
+		pos.X, pos.Y,
+		size.X, size.Y,
+		int16(b),
+		pictures.border[b],
+	)
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -46,8 +62,8 @@ func Point(pos XY, z Layer, c color.Index) {
 // Line queues a GPU command to draw a single line on the canvas.
 func Line(p1, p2 XY, z Layer, c color.Index) {
 	renderer.command(
-		cmdLine,
-		int16(c), int16(z),
+		cmdLine, int16(c),
+		int16(z),
 		p1.X, p1.Y,
 		p2.X, p2.Y,
 		0, 0,

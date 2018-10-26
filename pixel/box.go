@@ -18,6 +18,7 @@ type BoxID PictureID
 
 var boxes = struct {
 	dictionary map[string]BoxID
+	borders    []int16
 }{
 	dictionary: map[string]BoxID{},
 }
@@ -37,16 +38,23 @@ func Box(name string) BoxID {
 // NewBox creates a new box from an image.
 //
 // Must be called *before* running the framework.
-func NewBox(name string, m *image.Paletted, l *color.LUT, top, bottom, left, right uint8) BoxID {
+func NewBox(name string, m *image.Paletted, l *color.LUT, top, bottom, left, right int) BoxID {
 	_, ok := pictures.dictionary[name]
 	if ok && name != "" {
-		setErr(errors.New(`new box: name "` + name + `" already taken`))
+		setErr(errors.New(`new box "` + name + `": name already taken`))
+		return BoxID(NoPicture)
+	}
+
+	if top < 0 || top > 15 ||
+		bottom < 0 || bottom > 15 ||
+		left < 0 || left > 15 ||
+		right < 0 || right > 15 {
+		setErr(errors.New(`new box "` + name + `": invalid borders`))
 		return BoxID(NoPicture)
 	}
 
 	p := NewPicture(name, m, l)
-	pictures.mapping[p].topbottom = int16(top)<<8 | int16(bottom)
-	pictures.mapping[p].leftright = int16(left)<<8 | int16(right)
+	pictures.border[p] = int16(top<<12 | bottom<<8 | left<<4 | right)
 	if name != "" {
 		boxes.dictionary[name] = BoxID(p)
 	}
@@ -104,11 +112,7 @@ func loadBox(name string, tags []string, ext string, r io.Reader) error {
 	if !ok {
 		return errors.New("unexpected subimage") //TODO:
 	}
-	NewBox(
-		name, mmm, nil,
-		uint8(top), uint8(bottom),
-		uint8(left), uint8(right),
-	)
+	NewBox(name, mmm, nil, top, bottom, left, right)
 	return nil
 }
 

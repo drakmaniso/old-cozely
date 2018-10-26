@@ -5,7 +5,7 @@ const drawFragmentShader = "\n" + `#version 460 core
 ////////////////////////////////////////////////////////////////////////////////
 
 const uint cmdPicture    = 1;
-const uint cmdTile       = 2;
+const uint cmdBox        = 2;
 const uint cmdSubpicture = 3;
 const uint cmdTriangle   = 4;
 const uint cmdLine       = 5;
@@ -21,7 +21,7 @@ in PerVertex {
 	layout(location=4) flat ivec2 UV;
 	layout(location=5) flat ivec2 PictSize;
 	layout(location=6) flat ivec2 TileSize;
-	layout(location=7) flat ivec2 Borders;
+	layout(location=7) flat uint Borders;
 	layout(location=8) vec2 Position;
 	layout(location=9) flat vec4 Box;
 };
@@ -55,12 +55,12 @@ void main(void)
 		}
 		break;
 
-	case cmdTile:
+	case cmdBox:
 		ivec2 uv = ivec2(UV);
 		ivec2 p = ivec2(Position);
 
-		int l = Borders.x>>8;
-		int r = Borders.x&0xFF;
+		int l = int(Borders>>4&0xF);
+		int r = int(Borders&0xF);
 		if (Position.x < l) {
 			uv.x += p.x;
 		} else if (p.x < TileSize.x - r) {
@@ -69,8 +69,8 @@ void main(void)
 			uv.x += PictSize.x - TileSize.x + p.x;
 		}
 
-		int t = Borders.y>>8;
-		int b = Borders.y&0xFF;
+		int t = int(Borders>>12&0xF);
+		int b = int(Borders>>8&0xF);
 		if (Position.y < t) {
 			uv.y += p.y;
 		} else if (p.y < TileSize.y - b) {
