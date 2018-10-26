@@ -17,6 +17,7 @@ const (
 
 // Paint queues a GPU command to put a picture on the canvas.
 func (p PictureID) Paint(pos XY, z Layer, shift color.Index) {
+	pos = pos.Minus(pictures.origin[p])
 	renderer.command(
 		cmdPicture,	int16(shift),
 		int16(z),

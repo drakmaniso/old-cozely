@@ -8,6 +8,7 @@ import (
 	"github.com/cozely/cozely/color/pico8"
 	"github.com/cozely/cozely/input"
 	"github.com/cozely/cozely/pixel"
+	"github.com/cozely/cozely/resource"
 )
 
 //// Constants /////////////////////////////////////////////////////////////////
@@ -49,11 +50,15 @@ var (
 func Example_snake() {
 	defer cozely.Recover()
 
+	err := resource.Path("testdata/")
+	if err != nil {
+		panic(err)
+	}
 	color.Load(&pico8.Palette)
 	pixel.SetResolution(resolution)
 	cozely.Configure(cozely.UpdateStep(.25))
 
-	err := cozely.Run(menu{})
+	err = cozely.Run(menu{})
 	if err != nil {
 		panic(err)
 	}
@@ -272,14 +277,11 @@ func step() {
 
 // drawGrid draws the current game state.
 func drawGrid() {
-	rectangle := pixel.Box("builtins/rectangle")
-	fill := pixel.Box("builtins/fill")
 	{
 		// Draw background
 		o := origin.Plus(cellsize).MinusS(1)
 		s := pixel.XY{gridwidth - 2, gridheight - 2}.TimesXY(cellsize).PlusS(3)
-		fill.Paint(o, s, 0, pico8.DarkGreen)
-		rectangle.Paint(o, s, 0, pico8.Green)
+		pixel.Box("playground").Paint(o, s, 0, 0)
 	}
 
 	// Draw grid content
@@ -290,14 +292,12 @@ func drawGrid() {
 			p = origin.Plus(p)
 			switch grid[s.X][s.Y] {
 			case fruit:
-				fill.Paint(p.PlusS(2), cellsize.MinusS(3), 0, pico8.Red)
+				pixel.Picture("fruit").Paint(p, 0, 0)
 			case up, right, down, left, tail:
-				fill.Paint(p, cellsize.PlusS(1), 0, pico8.Peach)
-				rectangle.Paint(p, cellsize.PlusS(1), 0, pico8.DarkPurple)
+				pixel.Picture("body").Paint(p, 0, 0)
 			}
 			if s.X == head.X && s.Y == head.Y {
-				fill.Paint(p, cellsize.PlusS(1), 0, pico8.Pink)
-				rectangle.Paint(p, cellsize.PlusS(1), 0, pico8.DarkPurple)
+				pixel.Picture("head").Paint(p, 0, 0)
 				switch next {
 				case up:
 					pixel.Point(p.Plus(pixel.XY{3, 2}), 0, pico8.DarkBlue)

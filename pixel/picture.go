@@ -27,6 +27,7 @@ var pictures = struct {
 	name       []string
 	mapping    []mapping
 	border     []int16
+	origin     []XY
 	image      []*image.Paletted
 	lut        []*color.LUT
 }{
@@ -34,9 +35,9 @@ var pictures = struct {
 }
 
 type mapping struct {
-	bin       int16
-	x, y      int16
-	w, h      int16
+	bin  int16
+	x, y int16
+	w, h int16
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -78,6 +79,7 @@ func NewPicture(name string, m *image.Paletted, l *color.LUT) PictureID {
 	pictures.lut = append(pictures.lut, l)
 	pictures.mapping = append(pictures.mapping, mapping{})
 	pictures.border = append(pictures.border, 0)
+	pictures.origin = append(pictures.origin, XY{})
 	p := PictureID(len(pictures.name) - 1)
 
 	if pictures.lut[p] == nil {
@@ -115,7 +117,7 @@ func loadPicture(name string, tags []string, ext string, r io.Reader) error {
 	if ext != "png" {
 		return errors.New(`load picture "` + name + `": format "` + ext + `" not supported`)
 	}
-	println("Loading picture", name)
+
 	m, _, err := image.Decode(r)
 	if err != nil {
 		return internal.Wrap("decoding ", err)
@@ -124,7 +126,48 @@ func loadPicture(name string, tags []string, ext string, r io.Reader) error {
 	if !ok {
 		return errors.New("impossible to load picture " + name + ": image is not in indexed color format")
 	}
-	NewPicture(name, mm, nil)
+
+	// Check the optional tags
+	meta := false
+	for _, t := range tags {
+		switch t {
+		case "meta":
+			meta = true
+		default:
+			setErr(errors.New(`load picture "` + name + `": invalid tag`))
+		}
+	}
+
+	// Origin
+	o := XY{}
+	if meta {
+		b := mm.Bounds()
+
+		for x := 1; x < b.Dx()-1; x++ {
+			if mm.Pix[mm.PixOffset(x, 0)] != uint8(color.Transparent) {
+				break
+			}
+			o.X++
+		}
+		for y := 1; y < b.Dy()-1; y++ {
+			if mm.Pix[mm.PixOffset(0, y)] != uint8(color.Transparent) {
+				break
+			}
+			o.Y++
+		}
+
+		b.Min.X++
+		b.Min.Y++
+		b.Max.X--
+		b.Max.Y--
+		mm, ok = mm.SubImage(b).(*image.Paletted)
+		if !ok {
+			return errors.New("unexpected subimage") //TODO:
+		}
+	}
+
+	p := NewPicture(name, mm, nil)
+	p.SetOrigin(o)
 	return nil
 }
 
@@ -133,6 +176,14 @@ func loadPicture(name string, tags []string, ext string, r io.Reader) error {
 // Size returns the width and height of the picture.
 func (p PictureID) Size() XY {
 	return XY{pictures.mapping[p].w, pictures.mapping[p].h}
+}
+
+func (p PictureID) Origin() XY {
+	return pictures.origin[p]
+}
+
+func (p PictureID) SetOrigin(o XY) {
+	pictures.origin[p] = o
 }
 
 ////////////////////////////////////////////////////////////////////////////////

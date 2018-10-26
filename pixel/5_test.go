@@ -14,7 +14,6 @@ import (
 
 type loop5 struct {
 	points []pixel.XY
-	cursor pixel.PictureID
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -39,7 +38,6 @@ func (l *loop5) setup() error {
 
 func (l *loop5) Enter() {
 	input.ShowMouse(false)
-	l.cursor = pixel.Picture("builtins/cursor")
 
 	l.points = []pixel.XY{
 		{4, 4},
@@ -75,25 +73,24 @@ func (loop5) Update() {
 }
 
 func (l *loop5) Render() {
-	pixel.Clear(1)
+	pixel.Clear(pico8.DarkBlue)
 	m := pixel.XYof(input.Pointer.XY())
 	if !input.Up.Ongoing() {
 		for i := 0; i < len(l.points)-2; i++ {
-			pixel.Triangle(l.points[i], l.points[i+1], l.points[i+2], 0, 2)
+			pixel.Triangle(l.points[i], l.points[i+1], l.points[i+2], 0, pico8.DarkPurple)
 		}
 	}
 	if !input.Right.Ongoing() {
 		for i := 0; i < len(l.points)-1; i++ {
-			pixel.Line(l.points[i], l.points[i+1], 0, 14)
+			pixel.Line(l.points[i], l.points[i+1], 0, pico8.Pink)
 		}
-		pixel.Line(l.points[len(l.points)-1], m, 0, 13)
+		pixel.Line(l.points[len(l.points)-1], m, 0, pico8.Indigo)
 	}
 	if !input.Down.Ongoing() {
 		for _, p := range l.points {
-			pixel.Point(p, 0, 8)
+			pixel.Point(p, 0, pico8.White)
 		}
-		pixel.Point(m, 0, 7)
-		l.cursor.Paint(m, 0, 0)
+		pixel.Point(m, 0, pico8.Red)
 	}
 }
 

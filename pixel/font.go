@@ -169,9 +169,8 @@ func loadFont(name string, tags []string, ext string, r io.Reader) error {
 	var err error
 
 	if ext != "png" {
-		return errors.New(`load box "` + name + `": format "` + ext + `" not supported`)
+		return errors.New(`load font "` + name + `": format "` + ext + `" not supported`)
 	}
-	println("Loading font", name)
 
 	m, _, err := image.Decode(r)
 	switch err {
@@ -185,6 +184,16 @@ func loadFont(name string, tags []string, ext string, r io.Reader) error {
 	mm, ok := m.(*image.Paletted)
 	if !ok {
 		return errors.New("impossible to load font " + name + " (color model not supported)")
+	}
+
+	// Check the optional tags
+	for _, t := range tags {
+		switch t {
+		case "meta":
+			// ignore, always on
+		default:
+			setErr(errors.New(`load font "` + name + `": invalid tag`))
+		}
 	}
 
 	newFont(name, mm, nil)

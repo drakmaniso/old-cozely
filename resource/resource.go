@@ -41,5 +41,17 @@ func Handle(kind string, fn Handler) {
 	handlers[kind] = fn
 }
 
+////////////////////////////////////////////////////////////////////////////////
+
+// HasTag returns true if t is in tags.
+func HasTag(tags []string, t string) bool {
+	for _, s := range tags {
+		if s == t {
+			return true
+		}
+	}
+	return false
+}
+
 //// Copyright (c) 2013-2018 Laurent Moussault. All rights reserved.
 //// Licensed under a simplified BSD license (see LICENSE file).

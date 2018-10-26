@@ -58,6 +58,7 @@ func cleanup() error {
 	pictures.atlas = nil
 	pictures.mapping = pictures.mapping[:0]
 	pictures.border = pictures.border[:0]
+	pictures.origin = pictures.origin[:0]
 
 	// Boxes
 	boxes.dictionary = map[string]BoxID{}

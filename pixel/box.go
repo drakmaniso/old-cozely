@@ -73,7 +73,7 @@ func loadBox(name string, tags []string, ext string, r io.Reader) error {
 	if ext != "png" {
 		return errors.New(`load box "` + name + `": format "` + ext + `" not supported`)
 	}
-	println("Loading box", name)
+
 	m, _, err := image.Decode(r)
 	if err != nil {
 		return internal.Wrap("decoding ", err)
@@ -82,42 +82,58 @@ func loadBox(name string, tags []string, ext string, r io.Reader) error {
 	if !ok {
 		return errors.New("impossible to load box " + name + ": image is not in indexed color format")
 	}
-	b := mm.Bounds()
+
+	// Check the optional tags
+	meta := true // always on
+	for _, t := range tags {
+		switch t {
+		case "meta":
+			// ignore, already on
+		default:
+			setErr(errors.New(`load box "` + name + `": invalid tag`))
+		}
+	}
+
+	// Borders
 	var left, right, top, bottom int
-	for x := 1; x < b.Dx()-1; x++ {
-		if mm.Pix[mm.PixOffset(x, 0)] != uint8(color.Transparent) {
-			break
+	if meta {
+		b := mm.Bounds()
+		for x := 1; x < b.Dx()-1; x++ {
+			if mm.Pix[mm.PixOffset(x, 0)] != uint8(color.Transparent) {
+				break
+			}
+			left++
 		}
-		left++
-	}
-	for x := b.Dx() - 2; x > 0; x-- {
-		if mm.Pix[mm.PixOffset(x, 0)] != uint8(color.Transparent) {
-			break
+		for x := b.Dx() - 2; x > 0; x-- {
+			if mm.Pix[mm.PixOffset(x, 0)] != uint8(color.Transparent) {
+				break
+			}
+			right++
 		}
-		right++
-	}
-	for y := 1; y < b.Dy()-1; y++ {
-		if mm.Pix[mm.PixOffset(0, y)] != uint8(color.Transparent) {
-			break
+		for y := 1; y < b.Dy()-1; y++ {
+			if mm.Pix[mm.PixOffset(0, y)] != uint8(color.Transparent) {
+				break
+			}
+			top++
 		}
-		top++
-	}
-	for y := b.Dy() - 2; y > 0; y-- {
-		if mm.Pix[mm.PixOffset(0, y)] != uint8(color.Transparent) {
-			break
+		for y := b.Dy() - 2; y > 0; y-- {
+			if mm.Pix[mm.PixOffset(0, y)] != uint8(color.Transparent) {
+				break
+			}
+			bottom++
 		}
-		bottom++
+		//TODO: check top, left, bottom, right < 256
+		b.Min.X++
+		b.Min.Y++
+		b.Max.X--
+		b.Max.Y--
+		mm, ok = mm.SubImage(b).(*image.Paletted)
+		if !ok {
+			return errors.New("unexpected subimage") //TODO:
+		}
 	}
-	//TODO: check top, left, bottom, right < 256
-	b.Min.X++
-	b.Min.Y++
-	b.Max.X--
-	b.Max.Y--
-	mmm, ok := mm.SubImage(b).(*image.Paletted)
-	if !ok {
-		return errors.New("unexpected subimage") //TODO:
-	}
-	NewBox(name, mmm, nil, top, bottom, left, right)
+
+	NewBox(name, mm, nil, top, bottom, left, right)
 	return nil
 }
 
