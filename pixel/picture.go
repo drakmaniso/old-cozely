@@ -46,11 +46,7 @@ type mapping struct {
 // Should only be called when the framework is running (since resources are
 // loaded when the framework starts).
 func Picture(name string) PictureID {
-	p, ok := pictures.dictionary[name]
-	if ok {
-		return p
-	}
-	return NoPicture //TODO: reserve ID instead?
+	return pictures.dictionary[name]
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -39,11 +39,7 @@ var fonts = struct {
 // Should only be called when the framework is running (since resources are
 // loaded when the framework starts).
 func Font(name string) FontID {
-	f, ok := fonts.dictionary[name]
-	if ok {
-		return f
-	}
-	return noFont
+	return fonts.dictionary[name]
 }
 
 ////////////////////////////////////////////////////////////////////////////////

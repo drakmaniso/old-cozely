@@ -39,6 +39,11 @@ func Box(name string) BoxID {
 //
 // Must be called *before* running the framework.
 func NewBox(name string, m *image.Paletted, l *color.LUT, top, bottom, left, right int) BoxID {
+	if internal.Running {
+		setErr(errors.New("pixel box: declarations must happen before starting the framework"))
+		return BoxID(NoPicture)
+	}
+
 	_, ok := pictures.dictionary[name]
 	if ok && name != "" {
 		setErr(errors.New(`new box "` + name + `": name already taken`))
