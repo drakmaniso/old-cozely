@@ -49,10 +49,10 @@ func TestTest2(t *testing.T) {
 
 func (l *loop2) Enter() {
 	l.picts = []pixel.PictureID{
-		pixel.Picture("graphics/shape1"),
-		pixel.Picture("graphics/shape2"),
-		pixel.Picture("graphics/shape3"),
-		pixel.Picture("graphics/shape4"),
+		pixel.Picture("shape1"),
+		pixel.Picture("shape2"),
+		pixel.Picture("shape3"),
+		pixel.Picture("shape4"),
 	}
 	l.shapes = make([]shape, 400000)
 	l.resize()

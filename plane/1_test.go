@@ -96,18 +96,10 @@ func (loop1) Render() {
 	pixel.Line(pt[1], pt[2], 0, pico8.LightGray)
 	pixel.Line(pt[2], pt[0], 0, pico8.LightGray)
 	for i := range points {
-		var c color.Index
-		switch i {
-		case 0:
-			c = pico8.Red
-		case 1:
-			c = pico8.Green
-		case 2:
-			c = pico8.Blue
-		}
 		r := pt[i].Minus(toScreen(d)).Slash(12)
 		cur.Position = pt[i].Plus(r).Plus(pixel.XY{-2, +3})
-		cur.Color = c
+		cur.Layer = -1
+		cur.Color = [3]color.Index{pico8.Red, pico8.Green, pico8.Blue}[i]
 		cur.Print([]string{"A", "B", "C"}[i])
 	}
 
