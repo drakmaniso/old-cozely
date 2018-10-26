@@ -40,6 +40,8 @@ func (b BoxID) Paint(pos XY, size XY, z Layer, shift color.Index) {
 		pos.Y += size.Y
 		size.Y = -size.Y
 	}
+	pos = pos.Minus(pictures.origin[b])
+	size = size.Plus(pictures.origin[b]).Plus(pictures.end[b])
 	renderer.command(
 		cmdTile, int16(shift),
 		int16(z),

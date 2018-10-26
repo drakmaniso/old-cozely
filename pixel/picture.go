@@ -28,6 +28,7 @@ var pictures = struct {
 	mapping    []mapping
 	border     []int16
 	origin     []XY
+	end        []XY
 	image      []*image.Paletted
 	lut        []*color.LUT
 }{
@@ -80,6 +81,7 @@ func NewPicture(name string, m *image.Paletted, l *color.LUT) PictureID {
 	pictures.mapping = append(pictures.mapping, mapping{})
 	pictures.border = append(pictures.border, 0)
 	pictures.origin = append(pictures.origin, XY{})
+	pictures.end = append(pictures.end, XY{})
 	p := PictureID(len(pictures.name) - 1)
 
 	if pictures.lut[p] == nil {

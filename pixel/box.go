@@ -94,10 +94,12 @@ func loadBox(name string, tags []string, ext string, r io.Reader) error {
 		}
 	}
 
-	// Borders
-	var left, right, top, bottom int
+	// Borders, origin and end
+	var left, right, top, bottom int = 0, 0, 0, 0
+	o, e := XY{}, XY{}
 	if meta {
 		b := mm.Bounds()
+		// Borders
 		for x := 1; x < b.Dx()-1; x++ {
 			if mm.Pix[mm.PixOffset(x, 0)] != uint8(color.Transparent) {
 				break
@@ -122,6 +124,31 @@ func loadBox(name string, tags []string, ext string, r io.Reader) error {
 			}
 			bottom++
 		}
+		// Origin and end
+		for x := 1; x < b.Dx()-1; x++ {
+			if mm.Pix[mm.PixOffset(x, b.Dy()-1)] != uint8(color.Transparent) {
+				break
+			}
+			o.X++
+		}
+		for x := b.Dx() - 2; x > 0; x-- {
+			if mm.Pix[mm.PixOffset(x, b.Dy()-1)] != uint8(color.Transparent) {
+				break
+			}
+			e.X++
+		}
+		for y := 1; y < b.Dy()-1; y++ {
+			if mm.Pix[mm.PixOffset(b.Dx()-1, y)] != uint8(color.Transparent) {
+				break
+			}
+			o.Y++
+		}
+		for y := b.Dy() - 2; y > 0; y-- {
+			if mm.Pix[mm.PixOffset(b.Dy()-1, y)] != uint8(color.Transparent) {
+				break
+			}
+			e.Y++
+		}
 		//TODO: check top, left, bottom, right < 256
 		b.Min.X++
 		b.Min.Y++
@@ -133,7 +160,10 @@ func loadBox(name string, tags []string, ext string, r io.Reader) error {
 		}
 	}
 
-	NewBox(name, mm, nil, top, bottom, left, right)
+	p := NewBox(name, mm, nil, top, bottom, left, right)
+	pictures.origin[p] = o
+	pictures.end[p] = e
+	println(name, o.X, o.Y, e.X, e.Y)
 	return nil
 }
 
