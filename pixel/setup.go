@@ -69,7 +69,6 @@ func cleanup() error {
 	fonts.name = fonts.name[:0]
 	fonts.height = fonts.height[:0]
 	fonts.baseline = fonts.baseline[:0]
-	fonts.basecolor = fonts.basecolor[:0]
 	fonts.first = fonts.first[:0]
 
 	return renderer.cleanup()

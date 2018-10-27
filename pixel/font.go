@@ -24,7 +24,6 @@ var fonts = struct {
 	name       []string
 	height     []int16
 	baseline   []int16
-	basecolor  []color.Index
 	first      []uint16 // index of the first glyph
 	image      []*image.Paletted
 	lut        []*color.LUT
@@ -69,7 +68,6 @@ func newFont(name string, m *image.Paletted, l *color.LUT) FontID {
 	fonts.name = append(fonts.name, name)
 	fonts.height = append(fonts.height, 0)
 	fonts.baseline = append(fonts.baseline, 0)
-	fonts.basecolor = append(fonts.basecolor, 0)
 	fonts.first = append(fonts.first, 0)
 	fonts.image = append(fonts.image, m)
 	fonts.lut = append(fonts.lut, l)
@@ -107,18 +105,6 @@ func newFont(name string, m *image.Paletted, l *color.LUT) FontID {
 		if m.Pix[0+y*m.Stride] != 0 {
 			fonts.baseline[f] = int16(y)
 			break
-		}
-	}
-
-	// Find the basecolor
-	fonts.basecolor[f] = 255
-	for y := 0; y < m.Bounds().Dy()-1; y++ {
-		for x := 1; x < m.Bounds().Dx(); x++ {
-			c := color.Index(m.Pix[x+y*m.Stride])
-			lc := fonts.lut[f][c]
-			if lc != 0 && c < fonts.basecolor[f] {
-				fonts.basecolor[f] = lc
-			}
 		}
 	}
 
