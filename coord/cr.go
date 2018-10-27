@@ -55,8 +55,8 @@ func (a CR) Plus(b CR) CR {
 	return CR{a.C + b.C, a.R + b.R}
 }
 
-// PlusS returns the sum with the vector (s, s).
-func (a CR) PlusS(s int16) CR {
+// Pluss returns the sum with the vector (s, s).
+func (a CR) Pluss(s int16) CR {
 	return CR{a.C + s, a.R + s}
 }
 
@@ -65,8 +65,8 @@ func (a CR) Minus(b CR) CR {
 	return CR{a.C - b.C, a.R - b.R}
 }
 
-// MinusS returns the difference with the vector (s, s).
-func (a CR) MinusS(s int16) CR {
+// Minuss returns the difference with the vector (s, s).
+func (a CR) Minuss(s int16) CR {
 	return CR{a.C - s, a.R - s}
 }
 
@@ -75,37 +75,37 @@ func (a CR) Opposite() CR {
 	return CR{-a.C, -a.R}
 }
 
-// Times returns the product with a scalar.
-func (a CR) Times(s int16) CR {
+// Timess returns the product with a scalar.
+func (a CR) Timess(s int16) CR {
 	return CR{a.C * s, a.R * s}
 }
 
-// TimesCR returns the component-wise product with another vector.
-func (a CR) TimesCR(b CR) CR {
+// Times returns the component-wise product with another vector.
+func (a CR) Times(b CR) CR {
 	return CR{a.C * b.C, a.R * b.R}
 }
 
-// Slash returns the integer quotient of the division by a scalar (which must be
+// Slashs returns the integer quotient of the division by a scalar (which must be
 // non-zero).
-func (a CR) Slash(s int16) CR {
+func (a CR) Slashs(s int16) CR {
 	return CR{a.C / s, a.R / s}
 }
 
-// SlashCR returns the integer quotients of the component-wise division by
+// Slash returns the integer quotients of the component-wise division by
 // another vector (of which both C and R must be non-zero).
-func (a CR) SlashCR(b CR) CR {
+func (a CR) Slash(b CR) CR {
 	return CR{a.C / b.C, a.R / b.R}
 }
 
-// Mod returns the remainder (modulus) of the division by a scalar (which must
+// Mods returns the remainder (modulus) of the division by a scalar (which must
 // be non-zero).
-func (a CR) Mod(s int16) CR {
+func (a CR) Mods(s int16) CR {
 	return CR{a.C % s, a.R % s}
 }
 
-// ModCR returns the remainder (modulus) of the component-wise division by
+// Mod returns the remainder (modulus) of the component-wise division by
 // another vector (of which both C and R must be non-zero).
-func (a CR) ModCR(b CR) CR {
+func (a CR) Mod(b CR) CR {
 	return CR{a.C % b.C, a.R % b.R}
 }
 

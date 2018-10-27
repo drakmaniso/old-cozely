@@ -29,7 +29,7 @@ var (
 )
 
 var (
-	fill pixel.BoxID
+	fill   pixel.BoxID
 	cursor pixel.PictureID
 )
 
@@ -173,7 +173,7 @@ func (loop1) Render() {
 	pt := make([]pixel.XY, len(points))
 	for i, sd := range points {
 		pt[i] = toScreen(sd)
-		fill.Paint(pt[i].MinusS(1), pixel.XY{3, 3}, 0, pico8.Orange)
+		fill.Paint(pt[i].Minuss(1), pixel.XY{3, 3}, 0, pico8.Orange)
 	}
 
 	if window.HasMouseFocus() {
@@ -182,11 +182,11 @@ func (loop1) Render() {
 }
 
 func toScreen(p coord.XY) pixel.XY {
-	return pixel.XYof(orig.Plus(p.FlipY().Times(ratio)))
+	return pixel.XYof(orig.Plus(p.FlipY().Timess(ratio)))
 }
 
 func fromScreen(p pixel.XY) coord.XY {
-	return (p.Coord().FlipY().Minus(orig.FlipY())).Slash(ratio)
+	return (p.Coord().FlipY().Minus(orig.FlipY())).Slashs(ratio)
 }
 
 func newPoints() {

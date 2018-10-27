@@ -98,7 +98,7 @@ func (l *loop7) Render() {
 	cs := pixel.Resolution()
 
 	ps := l.pict.Size()
-	p := cs.Minus(ps).Slash(2)
+	p := cs.Minus(ps).Slashs(2)
 	_ = p
 	l.pict.Paint(p, 0, 0)
 

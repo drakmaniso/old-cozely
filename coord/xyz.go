@@ -34,9 +34,19 @@ func (a XYZ) Plus(b XYZ) XYZ {
 	return XYZ{a.X + b.X, a.Y + b.Y, a.Z + b.Z}
 }
 
+// Pluss returns the sum with a scalar.
+func (a XYZ) Pluss(s float32) XYZ {
+	return XYZ{a.X + s, a.Y + s, a.Z + s}
+}
+
 // Minus returns the difference with another vector.
 func (a XYZ) Minus(b XYZ) XYZ {
 	return XYZ{a.X - b.X, a.Y - b.Y, a.Z - b.Z}
+}
+
+// Minuss returns the sum with a scalar.
+func (a XYZ) Minuss(s float32) XYZ {
+	return XYZ{a.X - s, a.Y - s, a.Z - s}
 }
 
 // Opposite returns the opposite of the vector.
@@ -44,36 +54,36 @@ func (a XYZ) Opposite() XYZ {
 	return XYZ{-a.X, -a.Y, -a.Z}
 }
 
-// Times returns the product with a scalar.
-func (a XYZ) Times(s float32) XYZ {
+// Timess returns the product with a scalar.
+func (a XYZ) Timess(s float32) XYZ {
 	return XYZ{a.X * s, a.Y * s, a.Z * s}
 }
 
-// TimesCW returns the component-wise product with another vector.
-func (a XYZ) TimesCW(b XYZ) XYZ {
+// Times returns the component-wise product with another vector.
+func (a XYZ) Times(b XYZ) XYZ {
 	return XYZ{a.X * b.X, a.Y * b.Y, a.Z * b.Z}
 }
 
-// Slash returns the division by a scalar (which must be non-zero).
-func (a XYZ) Slash(s float32) XYZ {
+// Slashs returns the division by a scalar (which must be non-zero).
+func (a XYZ) Slashs(s float32) XYZ {
 	return XYZ{a.X / s, a.Y / s, a.Z / s}
 }
 
-// SlashCW returns the component-wise division by another vector (of which X, Y
+// Slash returns the component-wise division by another vector (of which X, Y
 // and Z must be non-zero).
-func (a XYZ) SlashCW(b XYZ) XYZ {
+func (a XYZ) Slash(b XYZ) XYZ {
 	return XYZ{a.X / b.X, a.Y / b.Y, a.Z / b.Z}
 }
 
-// Mod returns the remainder (modulus) of the division by a scalar (which must
+// Mods returns the remainder (modulus) of the division by a scalar (which must
 // be non-zero).
-func (a XYZ) Mod(s float32) XYZ {
+func (a XYZ) Mods(s float32) XYZ {
 	return XYZ{math32.Mod(a.X, s), math32.Mod(a.Y, s), math32.Mod(a.Z, s)}
 }
 
-// ModCW returns the remainders (modulus) of the component-wise division by
+// Mod returns the remainders (modulus) of the component-wise division by
 // another vector (of which X, Y and Z must be non-zero).
-func (a XYZ) ModCW(b XYZ) XYZ {
+func (a XYZ) Mod(b XYZ) XYZ {
 	return XYZ{math32.Mod(a.X, b.X), math32.Mod(a.Y, b.Y), math32.Mod(a.Z, b.Z)}
 }
 

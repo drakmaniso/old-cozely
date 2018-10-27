@@ -15,7 +15,7 @@ import (
 var ()
 
 type loop1 struct {
-	mode                                   int
+	mode int
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -83,13 +83,13 @@ func (l *loop1) Render() {
 	pixel.Picture("srgb-blue").Paint(pixel.XY{s.X + 23 + 4*(s.X+4), 0}, 0, 0)
 
 	p = pixel.Picture("origtest")
-	p.Paint(pixel.XY{r.X - s.X - 32, s.Y/2}, 0, 0)
-	pixel.Point(pixel.XY{r.X - s.X - 32, s.Y/2}, 0, 255)
+	p.Paint(pixel.XY{r.X - s.X - 32, s.Y / 2}, 0, 0)
+	pixel.Point(pixel.XY{r.X - s.X - 32, s.Y / 2}, 0, 255)
 
 	fill := pixel.Box("builtins/fill")
 	rect := pixel.Box("builtins/rectangle")
-	fill.Paint(s, r.Minus(s.Times(2)), -1, color.Black)
-	rect.Paint(s, r.Minus(s.Times(2)), -1, color.DarkGray)
+	fill.Paint(s, r.Minus(s.Timess(2)), -1, color.Black)
+	rect.Paint(s, r.Minus(s.Timess(2)), -1, color.DarkGray)
 
 	for i := int16(0); i < 6; i++ {
 		rect.Paint(

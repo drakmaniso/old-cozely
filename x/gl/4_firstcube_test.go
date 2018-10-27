@@ -139,14 +139,14 @@ func (l *loop4) React() {
 	}
 
 	if move.Ongoing() {
-		d := m.Times(2).Slashxy(s)
+		d := m.Timess(2).Slash(s)
 		l.position.X += d.X
 		l.position.Y -= d.Y
 		l.computeWorldFromObject()
 	}
 
 	if zoom.Ongoing() {
-		d := m.Times(2).Slashxy(s)
+		d := m.Timess(2).Slash(s)
 		l.position.X += d.X
 		l.position.Z += d.Y
 		l.computeWorldFromObject()

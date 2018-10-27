@@ -74,37 +74,37 @@ func (a CRD) Opposite() CRD {
 	return CRD{-a.C, -a.R, -a.D}
 }
 
-// Times returns the product with a scalar.
-func (a CRD) Times(s int16) CRD {
+// Timess returns the product with a scalar.
+func (a CRD) Timess(s int16) CRD {
 	return CRD{a.C * s, a.R * s, a.D * s}
 }
 
-// Timescr returns the component-wise product with another vector.
-func (a CRD) Timescr(b CRD) CRD {
+// Times returns the component-wise product with another vector.
+func (a CRD) Times(b CRD) CRD {
 	return CRD{a.C * b.C, a.R * b.R, a.D * b.D}
 }
 
-// Slash returns the integer quotient of the division by a scalar (which must be
+// Slashs returns the integer quotient of the division by a scalar (which must be
 // non-zero).
-func (a CRD) Slash(s int16) CRD {
+func (a CRD) Slashs(s int16) CRD {
 	return CRD{a.C / s, a.R / s, a.D / s}
 }
 
-// Slashcr returns the integer quotients of the component-wise division by
+// Slash returns the integer quotients of the component-wise division by
 // another vector (of which both C and R must be non-zero).
-func (a CRD) Slashcr(b CRD) CRD {
+func (a CRD) Slash(b CRD) CRD {
 	return CRD{a.C / b.C, a.R / b.R, a.D / b.D}
 }
 
-// Mod returns the remainder (modulus) of the division by a scalar (which must
+// Mods returns the remainder (modulus) of the division by a scalar (which must
 // be non-zero).
-func (a CRD) Mod(s int16) CRD {
+func (a CRD) Mods(s int16) CRD {
 	return CRD{a.C % s, a.R % s, a.D % s}
 }
 
-// Modcr returns the remainder (modulus) of the component-wise division by
+// Mod returns the remainder (modulus) of the component-wise division by
 // another vector (of which both C and R must be non-zero).
-func (a CRD) Modcr(b CRD) CRD {
+func (a CRD) Mod(b CRD) CRD {
 	return CRD{a.C % b.C, a.R % b.R, a.D % b.D}
 }
 

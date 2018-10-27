@@ -32,7 +32,7 @@ func Simplex2D(p coord.XY, grad []coord.XY) float32 {
 	// http://webstaff.itn.liu.se/~stegu/simplexnoise/SimplexNoise.java
 
 	// p = p.Times(0.70710678118654752440084436210485)
-	p = p.Times(0.816496580928)
+	p = p.Timess(0.816496580928)
 
 	// Noise contributions from the three corners
 	var n0, n1, n2 float32

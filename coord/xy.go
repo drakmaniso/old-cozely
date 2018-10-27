@@ -76,36 +76,36 @@ func (a XY) Opposite() XY {
 	return XY{-a.X, -a.Y}
 }
 
-// Times returns the product with a scalar.
-func (a XY) Times(s float32) XY {
+// Timess returns the product with a scalar.
+func (a XY) Timess(s float32) XY {
 	return XY{a.X * s, a.Y * s}
 }
 
-// Timesxy returns the component-wise product with another vector.
-func (a XY) Timesxy(b XY) XY {
+// Times returns the component-wise product with another vector.
+func (a XY) Times(b XY) XY {
 	return XY{a.X * b.X, a.Y * b.Y}
 }
 
-// Slash returns the division by a scalar (which must be non-zero).
-func (a XY) Slash(s float32) XY {
+// Slashs returns the division by a scalar (which must be non-zero).
+func (a XY) Slashs(s float32) XY {
 	return XY{a.X / s, a.Y / s}
 }
 
-// Slashxy returns the component-wise division by another vector (of which both
+// Slash returns the component-wise division by another vector (of which both
 // X and Y must be non-zero).
-func (a XY) Slashxy(b XY) XY {
+func (a XY) Slash(b XY) XY {
 	return XY{a.X / b.X, a.Y / b.Y}
 }
 
-// Mod returns the remainder (modulus) of the division by a scalar (which must
+// Mods returns the remainder (modulus) of the division by a scalar (which must
 // be non-zero).
-func (a XY) Mod(s float32) XY {
+func (a XY) Mods(s float32) XY {
 	return XY{math32.Mod(a.X, s), math32.Mod(a.Y, s)}
 }
 
-// Modxy returns the remainders (modulus) of the component-wise division by
+// Mod returns the remainders (modulus) of the component-wise division by
 // another vector (of which both X and Y must be non-zero).
-func (a XY) Modxy(b XY) XY {
+func (a XY) Mod(b XY) XY {
 	return XY{math32.Mod(a.X, b.X), math32.Mod(a.Y, b.Y)}
 }
 

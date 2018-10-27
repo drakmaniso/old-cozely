@@ -92,7 +92,7 @@ func resize() {
 	if (screen.resolution == XY{}) {
 		screen.margin = XY{}
 	} else {
-		screen.margin = screen.size.Minus(screen.resolution).Slash(2)
+		screen.margin = screen.size.Minus(screen.resolution).Slashs(2)
 	}
 }
 

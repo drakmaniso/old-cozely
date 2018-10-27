@@ -88,7 +88,7 @@ func (a *gpStick) asDelta() (just bool, value coord.XY) {
 		c.Y = 0
 	}
 	s := coord.XY{float32(internal.Window.Width), float32(internal.Window.Height)}
-	c = c.Times(s.Y / 256)
+	c = c.Timess(s.Y / 256)
 
 	return j, c
 }

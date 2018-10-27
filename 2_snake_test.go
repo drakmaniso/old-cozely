@@ -266,13 +266,13 @@ func step() {
 // drawGrid draws the current game state.
 func drawGrid() {
 	g := pixel.XY{int16(len(grid)), int16(len(grid[0]))} // grid size
-	s := pixel.Picture("body").Size().MinusS(1)          // cell size
-	o := pixel.Resolution().Minus(s.TimesXY(g)).Slash(2) // grid origin
+	s := pixel.Picture("body").Size().Minuss(1)          // cell size
+	o := pixel.Resolution().Minus(s.Times(g)).Slashs(2)  // grid origin
 
 	// Draw grid background
 	pixel.Box("playground").Paint(
 		o.Plus(s),
-		s.TimesXY(g.MinusS(2)).PlusS(1),
+		s.Times(g.Minuss(2)).Pluss(1),
 		0,
 		0,
 	)
@@ -281,7 +281,7 @@ func drawGrid() {
 	for x := range grid {
 		for y := range grid[x] {
 			i := pixel.XY{int16(x), int16(y)}
-			p := o.Plus(i.TimesXY(s))
+			p := o.Plus(i.Times(s))
 			switch grid[i.X][i.Y] {
 			case fruit:
 				pixel.Picture("fruit").Paint(p, 0, 0)

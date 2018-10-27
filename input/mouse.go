@@ -38,7 +38,7 @@ func updateMouse() {
 	}
 	// Wheel delta multiplied by 2 to generate on/off events
 	mw := coord.CR{internal.MouseWheelX, internal.MouseWheelY}
-	mouse.wheel = mouse.wheel.Plus(mw.Times(2))
+	mouse.wheel = mouse.wheel.Plus(mw.Timess(2))
 	internal.MouseWheelX = 0
 	internal.MouseWheelY = 0
 }

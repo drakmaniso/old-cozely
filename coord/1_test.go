@@ -102,7 +102,7 @@ func TestCoord_Inverse(t *testing.T) {
 
 func TestCoord_Times(t *testing.T) {
 	a := coord.XYZ{1.1, 2.2, 3.3}
-	b := a.Times(4.4)
+	b := a.Timess(4.4)
 	if b.X != 4.84 || b.Y != 9.68 || b.Z != 14.52 {
 		t.Errorf("Wrong result: %#v", b)
 	}
@@ -115,7 +115,7 @@ func TestCoord_Times(t *testing.T) {
 
 func TestCoord_Slash(t *testing.T) {
 	a := coord.XYZ{1.1, 2.2, 3.3}
-	b := a.Slash(4.4)
+	b := a.Slashs(4.4)
 	if b.X != 0.25 || b.Y != 0.5 || b.Z != 0.75 {
 		t.Errorf("Wrong result: %#v", b)
 	}

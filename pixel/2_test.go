@@ -130,7 +130,7 @@ func (l *loop2) React() {
 		p := l.picts[j]
 		l.shapes[i].pict = p
 		//TODO:
-		l.shapes[i].pos = pixel.XYof(input.Pointer.XY()).Minus(p.Size().Slash(2))
+		l.shapes[i].pos = pixel.XYof(input.Pointer.XY()).Minus(p.Size().Slashs(2))
 	}
 }
 

@@ -42,10 +42,10 @@ func XYof(v coord.Coordinates) XY {
 // WindowXY takes coordinates in canvas space and returns them in window space.
 func (a XY) WindowXY() window.XY {
 	if !screen.resolution.Null() {
-		a = a.Times(screen.zoom)
+		a = a.Timess(screen.zoom)
 		return window.XY(a)
 	}
-	a = a.Plus(screen.margin).Times(screen.zoom)
+	a = a.Plus(screen.margin).Timess(screen.zoom)
 	return window.XY(a)
 }
 
@@ -77,8 +77,8 @@ func (a XY) Plus(b XY) XY {
 	return XY{a.X + b.X, a.Y + b.Y}
 }
 
-// PlusS returns the sum with the vector (s, s).
-func (a XY) PlusS(s int16) XY {
+// Pluss returns the sum with the vector (s, s).
+func (a XY) Pluss(s int16) XY {
 	return XY{a.X + s, a.Y + s}
 }
 
@@ -87,8 +87,8 @@ func (a XY) Minus(b XY) XY {
 	return XY{a.X - b.X, a.Y - b.Y}
 }
 
-// MinusS returns the difference with the vector (s, s).
-func (a XY) MinusS(s int16) XY {
+// Minuss returns the difference with the vector (s, s).
+func (a XY) Minuss(s int16) XY {
 	return XY{a.X - s, a.Y - s}
 }
 
@@ -97,37 +97,37 @@ func (a XY) Opposite() XY {
 	return XY{-a.X, -a.Y}
 }
 
-// Times returns the product with a scalar.
-func (a XY) Times(s int16) XY {
+// Timess returns the product with a scalar.
+func (a XY) Timess(s int16) XY {
 	return XY{a.X * s, a.Y * s}
 }
 
-// TimesXY returns the component-wise product with another vector.
-func (a XY) TimesXY(b XY) XY {
+// Times returns the component-wise product with another vector.
+func (a XY) Times(b XY) XY {
 	return XY{a.X * b.X, a.Y * b.Y}
 }
 
-// Slash returns the integer quotient of the division by a scalar (which must be
+// Slashs returns the integer quotient of the division by a scalar (which must be
 // non-zero).
-func (a XY) Slash(s int16) XY {
+func (a XY) Slashs(s int16) XY {
 	return XY{a.X / s, a.Y / s}
 }
 
-// SlashXY returns the integer quotients of the component-wise division by
+// Slash returns the integer quotients of the component-wise division by
 // another vector (of which both X and Y must be non-zero).
-func (a XY) SlashXY(b XY) XY {
+func (a XY) Slash(b XY) XY {
 	return XY{a.X / b.X, a.Y / b.Y}
 }
 
-// Mod returns the remainder (modulus) of the division by a scalar (which must
+// Mods returns the remainder (modulus) of the division by a scalar (which must
 // be non-zero).
-func (a XY) Mod(s int16) XY {
+func (a XY) Mods(s int16) XY {
 	return XY{a.X % s, a.Y % s}
 }
 
-// ModXY returns the remainder (modulus) of the component-wise division by
+// Mod returns the remainder (modulus) of the component-wise division by
 // another vector (of which both X and Y must be non-zero).
-func (a XY) ModXY(b XY) XY {
+func (a XY) Mod(b XY) XY {
 	return XY{a.X % b.X, a.Y % b.Y}
 }
 

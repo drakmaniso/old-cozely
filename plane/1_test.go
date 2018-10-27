@@ -96,7 +96,7 @@ func (loop1) Render() {
 	pixel.Line(pt[1], pt[2], 0, pico8.LightGray)
 	pixel.Line(pt[2], pt[0], 0, pico8.LightGray)
 	for i := range points {
-		r := pt[i].Minus(toScreen(d)).Slash(12)
+		r := pt[i].Minus(toScreen(d)).Slashs(12)
 		cur.Position = pt[i].Plus(r).Plus(pixel.XY{-2, +3})
 		cur.Layer = -1
 		cur.Color = [3]color.Index{pico8.Red, pico8.Green, pico8.Blue}[i]
@@ -161,7 +161,7 @@ func (loop1) Render() {
 	cur.Color = pico8.White
 	cur.Printf("Circumcenter: %.3f, %.3f\n", d.X, d.Y)
 	dd := toScreen(d)
-	pixel.Line(dd.MinusS(2), dd.PlusS(2), 0, pico8.DarkGray)
+	pixel.Line(dd.Minuss(2), dd.Pluss(2), 0, pico8.DarkGray)
 	pixel.Line(dd.Minus(pixel.XY{-2, 2}), dd.Plus(pixel.XY{-2, 2}), 0, pico8.DarkGray)
 }
 
@@ -173,7 +173,7 @@ func toScreen(p coord.XY) pixel.XY {
 }
 
 func fromScreen(p pixel.XY) coord.XY {
-	return coord.XYof(p.Coord().FlipY().Minus(offset.FlipY())).Slash(ratio)
+	return coord.XYof(p.Coord().FlipY().Minus(offset.FlipY())).Slashs(ratio)
 }
 
 func newPoints() {

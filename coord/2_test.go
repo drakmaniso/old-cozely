@@ -160,7 +160,7 @@ func BenchmarkCoord_Times(b *testing.B) {
 	n := float32(5.5)
 	var o XYZ
 	for i := 0; i < b.N; i++ {
-		o = m.Times(n)
+		o = m.Timess(n)
 	}
 	_ = o
 }
@@ -169,7 +169,7 @@ func BenchmarkCoord_Times_Self(b *testing.B) {
 	m := XYZ{1.1, 2.2, 3.3}
 	n := float32(5.5)
 	for i := 0; i < b.N; i++ {
-		m = m.Times(n)
+		m = m.Timess(n)
 	}
 	_ = m
 }
@@ -200,7 +200,7 @@ func BenchmarkCoord_Slash(b *testing.B) {
 	n := float32(5.5)
 	var o XYZ
 	for i := 0; i < b.N; i++ {
-		o = m.Slash(n)
+		o = m.Slashs(n)
 	}
 	_ = o
 }
@@ -209,7 +209,7 @@ func BenchmarkCoord_Slash_Self(b *testing.B) {
 	m := XYZ{1.1, 2.2, 3.3}
 	n := float32(5.5)
 	for i := 0; i < b.N; i++ {
-		m = m.Slash(n)
+		m = m.Slashs(n)
 	}
 	_ = m
 }
