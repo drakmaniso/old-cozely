@@ -17,9 +17,9 @@ const (
 
 // Paint queues a GPU command to put a picture on the canvas.
 func (p PictureID) Paint(pos XY, z Layer, shift color.Index) {
-	pos = pos.Minus(pictures.origin[p])
+	pos = pos.Minus(pictures.topleft[p])
 	renderer.command(
-		cmdPicture,	int16(shift),
+		cmdPicture, int16(shift),
 		int16(z),
 		pos.X, pos.Y,
 		0, 0,
@@ -40,15 +40,15 @@ func (b BoxID) Paint(pos XY, size XY, z Layer, shift color.Index) {
 		pos.Y += size.Y
 		size.Y = -size.Y
 	}
-	pos = pos.Minus(pictures.origin[b])
-	size = size.Plus(pictures.origin[b]).Plus(pictures.end[b])
+	pos = pos.Minus(pictures.topleft[b])
+	size = size.Plus(pictures.topleft[b]).Plus(pictures.bottomright[b])
 	renderer.command(
 		cmdTile, int16(shift),
 		int16(z),
 		pos.X, pos.Y,
 		size.X, size.Y,
 		int16(b),
-		pictures.border[b],
+		pictures.corners[b],
 	)
 }
 

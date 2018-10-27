@@ -22,15 +22,15 @@ const maxPictureID = 0xFFFF
 const NoPicture PictureID = 0
 
 var pictures = struct {
-	dictionary map[string]PictureID
-	atlas      *atlas.Atlas
-	name       []string
-	mapping    []mapping
-	border     []int16
-	origin     []XY
-	end        []XY
-	image      []*image.Paletted
-	lut        []*color.LUT
+	dictionary  map[string]PictureID
+	atlas       *atlas.Atlas
+	name        []string
+	mapping     []mapping
+	corners     []int16
+	topleft     []XY
+	bottomright []XY
+	image       []*image.Paletted
+	lut         []*color.LUT
 }{
 	dictionary: map[string]PictureID{},
 }
@@ -79,9 +79,9 @@ func NewPicture(name string, m *image.Paletted, l *color.LUT) PictureID {
 	pictures.image = append(pictures.image, m)
 	pictures.lut = append(pictures.lut, l)
 	pictures.mapping = append(pictures.mapping, mapping{})
-	pictures.border = append(pictures.border, 0)
-	pictures.origin = append(pictures.origin, XY{})
-	pictures.end = append(pictures.end, XY{})
+	pictures.corners = append(pictures.corners, 0)
+	pictures.topleft = append(pictures.topleft, XY{})
+	pictures.bottomright = append(pictures.bottomright, XY{})
 	p := PictureID(len(pictures.name) - 1)
 
 	if pictures.lut[p] == nil {
@@ -169,7 +169,7 @@ func loadPicture(name string, tags []string, ext string, r io.Reader) error {
 	}
 
 	p := NewPicture(name, mm, nil)
-	p.SetOrigin(o)
+	pictures.topleft[p] = o
 	return nil
 }
 
@@ -180,12 +180,9 @@ func (p PictureID) Size() XY {
 	return XY{pictures.mapping[p].w, pictures.mapping[p].h}
 }
 
+// Origin is the "anchor point" of the picture.
 func (p PictureID) Origin() XY {
-	return pictures.origin[p]
-}
-
-func (p PictureID) SetOrigin(o XY) {
-	pictures.origin[p] = o
+	return pictures.topleft[p]
 }
 
 ////////////////////////////////////////////////////////////////////////////////
