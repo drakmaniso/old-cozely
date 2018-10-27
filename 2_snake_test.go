@@ -11,18 +11,6 @@ import (
 	"github.com/cozely/cozely/resource"
 )
 
-//// Constants /////////////////////////////////////////////////////////////////
-
-const (
-	gridwidth, gridheight = 18, 18
-)
-
-var (
-	resolution = pixel.XY{180, 180}
-	cellsize   = pixel.XY{8, 8}
-	origin     = resolution.Minus(pixel.XY{gridwidth, gridheight}.TimesXY(cellsize)).Slash(2)
-)
-
 //// Game Sate /////////////////////////////////////////////////////////////////
 
 type cell byte
@@ -55,7 +43,7 @@ func Example_snake() {
 		panic(err)
 	}
 	color.Load(&pico8.Palette)
-	pixel.SetResolution(resolution)
+	pixel.SetResolution(pixel.XY{180, 180})
 	cozely.Configure(cozely.UpdateStep(.25))
 
 	err = cozely.Run(menu{})
@@ -90,7 +78,7 @@ func (menu) React() {
 func (menu) Update() {}
 
 func (menu) Render() {
-	pixel.Clear(1)
+	pixel.Clear(pico8.DarkBlue)
 	cur := pixel.Cursor{
 		Color:    pico8.White,
 		Position: pixel.XY{25, 16},
@@ -136,7 +124,7 @@ func (game) Update() {
 }
 
 func (game) Render() {
-	pixel.Clear(1)
+	pixel.Clear(pico8.DarkBlue)
 	drawGrid()
 }
 
@@ -175,7 +163,7 @@ func (gameover) Update() {
 }
 
 func (gameover) Render() {
-	pixel.Clear(8)
+	pixel.Clear(pico8.Red)
 	if counter%2 == 0 {
 		cur := pixel.Cursor{
 			Color:    pico8.White,
@@ -190,16 +178,16 @@ func (gameover) Render() {
 
 // setupGrid prepares the grid for a new game.
 func setupGrid() {
-	grid = [gridwidth][gridheight]cell{}
-	for x := 0; x < gridwidth; x++ {
-		grid[x][0] = border
-		grid[x][gridheight-1] = border
+	for x := range grid {
+		for y := range grid[x] {
+			if x == 0 || x == len(grid)-1 || y == 0 || y == len(grid[x])-1 {
+				grid[x][y] = border
+			} else {
+				grid[x][y] = empty
+			}
+		}
 	}
-	for y := 0; y < gridheight; y++ {
-		grid[0][y] = border
-		grid[gridwidth-1][y] = border
-	}
-	head.X, head.Y = gridwidth/2, gridheight/2
+	head.X, head.Y = int16(len(grid)/2), int16(len(grid[0])/2)
 	grid[head.X][head.Y] = up
 	grid[head.X][head.Y+1] = up
 	grid[head.X][head.Y+2] = up
@@ -211,10 +199,10 @@ func setupGrid() {
 
 }
 
-// addFruit randaomly places a fruit in an empty cell of the grid.
+// addFruit randomly places a fruit in an empty cell of the grid.
 func addFruit() {
 	for {
-		x, y := rand.Intn(gridwidth), rand.Intn(gridheight)
+		x, y := rand.Intn(len(grid)), rand.Intn(len(grid[0]))
 		if grid[x][y] == empty {
 			grid[x][y] = fruit
 			return
@@ -234,25 +222,25 @@ func step() {
 	case left:
 		head.X--
 	}
+	var c cell
+	c, grid[head.X][head.Y] = grid[head.X][head.Y], direction
 
-	if grid[head.X][head.Y] == fruit {
+	if c == fruit {
 		// Eat and grow
 		score++
-		grid[head.X][head.Y] = direction
 		addFruit()
 		return
 	}
 
-	if grid[head.X][head.Y] != empty {
+	if c != empty {
 		// Hit border or snake body
 		cozely.Goto(gameover{})
 		return
 	}
 
 	// Remove last section of the tail
-	grid[head.X][head.Y] = direction
 	s := head
-	for i := 0; i < gridwidth*gridheight; i++ {
+	for i := 0; i < len(grid)*len(grid[0]); i++ {
 		ns := s
 		switch grid[s.X][s.Y] {
 		case up:
@@ -277,40 +265,45 @@ func step() {
 
 // drawGrid draws the current game state.
 func drawGrid() {
-	{
-		// Draw background
-		o := origin.Plus(cellsize).MinusS(1)
-		s := pixel.XY{gridwidth - 2, gridheight - 2}.TimesXY(cellsize).PlusS(3)
-		pixel.Box("playground").Paint(o, s, 0, 0)
-	}
+	g := pixel.XY{int16(len(grid)), int16(len(grid[0]))} // grid size
+	s := pixel.Picture("body").Size().MinusS(1)          // cell size
+	o := pixel.Resolution().Minus(s.TimesXY(g)).Slash(2) // grid origin
+
+	// Draw grid background
+	pixel.Box("playground").Paint(
+		o.Plus(s),
+		s.TimesXY(g.MinusS(2)).PlusS(1),
+		0,
+		0,
+	)
 
 	// Draw grid content
-	var s struct{ X, Y int16 }
-	for s.X = int16(0); s.X < gridwidth; s.X++ {
-		for s.Y = int16(0); s.Y < gridheight; s.Y++ {
-			p := pixel.XY(s).TimesXY(cellsize)
-			p = origin.Plus(p)
-			switch grid[s.X][s.Y] {
+	for x := range grid {
+		for y := range grid[x] {
+			i := pixel.XY{int16(x), int16(y)}
+			p := o.Plus(i.TimesXY(s))
+			switch grid[i.X][i.Y] {
 			case fruit:
 				pixel.Picture("fruit").Paint(p, 0, 0)
 			case up, right, down, left, tail:
-				pixel.Picture("body").Paint(p, 0, 0)
-			}
-			if s.X == head.X && s.Y == head.Y {
-				pixel.Picture("head").Paint(p, 0, 0)
-				switch next {
-				case up:
-					pixel.Point(p.Plus(pixel.XY{3, 2}), 0, pico8.DarkBlue)
-					pixel.Point(p.Plus(pixel.XY{5, 2}), 0, pico8.DarkBlue)
-				case down:
-					pixel.Point(p.Plus(pixel.XY{3, 8 - 2}), 0, pico8.DarkBlue)
-					pixel.Point(p.Plus(pixel.XY{5, 8 - 2}), 0, pico8.DarkBlue)
-				case left:
-					pixel.Point(p.Plus(pixel.XY{2, 3}), 0, pico8.DarkBlue)
-					pixel.Point(p.Plus(pixel.XY{2, 5}), 0, pico8.DarkBlue)
-				case right:
-					pixel.Point(p.Plus(pixel.XY{8 - 2, 3}), 0, pico8.DarkBlue)
-					pixel.Point(p.Plus(pixel.XY{8 - 2, 5}), 0, pico8.DarkBlue)
+				if i == head {
+					pixel.Picture("head").Paint(p, 0, 0)
+					switch next {
+					case up:
+						pixel.Point(p.Plus(pixel.XY{3, 2}), 0, pico8.DarkBlue)
+						pixel.Point(p.Plus(pixel.XY{5, 2}), 0, pico8.DarkBlue)
+					case down:
+						pixel.Point(p.Plus(pixel.XY{3, 8 - 2}), 0, pico8.DarkBlue)
+						pixel.Point(p.Plus(pixel.XY{5, 8 - 2}), 0, pico8.DarkBlue)
+					case left:
+						pixel.Point(p.Plus(pixel.XY{2, 3}), 0, pico8.DarkBlue)
+						pixel.Point(p.Plus(pixel.XY{2, 5}), 0, pico8.DarkBlue)
+					case right:
+						pixel.Point(p.Plus(pixel.XY{8 - 2, 3}), 0, pico8.DarkBlue)
+						pixel.Point(p.Plus(pixel.XY{8 - 2, 5}), 0, pico8.DarkBlue)
+					}
+				} else {
+					pixel.Picture("body").Paint(p, 0, 0)
 				}
 			}
 		}
