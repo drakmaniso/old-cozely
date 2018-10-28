@@ -20,13 +20,13 @@ var colours [ecs.Size]colour
 func (loop) Render() {
 	pixel.Clear(1)
 
-	var x, y int16 // screen coords
+	var pos pixel.XY
 
 	for e := ecs.First; e < ecs.Last(); e++ {
 		// Compute screen coords
 		switch {
 		case e.Has(ecs.GridPosition):
-			x, y = grid.PositionOf(e).ScreenXY()
+			pos = grid.PositionOf(e).Pixel()
 		}
 		// Draw
 		switch {
@@ -36,7 +36,7 @@ func (loop) Render() {
 			if grid.PositionOf(e) == current || e.Has(ecs.MatchFlag) {
 				p = tilesPict[c].big
 			}
-			p.Paint(pixel.XY{x, y}, 0, 0)
+			p.Paint(pos, 0, 0)
 		}
 	}
 }

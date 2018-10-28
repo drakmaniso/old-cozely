@@ -52,6 +52,10 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	err = resource.Path("./")
+	if err != nil {
+		panic(err)
+	}
 
 	err = cozely.Run(loop{})
 	if err != nil {

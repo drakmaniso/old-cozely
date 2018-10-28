@@ -122,7 +122,7 @@ func newFont(name string, m *image.Paletted, l *color.LUT) FontID {
 			setErr(errors.New("unexpected subimage in Loadfont"))
 			return noFont
 		}
-		gg := NewPicture("", sm, fonts.lut[f])
+		gg := newPicture("", sm, fonts.lut[f])
 		if gg != PictureID(g) {
 			//TODO:
 			panic("load font: gg != g")

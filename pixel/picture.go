@@ -22,15 +22,18 @@ const maxPictureID = 0xFFFF
 const NoPicture PictureID = 0
 
 var pictures = struct {
-	dictionary  map[string]PictureID
-	atlas       *atlas.Atlas
+	dictionary map[string]PictureID
+	// Fields
 	name        []string
-	mapping     []mapping
 	corners     []int16
 	topleft     []XY
 	bottomright []XY
-	image       []*image.Paletted
-	lut         []*color.LUT
+	// Temporary fields
+	image []*image.Paletted
+	lut   []*color.LUT
+	// Atlas
+	atlas   *atlas.Atlas
+	mapping []mapping
 }{
 	dictionary: map[string]PictureID{},
 }
@@ -53,10 +56,10 @@ func Picture(name string) PictureID {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// NewPicture creates a picture from an image.
+// newPicture creates a picture from an image.
 //
 // Must be called *before* running the framework.
-func NewPicture(name string, m *image.Paletted, l *color.LUT) PictureID {
+func newPicture(name string, m *image.Paletted, l *color.LUT) PictureID {
 	var err error
 
 	if internal.Running {
@@ -143,16 +146,17 @@ func loadPicture(name string, tags []string, ext string, r io.Reader) error {
 	// Origin
 	o := XY{}
 	if meta {
+		// TODO: merge with Box corners/anchors?
 		b := mm.Bounds()
 
 		for x := 1; x < b.Dx()-1; x++ {
-			if mm.Pix[mm.PixOffset(x, 0)] != uint8(color.Transparent) {
+			if mm.Pix[mm.PixOffset(x, b.Dy()-1)] != uint8(color.Transparent) {
 				break
 			}
 			o.X++
 		}
 		for y := 1; y < b.Dy()-1; y++ {
-			if mm.Pix[mm.PixOffset(0, y)] != uint8(color.Transparent) {
+			if mm.Pix[mm.PixOffset(b.Dx()-1, y)] != uint8(color.Transparent) {
 				break
 			}
 			o.Y++
@@ -168,7 +172,7 @@ func loadPicture(name string, tags []string, ext string, r io.Reader) error {
 		}
 	}
 
-	p := NewPicture(name, mm, nil)
+	p := newPicture(name, mm, nil)
 	pictures.topleft[p] = o
 	return nil
 }

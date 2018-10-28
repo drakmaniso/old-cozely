@@ -25,12 +25,13 @@ func ScreenResized(w, h int16) {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// ScreenXY returns the screen coordinates of the grid position, given a cell
+// Pixel returns the screen coordinates of the grid position, given a cell
 // size of s.
-func (p Position) ScreenXY() (x, y int16) {
-	x = origin.X + int16(p.x)*cellSize
-	y = origin.Y + int16(height-1-p.y)*cellSize
-	return x, y
+func (p Position) Pixel() pixel.XY {
+	return pixel.XY{
+		origin.X + int16(p.x)*cellSize,
+		origin.Y + int16(height-1-p.y)*cellSize,
+	}
 }
 
 ////////////////////////////////////////////////////////////////////////////////

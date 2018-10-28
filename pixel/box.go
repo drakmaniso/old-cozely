@@ -12,8 +12,8 @@ import (
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// BoxID is the ID to handle stretchable image resources (also known as
-// nine-patch or nine-slice images).
+// BoxID identifies a stretchable image resources (also known as nine-patch or
+// nine-slice images).
 type BoxID PictureID
 
 var boxes = struct {
@@ -35,35 +35,21 @@ func Box(name string) BoxID {
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// NewBox creates a new box from an image.
+// newBox creates a new box from an image.
 //
 // Must be called *before* running the framework.
-func NewBox(name string, m *image.Paletted, l *color.LUT, topLeft, bottomRight XY) BoxID {
-	if internal.Running {
-		setErr(errors.New("pixel box: declarations must happen before starting the framework"))
-		return BoxID(NoPicture)
-	}
-
-	_, ok := pictures.dictionary[name]
+func newBox(name string, m *image.Paletted, l *color.LUT) BoxID {
+	_, ok := boxes.dictionary[name]
 	if ok && name != "" {
 		setErr(errors.New(`new box "` + name + `": name already taken`))
 		return BoxID(NoPicture)
 	}
 
-	if topLeft.Y < 0 || topLeft.Y > 15 ||
-		bottomRight.Y < 0 || bottomRight.Y > 15 ||
-		topLeft.X < 0 || topLeft.X > 15 ||
-		bottomRight.X < 0 || bottomRight.X > 15 {
-		setErr(errors.New(`new box "` + name + `": invalid borders`))
-		return BoxID(NoPicture)
-	}
-
-	p := NewPicture(name, m, l)
-	pictures.corners[p] = int16(topLeft.Y<<12 | bottomRight.Y<<8 | topLeft.X<<4 | bottomRight.X)
+	b := BoxID(newPicture(name, m, l))
 	if name != "" {
-		boxes.dictionary[name] = BoxID(p)
+		boxes.dictionary[name] = b
 	}
-	return BoxID(p)
+	return b
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -94,7 +80,7 @@ func loadBox(name string, tags []string, ext string, r io.Reader) error {
 		}
 	}
 
-	// Corners and borders
+	// Corners and anchors
 	cornTL, cornBR := XY{}, XY{}
 	borTL, borBR := XY{}, XY{}
 	if meta {
@@ -124,7 +110,7 @@ func loadBox(name string, tags []string, ext string, r io.Reader) error {
 			}
 			cornBR.Y++
 		}
-		// Borders
+		// Anchors
 		for x := 1; x < b.Dx()-1; x++ {
 			if mm.Pix[mm.PixOffset(x, b.Dy()-1)] != uint8(color.Transparent) {
 				break
@@ -160,17 +146,18 @@ func loadBox(name string, tags []string, ext string, r io.Reader) error {
 		}
 	}
 
-	p := NewBox(name, mm, nil, cornTL, cornBR)
-	pictures.topleft[p] = borTL
-	pictures.bottomright[p] = borBR
+	b := newBox(name, mm, nil)
+	b.setCorners(cornTL, cornBR)
+	pictures.topleft[b] = borTL
+	pictures.bottomright[b] = borBR
 	println(name, borTL.X, borTL.Y, borBR.X, borBR.Y)
 	return nil
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 
-// Corners returns the corners of the box (i.e. the fixed parts of the image, as
-// opposed to the stretchable center).
+// Corners of the box (i.e. the fixed parts of the image, as opposed to the
+// stretchable center).
 func (b BoxID) Corners() (topLeft, bottomRight XY) {
 	topLeft.Y = pictures.corners[b] >> 12
 	topLeft.X = (pictures.corners[b] >> 8) & 0xF
@@ -179,9 +166,20 @@ func (b BoxID) Corners() (topLeft, bottomRight XY) {
 	return topLeft, bottomRight
 }
 
-// Borders returns the borders of the box (i.e. the part of the image that is
-// drawn outside the specified size).
-func (b BoxID) Borders() (topLeft, bottomRight XY) {
+func (b BoxID) setCorners(topLeft, bottomRight XY) error {
+	if topLeft.Y < 0 || topLeft.Y > 15 ||
+		bottomRight.Y < 0 || bottomRight.Y > 15 ||
+		topLeft.X < 0 || topLeft.X > 15 ||
+		bottomRight.X < 0 || bottomRight.X > 15 {
+		return errors.New(`new box "` + pictures.name[b] + `": invalid borders`)
+	}
+	pictures.corners[b] = int16(topLeft.Y<<12 | bottomRight.Y<<8 | topLeft.X<<4 | bottomRight.X)
+	return nil
+}
+
+// Anchors of the box (i.e. the starting and ending points of the box content in
+// the image).
+func (b BoxID) Anchors() (topLeft, bottomRight XY) {
 	return pictures.topleft[b], pictures.bottomright[b]
 }
 
