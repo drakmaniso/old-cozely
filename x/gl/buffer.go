@@ -270,6 +270,10 @@ func (vb *VertexBuffer) Bind(binding uint32, offset uintptr) {
 	C.BindVertex(C.GLuint(binding), vb.object, C.GLintptr(offset), C.GLsizei(vb.stride))
 }
 
+func (vb *VertexBuffer) AsStorage() StorageBuffer {
+	return StorageBuffer{object: vb.object}
+}
+
 // Delete frees the buffer.
 func (vb *VertexBuffer) Delete() {
 	C.DeleteBuffer(C.GLuint(vb.object))

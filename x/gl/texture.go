@@ -4,7 +4,9 @@
 package gl
 
 import (
+	"fmt"
 	"image"
+	"reflect"
 	"unsafe"
 )
 
@@ -98,6 +100,41 @@ func pointerFormatAndTypeOf(img image.Image) (p unsafe.Pointer, pformat C.GLenum
 		p = unsafe.Pointer(&img.Pix[0])
 		pformat = C.GL_RED_INTEGER
 		ptype = C.GL_UNSIGNED_BYTE
+	}
+	return p, pformat, ptype
+}
+
+func pointerFormatAndTypeOfData(data interface{}) (p unsafe.Pointer, pformat C.GLenum, ptype C.GLenum) {
+	v := reflect.ValueOf(data)
+	switch v.Kind() {
+	case reflect.Ptr:
+		p = unsafe.Pointer(v.Pointer())
+		v = v.Elem()
+		if v.Kind() != reflect.Array {
+			fmt.Println(v.Kind())
+			panic("TODO") //TODO
+		}
+		vv := v.Index(0)
+		switch vv.Kind() {
+		case reflect.Int8:
+			pformat = C.GL_RED_INTEGER
+			ptype = C.GL_BYTE
+		case reflect.Uint8:
+			pformat = C.GL_RED_INTEGER
+			ptype = C.GL_UNSIGNED_BYTE
+		case reflect.Int16:
+			pformat = C.GL_RED_INTEGER
+			ptype = C.GL_SHORT
+		case reflect.Uint16:
+			pformat = C.GL_RED_INTEGER
+			ptype = C.GL_UNSIGNED_SHORT
+		case reflect.Int32:
+			pformat = C.GL_RED_INTEGER
+			ptype = C.GL_INT
+		case reflect.Uint32:
+			pformat = C.GL_RED_INTEGER
+			ptype = C.GL_UNSIGNED_INT
+		}
 	}
 	return p, pformat, ptype
 }

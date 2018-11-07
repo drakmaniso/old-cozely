@@ -80,6 +80,19 @@ func (t *TextureArray2D) SubImage(level int32, ox, oy int32, index int32, img im
 	)
 }
 
+// SubData loads data into a texture at a specific position offset, array
+// index and mipmap level.
+func (t *TextureArray2D) SubData(level int32, ox, oy int32, index int32, sx, sy int32, data interface{}) {
+	p, pf, pt := pointerFormatAndTypeOfData(data)
+	C.TextureArray2DSubImage(
+		t.object,
+		C.GLint(level),
+		C.GLint(ox), C.GLint(oy), C.GLint(index),
+		C.GLsizei(sx), C.GLsizei(sy), C.GLsizei(1),
+		pf, pt, p,
+	)
+}
+
 // GenerateMipmap generates mipmaps for the texture.
 func (t *TextureArray2D) GenerateMipmap() {
 	C.TextureGenerateMipmap(t.object)

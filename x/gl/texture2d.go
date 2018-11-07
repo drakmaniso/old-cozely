@@ -78,7 +78,26 @@ func NewTexture2D(levels int32, f TextureFormat, width, height int32) Texture2D 
 // mipmap level.
 func (t *Texture2D) SubImage(level int32, ox, oy int32, img image.Image) {
 	p, pf, pt := pointerFormatAndTypeOf(img)
-	C.Texture2DSubImage(t.object, C.GLint(level), C.GLint(ox), C.GLint(oy), C.GLsizei(img.Bounds().Dx()), C.GLsizei(img.Bounds().Dy()), pf, pt, p)
+	C.Texture2DSubImage(
+		t.object,
+		C.GLint(level),
+		C.GLint(ox), C.GLint(oy),
+		C.GLsizei(img.Bounds().Dx()), C.GLsizei(img.Bounds().Dy()),
+		pf, pt, p,
+	)
+}
+
+// SubData loads data into a texture at a specific position offset, array
+// index and mipmap level.
+func (t *Texture2D) SubData(level int32, ox, oy int32, sx, sy int32, data interface{}) {
+	p, pf, pt := pointerFormatAndTypeOfData(data)
+	C.Texture2DSubImage(
+		t.object,
+		C.GLint(level),
+		C.GLint(ox), C.GLint(oy),
+		C.GLsizei(sx), C.GLsizei(sy),
+		pf, pt, p,
+	)
 }
 
 // GenerateMipmap generates mipmaps for the texture.
