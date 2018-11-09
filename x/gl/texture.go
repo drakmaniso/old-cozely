@@ -115,6 +115,13 @@ func pointerFormatAndTypeOfData(data interface{}) (p unsafe.Pointer, pformat C.G
 			panic("TODO") //TODO
 		}
 		vv := v.Index(0)
+		if vv.Kind() == reflect.Array {
+			vv = vv.Index(0)
+			if v.Kind() != reflect.Array {
+				fmt.Println(v.Kind())
+				panic("TODO") //TODO
+			}
+		}
 		switch vv.Kind() {
 		case reflect.Int8:
 			pformat = C.GL_RED_INTEGER
